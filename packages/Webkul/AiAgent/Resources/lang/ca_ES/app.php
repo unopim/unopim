@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'S\'ha assolit el límit de peticions del proveïdor d\'IA. Torneu-ho a provar d\'aquí a :seconds segons.',
         'error-overloaded'          => 'El proveïdor d\'IA està actualment sobrecarregat. Torneu-ho a provar d\'aquí a uns moments.',
         'error-request-too-large'   => 'La vostra petició és massa gran per al proveïdor d\'IA. Escurceu el missatge o elimineu alguns adjunts i torneu-ho a provar.',
+        'error-api-key-corrupted'   => 'No s\'ha pogut desxifrar la clau API d\'aquesta plataforma (:error). La clau de xifrat de l\'aplicació pot haver canviat. Editeu la plataforma i torneu a introduir la vostra clau API.',
         'invalid-file-path'         => 'Ruta del fitxer no vàlida.',
         'invalid-locale-code'       => 'Codi d\'idioma no vàlid.',
         'invalid-channel-code'      => 'Codi de canal no vàlid.',

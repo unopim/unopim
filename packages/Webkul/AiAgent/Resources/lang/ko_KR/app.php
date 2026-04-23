@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'AI 제공자의 요청 한도에 도달했습니다. :seconds초 후에 다시 시도해 주세요.',
         'error-overloaded'          => 'AI 제공자가 현재 과부하 상태입니다. 잠시 후 다시 시도해 주세요.',
         'error-request-too-large'   => '요청이 AI 제공자에게 너무 큽니다. 메시지를 줄이거나 첨부 파일을 제거한 후 다시 시도해 주세요.',
+        'error-api-key-corrupted'   => '이 플랫폼의 API 키를 복호화할 수 없습니다 (:error). 애플리케이션 암호화 키가 변경되었을 수 있습니다. 플랫폼을 편집하고 API 키를 다시 입력해 주세요.',
         'invalid-file-path'         => '잘못된 파일 경로입니다.',
         'invalid-locale-code'       => '잘못된 로케일 코드입니다.',
         'invalid-channel-code'      => '잘못된 채널 코드입니다.',

@@ -27,7 +27,6 @@ class AppServiceProvider extends ServiceProvider
             try {
                 Artisan::call('db:seed');
             } catch (\Throwable $e) {
-                // Log seeder failure for debugging parallel test DB issues
                 logger()->error("Parallel DB seed failed for {$database}: ".$e->getMessage());
             }
         });

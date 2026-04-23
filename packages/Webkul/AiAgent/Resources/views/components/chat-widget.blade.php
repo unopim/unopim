@@ -10,6 +10,10 @@
     $aiPlatforms     = $platformRepo->getActivePlatformOptions();
     $defaultPlatform = collect($aiPlatforms)->firstWhere('is_default', true);
     $defaultPlatformId = $defaultPlatform['id'] ?? ($aiPlatforms[0]['id'] ?? null);
+
+    // Default panel state for fresh sessions. Stored user preference in
+    // sessionStorage still wins — see restoreState() below.
+    $openByDefault = (bool) (core()->getConfigData('general.magic_ai.agentic_pim.open_by_default') ?? true);
 @endphp
 
 <v-agenting-pim></v-agenting-pim>
@@ -773,7 +777,7 @@ app.component('v-agenting-pim', {
         };
 
         return {
-            isOpen: false,
+            isOpen: @json($openByDefault),
             activeTab: 'capabilities',
             activeCapability: null,
             messages: [],
@@ -933,6 +937,21 @@ app.component('v-agenting-pim', {
         this.restoreState();
         if (!this.activeSessionId) {
             this.activeSessionId = this.generateSessionId();
+        }
+
+        // The isOpen watcher only fires on change, so the initial-open state
+        // (either from sessionStorage or from the config-driven default) needs
+        // to run its side effects explicitly: shift #app margin, scroll to
+        // the latest message, and focus the input. Skip the slide transition
+        // so the panel doesn't flash in on every page load.
+        if (this.isOpen) {
+            this.noTransition = true;
+            this.$nextTick(() => {
+                this.adjustLayout(true, true);
+                this.scrollBottom();
+                this.$refs.textInput?.focus();
+                requestAnimationFrame(() => requestAnimationFrame(() => { this.noTransition = false; }));
+            });
         }
 
         // Delegate clicks on internal admin links to navigate in the same tab
@@ -1635,20 +1654,13 @@ app.component('v-agenting-pim', {
                 }
                 if (s.activeSessionId) this.activeSessionId = s.activeSessionId;
                 if (Array.isArray(s.messages) && s.messages.length > 0) this.messages = s.messages.filter(m => !m.isRedirect);
-                if (s.isOpen) {
-                    // Disable the Vue panel slide-in transition and #app margin animation on page load.
-                    // Both noTransition and isOpen must change in the SAME synchronous tick so
-                    // Vue's <transition> sees name="" when it processes the enter.
-                    this.noTransition = true;
-                    this.isOpen = true;
-                    this.$nextTick(() => {
-                        // instant=true prevents #app transition CSS from being set
-                        this.adjustLayout(true, true);
-                        this.scrollBottom();
-                        this.$refs.textInput?.focus();
-                        // Re-enable transitions only after two paint frames (more reliable than setTimeout)
-                        requestAnimationFrame(() => requestAnimationFrame(() => { this.noTransition = false; }));
-                    });
+                // When the default is open-on-load, a user who manually closed the
+                // panel must stay closed on subsequent navigations in the same tab.
+                // Honor the explicit stored false; otherwise the config-driven
+                // default (set in data()) is preserved. mounted() runs the DOM
+                // side effects for whatever state we end up in.
+                if (typeof s.isOpen === 'boolean') {
+                    this.isOpen = s.isOpen;
                 }
             } catch (e) {}
         },

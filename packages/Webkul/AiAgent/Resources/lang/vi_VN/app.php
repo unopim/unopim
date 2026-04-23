@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'Đã đạt giới hạn yêu cầu của nhà cung cấp AI. Vui lòng thử lại sau :seconds giây.',
         'error-overloaded'          => 'Nhà cung cấp AI hiện đang quá tải. Vui lòng thử lại sau giây lát.',
         'error-request-too-large'   => 'Yêu cầu của bạn quá lớn đối với nhà cung cấp AI. Vui lòng rút ngắn tin nhắn hoặc xóa một số tệp đính kèm và thử lại.',
+        'error-api-key-corrupted'   => 'Không thể giải mã khóa API cho nền tảng này (:error). Khóa mã hóa của ứng dụng có thể đã thay đổi. Vui lòng chỉnh sửa nền tảng và nhập lại khóa API của bạn.',
         'invalid-file-path'         => 'Đường dẫn tệp không hợp lệ.',
         'invalid-locale-code'       => 'Mã ngôn ngữ không hợp lệ.',
         'invalid-channel-code'      => 'Mã kênh không hợp lệ.',

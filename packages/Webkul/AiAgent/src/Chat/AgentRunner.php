@@ -177,7 +177,9 @@ class AgentRunner
 
         $messages[] = new UserMessage($context->message, $imageContent);
 
-        return Prism::text()
+        $isReasoningModel = (bool) preg_match('/^o[1-9]|^o[1-9]-|^gpt-5/i', $context->model);
+
+        $request = Prism::text()
             ->using($prismProvider, $context->model, [
                 'api_key' => $context->platform->api_key,
             ])
@@ -185,9 +187,15 @@ class AgentRunner
             ->withMessages($messages)
             ->withTools($tools)
             ->withMaxSteps($this->resolveMaxSteps())
-            ->withMaxTokens(4096)
-            ->usingTemperature(0.7)
+            ->withMaxTokens($isReasoningModel ? 16000 : 4096)
             ->withClientOptions(['timeout' => 120]);
+
+        // Reasoning models (o-series, gpt-5*) reject `temperature` — only the default is allowed.
+        if (! $isReasoningModel) {
+            $request->usingTemperature(0.7);
+        }
+
+        return $request;
     }
 
     /**

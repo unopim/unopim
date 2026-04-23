@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Konfigurieren Sie den AI-Agenten-Chat, autonome Anreicherungs-Workflows und Qualitätsüberwachung. Diese Funktionen ermöglichen konversationelles Produktmanagement und proaktive Katalogwartung.',
                         'enabled'                   => 'AI-Agenten-Chat aktivieren',
                         'enabled-info'              => 'Aktivieren Sie das schwebende AI-Chat-Widget für konversationelles Produktmanagement mit über 27 Tool-Aktionen.',
+                        'open-by-default'           => 'Chat-Panel beim Laden der Seite öffnen',
+                        'open-by-default-info'      => 'Wenn aktiviert, öffnet sich das Chat-Panel des KI-Agenten automatisch, sobald ein Administrator zum ersten Mal eine Seite aufruft. Benutzer können es weiterhin manuell schließen — die Einstellung bleibt für den Rest der Browsersitzung gespeichert.',
                         'max-steps'                 => 'Max. Agentenschritte pro Durchgang',
                         'max-steps-info'            => 'Maximale Anzahl von Tool-Aufruf-Iterationen, die der AI-Agent pro Benutzernachricht ausführen kann. Höhere Werte ermöglichen komplexere mehrstufige Operationen.',
                         'daily-token-budget'        => 'Tägliches Token-Budget',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Plattform erfolgreich aktualisiert.',
                 'delete-success'          => 'Plattform erfolgreich gelöscht.',
                 'delete-fail'             => 'Löschen der Plattform fehlgeschlagen.',
+                'not-found'               => 'Die ausgewählte Plattform existiert nicht mehr. Bitte aktualisieren Sie und versuchen Sie es erneut.',
                 'cannot-delete-default'   => 'Die einzige Standardplattform kann nicht gelöscht werden.',
                 'set-default-success'     => 'Plattform erfolgreich als Standard festgelegt.',
                 'test-success'            => 'Verbindung erfolgreich verifiziert!',
                 'test-fail'               => 'Verbindungstest fehlgeschlagen',
                 'no-test-model'           => 'Wählen Sie mindestens ein textfähiges Modell aus, um den Verbindungstest auszuführen.',
                 'custom-api-url-required' => 'Für benutzerdefinierte Anbieter ist die API URL erforderlich, damit der Verbindungstest Ihren eigenen Endpunkt erreicht.',
+                'api-key-corrupted'       => 'Der gespeicherte API-Schlüssel konnte nicht entschlüsselt werden (:error). Der Verschlüsselungsschlüssel der Anwendung wurde möglicherweise geändert. Bitte geben Sie Ihren API-Schlüssel erneut ein und speichern Sie.',
                 'fetch-models-fail'       => 'Modelle konnten nicht abgerufen werden',
                 'invalid-model-names'     => 'Ungültige Modellnamen: :names. Modellnamen müssen mit einem Buchstaben oder einer Zahl beginnen und dürfen nur Buchstaben, Zahlen, Bindestriche, Punkte, Doppelpunkte und Schrägstriche enthalten.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Bild hinzufügen',
+                'add-media-btn'      => 'Medien hinzufügen',
                 'generate-with-ai'   => 'Mit KI generieren',
                 'upload-from-device' => 'Vom Gerät hochladen',
                 'cancel'             => 'Abbrechen',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Standardaufforderung',
+                'select-prompt-template' => '-- Eingabeaufforderungsvorlage auswählen --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Hoppla! Diese Seite ist gesperrt. Offenbar verfügen Sie nicht über die erforderlichen Berechtigungen, um diesen Inhalt anzuzeigen.',
             'title'       => '403 Verboten',
+            'message'     => 'Sie haben keine Berechtigung, auf diese Seite zuzugreifen. Bitte wenden Sie sich an Ihren Administrator, wenn Sie glauben, dass dies ein Fehler ist.',
         ],
         '413' => [
             'description' => 'Hoppla! Offenbar versuchen Sie, eine Datei hochzuladen, die zu groß ist. Wenn Sie dieselbe Datei hochladen möchten, aktualisieren Sie bitte die PHP-Konfiguration entsprechend.',

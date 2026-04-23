@@ -206,6 +206,13 @@ test.describe('Product webhook delivery — bulk edit E2E', () => {
     const productId = await getFirstProductId(adminPage);
 
     const token = await getCsrfToken(adminPage.context());
+
+    // The webhook only fires when the bulk save produces an actual audit
+    // diff — sending an empty payload (or the existing value) skips the
+    // SQL UPDATE entirely, so WebhookService::getProductChangesForWebhook
+    // returns nothing and no POST happens. Rotating the SKU to a unique
+    // value guarantees a diff and, consequently, a webhook delivery.
+    const newSku = `webhook-test-${Date.now()}`;
     const saveResponse = await adminPage.request.post(
       '/admin/catalog/products/bulkedit/save',
       {
@@ -216,7 +223,7 @@ test.describe('Product webhook delivery — bulk edit E2E', () => {
         },
         data: {
           data: {
-            [productId]: {},
+            [productId]: { sku: newSku },
           },
         },
       },

@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Configurați chatul agentului AI, fluxurile de lucru de îmbogățire autonomă și monitorizarea calității. Aceste funcții permit gestionarea conversațională a produselor și întreținerea proactivă a catalogului.',
                         'enabled'                   => 'Activare chat agent AI',
                         'enabled-info'              => 'Activați widgetul de chat AI flotant pentru gestionarea conversațională a produselor cu peste 27 de acțiuni de instrumente.',
+                        'open-by-default'           => 'Deschide panoul de chat la încărcarea paginii',
+                        'open-by-default-info'      => 'Când este activată, fereastra de chat a Agentului AI se deschide automat prima dată când un administrator ajunge pe o pagină. Utilizatorii o pot închide manual — preferința este reținută pentru restul sesiunii de navigare.',
                         'max-steps'                 => 'Pași max. agent pe tură',
                         'max-steps-info'            => 'Numărul maxim de iterații ale apelurilor de instrumente pe care agentul AI le poate efectua pe mesaj de utilizator. Valori mai mari permit operații cu mai mulți pași mai complexe.',
                         'daily-token-budget'        => 'Buget zilnic de tokenuri',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Platforma a fost actualizată cu succes.',
                 'delete-success'          => 'Platforma a fost ștearsă cu succes.',
                 'delete-fail'             => 'Ștergerea platformei a eșuat.',
+                'not-found'               => 'Platforma selectată nu mai există. Vă rugăm să reîmprospătați și să încercați din nou.',
                 'cannot-delete-default'   => 'Nu se poate șterge singura platformă implicită.',
                 'set-default-success'     => 'Platforma a fost setată ca implicită cu succes.',
                 'test-success'            => 'Conexiunea a fost verificată cu succes!',
                 'test-fail'               => 'Testul conexiunii a eșuat',
                 'no-test-model'           => 'Selectați cel puțin un model compatibil cu textul pentru a rula testul de conexiune.',
                 'custom-api-url-required' => 'API URL este obligatoriu pentru furnizorii personalizați, astfel încât testul de conexiune să ajungă la propriul dvs. endpoint.',
+                'api-key-corrupted'       => 'Cheia API stocată nu a putut fi decriptată (:error). Cheia de criptare a aplicației s-ar fi putut schimba. Reintroduceți cheia API și salvați.',
                 'fetch-models-fail'       => 'Modelele nu au putut fi obținute',
                 'invalid-model-names'     => 'Nume de model invalide: :names. Numele de model trebuie să înceapă cu o literă sau un număr și să conțină doar litere, cifre, cratime, puncte, două puncte și bare oblice.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Adaugă Imagine',
+                'add-media-btn'      => 'Adaugă Media',
                 'generate-with-ai'   => 'Generează cu IA',
                 'upload-from-device' => 'Încarcă de pe dispozitiv',
                 'cancel'             => 'Anulează',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Prompt implicit',
+                'select-prompt-template' => '-- Selectați un șablon de prompt --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Oops! Această pagină este interzisă. Se pare că nu ai permisiunea de a vizualiza acest conținut.',
             'title'       => '403 Interzis',
+            'message'     => 'Nu aveți permisiunea de a accesa această pagină. Contactați administratorul dacă credeți că aceasta este o eroare.',
         ],
         '413' => [
             'description' => 'Oops! Pare că încerci să încarci un fișier prea mare. Dacă dorești să faci acest lucru, actualizează configurația PHP.',

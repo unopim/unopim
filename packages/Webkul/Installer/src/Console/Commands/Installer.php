@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Webkul\Core\ElasticSearch;
+use Webkul\Installer\Database\Seeders\CategoryDemoTableSeeder;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
+use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
 use Webkul\Installer\Database\Seeders\ProductTableSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 
@@ -481,21 +483,48 @@ class Installer extends Command
     protected function seedSampleProducts(): void
     {
         try {
-            $this->warn('Step: Seeding sample products...');
+            $this->warn('Step: Seeding demo extras (channels, attributes, families, core config, ...)...');
+            app(DemoExtrasTableSeeder::class)->run();
 
-            app(ProductTableSeeder::class)->run([
-                'default_locale'     => core()->getDefaultLocaleCodeFromDefaultChannel(),
-                'allowed_locales'    => [core()->getDefaultLocaleCodeFromDefaultChannel()],
-            ]);
+            $this->warn('Step: Seeding demo categories...');
+            app(CategoryDemoTableSeeder::class)->run();
+
+            $this->warn('Step: Seeding sample products...');
+            app(ProductTableSeeder::class)->run();
 
             $this->info('Sample products seeded successfully.');
 
             if (config('elasticsearch.enabled') == 'true') {
+                $this->warn('Step: Re-indexing categories to Elasticsearch...');
+                $this->call('unopim:category:index');
+
                 $this->warn('Step: Re-indexing products to Elasticsearch...');
                 $this->call('unopim:product:index');
             }
+
+            $this->warn('Step: Recalculating product completeness...');
+            $this->recalculateCompleteness();
         } catch (\Exception $e) {
             $this->error("Failed to seed sample products: {$e->getMessage()}");
+        }
+    }
+
+    /**
+     * Recalculate product completeness synchronously. The
+     * `unopim:completeness:recalculate` command dispatches queue jobs, so
+     * we temporarily force the sync driver to guarantee the jobs run
+     * before the installer finishes.
+     */
+    protected function recalculateCompleteness(): void
+    {
+        $originalDefault = config('queue.default');
+
+        try {
+            config(['queue.default' => 'sync']);
+
+            $this->call('unopim:completeness:recalculate', ['--all' => true]);
+        } finally {
+            config(['queue.default' => $originalDefault]);
         }
     }
 

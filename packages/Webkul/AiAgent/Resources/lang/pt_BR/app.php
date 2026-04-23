@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'O limite de solicitações do provedor de IA foi atingido. Tente novamente em :seconds segundos.',
         'error-overloaded'          => 'O provedor de IA está sobrecarregado no momento. Tente novamente em alguns instantes.',
         'error-request-too-large'   => 'Sua solicitação é muito grande para o provedor de IA. Encurte sua mensagem ou remova alguns anexos e tente novamente.',
+        'error-api-key-corrupted'   => 'A chave de API desta plataforma não pôde ser descriptografada (:error). A chave de criptografia do aplicativo pode ter sido alterada. Edite a plataforma e insira novamente sua chave de API.',
         'invalid-file-path'         => 'Caminho de arquivo inválido.',
         'invalid-locale-code'       => 'Código de localidade inválido.',
         'invalid-channel-code'      => 'Código de canal inválido.',

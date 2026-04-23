@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Konfigurirajte AI agentski chat, autonomne tijekove obogaćivanja i praćenje kvalitete. Ove značajke omogućuju razgovorno upravljanje proizvodima i proaktivno održavanje kataloga.',
                         'enabled'                   => 'Omogući AI agentski chat',
                         'enabled-info'              => 'Omogućite plutajući AI chat widget za razgovorno upravljanje proizvodima s više od 27 akcija alata.',
+                        'open-by-default'           => 'Otvori panel za razgovor pri učitavanju stranice',
+                        'open-by-default-info'      => 'Kada je omogućeno, panel za razgovor AI agenta automatski se otvara prvi put kada administrator dođe na stranicu. Korisnici ga i dalje mogu ručno zatvoriti — postavka se pamti do kraja sesije preglednika.',
                         'max-steps'                 => 'Maks. koraka agenta po krugu',
                         'max-steps-info'            => 'Maksimalan broj iteracija poziva alata koje AI agent može izvršiti po korisničkoj poruci. Veće vrijednosti omogućuju složenije višekoračne operacije.',
                         'daily-token-budget'        => 'Dnevni proračun tokena',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Platforma uspješno ažurirana.',
                 'delete-success'          => 'Platforma uspješno obrisana.',
                 'delete-fail'             => 'Brisanje platforme nije uspjelo.',
+                'not-found'               => 'Odabrana platforma više ne postoji. Osvježite stranicu i pokušajte ponovno.',
                 'cannot-delete-default'   => 'Nije moguće obrisati jedinu zadanu platformu.',
                 'set-default-success'     => 'Platforma uspješno postavljena kao zadana.',
                 'test-success'            => 'Veza uspješno provjerena!',
                 'test-fail'               => 'Test veze nije uspio',
                 'no-test-model'           => 'Odaberite barem jedan model koji podržava tekst za pokretanje testa veze.',
                 'custom-api-url-required' => 'API URL je obavezan za prilagođene pružatelje kako bi test veze došao do vaše vlastite krajnje točke.',
+                'api-key-corrupted'       => 'Pohranjeni API ključ nije mogao biti dekriptiran (:error). Ključ za šifriranje aplikacije je možda promijenjen. Ponovo unesite svoj API ključ i spremite.',
                 'fetch-models-fail'       => 'Dohvaćanje modela nije uspjelo',
                 'invalid-model-names'     => 'Nevažeći nazivi modela: :names. Nazivi modela moraju započinjati slovom ili brojem i sadržavati samo slova, brojeve, crtice, točke, dvotočke i kose crte.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Dodaj sliku',
+                'add-media-btn'      => 'Dodaj medije',
                 'generate-with-ai'   => 'Generiraj s AI-om',
                 'upload-from-device' => 'Prenesi s uređaja',
                 'cancel'             => 'Odustani',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Zadani upit',
+                'select-prompt-template' => '-- Odaberite predložak upita --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Ups! Ova stranica je zabranjena. Čini se da nemate dozvolu za pregled ovog sadržaja.',
             'title'       => '403 Zabranjeno',
+            'message'     => 'Nemate dopuštenje za pristup ovoj stranici. Obratite se svom administratoru ako mislite da je ovo pogreška.',
         ],
         '413' => [
             'description' => 'Ups! Čini se da pokušavate prenijeti preveliku datoteku. Ako želite prenijeti istu, molimo ažurirajte postavke PHP konfiguracije.',

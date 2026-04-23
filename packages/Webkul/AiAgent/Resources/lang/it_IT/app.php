@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'È stato raggiunto il limite di richieste del provider AI. Riprova tra :seconds secondi.',
         'error-overloaded'          => 'Il provider AI è attualmente sovraccarico. Riprova tra qualche istante.',
         'error-request-too-large'   => 'La tua richiesta è troppo grande per il provider AI. Accorcia il messaggio o rimuovi alcuni allegati e riprova.',
+        'error-api-key-corrupted'   => 'La chiave API per questa piattaforma non è stata decifrata (:error). La chiave di crittografia dell\'applicazione potrebbe essere cambiata. Modifica la piattaforma e reinserisci la tua chiave API.',
         'invalid-file-path'         => 'Percorso file non valido.',
         'invalid-locale-code'       => 'Codice locale non valido.',
         'invalid-channel-code'      => 'Codice canale non valido.',

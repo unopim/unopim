@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'I-configure ang AI agent chat, mga autonomous na workflow ng pagpapayaman, at pagsubaybay sa kalidad. Pinapagana ng mga feature na ito ang pamamahala ng produkto sa pamamagitan ng usapan at proactive na pagpapanatili ng katalogo.',
                         'enabled'                   => 'I-enable ang AI agent chat',
                         'enabled-info'              => 'I-enable ang lumulutang na AI chat widget para sa pamamahala ng produkto sa pamamagitan ng usapan na may 27+ na aksyon ng tool.',
+                        'open-by-default'           => 'Buksan ang Panel ng Chat kapag Naglo-load ang Pahina',
+                        'open-by-default-info'      => 'Kapag pinagana, awtomatikong bubukas ang chat panel ng AI Agent sa unang pagkakataong mapunta ang isang admin sa isang pahina. Maaari pa rin itong isara ng mga user nang manu-mano — naaalala ang kagustuhan sa natitirang bahagi ng session ng browser.',
                         'max-steps'                 => 'Max na hakbang ng ahente bawat turn',
                         'max-steps-info'            => 'Maximum na bilang ng tool-call iteration na maaaring gawin ng AI agent bawat mensahe ng user. Ang mas mataas na halaga ay nagbibigay-daan sa mas kumplikadong multi-step na operasyon.',
                         'daily-token-budget'        => 'Araw-araw na budget ng token',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Matagumpay na na-update ang platform.',
                 'delete-success'          => 'Matagumpay na nabura ang platform.',
                 'delete-fail'             => 'Nabigong burahin ang platform.',
+                'not-found'               => 'Wala na ang napiling platform. Pakisariwa at subukang muli.',
                 'cannot-delete-default'   => 'Hindi mabura ang nag-iisang default na platform.',
                 'set-default-success'     => 'Matagumpay na naitakda ang platform bilang default.',
                 'test-success'            => 'Matagumpay na na-verify ang koneksyon!',
                 'test-fail'               => 'Nabigo ang pagsubok sa koneksyon',
                 'no-test-model'           => 'Pumili ng kahit isang text-capable na modelo para patakbuhin ang pagsubok sa koneksyon.',
                 'custom-api-url-required' => 'Kailangan ang API URL para sa mga custom na provider upang maabot ng pagsubok sa koneksyon ang iyong sariling endpoint.',
+                'api-key-corrupted'       => 'Hindi ma-decrypt ang nakaimbak na API key (:error). Maaaring nagbago ang encryption key ng application. Muling ilagay ang iyong API key at i-save.',
                 'fetch-models-fail'       => 'Hindi makuha ang mga modelo',
                 'invalid-model-names'     => 'Hindi wastong mga pangalan ng modelo: :names. Ang mga pangalan ng modelo ay dapat magsimula sa titik o numero at maglaman lamang ng mga titik, numero, gitling, tuldok, tutuldok, at pahilis.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Magdagdag ng Larawan',
+                'add-media-btn'      => 'Magdagdag ng Media',
                 'generate-with-ai'   => 'Gumawa gamit ang AI',
                 'upload-from-device' => 'I-upload mula sa device',
                 'cancel'             => 'Kanselahin',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Varsayılan istem',
+                'select-prompt-template' => '-- Pumili ng template ng prompt --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Oops! Hindi ma-access ang pahinang ito. Mukhang wala kang mga permiso para makita ang nilalaman na ito.',
             'title'       => '403 Ipinagbabawal',
+            'message'     => 'Wala kang pahintulot na mag-access sa pahinang ito. Mangyaring makipag-ugnayan sa iyong administrator kung naniniwala kang ito ay isang error.',
         ],
         '413' => [
             'description' => 'Oops! Mukhang sinusubukan mong mag-upload ng isang napakalaking file. Kung gusto mong i-upload ito, i-update ang configuration ng PHP.',

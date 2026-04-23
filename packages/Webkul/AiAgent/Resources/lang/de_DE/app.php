@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'Das Anfrage-Limit des KI-Anbieters wurde erreicht. Bitte versuchen Sie es in :seconds Sekunden erneut.',
         'error-overloaded'          => 'Der KI-Anbieter ist derzeit überlastet. Bitte versuchen Sie es in Kürze erneut.',
         'error-request-too-large'   => 'Ihre Anfrage ist zu groß für den KI-Anbieter. Bitte kürzen Sie Ihre Nachricht oder entfernen Sie einige Anhänge und versuchen Sie es erneut.',
+        'error-api-key-corrupted'   => 'Der API-Schlüssel für diese Plattform konnte nicht entschlüsselt werden (:error). Der Verschlüsselungsschlüssel der Anwendung wurde möglicherweise geändert. Bitte bearbeiten Sie die Plattform und geben Sie Ihren API-Schlüssel erneut ein.',
         'invalid-file-path'         => 'Ungültiger Dateipfad.',
         'invalid-locale-code'       => 'Ungültiger Sprachcode.',
         'invalid-channel-code'      => 'Ungültiger Kanalcode.',

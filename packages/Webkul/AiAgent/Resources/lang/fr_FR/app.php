@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'La limite de requêtes du fournisseur d\'IA a été atteinte. Veuillez réessayer dans :seconds secondes.',
         'error-overloaded'          => 'Le fournisseur d\'IA est actuellement surchargé. Veuillez réessayer dans quelques instants.',
         'error-request-too-large'   => 'Votre requête est trop volumineuse pour le fournisseur d\'IA. Veuillez raccourcir votre message ou supprimer des pièces jointes et réessayer.',
+        'error-api-key-corrupted'   => 'La clé API de cette plateforme n\'a pas pu être déchiffrée (:error). La clé de chiffrement de l\'application a peut-être changé. Veuillez modifier la plateforme et ressaisir votre clé API.',
         'invalid-file-path'         => 'Chemin de fichier invalide.',
         'invalid-locale-code'       => 'Code de langue invalide.',
         'invalid-channel-code'      => 'Code de canal invalide.',

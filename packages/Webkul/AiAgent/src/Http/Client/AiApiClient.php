@@ -161,20 +161,27 @@ class AiApiClient
      */
     protected function buildChatBody(array $messages, int $maxTokens, float $temperature): array
     {
-        return match ($this->provider) {
-            'anthropic' => [
+        if ($this->provider === 'anthropic') {
+            return [
                 'model'      => $this->model,
                 'max_tokens' => $maxTokens,
                 'messages'   => $this->convertToAnthropicFormat($messages),
                 'system'     => $this->extractSystemMessage($messages),
-            ],
-            default => [
-                'model'                 => $this->model,
-                'messages'              => $messages,
-                'max_completion_tokens' => $maxTokens,
-                'temperature'           => $temperature,
-            ],
-        };
+            ];
+        }
+
+        $body = [
+            'model'                 => $this->model,
+            'messages'              => $messages,
+            'max_completion_tokens' => $maxTokens,
+        ];
+
+        // Reasoning models (o-series, gpt-5*) reject `temperature` — only the default is allowed.
+        if (! preg_match('/^o[1-9]|^o[1-9]-|^gpt-5/i', $this->model)) {
+            $body['temperature'] = $temperature;
+        }
+
+        return $body;
     }
 
     /**

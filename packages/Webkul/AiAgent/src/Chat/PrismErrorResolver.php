@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Chat;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Client\RequestException;
 use Prism\Prism\Exceptions\PrismProviderOverloadedException;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
@@ -25,6 +26,18 @@ class PrismErrorResolver
      */
     public static function resolve(Throwable $e): array
     {
+        // DecryptException: the platform's API key was encrypted with a
+        // different APP_KEY — the user needs to re-enter the key.
+        if (self::isDecryptException($e)) {
+            return [
+                'message'  => trans('ai-agent::app.common.error-api-key-corrupted', [
+                    'error' => $e->getMessage(),
+                ]),
+                'status'   => 422,
+                'is_known' => true,
+            ];
+        }
+
         if ($e instanceof PrismRateLimitedException) {
             $message = $e->retryAfter
                 ? trans('ai-agent::app.common.error-rate-limit-retry', ['seconds' => $e->retryAfter])
@@ -148,5 +161,23 @@ class PrismErrorResolver
         }
 
         return '';
+    }
+
+    /**
+     * Check if the exception (or any exception in its chain) is a DecryptException.
+     */
+    protected static function isDecryptException(Throwable $e): bool
+    {
+        $current = $e;
+
+        while ($current !== null) {
+            if ($current instanceof DecryptException) {
+                return true;
+            }
+
+            $current = $current->getPrevious();
+        }
+
+        return false;
     }
 }

@@ -188,3 +188,31 @@ Check `packages/Webkul/Admin/src/Resources/views/components/` for the full list:
 - Use middleware for authentication and authorization
 - ACL checks via `bouncer()->hasPermission()` for admin actions
 - CSRF protection on all POST/PUT/DELETE routes
+
+---
+
+## Translations — No Hardcoded UI Strings (MANDATORY)
+
+UnoPim ships in 33 locales. **Every** user-facing string must be a translation key — labels, placeholders, dropdown options, toast messages, validation copy, button text, error messages, ARIA labels, even the `-- Select … --` style placeholders inside `<option>` tags.
+
+### Rule
+
+- Blade: `@lang('package::file.key')` or `{{ trans('package::file.key') }}`
+- PHP: `trans('package::file.key')` or `__('package::file.key')`
+- Vue templates: server-render the string via `@lang(...)` in the surrounding Blade and bind it through a prop or data field — never hardcode English in the `<template>` tag.
+
+### When You Add or Change a Key
+
+1. **Add to `en_US/app.php` first** — this is the source locale.
+2. **Propagate to ALL 32 other locales** in the same `Resources/lang/{locale}/app.php` location with **natural translations** (not English copies). Locale list: `ar_AE ca_ES da_DK de_DE en_AU en_GB en_NZ es_ES es_VE fi_FI fr_FR hi_IN hr_HR id_ID it_IT ja_JP ko_KR mn_MN nl_NL no_NO pl_PL pt_BR pt_PT ro_RO ru_RU sv_SE tl_PH tr_TR uk_UA vi_VN zh_CN zh_TW`. The three other English locales (`en_AU`, `en_GB`, `en_NZ`) keep the English wording.
+3. **Preserve placeholders** — `:attribute`, `:count`, `:name`, etc. stay literal in every locale.
+4. **Verify** — run `php artisan unopim:translations:check`. Must report `100%` for every locale before the change is done.
+
+### Common Misses to Avoid
+
+- Dropdown placeholder options like `<option value="">-- Select X --</option>` — these are user-facing.
+- Strings inside `console.error`, alert(), or thrown JS errors that surface to the user.
+- Tooltip / `title=""` attributes on form controls.
+- "Loading…", "No results", and similar status text.
+
+If you copy markup from another Blade file, audit it for hardcoded strings before saving — old views may pre-date this rule.

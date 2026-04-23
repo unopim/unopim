@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'De aanvraaglimiet van de AI-provider is bereikt. Probeer het over :seconds seconden opnieuw.',
         'error-overloaded'          => 'De AI-provider is momenteel overbelast. Probeer het over enkele ogenblikken opnieuw.',
         'error-request-too-large'   => 'Uw aanvraag is te groot voor de AI-provider. Kort uw bericht in of verwijder enkele bijlagen en probeer het opnieuw.',
+        'error-api-key-corrupted'   => 'De API-sleutel voor dit platform kon niet worden ontsleuteld (:error). De versleutelingssleutel van de applicatie is mogelijk gewijzigd. Bewerk het platform en voer uw API-sleutel opnieuw in.',
         'invalid-file-path'         => 'Ongeldig bestandspad.',
         'invalid-locale-code'       => 'Ongeldige taalcode.',
         'invalid-channel-code'      => 'Ongeldige kanaalcode.',

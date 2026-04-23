@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'Tekoälypalveluntarjoajan pyyntöraja on saavutettu. Yritä uudelleen :seconds sekunnin kuluttua.',
         'error-overloaded'          => 'Tekoälypalveluntarjoaja on parhaillaan ylikuormitettu. Yritä uudelleen hetken kuluttua.',
         'error-request-too-large'   => 'Pyyntösi on liian suuri tekoälypalveluntarjoajalle. Lyhennä viestiäsi tai poista liitteitä ja yritä uudelleen.',
+        'error-api-key-corrupted'   => 'Tämän alustan API-avainta ei voitu purkaa (:error). Sovelluksen salausavain on saattanut muuttua. Muokkaa alustaa ja syötä API-avaimesi uudelleen.',
         'invalid-file-path'         => 'Virheellinen tiedostopolku.',
         'invalid-locale-code'       => 'Virheellinen kielikoodi.',
         'invalid-channel-code'      => 'Virheellinen kanavakoodi.',

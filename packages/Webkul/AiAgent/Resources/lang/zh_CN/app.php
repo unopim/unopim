@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => '已达到AI提供商的请求速率限制。请在 :seconds 秒后重试。',
         'error-overloaded'          => 'AI提供商目前负载过高。请稍后重试。',
         'error-request-too-large'   => '您的请求对AI提供商来说太大。请缩短消息或删除一些附件后重试。',
+        'error-api-key-corrupted'   => '无法解密此平台的API密钥（:error）。应用加密密钥可能已更改。请编辑平台并重新输入您的API密钥。',
         'invalid-file-path'         => '文件路径无效。',
         'invalid-locale-code'       => '语言代码无效。',
         'invalid-channel-code'      => '渠道代码无效。',

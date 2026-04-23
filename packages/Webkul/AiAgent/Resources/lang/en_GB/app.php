@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'The AI provider rate limit has been reached. Please try again in :seconds seconds.',
         'error-overloaded'          => 'The AI provider is currently overloaded. Please try again in a few moments.',
         'error-request-too-large'   => 'Your request is too large for the AI provider. Please shorten your message or remove some attachments and try again.',
+        'error-api-key-corrupted'   => 'The API key for this platform could not be decrypted (:error). The application encryption key may have changed. Please edit the platform and re-enter your API key.',
         'invalid-file-path'         => 'Invalid file path.',
         'invalid-locale-code'       => 'Invalid locale code.',
         'invalid-channel-code'      => 'Invalid channel code.',

@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'Dosegnuto je ograničenje zahtjeva AI pružatelja usluge. Pokušajte ponovno za :seconds sekundi.',
         'error-overloaded'          => 'AI pružatelj usluge trenutno je preopterećen. Pokušajte ponovno za nekoliko trenutaka.',
         'error-request-too-large'   => 'Vaš je zahtjev prevelik za AI pružatelja usluge. Skratite poruku ili uklonite neke privitke i pokušajte ponovno.',
+        'error-api-key-corrupted'   => 'API ključ za ovu platformu nije mogao biti dekriptiran (:error). Ključ za šifriranje aplikacije je možda promijenjen. Uredite platformu i ponovo unesite svoj API ključ.',
         'invalid-file-path'         => 'Nevažeća putanja datoteke.',
         'invalid-locale-code'       => 'Nevažeći kod jezika.',
         'invalid-channel-code'      => 'Nevažeći kod kanala.',

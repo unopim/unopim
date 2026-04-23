@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Configure the AI Agent Chat, autonomous enrichment workflows, and quality monitoring. These features enable conversational product management and proactive catalog maintenance.',
                         'enabled'                   => 'Enable AI Agent Chat',
                         'enabled-info'              => 'Enable the floating AI chat widget for conversational product management with 27+ tool actions.',
+                        'open-by-default'           => 'Open Chat Panel on Page Load',
+                        'open-by-default-info'      => 'When enabled, the AI Agent chat panel opens automatically the first time an admin lands on a page. Users can still close it manually — the preference is remembered for the rest of the browser session.',
                         'max-steps'                 => 'Max Agent Steps Per Turn',
                         'max-steps-info'            => 'Maximum number of tool-call iterations the AI agent can perform per user message. Higher values allow more complex multi-step operations.',
                         'daily-token-budget'        => 'Daily Token Budget',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Platform updated successfully.',
                 'delete-success'          => 'Platform deleted successfully.',
                 'delete-fail'             => 'Platform deletion failed.',
+                'not-found'               => 'The selected platform no longer exists. Please refresh and try again.',
                 'cannot-delete-default'   => 'Cannot delete the only default platform.',
                 'set-default-success'     => 'Platform set as default successfully.',
                 'test-success'            => 'Connection verified successfully!',
                 'test-fail'               => 'Connection test failed',
                 'no-test-model'           => 'Select at least one text-capable model to run the connection test.',
                 'custom-api-url-required' => 'API URL is required for custom providers so the connection test reaches your own endpoint.',
+                'api-key-corrupted'       => 'The stored API key cannot be decrypted (:error). The application encryption key may have changed. Please re-enter your API key and save.',
                 'fetch-models-fail'       => 'Could not fetch models',
                 'invalid-model-names'     => 'Invalid model names: :names. Model names must start with a letter or number and contain only letters, numbers, hyphens, dots, colons, and slashes.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Add Image',
+                'add-media-btn'      => 'Add Media',
                 'generate-with-ai'   => 'Generate with AI',
                 'upload-from-device' => 'Upload from Device',
                 'cancel'             => 'Cancel',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Default Prompt',
+                'select-prompt-template' => '-- Select a prompt template --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Oops! This page is off-limits. You don\'t have the required permissions to view this content.',
             'title'       => '403 Forbidden',
+            'message'     => 'You do not have permission to access this page. Please contact your administrator if you believe this is an error.',
         ],
         '413' => [
             'description' => 'Oops! It seems you are trying to upload a file that is too large. If you want to upload the same, please update the PHP configuration accordingly.',

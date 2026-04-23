@@ -178,7 +178,8 @@
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
-                    width='210px' 
+                    :responsive="true"
+                    :has-context="true"
                 />
                 @break
             @case('gallery')

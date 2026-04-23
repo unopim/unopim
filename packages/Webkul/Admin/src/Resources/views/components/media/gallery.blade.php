@@ -23,68 +23,54 @@
     <script type="text/x-template" id="v-media-gallery-template">
         <!-- Panel Content -->
         <div class="grid">
-            <div class="flex flex-wrap gap-1">
-                <div class="flex flex-col w-full max-w-[210px]">
-                    <!-- AI Image Generation -->
-                    <label
-                        class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
-                        :style="{'max-width': this.width, 'max-height': this.height}"
-                        :for="$.uid + '_imageInput'"
-                        v-if="ai.enabled"
-                        @click="resetAIModal(); $refs.choiceImageModal.open()"
-                    >
-                        <div class="flex flex-col items-center">
-                            <span class="icon-image text-2xl"></span>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                <!-- Add Media tile (always first) -->
+                <label
+                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
+                    v-if="ai.enabled"
+                    :for="$.uid + '_imageInput'"
+                    @click="resetAIModal(); $refs.choiceImageModal.open()"
+                >
+                    <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
+                    <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        @lang('admin::app.components.media.images.add-media-btn')
+                    </p>
+                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                        @lang('admin::app.components.media.images.allowed-types')
+                        <br>
+                        @lang('admin::app.components.media.videos.allowed-types')
+                    </p>
+                </label>
 
-                            <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
-                                @lang('admin::app.components.media.images.upload-media-btn')
+                <label
+                    v-else
+                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
+                    :for="$.uid + '_imageInput'"
+                >
+                    <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
+                    <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        @lang('admin::app.components.media.images.add-media-btn')
+                    </p>
+                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                        @lang('admin::app.components.media.images.allowed-types')
+                        <br>
+                        @lang('admin::app.components.media.videos.allowed-types')
+                    </p>
 
-                                <span class="text-xs mt-1 text-gray-600 dark:text-gray-300 font-medium text-center">
-                                    @lang('admin::app.components.media.images.allowed-types')
-                                </span>
-                                <span class="text-xs text-gray-600 dark:text-gray-300 font-medium text-center">
-                                    @lang('admin::app.components.media.videos.allowed-types')
-                                </span>
-                            </p>
-                        </div>
-                    </label>
+                    <input
+                        type="file"
+                        class="hidden"
+                        :id="$.uid + '_imageInput'"
+                        accept="image/*, video/*"
+                        :multiple="allowMultiple"
+                        :ref="$.uid + '_imageInput'"
+                        @change="add"
+                    />
+                </label>
 
-                    <label
-                        v-else
-                        class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-cherry-800 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
-                        :style="{'max-width': this.width, 'max-height': this.height}"
-                        :for="$.uid + '_imageInput'"
-                    >
-                        <div class="flex flex-col items-center justify-center">
-                            <span class="icon-image text-2xl"></span>
-
-                            <p class="grid text-sm text-gray-700 dark:text-gray-300 font-semibold text-center">
-                                @lang('admin::app.components.media.images.upload-media-btn')
-                                <span class="text-xs mt-1 text-gray-600 dark:text-gray-300 font-medium text-center">
-                                    @lang('admin::app.components.media.images.allowed-types')
-                                </span>
-                                <span class="text-xs text-gray-600 dark:text-gray-300 font-medium text-center">
-                                    @lang('admin::app.components.media.videos.allowed-types')
-                                </span>
-
-                            </p>
-
-                            <input
-                                type="file"
-                                class="hidden"
-                                :id="$.uid + '_imageInput'"
-                                accept="image/*, video/*"
-                                :multiple="allowMultiple"
-                                :ref="$.uid + '_imageInput'"
-                                @change="add"
-                            />
-                        </div>
-                    </label>
-                </div>
-
-                <!-- Uploaded Images -->
+                <!-- Uploaded Images / Videos (rendered after the upload tile) -->
                 <draggable
-                    class="flex flex-wrap gap-1"
+                    class="contents"
                     ghost-class="draggable-ghost"
                     v-bind="{animation: 200}"
                     :list="images"
@@ -115,7 +101,7 @@
                             <!-- Modal Header -->
                             <x-slot:header>
                                 <p class="grid text-base text-gray-800 dark:text-gray-300 font-semibold text-center">
-                                    @lang('admin::app.components.media.images.add-image-btn')
+                                    @lang('admin::app.components.media.images.add-media-btn')
                                 </p>
                             </x-slot>
 
@@ -165,7 +151,7 @@
                                             type="file"
                                             class="hidden"
                                             :id="$.uid + '_imageInput_ai'"
-                                            accept="image/*"
+                                            accept="image/*,video/*"
                                             :multiple="allowMultiple"
                                             :ref="$.uid + '_imageInput'"
                                             @change="add"
@@ -220,27 +206,20 @@
                             <!-- Modal Content -->
                             <x-slot:content>
                                 <div v-show="! ai.images.length">
-                                    <!-- Model -->
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.components.media.images.ai-generation.model')
+                                    <!-- Default Image Prompt -->
+                                    <x-admin::form.control-group v-if="imagePrompts.length">
+                                        <x-admin::form.control-group.label>
+                                            @lang('admin::app.components.tinymce.ai-generation.default-prompt')
                                         </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            name="model"
-                                            rules="required"
-                                            ::value="ai.model"
-                                            v-model="ai.model"
-                                            ::options="aiModels"
-                                            track-by="id"
-                                            label-by="label"
-                                            :label="trans('admin::app.components.media.images.ai-generation.model')"
+                                        <select
+                                            @change="onImagePromptChange($event)"
+                                            class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
                                         >
-                                        </x-admin::form.control-group.control>
-
-                                        <x-admin::form.control-group.error control-name="model" />
+                                            <option value="">@lang('admin::app.components.tinymce.ai-generation.select-prompt-template')</option>
+                                            <option v-for="p in imagePrompts" :key="p.title" :value="p.prompt">@{{ p.title }}</option>
+                                        </select>
                                     </x-admin::form.control-group>
+
                                     <!-- Prompt -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
@@ -373,55 +352,78 @@
 
                             <!-- Modal Footer -->
                             <x-slot:footer>
-                                <div class="flex gap-x-2.5 items-center">
-                                    <template v-if="! ai.images.length">
-                                        <button class="secondary-button">
-                                            <!-- Spinner -->
-                                            <template v-if="isLoading">
-                                                <img
-                                                    class="animate-spin h-5 w-5 text-violet-700"
-                                                    src="{{ unopim_asset('images/spinner.svg') }}"
-                                                />
-
-                                                @lang('admin::app.components.media.images.ai-generation.generating')
-                                            </template>
-
-                                            <template v-else>
-                                                <span class="icon-magic  text-violet-700"></span>
-
-                                                @lang('admin::app.components.media.images.ai-generation.generate')
-                                            </template>
-                                        </button>
-                                    </template>
-
-                                    <template v-else>
-                                        <button class="secondary-button">
-                                            <!-- Spinner -->
-                                            <template v-if="isLoading">
-                                                <img
-                                                    class="animate-spin h-5 w-5 text-violet-700"
-                                                    src="{{ unopim_asset('images/spinner.svg') }}"
-                                                />
-
-                                                @lang('admin::app.components.media.images.ai-generation.regenerating')
-                                            </template>
-
-                                            <template v-else>
-                                                <span class="icon-magic text-2xl text-violet-700"></span>
-
-                                                @lang('admin::app.components.media.images.ai-generation.regenerate')
-                                            </template>
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            class="primary-button"
-                                            :disabled="! selectedAIImages.length"
-                                            @click="apply"
+                                <div class="flex items-center justify-between w-full">
+                                    <!-- Platform & Model compact selectors (left side) -->
+                                    <div class="flex items-center gap-2" v-if="!ai.images.length">
+                                        <select
+                                            v-model="ai.platform_id"
+                                            @change="onPlatformChange()"
+                                            class="py-1.5 px-2 border rounded-md text-xs text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800 max-w-[140px]"
+                                            title="@lang('admin::app.components.tinymce.ai-generation.platform')"
                                         >
-                                            @lang('admin::app.components.media.images.ai-generation.apply')
-                                        </button>
-                                    </template>
+                                            <option v-for="p in platforms" :key="p.id" :value="p.id">@{{ p.label }}</option>
+                                        </select>
+                                        <select
+                                            v-model="ai.model"
+                                            class="py-1.5 px-2 border rounded-md text-xs text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800 max-w-[160px]"
+                                            title="@lang('admin::app.components.media.images.ai-generation.model')"
+                                        >
+                                            <option v-for="m in aiModels" :key="m.id" :value="m.id">@{{ m.label }}</option>
+                                        </select>
+                                    </div>
+                                    <div v-else></div>
+
+                                    <!-- Action buttons (right side) -->
+                                    <div class="flex gap-x-2.5 items-center">
+                                        <template v-if="! ai.images.length">
+                                            <button
+                                                class="secondary-button"
+                                                :disabled="isLoading"
+                                                :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
+                                                <template v-if="isLoading">
+                                                    <img
+                                                        class="animate-spin h-5 w-5 text-violet-700"
+                                                        src="{{ unopim_asset('images/spinner.svg') }}"
+                                                    />
+                                                    @lang('admin::app.components.tinymce.ai-generation.generating')
+                                                </template>
+
+                                                <template v-else>
+                                                    <span class="icon-magic text-2xl text-violet-700"></span>
+                                                    @lang('admin::app.components.tinymce.ai-generation.generate')
+                                                </template>
+                                            </button>
+                                        </template>
+
+                                        <template v-else>
+                                            <button
+                                                class="secondary-button"
+                                                :disabled="isLoading"
+                                                :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
+                                                <template v-if="isLoading">
+                                                    <img
+                                                        class="animate-spin h-5 w-5 text-violet-700"
+                                                        src="{{ unopim_asset('images/spinner.svg') }}"
+                                                    />
+                                                    @lang('admin::app.components.media.images.ai-generation.regenerating')
+                                                </template>
+
+                                                <template v-else>
+                                                    <span class="icon-magic text-2xl text-violet-700"></span>
+                                                    @lang('admin::app.components.media.images.ai-generation.regenerate')
+                                                </template>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                class="primary-button"
+                                                :disabled="! selectedAIImages.length"
+                                                @click="apply"
+                                            >
+                                                @lang('admin::app.components.media.images.ai-generation.apply')
+                                            </button>
+                                        </template>
+                                    </div>
                                 </div>
                             </x-slot>
                         </x-admin::modal>
@@ -432,19 +434,15 @@
     </script>
 
     <script type="text/x-template" id="v-media-gallery-item-template">
-        <div class="flex gap-1.6 max-w-max py-1.5 ltr:pr-1.5 rtl:pl-1.5 text-gray-600 dark:text-gray-300 group border border-dashed border-gray-300 rounded transition-all hover:border-gray-400 group-hover:visible">
-
-            <i class="icon-drag text-4xl transition-all group-hover:text-gray-700 cursor-pointer"></i>
-
+        <div class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-700">
             <div
-                v-if="image.type?.startsWith('image/')" 
-                class="grid justify-items-center max-w-[210px] min-w-[210px] relative"
-                :style="{ 'width': this.width }"
+                v-if="image.type?.startsWith('image/')"
+                class="relative w-full"
             >
                 <!-- Image Preview -->
                 <img
                     :src="image.url" :type="image.type"
-                    class="w-[210px] h-[120px] object-cover"
+                    class="w-full h-[140px] object-cover bg-gray-100 dark:bg-cherry-800"
                 />
                 <x-admin::modal ref="mediaPreviewModal" type="large">
                     <x-slot:header>
@@ -460,119 +458,120 @@
                     </x-slot>
                 </x-admin::modal>
 
-                <div class="flex flex-col justify-between invisible w-full max-h-[120px] p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
-                    <!-- Image Name -->
-                    <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all"></p>
-                    <!-- Actions -->
-                    <div class="flex justify-between">
-                        <span
-                            class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            @click="remove"
-                        ></span>
+                <!-- Hover overlay with actions -->
+                <div class="absolute inset-0 flex items-end justify-center gap-2 p-2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
+                    <span class="icon-drag text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-grab active:cursor-grabbing"></span>
+                    <span
+                        class="icon-view text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
+                        @click="previewMedia"
+                    ></span>
+                    <label
+                        class="icon-edit text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
+                        :for="$.uid + '_imageInput_' + index"
+                    ></label>
+                    <span
+                        class="icon-delete text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-red-500/80 cursor-pointer"
+                        @click="remove"
+                    ></span>
 
-                        <span
-                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            @click="previewMedia"
-                        ></span>
-
-                        <label
-                            class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            :for="$.uid + '_imageInput_' + index"
-                        ></label>
-
-                        <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-
-                        <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-
-                        <input
-                            type="file"
-                            :name="name + '[]'"
-                            class="hidden"
-                            accept="image/*"
-                            :id="$.uid + '_imageInput_' + index"
-                            :ref="$.uid + '_imageInput_' + index"
-                            @change="edit"
-                        />
-                    </div>
+                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+                    <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+                    <input
+                        type="file"
+                        :name="name + '[]'"
+                        class="hidden"
+                        accept="image/*"
+                        :id="$.uid + '_imageInput_' + index"
+                        :ref="$.uid + '_imageInput_' + index"
+                        @change="edit"
+                    />
                 </div>
-
-                <!-- Image Name -->
-                <label class="mt-1 grid text-xs text-gray-700 dark:text-gray-300 font-medium text-center break-all" :key="image.url">
-                        @{{ getDisplayFileName(image.name) }}
-                </label>
             </div>
 
+            <x-admin::modal ref="mediaPreviewModal" type="large">
+                <x-slot:header>
+                    <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
+                </x-slot>
+                <x-slot:content>
+                    <div>
+                        <img
+                            v-if="image.type?.startsWith('image/')"
+                            :src="image.url"
+                            class="w-full h-full object-cover object-top"
+                        />
+                        <video v-else-if="image.type?.startsWith('video/')" class="w-full h-full" controls autoplay>
+                            <source :src="image.url" type="video/mp4">
+                        </video>
+                    </div>
+                </x-slot>
+            </x-admin::modal>
+
+            <!-- Filename caption -->
+            <p
+                v-if="image.type?.startsWith('image/')"
+                class="px-2 py-1.5 text-xs text-gray-700 dark:text-gray-300 text-center truncate"
+                :title="image.name"
+            >
+                @{{ getDisplayFileName(image.name) }}
+            </p>
+
             <div
-                v-else-if="image.type.startsWith('video/')" 
-                class="grid justify-items-center max-w-[210px] min-w-[210px] relative"
+                v-else-if="image.type?.startsWith('video/')"
+                class="relative w-full"
             >
                 <!-- Video Preview -->
                 <video
-                    class="w-[210px] h-[120px] object-cover"
+                    class="w-full h-[140px] object-cover bg-gray-900"
                     ref="videoPreview"
                     v-if="image.url.length > 0"
                     :key="image.url"
+                    muted
                 >
                     <source :src="image.url" :type="image.type">
                 </video>
 
-                <x-admin::modal ref="mediaPreviewModal">
-                    <x-slot:header>
-                            <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
-                    </x-slot>
-                    <x-slot:content>
-                        <div >
-                            <video class="w-full h-full" controls autoplay>
-                                <source :src="image.url" type="video/mp4">
-                            </video>
-                        </div>
-                    </x-slot>
-                </x-admin::modal>
-
-                <div class="flex flex-col justify-between invisible w-full max-h-[120px] p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
-                    <!-- Video Name -->
-                    <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all"></p>
-
-                    <!-- Actions -->
-                    <div class="flex justify-between">
-                        <!-- Remove Button -->
-                        <span
-                            class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            @click="remove"
-                        ></span>
-
-                        <!-- Full Screen Button -->
-                        <span
-                            class="icon-play text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            @click="previewMedia"
-                        ></span>
-
-                        <!-- Edit Button -->
-                        <label
-                            class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            :for="$.uid + '_imageInput_' + index"
-                        ></label>
-
-                        <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-
-                        <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-
-                        <input
-                            type="file"
-                            :name="name + '[]'"
-                            class="hidden"
-                            accept="video/*"
-                            :id="$.uid + '_imageInput_' + index"
-                            :ref="$.uid + '_imageInput_' + index"
-                            @change="edit"
-                        />
-                    </div>
+                <!-- Play badge (always visible to indicate video) -->
+                <div class="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center">
+                    <span class="icon-play text-base leading-none"></span>
                 </div>
-                <!-- Video Name -->
-                <label class="mt-1 text-xs text-gray-700 dark:text-gray-300 font-medium text-center break-all" :key="image.url">
-                        @{{ getDisplayFileName(image.name) }}
-                </label>
+
+                <!-- Hover overlay with actions -->
+                <div class="absolute inset-0 flex items-end justify-center gap-2 p-2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
+                    <span
+                        class="icon-play text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
+                        @click="previewMedia"
+                    ></span>
+                    <label
+                        class="icon-edit text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
+                        :for="$.uid + '_imageInput_' + index"
+                    ></label>
+                    <span
+                        class="icon-delete text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-red-500/80 cursor-pointer"
+                        @click="remove"
+                    ></span>
+
+                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+                    <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+                    <input
+                        type="file"
+                        :name="name + '[]'"
+                        class="hidden"
+                        accept="video/*"
+                        :id="$.uid + '_imageInput_' + index"
+                        :ref="$.uid + '_imageInput_' + index"
+                        @change="edit"
+                    />
+                </div>
             </div>
+
+            <!-- Filename caption (video) -->
+            <p
+                v-if="image.type?.startsWith('video/')"
+                class="px-2 py-1.5 text-xs text-gray-700 dark:text-gray-300 text-center truncate"
+                :title="image.name"
+            >
+                @{{ getDisplayFileName(image.name) }}
+            </p>
         </div>
     </script>
 
@@ -631,7 +630,9 @@
 
                         prompt: null,
 
-                        model: 'dall-e-2',
+                        platform_id: null,
+
+                        model: null,
 
                         n: 1,
 
@@ -642,10 +643,11 @@
                         images: [],
                     },
 
+                    platforms: [],
                     aiModels: [],
+                    imagePrompts: [],
                     suggestionValues: [],
-                    selectedModel: null,
-                    resourceId: "{{ request()->id }}",
+                    resourceId: "{{ request()->id ?? auth()->id() }}",
                     entityName: "{{ $attributes->get('entity-name', 'attribute') }}",
                 }
             },
@@ -733,8 +735,12 @@
                     this.$refs.magicAIImageModal.open();
                     this.$nextTick(() => {
                         if (this.$refs.imagePromptInput) {
-                            if (this.aiModels.length === 0) {
-                                this.fetchModels();
+                            if (this.platforms.length === 0) {
+                                this.fetchPlatforms();
+                            }
+
+                            if (this.imagePrompts.length === 0) {
+                                this.fetchImagePrompts();
                             }
 
                             const tribute = this.$tribute.init({
@@ -751,14 +757,53 @@
                     });
                 },
 
-                async fetchModels() {
+                async fetchPlatforms() {
                     try {
-                        const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
+                        const response = await axios.get("{{ route('admin.magic_ai.platforms') }}", {
+                            params: { purpose: 'image_generation' }
+                        });
+                        this.platforms = response.data.platforms || [];
 
-                        this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3');
-                        this.ai.model = this.aiModels[0] ? this.aiModels[0].id : '';
+                        if (this.platforms.length) {
+                            let defaultPlatform = this.platforms.find(p => p.is_default);
+                            this.ai.platform_id = defaultPlatform ? defaultPlatform.id : this.platforms[0].id;
+                            this.loadModelsForPlatform();
+                        }
                     } catch (error) {
-                        console.error("Failed to fetch AI models:", error);
+                        console.error("Failed to fetch platforms:", error);
+                    }
+                },
+
+                onPlatformChange() {
+                    this.loadModelsForPlatform();
+                },
+
+                loadModelsForPlatform() {
+                    let platform = this.platforms.find(p => p.id === this.ai.platform_id);
+
+                    if (platform && platform.models) {
+                        this.aiModels = platform.models.map(m => ({ id: m, label: m }));
+                        this.ai.model = this.aiModels[0]?.id || null;
+                    } else {
+                        this.aiModels = [];
+                        this.ai.model = null;
+                    }
+                },
+
+                async fetchImagePrompts() {
+                    try {
+                        const response = await axios.get("{{ route('admin.magic_ai.default_prompt') }}", {
+                            params: { purpose: 'image_generation' }
+                        });
+                        this.imagePrompts = response.data.prompts || [];
+                    } catch (error) {
+                        console.error("Failed to fetch image prompts:", error);
+                    }
+                },
+
+                onImagePromptChange(event) {
+                    if (event.target.value) {
+                        this.ai.prompt = event.target.value;
                     }
                 },
 
@@ -806,6 +851,7 @@
                     params.resource_type = this.getResourceType();
                     params.field_type = 'image';
                     params.model = this.ai.model;
+                    params.platform_id = this.ai.platform_id;
                     params.channel = "{{ core()->getRequestedChannelCode() }}";
                     params.locale = "{{ core()->getRequestedLocaleCode() }}";
 
@@ -815,9 +861,7 @@
 
                             self.ai.images = response.data.images;
 
-                            if (self.ai.images.length === 1) {
-                                self.ai.images[0].selected = true;
-                            }
+                            self.ai.images.forEach(image => image.selected = true);
                         })
                         .catch(error => {
                             this.isLoading = false;
@@ -831,13 +875,22 @@
                 },
 
                 apply() {
-                    this.selectedAIImages.forEach((image, index) => {
+                    this.selectedAIImages.forEach((image) => {
+                        const mime = image.url.match(/^data:(image\/[^;]+);base64,/)?.[1] ?? 'image/png';
+                        const extension = ({
+                            'image/jpeg': 'jpg',
+                            'image/png':  'png',
+                            'image/webp': 'webp',
+                        })[mime] || 'png';
+
+                        const file = this.getBase64ToFile(image.url, `temp.${extension}`);
+
                         this.images.push({
-                            id: 'image_' + this.images.length,
-                            url: '',
-                            file: this.getBase64ToFile(image.url, 'temp.png'),
+                            id:   'image_' + this.images.length,
+                            url:  '',
+                            file: file,
                             type: file.type,
-                            name: file.name
+                            name: file.name,
                         });
                     });
 

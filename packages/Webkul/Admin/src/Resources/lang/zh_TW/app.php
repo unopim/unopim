@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => '設定AI代理聊天、自主豐富工作流程和品質監控。這些功能支援對話式產品管理和主動目錄維護。',
                         'enabled'                   => '啟用AI代理聊天',
                         'enabled-info'              => '啟用浮動AI聊天小工具，用於對話式產品管理，支援27+工具操作。',
+                        'open-by-default'           => '在頁面載入時開啟聊天面板',
+                        'open-by-default-info'      => '啟用後，AI 代理聊天面板會在管理員首次進入頁面時自動開啟。使用者仍可手動關閉 — 此偏好會在瀏覽器工作階段的其餘時間內被記住。',
                         'max-steps'                 => '每輪最大代理步驟數',
                         'max-steps-info'            => 'AI代理每條使用者訊息可執行的最大工具呼叫迭代次數。較高的值允許更複雜的多步驟操作。',
                         'daily-token-budget'        => '每日令牌預算',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => '平台更新成功。',
                 'delete-success'          => '平台刪除成功。',
                 'delete-fail'             => '平台刪除失敗。',
+                'not-found'               => '所選平台已不存在。請重新整理後再試一次。',
                 'cannot-delete-default'   => '無法刪除唯一的預設平台。',
                 'set-default-success'     => '平台已成功設為預設。',
                 'test-success'            => '連線驗證成功！',
                 'test-fail'               => '連線測試失敗',
                 'no-test-model'           => '請至少選擇一個支援文字的模型來執行連線測試。',
                 'custom-api-url-required' => '自訂提供者必須提供 API URL，連線測試才能抵達您自己的端點。',
+                'api-key-corrupted'       => '無法解密儲存的API金鑰（:error）。應用程式加密金鑰可能已變更。請重新輸入您的API金鑰並儲存。',
                 'fetch-models-fail'       => '無法取得模型',
                 'invalid-model-names'     => '無效的模型名稱：:names。模型名稱必須以字母或數字開頭，且僅包含字母、數字、連字號、點、冒號和斜線。',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => '添加圖片',
+                'add-media-btn'      => '新增媒體',
                 'generate-with-ai'   => '使用 AI 生成',
                 'upload-from-device' => '從設備上傳',
                 'cancel'             => '取消',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => '預設提示',
+                'select-prompt-template' => '-- 選擇提示範本 --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => '哎呀！此頁面禁止訪問。似乎您無權查看此內容。',
             'title'       => '403 禁止',
+            'message'     => '您沒有權限存取此頁面。如果您認為這是個錯誤，請聯繫您的管理員。',
         ],
         '413' => [
             'description' => '哎呀！似乎您嘗試上傳一個太大的文件。如果要上傳該文件，請根據需要更新PHP配置。',

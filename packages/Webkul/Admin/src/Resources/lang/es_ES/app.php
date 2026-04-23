@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Configure el chat del agente IA, los flujos de trabajo de enriquecimiento autónomo y la supervisión de calidad. Estas funciones permiten la gestión conversacional de productos y el mantenimiento proactivo del catálogo.',
                         'enabled'                   => 'Habilitar chat del agente IA',
                         'enabled-info'              => 'Habilite el widget flotante de chat IA para la gestión conversacional de productos con más de 27 acciones de herramientas.',
+                        'open-by-default'           => 'Abrir el panel de chat al cargar la página',
+                        'open-by-default-info'      => 'Cuando está habilitado, el panel de chat del Agente de IA se abre automáticamente la primera vez que un administrador accede a una página. Los usuarios pueden seguir cerrándolo manualmente — la preferencia se recuerda durante el resto de la sesión del navegador.',
                         'max-steps'                 => 'Pasos máx. del agente por turno',
                         'max-steps-info'            => 'Número máximo de iteraciones de llamadas a herramientas que el agente IA puede realizar por mensaje de usuario. Valores más altos permiten operaciones de varios pasos más complejas.',
                         'daily-token-budget'        => 'Presupuesto diario de tokens',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Plataforma actualizada correctamente.',
                 'delete-success'          => 'Plataforma eliminada correctamente.',
                 'delete-fail'             => 'Error al eliminar la plataforma.',
+                'not-found'               => 'La plataforma seleccionada ya no existe. Actualice la página e inténtelo de nuevo.',
                 'cannot-delete-default'   => 'No se puede eliminar la única plataforma predeterminada.',
                 'set-default-success'     => 'Plataforma establecida como predeterminada correctamente.',
                 'test-success'            => '¡Conexión verificada correctamente!',
                 'test-fail'               => 'La prueba de conexión ha fallado',
                 'no-test-model'           => 'Seleccione al menos un modelo con capacidad de texto para ejecutar la prueba de conexión.',
                 'custom-api-url-required' => 'La API URL es obligatoria para los proveedores personalizados para que la prueba de conexión llegue a su propio endpoint.',
+                'api-key-corrupted'       => 'No se pudo descifrar la clave API almacenada (:error). La clave de cifrado de la aplicación puede haber cambiado. Vuelva a introducir su clave API y guarde.',
                 'fetch-models-fail'       => 'No se pudieron obtener los modelos',
                 'invalid-model-names'     => 'Nombres de modelo no válidos: :names. Los nombres de modelo deben comenzar con una letra o número y contener solo letras, números, guiones, puntos, dos puntos y barras.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Añadir imagen',
+                'add-media-btn'      => 'Añadir multimedia',
                 'generate-with-ai'   => 'Generar con IA',
                 'upload-from-device' => 'Subir desde el dispositivo',
                 'cancel'             => 'Cancelar',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'La lava',
                 'default-prompt'         => 'Prompt predeterminado',
+                'select-prompt-template' => '-- Selecciona una plantilla de prompt --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => '¡Ups!Esta página está fuera de los límites.Parece que no\'t have the required permissions to view this content.',
             'title'       => '403 Prohibido',
+            'message'     => 'No tiene permiso para acceder a esta página. Póngase en contacto con su administrador si cree que esto es un error.',
         ],
         '413' => [
             'description' => '¡Ups!Parece que está tratando de cargar un archivo que sea demasiado grande.Si desea cargar lo mismo, actualice la configuración de PHP en consecuencia.',

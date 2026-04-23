@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Configure o chat do agente IA, os fluxos de trabalho de enriquecimento autónomo e a monitorização de qualidade. Estas funcionalidades permitem a gestão conversacional de produtos e a manutenção proativa do catálogo.',
                         'enabled'                   => 'Ativar chat do agente IA',
                         'enabled-info'              => 'Ative o widget de chat IA flutuante para gestão conversacional de produtos com mais de 27 ações de ferramentas.',
+                        'open-by-default'           => 'Abrir o painel de conversação ao carregar a página',
+                        'open-by-default-info'      => 'Quando ativado, o painel de conversação do Agente de IA abre automaticamente na primeira vez que um administrador acede a uma página. Os utilizadores podem fechá-lo manualmente — a preferência é memorizada durante o resto da sessão do navegador.',
                         'max-steps'                 => 'Etapas máx. do agente por turno',
                         'max-steps-info'            => 'Número máximo de iterações de chamadas de ferramentas que o agente IA pode executar por mensagem do utilizador. Valores mais altos permitem operações de várias etapas mais complexas.',
                         'daily-token-budget'        => 'Orçamento diário de tokens',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Plataforma atualizada com sucesso.',
                 'delete-success'          => 'Plataforma eliminada com sucesso.',
                 'delete-fail'             => 'Falha ao eliminar a plataforma.',
+                'not-found'               => 'A plataforma selecionada já não existe. Atualize a página e tente novamente.',
                 'cannot-delete-default'   => 'Não é possível eliminar a única plataforma predefinida.',
                 'set-default-success'     => 'Plataforma definida como predefinida com sucesso.',
                 'test-success'            => 'Ligação verificada com sucesso!',
                 'test-fail'               => 'Falha no teste de ligação',
                 'no-test-model'           => 'Selecione pelo menos um modelo compatível com texto para executar o teste de ligação.',
                 'custom-api-url-required' => 'O API URL é obrigatório para fornecedores personalizados para que o teste de ligação alcance o seu próprio endpoint.',
+                'api-key-corrupted'       => 'A chave de API armazenada não pôde ser desencriptada (:error). A chave de encriptação da aplicação pode ter sido alterada. Insira novamente a sua chave de API e guarde.',
                 'fetch-models-fail'       => 'Não foi possível obter os modelos',
                 'invalid-model-names'     => 'Nomes de modelo inválidos: :names. Os nomes de modelo devem começar com uma letra ou número e conter apenas letras, números, hífens, pontos, dois pontos e barras.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Adicionar Imagem',
+                'add-media-btn'      => 'Adicionar Multimédia',
                 'generate-with-ai'   => 'Gerar com IA',
                 'upload-from-device' => 'Carregar do dispositivo',
                 'cancel'             => 'Cancelar',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Prompt padrão',
+                'select-prompt-template' => '-- Selecione um modelo de prompt --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Ops! Esta página está fora dos limites. Parece que você não tem permissão para ver este conteúdo.',
             'title'       => '403 Proibido',
+            'message'     => 'Não tem permissão para aceder a esta página. Contacte o seu administrador se acreditar que isto é um erro.',
         ],
         '413' => [
             'description' => 'Ops! Parece que você está tentando carregar um arquivo muito grande. Se você deseja carregar o mesmo, atualize a configuração do PHP.',

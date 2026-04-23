@@ -146,6 +146,18 @@ class ChatController extends Controller
             ], 422);
         }
 
+        // Verify the platform's API key is decryptable before proceeding.
+        // If the APP_KEY changed after the platform was saved, every access
+        // to api_key throws DecryptException — catch it early with a clear message.
+        $apiKeyError = $platform->apiKeyError();
+
+        if ($apiKeyError) {
+            return new JsonResponse([
+                'reply'  => trans('ai-agent::app.common.error-api-key-corrupted', ['error' => $apiKeyError]),
+                'action' => 'error',
+            ], 422);
+        }
+
         // When the widget doesn't pass an explicit model, pick a text-capable
         // one from the platform's list. The previous `model_list[0]` fallback
         // would select whichever model sorted first, so providers like OpenAI

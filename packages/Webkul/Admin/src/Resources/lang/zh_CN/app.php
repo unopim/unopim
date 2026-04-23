@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => '配置AI代理聊天、自主丰富工作流和质量监控。这些功能支持对话式产品管理和主动目录维护。',
                         'enabled'                   => '启用AI代理聊天',
                         'enabled-info'              => '启用浮动AI聊天小部件，用于对话式产品管理，支持27+工具操作。',
+                        'open-by-default'           => '页面加载时打开聊天面板',
+                        'open-by-default-info'      => '启用后，AI 代理聊天面板会在管理员首次访问页面时自动打开。用户仍可手动关闭 — 此偏好将在浏览器会话的其余时间内被记住。',
                         'max-steps'                 => '每轮最大代理步骤数',
                         'max-steps-info'            => 'AI代理每条用户消息可执行的最大工具调用迭代次数。较高的值允许更复杂的多步骤操作。',
                         'daily-token-budget'        => '每日令牌预算',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => '平台更新成功。',
                 'delete-success'          => '平台删除成功。',
                 'delete-fail'             => '平台删除失败。',
+                'not-found'               => '所选平台已不存在。请刷新后重试。',
                 'cannot-delete-default'   => '无法删除唯一的默认平台。',
                 'set-default-success'     => '平台已成功设为默认。',
                 'test-success'            => '连接验证成功！',
                 'test-fail'               => '连接测试失败',
                 'no-test-model'           => '请至少选择一个支持文本的模型来运行连接测试。',
                 'custom-api-url-required' => '自定义提供商必须提供 API URL，以便连接测试能够访问您自己的端点。',
+                'api-key-corrupted'       => '无法解密存储的API密钥（:error）。应用加密密钥可能已更改。请重新输入您的API密钥并保存。',
                 'fetch-models-fail'       => '无法获取模型',
                 'invalid-model-names'     => '无效的模型名称：:names。模型名称必须以字母或数字开头，且仅包含字母、数字、连字符、点、冒号和斜杠。',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => '添加图片',
+                'add-media-btn'      => '添加媒体',
                 'generate-with-ai'   => '使用 AI 生成',
                 'upload-from-device' => '从设备上传',
                 'cancel'             => '取消',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => '维库纳',
                 'llava'                  => '熔岩',
                 'default-prompt'         => '默认提示',
+                'select-prompt-template' => '-- 选择提示模板 --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => '哎呀！此页面是禁止访问的。您似乎没有查看此内容所需的权限。',
             'title'       => '403 禁忌',
+            'message'     => '您没有权限访问此页面。如果您认为这是一个错误，请联系您的管理员。',
         ],
         '413' => [
             'description' => '哎呀！您似乎正在尝试上传太大的文件。如果您想上传相同的内容，请相应地更新 PHP 配置。',

@@ -22,40 +22,35 @@
     >
         <!-- Panel Content -->
         <div class="grid">
-            <div class="flex gap-1">
-                <!-- Upload File Button -->
-
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                <!-- Add File tile (always first; hidden once a file exists) -->
                 <label
-                    class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400"
-                    :class="[errors['inputFiles.files[0]'] ? 'border border-red-500' : 'border-gray-300']"
+                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
+                    :class="{ 'border-red-500 dark:border-red-500': errors['inputFiles.files[0]'] }"
                     :for="$.uid + '_fileInput'"
                     v-if="0 == inputFiles.length"
                 >
-                    <div class="flex flex-col items-center">
-                        <span class="icon-folder text-2xl"></span>
+                    <span class="icon-folder text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
+                    <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        @lang('admin::app.components.media.files.add-file-btn')
+                    </p>
+                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                        @lang('admin::app.components.media.files.allowed-types')
+                    </p>
 
-                        <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
-                            @lang('admin::app.components.media.files.add-file-btn')
-                            
-                            <span class="text-xs">
-                                @lang('admin::app.components.media.files.allowed-types')
-                            </span>
-                        </p>
-
-                        <input
-                            type="file"
-                            class="hidden"
-                            :id="$.uid + '_fileInput'"
-                            accept="application/pdf"
-                            :ref="$.uid + '_fileInput'"
-                            @change="add"
-                        />
-                    </div>
+                    <input
+                        type="file"
+                        class="hidden"
+                        :id="$.uid + '_fileInput'"
+                        accept="application/pdf"
+                        :ref="$.uid + '_fileInput'"
+                        @change="add"
+                    />
                 </label>
 
                 <!-- Uploaded Files -->
                 <draggable
-                    class="flex gap-1"
+                    class="contents"
                     ghost-class="draggable-ghost"
                     v-bind="{animation: 200}"
                     :list="inputFiles"
@@ -79,39 +74,27 @@
     </script>
 
     <script type="text/x-template" id="v-media-files-item-template">
-        <div class="grid justify-items-center h-[120px] max-w-[210px] min-w-[210px] max-h-[120px] relative border border-dashed border-gray-300 dark:border-cherry-800 rounded overflow-hidden transition-all hover:border-gray-400 group">
-            <!-- File Name -->
-            <div class="flex flex-col justify-between visible w-full p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:invisible">
-                <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all" v-text="inputFile?.file?.name ?? inputFile.fileName"></p>
-            </div>
-            <div class="flex flex-col justify-between invisible w-full p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
-                <!-- File Name -->
-                <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all" v-text="inputFile?.file?.name ?? inputFile.fileName"></p>
+        <div class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-700">
+            <!-- File icon preview area -->
+            <div class="relative flex flex-col items-center justify-center w-full h-[140px] bg-gray-50 dark:bg-cherry-800">
+                <span class="icon-folder text-5xl text-gray-400 dark:text-gray-500"></span>
+                <span class="mt-1 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">PDF</span>
 
-                <!-- Actions -->
-                <div class="flex justify-between">
-                    <!-- Remove Button -->
+                <!-- Hover overlay with actions -->
+                <div class="absolute inset-0 flex items-end justify-center gap-2 p-2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
+                    <a :href="inputFile.url" target="_blank" class="flex items-center">
+                        <span class="icon-down-stat text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"></span>
+                    </a>
+                    <label
+                        class="icon-edit text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
+                        :for="$.uid + '_fileInput_' + index"
+                    ></label>
                     <span
-                        class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                        class="icon-delete text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-red-500/80 cursor-pointer"
                         @click="remove"
                     ></span>
 
-                    <!-- Download Button -->
-
-                    <a :href="inputFile.url" target="_blank" class="flex items-center cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800">
-                        <span
-                            class="text-2xl p-1.5 rounded-md icon-down-stat"
-                        ></span>
-                    </a>
-
-                    <!-- Edit Button -->
-                    <label
-                        class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                        :for="$.uid + '_fileInput_' + index"
-                    ></label>
-
                     <input type="hidden" :name="name" v-if="! inputFile.is_new && inputFile.value" :value="inputFile.value"/>
-
                     <input
                         type="file"
                         :name="name + '[]'"
@@ -123,6 +106,13 @@
                     />
                 </div>
             </div>
+
+            <!-- Filename caption -->
+            <p
+                class="px-2 py-1.5 text-xs text-gray-700 dark:text-gray-300 text-center truncate"
+                :title="inputFile?.file?.name ?? inputFile.fileName"
+                v-text="inputFile?.file?.name ?? inputFile.fileName"
+            ></p>
         </div>
     </script>
 

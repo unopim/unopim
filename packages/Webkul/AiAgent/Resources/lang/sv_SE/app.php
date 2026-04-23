@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'Begärandegränsen för AI-leverantören har nåtts. Försök igen om :seconds sekunder.',
         'error-overloaded'          => 'AI-leverantören är för närvarande överbelastad. Försök igen om en liten stund.',
         'error-request-too-large'   => 'Din begäran är för stor för AI-leverantören. Förkorta meddelandet eller ta bort några bilagor och försök igen.',
+        'error-api-key-corrupted'   => 'API-nyckeln för denna plattform kunde inte dekrypteras (:error). Applikationens krypteringsnyckel kan ha ändrats. Redigera plattformen och ange din API-nyckel på nytt.',
         'invalid-file-path'         => 'Ogiltig filsökväg.',
         'invalid-locale-code'       => 'Ogiltig språkkod.',
         'invalid-channel-code'      => 'Ogiltig kanalkod.',

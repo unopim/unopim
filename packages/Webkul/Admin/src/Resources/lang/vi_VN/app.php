@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Cấu hình trò chuyện tác nhân AI, quy trình làm giàu tự động và giám sát chất lượng. Các tính năng này cho phép quản lý sản phẩm theo hội thoại và bảo trì danh mục chủ động.',
                         'enabled'                   => 'Bật trò chuyện tác nhân AI',
                         'enabled-info'              => 'Bật widget trò chuyện AI nổi để quản lý sản phẩm theo hội thoại với hơn 27 hành động công cụ.',
+                        'open-by-default'           => 'Mở bảng trò chuyện khi tải trang',
+                        'open-by-default-info'      => 'Khi được bật, bảng trò chuyện Tác nhân AI sẽ tự động mở lần đầu khi quản trị viên truy cập một trang. Người dùng vẫn có thể đóng thủ công — tùy chọn được ghi nhớ trong suốt phần còn lại của phiên trình duyệt.',
                         'max-steps'                 => 'Số bước tối đa của tác nhân mỗi lượt',
                         'max-steps-info'            => 'Số lần lặp gọi công cụ tối đa mà tác nhân AI có thể thực hiện cho mỗi tin nhắn người dùng. Giá trị cao hơn cho phép các thao tác nhiều bước phức tạp hơn.',
                         'daily-token-budget'        => 'Ngân sách token hàng ngày',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Nền tảng đã được cập nhật thành công.',
                 'delete-success'          => 'Nền tảng đã được xóa thành công.',
                 'delete-fail'             => 'Xóa nền tảng thất bại.',
+                'not-found'               => 'Nền tảng đã chọn không còn tồn tại. Vui lòng làm mới và thử lại.',
                 'cannot-delete-default'   => 'Không thể xóa nền tảng mặc định duy nhất.',
                 'set-default-success'     => 'Nền tảng đã được đặt làm mặc định thành công.',
                 'test-success'            => 'Kết nối đã được xác minh thành công!',
                 'test-fail'               => 'Kiểm tra kết nối thất bại',
                 'no-test-model'           => 'Chọn ít nhất một mô hình hỗ trợ văn bản để chạy kiểm tra kết nối.',
                 'custom-api-url-required' => 'API URL là bắt buộc đối với các nhà cung cấp tùy chỉnh để kiểm tra kết nối có thể đến được điểm cuối của riêng bạn.',
+                'api-key-corrupted'       => 'Không thể giải mã khóa API đã lưu (:error). Khóa mã hóa của ứng dụng có thể đã thay đổi. Vui lòng nhập lại khóa API của bạn và lưu.',
                 'fetch-models-fail'       => 'Không thể lấy danh sách mô hình',
                 'invalid-model-names'     => 'Tên mô hình không hợp lệ: :names. Tên mô hình phải bắt đầu bằng chữ cái hoặc số và chỉ chứa chữ cái, số, dấu gạch ngang, dấu chấm, dấu hai chấm và dấu gạch chéo.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Thêm ảnh',
+                'add-media-btn'      => 'Thêm phương tiện',
                 'generate-with-ai'   => 'Tạo bằng AI',
                 'upload-from-device' => 'Tải lên từ thiết bị',
                 'cancel'             => 'Hủy',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Lời nhắc mặc định',
+                'select-prompt-template' => '-- Chọn một mẫu lời nhắc --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Oops! Trang này không thể truy cập được. Có vẻ như bạn không có quyền xem nội dung này.',
             'title'       => '403 Cấm',
+            'message'     => 'Bạn không có quyền truy cập trang này. Vui lòng liên hệ với quản trị viên nếu bạn cho rằng đây là lỗi.',
         ],
         '413' => [
             'description' => 'Oops! Có vẻ như bạn đang cố tải lên một tệp rất lớn. Nếu muốn tải lên, vui lòng cập nhật cấu hình PHP của bạn.',

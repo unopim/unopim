@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Skonfiguruj czat agenta AI, autonomiczne przepływy wzbogacania i monitorowanie jakości. Te funkcje umożliwiają konwersacyjne zarządzanie produktami i proaktywną konserwację katalogu.',
                         'enabled'                   => 'Włącz czat agenta AI',
                         'enabled-info'              => 'Włącz pływający widget czatu AI do konwersacyjnego zarządzania produktami z ponad 27 akcjami narzędzi.',
+                        'open-by-default'           => 'Otwórz panel czatu przy ładowaniu strony',
+                        'open-by-default-info'      => 'Gdy ta opcja jest włączona, panel czatu agenta AI otwiera się automatycznie przy pierwszym wejściu administratora na stronę. Użytkownicy mogą go nadal zamknąć ręcznie — preferencja jest zapamiętywana do końca sesji przeglądarki.',
                         'max-steps'                 => 'Maks. kroków agenta na turę',
                         'max-steps-info'            => 'Maksymalna liczba iteracji wywołań narzędzi, które agent AI może wykonać na wiadomość użytkownika. Wyższe wartości pozwalają na bardziej złożone operacje wieloetapowe.',
                         'daily-token-budget'        => 'Dzienny budżet tokenów',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Platforma została zaktualizowana pomyślnie.',
                 'delete-success'          => 'Platforma została usunięta pomyślnie.',
                 'delete-fail'             => 'Usunięcie platformy nie powiodło się.',
+                'not-found'               => 'Wybrana platforma już nie istnieje. Odśwież stronę i spróbuj ponownie.',
                 'cannot-delete-default'   => 'Nie można usunąć jedynej domyślnej platformy.',
                 'set-default-success'     => 'Platforma została ustawiona jako domyślna pomyślnie.',
                 'test-success'            => 'Połączenie zweryfikowane pomyślnie!',
                 'test-fail'               => 'Test połączenia nie powiódł się',
                 'no-test-model'           => 'Wybierz co najmniej jeden model obsługujący tekst, aby uruchomić test połączenia.',
                 'custom-api-url-required' => 'API URL jest wymagany dla niestandardowych dostawców, aby test połączenia mógł dotrzeć do Twojego własnego punktu końcowego.',
+                'api-key-corrupted'       => 'Zapisany klucz API nie mógł zostać odszyfrowany (:error). Klucz szyfrowania aplikacji mógł zostać zmieniony. Wprowadź ponownie swój klucz API i zapisz.',
                 'fetch-models-fail'       => 'Nie udało się pobrać modeli',
                 'invalid-model-names'     => 'Nieprawidłowe nazwy modeli: :names. Nazwy modeli muszą zaczynać się od litery lub cyfry i zawierać tylko litery, cyfry, myślniki, kropki, dwukropki i ukośniki.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Dodaj obraz',
+                'add-media-btn'      => 'Dodaj media',
                 'generate-with-ai'   => 'Generuj za pomocą AI',
                 'upload-from-device' => 'Prześlij z urządzenia',
                 'cancel'             => 'Anuluj',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Domyślny prompt',
+                'select-prompt-template' => '-- Wybierz szablon promptu --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Ups! Ta strona jest zabroniona. Wygląda na to, że nie masz dostępu do tego zasobu.',
             'title'       => '403 Zabronione',
+            'message'     => 'Nie masz uprawnień do dostępu do tej strony. Skontaktuj się z administratorem, jeśli uważasz, że to błąd.',
         ],
         '413' => [
             'description' => 'Ups! Wygląda na to, że próbujesz przesłać zbyt duży plik. Jeśli chcesz to zrobić, zmień konfigurację PHP.',

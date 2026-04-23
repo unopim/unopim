@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'Naabot na ang limit ng mga kahilingan ng AI provider. Subukang muli pagkatapos ng :seconds segundo.',
         'error-overloaded'          => 'Ang AI provider ay kasalukuyang sobra sa karga. Subukang muli pagkatapos ng ilang sandali.',
         'error-request-too-large'   => 'Ang iyong kahilingan ay masyadong malaki para sa AI provider. Paikliin ang iyong mensahe o alisin ang ilang kalakip at subukang muli.',
+        'error-api-key-corrupted'   => 'Hindi ma-decrypt ang API key para sa platform na ito (:error). Maaaring nagbago ang encryption key ng application. Pakiedit ang platform at muling ilagay ang iyong API key.',
         'invalid-file-path'         => 'Hindi wastong path ng file.',
         'invalid-locale-code'       => 'Hindi wastong code ng wika.',
         'invalid-channel-code'      => 'Hindi wastong code ng channel.',

@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'Osiągnięto limit żądań dostawcy AI. Spróbuj ponownie za :seconds sekund.',
         'error-overloaded'          => 'Dostawca AI jest obecnie przeciążony. Spróbuj ponownie za chwilę.',
         'error-request-too-large'   => 'Twoje żądanie jest za duże dla dostawcy AI. Skróć wiadomość lub usuń niektóre załączniki i spróbuj ponownie.',
+        'error-api-key-corrupted'   => 'Klucz API dla tej platformy nie mógł zostać odszyfrowany (:error). Klucz szyfrowania aplikacji mógł zostać zmieniony. Edytuj platformę i wprowadź ponownie swój klucz API.',
         'invalid-file-path'         => 'Nieprawidłowa ścieżka pliku.',
         'invalid-locale-code'       => 'Nieprawidłowy kod lokalizacji.',
         'invalid-channel-code'      => 'Nieprawidłowy kod kanału.',

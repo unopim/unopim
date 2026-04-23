@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Konfigurer AI-agentchat, autonome berikelsesarbeidsflyter og kvalitetsovervåking. Disse funksjonene muliggjør samtalebasert produktstyring og proaktivt katalogvedlikehold.',
                         'enabled'                   => 'Aktiver AI-agentchat',
                         'enabled-info'              => 'Aktiver den flytende AI-chatwidgeten for samtalebasert produktstyring med over 27 verktøyhandlinger.',
+                        'open-by-default'           => 'Åpne chatpanelet ved sidelasting',
+                        'open-by-default-info'      => 'Når dette er aktivert, åpnes chatpanelet til AI-agenten automatisk første gang en administrator kommer til en side. Brukere kan fortsatt lukke det manuelt — innstillingen huskes resten av nettleserøkten.',
                         'max-steps'                 => 'Maks. agenttrinn per tur',
                         'max-steps-info'            => 'Maksimalt antall verktøyoppkallsiterasjoner som AI-agenten kan utføre per brukermelding. Høyere verdier tillater mer komplekse flertrinnoperasjoner.',
                         'daily-token-budget'        => 'Daglig tokenbudsjett',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Plattform oppdatert vellykket.',
                 'delete-success'          => 'Plattform slettet vellykket.',
                 'delete-fail'             => 'Sletting av plattform mislyktes.',
+                'not-found'               => 'Den valgte plattformen finnes ikke lenger. Oppdater og prøv igjen.',
                 'cannot-delete-default'   => 'Kan ikke slette den eneste standardplattformen.',
                 'set-default-success'     => 'Plattform angitt som standard vellykket.',
                 'test-success'            => 'Tilkobling bekreftet vellykket!',
                 'test-fail'               => 'Tilkoblingstest mislyktes',
                 'no-test-model'           => 'Velg minst én tekstkapabel modell for å kjøre tilkoblingstesten.',
                 'custom-api-url-required' => 'API URL er påkrevd for egendefinerte leverandører slik at tilkoblingstesten når ditt eget endepunkt.',
+                'api-key-corrupted'       => 'Den lagrede API-nøkkelen kunne ikke dekrypteres (:error). Applikasjonens krypteringsnøkkel kan ha blitt endret. Skriv inn API-nøkkelen din på nytt og lagre.',
                 'fetch-models-fail'       => 'Kunne ikke hente modeller',
                 'invalid-model-names'     => 'Ugyldige modellnavn: :names. Modellnavn må starte med en bokstav eller et tall og kun inneholde bokstaver, tall, bindestreker, punktum, kolon og skråstreker.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Legg til bilde',
+                'add-media-btn'      => 'Legg til medier',
                 'generate-with-ai'   => 'Generer med AI',
                 'upload-from-device' => 'Last opp fra enhet',
                 'cancel'             => 'Avbryt',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Standard prompt',
+                'select-prompt-template' => '-- Velg en promptmal --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Ups! Denne siden er utilgjengelig. Det ser ut som du ikke har tillatelse til å se dette innholdet.',
             'title'       => '403 Forbudt',
+            'message'     => 'Du har ikke tillatelse til å få tilgang til denne siden. Kontakt administratoren din hvis du mener dette er en feil.',
         ],
         '413' => [
             'description' => 'Ups! Det ser ut som om du prøver å laste opp en fil som er for stor. Hvis du ønsker å laste opp samme, oppdater PHP-konfigurasjonen tilsvarende.',

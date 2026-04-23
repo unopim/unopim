@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Configureu el xat de l\'agent IA, els fluxos de treball d\'enriquiment autònom i el monitoratge de qualitat. Aquestes funcions permeten la gestió conversacional de productes i el manteniment proactiu del catàleg.',
                         'enabled'                   => 'Activar el xat de l\'agent IA',
                         'enabled-info'              => 'Activeu el widget de xat flotant d\'IA per a la gestió conversacional de productes amb més de 27 accions d\'eines.',
+                        'open-by-default'           => 'Obre el tauler de xat en carregar la pàgina',
+                        'open-by-default-info'      => 'Quan s\'habilita, el tauler de xat de l\'Agent d\'IA s\'obre automàticament la primera vegada que un administrador arriba a una pàgina. Els usuaris encara poden tancar-lo manualment — la preferència es recorda durant la resta de la sessió del navegador.',
                         'max-steps'                 => 'Passos màxims de l\'agent per torn',
                         'max-steps-info'            => 'Nombre màxim d\'iteracions de crida d\'eines que l\'agent IA pot realitzar per missatge d\'usuari. Valors més alts permeten operacions de múltiples passos més complexes.',
                         'daily-token-budget'        => 'Pressupost diari de tokens',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Plataforma actualitzada correctament.',
                 'delete-success'          => 'Plataforma eliminada correctament.',
                 'delete-fail'             => 'Error en eliminar la plataforma.',
+                'not-found'               => 'La plataforma seleccionada ja no existeix. Actualitzeu i torneu-ho a provar.',
                 'cannot-delete-default'   => 'No es pot eliminar l\'única plataforma per defecte.',
                 'set-default-success'     => 'Plataforma establerta com a predeterminada correctament.',
                 'test-success'            => 'Connexió verificada correctament!',
                 'test-fail'               => 'La prova de connexió ha fallat',
                 'no-test-model'           => 'Seleccioneu almenys un model capaç de generar text per executar la prova de connexió.',
                 'custom-api-url-required' => 'L\'API URL és obligatòria per als proveïdors personalitzats perquè la prova de connexió arribi al vostre propi endpoint.',
+                'api-key-corrupted'       => 'No s\'ha pogut desxifrar la clau API emmagatzemada (:error). La clau de xifrat de l\'aplicació pot haver canviat. Torneu a introduir la vostra clau API i deseu.',
                 'fetch-models-fail'       => 'No s\'han pogut obtenir els models',
                 'invalid-model-names'     => 'Noms de model no vàlids: :names. Els noms de model han de començar amb una lletra o un número i contenir només lletres, números, guions, punts, dos punts i barres.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Añadir imagen',
+                'add-media-btn'      => 'Afegir multimèdia',
                 'generate-with-ai'   => 'Generar amb IA',
                 'upload-from-device' => 'Carregar des del dispositiu',
                 'cancel'             => 'Cancel·lar',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Sol·licitud per defecte',
+                'select-prompt-template' => '-- Seleccioneu una plantilla d\'indicació --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Oops! Aquesta pàgina està prohibida. No tens els permisos necessaris per veure aquest contingut.',
             'title'       => '403 Prohibit',
+            'message'     => 'No teniu permís per accedir a aquesta pàgina. Poseu-vos en contacte amb l\'administrador si creieu que això és un error.',
         ],
         '413' => [
             'description' => 'Oops! Estàs intentant pujar un fitxer que és massa gran. Si vols pujar-lo, actualitza la configuració PHP.',

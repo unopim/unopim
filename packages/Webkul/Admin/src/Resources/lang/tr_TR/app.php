@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'AI ajan sohbetini, otonom zenginleştirme iş akışlarını ve kalite izlemeyi yapılandırın. Bu özellikler konuşmaya dayalı ürün yönetimi ve proaktif katalog bakımını mümkün kılar.',
                         'enabled'                   => 'AI ajan sohbetini etkinleştir',
                         'enabled-info'              => '27\'den fazla araç eylemiyle konuşmaya dayalı ürün yönetimi için kayan AI sohbet widget\'ını etkinleştirin.',
+                        'open-by-default'           => 'Sayfa yüklenirken sohbet panelini aç',
+                        'open-by-default-info'      => 'Etkinleştirildiğinde, AI Ajanı sohbet paneli bir yönetici bir sayfaya ilk kez ulaştığında otomatik olarak açılır. Kullanıcılar yine de manuel olarak kapatabilir — tercih, tarayıcı oturumunun geri kalanı için hatırlanır.',
                         'max-steps'                 => 'Tur başına maks. ajan adımı',
                         'max-steps-info'            => 'AI ajanın kullanıcı mesajı başına gerçekleştirebileceği maksimum araç çağrısı iterasyonu sayısı. Daha yüksek değerler daha karmaşık çok adımlı işlemlere olanak tanır.',
                         'daily-token-budget'        => 'Günlük token bütçesi',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Platform başarıyla güncellendi.',
                 'delete-success'          => 'Platform başarıyla silindi.',
                 'delete-fail'             => 'Platform silinemedi.',
+                'not-found'               => 'Seçilen platform artık mevcut değil. Lütfen sayfayı yenileyip tekrar deneyin.',
                 'cannot-delete-default'   => 'Tek varsayılan platform silinemez.',
                 'set-default-success'     => 'Platform başarıyla varsayılan olarak ayarlandı.',
                 'test-success'            => 'Bağlantı başarıyla doğrulandı!',
                 'test-fail'               => 'Bağlantı testi başarısız oldu',
                 'no-test-model'           => 'Bağlantı testini çalıştırmak için en az bir metin destekli model seçin.',
                 'custom-api-url-required' => 'Bağlantı testinin kendi uç noktanıza ulaşabilmesi için özel sağlayıcılarda API URL gereklidir.',
+                'api-key-corrupted'       => 'Kayıtlı API anahtarının şifresi çözülemedi (:error). Uygulamanın şifreleme anahtarı değişmiş olabilir. Lütfen API anahtarınızı yeniden girin ve kaydedin.',
                 'fetch-models-fail'       => 'Modeller alınamadı',
                 'invalid-model-names'     => 'Geçersiz model adları: :names. Model adları bir harf veya rakamla başlamalı ve yalnızca harf, rakam, tire, nokta, iki nokta üst üste ve eğik çizgi içermelidir.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Görsel Ekle',
+                'add-media-btn'      => 'Medya Ekle',
                 'generate-with-ai'   => 'Yapay Zeka ile Oluştur',
                 'upload-from-device' => 'Cihazdan Yükle',
                 'cancel'             => 'İptal',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Varsayılan Komut',
+                'select-prompt-template' => '-- Bir komut şablonu seçin --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Oops! Bu sayfa erişilemez durumda. Bu içeriği görüntülemek için gerekli yetkilere sahip değilsiniz.',
             'title'       => '403 Yasak',
+            'message'     => 'Bu sayfaya erişim izniniz yok. Bunun bir hata olduğunu düşünüyorsanız lütfen yöneticinizle iletişime geçin.',
         ],
         '413' => [
             'description' => 'Oops! Yüklemek istediğiniz dosya çok büyük gibi görünüyor. Yüklemek istiyorsanız, PHP yapılandırmasını güncelleyin.',

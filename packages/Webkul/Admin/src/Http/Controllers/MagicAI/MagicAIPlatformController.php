@@ -77,18 +77,24 @@ class MagicAIPlatformController extends Controller
     {
         $platform = $this->platformRepository->findOrFail($id);
 
+        $apiKeyError = $platform->apiKeyError();
+
         return new JsonResponse([
             'data' => [
-                'id'         => $platform->id,
-                'label'      => $platform->label,
-                'provider'   => $platform->provider,
-                'api_url'    => $platform->api_url,
-                'api_key'    => $platform->api_key ? '********' : '',
-                'models'     => $platform->models,
-                'extras'     => $platform->extras ? json_encode($platform->extras) : '',
-                'is_default' => $platform->is_default,
-                'status'     => $platform->status,
+                'id'                => $platform->id,
+                'label'             => $platform->label,
+                'provider'          => $platform->provider,
+                'api_url'           => $platform->api_url,
+                'api_key'           => $apiKeyError ? '' : ($platform->safeApiKey() ? '********' : ''),
+                'models'            => $platform->models,
+                'extras'            => $platform->extras ? json_encode($platform->extras) : '',
+                'is_default'        => $platform->is_default,
+                'status'            => $platform->status,
+                'api_key_corrupted' => $apiKeyError !== null,
             ],
+            'message' => $apiKeyError
+                ? trans('admin::app.configuration.platform.message.api-key-corrupted', ['error' => $apiKeyError])
+                : null,
         ]);
     }
 
@@ -103,6 +109,12 @@ class MagicAIPlatformController extends Controller
             'is_default' => 'sometimes|boolean',
             'status'     => 'sometimes|boolean',
         ]);
+
+        if (! $this->platformRepository->find($id)) {
+            return new JsonResponse([
+                'message' => trans('admin::app.configuration.platform.message.not-found'),
+            ], JsonResponse::HTTP_NOT_FOUND);
+        }
 
         $data = request()->only(['label', 'provider', 'api_url', 'models', 'is_default', 'status']);
 
@@ -323,7 +335,7 @@ class MagicAIPlatformController extends Controller
         if ($apiKey && preg_match('/^\*+$/', $apiKey) && $platformId) {
             $platform = $this->platformRepository->find($platformId);
 
-            return $platform?->api_key;
+            return $platform?->safeApiKey();
         }
 
         return $apiKey;

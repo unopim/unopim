@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'Forespørselsgrensen for AI-leverandøren er nådd. Prøv igjen om :seconds sekunder.',
         'error-overloaded'          => 'AI-leverandøren er for øyeblikket overbelastet. Prøv igjen om et øyeblikk.',
         'error-request-too-large'   => 'Forespørselen din er for stor for AI-leverandøren. Forkort meldingen eller fjern noen vedlegg og prøv igjen.',
+        'error-api-key-corrupted'   => 'API-nøkkelen for denne plattformen kunne ikke dekrypteres (:error). Applikasjonens krypteringsnøkkel kan ha blitt endret. Rediger plattformen og skriv inn API-nøkkelen din på nytt.',
         'invalid-file-path'         => 'Ugyldig filbane.',
         'invalid-locale-code'       => 'Ugyldig språkkode.',
         'invalid-channel-code'      => 'Ugyldig kanalkode.',

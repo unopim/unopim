@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Määritä tekoälyagentin chat, itsenäiset rikastustyönkulut ja laadunvalvonta. Nämä ominaisuudet mahdollistavat keskustelupohjaisen tuotehallinnan ja ennakoivan katalogien ylläpidon.',
                         'enabled'                   => 'Ota tekoälyagentin chat käyttöön',
                         'enabled-info'              => 'Ota käyttöön kelluva tekoälykeskusteluwidget keskustelupohjaiseen tuotehallintaan yli 27 työkalutoiminnolla.',
+                        'open-by-default'           => 'Avaa keskustelupaneeli sivun latautuessa',
+                        'open-by-default-info'      => 'Kun tämä on käytössä, tekoälyagentin keskustelupaneeli avautuu automaattisesti, kun järjestelmänvalvoja saapuu sivulle ensimmäistä kertaa. Käyttäjät voivat edelleen sulkea sen manuaalisesti — valinta muistetaan selainistunnon loppuajan.',
                         'max-steps'                 => 'Agentin max. askeleet per vuoro',
                         'max-steps-info'            => 'Työkalukutsun iteraatioiden enimmäismäärä, jotka tekoälyagentti voi suorittaa käyttäjäviestiä kohden. Suuremmat arvot mahdollistavat monimutkaisemmat monivaihetoiminnot.',
                         'daily-token-budget'        => 'Päivittäinen tokenibudjetti',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Alusta päivitetty onnistuneesti.',
                 'delete-success'          => 'Alusta poistettu onnistuneesti.',
                 'delete-fail'             => 'Alustan poistaminen epäonnistui.',
+                'not-found'               => 'Valittua alustaa ei enää ole olemassa. Päivitä ja yritä uudelleen.',
                 'cannot-delete-default'   => 'Ainoaa oletusalustaa ei voi poistaa.',
                 'set-default-success'     => 'Alusta asetettu oletukseksi onnistuneesti.',
                 'test-success'            => 'Yhteys vahvistettu onnistuneesti!',
                 'test-fail'               => 'Yhteystesti epäonnistui',
                 'no-test-model'           => 'Valitse vähintään yksi tekstiä tukeva malli yhteystestin suorittamiseksi.',
                 'custom-api-url-required' => 'API URL vaaditaan mukautetuille tarjoajille, jotta yhteystesti saavuttaa oman päätepisteesi.',
+                'api-key-corrupted'       => 'Tallennettua API-avainta ei voitu purkaa (:error). Sovelluksen salausavain on saattanut muuttua. Syötä API-avaimesi uudelleen ja tallenna.',
                 'fetch-models-fail'       => 'Mallien haku epäonnistui',
                 'invalid-model-names'     => 'Virheelliset mallien nimet: :names. Mallien nimien on alettava kirjaimella tai numerolla ja sisällettävä vain kirjaimia, numeroita, väliviivoja, pisteitä, kaksoispisteitä ja kauttaviivoja.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Lisää kuva',
+                'add-media-btn'      => 'Lisää mediaa',
                 'generate-with-ai'   => 'Luo tekoälyllä',
                 'upload-from-device' => 'Lataa laitteelta',
                 'cancel'             => 'Peruuta',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Oletuskehotus',
+                'select-prompt-template' => '-- Valitse kehotepohja --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Voi ei! Tämä sivu on rajoitettu. Sinulla ei ole tarvittavia oikeuksia nähdä tätä sisältöä.',
             'title'       => '403 Pääsy kielletty',
+            'message'     => 'Sinulla ei ole lupaa käyttää tätä sivua. Ota yhteyttä järjestelmänvalvojaan, jos uskot tämän olevan virhe.',
         ],
         '413' => [
             'description' => 'Voi ei! Näyttää siltä, että yrität ladata liian suuren tiedoston. Jos haluat ladata sen, päivitä PHP-konfiguraatio.',

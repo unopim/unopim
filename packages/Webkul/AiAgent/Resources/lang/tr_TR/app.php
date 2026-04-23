@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'AI sağlayıcısının istek sınırına ulaşıldı. Lütfen :seconds saniye sonra tekrar deneyin.',
         'error-overloaded'          => 'AI sağlayıcısı şu anda aşırı yüklü. Lütfen birkaç dakika sonra tekrar deneyin.',
         'error-request-too-large'   => 'İsteğiniz AI sağlayıcısı için çok büyük. Lütfen mesajınızı kısaltın veya bazı ekleri kaldırın ve tekrar deneyin.',
+        'error-api-key-corrupted'   => 'Bu platformun API anahtarının şifresi çözülemedi (:error). Uygulamanın şifreleme anahtarı değişmiş olabilir. Lütfen platformu düzenleyin ve API anahtarınızı yeniden girin.',
         'invalid-file-path'         => 'Geçersiz dosya yolu.',
         'invalid-locale-code'       => 'Geçersiz dil kodu.',
         'invalid-channel-code'      => 'Geçersiz kanal kodu.',

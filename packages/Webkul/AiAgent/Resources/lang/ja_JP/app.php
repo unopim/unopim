@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'AIプロバイダーのレート制限に達しました。:seconds秒後にもう一度お試しください。',
         'error-overloaded'          => 'AIプロバイダーは現在過負荷状態です。しばらくしてからもう一度お試しください。',
         'error-request-too-large'   => 'リクエストがAIプロバイダーにとって大きすぎます。メッセージを短くするか、添付ファイルを減らしてもう一度お試しください。',
+        'error-api-key-corrupted'   => 'このプラットフォームのAPIキーを復号できませんでした（:error）。アプリケーションの暗号化キーが変更された可能性があります。プラットフォームを編集してAPIキーを再入力してください。',
         'invalid-file-path'         => '無効なファイルパスです。',
         'invalid-locale-code'       => '無効なロケールコードです。',
         'invalid-channel-code'      => '無効なチャネルコードです。',

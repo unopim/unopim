@@ -42,9 +42,21 @@ exports.test = base.test.extend({
   /**
    * Authenticated admin page WITH the chat widget visible.
    * Used only by tests that verify the widget itself (agentingPIM.spec.js).
+   *
+   * The widget honours `general.magic_ai.agentic_pim.open_by_default` (default true),
+   * so on a fresh dev DB the panel auto-opens and the floating "Open Agenting PIM"
+   * button is hidden. Tests assert against the closed state, so we seed
+   * sessionStorage with isOpen=false before any page navigation. The widget's
+   * restoreState() reads this and keeps the panel closed regardless of the
+   * server-side default.
    */
   adminPageWithWidget: async ({ browser }, use) => {
     const context = await browser.newContext({ storageState: STORAGE_STATE });
+    await context.addInitScript(() => {
+      try {
+        sessionStorage.setItem('agenting_pim_state', JSON.stringify({ isOpen: false }));
+      } catch (e) {}
+    });
     const page = await context.newPage();
 
     await use(page);

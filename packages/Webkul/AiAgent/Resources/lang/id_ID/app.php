@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'Batas permintaan penyedia AI telah tercapai. Silakan coba lagi dalam :seconds detik.',
         'error-overloaded'          => 'Penyedia AI sedang kelebihan beban. Silakan coba lagi dalam beberapa saat.',
         'error-request-too-large'   => 'Permintaan Anda terlalu besar untuk penyedia AI. Silakan perpendek pesan Anda atau hapus beberapa lampiran dan coba lagi.',
+        'error-api-key-corrupted'   => 'Kunci API untuk platform ini tidak dapat didekripsi (:error). Kunci enkripsi aplikasi mungkin telah berubah. Silakan edit platform dan masukkan kembali kunci API Anda.',
         'invalid-file-path'         => 'Jalur file tidak valid.',
         'invalid-locale-code'       => 'Kode lokal tidak valid.',
         'invalid-channel-code'      => 'Kode saluran tidak valid.',

@@ -1665,6 +1665,8 @@ return [
                         'title-info'                => 'Configureer de AI-agent chat, autonome verrijkingsworkflows en kwaliteitsmonitoring. Deze functies maken conversationeel productbeheer en proactief catalogusonderhoud mogelijk.',
                         'enabled'                   => 'AI-agent chat inschakelen',
                         'enabled-info'              => 'Schakel de zwevende AI-chatwidget in voor conversationeel productbeheer met meer dan 27 toolacties.',
+                        'open-by-default'           => 'Chatpaneel openen bij pagina-laden',
+                        'open-by-default-info'      => 'Wanneer ingeschakeld, wordt het chatpaneel van de AI-agent automatisch geopend zodra een beheerder voor het eerst op een pagina komt. Gebruikers kunnen het nog steeds handmatig sluiten — de voorkeur wordt onthouden voor de rest van de browsersessie.',
                         'max-steps'                 => 'Max. agentstappen per beurt',
                         'max-steps-info'            => 'Maximaal aantal tool-aanroep-iteraties dat de AI-agent per gebruikersbericht kan uitvoeren. Hogere waarden maken complexere meerstapsoperaties mogelijk.',
                         'daily-token-budget'        => 'Dagelijks tokenbudget',
@@ -1874,12 +1876,14 @@ return [
                 'update-success'          => 'Platform succesvol bijgewerkt.',
                 'delete-success'          => 'Platform succesvol verwijderd.',
                 'delete-fail'             => 'Verwijdering van platform mislukt.',
+                'not-found'               => 'Het geselecteerde platform bestaat niet meer. Vernieuw de pagina en probeer het opnieuw.',
                 'cannot-delete-default'   => 'Kan het enige standaardplatform niet verwijderen.',
                 'set-default-success'     => 'Platform succesvol als standaard ingesteld.',
                 'test-success'            => 'Verbinding succesvol geverifieerd!',
                 'test-fail'               => 'Verbindingstest mislukt',
                 'no-test-model'           => 'Selecteer ten minste één tekstondersteunend model om de verbindingstest uit te voeren.',
                 'custom-api-url-required' => 'API URL is vereist voor aangepaste providers zodat de verbindingstest jouw eigen endpoint bereikt.',
+                'api-key-corrupted'       => 'De opgeslagen API-sleutel kon niet worden ontsleuteld (:error). De versleutelingssleutel van de applicatie is mogelijk gewijzigd. Voer uw API-sleutel opnieuw in en sla op.',
                 'fetch-models-fail'       => 'Modellen konden niet worden opgehaald',
                 'invalid-model-names'     => 'Ongeldige modelnamen: :names. Modelnamen moeten beginnen met een letter of cijfer en mogen alleen letters, cijfers, koppeltekens, punten, dubbele punten en schuine strepen bevatten.',
             ],
@@ -2049,6 +2053,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Voeg afbeelding toe',
+                'add-media-btn'      => 'Media toevoegen',
                 'generate-with-ai'   => 'Genereren met AI',
                 'upload-from-device' => 'Uploaden vanaf apparaat',
                 'cancel'             => 'Annuleren',
@@ -2130,6 +2135,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'De lava',
                 'default-prompt'         => 'Standaard prompt',
+                'select-prompt-template' => '-- Selecteer een promptsjabloon --',
             ],
         ],
     ],
@@ -2215,6 +2221,7 @@ return [
         '403' => [
             'description' => 'Oeps!Deze pagina is verboden.Het lijkt erop dat je geen\'t have the required permissions to view this content.',
             'title'       => '403 verboden',
+            'message'     => 'U heeft geen toestemming om deze pagina te openen. Neem contact op met uw beheerder als u denkt dat dit een fout is.',
         ],
         '413' => [
             'description' => 'Oeps!Het lijkt erop dat u een bestand probeert te uploaden dat te groot is.Als u hetzelfde wilt uploaden, werkt u de PHP -configuratie dienovereenkomstig bij.',

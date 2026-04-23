@@ -39,6 +39,7 @@ return [
         'error-rate-limit-retry'    => 'Limita de solicitări a furnizorului AI a fost atinsă. Încercați din nou în :seconds secunde.',
         'error-overloaded'          => 'Furnizorul AI este în prezent supraîncărcat. Încercați din nou peste câteva momente.',
         'error-request-too-large'   => 'Solicitarea dvs. este prea mare pentru furnizorul AI. Scurtați mesajul sau eliminați unele atașamente și încercați din nou.',
+        'error-api-key-corrupted'   => 'Cheia API pentru această platformă nu a putut fi decriptată (:error). Cheia de criptare a aplicației s-ar fi putut schimba. Editați platforma și reintroduceți cheia API.',
         'invalid-file-path'         => 'Cale de fișier invalidă.',
         'invalid-locale-code'       => 'Cod de localizare invalid.',
         'invalid-channel-code'      => 'Cod de canal invalid.',
