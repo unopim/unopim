@@ -2,7 +2,6 @@
 
 namespace Webkul\Product\Validator;
 
-use Illuminate\Validation\Rule;
 use Webkul\Category\Models\Category;
 use Webkul\Product\Validator\Abstract\ValuesValidator;
 
@@ -13,16 +12,18 @@ class ProductCategoriesValidator extends ValuesValidator
      */
     protected function generateRules(mixed $data, ?string $productId, array $options)
     {
-        $rules = [
+        return [
             '*' => [
                 'exists:categories,code',
-                Rule::notIn(
-                    Category::whereNull('parent_id')->pluck('code')->toArray()
-                ),
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    // Single indexed lookup per submitted code — avoids materializing every
+                    // root-category code in PHP on each validate call.
+                    if (Category::where('code', $value)->whereNull('parent_id')->exists()) {
+                        $fail(trans('admin::app.catalog.products.categories.root-not-allowed'));
+                    }
+                },
             ],
         ];
-
-        return $rules;
     }
 
     /**
@@ -31,8 +32,7 @@ class ProductCategoriesValidator extends ValuesValidator
     protected function getMessages()
     {
         return [
-            '*.exists'  => trans('validation.exists-value'),
-            '*.not_in'  => trans('admin::app.catalog.products.categories.root-not-allowed'),
+            '*.exists' => trans('validation.exists-value'),
         ];
     }
 }

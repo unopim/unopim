@@ -23,10 +23,20 @@
                 @change="inputChanged()"
             >
 
-            <span class="icon-radio-normal mr-1 text-2xl rounded-md cursor-pointer peer-checked:icon-radio-selected peer-checked:text-violet-700"></span>
+            <span
+                :class="[
+                    'icon-radio-normal mr-1 text-2xl rounded-md peer-checked:icon-radio-selected peer-checked:text-violet-700',
+                    isCurrentCategory ? 'cursor-not-allowed' : 'cursor-pointer'
+                ]"
+            ></span>
 
             <div
-                class="text-sm cursor-pointer hover:text-gray-800 dark:hover:text-white"
+                :class="[
+                    'text-sm',
+                    isCurrentCategory
+                        ? 'cursor-not-allowed'
+                        : 'cursor-pointer hover:text-gray-800 dark:hover:text-white'
+                ]"
                 v-text="label"
             >
             </div>

@@ -238,9 +238,7 @@ class MediaFileController extends ApiController
             return;
         }
 
-        $attribute = app(AttributeRepository::class)
-            ->findByField('code', $attributeCode)
-            ->first();
+        $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
 
         if (! $attribute) {
             return;
