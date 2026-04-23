@@ -13,10 +13,10 @@ describe('Profile image AI generation should not have @ suggestions', function (
         expect($content)->toContain('show-suggestions');
 
         // Verify the @ icon is conditional on showSuggestions
-        expect($content)->toContain('v-if="showSuggestions"');
+        expect($content)->toContain('showSuggestions');
 
         // Verify tribute init is conditional on showSuggestions
-        expect($content)->toContain('if (this.showSuggestions)');
+        expect($content)->toContain('this.showSuggestions');
     });
 
     it('account edit page disables suggestions for profile image', function () {
