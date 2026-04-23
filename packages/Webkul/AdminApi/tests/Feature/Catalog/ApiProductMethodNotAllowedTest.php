@@ -4,31 +4,31 @@ beforeEach(function () {
     $this->headers = $this->getAuthenticationHeaders();
 });
 
-it('should reject PATCH on the products listing endpoint with 405 Method Not Allowed (Issue #742)', function () {
+it('rejects PATCH on the products listing endpoint with 405 Method Not Allowed', function () {
     $response = $this->withHeaders($this->headers)
         ->call('PATCH', '/api/v1/rest/products', [], [], [], [
             'HTTP_ACCEPT' => 'application/json',
         ]);
 
-    expect($response->status())->toBeIn([404, 405]);
-    expect($response->status())->not->toBe(200);
+    expect($response->status())->toBe(405);
+    expect($response->headers->get('Allow'))->not->toBeNull();
 });
 
-it('should reject PATCH on the products listing endpoint with trailing slash (Issue #742)', function () {
+it('rejects PATCH on the products listing endpoint with trailing slash', function () {
     $response = $this->withHeaders($this->headers)
         ->call('PATCH', '/api/v1/rest/products/', [], [], [], [
             'HTTP_ACCEPT' => 'application/json',
         ]);
 
-    expect($response->status())->not->toBe(200);
+    expect($response->status())->toBe(405);
 });
 
-it('should reject DELETE on the products listing endpoint (Issue #741)', function () {
+it('rejects DELETE on the products listing endpoint with 405', function () {
     $response = $this->withHeaders($this->headers)
         ->call('DELETE', '/api/v1/rest/products', [], [], [], [
             'HTTP_ACCEPT' => 'application/json',
         ]);
 
-    expect($response->status())->toBeIn([404, 405]);
-    expect($response->status())->not->toBe(200);
+    expect($response->status())->toBe(405);
+    expect($response->headers->get('Allow'))->not->toBeNull();
 });

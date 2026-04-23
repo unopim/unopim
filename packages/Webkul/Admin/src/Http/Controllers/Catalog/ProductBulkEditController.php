@@ -268,7 +268,7 @@ class ProductBulkEditController extends Controller
 
                     if (! is_numeric($scalar)) {
                         $errors[$code][] = trans('admin::app.catalog.products.bulk-edit.validation.numeric', ['attribute' => $code]);
-                        break 2;
+                        break;
                     }
                 }
             }
