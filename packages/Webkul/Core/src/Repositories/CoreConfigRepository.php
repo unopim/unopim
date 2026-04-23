@@ -56,7 +56,7 @@ class CoreConfigRepository extends Repository
                     }
                 }
 
-                if ($field['type'] === 'password' && preg_match('/^\*+$/', $value)) {
+                if (($field['type'] ?? null) === 'password' && preg_match('/^\*+$/', $value)) {
                     $original = core()->getConfigData($fieldName);
                     if (strlen($value) === strlen($original)) {
                         $value = $original;
