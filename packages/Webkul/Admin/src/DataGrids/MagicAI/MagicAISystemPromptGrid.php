@@ -126,22 +126,22 @@ class MagicAISystemPromptGrid extends DataGrid
      */
     public function prepareActions()
     {
-        $this->addAction([
-            'icon'   => 'icon-edit',
-            'title'  => trans('admin::app.configuration.system-prompt.datagrid.edit'),
-            'method' => 'GET',
-            'url'    => function ($row) {
-                return route('admin.magic_ai.system_prompt.edit', $row->id);
-            },
-        ]);
+        if (bouncer()->hasPermission('ai-agent.system-prompt.edit')) {
+            $this->addAction([
+                'icon'   => 'icon-edit',
+                'title'  => trans('admin::app.configuration.system-prompt.datagrid.edit'),
+                'method' => 'GET',
+                'url'    => fn ($row) => route('admin.magic_ai.system_prompt.edit', $row->id),
+            ]);
+        }
 
-        $this->addAction([
-            'icon'   => 'icon-delete',
-            'title'  => trans('admin::app.configuration.system-prompt.datagrid.delete'),
-            'method' => 'DELETE',
-            'url'    => function ($row) {
-                return route('admin.magic_ai.system_prompt.delete', $row->id);
-            },
-        ]);
+        if (bouncer()->hasPermission('ai-agent.system-prompt.delete')) {
+            $this->addAction([
+                'icon'   => 'icon-delete',
+                'title'  => trans('admin::app.configuration.system-prompt.datagrid.delete'),
+                'method' => 'DELETE',
+                'url'    => fn ($row) => route('admin.magic_ai.system_prompt.delete', $row->id),
+            ]);
+        }
     }
 }

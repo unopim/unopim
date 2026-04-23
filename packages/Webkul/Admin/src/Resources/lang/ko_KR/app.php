@@ -220,7 +220,8 @@ return [
                 'save-btn'   => '제품 저장',
                 'title'      => '제품 편집',
                 'categories' => [
-                    'title' => '카테고리',
+                    'title'            => '카테고리',
+                    'root-not-allowed' => '루트 카테고리는 제품에 할당할 수 없습니다.',
                 ],
                 'images' => [
                     'info'  => '이미지 해상도는 560px X 609px이어야 합니다',
@@ -363,6 +364,8 @@ return [
                     'url'                        => '유효한 URL을 입력하세요.',
                     'regex'                      => '값이 요구되는 패턴과 일치하지 않습니다.',
                     'invalid-pattern'            => '잘못된 사용자 지정 패턴입니다.',
+
+                    'numeric'                    => '숫자 속성 ":attribute"의 값은 유효한 숫자여야 합니다.',
                     'select-attribute-or-family' => '하나 이상의 속성 또는 속성 패밀리를 선택하세요.',
                     'failed'                     => '유효성 검사 실패.',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => '일괄 편집이 성공적으로 완료되었습니다.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => '저장할 변경 사항이 없습니다.',
-                'success'         => '작업이 성공적으로 실행되었습니다.',
-                'fetch-failed'    => '가져오기 실패.',
-                'action'          => '일괄 편집',
-                'description'     => '여러 제품을 한 번에 편집합니다. 변경 사항은 백그라운드에서 처리됩니다.',
-                'gallery-preview' => '갤러리 미리보기',
-                'img-preview'     => '이미지 미리보기',
-                'no-image'        => '이미지 없음',
-                'img-fail'        => '이미지 업로드 실패',
-                'no-option'       => '옵션 없음',
+                'id'                          => 'ID',
+                'no-changes'                  => '저장할 변경 사항이 없습니다.',
+
+                'invalid-datetime'            => '유효한 날짜와 시간을 입력하세요.',
+
+                'resize-column'               => '드래그하여 열 너비 조정',
+                'success'                     => '작업이 성공적으로 실행되었습니다.',
+                'fetch-failed'                => '가져오기 실패.',
+                'action'                      => '일괄 편집',
+                'description'                 => '여러 제품을 한 번에 편집합니다. 변경 사항은 백그라운드에서 처리됩니다.',
+                'gallery-preview'             => '갤러리 미리보기',
+                'img-preview'                 => '이미지 미리보기',
+                'no-image'                    => '이미지 없음',
+                'img-fail'                    => '이미지 업로드 실패',
+                'no-option'                   => '옵션 없음',
+                'keyboard-shortcuts'          => '키보드 단축키',
+                'shortcuts-navigation'        => '탐색',
+                'shortcuts-editing'           => '편집',
+                'shortcuts-selection'         => '선택',
+                'shortcuts-clipboard'         => '클립보드 및 채우기',
+                'shortcuts-move-cell'         => '셀 간 이동',
+                'shortcuts-move-down'         => '아래로 이동 / 편집 확인',
+                'shortcuts-move-up'           => '위로 이동',
+                'shortcuts-move-right-left'   => '오른쪽 / 왼쪽으로 이동',
+                'shortcuts-home-end'          => '행의 첫 번째 / 마지막 열',
+                'shortcuts-ctrl-home-end'     => '그리드의 첫 번째 / 마지막 셀',
+                'shortcuts-extend-selection'  => '선택 범위 확장',
+                'shortcuts-select-all'        => '모든 셀 선택',
+                'shortcuts-enter-edit'        => '편집 모드 진입',
+                'shortcuts-confirm-move-down' => '확인 + 아래로 이동',
+                'shortcuts-confirm-move-right'=> '확인 + 오른쪽으로 이동',
+                'shortcuts-escape-revert'     => '값 되돌리기 + 편집 종료',
+                'shortcuts-clear-cell'        => '셀 지우기',
+                'shortcuts-copy'              => '복사',
+                'shortcuts-cut'               => '잘라내기',
+                'shortcuts-paste'             => '붙여넣기',
+                'shortcuts-fill-down'         => '아래로 채우기',
+                'shortcuts-fill-right'        => '오른쪽으로 채우기',
+                'shortcuts-undo'              => '실행 취소',
+                'shortcuts-redo'              => '다시 실행',
+                'shortcuts-help'              => '키보드 단축키 표시/숨기기',
             ],
             'create-success'          => '제품이 성공적으로 생성되었습니다',
             'delete-failed'           => '제품 삭제 실패',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => '필터링 가능',
                 'ai-translate'          => 'AI 번역',
                 'invalid-swatch-type'   => ':attribute는 스와치 유형 :swatch_type의 속성 유형 :type에 대해 허용되지 않습니다.',
+
+                'single-object-only'    => '각 생성 요청은 속성 객체를 하나만 보내야 합니다.',
                 'option'                => [
                     'color'    => '샘플 색상',
                     'dropdown' => '드롭다운',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => '속성 삭제 성공',
             'update-success'    => '속성 수정 성공',
             'user-define-error' => '시스템 속성은 삭제할 수 없습니다',
+
+            'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
             'not-found'         => '코드 ":code"에 해당하는 속성을 찾을 수 없습니다',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => '카테고리가 성공적으로 삭제되었습니다.',
             'update-success'       => '카테고리가 성공적으로 업데이트되었습니다.',
             'can-not-update'       => '이 루트 카테고리는 채널과 연결되어 있어 부모 카테고리를 가질 수 없습니다.',
+            'invalid-parent'       => '선택한 상위 카테고리가 유효하지 않습니다. 카테고리는 자기 자신의 상위 카테고리이거나 자신의 하위 항목일 수 없습니다.',
             'unique-validation'    => '이 값은 이미 사용 중입니다.',
             'not-found'            => '코드 ":code"인 카테고리를 찾을 수 없습니다.',
             'unknown-fields'       => '필드 코드 ":fields"인 카테고리를 찾을 수 없습니다.',
@@ -849,15 +887,18 @@ return [
             'update-success'    => '카테고리 필드 업데이트 성공',
             'user-define-error' => '시스템 카테고리 필드는 삭제할 수 없습니다.',
             'not-found'         => '코드 ":code"의 카테고리 필드를 찾을 수 없습니다.',
+
+            'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => '카테고리 필드 옵션이 성공적으로 생성되었습니다.',
-            'update-success' => '카테고리 필드 옵션이 성공적으로 업데이트되었습니다.',
+            'create-success'      => '카테고리 필드 옵션이 성공적으로 생성되었습니다.',
+            'update-success'      => '카테고리 필드 옵션이 성공적으로 업데이트되었습니다.',
+            'update-unknown-code' => '코드 ":code"에 해당하는 카테고리 필드 옵션이 없습니다.',
         ],
         'families' => [
             'index' => [
                 'add'      => '속성 그룹 만들기',
-                'title'    => '속성 그룹',
+                'title'    => '속성 패밀리',
                 'datagrid' => [
                     'code'           => '코드',
                     'delete'         => '삭제',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => '이 가족에는 이미 제품 변형이 있어 구성 옵션을 업데이트할 수 없습니다.',
         ],
         'history' => [
+            'view' => '버전 세부 정보 보기',
+
             'index' => [
                 'datagrid' => [
                     'version'   => '버전',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => '일시 중지됨',
                         'cancelled'            => '취소됨',
                         'failed'               => '실패',
+
+                        'view'       => '보기',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => '클라이언트를 찾을 수 없습니다',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => '프롬프트',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '제목',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => '시스템 프롬프트',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '제목',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => '잘못된 모델 이름입니다. 문자, 숫자, 하이픈, 점, 콜론, 슬래시만 사용하세요 (예: gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'            => '플랫폼이 성공적으로 저장되었습니다.',
-                'update-success'          => '플랫폼이 성공적으로 업데이트되었습니다.',
-                'delete-success'          => '플랫폼이 성공적으로 삭제되었습니다.',
-                'delete-fail'             => '플랫폼 삭제에 실패했습니다.',
-                'not-found'               => '선택한 플랫폼이 더 이상 존재하지 않습니다. 새로 고침한 후 다시 시도해 주세요.',
-                'cannot-delete-default'   => '유일한 기본 플랫폼은 삭제할 수 없습니다.',
-                'set-default-success'     => '플랫폼이 기본값으로 설정되었습니다.',
-                'test-success'            => '연결이 성공적으로 확인되었습니다!',
-                'test-fail'               => '연결 테스트 실패',
-                'no-test-model'           => '연결 테스트를 실행하려면 텍스트를 지원하는 모델을 하나 이상 선택하세요.',
-                'custom-api-url-required' => '연결 테스트가 사용자 지정 엔드포인트에 도달할 수 있도록 사용자 지정 공급자에는 API URL이 필요합니다.',
-                'api-key-corrupted'       => '저장된 API 키를 복호화할 수 없습니다 (:error). 애플리케이션 암호화 키가 변경되었을 수 있습니다. API 키를 다시 입력하고 저장해 주세요.',
-                'fetch-models-fail'       => '모델을 가져올 수 없습니다',
-                'invalid-model-names'     => '잘못된 모델 이름: :names. 모델 이름은 문자 또는 숫자로 시작해야 하며 문자, 숫자, 하이픈, 점, 콜론, 슬래시만 포함해야 합니다.',
+                'save-success'             => '플랫폼이 성공적으로 저장되었습니다.',
+                'update-success'           => '플랫폼이 성공적으로 업데이트되었습니다.',
+                'delete-success'           => '플랫폼이 성공적으로 삭제되었습니다.',
+                'delete-fail'              => '플랫폼 삭제에 실패했습니다.',
+                'not-found'                => '선택한 플랫폼이 더 이상 존재하지 않습니다. 새로 고침한 후 다시 시도해 주세요.',
+                'cannot-delete-default'    => '유일한 기본 플랫폼은 삭제할 수 없습니다.',
+                'set-default-success'      => '플랫폼이 기본값으로 설정되었습니다.',
+                'test-success'             => '연결이 성공적으로 확인되었습니다!',
+                'test-fail'                => '연결 테스트 실패',
+                'no-test-model'            => '연결 테스트를 실행하려면 텍스트를 지원하는 모델을 하나 이상 선택하세요.',
+                'custom-api-url-required'  => '연결 테스트가 사용자 지정 엔드포인트에 도달할 수 있도록 사용자 지정 공급자에는 API URL이 필요합니다.',
+                'api-key-corrupted'        => '저장된 API 키를 복호화할 수 없습니다 (:error). 애플리케이션 암호화 키가 변경되었을 수 있습니다. API 키를 다시 입력하고 저장해 주세요.',
+                'fetch-models-fail'        => '모델을 가져올 수 없습니다',
+                'invalid-model-names'      => '잘못된 모델 이름: :names. 모델 이름은 문자 또는 숫자로 시작해야 하며 문자, 숫자, 하이픈, 점, 콜론, 슬래시만 포함해야 합니다.',
+                'default-requires-enabled' => '비활성화된 플랫폼은 기본값으로 설정할 수 없습니다. 먼저 플랫폼을 활성화하세요.',
             ],
         ],
     ],

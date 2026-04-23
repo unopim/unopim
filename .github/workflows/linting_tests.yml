@@ -18,8 +18,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Running Pint Test
-        uses: aglipanci/laravel-pint-action@2.0.0
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          testMode: true
-          verboseMode: true
+          php-version: '8.3'
+          coverage: none
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--prefer-dist --no-scripts"
+
+      - name: Run Pint
+        run: vendor/bin/pint --test

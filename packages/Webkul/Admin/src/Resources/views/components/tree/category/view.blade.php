@@ -86,7 +86,8 @@
                     default: () => ([])
                 },
                 currentCategory: {
-                    type: Object
+                    type: [Number, String],
+                    default: null
                 }
             },
 

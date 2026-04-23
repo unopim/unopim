@@ -104,7 +104,7 @@ class ChatController extends Controller
             'images'      => 'nullable|array|max:5',
             'images.*'    => 'image|mimes:jpeg,png,webp,gif|max:10240',
             'files'       => 'nullable|array|max:3',
-            'files.*'     => ['file', 'max:20480', function (string $attribute, $value, $fail) {
+            'files.*'     => ['file', 'max:102400', function (string $attribute, $value, $fail) {
                 $allowed = ['csv', 'xlsx', 'xls'];
                 $ext = strtolower($value->getClientOriginalExtension());
                 if (! in_array($ext, $allowed, true)) {
@@ -333,6 +333,60 @@ class ChatController extends Controller
         $activeList = $this->platformRepository->getActiveList();
 
         return $activeList->first();
+    }
+
+    /**
+     * Store user feedback (like/dislike) for a chat message.
+     */
+    public function rate(Request $request): JsonResponse
+    {
+        $request->validate([
+            'rating'  => 'required|in:helpful,not_helpful',
+            'message' => 'nullable|string|max:5000',
+        ]);
+
+        $user = auth()->guard('admin')->user();
+        $rating = $request->input('rating');
+        $messageText = $request->input('message', '');
+        $ratingLabel = $rating === 'helpful' ? 'positive' : 'negative';
+
+        DB::table('ai_agent_memories')->insert([
+            'scope'      => 'catalog',
+            'key'        => "message_feedback:{$ratingLabel}",
+            'user_id'    => $user?->id,
+            'value'      => mb_substr($messageText, 0, 500),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        if ($rating === 'helpful' && ! empty($messageText)) {
+            $existing = DB::table('ai_agent_memories')
+                ->where('scope', 'catalog')
+                ->where('key', 'content_style_preference')
+                ->where('user_id', $user?->id)
+                ->first();
+
+            $hint = 'User found this response helpful: '.mb_substr($messageText, 0, 200);
+
+            if ($existing) {
+                $styleHints = mb_substr($existing->value.'; '.$hint, -500);
+                DB::table('ai_agent_memories')->where('id', $existing->id)->update([
+                    'value'      => $styleHints,
+                    'updated_at' => now(),
+                ]);
+            } else {
+                DB::table('ai_agent_memories')->insert([
+                    'scope'      => 'catalog',
+                    'key'        => 'content_style_preference',
+                    'user_id'    => $user?->id,
+                    'value'      => $hint,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        return new JsonResponse(['success' => true]);
     }
 
     /**

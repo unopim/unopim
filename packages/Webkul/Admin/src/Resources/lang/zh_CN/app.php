@@ -220,7 +220,8 @@ return [
                 'save-btn'   => '保存产品',
                 'title'      => '编辑产品',
                 'categories' => [
-                    'title' => '类别',
+                    'title'            => '类别',
+                    'root-not-allowed' => '根类别不能分配给产品。',
                 ],
                 'images' => [
                     'info'  => '图像分辨率应像560px x 609px',
@@ -363,6 +364,8 @@ return [
                     'url'                        => '请输入有效的URL地址。',
                     'regex'                      => '该值不符合所需的模式。',
                     'invalid-pattern'            => '提供了无效的自定义模式。',
+
+                    'numeric'                    => '数字属性":attribute"的值必须为有效的数字。',
                     'select-attribute-or-family' => '请选择至少一个属性或一个属性族。',
                     'failed'                     => '验证失败。',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => '批量编辑成功。',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => '没有可保存的更改。',
-                'success'         => '任务已成功执行。',
-                'fetch-failed'    => '获取失败。',
-                'action'          => '批量编辑',
-                'description'     => '一次编辑多个产品。更改将在后台处理。',
-                'gallery-preview' => '图库预览',
-                'img-preview'     => '图片预览',
-                'no-image'        => '无图片',
-                'img-fail'        => '图片上传失败',
-                'no-option'       => '无选项',
+                'id'                          => 'ID',
+                'no-changes'                  => '没有可保存的更改。',
+
+                'invalid-datetime'            => '请输入有效的日期和时间。',
+
+                'resize-column'               => '拖动以调整列宽',
+                'success'                     => '任务已成功执行。',
+                'fetch-failed'                => '获取失败。',
+                'action'                      => '批量编辑',
+                'description'                 => '一次编辑多个产品。更改将在后台处理。',
+                'gallery-preview'             => '图库预览',
+                'img-preview'                 => '图片预览',
+                'no-image'                    => '无图片',
+                'img-fail'                    => '图片上传失败',
+                'no-option'                   => '无选项',
+                'keyboard-shortcuts'          => '键盘快捷键',
+                'shortcuts-navigation'        => '导航',
+                'shortcuts-editing'           => '编辑',
+                'shortcuts-selection'         => '选择',
+                'shortcuts-clipboard'         => '剪贴板与填充',
+                'shortcuts-move-cell'         => '在单元格间移动',
+                'shortcuts-move-down'         => '向下移动 / 确认编辑',
+                'shortcuts-move-up'           => '向上移动',
+                'shortcuts-move-right-left'   => '向右 / 向左移动',
+                'shortcuts-home-end'          => '行中第一 / 最后一列',
+                'shortcuts-ctrl-home-end'     => '网格中第一 / 最后一个单元格',
+                'shortcuts-extend-selection'  => '扩展选择',
+                'shortcuts-select-all'        => '选择所有单元格',
+                'shortcuts-enter-edit'        => '进入编辑模式',
+                'shortcuts-confirm-move-down' => '确认 + 向下移动',
+                'shortcuts-confirm-move-right'=> '确认 + 向右移动',
+                'shortcuts-escape-revert'     => '恢复值 + 退出编辑',
+                'shortcuts-clear-cell'        => '清除单元格',
+                'shortcuts-copy'              => '复制',
+                'shortcuts-cut'               => '剪切',
+                'shortcuts-paste'             => '粘贴',
+                'shortcuts-fill-down'         => '向下填充',
+                'shortcuts-fill-right'        => '向右填充',
+                'shortcuts-undo'              => '撤销',
+                'shortcuts-redo'              => '重做',
+                'shortcuts-help'              => '显示/隐藏键盘快捷键',
             ],
             'create-success'          => '成功创建的产品',
             'delete-failed'           => '产品删除失败',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => '可筛选',
                 'ai-translate'          => 'AI翻译',
                 'invalid-swatch-type'   => ':attribute 不允许用于属性类型 :type 和样本类型 :swatch_type。',
+
+                'single-object-only'    => '每个创建请求只能发送一个属性对象。',
                 'option'                => [
                     'color'    => '色板',
                     'dropdown' => '落下',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => '属性成功删除',
             'update-success'    => '属性成功更新',
             'user-define-error' => '无法删除系统属性',
+
+            'immutable-fields'  => '以下字段无法修改：:fields。',
             'not-found'         => '无法找到代码为“:code”的属性',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => '该类别已成功删除。',
             'update-success'       => '类别成功更新。',
             'can-not-update'       => '此根类别与通道有关，无法具有父级类别。',
+            'invalid-parent'       => '所选父类别无效。类别不能是其自身的父类别或其自身的后代。',
             'unique-validation'    => '此值已经采用。',
             'not-found'            => '找不到代码为“:code”的类别',
             'unknown-fields'       => '无法找到代码为“:fields”的类别字段',
@@ -849,15 +887,18 @@ return [
             'update-success'    => '类别字段成功更新',
             'user-define-error' => '无法删除系统类别字段',
             'not-found'         => '无法找到代码为“:code”的类别字段',
+
+            'immutable-fields'  => '以下字段无法修改：:fields。',
         ],
         'category-fields-options' => [
-            'create-success' => '类别字段选项成功创建了',
-            'update-success' => '类别字段选项成功更新',
+            'create-success'      => '类别字段选项成功创建了',
+            'update-success'      => '类别字段选项成功更新',
+            'update-unknown-code' => '不存在代码为":code"的类别字段选项。',
         ],
         'families' => [
             'index' => [
                 'add'      => '创建属性家庭',
-                'title'    => '家庭',
+                'title'    => '属性族',
                 'datagrid' => [
                     'code'           => '代码',
                     'delete'         => '删除',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => '无法更新可配置的选项，因为该家族已经拥有变体产品。',
         ],
         'history' => [
+            'view' => '查看版本详情',
+
             'index' => [
                 'datagrid' => [
                     'version'   => '版本',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => '已暂停',
                         'cancelled'            => '已取消',
                         'failed'               => '失败的',
+
+                        'view'       => '查看',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => '未找到客户',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => '提示词',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '标题',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => '系统提示词',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '标题',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => '无效的模型名称。仅可使用字母、数字、连字符、点、冒号和斜杠（如 gpt-4o、claude-3-sonnet）。',
             ],
             'message' => [
-                'save-success'            => '平台保存成功。',
-                'update-success'          => '平台更新成功。',
-                'delete-success'          => '平台删除成功。',
-                'delete-fail'             => '平台删除失败。',
-                'not-found'               => '所选平台已不存在。请刷新后重试。',
-                'cannot-delete-default'   => '无法删除唯一的默认平台。',
-                'set-default-success'     => '平台已成功设为默认。',
-                'test-success'            => '连接验证成功！',
-                'test-fail'               => '连接测试失败',
-                'no-test-model'           => '请至少选择一个支持文本的模型来运行连接测试。',
-                'custom-api-url-required' => '自定义提供商必须提供 API URL，以便连接测试能够访问您自己的端点。',
-                'api-key-corrupted'       => '无法解密存储的API密钥（:error）。应用加密密钥可能已更改。请重新输入您的API密钥并保存。',
-                'fetch-models-fail'       => '无法获取模型',
-                'invalid-model-names'     => '无效的模型名称：:names。模型名称必须以字母或数字开头，且仅包含字母、数字、连字符、点、冒号和斜杠。',
+                'save-success'             => '平台保存成功。',
+                'update-success'           => '平台更新成功。',
+                'delete-success'           => '平台删除成功。',
+                'delete-fail'              => '平台删除失败。',
+                'not-found'                => '所选平台已不存在。请刷新后重试。',
+                'cannot-delete-default'    => '无法删除唯一的默认平台。',
+                'set-default-success'      => '平台已成功设为默认。',
+                'test-success'             => '连接验证成功！',
+                'test-fail'                => '连接测试失败',
+                'no-test-model'            => '请至少选择一个支持文本的模型来运行连接测试。',
+                'custom-api-url-required'  => '自定义提供商必须提供 API URL，以便连接测试能够访问您自己的端点。',
+                'api-key-corrupted'        => '无法解密存储的API密钥（:error）。应用加密密钥可能已更改。请重新输入您的API密钥并保存。',
+                'fetch-models-fail'        => '无法获取模型',
+                'invalid-model-names'      => '无效的模型名称：:names。模型名称必须以字母或数字开头，且仅包含字母、数字、连字符、点、冒号和斜杠。',
+                'default-requires-enabled' => '不能将已禁用的平台设为默认。请先启用该平台。',
             ],
         ],
     ],

@@ -457,3 +457,23 @@ it('should return a downloadable file response for quick export in xls format', 
     $response->assertHeader('content-type', 'application/vnd.ms-excel');
     $response->assertHeader('content-disposition');
 });
+
+it('should render product edit page header with sticky top offset so save button stays visible while scrolling', function () {
+    $this->loginAsAdmin();
+
+    $product = Product::factory()->simple()->create();
+
+    $response = $this->get(route('admin.catalog.products.edit', $product->id));
+
+    $response->assertOk();
+
+    $content = $response->getContent();
+
+    // The product page header should use sticky top-[Xpx] (offset below main header)
+    // The main header only uses top-0, so top-[...px] is specific to the product header fix
+    $this->assertStringContainsString(
+        'sticky top-[',
+        $content,
+        'Product edit page header should have sticky positioning with a top offset so the save button is visible while scrolling'
+    );
+});

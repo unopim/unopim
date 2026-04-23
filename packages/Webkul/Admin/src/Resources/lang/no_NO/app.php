@@ -220,7 +220,8 @@ return [
                 'save-btn'   => 'Lagre produkt',
                 'title'      => 'Rediger produkt',
                 'categories' => [
-                    'title' => 'Kategorier',
+                    'title'            => 'Kategorier',
+                    'root-not-allowed' => 'Rotkategorien kan ikke tildeles et produkt.',
                 ],
                 'images' => [
                     'info'  => 'Bilder bør ha oppløsningen 560px X 609px',
@@ -363,6 +364,8 @@ return [
                     'url'                        => 'Vennligst oppgi en gyldig URL.',
                     'regex'                      => 'Verdien samsvarer ikke med det nødvendige mønsteret.',
                     'invalid-pattern'            => 'Ugyldig egendefinert mønster angitt.',
+
+                    'numeric'                    => 'Verdien for det numeriske attributtet «:attribute» må være et gyldig tall.',
                     'select-attribute-or-family' => 'Vennligst velg minst ett attributt eller en attributtfamilie.',
                     'failed'                     => 'Validering mislyktes.',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Masseendring vellykket.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Ingen endringer å lagre.',
-                'success'         => 'Jobb fullført.',
-                'fetch-failed'    => 'Henting mislyktes.',
-                'action'          => 'Masseendring',
-                'description'     => 'Rediger flere produkter samtidig. Endringene behandles i bakgrunnen.',
-                'gallery-preview' => 'Galleri forhåndsvisning',
-                'img-preview'     => 'Bilde forhåndsvisning',
-                'no-image'        => 'Ingen bilde',
-                'img-fail'        => 'Opplasting av bilde mislyktes',
-                'no-option'       => 'Ingen alternativer',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Ingen endringer å lagre.',
+
+                'invalid-datetime'            => 'Angi en gyldig dato og et gyldig klokkeslett.',
+
+                'resize-column'               => 'Dra for å endre kolonnebredde',
+                'success'                     => 'Jobb fullført.',
+                'fetch-failed'                => 'Henting mislyktes.',
+                'action'                      => 'Masseendring',
+                'description'                 => 'Rediger flere produkter samtidig. Endringene behandles i bakgrunnen.',
+                'gallery-preview'             => 'Galleri forhåndsvisning',
+                'img-preview'                 => 'Bilde forhåndsvisning',
+                'no-image'                    => 'Ingen bilde',
+                'img-fail'                    => 'Opplasting av bilde mislyktes',
+                'no-option'                   => 'Ingen alternativer',
+                'keyboard-shortcuts'          => 'Tastatursnarveier',
+                'shortcuts-navigation'        => 'Navigasjon',
+                'shortcuts-editing'           => 'Redigering',
+                'shortcuts-selection'         => 'Utvalg',
+                'shortcuts-clipboard'         => 'Utklippstavle og fyll',
+                'shortcuts-move-cell'         => 'Flytt mellom celler',
+                'shortcuts-move-down'         => 'Flytt ned / bekreft redigering',
+                'shortcuts-move-up'           => 'Flytt opp',
+                'shortcuts-move-right-left'   => 'Flytt til høyre / venstre',
+                'shortcuts-home-end'          => 'Første / siste kolonne i raden',
+                'shortcuts-ctrl-home-end'     => 'Første / siste celle i rutenettet',
+                'shortcuts-extend-selection'  => 'Utvid utvalget',
+                'shortcuts-select-all'        => 'Velg alle celler',
+                'shortcuts-enter-edit'        => 'Gå til redigeringsmodus',
+                'shortcuts-confirm-move-down' => 'Bekreft + flytt ned',
+                'shortcuts-confirm-move-right'=> 'Bekreft + flytt til høyre',
+                'shortcuts-escape-revert'     => 'Gjenopprett verdi + avslutt redigering',
+                'shortcuts-clear-cell'        => 'Tøm celle',
+                'shortcuts-copy'              => 'Kopier',
+                'shortcuts-cut'               => 'Klipp ut',
+                'shortcuts-paste'             => 'Lim inn',
+                'shortcuts-fill-down'         => 'Fyll nedover',
+                'shortcuts-fill-right'        => 'Fyll til høyre',
+                'shortcuts-undo'              => 'Angre',
+                'shortcuts-redo'              => 'Gjør om',
+                'shortcuts-help'              => 'Vis/skjul tastatursnarveier',
             ],
             'create-success'          => 'Produkt opprettet vellykket',
             'delete-failed'           => 'Sletting av produkt mislyktes',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => 'Er filtrerbar',
                 'ai-translate'          => 'AI Oversettelse',
                 'invalid-swatch-type'   => ':attribute er ikke tillatt for attributttype :type med fargeprøvetype :swatch_type.',
+
+                'single-object-only'    => 'Hver opprettelsesforespørsel må inneholde kun ett attributtobjekt.',
                 'option'                => [
                     'color'    => 'Fargeprøve',
                     'dropdown' => 'Nedtrekksmeny',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => 'Attributt slettet',
             'update-success'    => 'Attributt oppdatert',
             'user-define-error' => 'Kan ikke slette systemattributt',
+
+            'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
             'not-found'         => 'Fant ikke attributt med kode ":code"',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => 'Kategori slettet.',
             'update-success'       => 'Kategori oppdatert.',
             'can-not-update'       => 'Denne rotkategorien er tilknyttet et kanal og kan ikke ha en overordnet kategori.',
+            'invalid-parent'       => 'Den valgte overordnede kategorien er ugyldig. En kategori kan ikke være sin egen forelder eller en etterkommer av seg selv.',
             'unique-validation'    => 'Denne verdien er allerede opptatt.',
             'not-found'            => 'Kategori med kode ":code" ble ikke funnet',
             'unknown-fields'       => 'Kategori med kode ":fields" ble ikke funnet',
@@ -849,15 +887,18 @@ return [
             'update-success'    => 'Kategorifelt Oppdatert',
             'user-define-error' => 'Kan ikke slette system Kategorifelt',
             'not-found'         => 'Kategorifelt med kode ":code" ble ikke funnet',
+
+            'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategori feltalternativ opprettet',
-            'update-success' => 'Kategori feltalternativ oppdatert',
+            'create-success'      => 'Kategori feltalternativ opprettet',
+            'update-success'      => 'Kategori feltalternativ oppdatert',
+            'update-unknown-code' => 'Det finnes ingen kategorifeltalternativ med koden «:code».',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Opprett attributt familie',
-                'title'    => 'Familier',
+                'title'    => 'Attributtfamilier',
                 'datagrid' => [
                     'code'           => 'Kode',
                     'delete'         => 'Slett',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Kan ikke oppdatere konfigurasjonsalternativer, fordi denne familien allerede har produktvarianter.',
         ],
         'history' => [
+            'view' => 'Vis versjonsdetaljer',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versjon',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => 'Satt på pause',
                         'cancelled'            => 'Avbrutt',
                         'failed'               => 'Mislyktes',
+
+                        'view'       => 'Vis',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => 'Klient ble ikke funnet',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Tittel',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Systemprompts',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Tittel',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => 'Ugyldig modellnavn. Bruk kun bokstaver, tall, bindestreker, punktum, kolon og skråstreker (f.eks. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'            => 'Plattform lagret vellykket.',
-                'update-success'          => 'Plattform oppdatert vellykket.',
-                'delete-success'          => 'Plattform slettet vellykket.',
-                'delete-fail'             => 'Sletting av plattform mislyktes.',
-                'not-found'               => 'Den valgte plattformen finnes ikke lenger. Oppdater og prøv igjen.',
-                'cannot-delete-default'   => 'Kan ikke slette den eneste standardplattformen.',
-                'set-default-success'     => 'Plattform angitt som standard vellykket.',
-                'test-success'            => 'Tilkobling bekreftet vellykket!',
-                'test-fail'               => 'Tilkoblingstest mislyktes',
-                'no-test-model'           => 'Velg minst én tekstkapabel modell for å kjøre tilkoblingstesten.',
-                'custom-api-url-required' => 'API URL er påkrevd for egendefinerte leverandører slik at tilkoblingstesten når ditt eget endepunkt.',
-                'api-key-corrupted'       => 'Den lagrede API-nøkkelen kunne ikke dekrypteres (:error). Applikasjonens krypteringsnøkkel kan ha blitt endret. Skriv inn API-nøkkelen din på nytt og lagre.',
-                'fetch-models-fail'       => 'Kunne ikke hente modeller',
-                'invalid-model-names'     => 'Ugyldige modellnavn: :names. Modellnavn må starte med en bokstav eller et tall og kun inneholde bokstaver, tall, bindestreker, punktum, kolon og skråstreker.',
+                'save-success'             => 'Plattform lagret vellykket.',
+                'update-success'           => 'Plattform oppdatert vellykket.',
+                'delete-success'           => 'Plattform slettet vellykket.',
+                'delete-fail'              => 'Sletting av plattform mislyktes.',
+                'not-found'                => 'Den valgte plattformen finnes ikke lenger. Oppdater og prøv igjen.',
+                'cannot-delete-default'    => 'Kan ikke slette den eneste standardplattformen.',
+                'set-default-success'      => 'Plattform angitt som standard vellykket.',
+                'test-success'             => 'Tilkobling bekreftet vellykket!',
+                'test-fail'                => 'Tilkoblingstest mislyktes',
+                'no-test-model'            => 'Velg minst én tekstkapabel modell for å kjøre tilkoblingstesten.',
+                'custom-api-url-required'  => 'API URL er påkrevd for egendefinerte leverandører slik at tilkoblingstesten når ditt eget endepunkt.',
+                'api-key-corrupted'        => 'Den lagrede API-nøkkelen kunne ikke dekrypteres (:error). Applikasjonens krypteringsnøkkel kan ha blitt endret. Skriv inn API-nøkkelen din på nytt og lagre.',
+                'fetch-models-fail'        => 'Kunne ikke hente modeller',
+                'invalid-model-names'      => 'Ugyldige modellnavn: :names. Modellnavn må starte med en bokstav eller et tall og kun inneholde bokstaver, tall, bindestreker, punktum, kolon og skråstreker.',
+                'default-requires-enabled' => 'En deaktivert plattform kan ikke settes som standard. Aktiver plattformen først.',
             ],
         ],
     ],

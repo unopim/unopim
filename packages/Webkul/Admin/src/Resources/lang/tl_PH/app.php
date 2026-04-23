@@ -220,7 +220,8 @@ return [
                 'save-btn'   => 'I-save ang produkto',
                 'title'      => 'I-edit ang produkto',
                 'categories' => [
-                    'title' => 'Mga Kategorya',
+                    'title'            => 'Mga Kategorya',
+                    'root-not-allowed' => 'Ang kategoryang ugat ay hindi maaaring italaga sa isang produkto.',
                 ],
                 'images' => [
                     'info'  => 'Ang mga larawan ay dapat may resolusyon na 560px X 609px',
@@ -363,6 +364,8 @@ return [
                     'url'                        => 'Pakilagay ng wastong URL.',
                     'regex'                      => 'Hindi tumutugma ang halaga sa kinakailangang pattern.',
                     'invalid-pattern'            => 'Di-wastong pasadyang pattern ang ibinigay.',
+
+                    'numeric'                    => 'Ang halaga ng numerikong attribute na ":attribute" ay dapat maging wastong numero.',
                     'select-attribute-or-family' => 'Mangyaring pumili ng kahit isang attribute o isang pamilya ng attribute.',
                     'failed'                     => 'Nabigo ang pagpapatunay.',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Matagumpay ang bulk edit.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Walang pagbabago para i-save.',
-                'success'         => 'Matagumpay na naisagawa ang gawain.',
-                'fetch-failed'    => 'Hindi nakuha ang datos.',
-                'action'          => 'Maramihang Pag-edit',
-                'description'     => 'I-edit ang maraming produkto nang sabay-sabay. Ang mga pagbabago ay pinoproseso sa background.',
-                'gallery-preview' => 'Preview ng Gallery',
-                'img-preview'     => 'Preview ng Imahe',
-                'no-image'        => 'Walang Imahe',
-                'img-fail'        => 'Nabigo ang pag-upload ng imahe',
-                'no-option'       => 'Walang Pagpipilian',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Walang pagbabago para i-save.',
+
+                'invalid-datetime'            => 'Maglagay ng wastong petsa at oras.',
+
+                'resize-column'               => 'I-drag upang baguhin ang lapad ng column',
+                'success'                     => 'Matagumpay na naisagawa ang gawain.',
+                'fetch-failed'                => 'Hindi nakuha ang datos.',
+                'action'                      => 'Maramihang Pag-edit',
+                'description'                 => 'I-edit ang maraming produkto nang sabay-sabay. Ang mga pagbabago ay pinoproseso sa background.',
+                'gallery-preview'             => 'Preview ng Gallery',
+                'img-preview'                 => 'Preview ng Imahe',
+                'no-image'                    => 'Walang Imahe',
+                'img-fail'                    => 'Nabigo ang pag-upload ng imahe',
+                'no-option'                   => 'Walang Pagpipilian',
+                'keyboard-shortcuts'          => 'Mga Shortcut sa Keyboard',
+                'shortcuts-navigation'        => 'Nabigasyon',
+                'shortcuts-editing'           => 'Pag-edit',
+                'shortcuts-selection'         => 'Pagpili',
+                'shortcuts-clipboard'         => 'Clipboard at Punan',
+                'shortcuts-move-cell'         => 'Lumipat sa pagitan ng mga cell',
+                'shortcuts-move-down'         => 'Bumaba / kumpirmahin ang pag-edit',
+                'shortcuts-move-up'           => 'Umakyat',
+                'shortcuts-move-right-left'   => 'Pumunta sa kanan / kaliwa',
+                'shortcuts-home-end'          => 'Una / huling kolumna sa hilera',
+                'shortcuts-ctrl-home-end'     => 'Una / huling cell sa grid',
+                'shortcuts-extend-selection'  => 'Palawakin ang pagpili',
+                'shortcuts-select-all'        => 'Piliin ang lahat ng cell',
+                'shortcuts-enter-edit'        => 'Pumasok sa edit mode',
+                'shortcuts-confirm-move-down' => 'Kumpirmahin + bumaba',
+                'shortcuts-confirm-move-right'=> 'Kumpirmahin + pumunta sa kanan',
+                'shortcuts-escape-revert'     => 'Ibalik ang halaga + lumabas sa pag-edit',
+                'shortcuts-clear-cell'        => 'Linisin ang cell',
+                'shortcuts-copy'              => 'Kopyahin',
+                'shortcuts-cut'               => 'I-cut',
+                'shortcuts-paste'             => 'I-paste',
+                'shortcuts-fill-down'         => 'Punan pababa',
+                'shortcuts-fill-right'        => 'Punan pakanan',
+                'shortcuts-undo'              => 'I-undo',
+                'shortcuts-redo'              => 'I-redo',
+                'shortcuts-help'              => 'Ipakita/itago ang mga shortcut sa keyboard',
             ],
             'create-success'          => 'Matagumpay na nalikha ang produkto',
             'delete-failed'           => 'Nabigong tanggalin ang produkto',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => 'Nafifilter',
                 'ai-translate'          => 'AI Pagsasalin',
                 'invalid-swatch-type'   => 'Ang :attribute ay hindi pinapayagan para sa uri ng katangian :type na may uri ng swatch :swatch_type.',
+
+                'single-object-only'    => 'Ang bawat create request ay dapat magpadala ng iisang attribute object.',
                 'option'                => [
                     'color'    => 'Color Swatch',
                     'dropdown' => 'Dropdown',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => 'Katangian natanggal',
             'update-success'    => 'Katangian na-update',
             'user-define-error' => 'Hindi ma-delete ang system attribute',
+
+            'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
             'not-found'         => 'Ang katangian na may code ":code" ay hindi natagpuan',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => 'Matagumpay na natanggal ang kategorya.',
             'update-success'       => 'Matagumpay na na-update ang kategorya.',
             'can-not-update'       => 'Ang root category na ito ay naka-link sa isang channel at hindi maaaring magkaroon ng parent category.',
+            'invalid-parent'       => 'Ang napiling parent category ay hindi wasto. Ang isang category ay hindi maaaring maging sariling parent o inapo ng sarili nito.',
             'unique-validation'    => 'Ang halaga na ito ay ginagamit na.',
             'not-found'            => 'Ang kategorya na may kode ":code" ay hindi natagpuan',
             'unknown-fields'       => 'Hindi natagpuang field sa kategorya na may kode ":fields"',
@@ -849,15 +887,18 @@ return [
             'update-success'    => 'Matagumpay na na-update ang field ng kategorya',
             'user-define-error' => 'Hindi maaaring tanggalin ang field ng kategorya ng sistema',
             'not-found'         => 'Hindi natagpuan ang field ng kategorya na may code ":code"',
+
+            'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Nagtagumpay ang paglikha ng opsyon ng kategorya',
-            'update-success' => 'Na-update ang opsyon ng kategorya',
+            'create-success'      => 'Nagtagumpay ang paglikha ng opsyon ng kategorya',
+            'update-success'      => 'Na-update ang opsyon ng kategorya',
+            'update-unknown-code' => 'Walang category field option na may code na ":code".',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Lumikha ng pamilya ng mga katangian',
-                'title'    => 'Mga Pamilya',
+                'title'    => 'Mga Attribute Family',
                 'datagrid' => [
                     'code'           => 'Kodigo',
                     'delete'         => 'Tanggalin',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Hindi ma-update ang mga opsyon ng configuration dahil mayroon nang mga produkto ng variant sa pamilya.',
         ],
         'history' => [
+            'view' => 'Tingnan ang Mga Detalye ng Bersyon',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Bersyon',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => 'Naka-pause',
                         'cancelled'            => 'Na-cancel',
                         'failed'               => 'Nabigo',
+
+                        'view'       => 'Tingnan',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => 'Ang client ay hindi natagpuan',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Mga Prompt',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Pamagat',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Mga System Prompt',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Pamagat',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => 'Hindi wastong pangalan ng modelo. Gumamit lamang ng mga titik, numero, gitling, tuldok, tutuldok, at pahilis (hal. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'            => 'Matagumpay na na-save ang platform.',
-                'update-success'          => 'Matagumpay na na-update ang platform.',
-                'delete-success'          => 'Matagumpay na nabura ang platform.',
-                'delete-fail'             => 'Nabigong burahin ang platform.',
-                'not-found'               => 'Wala na ang napiling platform. Pakisariwa at subukang muli.',
-                'cannot-delete-default'   => 'Hindi mabura ang nag-iisang default na platform.',
-                'set-default-success'     => 'Matagumpay na naitakda ang platform bilang default.',
-                'test-success'            => 'Matagumpay na na-verify ang koneksyon!',
-                'test-fail'               => 'Nabigo ang pagsubok sa koneksyon',
-                'no-test-model'           => 'Pumili ng kahit isang text-capable na modelo para patakbuhin ang pagsubok sa koneksyon.',
-                'custom-api-url-required' => 'Kailangan ang API URL para sa mga custom na provider upang maabot ng pagsubok sa koneksyon ang iyong sariling endpoint.',
-                'api-key-corrupted'       => 'Hindi ma-decrypt ang nakaimbak na API key (:error). Maaaring nagbago ang encryption key ng application. Muling ilagay ang iyong API key at i-save.',
-                'fetch-models-fail'       => 'Hindi makuha ang mga modelo',
-                'invalid-model-names'     => 'Hindi wastong mga pangalan ng modelo: :names. Ang mga pangalan ng modelo ay dapat magsimula sa titik o numero at maglaman lamang ng mga titik, numero, gitling, tuldok, tutuldok, at pahilis.',
+                'save-success'             => 'Matagumpay na na-save ang platform.',
+                'update-success'           => 'Matagumpay na na-update ang platform.',
+                'delete-success'           => 'Matagumpay na nabura ang platform.',
+                'delete-fail'              => 'Nabigong burahin ang platform.',
+                'not-found'                => 'Wala na ang napiling platform. Pakisariwa at subukang muli.',
+                'cannot-delete-default'    => 'Hindi mabura ang nag-iisang default na platform.',
+                'set-default-success'      => 'Matagumpay na naitakda ang platform bilang default.',
+                'test-success'             => 'Matagumpay na na-verify ang koneksyon!',
+                'test-fail'                => 'Nabigo ang pagsubok sa koneksyon',
+                'no-test-model'            => 'Pumili ng kahit isang text-capable na modelo para patakbuhin ang pagsubok sa koneksyon.',
+                'custom-api-url-required'  => 'Kailangan ang API URL para sa mga custom na provider upang maabot ng pagsubok sa koneksyon ang iyong sariling endpoint.',
+                'api-key-corrupted'        => 'Hindi ma-decrypt ang nakaimbak na API key (:error). Maaaring nagbago ang encryption key ng application. Muling ilagay ang iyong API key at i-save.',
+                'fetch-models-fail'        => 'Hindi makuha ang mga modelo',
+                'invalid-model-names'      => 'Hindi wastong mga pangalan ng modelo: :names. Ang mga pangalan ng modelo ay dapat magsimula sa titik o numero at maglaman lamang ng mga titik, numero, gitling, tuldok, tutuldok, at pahilis.',
+                'default-requires-enabled' => 'Hindi maaaring markahan bilang default ang isang naka-disable na platform. I-enable muna ang platform.',
             ],
         ],
     ],

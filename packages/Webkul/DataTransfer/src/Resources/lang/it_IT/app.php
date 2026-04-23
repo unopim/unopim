@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'L\'intestazione contiene attributi non validi: "%s".',
             'system'               => 'Si è verificato un errore di sistema imprevisto.',
             'wrong-quotes'         => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
+            'file-empty'           => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
         ],
     ],
     'job' => [

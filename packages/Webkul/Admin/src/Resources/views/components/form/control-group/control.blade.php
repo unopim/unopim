@@ -1471,10 +1471,10 @@
                 },
 
                 clearFile(event) {
-                    this.fieldData.value = null;
+                    this.fieldData.value = '';
 
                     if (this.$refs.fileInput) {
-                        this.$refs.fileInput.value = null;
+                        this.$refs.fileInput.value = '';
                     }
 
                     this.$nextTick(() => {

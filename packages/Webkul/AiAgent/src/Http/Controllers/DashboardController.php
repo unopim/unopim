@@ -15,7 +15,7 @@ class DashboardController extends Controller
     {
         $this->middleware(function ($request, $next) {
             if (! bouncer()->hasPermission('ai-agent.dashboard')) {
-                abort(401, trans('ai-agent::app.common.unauthorized'));
+                abort(403, trans('ai-agent::app.common.unauthorized'));
             }
 
             return $next($request);

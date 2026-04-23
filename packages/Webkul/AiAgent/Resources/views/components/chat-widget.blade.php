@@ -793,6 +793,7 @@ app.component('v-agenting-pim', {
             activeSessionId: null,
             showSessions: false,
             platforms: platforms,
+            defaultPlatformId: defaultPlatformId,
             selectedPlatformId: initialPlatform ? initialPlatform.id : null,
             selectedModel: pickTextModel(initialModels),
             trans: trans,
@@ -836,8 +837,8 @@ app.component('v-agenting-pim', {
                 // Row 5: Image editing & export
                 { key: 'edit_image', label: `@lang('ai-agent::app.widget.capabilities-list.edit-image')`, description: `@lang('ai-agent::app.widget.capabilities-list.edit-image-desc')`,
                   iconSvg: svg('<circle cx="12" cy="12" r="3"/><path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12z" stroke-dasharray="4 2"/>'),
-                  color: '#D946EF', hint: `@lang('ai-agent::app.widget.capabilities-list.edit-image-hint')`, acceptsImages: true, acceptsSpreadsheet: false,
-                  autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.edit-image-prompt')`, autoFileUpload: true },
+                  color: '#D946EF', hint: `@lang('ai-agent::app.widget.capabilities-list.edit-image-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
+                  autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.edit-image-prompt')`, autoFileUpload: false },
                 { key: 'export_products', label: `@lang('ai-agent::app.widget.capabilities-list.export-products')`, description: `@lang('ai-agent::app.widget.capabilities-list.export-products-desc')`,
                   iconSvg: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),
                   color: '#0891B2', hint: `@lang('ai-agent::app.widget.capabilities-list.export-products-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -1451,6 +1452,15 @@ app.component('v-agenting-pim', {
             const newRating = current === rating ? null : rating;
             // Trigger Vue reactivity by replacing the object
             this.messages[idx] = { ...this.messages[idx], _rating: newRating };
+
+            // Persist feedback to backend
+            if (newRating) {
+                const messageText = this.messages[idx]?.content || '';
+                this.$axios.post("{{ route('ai-agent.chat.rate') }}", {
+                    rating: newRating,
+                    message: messageText.substring(0, 5000),
+                }).catch(() => {});
+            }
         },
 
         needsConfirmation(msg, idx) {
@@ -1644,7 +1654,8 @@ app.component('v-agenting-pim', {
                 const s = JSON.parse(raw);
                 if (s.activeTab) this.activeTab = s.activeTab;
                 if (s.activeCapability) this.activeCapability = this.capabilities.find(c => c.key === s.activeCapability) || null;
-                if (s.selectedPlatformId && this.platforms.find(p => p.id === s.selectedPlatformId)) {
+                // Restore platform only when it still matches the current server default; otherwise respect the newly-set default.
+                if (s.selectedPlatformId && s.selectedPlatformId === this.defaultPlatformId && this.platforms.find(p => p.id === s.selectedPlatformId)) {
                     this.selectedPlatformId = s.selectedPlatformId;
                     if (s.selectedModel && this.availableModels.includes(s.selectedModel)) {
                         this.selectedModel = s.selectedModel;

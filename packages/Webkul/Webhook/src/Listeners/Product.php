@@ -48,4 +48,19 @@ class Product
 
         SendBulkProductWebhook::dispatch($ids, auth('admin')?->user()?->id);
     }
+
+    /**
+     * Fire webhook for all products processed by a bulk-edit save.
+     * Unlike afterUpdate, no change-detection audit is required.
+     *
+     * @param  array<int>  $ids
+     */
+    public function afterBulkEdit(array $ids)
+    {
+        if (! $this->settingsRepository->isWebhookActive()) {
+            return;
+        }
+
+        $this->webhookService->sendBatchForBulkEdit($ids);
+    }
 }

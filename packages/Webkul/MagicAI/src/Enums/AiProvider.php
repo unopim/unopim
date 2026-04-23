@@ -209,7 +209,10 @@ enum AiProvider: string
         ]);
 
         $data = json_decode($response->getBody()->getContents(), true);
-        $models = array_column($data['data'] ?? [], 'id');
+        $models = array_map(
+            fn ($id) => ltrim((string) $id, '~'),
+            array_column($data['data'] ?? [], 'id')
+        );
         sort($models);
 
         return $models;

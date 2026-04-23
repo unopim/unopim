@@ -123,7 +123,7 @@ class MagicAIController extends Controller
      */
     public function suggestionValues(): JsonResponse
     {
-        $query = request()->input('query') ?? '';
+        $query = (string) request()->input('query', '');
         $entityName = request()->input('entity_name', 'attribute');
 
         if ($entityName === 'category_field') {

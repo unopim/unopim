@@ -127,13 +127,7 @@
                                                                 >
                                                                 </span>
 
-                                                                <span
-                                                                    v-if="element.code !== element.label"
-                                                                    class="text-[10px] text-gray-400 dark:text-gray-500 transition-all truncate max-w-[120px] flex-shrink-0"
-                                                                    :title="element.code"
-                                                                    v-text="'(' + element.code + ')'"
-                                                                >
-                                                                </span>
+                                                                {{-- Attribute code is intentionally hidden to keep the list name-only (Issue #716). --}}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -236,13 +230,7 @@
                                                             >
                                                             </span>
 
-                                                            <span
-                                                                v-if="element.code !== element.label"
-                                                                class="text-[10px] text-gray-400 dark:text-gray-500 transition-all truncate max-w-[120px] flex-shrink-0"
-                                                                :title="element.code"
-                                                                v-text="'(' + element.code + ')'"
-                                                            >
-                                                            </span>
+                                                            {{-- Attribute code is intentionally hidden to keep the list name-only (Issue #716). --}}
 
                                                             <input
                                                                 type="hidden"

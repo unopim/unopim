@@ -7,7 +7,7 @@ return [
         'key'   => 'ai-agent',
         'name'  => 'ai-agent::app.acl.ai-agent',
         'route' => 'admin.configuration.edit',
-        'sort'  => 10,
+        'sort'  => 7,
     ],
     [
         'key'    => 'ai-agent.platform',
@@ -43,10 +43,34 @@ return [
         'sort'   => 2,
     ],
     [
+        'key'    => 'ai-agent.prompt.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.prompt.edit',
+        'sort'   => 1,
+    ],
+    [
+        'key'    => 'ai-agent.prompt.delete',
+        'name'   => 'ai-agent::app.acl.delete',
+        'route'  => 'admin.magic_ai.prompt.delete',
+        'sort'   => 2,
+    ],
+    [
         'key'    => 'ai-agent.system-prompt',
         'name'   => 'ai-agent::app.acl.system-prompt',
         'route'  => 'admin.magic_ai.system_prompt.index',
         'sort'   => 3,
+    ],
+    [
+        'key'    => 'ai-agent.system-prompt.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.system_prompt.edit',
+        'sort'   => 1,
+    ],
+    [
+        'key'    => 'ai-agent.system-prompt.delete',
+        'name'   => 'ai-agent::app.acl.delete',
+        'route'  => 'admin.magic_ai.system_prompt.delete',
+        'sort'   => 2,
     ],
 
     [

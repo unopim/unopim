@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
             'system'               => 'Lỗi hệ thống không mong muốn xảy ra.',
             'wrong-quotes'         => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
+            'file-empty'           => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',
         ],
     ],
     'job' => [

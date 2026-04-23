@@ -232,7 +232,8 @@ return [
                 'title'    => 'Edit Product',
 
                 'categories' => [
-                    'title' => 'Categories',
+                    'title'            => 'Categories',
+                    'root-not-allowed' => 'Root category cannot be assigned to a product.',
                 ],
 
                 'images' => [
@@ -388,6 +389,8 @@ return [
                     'url'                        => 'Please enter a valid URL.',
                     'regex'                      => 'Value does not match the required pattern.',
                     'invalid-pattern'            => 'Invalid custom pattern provided.',
+
+                    'numeric'                    => 'Value for the numeric attribute ":attribute" must be a valid number.',
                     'select-attribute-or-family' => 'Please select at least one attribute or an attribute family.',
                     'failed'                     => 'Validation failed.',
                 ],
@@ -414,15 +417,46 @@ return [
 
                 'id'              => 'ID',
                 'no-changes'      => 'No changes to save.',
-                'success'         => 'Job executed successfully.',
-                'fetch-failed'    => 'Failed to fetch.',
-                'action'          => 'Bulk Edit',
-                'description'     => 'Edit multiple products at once. Changes are processed in the background.',
-                'gallery-preview' => 'Gallery Preview',
-                'img-preview'     => 'Image Preview',
-                'no-image'        => 'No Image',
-                'img-fail'        => 'Image upload failed',
-                'no-option'       => 'No Options',
+
+                'invalid-datetime' => 'Please enter a valid date and time.',
+
+                'resize-column'    => 'Drag to resize column',
+                'success'          => 'Job executed successfully.',
+                'fetch-failed'     => 'Failed to fetch.',
+                'action'           => 'Bulk Edit',
+                'description'      => 'Edit multiple products at once. Changes are processed in the background.',
+                'gallery-preview'  => 'Gallery Preview',
+                'img-preview'      => 'Image Preview',
+                'no-image'         => 'No Image',
+                'img-fail'         => 'Image upload failed',
+                'no-option'        => 'No Options',
+
+                'keyboard-shortcuts'          => 'Keyboard Shortcuts',
+                'shortcuts-navigation'        => 'Navigation',
+                'shortcuts-editing'           => 'Editing',
+                'shortcuts-selection'         => 'Selection',
+                'shortcuts-clipboard'         => 'Clipboard & Fill',
+                'shortcuts-move-cell'         => 'Move between cells',
+                'shortcuts-move-down'         => 'Move down / confirm edit',
+                'shortcuts-move-up'           => 'Move up',
+                'shortcuts-move-right-left'   => 'Move right / left',
+                'shortcuts-home-end'          => 'First / last column in row',
+                'shortcuts-ctrl-home-end'     => 'First / last cell in grid',
+                'shortcuts-extend-selection'  => 'Extend selection',
+                'shortcuts-select-all'        => 'Select all cells',
+                'shortcuts-enter-edit'        => 'Enter edit mode',
+                'shortcuts-confirm-move-down' => 'Confirm + move down',
+                'shortcuts-confirm-move-right'=> 'Confirm + move right',
+                'shortcuts-escape-revert'     => 'Revert value + exit edit',
+                'shortcuts-clear-cell'        => 'Clear cell',
+                'shortcuts-copy'              => 'Copy',
+                'shortcuts-cut'               => 'Cut',
+                'shortcuts-paste'             => 'Paste',
+                'shortcuts-fill-down'         => 'Fill down',
+                'shortcuts-fill-right'        => 'Fill right',
+                'shortcuts-undo'              => 'Undo',
+                'shortcuts-redo'              => 'Redo',
+                'shortcuts-help'              => 'Toggle keyboard shortcuts',
             ],
 
             'create-success'          => 'Product created successfully',
@@ -522,7 +556,8 @@ return [
                 'ai-translate'          => 'AI Translate',
                 'invalid-swatch-type'   => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
 
-                'option' => [
+                'single-object-only' => 'Each create request must send a single attribute object.',
+                'option'             => [
                     'color'    => 'Color Swatch',
                     'dropdown' => 'Dropdown',
                     'image'    => 'Image Swatch',
@@ -607,6 +642,8 @@ return [
             'delete-success'    => 'Attribute Deleted Successfully',
             'update-success'    => 'Attribute Updated Successfully',
             'user-define-error' => 'Can not delete system Attribute',
+
+            'immutable-fields'  => 'The following fields cannot be modified: :fields.',
             'not-found'         => 'Attribute with code ":code" could not be found',
         ],
 
@@ -730,6 +767,7 @@ return [
             'delete-success'       => 'The category has been successfully deleted.',
             'update-success'       => 'Category updated successfully.',
             'can-not-update'       => 'This root category is related to a channel and can not have parent category.',
+            'invalid-parent'       => 'The selected parent category is invalid. A category cannot be its own parent or a descendant of itself.',
             'unique-validation'    => 'This value is already taken.',
             'not-found'            => 'Category with code ":code" could not be found',
             'unknown-fields'       => 'Category Field with code ":fields" could not be found',
@@ -905,17 +943,20 @@ return [
             'update-success'    => 'Category Field Updated Successfully',
             'user-define-error' => 'Can not delete system Category Field',
             'not-found'         => 'Category Field with code ":code" could not be found',
+
+            'immutable-fields'  => 'The following fields cannot be modified: :fields.',
         ],
 
         'category-fields-options' => [
-            'create-success' => 'Category Field Option Created Successfully',
-            'update-success' => 'Category Field Option Updated Successfully',
+            'create-success'      => 'Category Field Option Created Successfully',
+            'update-success'      => 'Category Field Option Updated Successfully',
+            'update-unknown-code' => 'No category field option exists with code ":code".',
         ],
 
         'families' => [
             'index' => [
                 'add'   => 'Create Attribute Family',
-                'title' => 'Families',
+                'title' => 'Attribute Families',
 
                 'datagrid' => [
                     'code'           => 'Code',
@@ -1011,6 +1052,8 @@ return [
         ],
 
         'history' => [
+            'view' => 'View Version Details',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -1159,6 +1202,8 @@ return [
                         'paused'     => 'Paused',
                         'cancelled'  => 'Cancelled',
                         'failed'     => 'Failed',
+
+                        'view'       => 'View',
                     ],
                 ],
 
@@ -1861,6 +1906,12 @@ return [
         ],
 
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Title',
@@ -1904,6 +1955,12 @@ return [
         ],
 
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'System Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'            => 'ID',
                 'title'         => 'Title',
@@ -2002,20 +2059,21 @@ return [
             ],
 
             'message' => [
-                'save-success'            => 'Platform saved successfully.',
-                'update-success'          => 'Platform updated successfully.',
-                'delete-success'          => 'Platform deleted successfully.',
-                'delete-fail'             => 'Platform deletion failed.',
-                'not-found'               => 'The selected platform no longer exists. Please refresh and try again.',
-                'cannot-delete-default'   => 'Cannot delete the only default platform.',
-                'set-default-success'     => 'Platform set as default successfully.',
-                'test-success'            => 'Connection verified successfully!',
-                'test-fail'               => 'Connection test failed',
-                'no-test-model'           => 'Select at least one text-capable model to run the connection test.',
-                'custom-api-url-required' => 'API URL is required for custom providers so the connection test reaches your own endpoint.',
-                'api-key-corrupted'       => 'The stored API key cannot be decrypted (:error). The application encryption key may have changed. Please re-enter your API key and save.',
-                'fetch-models-fail'       => 'Could not fetch models',
-                'invalid-model-names'     => 'Invalid model names: :names. Model names must start with a letter or number and contain only letters, numbers, hyphens, dots, colons, and slashes.',
+                'save-success'             => 'Platform saved successfully.',
+                'update-success'           => 'Platform updated successfully.',
+                'delete-success'           => 'Platform deleted successfully.',
+                'delete-fail'              => 'Platform deletion failed.',
+                'not-found'                => 'The selected platform no longer exists. Please refresh and try again.',
+                'cannot-delete-default'    => 'Cannot delete the only default platform.',
+                'set-default-success'      => 'Platform set as default successfully.',
+                'test-success'             => 'Connection verified successfully!',
+                'test-fail'                => 'Connection test failed',
+                'no-test-model'            => 'Select at least one text-capable model to run the connection test.',
+                'custom-api-url-required'  => 'API URL is required for custom providers so the connection test reaches your own endpoint.',
+                'api-key-corrupted'        => 'The stored API key cannot be decrypted (:error). The application encryption key may have changed. Please re-enter your API key and save.',
+                'fetch-models-fail'        => 'Could not fetch models',
+                'invalid-model-names'      => 'Invalid model names: :names. Model names must start with a letter or number and contain only letters, numbers, hyphens, dots, colons, and slashes.',
+                'default-requires-enabled' => 'A disabled platform cannot be marked as default. Please enable the platform first.',
             ],
         ],
     ],

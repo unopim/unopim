@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Illuminate\View\View;
@@ -186,6 +187,15 @@ class ProductBulkEditController extends Controller
             'data' => 'required',
         ]);
 
+        $errors = $this->validateNumericAttributeValues($data['data'] ?? []);
+
+        if (! empty($errors)) {
+            return response()->json([
+                'message' => trans('admin::app.catalog.products.bulk-edit.validation.failed'),
+                'errors'  => $errors,
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         $jobInstance = $this->jobInstancesRepository->find(['code' => 'bulk_product_update']);
 
         if (! $jobInstance) {
@@ -204,6 +214,81 @@ class ProductBulkEditController extends Controller
             'status'       => 'success',
             'redirect_url' => route('admin.catalog.products.index'),
         ]);
+    }
+
+    /**
+     * Flatten the bulk-edit payload and return ["<attribute_code>" => [messages]]
+     * for attributes whose numeric types (price, integer, decimal) got non-numeric values.
+     */
+    protected function validateNumericAttributeValues(array $data): array
+    {
+        $attributeCodes = [];
+
+        foreach ($data as $perProduct) {
+            if (! is_array($perProduct)) {
+                continue;
+            }
+
+            foreach (array_keys($perProduct) as $code) {
+                $attributeCodes[$code] = true;
+            }
+        }
+
+        if (empty($attributeCodes)) {
+            return [];
+        }
+
+        $numericTypes = ['price', 'integer', 'decimal'];
+
+        $numericCodes = $this->attributeRepository
+            ->whereIn('code', array_keys($attributeCodes))
+            ->whereIn('type', $numericTypes)
+            ->pluck('type', 'code');
+
+        if ($numericCodes->isEmpty()) {
+            return [];
+        }
+
+        $errors = [];
+
+        foreach ($data as $perProduct) {
+            if (! is_array($perProduct)) {
+                continue;
+            }
+
+            foreach ($perProduct as $code => $value) {
+                if (! $numericCodes->has($code)) {
+                    continue;
+                }
+
+                foreach ($this->flattenScalarValues($value) as $scalar) {
+                    if ($scalar === '' || $scalar === null) {
+                        continue;
+                    }
+
+                    if (! is_numeric($scalar)) {
+                        $errors[$code][] = trans('admin::app.catalog.products.bulk-edit.validation.numeric', ['attribute' => $code]);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Yield every scalar leaf from an arbitrarily-nested array.
+     */
+    protected function flattenScalarValues(mixed $value): \Generator
+    {
+        if (is_array($value)) {
+            foreach ($value as $v) {
+                yield from $this->flattenScalarValues($v);
+            }
+        } else {
+            yield $value;
+        }
     }
 
     /**
@@ -231,6 +316,21 @@ class ProductBulkEditController extends Controller
         $query = $this->attributeRepository
             ->whereNotIn('code', ['sku'])
             ->whereNotIn('type', ['table', 'file']);
+
+        $productIds = session('bulk_edit_product_ids', []);
+
+        if (! empty($productIds)) {
+            $familyAttributeIds = DB::table('attributes as a')
+                ->distinct()
+                ->join('attribute_group_mappings as agm', 'agm.attribute_id', '=', 'a.id')
+                ->join('attribute_family_group_mappings as afgm', 'afgm.id', '=', 'agm.attribute_family_group_id')
+                ->join('products as p', 'p.attribute_family_id', '=', 'afgm.attribute_family_id')
+                ->whereIn('p.id', $productIds)
+                ->pluck('a.id')
+                ->toArray();
+
+            $query = $query->whereIn('id', $familyAttributeIds);
+        }
 
         if ($request->filled('ids')) {
             $ids = (array) $request->input('ids');

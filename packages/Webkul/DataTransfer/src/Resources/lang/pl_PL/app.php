@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Nagłówek zawiera nieprawidłowe atrybuty: "%s".',
             'system'               => 'Wystąpił nieoczekiwany błąd systemowy.',
             'wrong-quotes'         => 'Zastosowano krzywe cudzysłowy zamiast prostych cudzysłowów.',
+            'file-empty'           => 'Plik jest pusty lub nie zawiera wiersza nagłówkowego. Proszę przesłać prawidłowy plik z danymi.',
         ],
     ],
     'job' => [

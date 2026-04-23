@@ -220,7 +220,8 @@ return [
                 'save-btn'   => 'Bewaar product',
                 'title'      => 'Product bewerken',
                 'categories' => [
-                    'title' => 'Categorieën',
+                    'title'            => 'Categorieën',
+                    'root-not-allowed' => 'De hoofdcategorie kan niet aan een product worden toegewezen.',
                 ],
                 'images' => [
                     'info'  => 'Beeldresolutie moet zijn als 560px x 609px',
@@ -363,6 +364,8 @@ return [
                     'url'                        => 'Voer een geldige URL in.',
                     'regex'                      => 'Waarde komt niet overeen met het vereiste patroon.',
                     'invalid-pattern'            => 'Ongeldig aangepast patroon opgegeven.',
+
+                    'numeric'                    => 'De waarde voor het numerieke attribuut ":attribute" moet een geldig getal zijn.',
                     'select-attribute-or-family' => 'Selecteer ten minste één attribuut of een attribuutfamilie.',
                     'failed'                     => 'Validatie mislukt.',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Bulkbewerking succesvol uitgevoerd.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Geen wijzigingen om op te slaan.',
-                'success'         => 'Taak succesvol uitgevoerd.',
-                'fetch-failed'    => 'Ophalen mislukt.',
-                'action'          => 'Bulk Bewerken',
-                'description'     => 'Bewerk meerdere producten tegelijk. Wijzigingen worden op de achtergrond verwerkt.',
-                'gallery-preview' => 'Galerijvoorbeeld',
-                'img-preview'     => 'Afbeeldingvoorbeeld',
-                'no-image'        => 'Geen Afbeelding',
-                'img-fail'        => 'Uploaden van afbeelding mislukt',
-                'no-option'       => 'Geen opties',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Geen wijzigingen om op te slaan.',
+
+                'invalid-datetime'            => 'Voer een geldige datum en tijd in.',
+
+                'resize-column'               => 'Sleep om kolom te vergroten of verkleinen',
+                'success'                     => 'Taak succesvol uitgevoerd.',
+                'fetch-failed'                => 'Ophalen mislukt.',
+                'action'                      => 'Bulk Bewerken',
+                'description'                 => 'Bewerk meerdere producten tegelijk. Wijzigingen worden op de achtergrond verwerkt.',
+                'gallery-preview'             => 'Galerijvoorbeeld',
+                'img-preview'                 => 'Afbeeldingvoorbeeld',
+                'no-image'                    => 'Geen Afbeelding',
+                'img-fail'                    => 'Uploaden van afbeelding mislukt',
+                'no-option'                   => 'Geen opties',
+                'keyboard-shortcuts'          => 'Sneltoetsen',
+                'shortcuts-navigation'        => 'Navigatie',
+                'shortcuts-editing'           => 'Bewerken',
+                'shortcuts-selection'         => 'Selectie',
+                'shortcuts-clipboard'         => 'Klembord en invullen',
+                'shortcuts-move-cell'         => 'Bewegen tussen cellen',
+                'shortcuts-move-down'         => 'Naar beneden / bewerking bevestigen',
+                'shortcuts-move-up'           => 'Naar boven',
+                'shortcuts-move-right-left'   => 'Naar rechts / links',
+                'shortcuts-home-end'          => 'Eerste / laatste kolom in rij',
+                'shortcuts-ctrl-home-end'     => 'Eerste / laatste cel in raster',
+                'shortcuts-extend-selection'  => 'Selectie uitbreiden',
+                'shortcuts-select-all'        => 'Alle cellen selecteren',
+                'shortcuts-enter-edit'        => 'Bewerkingsmodus activeren',
+                'shortcuts-confirm-move-down' => 'Bevestigen + naar beneden',
+                'shortcuts-confirm-move-right'=> 'Bevestigen + naar rechts',
+                'shortcuts-escape-revert'     => 'Waarde herstellen + bewerking verlaten',
+                'shortcuts-clear-cell'        => 'Cel wissen',
+                'shortcuts-copy'              => 'Kopiëren',
+                'shortcuts-cut'               => 'Knippen',
+                'shortcuts-paste'             => 'Plakken',
+                'shortcuts-fill-down'         => 'Naar beneden vullen',
+                'shortcuts-fill-right'        => 'Naar rechts vullen',
+                'shortcuts-undo'              => 'Ongedaan maken',
+                'shortcuts-redo'              => 'Opnieuw uitvoeren',
+                'shortcuts-help'              => 'Sneltoetsen weergeven/verbergen',
             ],
             'create-success'          => 'Product met succes gemaakt',
             'delete-failed'           => 'Product verwijderd mislukt',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => 'Is filterbaar',
                 'ai-translate'          => 'AI Vertaling',
                 'invalid-swatch-type'   => 'De :attribute is niet toegestaan voor attribuuttype :type met swatchtype :swatch_type.',
+
+                'single-object-only'    => 'Elke aanmaakaanvraag moet één attribuutobject bevatten.',
                 'option'                => [
                     'color'    => 'Kleurstaal',
                     'dropdown' => 'Laten vallen',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => 'Kenmerk met succes verwijderd',
             'update-success'    => 'Kenmerk succesvol bijgewerkt',
             'user-define-error' => 'Kan het systeem niet verwijderen',
+
+            'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
             'not-found'         => 'Kenmerk met code ":code" kon niet worden gevonden',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => 'De categorie is met succes verwijderd.',
             'update-success'       => 'Categorie met succes bijgewerkt.',
             'can-not-update'       => 'Deze rootcategorie is gerelateerd aan een kanaal en kan geen oudercategorie hebben.',
+            'invalid-parent'       => 'De geselecteerde bovenliggende categorie is ongeldig. Een categorie kan niet zijn eigen bovenliggende of een afstammeling van zichzelf zijn.',
             'unique-validation'    => 'Deze waarde is al genomen.',
             'not-found'            => 'Categorie met code ":code" kon niet worden gevonden',
             'unknown-fields'       => 'Categorie -veld met code ":fields" kon niet worden gevonden',
@@ -849,15 +887,18 @@ return [
             'update-success'    => 'Categorie veld met succes bijgewerkt',
             'user-define-error' => 'Kan het veld systeemcategorie niet verwijderen',
             'not-found'         => 'Categorie -veld met code ":code" kon niet worden gevonden',
+
+            'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Categorie -veldoptie met succes gemaakt',
-            'update-success' => 'Categorie veldoptie met succes bijgewerkt',
+            'create-success'      => 'Categorie -veldoptie met succes gemaakt',
+            'update-success'      => 'Categorie veldoptie met succes bijgewerkt',
+            'update-unknown-code' => 'Er bestaat geen categorieveldoptie met code ":code".',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Creëer attribuutfamilie',
-                'title'    => 'Gezinnen',
+                'title'    => 'Attribuutfamilies',
                 'datagrid' => [
                     'code'           => 'Code',
                     'delete'         => 'Verwijderen',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Kan configureerbare opties niet bijwerken, omdat deze familie al variantproducten heeft.',
         ],
         'history' => [
+            'view' => 'Versiedetails bekijken',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versie',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => 'Gepauzeerd',
                         'cancelled'            => 'Geannuleerd',
                         'failed'               => 'Mislukt',
+
+                        'view'       => 'Bekijken',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => 'Klant niet gevonden',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titel',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Systeemprompts',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titel',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => 'Ongeldige modelnaam. Gebruik alleen letters, cijfers, koppeltekens, punten, dubbele punten en schuine strepen (bijv. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'            => 'Platform succesvol opgeslagen.',
-                'update-success'          => 'Platform succesvol bijgewerkt.',
-                'delete-success'          => 'Platform succesvol verwijderd.',
-                'delete-fail'             => 'Verwijdering van platform mislukt.',
-                'not-found'               => 'Het geselecteerde platform bestaat niet meer. Vernieuw de pagina en probeer het opnieuw.',
-                'cannot-delete-default'   => 'Kan het enige standaardplatform niet verwijderen.',
-                'set-default-success'     => 'Platform succesvol als standaard ingesteld.',
-                'test-success'            => 'Verbinding succesvol geverifieerd!',
-                'test-fail'               => 'Verbindingstest mislukt',
-                'no-test-model'           => 'Selecteer ten minste één tekstondersteunend model om de verbindingstest uit te voeren.',
-                'custom-api-url-required' => 'API URL is vereist voor aangepaste providers zodat de verbindingstest jouw eigen endpoint bereikt.',
-                'api-key-corrupted'       => 'De opgeslagen API-sleutel kon niet worden ontsleuteld (:error). De versleutelingssleutel van de applicatie is mogelijk gewijzigd. Voer uw API-sleutel opnieuw in en sla op.',
-                'fetch-models-fail'       => 'Modellen konden niet worden opgehaald',
-                'invalid-model-names'     => 'Ongeldige modelnamen: :names. Modelnamen moeten beginnen met een letter of cijfer en mogen alleen letters, cijfers, koppeltekens, punten, dubbele punten en schuine strepen bevatten.',
+                'save-success'             => 'Platform succesvol opgeslagen.',
+                'update-success'           => 'Platform succesvol bijgewerkt.',
+                'delete-success'           => 'Platform succesvol verwijderd.',
+                'delete-fail'              => 'Verwijdering van platform mislukt.',
+                'not-found'                => 'Het geselecteerde platform bestaat niet meer. Vernieuw de pagina en probeer het opnieuw.',
+                'cannot-delete-default'    => 'Kan het enige standaardplatform niet verwijderen.',
+                'set-default-success'      => 'Platform succesvol als standaard ingesteld.',
+                'test-success'             => 'Verbinding succesvol geverifieerd!',
+                'test-fail'                => 'Verbindingstest mislukt',
+                'no-test-model'            => 'Selecteer ten minste één tekstondersteunend model om de verbindingstest uit te voeren.',
+                'custom-api-url-required'  => 'API URL is vereist voor aangepaste providers zodat de verbindingstest jouw eigen endpoint bereikt.',
+                'api-key-corrupted'        => 'De opgeslagen API-sleutel kon niet worden ontsleuteld (:error). De versleutelingssleutel van de applicatie is mogelijk gewijzigd. Voer uw API-sleutel opnieuw in en sla op.',
+                'fetch-models-fail'        => 'Modellen konden niet worden opgehaald',
+                'invalid-model-names'      => 'Ongeldige modelnamen: :names. Modelnamen moeten beginnen met een letter of cijfer en mogen alleen letters, cijfers, koppeltekens, punten, dubbele punten en schuine strepen bevatten.',
+                'default-requires-enabled' => 'Een uitgeschakeld platform kan niet als standaard worden gemarkeerd. Schakel het platform eerst in.',
             ],
         ],
     ],

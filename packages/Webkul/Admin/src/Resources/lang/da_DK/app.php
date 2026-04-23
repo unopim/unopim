@@ -220,7 +220,8 @@ return [
                 'save-btn'   => 'Gem Produkt',
                 'title'      => 'Rediger Produkt',
                 'categories' => [
-                    'title' => 'Kategorier',
+                    'title'            => 'Kategorier',
+                    'root-not-allowed' => 'Rodkategorien kan ikke tildeles et produkt.',
                 ],
                 'images' => [
                     'info'  => 'Billedopløsningen bør være som 560px X 609px',
@@ -363,6 +364,8 @@ return [
                     'url'                        => 'Indtast venligst en gyldig URL.',
                     'regex'                      => 'Værdien matcher ikke det krævede mønster.',
                     'invalid-pattern'            => 'Ugyldigt brugerdefineret mønster angivet.',
+
+                    'numeric'                    => 'Værdien for den numeriske attribut ":attribute" skal være et gyldigt tal.',
                     'select-attribute-or-family' => 'Vælg mindst ét attribut eller en attributfamilie.',
                     'failed'                     => 'Validering mislykkedes.',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Masse-redigering lykkedes.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Ingen ændringer at gemme.',
-                'success'         => 'Handling gennemført med succes.',
-                'fetch-failed'    => 'Hentning mislykkedes.',
-                'action'          => 'Masseændring',
-                'description'     => 'Rediger flere produkter på én gang. Ændringerne behandles i baggrunden.',
-                'gallery-preview' => 'Galleri forhåndsvisning',
-                'img-preview'     => 'Billedforhåndsvisning',
-                'no-image'        => 'Intet billede',
-                'img-fail'        => 'Billedupload mislykkedes.',
-                'no-option'       => 'Ingen muligheder',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Ingen ændringer at gemme.',
+
+                'invalid-datetime'            => 'Indtast en gyldig dato og klokkeslæt.',
+
+                'resize-column'               => 'Træk for at ændre kolonnebredden',
+                'success'                     => 'Handling gennemført med succes.',
+                'fetch-failed'                => 'Hentning mislykkedes.',
+                'action'                      => 'Masseændring',
+                'description'                 => 'Rediger flere produkter på én gang. Ændringerne behandles i baggrunden.',
+                'gallery-preview'             => 'Galleri forhåndsvisning',
+                'img-preview'                 => 'Billedforhåndsvisning',
+                'no-image'                    => 'Intet billede',
+                'img-fail'                    => 'Billedupload mislykkedes.',
+                'no-option'                   => 'Ingen muligheder',
+                'keyboard-shortcuts'          => 'Tastaturgenveje',
+                'shortcuts-navigation'        => 'Navigation',
+                'shortcuts-editing'           => 'Redigering',
+                'shortcuts-selection'         => 'Valg',
+                'shortcuts-clipboard'         => 'Udklipsholder og udfyldning',
+                'shortcuts-move-cell'         => 'Flyt mellem celler',
+                'shortcuts-move-down'         => 'Flyt ned / bekræft redigering',
+                'shortcuts-move-up'           => 'Flyt op',
+                'shortcuts-move-right-left'   => 'Flyt til højre / venstre',
+                'shortcuts-home-end'          => 'Første / sidste kolonne i rækken',
+                'shortcuts-ctrl-home-end'     => 'Første / sidste celle i gitteret',
+                'shortcuts-extend-selection'  => 'Udvid valg',
+                'shortcuts-select-all'        => 'Vælg alle celler',
+                'shortcuts-enter-edit'        => 'Gå til redigeringstilstand',
+                'shortcuts-confirm-move-down' => 'Bekræft + flyt ned',
+                'shortcuts-confirm-move-right'=> 'Bekræft + flyt til højre',
+                'shortcuts-escape-revert'     => 'Gendan værdi + forlad redigering',
+                'shortcuts-clear-cell'        => 'Ryd celle',
+                'shortcuts-copy'              => 'Kopier',
+                'shortcuts-cut'               => 'Klip',
+                'shortcuts-paste'             => 'Indsæt',
+                'shortcuts-fill-down'         => 'Udfyld nedad',
+                'shortcuts-fill-right'        => 'Udfyld til højre',
+                'shortcuts-undo'              => 'Fortryd',
+                'shortcuts-redo'              => 'Gentag',
+                'shortcuts-help'              => 'Vis/skjul tastaturgenveje',
             ],
             'create-success'          => 'Produkt oprettet med succes',
             'delete-failed'           => 'Produkt sletning mislykkedes',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => 'Er filtrerbar',
                 'ai-translate'          => 'AI Oversæt',
                 'invalid-swatch-type'   => 'Attributten :attribute er ikke tilladt for attributtype :type med swatchtype :swatch_type.',
+
+                'single-object-only'    => 'Hver oprettelsesanmodning må kun indeholde ét attributobjekt.',
                 'option'                => [
                     'color'    => 'Farveprøve',
                     'dropdown' => 'Dropdown',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => 'Attribut slettet succesfuldt',
             'update-success'    => 'Attribut opdateret succesfuldt',
             'user-define-error' => 'Kan ikke slette systemattribut',
+
+            'immutable-fields'  => 'Følgende felter kan ikke ændres: :fields.',
             'not-found'         => 'Attribut med kode ":code" blev ikke fundet',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => 'Kategori blev succesfuldt slettet.',
             'update-success'       => 'Kategori opdateret succesfuldt.',
             'can-not-update'       => 'Denne rodkategori er relateret til en kanal og kan ikke have en forældrekategori.',
+            'invalid-parent'       => 'Den valgte overordnede kategori er ugyldig. En kategori kan ikke være sin egen forælder eller en efterkommer af sig selv.',
             'unique-validation'    => 'Denne værdi er allerede optaget.',
             'not-found'            => 'Kategori med kode ":code" kunne ikke findes',
             'unknown-fields'       => 'Kategori-felt med kode ":fields" kunne ikke findes',
@@ -849,15 +887,18 @@ return [
             'update-success'    => 'Kategori Felt Opdateret Med Succes',
             'user-define-error' => 'Kan ikke slette system Kategori Felt',
             'not-found'         => 'Kategori Felt med kode ":code" blev ikke fundet',
+
+            'immutable-fields'  => 'Følgende felter kan ikke ændres: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategori Felt Option Oprettet Succesfuldt',
-            'update-success' => 'Kategori Felt Option Opdateret Succesfuldt',
+            'create-success'      => 'Kategori Felt Option Oprettet Succesfuldt',
+            'update-success'      => 'Kategori Felt Option Opdateret Succesfuldt',
+            'update-unknown-code' => 'Der findes ingen kategorifeltsindstilling med koden ":code".',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Opret Attribut Familie',
-                'title'    => 'Familier',
+                'title'    => 'Attributfamilier',
                 'datagrid' => [
                     'code'           => 'Kode',
                     'delete'         => 'Slet',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Kan ikke opdatere konfigurerbare muligheder, da denne familie allerede har variantprodukter.',
         ],
         'history' => [
+            'view' => 'Vis versionsdetaljer',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => 'Sat på pause',
                         'cancelled'            => 'Annulleret',
                         'failed'               => 'Mislykket',
+
+                        'view'       => 'Vis',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => 'Klient ikke fundet',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titel',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Systemprompts',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titel',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => 'Ugyldigt modelnavn. Brug kun bogstaver, tal, bindestreger, punktummer, koloner og skråstreger (f.eks. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'            => 'Platform gemt med succes.',
-                'update-success'          => 'Platform opdateret med succes.',
-                'delete-success'          => 'Platform slettet med succes.',
-                'delete-fail'             => 'Sletning af platform mislykkedes.',
-                'not-found'               => 'Den valgte platform findes ikke længere. Opdater og prøv igen.',
-                'cannot-delete-default'   => 'Kan ikke slette den eneste standardplatform.',
-                'set-default-success'     => 'Platform angivet som standard med succes.',
-                'test-success'            => 'Forbindelse bekræftet med succes!',
-                'test-fail'               => 'Forbindelsestest mislykkedes',
-                'no-test-model'           => 'Vælg mindst én tekstbaseret model for at køre forbindelsestesten.',
-                'custom-api-url-required' => 'API URL er påkrævet for brugerdefinerede udbydere, så forbindelsestesten når dit eget endpoint.',
-                'api-key-corrupted'       => 'Den gemte API-nøgle kunne ikke dekrypteres (:error). Applikationens krypteringsnøgle kan være ændret. Indtast din API-nøgle igen og gem.',
-                'fetch-models-fail'       => 'Kunne ikke hente modeller',
-                'invalid-model-names'     => 'Ugyldige modelnavne: :names. Modelnavne skal starte med et bogstav eller tal og kun indeholde bogstaver, tal, bindestreger, punktummer, koloner og skråstreger.',
+                'save-success'             => 'Platform gemt med succes.',
+                'update-success'           => 'Platform opdateret med succes.',
+                'delete-success'           => 'Platform slettet med succes.',
+                'delete-fail'              => 'Sletning af platform mislykkedes.',
+                'not-found'                => 'Den valgte platform findes ikke længere. Opdater og prøv igen.',
+                'cannot-delete-default'    => 'Kan ikke slette den eneste standardplatform.',
+                'set-default-success'      => 'Platform angivet som standard med succes.',
+                'test-success'             => 'Forbindelse bekræftet med succes!',
+                'test-fail'                => 'Forbindelsestest mislykkedes',
+                'no-test-model'            => 'Vælg mindst én tekstbaseret model for at køre forbindelsestesten.',
+                'custom-api-url-required'  => 'API URL er påkrævet for brugerdefinerede udbydere, så forbindelsestesten når dit eget endpoint.',
+                'api-key-corrupted'        => 'Den gemte API-nøgle kunne ikke dekrypteres (:error). Applikationens krypteringsnøgle kan være ændret. Indtast din API-nøgle igen og gem.',
+                'fetch-models-fail'        => 'Kunne ikke hente modeller',
+                'invalid-model-names'      => 'Ugyldige modelnavne: :names. Modelnavne skal starte med et bogstav eller tal og kun indeholde bogstaver, tal, bindestreger, punktummer, koloner og skråstreger.',
+                'default-requires-enabled' => 'En deaktiveret platform kan ikke markeres som standard. Aktivér platformen først.',
             ],
         ],
     ],

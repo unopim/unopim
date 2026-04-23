@@ -14,7 +14,7 @@ it('should not display the export index page if user does not have permission', 
     $this->loginWithPermissions();
 
     $this->get(route('admin.settings.data_transfer.exports.index'))
-        ->assertSeeText('Unauthorized')
+        ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.settings.data-transfer.exports.index.title'));
 });
 
@@ -30,7 +30,7 @@ it('should not display the export create page if user does not have create permi
     $this->loginWithPermissions();
 
     $this->get(route('admin.settings.data_transfer.exports.create'))
-        ->assertSeeText('Unauthorized')
+        ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.settings.data-transfer.exports.create.title'));
 });
 
@@ -48,7 +48,7 @@ it('should not display the export edit page if user does not have edit permissio
     $this->loginWithPermissions();
 
     $this->get(route('admin.settings.data_transfer.exports.edit', 1))
-        ->assertSeeText('Unauthorized')
+        ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.settings.data-transfer.exports.edit.title'));
 });
 
@@ -69,7 +69,7 @@ it('should not allow the export delete action if user does not have delete permi
     $jobId = JobInstances::factory()->exportJob()->entityProduct()->create()->id;
 
     $this->delete(route('admin.settings.data_transfer.exports.delete', $jobId))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(JobInstances::class), ['id' => $jobId]);
 });
@@ -88,7 +88,7 @@ it('should not allow the export now action if user does not have execute permiss
     $this->loginWithPermissions();
 
     $this->put(route('admin.settings.data_transfer.exports.export_now', 1))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the job tracker grid if has correct permisssion', function () {
@@ -103,5 +103,5 @@ it('should not display the job tracker grid if has correct permisssion', functio
     $this->loginWithPermissions();
 
     $this->get(route(trans('admin.settings.data_transfer.tracker.index')))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });

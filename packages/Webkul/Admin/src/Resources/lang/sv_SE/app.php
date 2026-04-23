@@ -220,7 +220,8 @@ return [
                 'save-btn'   => 'Spara produkt',
                 'title'      => 'Redigera produkt',
                 'categories' => [
-                    'title' => 'Kategorier',
+                    'title'            => 'Kategorier',
+                    'root-not-allowed' => 'Rotkategorin kan inte tilldelas en produkt.',
                 ],
                 'images' => [
                     'info'  => 'Bilder måste ha upplösningen 560px X 609px',
@@ -363,6 +364,8 @@ return [
                     'url'                        => 'Ange en giltig URL.',
                     'regex'                      => 'Värdet matchar inte det krävs mönstret.',
                     'invalid-pattern'            => 'Ogiltigt anpassat mönster angivet.',
+
+                    'numeric'                    => 'Värdet för det numeriska attributet ":attribute" måste vara ett giltigt tal.',
                     'select-attribute-or-family' => 'Välj minst ett attribut eller en attributfamilj.',
                     'failed'                     => 'Valideringen misslyckades.',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Massredigeringen lyckades.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Inga ändringar att spara.',
-                'success'         => 'Uppgiften har utförts.',
-                'fetch-failed'    => 'Misslyckades med att hämta.',
-                'action'          => 'Massredigering',
-                'description'     => 'Redigera flera produkter samtidigt. Ändringar bearbetas i bakgrunden.',
-                'gallery-preview' => 'Galleri Förhandsgranskning',
-                'img-preview'     => 'Bildförhandsvisning',
-                'no-image'        => 'Ingen bild',
-                'img-fail'        => 'Misslyckades med att ladda upp bilden',
-                'no-option'       => 'Inga alternativ',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Inga ändringar att spara.',
+
+                'invalid-datetime'            => 'Ange ett giltigt datum och klockslag.',
+
+                'resize-column'               => 'Dra för att ändra kolumnbredd',
+                'success'                     => 'Uppgiften har utförts.',
+                'fetch-failed'                => 'Misslyckades med att hämta.',
+                'action'                      => 'Massredigering',
+                'description'                 => 'Redigera flera produkter samtidigt. Ändringar bearbetas i bakgrunden.',
+                'gallery-preview'             => 'Galleri Förhandsgranskning',
+                'img-preview'                 => 'Bildförhandsvisning',
+                'no-image'                    => 'Ingen bild',
+                'img-fail'                    => 'Misslyckades med att ladda upp bilden',
+                'no-option'                   => 'Inga alternativ',
+                'keyboard-shortcuts'          => 'Tangentbordsgenvägar',
+                'shortcuts-navigation'        => 'Navigering',
+                'shortcuts-editing'           => 'Redigering',
+                'shortcuts-selection'         => 'Markering',
+                'shortcuts-clipboard'         => 'Urklipp och fyllning',
+                'shortcuts-move-cell'         => 'Flytta mellan celler',
+                'shortcuts-move-down'         => 'Flytta ned / bekräfta redigering',
+                'shortcuts-move-up'           => 'Flytta upp',
+                'shortcuts-move-right-left'   => 'Flytta höger / vänster',
+                'shortcuts-home-end'          => 'Första / sista kolumnen i raden',
+                'shortcuts-ctrl-home-end'     => 'Första / sista cellen i rutnätet',
+                'shortcuts-extend-selection'  => 'Utöka markering',
+                'shortcuts-select-all'        => 'Markera alla celler',
+                'shortcuts-enter-edit'        => 'Gå till redigeringsläge',
+                'shortcuts-confirm-move-down' => 'Bekräfta + flytta ned',
+                'shortcuts-confirm-move-right'=> 'Bekräfta + flytta höger',
+                'shortcuts-escape-revert'     => 'Återställ värde + lämna redigering',
+                'shortcuts-clear-cell'        => 'Rensa cell',
+                'shortcuts-copy'              => 'Kopiera',
+                'shortcuts-cut'               => 'Klipp ut',
+                'shortcuts-paste'             => 'Klistra in',
+                'shortcuts-fill-down'         => 'Fyll nedåt',
+                'shortcuts-fill-right'        => 'Fyll åt höger',
+                'shortcuts-undo'              => 'Ångra',
+                'shortcuts-redo'              => 'Gör om',
+                'shortcuts-help'              => 'Visa/dölj tangentbordsgenvägar',
             ],
             'create-success'          => 'Produkten skapades framgångsrikt',
             'delete-failed'           => 'Fel vid radering av produkt',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => 'Är filtrerbar',
                 'ai-translate'          => 'AI Översättning',
                 'invalid-swatch-type'   => 'Attributet :attribute är inte tillåtet för attributtyp :type med swatchtyp :swatch_type.',
+
+                'single-object-only'    => 'Varje skapandeförfrågan får endast innehålla ett attributobjekt.',
                 'option'                => [
                     'color'    => 'Färgväljare',
                     'dropdown' => 'Rullgardinsmeny',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => 'Attribut borttaget',
             'update-success'    => 'Attribut uppdaterad',
             'user-define-error' => 'Det går inte att ta bort systemattribut',
+
+            'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
             'not-found'         => 'Attributet med koden ":code" hittades inte',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => 'Kategori raderad',
             'update-success'       => 'Kategori uppdaterad',
             'can-not-update'       => 'Denna rotkategori är kopplad till en kanal och kan inte ha en föräldrakategori.',
+            'invalid-parent'       => 'Den valda överordnade kategorin är ogiltig. En kategori kan inte vara sin egen förälder eller en ättling till sig själv.',
             'unique-validation'    => 'Detta värde är redan i användning.',
             'not-found'            => 'Kategori med kod ":code" hittades inte',
             'unknown-fields'       => 'Okänt fält för kategori med kod ":fields"',
@@ -849,15 +887,18 @@ return [
             'update-success'    => 'Kategori fält uppdaterades framgångsrikt',
             'user-define-error' => 'Det går inte att radera systemdefinierade fält',
             'not-found'         => 'Kategori fält med kod ":code" kunde inte hittas',
+
+            'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategoriens fältalternativ skapades',
-            'update-success' => 'Kategoriens fältalternativ uppdaterades',
+            'create-success'      => 'Kategoriens fältalternativ skapades',
+            'update-success'      => 'Kategoriens fältalternativ uppdaterades',
+            'update-unknown-code' => 'Det finns inget kategorifältsalternativ med koden ":code".',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Skapa attributgrupp',
-                'title'    => 'Familjer',
+                'title'    => 'Attributfamiljer',
                 'datagrid' => [
                     'code'           => 'Kod',
                     'delete'         => 'Ta bort',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Kan inte uppdatera konfigurationsalternativ eftersom denna familj redan har produktvarianter.',
         ],
         'history' => [
+            'view' => 'Visa versionsdetaljer',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => 'Pausad',
                         'cancelled'            => 'Avbruten',
                         'failed'               => 'Misslyckades',
+
+                        'view'       => 'Visa',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => 'Klient hittades inte',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titel',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Systemprompts',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titel',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => 'Ogiltigt modellnamn. Använd endast bokstäver, siffror, bindestreck, punkter, kolon och snedstreck (t.ex. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'            => 'Plattform sparad framgångsrikt.',
-                'update-success'          => 'Plattform uppdaterad framgångsrikt.',
-                'delete-success'          => 'Plattform raderad framgångsrikt.',
-                'delete-fail'             => 'Radering av plattform misslyckades.',
-                'not-found'               => 'Den valda plattformen finns inte längre. Uppdatera sidan och försök igen.',
-                'cannot-delete-default'   => 'Kan inte radera den enda standardplattformen.',
-                'set-default-success'     => 'Plattform angiven som standard framgångsrikt.',
-                'test-success'            => 'Anslutning verifierad framgångsrikt!',
-                'test-fail'               => 'Anslutningstest misslyckades',
-                'no-test-model'           => 'Välj minst en textkapabel modell för att köra anslutningstestet.',
-                'custom-api-url-required' => 'API URL krävs för anpassade leverantörer så att anslutningstestet når din egen slutpunkt.',
-                'api-key-corrupted'       => 'Den lagrade API-nyckeln kunde inte dekrypteras (:error). Applikationens krypteringsnyckel kan ha ändrats. Ange din API-nyckel på nytt och spara.',
-                'fetch-models-fail'       => 'Kunde inte hämta modeller',
-                'invalid-model-names'     => 'Ogiltiga modellnamn: :names. Modellnamn måste börja med en bokstav eller siffra och får bara innehålla bokstäver, siffror, bindestreck, punkter, kolon och snedstreck.',
+                'save-success'             => 'Plattform sparad framgångsrikt.',
+                'update-success'           => 'Plattform uppdaterad framgångsrikt.',
+                'delete-success'           => 'Plattform raderad framgångsrikt.',
+                'delete-fail'              => 'Radering av plattform misslyckades.',
+                'not-found'                => 'Den valda plattformen finns inte längre. Uppdatera sidan och försök igen.',
+                'cannot-delete-default'    => 'Kan inte radera den enda standardplattformen.',
+                'set-default-success'      => 'Plattform angiven som standard framgångsrikt.',
+                'test-success'             => 'Anslutning verifierad framgångsrikt!',
+                'test-fail'                => 'Anslutningstest misslyckades',
+                'no-test-model'            => 'Välj minst en textkapabel modell för att köra anslutningstestet.',
+                'custom-api-url-required'  => 'API URL krävs för anpassade leverantörer så att anslutningstestet når din egen slutpunkt.',
+                'api-key-corrupted'        => 'Den lagrade API-nyckeln kunde inte dekrypteras (:error). Applikationens krypteringsnyckel kan ha ändrats. Ange din API-nyckel på nytt och spara.',
+                'fetch-models-fail'        => 'Kunde inte hämta modeller',
+                'invalid-model-names'      => 'Ogiltiga modellnamn: :names. Modellnamn måste börja med en bokstav eller siffra och får bara innehålla bokstäver, siffror, bindestreck, punkter, kolon och snedstreck.',
+                'default-requires-enabled' => 'En inaktiverad plattform kan inte markeras som standard. Aktivera plattformen först.',
             ],
         ],
     ],

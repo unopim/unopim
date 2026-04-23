@@ -77,6 +77,7 @@
                         src="{{ url('cache/logo/unopim.png') }}"
                         width="24"
                         height="24"
+                        onerror="this.style.display='none'"
                     />
 
                     <!-- Version -->

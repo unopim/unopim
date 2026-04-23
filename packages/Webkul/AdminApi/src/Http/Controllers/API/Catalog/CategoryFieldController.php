@@ -114,6 +114,13 @@ class CategoryFieldController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $code]));
         }
 
+        $immutable = array_intersect(['code', 'type', 'value_per_locale', 'is_unique'], array_keys(request()->all()));
+        if (! empty($immutable)) {
+            return $this->validateErrorResponse([
+                'immutable' => [trans('admin::app.catalog.category_fields.immutable-fields', ['fields' => implode(', ', $immutable)])],
+            ]);
+        }
+
         $requestData = request()->except(['code', 'type', 'value_per_locale', 'is_unique']);
         $requestData = $this->setLabels($requestData);
         $requestData['enable_wysiwyg'] = $categoryField->type == 'textarea' ? $requestData['enable_wysiwyg'] : 0;
@@ -225,23 +232,18 @@ class CategoryFieldController extends ApiController
             foreach ($requestData as $optionInputs) {
                 $optionInputs = $this->setLabels($optionInputs, 'label');
 
-                $categoryFieldOption = $this->categoryFieldOptionRepository->findOneByField('code', $optionInputs['code']);
+                $categoryFieldOption = $this->categoryFieldOptionRepository
+                    ->findOneWhere(['code' => $optionInputs['code'], 'category_field_id' => $categoryField->id]);
 
                 if (! $categoryFieldOption) {
-                    $validator = $this->optionValidate($optionInputs, $categoryField->id);
+                    $errors[$optionInputs['code']] = [
+                        trans('admin::app.catalog.category-fields-options.update-unknown-code', ['code' => $optionInputs['code']]),
+                    ];
 
-                    if ($validator->fails()) {
-                        $errors[] = $validator->errors();
-
-                        continue;
-                    }
-
-                    $this->categoryFieldOptionRepository->create(array_merge([
-                        'category_field_id' => $categoryField->id,
-                    ], $optionInputs));
-                } else {
-                    $this->categoryFieldOptionRepository->update($optionInputs, $categoryFieldOption->id);
+                    continue;
                 }
+
+                $this->categoryFieldOptionRepository->update($optionInputs, $categoryFieldOption->id);
             }
 
             if (! empty($errors)) {

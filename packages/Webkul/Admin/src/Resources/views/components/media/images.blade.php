@@ -2,6 +2,7 @@
     'name'             => 'images',
     'allowMultiple'    => false,
     'showPlaceholders' => false,
+    'showSuggestions'  => true,
     'uploadedImages'   => [],
     'width'            => '120px',
     'height'           => '120px',
@@ -13,6 +14,7 @@
     name="{{ $name }}"
     v-bind:allow-multiple="{{ $allowMultiple ? true : false }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
+    v-bind:show-suggestions="{{ $showSuggestions ? 'true' : 'false' }}"
     :uploaded-images='{{ json_encode($uploadedImages) }}'
     width="{{ $width }}"
     height="{{ $height }}"
@@ -245,7 +247,7 @@
 
                                             <!-- Icon inside textarea (only when there's a resource context to interpolate from) -->
                                             <div
-                                                v-if="hasContext"
+                                                v-if="hasContext && showSuggestions"
                                                 class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
                                                 @click="openSuggestions"
                                             >
@@ -530,6 +532,11 @@
                     default: false,
                 },
 
+                showSuggestions: {
+                    type: Boolean,
+                    default: true,
+                },
+
                 uploadedImages: {
                     type: Array,
                     default: () => []
@@ -687,8 +694,8 @@
                                 this.fetchImagePrompts();
                             }
 
-                            // Skip @ suggestions when there's no resource context to interpolate.
-                            if (! this.hasContext) {
+                            // Skip @ suggestions when there's no resource context to interpolate or suggestions disabled.
+                            if (! this.hasContext || ! this.showSuggestions) {
                                 return;
                             }
 

@@ -3,7 +3,7 @@
         <colgroup>
             <col style="width: 46px" id="col_0" />
             <template v-for="(header, index) in headers" :key="'col_' + index">
-                <col :span="header.colspan" class="border dark:border-cherry-700 border-gray-200" :id="'col_' + (index + 1)" :style="{ width: '180px' }" />
+                <col :span="header.colspan" class="border dark:border-cherry-700 border-gray-200" :id="'col_' + (index + 1)" :style="{ width: (columnWidths[index] || 180) + 'px' }" />
             </template>
         </colgroup>
 
@@ -47,7 +47,14 @@
                 return {
                     sortBy: null,
                     sortDirection: 'asc',
+                    columnWidths: {},
                 };
+            },
+
+            created() {
+                this.$emitter?.on?.('bulkedit-column-resized', ({ index, width }) => {
+                    this.columnWidths = { ...this.columnWidths, [index]: width };
+                });
             },
 
             computed: {

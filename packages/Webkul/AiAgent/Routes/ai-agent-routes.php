@@ -59,6 +59,10 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             ->middleware('throttle:30,1')
             ->name('chat.stream');
 
+        Route::post('chat/rate', [ChatController::class, 'rate'])
+            ->middleware('throttle:60,1')
+            ->name('chat.rate');
+
         Route::get('chat/magic-ai-config', [ChatController::class, 'magicAiConfig'])
             ->name('chat.magic-ai-config');
 

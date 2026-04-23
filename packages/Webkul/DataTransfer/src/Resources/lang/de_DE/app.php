@@ -65,6 +65,7 @@ return [
             'invalid-attribute'    => 'Header enthält ungültige Attribute: „%s“.',
             'system'               => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
             'wrong-quotes'         => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
+            'file-empty'           => 'Die Datei ist leer oder enthält keine Kopfzeile. Bitte laden Sie eine gültige Datei mit Daten hoch.',
         ],
     ],
 

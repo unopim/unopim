@@ -7,6 +7,7 @@ use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\Product\Models\Product;
 
+use function Pest\Laravel\get;
 use function Pest\Laravel\getJson;
 
 it('should return latest 10 data transfer jobs with correct processed rows from summary', function () {
@@ -201,4 +202,12 @@ it('should return correct job type from job_instances table', function () {
     expect($job['type'])->toBe('export');
     expect($job['entity_type'])->toBe('categories');
     expect($job['processed_rows_count'])->toBe(42);
+});
+
+it('should return 403 not 401 when authenticated user lacks dashboard permission', function () {
+    // Create a user with custom role that has NO dashboard permission
+    $this->loginWithPermissions('custom', ['catalog.products']);
+
+    get(route('admin.dashboard.index'))
+        ->assertStatus(403);
 });

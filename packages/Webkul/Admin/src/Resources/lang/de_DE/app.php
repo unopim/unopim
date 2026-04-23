@@ -220,7 +220,8 @@ return [
                 'save-btn'   => 'Produkt speichern',
                 'title'      => 'Produkt bearbeiten',
                 'categories' => [
-                    'title' => 'Kategorien',
+                    'title'            => 'Kategorien',
+                    'root-not-allowed' => 'Die Stammkategorie kann einem Produkt nicht zugewiesen werden.',
                 ],
                 'images' => [
                     'info'  => 'Die Bildauflösung sollte etwa 560 x 609 Pixel betragen.',
@@ -363,6 +364,8 @@ return [
                     'url'                        => 'Bitte geben Sie eine gültige URL ein.',
                     'regex'                      => 'Der Wert entspricht nicht dem erforderlichen Muster.',
                     'invalid-pattern'            => 'Ungültiges benutzerdefiniertes Muster angegeben.',
+
+                    'numeric'                    => 'Der Wert für das numerische Attribut „:attribute“ muss eine gültige Zahl sein.',
                     'select-attribute-or-family' => 'Bitte wählen Sie mindestens ein Attribut oder eine Attributfamilie aus.',
                     'failed'                     => 'Validierung fehlgeschlagen.',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Massenbearbeitung erfolgreich.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Keine Änderungen zum Speichern.',
-                'success'         => 'Vorgang erfolgreich abgeschlossen.',
-                'fetch-failed'    => 'Abruf fehlgeschlagen.',
-                'action'          => 'Massenbearbeitung',
-                'description'     => 'Mehrere Produkte gleichzeitig bearbeiten. Änderungen werden im Hintergrund verarbeitet.',
-                'gallery-preview' => 'Galerievorschau',
-                'img-preview'     => 'Bildvorschau',
-                'no-image'        => 'Kein Bild',
-                'img-fail'        => 'Bildupload fehlgeschlagen.',
-                'no-option'       => 'Keine Optionen',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Keine Änderungen zum Speichern.',
+
+                'invalid-datetime'            => 'Bitte ein gültiges Datum mit Uhrzeit eingeben.',
+
+                'resize-column'               => 'Ziehen, um die Spaltenbreite zu ändern',
+                'success'                     => 'Vorgang erfolgreich abgeschlossen.',
+                'fetch-failed'                => 'Abruf fehlgeschlagen.',
+                'action'                      => 'Massenbearbeitung',
+                'description'                 => 'Mehrere Produkte gleichzeitig bearbeiten. Änderungen werden im Hintergrund verarbeitet.',
+                'gallery-preview'             => 'Galerievorschau',
+                'img-preview'                 => 'Bildvorschau',
+                'no-image'                    => 'Kein Bild',
+                'img-fail'                    => 'Bildupload fehlgeschlagen.',
+                'no-option'                   => 'Keine Optionen',
+                'keyboard-shortcuts'          => 'Tastaturkürzel',
+                'shortcuts-navigation'        => 'Navigation',
+                'shortcuts-editing'           => 'Bearbeitung',
+                'shortcuts-selection'         => 'Auswahl',
+                'shortcuts-clipboard'         => 'Zwischenablage & Ausfüllen',
+                'shortcuts-move-cell'         => 'Zwischen Zellen wechseln',
+                'shortcuts-move-down'         => 'Nach unten / Bearbeitung bestätigen',
+                'shortcuts-move-up'           => 'Nach oben',
+                'shortcuts-move-right-left'   => 'Nach rechts / links',
+                'shortcuts-home-end'          => 'Erste / letzte Spalte in der Zeile',
+                'shortcuts-ctrl-home-end'     => 'Erste / letzte Zelle im Raster',
+                'shortcuts-extend-selection'  => 'Auswahl erweitern',
+                'shortcuts-select-all'        => 'Alle Zellen auswählen',
+                'shortcuts-enter-edit'        => 'Bearbeitungsmodus aktivieren',
+                'shortcuts-confirm-move-down' => 'Bestätigen + nach unten',
+                'shortcuts-confirm-move-right'=> 'Bestätigen + nach rechts',
+                'shortcuts-escape-revert'     => 'Wert zurücksetzen + Bearbeitung beenden',
+                'shortcuts-clear-cell'        => 'Zelle leeren',
+                'shortcuts-copy'              => 'Kopieren',
+                'shortcuts-cut'               => 'Ausschneiden',
+                'shortcuts-paste'             => 'Einfügen',
+                'shortcuts-fill-down'         => 'Nach unten ausfüllen',
+                'shortcuts-fill-right'        => 'Nach rechts ausfüllen',
+                'shortcuts-undo'              => 'Rückgängig',
+                'shortcuts-redo'              => 'Wiederholen',
+                'shortcuts-help'              => 'Tastaturkürzel ein-/ausblenden',
             ],
             'create-success'          => 'Produkt erfolgreich erstellt',
             'delete-failed'           => 'Produkt gelöscht Fehlgeschlagen',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => 'Ist filterbar',
                 'ai-translate'          => 'KI Übersetzen',
                 'invalid-swatch-type'   => 'Der :attribute ist für den Attributtyp :type mit dem Farbmuster :swatch_type nicht erlaubt.',
+
+                'single-object-only'    => 'Pro Erstellungsanfrage darf nur ein Attributobjekt gesendet werden.',
                 'option'                => [
                     'color'    => 'Farbfeld',
                     'dropdown' => 'Dropdown',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => 'Attribut erfolgreich gelöscht',
             'update-success'    => 'Attribut erfolgreich aktualisiert',
             'user-define-error' => 'Systemattribut kann nicht gelöscht werden',
+
+            'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
             'not-found'         => 'Attribut mit Code „:code“ konnte nicht gefunden werden',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => 'Die Kategorie wurde erfolgreich gelöscht.',
             'update-success'       => 'Kategorie erfolgreich aktualisiert.',
             'can-not-update'       => 'Diese Stammkategorie ist mit einem Kanal verknüpft und kann keine übergeordnete Kategorie haben.',
+            'invalid-parent'       => 'Die ausgewählte übergeordnete Kategorie ist ungültig. Eine Kategorie kann nicht ihr eigenes übergeordnetes Element oder ein Nachkomme von sich selbst sein.',
             'unique-validation'    => 'Dieser Wert ist bereits vergeben.',
             'not-found'            => 'Kategorie mit Code „:code“ konnte nicht gefunden werden',
             'unknown-fields'       => 'Kategoriefeld mit Code „:fields“ konnte nicht gefunden werden',
@@ -849,15 +887,18 @@ return [
             'update-success'    => 'Kategoriefeld erfolgreich aktualisiert',
             'user-define-error' => 'Systemkategoriefeld kann nicht gelöscht werden',
             'not-found'         => 'Kategoriefeld mit Code „:code“ konnte nicht gefunden werden',
+
+            'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategoriefeldoption erfolgreich erstellt',
-            'update-success' => 'Kategoriefeldoption erfolgreich aktualisiert',
+            'create-success'      => 'Kategoriefeldoption erfolgreich erstellt',
+            'update-success'      => 'Kategoriefeldoption erfolgreich aktualisiert',
+            'update-unknown-code' => 'Eine Kategoriefeld-Option mit dem Code „:code“ existiert nicht.',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Attributfamilie erstellen',
-                'title'    => 'Familien',
+                'title'    => 'Attributfamilien',
                 'datagrid' => [
                     'code'           => 'Code',
                     'delete'         => 'Löschen',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Konfigurierbare Optionen können nicht aktualisiert werden, da diese Familie bereits Variantenprodukte hat.',
         ],
         'history' => [
+            'view' => 'Versionsdetails anzeigen',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => 'Pausiert',
                         'cancelled'            => 'Abgebrochen',
                         'failed'               => 'Fehlgeschlagen',
+
+                        'view'       => 'Ansehen',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => 'Client nicht gefunden',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titel',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'System-Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titel',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => 'Ungültiger Modellname. Verwenden Sie nur Buchstaben, Zahlen, Bindestriche, Punkte, Doppelpunkte und Schrägstriche (z. B. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'            => 'Plattform erfolgreich gespeichert.',
-                'update-success'          => 'Plattform erfolgreich aktualisiert.',
-                'delete-success'          => 'Plattform erfolgreich gelöscht.',
-                'delete-fail'             => 'Löschen der Plattform fehlgeschlagen.',
-                'not-found'               => 'Die ausgewählte Plattform existiert nicht mehr. Bitte aktualisieren Sie und versuchen Sie es erneut.',
-                'cannot-delete-default'   => 'Die einzige Standardplattform kann nicht gelöscht werden.',
-                'set-default-success'     => 'Plattform erfolgreich als Standard festgelegt.',
-                'test-success'            => 'Verbindung erfolgreich verifiziert!',
-                'test-fail'               => 'Verbindungstest fehlgeschlagen',
-                'no-test-model'           => 'Wählen Sie mindestens ein textfähiges Modell aus, um den Verbindungstest auszuführen.',
-                'custom-api-url-required' => 'Für benutzerdefinierte Anbieter ist die API URL erforderlich, damit der Verbindungstest Ihren eigenen Endpunkt erreicht.',
-                'api-key-corrupted'       => 'Der gespeicherte API-Schlüssel konnte nicht entschlüsselt werden (:error). Der Verschlüsselungsschlüssel der Anwendung wurde möglicherweise geändert. Bitte geben Sie Ihren API-Schlüssel erneut ein und speichern Sie.',
-                'fetch-models-fail'       => 'Modelle konnten nicht abgerufen werden',
-                'invalid-model-names'     => 'Ungültige Modellnamen: :names. Modellnamen müssen mit einem Buchstaben oder einer Zahl beginnen und dürfen nur Buchstaben, Zahlen, Bindestriche, Punkte, Doppelpunkte und Schrägstriche enthalten.',
+                'save-success'             => 'Plattform erfolgreich gespeichert.',
+                'update-success'           => 'Plattform erfolgreich aktualisiert.',
+                'delete-success'           => 'Plattform erfolgreich gelöscht.',
+                'delete-fail'              => 'Löschen der Plattform fehlgeschlagen.',
+                'not-found'                => 'Die ausgewählte Plattform existiert nicht mehr. Bitte aktualisieren Sie und versuchen Sie es erneut.',
+                'cannot-delete-default'    => 'Die einzige Standardplattform kann nicht gelöscht werden.',
+                'set-default-success'      => 'Plattform erfolgreich als Standard festgelegt.',
+                'test-success'             => 'Verbindung erfolgreich verifiziert!',
+                'test-fail'                => 'Verbindungstest fehlgeschlagen',
+                'no-test-model'            => 'Wählen Sie mindestens ein textfähiges Modell aus, um den Verbindungstest auszuführen.',
+                'custom-api-url-required'  => 'Für benutzerdefinierte Anbieter ist die API URL erforderlich, damit der Verbindungstest Ihren eigenen Endpunkt erreicht.',
+                'api-key-corrupted'        => 'Der gespeicherte API-Schlüssel konnte nicht entschlüsselt werden (:error). Der Verschlüsselungsschlüssel der Anwendung wurde möglicherweise geändert. Bitte geben Sie Ihren API-Schlüssel erneut ein und speichern Sie.',
+                'fetch-models-fail'        => 'Modelle konnten nicht abgerufen werden',
+                'invalid-model-names'      => 'Ungültige Modellnamen: :names. Modellnamen müssen mit einem Buchstaben oder einer Zahl beginnen und dürfen nur Buchstaben, Zahlen, Bindestriche, Punkte, Doppelpunkte und Schrägstriche enthalten.',
+                'default-requires-enabled' => 'Eine deaktivierte Plattform kann nicht als Standard festgelegt werden. Bitte aktivieren Sie sie zuerst.',
             ],
         ],
     ],

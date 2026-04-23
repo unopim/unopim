@@ -5,10 +5,14 @@
             :rowspan="rowspan"
             :title="label"
         >
-        <div class="absolute right-0 top-0 w-[5px] h-full cursor-[col-resize] select-none" @mousedown="startResize($event)"></div>
             <div class="flex items-center justify-center px-2 py-1">
                 <span class="truncate">@{{ label }}</span>
             </div>
+            <div
+                class="absolute right-[-4px] top-0 w-[10px] h-full cursor-[col-resize] select-none z-10 hover:bg-violet-400/50"
+                @mousedown="startResize($event)"
+                title="@lang('admin::app.catalog.products.bulk-edit.resize-column')"
+            ></div>
         </th>
     </script>
 
@@ -88,6 +92,12 @@
                         if (animationFrame) cancelAnimationFrame(animationFrame);
                         document.removeEventListener('mousemove', onMouseMove);
                         document.removeEventListener('mouseup', onMouseUp);
+
+                        const finalWidth = parseFloat(colElement.style.width) || startWidth;
+                        this.$emitter?.emit?.('bulkedit-column-resized', {
+                            index: this.columnIndex - 1,
+                            width: finalWidth,
+                        });
                     };
 
                     document.addEventListener('mousemove', onMouseMove);

@@ -61,6 +61,8 @@ class MagicAIPlatformController extends Controller
             $data['is_default'] = false;
         }
 
+        $this->ensureDefaultPlatformIsEnabled($data);
+
         $extras = request()->input('extras');
         if ($extras) {
             $data['extras'] = is_string($extras) ? json_decode($extras, true) : $extras;
@@ -128,6 +130,8 @@ class MagicAIPlatformController extends Controller
             $data['is_default'] = false;
         }
 
+        $this->ensureDefaultPlatformIsEnabled($data);
+
         $apiKey = request()->input('api_key');
         if ($apiKey && ! preg_match('/^\*+$/', $apiKey)) {
             $data['api_key'] = $apiKey;
@@ -151,12 +155,9 @@ class MagicAIPlatformController extends Controller
             $platform = $this->platformRepository->findOrFail($id);
 
             if ($platform->is_default) {
-                $otherCount = $this->platformRepository->findWhere(['status' => true])->count();
-                if ($otherCount <= 1) {
-                    return new JsonResponse([
-                        'message' => trans('admin::app.configuration.platform.message.cannot-delete-default'),
-                    ], JsonResponse::HTTP_BAD_REQUEST);
-                }
+                return new JsonResponse([
+                    'message' => trans('admin::app.configuration.platform.message.cannot-delete-default'),
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $this->platformRepository->delete($id);
@@ -303,9 +304,10 @@ class MagicAIPlatformController extends Controller
      *
      * @throws ValidationException
      */
-    protected function validateModelNames(string $models): void
+    protected function validateModelNames(string &$models): void
     {
-        $modelList = array_map('trim', explode(',', $models));
+        $modelList = array_map(fn ($m) => ltrim(trim($m), '~'), explode(',', $models));
+        $models = implode(',', $modelList);
         $invalid = [];
 
         foreach ($modelList as $model) {
@@ -319,6 +321,20 @@ class MagicAIPlatformController extends Controller
                 'models' => trans('admin::app.configuration.platform.message.invalid-model-names', [
                     'names' => implode(', ', $invalid),
                 ]),
+            ]);
+        }
+    }
+
+    /**
+     * A platform cannot be marked default unless it is also enabled.
+     *
+     * @throws ValidationException
+     */
+    protected function ensureDefaultPlatformIsEnabled(array $data): void
+    {
+        if (! empty($data['is_default']) && empty($data['status'])) {
+            throw ValidationException::withMessages([
+                'is_default' => trans('admin::app.configuration.platform.message.default-requires-enabled'),
             ]);
         }
     }

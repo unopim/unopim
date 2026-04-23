@@ -220,7 +220,8 @@ return [
                 'save-btn'   => 'Spremi proizvod',
                 'title'      => 'Uredi proizvod',
                 'categories' => [
-                    'title' => 'Kategorije',
+                    'title'            => 'Kategorije',
+                    'root-not-allowed' => 'Korijensku kategoriju nije moguće dodijeliti proizvodu.',
                 ],
                 'images' => [
                     'info'  => 'Rezolucija slike treba biti 560px X 609px',
@@ -363,6 +364,8 @@ return [
                     'url'                        => 'Unesite valjani URL.',
                     'regex'                      => 'Vrijednost ne odgovara traženom obrascu.',
                     'invalid-pattern'            => 'Unesen je nevažeći prilagođeni obrazac.',
+
+                    'numeric'                    => 'Vrijednost numeričkog atributa „:attribute“ mora biti valjani broj.',
                     'select-attribute-or-family' => 'Molimo odaberite barem jedan atribut ili obitelj atributa.',
                     'failed'                     => 'Provjera valjanosti nije uspjela.',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Grupno uređivanje je uspješno.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Nema promjena za spremiti.',
-                'success'         => 'Operacija uspješno izvršena.',
-                'fetch-failed'    => 'Preuzimanje nije uspjelo.',
-                'action'          => 'Grupno uređivanje',
-                'description'     => 'Uredite više proizvoda odjednom. Promjene se obrađuju u pozadini.',
-                'gallery-preview' => 'Pregled galerije',
-                'img-preview'     => 'Pregled slike',
-                'no-image'        => 'Nema slike',
-                'img-fail'        => 'Neuspješno učitavanje slike.',
-                'no-option'       => 'Nema opcija',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Nema promjena za spremiti.',
+
+                'invalid-datetime'            => 'Unesite valjani datum i vrijeme.',
+
+                'resize-column'               => 'Povucite za promjenu širine stupca',
+                'success'                     => 'Operacija uspješno izvršena.',
+                'fetch-failed'                => 'Preuzimanje nije uspjelo.',
+                'action'                      => 'Grupno uređivanje',
+                'description'                 => 'Uredite više proizvoda odjednom. Promjene se obrađuju u pozadini.',
+                'gallery-preview'             => 'Pregled galerije',
+                'img-preview'                 => 'Pregled slike',
+                'no-image'                    => 'Nema slike',
+                'img-fail'                    => 'Neuspješno učitavanje slike.',
+                'no-option'                   => 'Nema opcija',
+                'keyboard-shortcuts'          => 'Tipkovnički prečaci',
+                'shortcuts-navigation'        => 'Navigacija',
+                'shortcuts-editing'           => 'Uređivanje',
+                'shortcuts-selection'         => 'Odabir',
+                'shortcuts-clipboard'         => 'Međuspremnik i ispuna',
+                'shortcuts-move-cell'         => 'Premještanje između ćelija',
+                'shortcuts-move-down'         => 'Premjesti dolje / potvrdi uređivanje',
+                'shortcuts-move-up'           => 'Premjesti gore',
+                'shortcuts-move-right-left'   => 'Premjesti desno / lijevo',
+                'shortcuts-home-end'          => 'Prvi / zadnji stupac u retku',
+                'shortcuts-ctrl-home-end'     => 'Prva / zadnja ćelija u mreži',
+                'shortcuts-extend-selection'  => 'Proširi odabir',
+                'shortcuts-select-all'        => 'Odaberi sve ćelije',
+                'shortcuts-enter-edit'        => 'Uđi u način uređivanja',
+                'shortcuts-confirm-move-down' => 'Potvrdi + premjesti dolje',
+                'shortcuts-confirm-move-right'=> 'Potvrdi + premjesti desno',
+                'shortcuts-escape-revert'     => 'Vrati vrijednost + izađi iz uređivanja',
+                'shortcuts-clear-cell'        => 'Očisti ćeliju',
+                'shortcuts-copy'              => 'Kopiraj',
+                'shortcuts-cut'               => 'Izreži',
+                'shortcuts-paste'             => 'Zalijepi',
+                'shortcuts-fill-down'         => 'Ispuni prema dolje',
+                'shortcuts-fill-right'        => 'Ispuni prema desno',
+                'shortcuts-undo'              => 'Poništi',
+                'shortcuts-redo'              => 'Ponovi',
+                'shortcuts-help'              => 'Uključi/isključi tipkovničke prečace',
             ],
             'create-success'          => 'Proizvod uspješno stvoren',
             'delete-failed'           => 'Brisanje proizvoda nije uspjelo',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => 'Je filtrabilno',
                 'ai-translate'          => 'AI Prevod',
                 'invalid-swatch-type'   => ':attribute nije dozvoljen za tip atributa :type s tipom uzorka :swatch_type.',
+
+                'single-object-only'    => 'Svaki zahtjev za stvaranje mora sadržavati samo jedan objekt atributa.',
                 'option'                => [
                     'color'    => 'Boja uzorka',
                     'dropdown' => 'Padajući izbornik',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => 'Atribut uspješno izbrisan',
             'update-success'    => 'Atribut uspješno ažuriran',
             'user-define-error' => 'Ne možete obrisati sistemski atribut',
+
+            'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
             'not-found'         => 'Atribut s kodom ":code" nije pronađen',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => 'Kategorija uspješno izbrisana.',
             'update-success'       => 'Kategorija uspješno ažurirana.',
             'can-not-update'       => 'Ova glavna kategorija je povezana s kanalom i ne može imati roditeljsku kategoriju.',
+            'invalid-parent'       => 'Odabrana nadređena kategorija nije valjana. Kategorija ne može biti vlastiti roditelj niti potomak samog sebe.',
             'unique-validation'    => 'Ova vrijednost je već zauzeta.',
             'not-found'            => 'Kategorija s kodom ":code" nije pronađena',
             'unknown-fields'       => 'Polje kategorije s kodom ":fields" nije pronađeno',
@@ -849,15 +887,18 @@ return [
             'update-success'    => 'Polje Kategorije Ažurirano Uspješno',
             'user-define-error' => 'Ne možete obrisati sistemsko Polje Kategorije',
             'not-found'         => 'Polje Kategorije s kodom ":code" nije pronađeno',
+
+            'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opcija polja kategorije uspješno stvorena',
-            'update-success' => 'Opcija polja kategorije uspješno ažurirana',
+            'create-success'      => 'Opcija polja kategorije uspješno stvorena',
+            'update-success'      => 'Opcija polja kategorije uspješno ažurirana',
+            'update-unknown-code' => 'Ne postoji opcija polja kategorije s kodom „:code“.',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Kreiraj obitelj atributa',
-                'title'    => 'Obitelji',
+                'title'    => 'Obitelji atributa',
                 'datagrid' => [
                     'code'           => 'Kod',
                     'delete'         => 'Izbriši',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Ne možete ažurirati opcije konfiguracije jer ova obitelj već ima varijante proizvoda.',
         ],
         'history' => [
+            'view' => 'Pogledaj detalje verzije',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Verzija',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => 'Pauzirano',
                         'cancelled'            => 'Otkazano',
                         'failed'               => 'Neuspješno',
+
+                        'view'       => 'Pregled',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => 'Klijent nije pronađen',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Promptovi',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Naslov',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Sustavni promptovi',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Naslov',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => 'Nevažeći naziv modela. Koristite samo slova, brojeve, crtice, točke, dvotočke i kose crte (npr. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'            => 'Platforma uspješno spremljena.',
-                'update-success'          => 'Platforma uspješno ažurirana.',
-                'delete-success'          => 'Platforma uspješno obrisana.',
-                'delete-fail'             => 'Brisanje platforme nije uspjelo.',
-                'not-found'               => 'Odabrana platforma više ne postoji. Osvježite stranicu i pokušajte ponovno.',
-                'cannot-delete-default'   => 'Nije moguće obrisati jedinu zadanu platformu.',
-                'set-default-success'     => 'Platforma uspješno postavljena kao zadana.',
-                'test-success'            => 'Veza uspješno provjerena!',
-                'test-fail'               => 'Test veze nije uspio',
-                'no-test-model'           => 'Odaberite barem jedan model koji podržava tekst za pokretanje testa veze.',
-                'custom-api-url-required' => 'API URL je obavezan za prilagođene pružatelje kako bi test veze došao do vaše vlastite krajnje točke.',
-                'api-key-corrupted'       => 'Pohranjeni API ključ nije mogao biti dekriptiran (:error). Ključ za šifriranje aplikacije je možda promijenjen. Ponovo unesite svoj API ključ i spremite.',
-                'fetch-models-fail'       => 'Dohvaćanje modela nije uspjelo',
-                'invalid-model-names'     => 'Nevažeći nazivi modela: :names. Nazivi modela moraju započinjati slovom ili brojem i sadržavati samo slova, brojeve, crtice, točke, dvotočke i kose crte.',
+                'save-success'             => 'Platforma uspješno spremljena.',
+                'update-success'           => 'Platforma uspješno ažurirana.',
+                'delete-success'           => 'Platforma uspješno obrisana.',
+                'delete-fail'              => 'Brisanje platforme nije uspjelo.',
+                'not-found'                => 'Odabrana platforma više ne postoji. Osvježite stranicu i pokušajte ponovno.',
+                'cannot-delete-default'    => 'Nije moguće obrisati jedinu zadanu platformu.',
+                'set-default-success'      => 'Platforma uspješno postavljena kao zadana.',
+                'test-success'             => 'Veza uspješno provjerena!',
+                'test-fail'                => 'Test veze nije uspio',
+                'no-test-model'            => 'Odaberite barem jedan model koji podržava tekst za pokretanje testa veze.',
+                'custom-api-url-required'  => 'API URL je obavezan za prilagođene pružatelje kako bi test veze došao do vaše vlastite krajnje točke.',
+                'api-key-corrupted'        => 'Pohranjeni API ključ nije mogao biti dekriptiran (:error). Ključ za šifriranje aplikacije je možda promijenjen. Ponovo unesite svoj API ključ i spremite.',
+                'fetch-models-fail'        => 'Dohvaćanje modela nije uspjelo',
+                'invalid-model-names'      => 'Nevažeći nazivi modela: :names. Nazivi modela moraju započinjati slovom ili brojem i sadržavati samo slova, brojeve, crtice, točke, dvotočke i kose crte.',
+                'default-requires-enabled' => 'Onemogućena platforma ne može biti označena kao zadana. Najprije omogućite platformu.',
             ],
         ],
     ],

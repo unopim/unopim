@@ -214,7 +214,7 @@ return [
         'key'    => 'data_transfer',
         'name'   => 'admin::app.acl.data-transfer',
         'route'  => 'admin.settings.data_transfer.tracker.index',
-        'sort'   => 7,
+        'sort'   => 8,
     ], [
         'key'   => 'data_transfer.job_tracker',
         'name'  => 'admin::app.acl.tracker',

@@ -3,16 +3,22 @@
         @lang('admin::app.configuration.platform.title')
     </x-slot>
 
+    @php
+        $canCreatePlatform = bouncer()->hasPermission('ai-agent.platform.create');
+    @endphp
+
     <v-magic-ai-platform>
         <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
             <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
                 @lang('admin::app.configuration.platform.title')
             </p>
-            <div class="flex gap-x-2.5 items-center">
-                <button type="button" class="primary-button">
-                    @lang('admin::app.configuration.platform.create-btn')
-                </button>
-            </div>
+            @if ($canCreatePlatform)
+                <div class="flex gap-x-2.5 items-center">
+                    <button type="button" class="primary-button">
+                        @lang('admin::app.configuration.platform.create-btn')
+                    </button>
+                </div>
+            @endif
         </div>
         <x-admin::shimmer.datagrid />
     </v-magic-ai-platform>
@@ -23,11 +29,13 @@
                 <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
                     @lang('admin::app.configuration.platform.title')
                 </p>
-                <div class="flex gap-x-2.5 items-center">
-                    <button type="button" class="primary-button" @click="openCreateModal()">
-                        @lang('admin::app.configuration.platform.create-btn')
-                    </button>
-                </div>
+                @if ($canCreatePlatform)
+                    <div class="flex gap-x-2.5 items-center">
+                        <button type="button" class="primary-button" @click="openCreateModal()">
+                            @lang('admin::app.configuration.platform.create-btn')
+                        </button>
+                    </div>
+                @endif
             </div>
 
             <!-- Setup Guide Banner (no platforms configured) -->
@@ -99,11 +107,11 @@
                             <a @click="setAsDefault(record)" v-if="!record.is_default_raw" title="@lang('admin::app.configuration.platform.set-default')">
                                 <span class="icon-star cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
                             </a>
-                            <a @click="editModal(record.actions.find(a => a.index === 'action_1')?.url)" title="@lang('admin::app.configuration.platform.datagrid.edit')" aria-label="@lang('admin::app.configuration.platform.datagrid.edit')">
-                                <span :class="record.actions.find(a => a.index === 'action_1')?.icon" class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
+                            <a v-if="record.actions.find(a => a.icon === 'icon-edit')" @click="editModal(record.actions.find(a => a.icon === 'icon-edit')?.url)" title="@lang('admin::app.configuration.platform.datagrid.edit')" aria-label="@lang('admin::app.configuration.platform.datagrid.edit')">
+                                <span class="icon-edit cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
                             </a>
-                            <a @click="performAction(record.actions.find(a => a.index === 'action_2'))" title="@lang('admin::app.configuration.platform.datagrid.delete')" aria-label="@lang('admin::app.configuration.platform.datagrid.delete')">
-                                <span :class="record.actions.find(a => a.index === 'action_2')?.icon" class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
+                            <a v-if="record.actions.find(a => a.icon === 'icon-delete')" @click="performAction(record.actions.find(a => a.icon === 'icon-delete'))" title="@lang('admin::app.configuration.platform.datagrid.delete')" aria-label="@lang('admin::app.configuration.platform.datagrid.delete')">
+                                <span class="icon-delete cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
                             </a>
                         </div>
                     </div>
@@ -181,6 +189,7 @@
                                         rules="required"
                                         :label="trans('admin::app.configuration.platform.fields.api-key')"
                                         @change="onApiKeyEntered()"
+                                        @input="onApiKeyInput($event)"
                                     />
                                     <p v-if="fetchingModels" class="mt-1 text-xs text-violet-600">@lang('admin::app.configuration.platform.fetching-models')...</p>
                                     <x-admin::form.control-group.error control-name="api_key" />
@@ -428,6 +437,17 @@
                         }
                     },
 
+                    // Debounced auto-fetch so models load as soon as the user pastes/types an API key,
+                    // without waiting for a blur/change event (Issue #761).
+                    onApiKeyInput(event) {
+                        if (this._apiKeyInputTimer) {
+                            clearTimeout(this._apiKeyInputTimer);
+                        }
+                        this._apiKeyInputTimer = setTimeout(() => {
+                            this.onApiKeyEntered();
+                        }, 500);
+                    },
+
                     fetchModels() {
                         this.fetchingModels = true;
                         this.fetchError = '';
@@ -487,15 +507,56 @@
                         this.selectedModels.splice(index, 1);
                     },
 
-                    saveWithTest(params, { resetForm, setErrors }) {
+                    async saveWithTest(params, { resetForm, setErrors }) {
                         this.saving = true;
                         let saveData = new FormData(this.$refs.platformForm);
+
+                        // The provider field is a custom multiselect component whose value lives in
+                        // this.form.provider, not in a native input. Make sure FormData carries it
+                        // so the backend's `provider` validation and the preflight test both see it.
+                        if (this.form.provider) {
+                            saveData.set('provider', this.form.provider);
+                        }
+
+                        // Ensure the selected models are always in the payload regardless of the hidden
+                        // input's DOM value (Vue :value binding can lag for dynamically-added checkboxes).
+                        saveData.set('models', this.selectedModels.join(','));
 
                         if (this.form.provider === 'azure') {
                             saveData.set('extras', JSON.stringify({
                                 deployment: this.form.azure_deployment,
                                 api_version: this.form.azure_api_version,
                             }));
+                        }
+
+                        // Verify credentials with upstream before persisting (Issue #760).
+                        // Skip the test when the api_key is masked (user did not change it on update).
+                        const rawKey = this.form.api_key;
+                        const keyLooksMasked = typeof rawKey === 'string' && /^\*+$/.test(rawKey);
+                        if (!keyLooksMasked) {
+                            try {
+                                const testForm = new FormData();
+                                testForm.set('provider', this.form.provider || '');
+                                testForm.set('api_url', this.form.api_url || '');
+                                testForm.set('api_key', this.form.api_key || '');
+                                testForm.set('models', this.selectedModels.join(','));
+                                const testResponse = await this.$axios.post(
+                                    "{{ route('admin.magic_ai.platform.test') }}",
+                                    testForm
+                                );
+                                if (!testResponse.data?.success) {
+                                    throw testResponse;
+                                }
+                            } catch (testError) {
+                                this.saving = false;
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: testError?.response?.data?.message
+                                        || testError?.data?.message
+                                        || "@lang('admin::app.configuration.platform.message.test-fail')",
+                                });
+                                return;
+                            }
                         }
 
                         let url;

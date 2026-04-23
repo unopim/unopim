@@ -199,4 +199,28 @@ class ConfigurableProductController extends ProductController
             return $this->storeExceptionLog($e);
         }
     }
+
+    /**
+     * Remove the specified configurable product.
+     */
+    public function delete(string $code): JsonResponse
+    {
+        try {
+            $product = $this->findProductOr404($code);
+
+            Event::dispatch('catalog.product.delete.before', $code);
+
+            $product->delete();
+
+            Event::dispatch('catalog.product.delete.after', $code);
+
+            return response()->json([
+                'success' => true,
+                'message' => trans('admin::app.catalog.products.delete-success'),
+                'sku'     => $product['sku'],
+            ], JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
 }

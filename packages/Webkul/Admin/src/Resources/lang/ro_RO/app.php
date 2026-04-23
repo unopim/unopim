@@ -220,7 +220,8 @@ return [
                 'save-btn'   => 'Salvează produs',
                 'title'      => 'Editează produs',
                 'categories' => [
-                    'title' => 'Categorii',
+                    'title'            => 'Categorii',
+                    'root-not-allowed' => 'Categoria rădăcină nu poate fi atribuită unui produs.',
                 ],
                 'images' => [
                     'info'  => 'Imaginile trebuie să aibă o rezoluție de 560px X 609px',
@@ -363,6 +364,8 @@ return [
                     'url'                        => 'Introduceți un URL valid.',
                     'regex'                      => 'Valoarea nu se potrivește cu modelul necesar.',
                     'invalid-pattern'            => 'Model personalizat invalid furnizat.',
+
+                    'numeric'                    => 'Valoarea atributului numeric „:attribute” trebuie să fie un număr valid.',
                     'select-attribute-or-family' => 'Vă rugăm să selectați cel puțin un atribut sau o familie de atribute.',
                     'failed'                     => 'Validarea a eșuat.',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Editarea în masă a reușit.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Nicio modificare de salvat.',
-                'success'         => 'Sarcină executată cu succes.',
-                'fetch-failed'    => 'Eroare la preluare.',
-                'action'          => 'Editare în masă',
-                'description'     => 'Editați mai multe produse simultan. Modificările sunt procesate în fundal.',
-                'gallery-preview' => 'Previzualizare galerie',
-                'img-preview'     => 'Previzualizare imagine',
-                'no-image'        => 'Nicio imagine',
-                'img-fail'        => 'Încărcarea imaginii a eșuat',
-                'no-option'       => 'Fără opțiuni',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Nicio modificare de salvat.',
+
+                'invalid-datetime'            => 'Introduceți o dată și oră valide.',
+
+                'resize-column'               => 'Trageți pentru a redimensiona coloana',
+                'success'                     => 'Sarcină executată cu succes.',
+                'fetch-failed'                => 'Eroare la preluare.',
+                'action'                      => 'Editare în masă',
+                'description'                 => 'Editați mai multe produse simultan. Modificările sunt procesate în fundal.',
+                'gallery-preview'             => 'Previzualizare galerie',
+                'img-preview'                 => 'Previzualizare imagine',
+                'no-image'                    => 'Nicio imagine',
+                'img-fail'                    => 'Încărcarea imaginii a eșuat',
+                'no-option'                   => 'Fără opțiuni',
+                'keyboard-shortcuts'          => 'Comenzi rapide de la tastatură',
+                'shortcuts-navigation'        => 'Navigare',
+                'shortcuts-editing'           => 'Editare',
+                'shortcuts-selection'         => 'Selecție',
+                'shortcuts-clipboard'         => 'Clipboard și completare',
+                'shortcuts-move-cell'         => 'Deplasare între celule',
+                'shortcuts-move-down'         => 'Deplasare în jos / confirmare editare',
+                'shortcuts-move-up'           => 'Deplasare în sus',
+                'shortcuts-move-right-left'   => 'Deplasare la dreapta / stânga',
+                'shortcuts-home-end'          => 'Prima / ultima coloană din rând',
+                'shortcuts-ctrl-home-end'     => 'Prima / ultima celulă din grilă',
+                'shortcuts-extend-selection'  => 'Extinde selecția',
+                'shortcuts-select-all'        => 'Selectează toate celulele',
+                'shortcuts-enter-edit'        => 'Intră în modul de editare',
+                'shortcuts-confirm-move-down' => 'Confirmă + deplasare în jos',
+                'shortcuts-confirm-move-right'=> 'Confirmă + deplasare la dreapta',
+                'shortcuts-escape-revert'     => 'Revenire la valoare + ieșire din editare',
+                'shortcuts-clear-cell'        => 'Șterge celula',
+                'shortcuts-copy'              => 'Copiază',
+                'shortcuts-cut'               => 'Taie',
+                'shortcuts-paste'             => 'Lipește',
+                'shortcuts-fill-down'         => 'Completează în jos',
+                'shortcuts-fill-right'        => 'Completează la dreapta',
+                'shortcuts-undo'              => 'Anulează',
+                'shortcuts-redo'              => 'Refă',
+                'shortcuts-help'              => 'Afișează/ascunde comenzile rapide',
             ],
             'create-success'          => 'Produs creat cu succes',
             'delete-failed'           => 'Ștergerea produsului a eșuat',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => 'Este filtrabil',
                 'ai-translate'          => 'Traducere IA',
                 'invalid-swatch-type'   => 'Atributul :attribute nu este permis pentru tipul de atribut :type cu tipul de eșantion :swatch_type.',
+
+                'single-object-only'    => 'Fiecare cerere de creare trebuie să trimită un singur obiect de atribut.',
                 'option'                => [
                     'color'    => 'Eșantion de culoare',
                     'dropdown' => 'Meniu derulant',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => 'Atribut șters',
             'update-success'    => 'Atribut actualizat',
             'user-define-error' => 'Nu se poate șterge atributul de sistem',
+
+            'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
             'not-found'         => 'Atributul cu codul ":code" nu a fost găsit',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => 'Categorie ștearsă cu succes.',
             'update-success'       => 'Categorie actualizată cu succes.',
             'can-not-update'       => 'Această categorie rădăcină este asociată unui canal și nu poate avea o categorie părinte.',
+            'invalid-parent'       => 'Categoria părinte selectată este invalidă. O categorie nu poate fi propriul său părinte sau un descendent al său.',
             'unique-validation'    => 'Această valoare este deja utilizată.',
             'not-found'            => 'Categorie cu codul ":code" nu a fost găsită',
             'unknown-fields'       => 'Câmp necunoscut pentru categoria cu codul ":fields"',
@@ -849,15 +887,18 @@ return [
             'update-success'    => 'Câmp de categorie actualizat cu succes',
             'user-define-error' => 'Nu se poate șterge câmpul de categorie sistem',
             'not-found'         => 'Câmp de categorie cu codul ":code" nu a fost găsit',
+
+            'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opțiune câmp categorie creată',
-            'update-success' => 'Opțiune câmp categorie actualizată',
+            'create-success'      => 'Opțiune câmp categorie creată',
+            'update-success'      => 'Opțiune câmp categorie actualizată',
+            'update-unknown-code' => 'Nu există nicio opțiune de câmp de categorie cu codul „:code”.',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Creează familie de atribute',
-                'title'    => 'Familii',
+                'title'    => 'Familii de atribute',
                 'datagrid' => [
                     'code'           => 'Cod',
                     'delete'         => 'Șterge',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Nu se pot actualiza opțiunile de configurare deoarece această familie are deja variante de produse.',
         ],
         'history' => [
+            'view' => 'Vizualizare detalii versiune',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versiune',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => 'Suspendat',
                         'cancelled'            => 'Anulat',
                         'failed'               => 'Eșuat',
+
+                        'view'       => 'Vizualizare',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => 'Clientul nu a fost găsit',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompturi',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titlu',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Prompturi de sistem',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titlu',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => 'Nume de model invalid. Folosiți doar litere, cifre, cratime, puncte, două puncte și bare oblice (ex. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'            => 'Platforma a fost salvată cu succes.',
-                'update-success'          => 'Platforma a fost actualizată cu succes.',
-                'delete-success'          => 'Platforma a fost ștearsă cu succes.',
-                'delete-fail'             => 'Ștergerea platformei a eșuat.',
-                'not-found'               => 'Platforma selectată nu mai există. Vă rugăm să reîmprospătați și să încercați din nou.',
-                'cannot-delete-default'   => 'Nu se poate șterge singura platformă implicită.',
-                'set-default-success'     => 'Platforma a fost setată ca implicită cu succes.',
-                'test-success'            => 'Conexiunea a fost verificată cu succes!',
-                'test-fail'               => 'Testul conexiunii a eșuat',
-                'no-test-model'           => 'Selectați cel puțin un model compatibil cu textul pentru a rula testul de conexiune.',
-                'custom-api-url-required' => 'API URL este obligatoriu pentru furnizorii personalizați, astfel încât testul de conexiune să ajungă la propriul dvs. endpoint.',
-                'api-key-corrupted'       => 'Cheia API stocată nu a putut fi decriptată (:error). Cheia de criptare a aplicației s-ar fi putut schimba. Reintroduceți cheia API și salvați.',
-                'fetch-models-fail'       => 'Modelele nu au putut fi obținute',
-                'invalid-model-names'     => 'Nume de model invalide: :names. Numele de model trebuie să înceapă cu o literă sau un număr și să conțină doar litere, cifre, cratime, puncte, două puncte și bare oblice.',
+                'save-success'             => 'Platforma a fost salvată cu succes.',
+                'update-success'           => 'Platforma a fost actualizată cu succes.',
+                'delete-success'           => 'Platforma a fost ștearsă cu succes.',
+                'delete-fail'              => 'Ștergerea platformei a eșuat.',
+                'not-found'                => 'Platforma selectată nu mai există. Vă rugăm să reîmprospătați și să încercați din nou.',
+                'cannot-delete-default'    => 'Nu se poate șterge singura platformă implicită.',
+                'set-default-success'      => 'Platforma a fost setată ca implicită cu succes.',
+                'test-success'             => 'Conexiunea a fost verificată cu succes!',
+                'test-fail'                => 'Testul conexiunii a eșuat',
+                'no-test-model'            => 'Selectați cel puțin un model compatibil cu textul pentru a rula testul de conexiune.',
+                'custom-api-url-required'  => 'API URL este obligatoriu pentru furnizorii personalizați, astfel încât testul de conexiune să ajungă la propriul dvs. endpoint.',
+                'api-key-corrupted'        => 'Cheia API stocată nu a putut fi decriptată (:error). Cheia de criptare a aplicației s-ar fi putut schimba. Reintroduceți cheia API și salvați.',
+                'fetch-models-fail'        => 'Modelele nu au putut fi obținute',
+                'invalid-model-names'      => 'Nume de model invalide: :names. Numele de model trebuie să înceapă cu o literă sau un număr și să conțină doar litere, cifre, cratime, puncte, două puncte și bare oblice.',
+                'default-requires-enabled' => 'O platformă dezactivată nu poate fi setată ca implicită. Activați mai întâi platforma.',
             ],
         ],
     ],

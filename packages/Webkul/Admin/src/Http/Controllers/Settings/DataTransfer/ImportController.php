@@ -240,7 +240,7 @@ class ImportController extends Controller
     public function importView(int $id): View
     {
         if (! bouncer()->hasPermission('data_transfer.imports')) {
-            abort(401, 'This action is unauthorized');
+            abort(403, 'This action is unauthorized');
         }
 
         $import = $jobInstance = $this->jobInstancesRepository->findOrFail($id);
@@ -586,16 +586,14 @@ class ImportController extends Controller
      * @param  array|null  $summary  The summary data to be normalized.
      * @return array The normalized summary data.
      */
-    private function normalizeSummary($summery)
+    private function normalizeSummary($summary)
     {
         $summaryData = [];
 
-        // Loop through the summary data, translating keys and handling null values
-        foreach (($summery ?? []) as $key => $value) {
+        foreach (($summary ?? []) as $key => $value) {
             $summaryData[trans(sprintf('admin::app.settings.data-transfer.tracker.summary.%s', $key))] = $value ?? 0;
         }
 
-        // Return the normalized summary data
         return $summaryData;
     }
 

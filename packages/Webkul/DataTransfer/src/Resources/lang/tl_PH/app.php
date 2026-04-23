@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Ang ulo ay may hindi wasto na mga attribute: "%s".',
             'system'               => 'Isang hindi inaasahang error ng sistema ang nangyari.',
             'wrong-quotes'         => 'Ginamit ang mga kurbadong mga quote sa halip na mga tuwid na quote.',
+            'file-empty'           => 'Ang file ay walang laman o walang header row. Mangyaring mag-upload ng wastong file na may datos.',
         ],
     ],
     'job' => [

@@ -220,7 +220,8 @@ return [
                 'save-btn'   => 'Desar Producte',
                 'title'      => 'Editar Producte',
                 'categories' => [
-                    'title' => 'Categories',
+                    'title'            => 'Categories',
+                    'root-not-allowed' => 'La categoria arrel no es pot assignar a un producte.',
                 ],
                 'images' => [
                     'info'  => 'La resolució de la imatge hauria de ser com 560px X 609px',
@@ -363,6 +364,8 @@ return [
                     'url'                        => 'Si us plau, introdueix una URL vàlida.',
                     'regex'                      => 'El valor no coincideix amb el patró requerit.',
                     'invalid-pattern'            => 'S\'ha proporcionat un patró personalitzat no vàlid.',
+
+                    'numeric'                    => 'El valor de l\'atribut numèric ":attribute" ha de ser un número vàlid.',
                     'select-attribute-or-family' => 'Si us plau, seleccioneu almenys un atribut o una família d’atributs.',
                     'failed'                     => 'La validació ha fallat.',
                 ],
@@ -382,17 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Edició massiva realitzada amb èxit.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'No hi ha canvis per desar.',
-                'success'         => 'Operació completada amb èxit.',
-                'fetch-failed'    => 'Error en obtenir les dades.',
-                'action'          => 'Edició en massa',
-                'description'     => 'Editeu diversos productes alhora. Els canvis es processen en segon pla.',
-                'gallery-preview' => 'Previsualització de la galeria',
-                'img-preview'     => 'Previsualització de la imatge',
-                'no-image'        => 'Sense imatge',
-                'img-fail'        => 'Error en la pujada de la imatge.',
-                'no-option'       => 'Sense opcions',
+                'id'                          => 'ID',
+                'no-changes'                  => 'No hi ha canvis per desar.',
+
+                'invalid-datetime'            => 'Introdueix una data i hora vàlides.',
+
+                'resize-column'               => 'Arrossega per redimensionar la columna',
+                'success'                     => 'Operació completada amb èxit.',
+                'fetch-failed'                => 'Error en obtenir les dades.',
+                'action'                      => 'Edició en massa',
+                'description'                 => 'Editeu diversos productes alhora. Els canvis es processen en segon pla.',
+                'gallery-preview'             => 'Previsualització de la galeria',
+                'img-preview'                 => 'Previsualització de la imatge',
+                'no-image'                    => 'Sense imatge',
+                'img-fail'                    => 'Error en la pujada de la imatge.',
+                'no-option'                   => 'Sense opcions',
+                'keyboard-shortcuts'          => 'Dreceres de teclat',
+                'shortcuts-navigation'        => 'Navegació',
+                'shortcuts-editing'           => 'Edició',
+                'shortcuts-selection'         => 'Selecció',
+                'shortcuts-clipboard'         => 'Porta-retalls i omplir',
+                'shortcuts-move-cell'         => 'Moure entre cel·les',
+                'shortcuts-move-down'         => 'Baixar / confirmar edició',
+                'shortcuts-move-up'           => 'Pujar',
+                'shortcuts-move-right-left'   => 'Moure a la dreta / esquerra',
+                'shortcuts-home-end'          => 'Primera / última columna de la fila',
+                'shortcuts-ctrl-home-end'     => 'Primera / última cel·la de la graella',
+                'shortcuts-extend-selection'  => 'Ampliar la selecció',
+                'shortcuts-select-all'        => 'Seleccionar totes les cel·les',
+                'shortcuts-enter-edit'        => 'Entrar en mode edició',
+                'shortcuts-confirm-move-down' => 'Confirmar + baixar',
+                'shortcuts-confirm-move-right'=> 'Confirmar + moure a la dreta',
+                'shortcuts-escape-revert'     => 'Revertir valor + sortir de l\'edició',
+                'shortcuts-clear-cell'        => 'Buidar cel·la',
+                'shortcuts-copy'              => 'Copiar',
+                'shortcuts-cut'               => 'Retallar',
+                'shortcuts-paste'             => 'Enganxar',
+                'shortcuts-fill-down'         => 'Omplir cap avall',
+                'shortcuts-fill-right'        => 'Omplir cap a la dreta',
+                'shortcuts-undo'              => 'Desfer',
+                'shortcuts-redo'              => 'Refer',
+                'shortcuts-help'              => 'Mostrar/amagar dreceres de teclat',
             ],
             'create-success'          => 'Producte creat amb èxit',
             'delete-failed'           => 'Eliminació del producte fallida',
@@ -487,6 +520,8 @@ return [
                 'is-filterable'         => 'És filtrable',
                 'ai-translate'          => 'Traducció IA',
                 'invalid-swatch-type'   => 'L\':attribute no està permès per al tipus d\'atribut :type amb el tipus de mostra :swatch_type.',
+
+                'single-object-only'    => 'Cada sol·licitud de creació ha d\'enviar només un objecte d\'atribut.',
                 'option'                => [
                     'color'    => 'Muestra de color',
                     'dropdown' => 'Desplegable',
@@ -569,6 +604,8 @@ return [
             'delete-success'    => 'Atribut eliminat amb èxit',
             'update-success'    => 'Atribut actualitzat amb èxit',
             'user-define-error' => 'No es pot eliminar un atribut del sistema',
+
+            'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
             'not-found'         => 'No s\'ha trobat l\'atribut amb codi ":code"',
         ],
         'attribute-options' => [
@@ -681,6 +718,7 @@ return [
             'delete-success'       => 'La categoria s\'ha eliminat amb èxit.',
             'update-success'       => 'Categoria actualitzada amb èxit.',
             'can-not-update'       => 'Aquesta categoria arrel està associada a un canal i no pot tenir una categoria pare.',
+            'invalid-parent'       => 'La categoria pare seleccionada no és vàlida. Una categoria no pot ser el seu propi pare ni un descendent d\'ella mateixa.',
             'unique-validation'    => 'Aquest valor ja està en ús.',
             'not-found'            => 'No s\'ha pogut trobar la categoria amb codi ":code"',
             'unknown-fields'       => 'No s\'ha pogut trobar el camp de categoria amb codi ":fields"',
@@ -849,15 +887,18 @@ return [
             'update-success'    => 'Camp de Categoria Actualitzat Correctament',
             'user-define-error' => 'No es pot eliminar un Camp de Categoria del sistema',
             'not-found'         => 'No s\'ha trobat el Camp de Categoria amb el codi ":code"',
+
+            'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opció de Camp de Categoria Creada Correctament',
-            'update-success' => 'Opció de Camp de Categoria Actualitzada Correctament',
+            'create-success'      => 'Opció de Camp de Categoria Creada Correctament',
+            'update-success'      => 'Opció de Camp de Categoria Actualitzada Correctament',
+            'update-unknown-code' => 'No existeix cap opció de camp de categoria amb el codi «:code».',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Crear Família d\'Atributs',
-                'title'    => 'Famílies',
+                'title'    => 'Famílies d\'atributs',
                 'datagrid' => [
                     'code'           => 'Codi',
                     'delete'         => 'Eliminar',
@@ -948,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'No es poden actualitzar les opcions configurables ja que aquesta família ja té productes variants.',
         ],
         'history' => [
+            'view' => 'Veure els detalls de la versió',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versió',
@@ -1081,6 +1124,8 @@ return [
                         'paused'               => 'En pausa',
                         'cancelled'            => 'Cancel·lat',
                         'failed'               => 'Fallat',
+
+                        'view'       => 'Veure',
                     ],
                 ],
                 'import' => [
@@ -1737,6 +1782,12 @@ return [
             'client-not-found'               => 'Cliente Não Encontrado',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Títol',
@@ -1779,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Prompts del sistema',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Títol',
@@ -1872,20 +1929,21 @@ return [
                 'invalid-model-name'       => 'Nom de model no vàlid. Utilitzeu només lletres, números, guions, punts, dos punts i barres (p. ex. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'            => 'Plataforma desada correctament.',
-                'update-success'          => 'Plataforma actualitzada correctament.',
-                'delete-success'          => 'Plataforma eliminada correctament.',
-                'delete-fail'             => 'Error en eliminar la plataforma.',
-                'not-found'               => 'La plataforma seleccionada ja no existeix. Actualitzeu i torneu-ho a provar.',
-                'cannot-delete-default'   => 'No es pot eliminar l\'única plataforma per defecte.',
-                'set-default-success'     => 'Plataforma establerta com a predeterminada correctament.',
-                'test-success'            => 'Connexió verificada correctament!',
-                'test-fail'               => 'La prova de connexió ha fallat',
-                'no-test-model'           => 'Seleccioneu almenys un model capaç de generar text per executar la prova de connexió.',
-                'custom-api-url-required' => 'L\'API URL és obligatòria per als proveïdors personalitzats perquè la prova de connexió arribi al vostre propi endpoint.',
-                'api-key-corrupted'       => 'No s\'ha pogut desxifrar la clau API emmagatzemada (:error). La clau de xifrat de l\'aplicació pot haver canviat. Torneu a introduir la vostra clau API i deseu.',
-                'fetch-models-fail'       => 'No s\'han pogut obtenir els models',
-                'invalid-model-names'     => 'Noms de model no vàlids: :names. Els noms de model han de començar amb una lletra o un número i contenir només lletres, números, guions, punts, dos punts i barres.',
+                'save-success'             => 'Plataforma desada correctament.',
+                'update-success'           => 'Plataforma actualitzada correctament.',
+                'delete-success'           => 'Plataforma eliminada correctament.',
+                'delete-fail'              => 'Error en eliminar la plataforma.',
+                'not-found'                => 'La plataforma seleccionada ja no existeix. Actualitzeu i torneu-ho a provar.',
+                'cannot-delete-default'    => 'No es pot eliminar l\'única plataforma per defecte.',
+                'set-default-success'      => 'Plataforma establerta com a predeterminada correctament.',
+                'test-success'             => 'Connexió verificada correctament!',
+                'test-fail'                => 'La prova de connexió ha fallat',
+                'no-test-model'            => 'Seleccioneu almenys un model capaç de generar text per executar la prova de connexió.',
+                'custom-api-url-required'  => 'L\'API URL és obligatòria per als proveïdors personalitzats perquè la prova de connexió arribi al vostre propi endpoint.',
+                'api-key-corrupted'        => 'No s\'ha pogut desxifrar la clau API emmagatzemada (:error). La clau de xifrat de l\'aplicació pot haver canviat. Torneu a introduir la vostra clau API i deseu.',
+                'fetch-models-fail'        => 'No s\'han pogut obtenir els models',
+                'invalid-model-names'      => 'Noms de model no vàlids: :names. Els noms de model han de començar amb una lletra o un número i contenir només lletres, números, guions, punts, dos punts i barres.',
+                'default-requires-enabled' => 'Una plataforma desactivada no es pot marcar com a per defecte. Activa-la primer.',
             ],
         ],
     ],
