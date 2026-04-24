@@ -374,7 +374,14 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.locator('#product_number').fill(`PN-${uid}`);
     await adminPage.locator('#name').fill(`Config Product ${uid}`);
     await adminPage.locator('#url_key').fill(`url-${uid}`);
-    await adminPage.locator('#price').fill('25000');
+    // Multi-currency default channel; fill every #price input.
+    {
+      const prices = adminPage.locator('#price');
+      const pc = await prices.count();
+      for (let i = 0; i < pc; i++) {
+        await prices.nth(i).fill('25000');
+      }
+    }
 
     // Fill required TinyMCE fields (triggers VeeValidate via keyup handler)
     await fillTinyMCE(adminPage, 'short_description', 'Short description text');
