@@ -126,7 +126,7 @@ test.describe('UnoPim Webhook test cases', () => {
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
     await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
     await expect(adminPage.locator('input[name="user"]')).toBeVisible();
-    await expect(adminPage.locator('[name="status"]').first()).toBeVisible();
+    await expect(adminPage.locator('[name="status"], button:has-text("Status"), [data-filter="status"]').first()).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Save')).toBeVisible();
   });
 

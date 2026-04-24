@@ -290,7 +290,7 @@ test.describe('Simple Product CRUD', () => {
     await adminPage.locator('#product_number').fill(`PN-${uid}`);
     await adminPage.locator('#name').fill(`Test Product ${uid}`);
     await adminPage.locator('#url_key').fill(`url-${uid}`);
-    await adminPage.locator('#price').fill('40000');
+    await adminPage.locator('#price').first().fill('40000');
 
     // Fill required TinyMCE fields (triggers VeeValidate via keyup handler)
     await fillTinyMCE(adminPage, 'short_description', 'Short description text');
@@ -329,7 +329,7 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
 
     // Select a configurable attribute (e.g., Brand) when prompted
-    await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
+    await adminPage.locator('label, p').filter({ hasText: /^Brand$/ }).first().click();
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     // After creation, the app redirects to the product edit page
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -350,7 +350,7 @@ test.describe('Configurable Product CRUD', () => {
     await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
+    await adminPage.locator('label, p').filter({ hasText: /^Brand$/ }).first().click();
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await adminPage.waitForLoadState('networkidle').catch(() => {});
@@ -390,7 +390,7 @@ test.describe('Configurable Product CRUD', () => {
     await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
+    await adminPage.locator('label, p').filter({ hasText: /^Brand$/ }).first().click();
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await adminPage.waitForLoadState('networkidle').catch(() => {});
