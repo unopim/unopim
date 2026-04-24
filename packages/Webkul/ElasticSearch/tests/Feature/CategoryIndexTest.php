@@ -91,14 +91,19 @@ it('should index the category to elastic when category is updated', function () 
     ElasticSearch::shouldReceive('index')
         ->atLeast()->once()
         ->withArgs(function ($args) use ($category) {
+            // kalnoy/nestedset may fire an internal save on a sibling
+            // (mostly on PostgreSQL) to rebalance _lft/_rgt — ignore those
+            // calls and validate only the call for our target category.
+            if (($args['id'] ?? null) !== $category->id) {
+                return false;
+            }
+
             try {
                 $this->assertArrayHasKey('index', $args);
                 $this->assertArrayHasKey('id', $args);
                 $this->assertArrayHasKey('body', $args);
 
                 $this->assertEquals('testing_categories', $args['index']);
-
-                $this->assertEquals($category->id, $args['id']);
                 $this->assertEquals($category->toArray(), $args['body']);
             } catch (ExpectationFailedException $e) {
                 $this->fail($e->getMessage());

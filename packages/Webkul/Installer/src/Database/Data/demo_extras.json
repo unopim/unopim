@@ -2326,7 +2326,7 @@
                 "id": 1,
                 "channel_id": 1,
                 "locale": "en_US",
-                "name": "Print",
+                "name": "Default",
                 "created_at": null,
                 "updated_at": "2026-03-30 06:54:03"
             },
@@ -3760,7 +3760,7 @@
                 "id": 1,
                 "attribute_family_id": 1,
                 "locale": "en_US",
-                "name": "Accessories"
+                "name": "Default"
             },
             {
                 "id": 2,

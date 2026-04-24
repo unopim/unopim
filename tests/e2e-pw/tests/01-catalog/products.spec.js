@@ -33,10 +33,17 @@ async function selectMultiselect(page, fieldName, optionLabel) {
   const wrapper = page.locator(`input[name="${fieldName}"]`).locator('..');
   // Click tags area (works whether placeholder or tag is showing)
   await wrapper.locator('.multiselect__tags').click();
-  // Wait for dropdown list to appear
-  await page.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
-  // Pick the option
-  await page.getByRole('option', { name: optionLabel }).first().click();
+  // Wait for dropdown list to appear (scoped to this field)
+  await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
+  if (optionLabel) {
+    await page.getByRole('option', { name: optionLabel }).first().click();
+  } else {
+    // Pick first enabled option when label not provided
+    await wrapper
+      .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
+      .first()
+      .click();
+  }
   // Close dropdown by pressing Escape
   await page.keyboard.press('Escape');
 }
@@ -50,7 +57,7 @@ async function createSimpleProduct(adminPage, sku) {
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await adminPage.waitForLoadState('networkidle');
   await selectMultiselect(adminPage, 'type', 'Simple');
-  await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+  await selectMultiselect(adminPage, 'attribute_family_id');
   await adminPage.locator('input[name="sku"]').fill(sku);
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
   // After creation, the app redirects to the product edit page
@@ -82,7 +89,7 @@ test.describe('Product Creation - Validation', () => {
   test('1 - with empty product type field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(`val1_${generateUid()}`);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
@@ -101,7 +108,7 @@ test.describe('Product Creation - Validation', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
   });
@@ -118,7 +125,7 @@ test.describe('Product Creation - Validation', () => {
   test('5 - with empty product type and sku field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
@@ -186,7 +193,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `-PROD001-${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
@@ -199,7 +206,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `_INVALID-${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
@@ -210,7 +217,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `PROD--${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
@@ -221,7 +228,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `PROD@${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
@@ -232,7 +239,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `PROD ${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
@@ -258,7 +265,7 @@ test.describe('Simple Product CRUD', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The sku has already been taken.');
@@ -317,7 +324,7 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.waitForLoadState('networkidle');
     await selectMultiselect(adminPage, 'type', 'Configurable');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
 
@@ -340,7 +347,7 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.waitForLoadState('networkidle');
     await selectMultiselect(adminPage, 'type', 'Configurable');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
@@ -380,7 +387,7 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.waitForLoadState('networkidle');
     await selectMultiselect(adminPage, 'type', 'Configurable');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
