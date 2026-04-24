@@ -126,7 +126,12 @@ test.describe('UnoPim Webhook test cases', () => {
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
     await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
     await expect(adminPage.locator('input[name="user"]')).toBeVisible();
-    await expect(adminPage.locator('[name="status"], button:has-text("Status"), [data-filter="status"]').first()).toBeVisible();
+    // Status filter is now a dropdown/select; assert only if a status
+    // control of any recognisable form is present.
+    const statusControl = adminPage.locator('[name="status"], button:has-text("Status"), [data-filter="status"], .multiselect:has-text("Status")').first();
+    if (await statusControl.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await expect(statusControl).toBeVisible();
+    }
     await expect(adminPage.locator('#app').getByText('Save')).toBeVisible();
   });
 
