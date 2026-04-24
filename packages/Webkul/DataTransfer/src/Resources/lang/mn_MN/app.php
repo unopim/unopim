@@ -3,45 +3,88 @@
 return [
     'importers' => [
         'products' => [
-            'title'      => 'Бүтээгдэхүүн',
+            'title' => 'Бүтээгдэхүүн',
             'validation' => [
                 'errors' => [
-                    'duplicate-url-key'                        => 'URL түлхүүр: \'%s\' SKU-тай зүйлд аль хэдийн үүсгэгдсэн: \'%s\'.',
-                    'invalid-attribute-family'                 => 'Атрибутын гэр бүлийн баганын утга буруу байна (атрибутын гэр бүл байхгүй юу?)',
-                    'invalid-type'                             => 'Бүтээгдэхүүний төрөл буруу эсвэл дэмжигдээгүй байна',
-                    'sku-not-found'                            => 'Заасан SKU-тай бүтээгдэхүүн олдсонгүй',
-                    'super-attribute-not-found'                => 'Кодтой тохируулах боломжтой атрибут :code олдоогүй эсвэл атрибутын гэр бүлд хамаарахгүй :familyCode',
-                    'configurable-attributes-not-found'        => 'Бүтээгдэхүүний загварыг бий болгохын тулд тохируулж болох шинж чанарууд шаардлагатай',
-                    'configurable-attributes-wrong-type'       => 'Зөвхөн локал болон сувагт тулгуурлаагүй сонгосон төрлийн шинж чанаруудыг тохируулж болох бүтээгдэхүүний тохируулж болох шинж чанаруудыг зөвшөөрдөг.',
+                    'duplicate-url-key' => 'URL түлхүүр: \'%s\' SKU-тай зүйлд аль хэдийн үүсгэгдсэн: \'%s\'.',
+                    'invalid-attribute-family' => 'Атрибутын гэр бүлийн баганын утга буруу байна (атрибутын гэр бүл байхгүй юу?)',
+                    'invalid-type' => 'Бүтээгдэхүүний төрөл буруу эсвэл дэмжигдээгүй байна',
+                    'sku-not-found' => 'Заасан SKU-тай бүтээгдэхүүн олдсонгүй',
+                    'super-attribute-not-found' => 'Кодтой тохируулах боломжтой атрибут :code олдоогүй эсвэл атрибутын гэр бүлд хамаарахгүй :familyCode',
+                    'configurable-attributes-not-found' => 'Бүтээгдэхүүний загварыг бий болгохын тулд тохируулж болох шинж чанарууд шаардлагатай',
+                    'configurable-attributes-wrong-type' => 'Зөвхөн локал болон сувагт тулгуурлаагүй сонгосон төрлийн шинж чанаруудыг тохируулж болох бүтээгдэхүүний тохируулж болох шинж чанаруудыг зөвшөөрдөг.',
                     'variant-configurable-attribute-not-found' => 'Хувилбарыг тохируулах боломжтой шинж чанар :code үүсгэхэд шаардлагатай',
-                    'not-unique-variant-product'               => 'Тохируулж болох шинж чанаруудтай бүтээгдэхүүн аль хэдийн байна.',
-                    'channel-not-exist'                        => 'Энэ суваг байхгүй байна.',
-                    'locale-not-in-channel'                    => 'Суваг дээр энэ хэлийг сонгоогүй байна.',
-                    'locale-not-exist'                         => 'Энэ локал байхгүй байна',
-                    'not-unique-value'                         => ':code утга нь өвөрмөц байх ёстой.',
-                    'incorrect-family-for-variant'             => 'Гэр бүл нь эцэг эхтэй ижил байх ёстой',
-                    'parent-not-exist'                         => 'Эцэг эх нь байхгүй.',
+                    'not-unique-variant-product' => 'Тохируулж болох шинж чанаруудтай бүтээгдэхүүн аль хэдийн байна.',
+                    'channel-not-exist' => 'Энэ суваг байхгүй байна.',
+                    'locale-not-in-channel' => 'Суваг дээр энэ хэлийг сонгоогүй байна.',
+                    'locale-not-exist' => 'Энэ локал байхгүй байна',
+                    'not-unique-value' => ':code утга нь өвөрмөц байх ёстой.',
+                    'incorrect-family-for-variant' => 'Гэр бүл нь эцэг эхтэй ижил байх ёстой',
+                    'parent-not-exist' => 'Эцэг эх нь байхгүй.',
                 ],
             ],
         ],
         'categories' => [
-            'title'      => 'Ангилал',
+            'title' => 'Ангилал',
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Та сувагтай холбоотой үндсэн категорийг устгах боломжгүй',
                 ],
             ],
         ],
+        'attributes' => [
+            'title' => 'Attributes',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code' => 'Attribute code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
+                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title' => 'Attribute Groups',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code' => 'Attribute group code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
+                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title' => 'Attribute Families',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code' => 'Attribute family code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
+                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
+                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'invalid-channel' => 'Channel ":code" does not exist.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title' => 'Attribute Options',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code' => 'Attribute option code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
+                    'locale-not-exist' => 'Locale ":code" does not exist.',
+                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
-            'title'      => 'Бүтээгдэхүүн',
+            'title' => 'Бүтээгдэхүүн',
             'validation' => [
                 'errors' => [
-                    'duplicate-url-key'         => 'URL түлхүүр: \'%s\' SKU-тай зүйлд аль хэдийн үүсгэгдсэн: \'%s\'.',
-                    'invalid-attribute-family'  => 'Атрибутын гэр бүлийн баганын утга буруу байна (атрибутын гэр бүл байхгүй юу?)',
-                    'invalid-type'              => 'Бүтээгдэхүүний төрөл буруу эсвэл дэмжигдээгүй байна',
-                    'sku-not-found'             => 'Заасан SKU-тай бүтээгдэхүүн олдсонгүй',
+                    'duplicate-url-key' => 'URL түлхүүр: \'%s\' SKU-тай зүйлд аль хэдийн үүсгэгдсэн: \'%s\'.',
+                    'invalid-attribute-family' => 'Атрибутын гэр бүлийн баганын утга буруу байна (атрибутын гэр бүл байхгүй юу?)',
+                    'invalid-type' => 'Бүтээгдэхүүний төрөл буруу эсвэл дэмжигдээгүй байна',
+                    'sku-not-found' => 'Заасан SKU-тай бүтээгдэхүүн олдсонгүй',
                     'super-attribute-not-found' => 'Кодтой супер атрибут: \'%s\' олдсонгүй эсвэл атрибутын бүлэгт хамаарахгүй: \'%s\'',
                 ],
             ],
@@ -65,16 +108,16 @@ return [
     'validation' => [
         'errors' => [
             'column-empty-headers' => '"%s" дугаартай баганын толгой хоосон байна.',
-            'column-name-invalid'  => 'Баганын нэр буруу: "%s".',
-            'column-not-found'     => 'Шаардлагатай баганууд олдсонгүй: %s.',
-            'column-numbers'       => 'Баганын тоо толгойн мөрийн тоотой тохирохгүй байна.',
-            'invalid-attribute'    => 'Толгой хэсэгт хүчингүй атрибут(ууд) агуулагдаж байна: "%s".',
-            'system'               => 'Гэнэтийн системийн алдаа гарлаа.',
-            'wrong-quotes'         => 'Шулуун ишлэлийн оронд буржгар ишлэл ашигласан.',
+            'column-name-invalid' => 'Баганын нэр буруу: "%s".',
+            'column-not-found' => 'Шаардлагатай баганууд олдсонгүй: %s.',
+            'column-numbers' => 'Баганын тоо толгойн мөрийн тоотой тохирохгүй байна.',
+            'invalid-attribute' => 'Толгой хэсэгт хүчингүй атрибут(ууд) агуулагдаж байна: "%s".',
+            'system' => 'Гэнэтийн системийн алдаа гарлаа.',
+            'wrong-quotes' => 'Шулуун ишлэлийн оронд буржгар ишлэл ашигласан.',
         ],
     ],
     'job' => [
-        'started'   => 'Ажлын гүйцэтгэл эхэлсэн',
+        'started' => 'Ажлын гүйцэтгэл эхэлсэн',
         'completed' => 'Ажлын гүйцэтгэл дууссан',
     ],
 ];

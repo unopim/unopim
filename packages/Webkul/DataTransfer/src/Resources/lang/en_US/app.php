@@ -75,6 +75,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attribute option code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
+                    'locale-not-exist'         => 'Locale ":code" does not exist.',
                     'invalid-attribute'        => 'Attribute ":code" does not exist.',
                 ],
             ],

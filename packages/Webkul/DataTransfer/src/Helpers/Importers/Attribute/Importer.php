@@ -17,8 +17,11 @@ use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 class Importer extends AbstractImporter
 {
     public const ERROR_DUPLICATE_CODE = 'duplicate_code';
+
     public const ERROR_CODE_NOT_FOUND_FOR_DELETE = 'code_not_found_to_delete';
+
     public const ERROR_NOT_FOUND_LOCALE = 'locale_not_exist';
+
     public const ERROR_CODE_IS_SYSTEM = 'code_is_system';
 
     /**
@@ -40,6 +43,7 @@ class Importer extends AbstractImporter
         'value_per_channel',
         'is_filterable',
         'ai_translate',
+        'productCounts',
     ];
 
     /**
@@ -261,14 +265,14 @@ class Importer extends AbstractImporter
         $isAttribute = $this->isAttributeExist($rowData['code']);
 
         $data = [
-            'code' => $rowData['code'],
-            $rowData['locale'] => ['name' => $rowData['name'] ?? null]
+            'code'             => $rowData['code'],
+            $rowData['locale'] => ['name' => $rowData['name'] ?? null],
         ];
 
         $fields = [
             'type', 'enable_wysiwyg', 'position', 'swatch_type', 'is_required',
             'is_unique', 'validation', 'regex_pattern', 'value_per_locale',
-            'value_per_channel', 'is_filterable', 'ai_translate'
+            'value_per_channel', 'is_filterable', 'ai_translate',
         ];
 
         foreach ($fields as $field) {
@@ -276,7 +280,7 @@ class Importer extends AbstractImporter
                 // boolean casting for typical DB structure
                 if (in_array($field, ['enable_wysiwyg', 'is_required', 'is_unique', 'value_per_locale', 'value_per_channel', 'is_filterable', 'ai_translate'])) {
                     $data[$field] = (int) (bool) $rowData[$field];
-                } else if ($field === 'position') {
+                } elseif ($field === 'position') {
                     $data[$field] = (int) $rowData[$field];
                 } else {
                     $data[$field] = $rowData[$field];
@@ -310,7 +314,7 @@ class Importer extends AbstractImporter
 
             foreach ($attributes['update'] as $code => $attributeData) {
                 $attributeId = $this->attributeStorage->get($code);
-                
+
                 // Fetch the existing model to update translations properly through the repository
                 $this->attributeRepository->update($attributeData, $attributeId);
             }

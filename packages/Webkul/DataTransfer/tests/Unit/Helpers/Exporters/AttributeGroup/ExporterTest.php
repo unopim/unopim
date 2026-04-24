@@ -94,18 +94,18 @@ $sharedGroupAssertions = function (string $fileFormat, Exporter $exporter): void
 
     expect($enRow)->not->toBeNull()
         ->and($enRow['code'])->toBe('general')
-        ->and($enRow['label'])->toBe('General')
+        ->and($enRow['name'])->toBe('General')
         ->and($enRow['locale'])->toBe('en_US');
 
     if ($locales->contains('fr_FR')) {
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
 
         expect($frRow)->not->toBeNull()
-            ->and($frRow['label'])->toBe('Général');
+            ->and($frRow['name'])->toBe('Général');
     }
 
     foreach ($result as $row) {
-        expect($row)->toHaveKeys(['code', 'locale', 'label']);
+        expect($row)->toHaveKeys(['code', 'locale', 'name']);
     }
 };
 
@@ -143,7 +143,7 @@ describe('prepareAttributeGroups [CSV]', function () use ($sharedGroupAssertions
         $batch = makeGroupBatch([['code' => 'technical']]);
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.csv');
 
-        expect($result[0]['label'])->toBeNull();
+        expect($result[0]['name'])->toBeNull();
     });
 
     it('handles missing translations gracefully for CSV', function () {
@@ -153,7 +153,7 @@ describe('prepareAttributeGroups [CSV]', function () use ($sharedGroupAssertions
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.csv');
 
         foreach ($result as $row) {
-            expect($row['label'])->toBeNull();
+            expect($row['name'])->toBeNull();
         }
     });
 
@@ -169,11 +169,11 @@ describe('prepareAttributeGroups [CSV]', function () use ($sharedGroupAssertions
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.csv');
 
         $enRow = collect($result)->firstWhere('locale', 'en_US');
-        expect($enRow['label'])->toBe('General');
+        expect($enRow['name'])->toBe('General');
 
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
         if ($frRow) {
-            expect($frRow['label'])->toBeNull();
+            expect($frRow['name'])->toBeNull();
         }
     });
 
@@ -214,7 +214,7 @@ describe('prepareAttributeGroups [XLS]', function () use ($sharedGroupAssertions
         $batch = makeGroupBatch([['code' => 'technical']]);
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xls');
 
-        expect($result[0]['label'])->toBeNull();
+        expect($result[0]['name'])->toBeNull();
     });
 
     it('handles missing translations gracefully for XLS', function () {
@@ -224,7 +224,7 @@ describe('prepareAttributeGroups [XLS]', function () use ($sharedGroupAssertions
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xls');
 
         foreach ($result as $row) {
-            expect($row['label'])->toBeNull();
+            expect($row['name'])->toBeNull();
         }
     });
 
@@ -239,11 +239,11 @@ describe('prepareAttributeGroups [XLS]', function () use ($sharedGroupAssertions
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xls');
 
         $enRow = collect($result)->firstWhere('locale', 'en_US');
-        expect($enRow['label'])->toBe('General');
+        expect($enRow['name'])->toBe('General');
 
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
         if ($frRow) {
-            expect($frRow['label'])->toBeNull();
+            expect($frRow['name'])->toBeNull();
         }
     });
 
@@ -284,7 +284,7 @@ describe('prepareAttributeGroups [XLSX]', function () use ($sharedGroupAssertion
         $batch = makeGroupBatch([['code' => 'technical']]);
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xlsx');
 
-        expect($result[0]['label'])->toBeNull();
+        expect($result[0]['name'])->toBeNull();
     });
 
     it('handles missing translations gracefully for XLSX', function () {
@@ -294,7 +294,7 @@ describe('prepareAttributeGroups [XLSX]', function () use ($sharedGroupAssertion
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xlsx');
 
         foreach ($result as $row) {
-            expect($row['label'])->toBeNull();
+            expect($row['name'])->toBeNull();
         }
     });
 
@@ -309,11 +309,11 @@ describe('prepareAttributeGroups [XLSX]', function () use ($sharedGroupAssertion
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xlsx');
 
         $enRow = collect($result)->firstWhere('locale', 'en_US');
-        expect($enRow['label'])->toBe('General');
+        expect($enRow['name'])->toBe('General');
 
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
         if ($frRow) {
-            expect($frRow['label'])->toBeNull();
+            expect($frRow['name'])->toBeNull();
         }
     });
 
