@@ -88,31 +88,35 @@ it('should index the category to elastic when category is updated', function () 
     // from a prior test; that fires the observer a second time. The
     // assertion below validates the payload, so allow 1..2 calls and
     // rely on withArgs() to prove each call carries the right index/id/body.
+    $targetAsserted = false;
+
+    // kalnoy/nestedset may fire an internal save on a sibling (mostly on
+    // PostgreSQL) to rebalance _lft/_rgt, so the observer can be invoked
+    // more than once. Accept every call to avoid Mockery
+    // NoMatchingExpectationException, and validate the payload only for
+    // the call that targets our category.
     ElasticSearch::shouldReceive('index')
         ->atLeast()->once()
-        ->withArgs(function ($args) use ($category) {
-            // kalnoy/nestedset may fire an internal save on a sibling
-            // (mostly on PostgreSQL) to rebalance _lft/_rgt — ignore those
-            // calls and validate only the call for our target category.
-            if (($args['id'] ?? null) !== $category->id) {
-                return false;
-            }
+        ->withArgs(function ($args) use ($category, &$targetAsserted) {
+            if (($args['id'] ?? null) === $category->id) {
+                try {
+                    $this->assertArrayHasKey('index', $args);
+                    $this->assertArrayHasKey('body', $args);
 
-            try {
-                $this->assertArrayHasKey('index', $args);
-                $this->assertArrayHasKey('id', $args);
-                $this->assertArrayHasKey('body', $args);
-
-                $this->assertEquals('testing_categories', $args['index']);
-                $this->assertEquals($category->toArray(), $args['body']);
-            } catch (ExpectationFailedException $e) {
-                $this->fail($e->getMessage());
+                    $this->assertEquals('testing_categories', $args['index']);
+                    $this->assertEquals($category->toArray(), $args['body']);
+                    $targetAsserted = true;
+                } catch (ExpectationFailedException $e) {
+                    $this->fail($e->getMessage());
+                }
             }
 
             return true;
         });
 
     $category->save();
+
+    expect($targetAsserted)->toBeTrue('Observer did not fire for target category');
 });
 
 it('should remove category from elastic when category is deleted', function () {
