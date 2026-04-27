@@ -3,29 +3,29 @@
 return [
     'importers' => [
         'products' => [
-            'title'      => 'Prodotti',
+            'title' => 'Prodotti',
             'validation' => [
                 'errors' => [
-                    'duplicate-url-key'                        => 'Chiave URL: \'%s\' è già stata generata per un articolo con l\'SKU: \'%s\'.',
-                    'invalid-attribute-family'                 => 'Valore non valido per la colonna della famiglia di attributi (la famiglia di attributi non esiste?)',
-                    'invalid-type'                             => 'Tipo di prodotto non valido o non supportato',
-                    'sku-not-found'                            => 'Prodotto con SKU specificato non trovato',
-                    'super-attribute-not-found'                => 'Attributo configurabile con codice: \'%s\' non trovato o non appartiene alla famiglia di attributi: \'%s\' :code :familyCode',
-                    'configurable-attributes-not-found'        => 'Gli attributi configurabili sono necessari per creare il modello di prodotto',
-                    'configurable-attributes-wrong-type'       => 'Solo gli attributi di tipo che non sono basati su locale o canale possono essere attributi configurabili per un prodotto configurabile',
+                    'duplicate-url-key' => 'Chiave URL: \'%s\' è già stata generata per un articolo con l\'SKU: \'%s\'.',
+                    'invalid-attribute-family' => 'Valore non valido per la colonna della famiglia di attributi (la famiglia di attributi non esiste?)',
+                    'invalid-type' => 'Tipo di prodotto non valido o non supportato',
+                    'sku-not-found' => 'Prodotto con SKU specificato non trovato',
+                    'super-attribute-not-found' => 'Attributo configurabile con codice: \'%s\' non trovato o non appartiene alla famiglia di attributi: \'%s\' :code :familyCode',
+                    'configurable-attributes-not-found' => 'Gli attributi configurabili sono necessari per creare il modello di prodotto',
+                    'configurable-attributes-wrong-type' => 'Solo gli attributi di tipo che non sono basati su locale o canale possono essere attributi configurabili per un prodotto configurabile',
                     'variant-configurable-attribute-not-found' => 'Attributo configurabile variante: :code è richiesto per la creazione',
-                    'not-unique-variant-product'               => 'Un prodotto con gli stessi attributi configurabili esiste già.',
-                    'channel-not-exist'                        => 'Questo canale non esiste.',
-                    'locale-not-in-channel'                    => 'Questo locale non è selezionato nel canale.',
-                    'locale-not-exist'                         => 'Questo locale non esiste',
-                    'not-unique-value'                         => 'Il valore :code deve essere unico.',
-                    'incorrect-family-for-variant'             => 'La famiglia deve essere la stessa della famiglia principale',
-                    'parent-not-exist'                         => 'Il genitore non esiste.',
+                    'not-unique-variant-product' => 'Un prodotto con gli stessi attributi configurabili esiste già.',
+                    'channel-not-exist' => 'Questo canale non esiste.',
+                    'locale-not-in-channel' => 'Questo locale non è selezionato nel canale.',
+                    'locale-not-exist' => 'Questo locale non esiste',
+                    'not-unique-value' => 'Il valore :code deve essere unico.',
+                    'incorrect-family-for-variant' => 'La famiglia deve essere la stessa della famiglia principale',
+                    'parent-not-exist' => 'Il genitore non esiste.',
                 ],
             ],
         ],
         'categories' => [
-            'title'      => 'Categorie',
+            'title' => 'Categorie',
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Non puoi eliminare la categoria radice associata a un canale',
@@ -33,58 +33,58 @@ return [
             ],
         ],
         'attributes' => [
-            'title'      => 'Attributes',
+            'title' => 'Attributes',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'                       => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
+                    'duplicate-code' => 'Attribute code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title'      => 'Attribute Groups',
+            'title' => 'Attribute Groups',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'                       => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete'             => 'Attribute group code not found for deletion.',
+                    'duplicate-code' => 'Attribute group code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title'      => 'Attribute Families',
+            'title' => 'Attribute Families',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'           => 'Attribute family code :code is already in use.',
+                    'duplicate-code' => 'Attribute family code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group'  => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
-                    'invalid-channel'          => 'Channel ":code" does not exist.',
+                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
+                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'invalid-channel' => 'Channel ":code" does not exist.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title'      => 'Attribute Options',
+            'title' => 'Attribute Options',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'           => 'Attribute option code :code is already in use.',
+                    'duplicate-code' => 'Attribute option code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist'         => 'Locale ":code" does not exist.',
-                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                    'locale-not-exist' => 'Locale ":code" does not exist.',
+                    'invalid-attribute' => 'Attribute ":code" does not exist.',
                 ],
             ],
         ],
     ],
     'exporters' => [
         'products' => [
-            'title'      => 'Prodotti',
+            'title' => 'Prodotti',
             'validation' => [
                 'errors' => [
-                    'duplicate-url-key'         => 'Chiave URL: \'%s\' è già stata generata per un articolo con l\'SKU: \'%s\'.',
-                    'invalid-attribute-family'  => 'Valore non valido per la colonna della famiglia di attributi (la famiglia di attributi non esiste?)',
-                    'invalid-type'              => 'Tipo di prodotto non valido o non supportato',
-                    'sku-not-found'             => 'Prodotto con SKU specificato non trovato',
+                    'duplicate-url-key' => 'Chiave URL: \'%s\' è già stata generata per un articolo con l\'SKU: \'%s\'.',
+                    'invalid-attribute-family' => 'Valore non valido per la colonna della famiglia di attributi (la famiglia di attributi non esiste?)',
+                    'invalid-type' => 'Tipo di prodotto non valido o non supportato',
+                    'sku-not-found' => 'Prodotto con SKU specificato non trovato',
                     'super-attribute-not-found' => 'Attributo principale con codice: \'%s\' non trovato o non appartiene alla famiglia di attributi: \'%s\'',
                 ],
             ],
@@ -108,16 +108,17 @@ return [
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Le colonne numero "%s" hanno intestazioni vuote.',
-            'column-name-invalid'  => 'Intestazioni di colonna non valide: "%s".',
-            'column-not-found'     => 'Le colonne richieste non sono trovate: %s.',
-            'column-numbers'       => 'Il numero di colonne non corrisponde al numero di righe nell\'intestazione.',
-            'invalid-attribute'    => 'L\'intestazione contiene attributi non validi: "%s".',
-            'system'               => 'Si è verificato un errore di sistema imprevisto.',
-            'wrong-quotes'         => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
+            'column-name-invalid' => 'Intestazioni di colonna non valide: "%s".',
+            'column-not-found' => 'Le colonne richieste non sono trovate: %s.',
+            'column-numbers' => 'Il numero di colonne non corrisponde al numero di righe nell\'intestazione.',
+            'invalid-attribute' => 'L\'intestazione contiene attributi non validi: "%s".',
+            'system' => 'Si è verificato un errore di sistema imprevisto.',
+            'wrong-quotes' => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
+            'file-empty' => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [
-        'started'   => 'Esecuzione del lavoro iniziata',
+        'started' => 'Esecuzione del lavoro iniziata',
         'completed' => 'Esecuzione del lavoro completata',
     ],
 ];

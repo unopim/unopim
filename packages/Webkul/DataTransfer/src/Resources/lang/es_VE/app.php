@@ -3,29 +3,29 @@
 return [
     'importers' => [
         'products' => [
-            'title'      => 'Productos',
+            'title' => 'Productos',
             'validation' => [
                 'errors' => [
-                    'duplicate-url-key'                        => 'Clave URL: \'%s\' ya se ha generado para un artículo con SKU: \'%s\'.',
-                    'invalid-attribute-family'                 => 'Valor no válido para la columna de familia de atributos (¿la familia de atributos no existe?)',
-                    'invalid-type'                             => 'El tipo de producto no es válido o no está soportado',
-                    'sku-not-found'                            => 'No se encontró el producto con SKU especificado',
-                    'super-attribute-not-found'                => 'Atributo configurable con código: \'%s\' no encontrado o no pertenece a la familia de atributos: \'%s\' :code :familyCode',
-                    'configurable-attributes-not-found'        => 'Se requieren atributos configurables para crear el modelo de producto',
-                    'configurable-attributes-wrong-type'       => 'Solo los atributos de tipo que no se basan en la ubicación o el canal pueden ser atributos configurables para un producto configurable',
+                    'duplicate-url-key' => 'Clave URL: \'%s\' ya se ha generado para un artículo con SKU: \'%s\'.',
+                    'invalid-attribute-family' => 'Valor no válido para la columna de familia de atributos (¿la familia de atributos no existe?)',
+                    'invalid-type' => 'El tipo de producto no es válido o no está soportado',
+                    'sku-not-found' => 'No se encontró el producto con SKU especificado',
+                    'super-attribute-not-found' => 'Atributo configurable con código: \'%s\' no encontrado o no pertenece a la familia de atributos: \'%s\' :code :familyCode',
+                    'configurable-attributes-not-found' => 'Se requieren atributos configurables para crear el modelo de producto',
+                    'configurable-attributes-wrong-type' => 'Solo los atributos de tipo que no se basan en la ubicación o el canal pueden ser atributos configurables para un producto configurable',
                     'variant-configurable-attribute-not-found' => 'Atributo configurable de variante: :code es necesario para crear',
-                    'not-unique-variant-product'               => 'Ya existe un producto con los mismos atributos configurables.',
-                    'channel-not-exist'                        => 'Este canal no existe.',
-                    'locale-not-in-channel'                    => 'Este idioma no está seleccionado en el canal.',
-                    'locale-not-exist'                         => 'Este idioma no existe',
-                    'not-unique-value'                         => 'El valor :code debe ser único.',
-                    'incorrect-family-for-variant'             => 'La familia debe ser la misma que la familia principal',
-                    'parent-not-exist'                         => 'El producto padre no existe.',
+                    'not-unique-variant-product' => 'Ya existe un producto con los mismos atributos configurables.',
+                    'channel-not-exist' => 'Este canal no existe.',
+                    'locale-not-in-channel' => 'Este idioma no está seleccionado en el canal.',
+                    'locale-not-exist' => 'Este idioma no existe',
+                    'not-unique-value' => 'El valor :code debe ser único.',
+                    'incorrect-family-for-variant' => 'La familia debe ser la misma que la familia principal',
+                    'parent-not-exist' => 'El producto padre no existe.',
                 ],
             ],
         ],
         'categories' => [
-            'title'      => 'Categorías',
+            'title' => 'Categorías',
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'No puedes eliminar la categoría raíz relacionada con un canal',
@@ -33,58 +33,58 @@ return [
             ],
         ],
         'attributes' => [
-            'title'      => 'Attributes',
+            'title' => 'Attributes',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'                       => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
+                    'duplicate-code' => 'Attribute code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title'      => 'Attribute Groups',
+            'title' => 'Attribute Groups',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'                       => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete'             => 'Attribute group code not found for deletion.',
+                    'duplicate-code' => 'Attribute group code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title'      => 'Attribute Families',
+            'title' => 'Attribute Families',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'           => 'Attribute family code :code is already in use.',
+                    'duplicate-code' => 'Attribute family code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group'  => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
-                    'invalid-channel'          => 'Channel ":code" does not exist.',
+                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
+                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'invalid-channel' => 'Channel ":code" does not exist.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title'      => 'Attribute Options',
+            'title' => 'Attribute Options',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'           => 'Attribute option code :code is already in use.',
+                    'duplicate-code' => 'Attribute option code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist'         => 'Locale ":code" does not exist.',
-                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                    'locale-not-exist' => 'Locale ":code" does not exist.',
+                    'invalid-attribute' => 'Attribute ":code" does not exist.',
                 ],
             ],
         ],
     ],
     'exporters' => [
         'products' => [
-            'title'      => 'Productos',
+            'title' => 'Productos',
             'validation' => [
                 'errors' => [
-                    'duplicate-url-key'         => 'Clave URL: \'%s\' ya se ha generado para un artículo con SKU: \'%s\'.',
-                    'invalid-attribute-family'  => 'Valor no válido para la columna de familia de atributos (¿la familia de atributos no existe?)',
-                    'invalid-type'              => 'El tipo de producto no es válido o no está soportado',
-                    'sku-not-found'             => 'No se encontró el producto con SKU especificado',
+                    'duplicate-url-key' => 'Clave URL: \'%s\' ya se ha generado para un artículo con SKU: \'%s\'.',
+                    'invalid-attribute-family' => 'Valor no válido para la columna de familia de atributos (¿la familia de atributos no existe?)',
+                    'invalid-type' => 'El tipo de producto no es válido o no está soportado',
+                    'sku-not-found' => 'No se encontró el producto con SKU especificado',
                     'super-attribute-not-found' => 'Atributo configurable con código: \'%s\' no encontrado o no pertenece a la familia de atributos: \'%s\'',
                 ],
             ],
@@ -108,16 +108,17 @@ return [
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Las columnas con número "%s" tienen encabezados vacíos.',
-            'column-name-invalid'  => 'Nombres de columna no válidos: "%s".',
-            'column-not-found'     => 'Columnas requeridas no encontradas: %s.',
-            'column-numbers'       => 'La cantidad de columnas no coincide con la cantidad de filas en el encabezado.',
-            'invalid-attribute'    => 'El encabezado contiene atributos no válidos: "%s".',
-            'system'               => 'Ocurrió un error del sistema inesperado.',
-            'wrong-quotes'         => 'Se utilizaron comillas curvas en lugar de comillas rectas.',
+            'column-name-invalid' => 'Nombres de columna no válidos: "%s".',
+            'column-not-found' => 'Columnas requeridas no encontradas: %s.',
+            'column-numbers' => 'La cantidad de columnas no coincide con la cantidad de filas en el encabezado.',
+            'invalid-attribute' => 'El encabezado contiene atributos no válidos: "%s".',
+            'system' => 'Ocurrió un error del sistema inesperado.',
+            'wrong-quotes' => 'Se utilizaron comillas curvas en lugar de comillas rectas.',
+            'file-empty' => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [
-        'started'   => 'Trabajo iniciado',
+        'started' => 'Trabajo iniciado',
         'completed' => 'Trabajo completado',
     ],
 ];
