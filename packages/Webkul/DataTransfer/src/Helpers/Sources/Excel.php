@@ -55,9 +55,8 @@ class Excel extends AbstractSource
     protected function getNextRow(): array|bool
     {
         for ($column = 1; $column <= $this->totalColumns; $column++) {
-            $value = $this->reader->getCellByColumnAndRow($column, $this->currentRowNumber)->getValue();
-
-            $rowData[] = $value instanceof RichText ? $value->getPlainText() : $value;
+            $cellValue = $this->reader->getCellByColumnAndRow($column, $this->currentRowNumber)->getValue();
+            $rowData[] = $cellValue !== null ? (string) $cellValue : null;
         }
 
         $filteredRowData = array_filter($rowData);

@@ -1,4 +1,4 @@
-const { test, expect } = require('../../../utils/fixtures');
+const { test, expect } = require('../../../../utils/fixtures');
 
 test.describe('UnoPim Export Jobs', () => {
 

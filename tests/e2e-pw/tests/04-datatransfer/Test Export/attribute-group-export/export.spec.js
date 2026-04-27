@@ -1,10 +1,10 @@
-const { test, expect } = require('../../../utils/fixtures');
+const { test, expect } = require('../../../../utils/fixtures');
 
 test.describe('UnoPim Export Jobs', () => {
 
-  test('create attribute options export with CSV, switch to XLS, then delete', async ({ adminPage }) => {
+  test('create attribute groups export with CSV, switch to XLS, then delete', async ({ adminPage }) => {
 
-    const uniqueCode = 'Attribute Options Export CSV ' + Math.random().toString(36).slice(2, 6);
+    const uniqueCode = 'Attribute Export CSV ' + Math.random().toString(36).slice(2, 6);
 
     await adminPage.getByRole('link', { name: ' Data Transfer' }).click();
     await adminPage.getByRole('link', { name: 'Exports' }).click();
@@ -22,7 +22,7 @@ test.describe('UnoPim Export Jobs', () => {
       .click();
 
     await adminPage
-      .getByRole('option', { name: 'Attribute Options' })
+      .getByRole('option', { name: 'Attribute Groups' })
       .locator('span')
       .first()
       .click();

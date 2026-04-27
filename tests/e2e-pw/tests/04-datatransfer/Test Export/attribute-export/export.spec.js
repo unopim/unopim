@@ -1,8 +1,8 @@
-const { test, expect } = require('../../../utils/fixtures');
+const { test, expect } = require('../../../../utils/fixtures');
 
 test.describe('UnoPim Export Jobs', () => {
 
-  test('create attribute groups export with CSV, switch to XLS, then delete', async ({ adminPage }) => {
+  test('create attribute export with CSV, switch to XLS, then delete', async ({ adminPage }) => {
 
     const uniqueCode = 'Attribute Export CSV ' + Math.random().toString(36).slice(2, 6);
 
@@ -10,10 +10,8 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('link', { name: 'Exports' }).click();
     await adminPage.getByRole('link', { name: 'Create Export' }).click();
 
-    // Fill Code
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(uniqueCode);
 
-    // Select Export Type
     await adminPage
       .locator('#export-type')
       .getByRole('combobox')
@@ -22,12 +20,11 @@ test.describe('UnoPim Export Jobs', () => {
       .click();
 
     await adminPage
-      .getByRole('option', { name: 'Attribute Groups' })
+      .getByRole('option', { name: 'Attributes' })
       .locator('span')
       .first()
       .click();
 
-    // Select File Format CSV
     await adminPage
       .locator('input[name="filters[file_format]"]')
       .locator('..')
@@ -40,14 +37,12 @@ test.describe('UnoPim Export Jobs', () => {
       .first()
       .click();
 
-    // Save Export
     await adminPage.getByRole('button', { name: 'Save Export' }).click();
 
     await expect(
       adminPage.locator('#app').getByText(/Export created successfully/i)
     ).toBeVisible();
 
-    // Run Export
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
 
     const [, csvDownload] = await Promise.all([
@@ -56,10 +51,8 @@ test.describe('UnoPim Export Jobs', () => {
       adminPage.getByRole('link', { name: 'Download Exported Files' }).click(),
     ]);
 
-    // Edit Export
     await adminPage.getByRole('link', { name: 'Edit' }).click();
 
-    // Change File Format to XLS
     await adminPage
       .locator('input[name="filters[file_format]"]')
       .locator('..')
@@ -78,7 +71,6 @@ test.describe('UnoPim Export Jobs', () => {
       adminPage.locator('#app').getByText(/Export updated successfully/i)
     ).toBeVisible();
 
-    // Export Again
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
 
     const [, xlsDownload] = await Promise.all([
@@ -87,11 +79,9 @@ test.describe('UnoPim Export Jobs', () => {
       adminPage.getByRole('link', { name: 'Download Exported Files' }).click(),
     ]);
 
-    // Go back to list
     await adminPage.getByRole('link', { name: 'Exports' }).click();
 
-    // Delete created export
-    const itemRow = adminPage.locator('div', { hasText: uniqueCode });
+    const itemRow = await adminPage.locator('div', { hasText: uniqueCode });
 
     await itemRow.locator('span[title="Delete"]').first().click();
 
