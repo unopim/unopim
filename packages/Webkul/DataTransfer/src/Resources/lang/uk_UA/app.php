@@ -3,29 +3,29 @@
 return [
     'importers' => [
         'products' => [
-            'title' => 'Продукти',
+            'title'      => 'Продукти',
             'validation' => [
                 'errors' => [
-                    'duplicate-url-key' => 'URL ключ: \'%s\' вже створено для товару зі SKU: \'%s\'.',
-                    'invalid-attribute-family' => 'Недопустиме значення для стовпця сімейства атрибутів (сімейство атрибутів відсутнє?)',
-                    'invalid-type' => 'Тип продукту недійсний або не підтримується',
-                    'sku-not-found' => 'Продукт з вказаним SKU не знайдено',
-                    'super-attribute-not-found' => 'Конфігурований атрибут з кодом: \'%s\' не знайдено або не належить сімейству атрибутів: \'%s\' :code :familyCode',
-                    'configurable-attributes-not-found' => 'Конфігуровані атрибути потрібні для створення моделі продукту',
-                    'configurable-attributes-wrong-type' => 'Тільки вибрані атрибути типу, які не базуються на місті або каналі, можуть бути конфігурованими атрибутами для конфігурованого продукту',
+                    'duplicate-url-key'                        => 'URL ключ: \'%s\' вже створено для товару зі SKU: \'%s\'.',
+                    'invalid-attribute-family'                 => 'Недопустиме значення для стовпця сімейства атрибутів (сімейство атрибутів відсутнє?)',
+                    'invalid-type'                             => 'Тип продукту недійсний або не підтримується',
+                    'sku-not-found'                            => 'Продукт з вказаним SKU не знайдено',
+                    'super-attribute-not-found'                => 'Конфігурований атрибут з кодом: \'%s\' не знайдено або не належить сімейству атрибутів: \'%s\' :code :familyCode',
+                    'configurable-attributes-not-found'        => 'Конфігуровані атрибути потрібні для створення моделі продукту',
+                    'configurable-attributes-wrong-type'       => 'Тільки вибрані атрибути типу, які не базуються на місті або каналі, можуть бути конфігурованими атрибутами для конфігурованого продукту',
                     'variant-configurable-attribute-not-found' => 'Потрібний конфігурований атрибут варіанту: :code',
-                    'not-unique-variant-product' => 'Продукт з такими конфігурованими атрибутами вже існує.',
-                    'channel-not-exist' => 'Цей канал не існує.',
-                    'locale-not-in-channel' => 'Ця локалізація не вибрана в каналі.',
-                    'locale-not-exist' => 'Ця локалізація не існує',
-                    'not-unique-value' => 'Значення :code повинно бути унікальним.',
-                    'incorrect-family-for-variant' => 'Сімейство має бути таким самим, як і основне сімейство',
-                    'parent-not-exist' => 'Батьківський товар не існує.',
+                    'not-unique-variant-product'               => 'Продукт з такими конфігурованими атрибутами вже існує.',
+                    'channel-not-exist'                        => 'Цей канал не існує.',
+                    'locale-not-in-channel'                    => 'Ця локалізація не вибрана в каналі.',
+                    'locale-not-exist'                         => 'Ця локалізація не існує',
+                    'not-unique-value'                         => 'Значення :code повинно бути унікальним.',
+                    'incorrect-family-for-variant'             => 'Сімейство має бути таким самим, як і основне сімейство',
+                    'parent-not-exist'                         => 'Батьківський товар не існує.',
                 ],
             ],
         ],
         'categories' => [
-            'title' => 'Категорії',
+            'title'      => 'Категорії',
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Ви не можете видалити кореневу категорію, яка пов\'язана з каналом',
@@ -33,58 +33,58 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title'      => 'Attributes',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
+                    'duplicate-code'                       => 'Attribute code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title'      => 'Attribute Groups',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
+                    'duplicate-code'                       => 'Attribute group code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute group code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title'      => 'Attribute Families',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
+                    'duplicate-code'           => 'Attribute family code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'invalid-attribute-group'  => 'Attribute group ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                    'invalid-channel'          => 'Channel ":code" does not exist.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title'      => 'Attribute Options',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
+                    'duplicate-code'           => 'Attribute option code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'locale-not-exist'         => 'Locale ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
                 ],
             ],
         ],
     ],
     'exporters' => [
         'products' => [
-            'title' => 'Продукти',
+            'title'      => 'Продукти',
             'validation' => [
                 'errors' => [
-                    'duplicate-url-key' => 'URL ключ: \'%s\' вже створено для товару зі SKU: \'%s\'.',
-                    'invalid-attribute-family' => 'Недопустиме значення для стовпця сімейства атрибутів (сімейство атрибутів відсутнє?)',
-                    'invalid-type' => 'Тип продукту недійсний або не підтримується',
-                    'sku-not-found' => 'Продукт з вказаним SKU не знайдено',
+                    'duplicate-url-key'         => 'URL ключ: \'%s\' вже створено для товару зі SKU: \'%s\'.',
+                    'invalid-attribute-family'  => 'Недопустиме значення для стовпця сімейства атрибутів (сімейство атрибутів відсутнє?)',
+                    'invalid-type'              => 'Тип продукту недійсний або не підтримується',
+                    'sku-not-found'             => 'Продукт з вказаним SKU не знайдено',
                     'super-attribute-not-found' => 'Конфігурований атрибут з кодом: \'%s\' не знайдено або не належить сімейству атрибутів: \'%s\'',
                 ],
             ],
@@ -108,16 +108,16 @@ return [
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Кількість колонок "%s" має пусті заголовки.',
-            'column-name-invalid' => 'Недійсні імена колонок: "%s".',
-            'column-not-found' => 'Вимагані колонки не знайдені: %s.',
-            'column-numbers' => 'Кількість колонок не відповідає кількості рядків у заголовку.',
-            'invalid-attribute' => 'Заголовок містить недійсні атрибути: "%s".',
-            'system' => 'Сталася несподівана система помилка.',
-            'wrong-quotes' => 'Використано криві лапки замість прямих лапок.',
+            'column-name-invalid'  => 'Недійсні імена колонок: "%s".',
+            'column-not-found'     => 'Вимагані колонки не знайдені: %s.',
+            'column-numbers'       => 'Кількість колонок не відповідає кількості рядків у заголовку.',
+            'invalid-attribute'    => 'Заголовок містить недійсні атрибути: "%s".',
+            'system'               => 'Сталася несподівана система помилка.',
+            'wrong-quotes'         => 'Використано криві лапки замість прямих лапок.',
         ],
     ],
     'job' => [
-        'started' => 'Запущено виконання завдання',
+        'started'   => 'Запущено виконання завдання',
         'completed' => 'Завдання виконане',
     ],
 ];

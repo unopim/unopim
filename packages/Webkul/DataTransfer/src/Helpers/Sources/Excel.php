@@ -5,7 +5,6 @@ namespace Webkul\DataTransfer\Helpers\Sources;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class Excel extends AbstractSource
 {

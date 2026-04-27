@@ -3,29 +3,29 @@
 return [
     'importers' => [
         'products' => [
-            'title' => 'Tuotteet',
+            'title'      => 'Tuotteet',
             'validation' => [
                 'errors' => [
-                    'duplicate-url-key' => 'URL-avain: \'%s\' on jo luotu tuotteelle, jonka SKU on: \'%s\'.',
-                    'invalid-attribute-family' => 'Virheellinen arvo attribuuttiperheen sarakkeelle (attribuuttiperhe ei ehkä ole olemassa?)',
-                    'invalid-type' => 'Tuotetyyppi on virheellinen tai ei tuettu',
-                    'sku-not-found' => 'Tuotetta, jolla on määritetty SKU, ei löytynyt',
-                    'super-attribute-not-found' => 'Configurable attribute with code: \'%s\' not found or does not belong to the attribute family: \'%s\' :code :familyCode',
-                    'configurable-attributes-not-found' => 'Muutettavat attribuutit ovat pakollisia tuotemallin luomiseksi',
-                    'configurable-attributes-wrong-type' => 'Vain valintatyyppiset attribuutit, jotka eivät perustu paikallisiin tai kanavakohtaisiin asetuksiin, voidaan määrittää muokattaviksi attribuuteiksi muokattavalle tuotteelle',
+                    'duplicate-url-key'                        => 'URL-avain: \'%s\' on jo luotu tuotteelle, jonka SKU on: \'%s\'.',
+                    'invalid-attribute-family'                 => 'Virheellinen arvo attribuuttiperheen sarakkeelle (attribuuttiperhe ei ehkä ole olemassa?)',
+                    'invalid-type'                             => 'Tuotetyyppi on virheellinen tai ei tuettu',
+                    'sku-not-found'                            => 'Tuotetta, jolla on määritetty SKU, ei löytynyt',
+                    'super-attribute-not-found'                => 'Configurable attribute with code: \'%s\' not found or does not belong to the attribute family: \'%s\' :code :familyCode',
+                    'configurable-attributes-not-found'        => 'Muutettavat attribuutit ovat pakollisia tuotemallin luomiseksi',
+                    'configurable-attributes-wrong-type'       => 'Vain valintatyyppiset attribuutit, jotka eivät perustu paikallisiin tai kanavakohtaisiin asetuksiin, voidaan määrittää muokattaviksi attribuuteiksi muokattavalle tuotteelle',
                     'variant-configurable-attribute-not-found' => 'Variant configurable attribute: :code is required for creating',
-                    'not-unique-variant-product' => 'Tuote, jolla on samat muokattavat attribuutit, on jo olemassa.',
-                    'channel-not-exist' => 'Tätä kanavaa ei ole olemassa.',
-                    'locale-not-in-channel' => 'Tätä kieltä ei ole valittu kanavassa.',
-                    'locale-not-exist' => 'Tätä kieltä ei ole olemassa',
-                    'not-unique-value' => ':code-arvon on oltava ainutlaatuinen.',
-                    'incorrect-family-for-variant' => 'Perheen on oltava sama kuin vanhemman perhe',
-                    'parent-not-exist' => 'Vanhempaa ei ole olemassa.',
+                    'not-unique-variant-product'               => 'Tuote, jolla on samat muokattavat attribuutit, on jo olemassa.',
+                    'channel-not-exist'                        => 'Tätä kanavaa ei ole olemassa.',
+                    'locale-not-in-channel'                    => 'Tätä kieltä ei ole valittu kanavassa.',
+                    'locale-not-exist'                         => 'Tätä kieltä ei ole olemassa',
+                    'not-unique-value'                         => ':code-arvon on oltava ainutlaatuinen.',
+                    'incorrect-family-for-variant'             => 'Perheen on oltava sama kuin vanhemman perhe',
+                    'parent-not-exist'                         => 'Vanhempaa ei ole olemassa.',
                 ],
             ],
         ],
         'categories' => [
-            'title' => 'Kategoriat',
+            'title'      => 'Kategoriat',
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Et voi poistaa juurikategoriaa, joka on liitetty kanavaan',
@@ -33,58 +33,58 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title'      => 'Attributes',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
+                    'duplicate-code'                       => 'Attribute code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title'      => 'Attribute Groups',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
+                    'duplicate-code'                       => 'Attribute group code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute group code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title'      => 'Attribute Families',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
+                    'duplicate-code'           => 'Attribute family code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'invalid-attribute-group'  => 'Attribute group ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                    'invalid-channel'          => 'Channel ":code" does not exist.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title'      => 'Attribute Options',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
+                    'duplicate-code'           => 'Attribute option code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'locale-not-exist'         => 'Locale ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
                 ],
             ],
         ],
     ],
     'exporters' => [
         'products' => [
-            'title' => 'Tuotteet',
+            'title'      => 'Tuotteet',
             'validation' => [
                 'errors' => [
-                    'duplicate-url-key' => 'URL-avain: \'%s\' on jo luotu tuotteelle, jonka SKU on: \'%s\'.',
-                    'invalid-attribute-family' => 'Virheellinen arvo attribuuttiperheen sarakkeelle (attribuuttiperhe ei ehkä ole olemassa?)',
-                    'invalid-type' => 'Tuotetyyppi on virheellinen tai ei tuettu',
-                    'sku-not-found' => 'Tuotetta, jolla on määritetty SKU, ei löytynyt',
+                    'duplicate-url-key'         => 'URL-avain: \'%s\' on jo luotu tuotteelle, jonka SKU on: \'%s\'.',
+                    'invalid-attribute-family'  => 'Virheellinen arvo attribuuttiperheen sarakkeelle (attribuuttiperhe ei ehkä ole olemassa?)',
+                    'invalid-type'              => 'Tuotetyyppi on virheellinen tai ei tuettu',
+                    'sku-not-found'             => 'Tuotetta, jolla on määritetty SKU, ei löytynyt',
                     'super-attribute-not-found' => 'Ylätunnus, jonka koodi on: \'%s\', ei löytynyt tai ei kuulu attribuuttiperheeseen: \'%s\'',
                 ],
             ],
@@ -108,16 +108,16 @@ return [
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Sarakkeiden numero "%s" otsikot ovat tyhjät.',
-            'column-name-invalid' => 'Virheelliset sarakkeen nimet: "%s".',
-            'column-not-found' => 'Vaadittuja sarakkeita ei löytynyt: %s.',
-            'column-numbers' => 'Sarakkeiden määrä ei vastaa otsikoiden rivien määrää.',
-            'invalid-attribute' => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
-            'system' => 'Odottamaton järjestelmävirhe tapahtui.',
-            'wrong-quotes' => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
+            'column-name-invalid'  => 'Virheelliset sarakkeen nimet: "%s".',
+            'column-not-found'     => 'Vaadittuja sarakkeita ei löytynyt: %s.',
+            'column-numbers'       => 'Sarakkeiden määrä ei vastaa otsikoiden rivien määrää.',
+            'invalid-attribute'    => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
+            'system'               => 'Odottamaton järjestelmävirhe tapahtui.',
+            'wrong-quotes'         => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
         ],
     ],
     'job' => [
-        'started' => 'Työn suoritus aloitettiin',
+        'started'   => 'Työn suoritus aloitettiin',
         'completed' => 'Työn suoritus saatiin päätökseen',
     ],
 ];
