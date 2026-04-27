@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Attribuutit',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code' => 'Attribuuttikoodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Attribuuttikoodia ei löytynyt poistettavaksi.',
+                    'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttia ei voi poistaa.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Attribuuttiryhmät',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code' => 'Attribuuttiryhmän koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Attribuuttiryhmän koodia ei löytynyt poistettavaksi.',
+                    'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttiryhmää ei voi poistaa.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Attribuuttiperheet',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code' => 'Attribuuttiperheen koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Attribuuttiperheen koodia ei löytynyt poistettavaksi.',
+                    'invalid-attribute-group' => 'Attribuuttiryhmää ":code" ei ole olemassa.',
+                    'invalid-attribute' => 'Attribuuttia ":code" ei ole olemassa.',
+                    'invalid-channel' => 'Kanavaa ":code" ei ole olemassa.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Attribuuttivaihtoehdot',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code' => 'Attribuuttivaihtoehdon koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Attribuuttivaihtoehdon koodia ei löytynyt poistettavaksi.',
+                    'locale-not-exist' => 'Kieltä ":code" ei ole olemassa.',
+                    'invalid-attribute' => 'Attribuuttia ":code" ei ole olemassa.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'Kategoriat',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Attribuutit',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Attribuuttiryhmät',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Attribuuttiperheet',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Attribuuttivaihtoehdot',
         ],
     ],
     'validation' => [

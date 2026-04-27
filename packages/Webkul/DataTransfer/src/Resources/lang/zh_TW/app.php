@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title'      => '屬性',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code'                       => '屬性代碼 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要刪除的屬性代碼。',
+                    'code_is_system_and_cannot_be_deleted' => '無法刪除系統屬性。',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title'      => '屬性組',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code'                       => '屬性組代碼 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要刪除的屬性組代碼。',
+                    'code_is_system_and_cannot_be_deleted' => '無法刪除系統屬性組。',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title'      => '屬性族',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code'           => '屬性族代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要刪除的屬性族代碼。',
+                    'invalid-attribute-group'  => '屬性組“:code”不存在。',
+                    'invalid-attribute'        => '屬性“:code”不存在。',
+                    'invalid-channel'          => '渠道“:code”不存在。',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title'      => '屬性選項',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code'           => '屬性選項代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要刪除的屬性選項代碼。',
+                    'locale-not-exist'         => '區域設置“:code”不存在。',
+                    'invalid-attribute'        => '屬性“:code”不存在。',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => '分類',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => '屬性',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => '屬性組',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => '屬性族',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => '屬性選項',
         ],
     ],
     'validation' => [

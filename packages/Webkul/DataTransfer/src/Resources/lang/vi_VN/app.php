@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title'      => 'Thuộc tính',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code'                       => 'Mã thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete'             => 'Không tìm thấy mã thuộc tính để xóa.',
+                    'code_is_system_and_cannot_be_deleted' => 'Không thể xóa thuộc tính hệ thống.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title'      => 'Nhóm thuộc tính',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code'                       => 'Mã nhóm thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete'             => 'Không tìm thấy mã nhóm thuộc tính để xóa.',
+                    'code_is_system_and_cannot_be_deleted' => 'Không thể xóa nhóm thuộc tính hệ thống.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title'      => 'Họ thuộc tính',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code'           => 'Mã họ thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã họ thuộc tính để xóa.',
+                    'invalid-attribute-group'  => 'Nhóm thuộc tính ":code" không tồn tại.',
+                    'invalid-attribute'        => 'Thuộc tính ":code" không tồn tại.',
+                    'invalid-channel'          => 'Kênh ":code" không tồn tại.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title'      => 'Tùy chọn thuộc tính',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code'           => 'Mã tùy chọn thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã tùy chọn thuộc tính để xóa.',
+                    'locale-not-exist'         => 'Vị trí ":code" không tồn tại.',
+                    'invalid-attribute'        => 'Thuộc tính ":code" không tồn tại.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'Các danh mục',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Thuộc tính',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Nhóm thuộc tính',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Họ thuộc tính',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Tùy chọn thuộc tính',
         ],
     ],
     'validation' => [

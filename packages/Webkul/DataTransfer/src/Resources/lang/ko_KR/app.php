@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => '속성',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code' => '속성 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 속성 코드를 찾을 수 없습니다.',
+                    'code_is_system_and_cannot_be_deleted' => '시스템 속성은 삭제할 수 없습니다.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => '속성 그룹',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code' => '속성 그룹 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 속성 그룹 코드를 찾을 수 없습니다.',
+                    'code_is_system_and_cannot_be_deleted' => '시스템 속성 그룹은 삭제할 수 없습니다.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => '속성 계열',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code' => '속성 계열 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 속성 계열 코드를 찾을 수 없습니다.',
+                    'invalid-attribute-group' => '속성 그룹 ":code"가 존재하지 않습니다.',
+                    'invalid-attribute' => '속성 ":code"가 존재하지 않습니다.',
+                    'invalid-channel' => '채널 ":code"가 존재하지 않습니다.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => '속성 옵션',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code' => '속성 옵션 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 속성 옵션 코드를 찾을 수 없습니다.',
+                    'locale-not-exist' => '로캘 ":code"가 존재하지 않습니다.',
+                    'invalid-attribute' => '속성 ":code"가 존재하지 않습니다.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => '카테고리',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => '속성',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => '속성 그룹',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => '속성 계열',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => '속성 옵션',
         ],
     ],
     'validation' => [

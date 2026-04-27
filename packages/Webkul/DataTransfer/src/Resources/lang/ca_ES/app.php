@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title'      => 'Atributs',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code'                       => 'El codi d\'atribut :code ja està en ús.',
+                    'code_not_found_to_delete'             => 'Codi d\'atribut no trobat per a supressió.',
+                    'code_is_system_and_cannot_be_deleted' => 'L\'atribut del sistema no es pot eliminar.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title'      => 'Grups d\'Atributs',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code'                       => 'El codi de grup d\'atributs :code ja està en ús.',
+                    'code_not_found_to_delete'             => 'Codi de grup d\'atributs no trobat per a supressió.',
+                    'code_is_system_and_cannot_be_deleted' => 'El grup d\'atributs del sistema no es pot eliminar.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title'      => 'Famílies d\'Atributs',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code'           => 'El codi de família d\'atributs :code ja està en ús.',
+                    'code_not_found_to_delete' => 'Codi de família d\'atributs no trobat per a supressió.',
+                    'invalid-attribute-group'  => 'El grup d\'atributs ":code" no existeix.',
+                    'invalid-attribute'        => 'L\'atribut ":code" no existeix.',
+                    'invalid-channel'          => 'El canal ":code" no existeix.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title'      => 'Opcions d\'Atribut',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code'           => 'El codi d\'opció d\'atribut :code ja està en ús.',
+                    'code_not_found_to_delete' => 'Codi d\'opció d\'atribut no trobat per a supressió.',
+                    'locale-not-exist'         => 'L\'idioma ":code" no existeix.',
+                    'invalid-attribute'        => 'L\'atribut ":code" no existeix.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'Categories',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Atributs',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Grups d\'Atributs',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Famílies d\'Atributs',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Opcions d\'Atribut',
         ],
     ],
     'validation' => [

@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Atribute',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code' => 'Codul atributului :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul atributului nu a fost găsit pentru ștergere.',
+                    'code_is_system_and_cannot_be_deleted' => 'Atributul de sistem nu poate fi șters.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Grupuri de atribute',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code' => 'Codul grupului de atribute :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul grupului de atribute nu a fost găsit pentru ștergere.',
+                    'code_is_system_and_cannot_be_deleted' => 'Grupul de atribute de sistem nu poate fi șters.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Familii de atribute',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code' => 'Codul familiei de atribute :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul familiei de atribute nu a fost găsit pentru ștergere.',
+                    'invalid-attribute-group' => 'Grupul de atribute ":code" nu există.',
+                    'invalid-attribute' => 'Atributul ":code" nu există.',
+                    'invalid-channel' => 'Canalul ":code" nu există.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Opțiuni atribute',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code' => 'Codul opțiunii atributului :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul opțiunii atributului nu a fost găsit pentru ștergere.',
+                    'locale-not-exist' => 'Numele de localizare ":code" nu există.',
+                    'invalid-attribute' => 'Atributul ":code" nu există.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'Categorii',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Atribute',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Grupuri de atribute',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Familii de atribute',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Opțiuni atribute',
         ],
     ],
     'validation' => [

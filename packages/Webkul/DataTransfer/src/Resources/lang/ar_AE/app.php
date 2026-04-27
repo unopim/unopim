@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title'      => 'السمات',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code'                       => 'كود السمة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete'             => 'لم يتم العثور على كود السمة للحذف.',
+                    'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف سمة النظام.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title'      => 'مجموعات السمات',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code'                       => 'كود مجموعة السمات :code مستخدم بالفعل.',
+                    'code_not_found_to_delete'             => 'لم يتم العثور على كود مجموعة السمات للحذف.',
+                    'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف مجموعة سمات النظام.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title'      => 'عائلات السمات',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code'           => 'كود عائلة السمات :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على كود عائلة السمات للحذف.',
+                    'invalid-attribute-group'  => 'مجموعة السمات ":code" غير موجودة.',
+                    'invalid-attribute'        => 'السمة ":code" غير موجودة.',
+                    'invalid-channel'          => 'القناة ":code" غير موجودة.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title'      => 'خيارات السمة',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code'           => 'كود خيار السمة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على كود خيار السمة للحذف.',
+                    'locale-not-exist'         => 'اللغة المحلية ":code" غير موجودة.',
+                    'invalid-attribute'        => 'السمة ":code" غير موجودة.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'فئات',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'السمات',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'مجموعات السمات',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'عائلات السمات',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'خيارات السمة',
         ],
     ],
     'validation' => [

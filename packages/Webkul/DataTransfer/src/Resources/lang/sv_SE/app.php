@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Attribut',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code' => 'Attributkoden :code används redan.',
+                    'code_not_found_to_delete' => 'Attributkoden för borttagning hittades inte.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributet kan inte tas bort.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Attributgrupper',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code' => 'Attributgruppskoden :code används redan.',
+                    'code_not_found_to_delete' => 'Attributgruppskoden för borttagning hittades inte.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributgruppen kan inte tas bort.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Attributfamiljer',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code' => 'Attributfamiljkoden :code används redan.',
+                    'code_not_found_to_delete' => 'Attributfamiljkoden för borttagning hittades inte.',
+                    'invalid-attribute-group' => 'Attributgruppen ":code" existerar inte.',
+                    'invalid-attribute' => 'Attributet ":code" existerar inte.',
+                    'invalid-channel' => 'Kanalen ":code" existerar inte.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Attributalternativ',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code' => 'Attributalternativkoden :code används redan.',
+                    'code_not_found_to_delete' => 'Attributalternativkoden för borttagning hittades inte.',
+                    'locale-not-exist' => 'Språkinställningen ":code" existerar inte.',
+                    'invalid-attribute' => 'Attributet ":code" existerar inte.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'Kategorier',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Attribut',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Attributgrupper',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Attributfamiljer',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Attributalternativ',
         ],
     ],
     'validation' => [

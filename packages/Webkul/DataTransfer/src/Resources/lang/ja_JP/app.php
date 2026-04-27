@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title'      => '属性',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code'                       => '属性コード :code はすでに使用されています。',
+                    'code_not_found_to_delete'             => '削除する属性コードが見つかりません。',
+                    'code_is_system_and_cannot_be_deleted' => 'システム属性は削除できません。',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title'      => '属性グループ',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code'                       => '属性グループコード :code はすでに使用されています。',
+                    'code_not_found_to_delete'             => '削除する属性グループコードが見つかりません。',
+                    'code_is_system_and_cannot_be_deleted' => 'システム属性グループは削除できません。',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title'      => '属性ファミリー',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code'           => '属性ファミリーコード :code はすでに使用されています。',
+                    'code_not_found_to_delete' => '削除する属性ファミリーコードが見つかりません。',
+                    'invalid-attribute-group'  => '属性グループ ":code" は存在しません。',
+                    'invalid-attribute'        => '属性 ":code" は存在しません。',
+                    'invalid-channel'          => 'チャネル ":code" は存在しません。',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title'      => '属性オプション',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code'           => '属性オプションコード :code はすでに使用されています。',
+                    'code_not_found_to_delete' => '削除する属性オプションコードが見つかりません。',
+                    'locale-not-exist'         => 'ロケール ":code" は存在しません。',
+                    'invalid-attribute'        => '属性 ":code" は存在しません。',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'カテゴリー',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => '属性',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => '属性グループ',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => '属性ファミリー',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => '属性オプション',
         ],
     ],
     'validation' => [

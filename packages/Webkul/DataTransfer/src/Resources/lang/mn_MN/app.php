@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Шинж чанарууд',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code' => 'Шиж чанарын код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах шинж чанарын код олдсонгүй.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системийн шинж чанарыг устгах боломжгүй.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Шинж чанарын бүлгүүд',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code' => 'Шиж чанарын бүлгийн код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах шинж чанарын бүлгийн код олдсонгүй.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системийн шинж чанарын бүлгийг устгах боломжгүй.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Шинж чанарын бүлгэмүүд',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code' => 'Шиж чанарын бүлгэмийн код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах шинж чанарын бүлгэмийн код олдсонгүй.',
+                    'invalid-attribute-group' => '":code" шинж чанарын бүлэг байхгүй байна.',
+                    'invalid-attribute' => '":code" шинж чанар байхгүй байна.',
+                    'invalid-channel' => '":code" суваг байхгүй байна.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Шинж чанарын сонголтууд',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code' => 'Шиж чанарын сонголтын код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах шинж чанарын сонголтын код олдсонгүй.',
+                    'locale-not-exist' => '":code" хэл байхгүй байна.',
+                    'invalid-attribute' => '":code" шинж чанар байхгүй байна.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'Ангилал',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Шинж чанарууд',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Шинж чанарын бүлгүүд',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Шинж чанарын бүлгэмүүд',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Шинж чанарын сонголтууд',
         ],
     ],
     'validation' => [

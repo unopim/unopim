@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title'      => 'Nitelikler',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code'                       => 'Nitelik kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete'             => 'Silinecek nitelik kodu bulunamadı.',
+                    'code_is_system_and_cannot_be_deleted' => 'Sistem niteliği silinemez.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title'      => 'Nitelik Grupları',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code'                       => 'Nitelik grup kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete'             => 'Silinecek nitelik grup kodu bulunamadı.',
+                    'code_is_system_and_cannot_be_deleted' => 'Sistem nitelik grubu silinemez.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title'      => 'Nitelik Aileleri',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code'           => 'Nitelik ailesi kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silinecek nitelik ailesi kodu bulunamadı.',
+                    'invalid-attribute-group'  => 'Nitelik grubu ":code" mevcut değil.',
+                    'invalid-attribute'        => 'Nitelik ":code" mevcut değil.',
+                    'invalid-channel'          => 'Kanal ":code" mevcut değil.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title'      => 'Nitelik Seçenekleri',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code'           => 'Nitelik seçenek kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silinecek nitelik seçenek kodu bulunamadı.',
+                    'locale-not-exist'         => 'Yerel ":code" mevcut değil.',
+                    'invalid-attribute'        => 'Nitelik ":code" mevcut değil.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'Kategoriler',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Nitelikler',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Nitelik Grupları',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Nitelik Aileleri',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Nitelik Seçenekleri',
         ],
     ],
     'validation' => [

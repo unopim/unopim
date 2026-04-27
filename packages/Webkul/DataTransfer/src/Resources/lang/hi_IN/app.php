@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'विशेषताएँ',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code' => 'विशेषता कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए विशेषता कोड नहीं मिला।',
+                    'code_is_system_and_cannot_be_deleted' => 'सिस्टम विशेषता को हटाया नहीं जा सकता।',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'विशेषता समूह',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code' => 'विशेषता समूह कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए विशेषता समूह कोड नहीं मिला।',
+                    'code_is_system_and_cannot_be_deleted' => 'सिस्टम विशेषता समूह को हटाया नहीं जा सकता।',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'विशेषता परिवार',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code' => 'विशेषता परिवार कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए विशेषता परिवार कोड नहीं मिला।',
+                    'invalid-attribute-group' => 'विशेषता समूह ":code" मौजूद नहीं है।',
+                    'invalid-attribute' => 'विशेषता ":code" मौजूद नहीं है।',
+                    'invalid-channel' => 'चैनल ":code" मौजूद नहीं है।',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'विशेषता विकल्प',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code' => 'विशेषता विकल्प कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए विशेषता विकल्प कोड नहीं मिला।',
+                    'locale-not-exist' => 'लोकेल ":code" मौजूद नहीं है।',
+                    'invalid-attribute' => 'विशेषता ":code" मौजूद नहीं है।',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'श्रेणियाँ',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'विशेषताएँ',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'विशेषता समूह',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'विशेषता परिवार',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'विशेषता विकल्प',
         ],
     ],
     'validation' => [

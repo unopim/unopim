@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Mga Tampok',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code' => 'Ang code ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng tampok para burahin.',
+                    'code_is_system_and_cannot_be_deleted' => 'Hindi maaaring burahin ang system feature.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Mga Grupo ng Tampok',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code' => 'Ang code ng grupo ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng grupo ng tampok para burahin.',
+                    'code_is_system_and_cannot_be_deleted' => 'Hindi maaaring burahin ang system feature group.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Mga Pamilya ng Tampok',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code' => 'Ang code ng pamilya ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng pamilya ng tampok para burahin.',
+                    'invalid-attribute-group' => 'Ang grupo ng tampok na ":code" ay hindi umiiral.',
+                    'invalid-attribute' => 'Ang tampok na ":code" ay hindi umiiral.',
+                    'invalid-channel' => 'Ang channel na ":code" ay hindi umiiral.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Mga Pagpipilian sa Tampok',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code' => 'Ang code ng opsyon ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng opsyon ng tampok para burahin.',
+                    'locale-not-exist' => 'Ang locale na ":code" ay hindi umiiral.',
+                    'invalid-attribute' => 'Ang tampok na ":code" ay hindi umiiral.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'Mga Kategorya',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Mga Tampok',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Mga Grupo ng Tampok',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Mga Pamilya ng Tampok',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Mga Pagpipilian sa Tampok',
         ],
     ],
     'validation' => [

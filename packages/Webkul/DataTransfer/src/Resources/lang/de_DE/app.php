@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Attribute',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code' => 'Attributcode :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Attributcode zum Löschen nicht gefunden.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattribut kann nicht gelöscht werden.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Attributgruppen',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code' => 'Attributgruppencode :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Attributgruppencode zum Löschen nicht gefunden.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributgruppe kann nicht gelöscht werden.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Attributfamilien',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code' => 'Attributfamiliencode :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Attributfamiliencode zum Löschen nicht gefunden.',
+                    'invalid-attribute-group' => 'Attributgruppe ":code" existiert nicht.',
+                    'invalid-attribute' => 'Attribut ":code" existiert nicht.',
+                    'invalid-channel' => 'Kanal ":code" existiert nicht.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Attributoptionen',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code' => 'Attributoptionscode :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Attributoptionscode zum Löschen nicht gefunden.',
+                    'locale-not-exist' => 'Gebietsschema ":code" existiert nicht.',
+                    'invalid-attribute' => 'Attribut ":code" existiert nicht.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'Kategorien',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Attribute',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Attributgruppen',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Attributfamilien',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Attributoptionen',
         ],
     ],
     'validation' => [

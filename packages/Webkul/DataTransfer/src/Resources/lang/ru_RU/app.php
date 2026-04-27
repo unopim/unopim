@@ -33,45 +33,45 @@ return [
             ],
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Атрибуты',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'duplicate-code' => 'Код атрибута :code уже используется.',
+                    'code_not_found_to_delete' => 'Код атрибута для удаления не найден.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системный атрибут не может быть удален.',
                 ],
             ],
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Группы атрибутов',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute group code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute group code not found for deletion.',
-                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                    'duplicate-code' => 'Код группы атрибутов :code уже используется.',
+                    'code_not_found_to_delete' => 'Код группы атрибутов для удаления не найден.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системная группа атрибутов не может быть удалена.',
                 ],
             ],
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Семейства атрибутов',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute family code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
-                    'invalid-attribute-group' => 'Attribute group ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
-                    'invalid-channel' => 'Channel ":code" does not exist.',
+                    'duplicate-code' => 'Код семейства атрибутов :code уже используется.',
+                    'code_not_found_to_delete' => 'Код семейства атрибутов для удаления не найден.',
+                    'invalid-attribute-group' => 'Группа атрибутов ":code" не существует.',
+                    'invalid-attribute' => 'Атрибут ":code" не существует.',
+                    'invalid-channel' => 'Канал ":code" не существует.',
                 ],
             ],
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Параметры атрибутов',
             'validation' => [
                 'errors' => [
-                    'duplicate-code' => 'Attribute option code :code is already in use.',
-                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
-                    'locale-not-exist' => 'Locale ":code" does not exist.',
-                    'invalid-attribute' => 'Attribute ":code" does not exist.',
+                    'duplicate-code' => 'Код параметра атрибута :code уже используется.',
+                    'code_not_found_to_delete' => 'Код параметра атрибута для удаления не найден.',
+                    'locale-not-exist' => 'Локаль ":code" не существует.',
+                    'invalid-attribute' => 'Атрибут ":code" не существует.',
                 ],
             ],
         ],
@@ -93,16 +93,16 @@ return [
             'title' => 'Категории',
         ],
         'attributes' => [
-            'title' => 'Attributes',
+            'title' => 'Атрибуты',
         ],
         'attribute-groups' => [
-            'title' => 'Attribute Groups',
+            'title' => 'Группы атрибутов',
         ],
         'attribute-families' => [
-            'title' => 'Attribute Families',
+            'title' => 'Семейства атрибутов',
         ],
         'attribute-options' => [
-            'title' => 'Attribute Options',
+            'title' => 'Параметры атрибутов',
         ],
     ],
     'validation' => [
