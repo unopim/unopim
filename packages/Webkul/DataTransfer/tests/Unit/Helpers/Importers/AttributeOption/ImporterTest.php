@@ -54,7 +54,7 @@ function makeImport(string $action): JobTrackContract
     return $import;
 }
 
-function makeBatch(string $action, array $data = []): JobTrackBatchContract
+function makeAttributeOptionImportBatch(string $action, array $data = []): JobTrackBatchContract
 {
     $jobTrack = mock(JobTrackContract::class)->makePartial();
     $jobTrack->action = $action;
@@ -234,7 +234,7 @@ describe('importBatch', function () {
 
         ['importer' => $importer, 'batchRepo' => $batchRepo, 'storage' => $storage, 'optionRepo' => $repo, 'attrStorage' => $attrStorage] = makeImporter();
 
-        $batch = makeBatch(Import::ACTION_APPEND, [
+        $batch = makeAttributeOptionImportBatch(Import::ACTION_APPEND, [
             ['code' => 'opt', 'attribute_code' => 'color', 'locale' => 'en', 'label' => 'Option'],
         ]);
 
@@ -259,7 +259,7 @@ describe('importBatch', function () {
     it('processes delete batch', function () {
         ['importer' => $importer, 'batchRepo' => $batchRepo, 'storage' => $storage, 'optionRepo' => $repo] = makeImporter();
 
-        $batch = makeBatch(Import::ACTION_DELETE, [
+        $batch = makeAttributeOptionImportBatch(Import::ACTION_DELETE, [
             ['code' => 'opt'],
         ]);
 

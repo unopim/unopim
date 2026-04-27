@@ -58,7 +58,7 @@ function makeImport(string $action): JobTrackContract
 /**
  * Build a minimal mock batch whose jobTrack property is also a contract mock.
  */
-function makeBatch(string $action, array $data = []): JobTrackBatchContract
+function makeAttributeImportBatch(string $action, array $data = []): JobTrackBatchContract
 {
     $jobTrack = mock(JobTrackContract::class)->makePartial();
     $jobTrack->action = $action;
@@ -422,7 +422,7 @@ describe('importBatch', function () {
 
         ['importer' => $importer, 'batchRepo' => $batchRepo, 'attributeStorage' => $storage, 'attributeRepo' => $repo] = makeImporter();
 
-        $batch = makeBatch(Import::ACTION_APPEND, [
+        $batch = makeAttributeImportBatch(Import::ACTION_APPEND, [
             ['code' => 'weight', 'locale' => 'en', 'type' => 'text', 'name' => 'Weight'],
         ]);
 
@@ -454,7 +454,7 @@ describe('importBatch', function () {
 
         ['importer' => $importer, 'batchRepo' => $batchRepo, 'attributeStorage' => $storage, 'attributeRepo' => $repo] = makeImporter();
 
-        $batch = makeBatch(Import::ACTION_DELETE, [
+        $batch = makeAttributeImportBatch(Import::ACTION_DELETE, [
             ['code' => 'obsolete'],
         ]);
 
@@ -478,7 +478,7 @@ describe('importBatch', function () {
 
         ['importer' => $importer, 'batchRepo' => $batchRepo, 'attributeStorage' => $storage, 'attributeRepo' => $repo] = makeImporter();
 
-        $batch = makeBatch(Import::ACTION_DELETE, [
+        $batch = makeAttributeImportBatch(Import::ACTION_DELETE, [
             ['code' => 'sku'],
         ]);
 

@@ -49,7 +49,7 @@ function makeImport(string $action): JobTrackContract
     return $import;
 }
 
-function makeBatch(string $action, array $data = []): JobTrackBatchContract
+function makeAttributeGroupImportBatch(string $action, array $data = []): JobTrackBatchContract
 {
     $jobTrack = mock(JobTrackContract::class)->makePartial();
     $jobTrack->action = $action;
@@ -225,7 +225,7 @@ describe('importBatch', function () {
 
         ['importer' => $importer, 'batchRepo' => $batchRepo, 'storage' => $storage, 'groupRepo' => $repo] = makeImporter();
 
-        $batch = makeBatch(Import::ACTION_APPEND, [
+        $batch = makeAttributeGroupImportBatch(Import::ACTION_APPEND, [
             ['code' => 'grp', 'locale' => 'en', 'name' => 'Group'],
         ]);
 
@@ -249,7 +249,7 @@ describe('importBatch', function () {
     it('processes delete batch', function () {
         ['importer' => $importer, 'batchRepo' => $batchRepo, 'storage' => $storage, 'groupRepo' => $repo] = makeImporter();
 
-        $batch = makeBatch(Import::ACTION_DELETE, [
+        $batch = makeAttributeGroupImportBatch(Import::ACTION_DELETE, [
             ['code' => 'grp'],
         ]);
 

@@ -91,7 +91,7 @@ function makeImport(string $action): JobTrackContract
     return $import;
 }
 
-function makeBatch(string $action, array $data): JobTrackBatchContract
+function makeAttributeFamilyImportBatch(string $action, array $data): JobTrackBatchContract
 {
     $jobTrack = mock(JobTrackContract::class)->makePartial();
     $jobTrack->action = $action;
@@ -298,7 +298,7 @@ describe('importBatch', function () {
 
         ['importer' => $importer, 'batchRepo' => $batchRepo] = makeImporter();
 
-        $batch = makeBatch(Import::ACTION_APPEND, []);
+        $batch = makeAttributeFamilyImportBatch(Import::ACTION_APPEND, []);
 
         $batchRepo->shouldReceive('update')->andReturn($batch);
 
@@ -311,7 +311,7 @@ describe('importBatch', function () {
     it('processes delete batch', function () {
         ['importer' => $importer, 'batchRepo' => $batchRepo] = makeImporter();
 
-        $batch = makeBatch(Import::ACTION_DELETE, []);
+        $batch = makeAttributeFamilyImportBatch(Import::ACTION_DELETE, []);
 
         $batchRepo->shouldReceive('update')->andReturn($batch);
 

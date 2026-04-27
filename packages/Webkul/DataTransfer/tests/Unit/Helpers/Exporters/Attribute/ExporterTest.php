@@ -58,7 +58,7 @@ function attributeRow(array $overrides = []): array
 /**
  * Build a batch mock containing the given rows.
  */
-function makeBatch(array $rows): JobTrackBatch
+function makeAttributeExportBatch(array $rows): JobTrackBatch
 {
     $batch = Mockery::mock(JobTrackBatch::class);
     $batch->data = $rows;
@@ -104,7 +104,7 @@ $sharedPrepareAssertions = function (string $fileFormat, Exporter $exporter): vo
     $exporter->setExport(makeExportTrack($fileFormat));
 
     $locales = core()->getAllActiveLocales()->pluck('code');
-    $batch = makeBatch([attributeRow()]);
+    $batch = makeAttributeExportBatch([attributeRow()]);
     $result = $exporter->prepareAttributes($batch, "dummy/path/attributes.{$fileFormat}");
 
     // ── Structure ──────────────────────────────────────────────────────────
@@ -184,7 +184,7 @@ describe('prepareAttributes [CSV]', function () use ($sharedPrepareAssertions) {
     it('defaults missing fields to null for CSV', function () {
         $this->exporter->setExport(makeExportTrack('Csv'));
 
-        $batch = makeBatch([['code' => 'size']]);
+        $batch = makeAttributeExportBatch([['code' => 'size']]);
         $result = $this->exporter->prepareAttributes($batch, 'dummy/path/attributes.csv');
 
         expect($result[0]['type'])->toBeNull()
@@ -196,7 +196,7 @@ describe('prepareAttributes [CSV]', function () use ($sharedPrepareAssertions) {
     it('handles missing translations gracefully for CSV', function () {
         $this->exporter->setExport(makeExportTrack('Csv'));
 
-        $batch = makeBatch([attributeRow(['translations' => []])]);
+        $batch = makeAttributeExportBatch([attributeRow(['translations' => []])]);
         $result = $this->exporter->prepareAttributes($batch, 'dummy/path/attributes.csv');
 
         foreach ($result as $row) {
@@ -207,7 +207,7 @@ describe('prepareAttributes [CSV]', function () use ($sharedPrepareAssertions) {
     it('handles partial translations for CSV', function () {
         $this->exporter->setExport(makeExportTrack('Csv'));
 
-        $batch = makeBatch([attributeRow([
+        $batch = makeAttributeExportBatch([attributeRow([
             'translations' => [
                 ['locale' => 'en_US', 'name' => 'Color'],
             ],
@@ -226,7 +226,7 @@ describe('prepareAttributes [CSV]', function () use ($sharedPrepareAssertions) {
     it('increments createdItemsCount once per attribute not per locale for CSV', function () {
         $this->exporter->setExport(makeExportTrack('Csv'));
 
-        $batch = makeBatch([
+        $batch = makeAttributeExportBatch([
             attributeRow(['code' => 'color']),
             attributeRow(['code' => 'size']),
         ]);
@@ -240,7 +240,7 @@ describe('prepareAttributes [CSV]', function () use ($sharedPrepareAssertions) {
         $this->exporter->setExport(makeExportTrack('Csv'));
 
         $locales = core()->getAllActiveLocales()->pluck('code');
-        $batch = makeBatch([
+        $batch = makeAttributeExportBatch([
             attributeRow(['code' => 'color']),
             attributeRow(['code' => 'size']),
         ]);
@@ -260,7 +260,7 @@ describe('prepareAttributes [XLS]', function () use ($sharedPrepareAssertions) {
     it('defaults missing fields to null for XLS', function () {
         $this->exporter->setExport(makeExportTrack('Xls'));
 
-        $batch = makeBatch([['code' => 'size']]);
+        $batch = makeAttributeExportBatch([['code' => 'size']]);
         $result = $this->exporter->prepareAttributes($batch, 'dummy/path/attributes.xls');
 
         expect($result[0]['type'])->toBeNull()
@@ -272,7 +272,7 @@ describe('prepareAttributes [XLS]', function () use ($sharedPrepareAssertions) {
     it('handles missing translations gracefully for XLS', function () {
         $this->exporter->setExport(makeExportTrack('Xls'));
 
-        $batch = makeBatch([attributeRow(['translations' => []])]);
+        $batch = makeAttributeExportBatch([attributeRow(['translations' => []])]);
         $result = $this->exporter->prepareAttributes($batch, 'dummy/path/attributes.xls');
 
         foreach ($result as $row) {
@@ -283,7 +283,7 @@ describe('prepareAttributes [XLS]', function () use ($sharedPrepareAssertions) {
     it('handles partial translations for XLS', function () {
         $this->exporter->setExport(makeExportTrack('Xls'));
 
-        $batch = makeBatch([attributeRow([
+        $batch = makeAttributeExportBatch([attributeRow([
             'translations' => [
                 ['locale' => 'en_US', 'name' => 'Color'],
             ],
@@ -302,7 +302,7 @@ describe('prepareAttributes [XLS]', function () use ($sharedPrepareAssertions) {
     it('increments createdItemsCount once per attribute not per locale for XLS', function () {
         $this->exporter->setExport(makeExportTrack('Xls'));
 
-        $batch = makeBatch([
+        $batch = makeAttributeExportBatch([
             attributeRow(['code' => 'color']),
             attributeRow(['code' => 'size']),
         ]);
@@ -315,7 +315,7 @@ describe('prepareAttributes [XLS]', function () use ($sharedPrepareAssertions) {
         $this->exporter->setExport(makeExportTrack('Xls'));
 
         $locales = core()->getAllActiveLocales()->pluck('code');
-        $batch = makeBatch([
+        $batch = makeAttributeExportBatch([
             attributeRow(['code' => 'color']),
             attributeRow(['code' => 'size']),
         ]);
@@ -335,7 +335,7 @@ describe('prepareAttributes [XLSX]', function () use ($sharedPrepareAssertions) 
     it('defaults missing fields to null for XLSX', function () {
         $this->exporter->setExport(makeExportTrack('Xlsx'));
 
-        $batch = makeBatch([['code' => 'size']]);
+        $batch = makeAttributeExportBatch([['code' => 'size']]);
         $result = $this->exporter->prepareAttributes($batch, 'dummy/path/attributes.xlsx');
 
         expect($result[0]['type'])->toBeNull()
@@ -347,7 +347,7 @@ describe('prepareAttributes [XLSX]', function () use ($sharedPrepareAssertions) 
     it('handles missing translations gracefully for XLSX', function () {
         $this->exporter->setExport(makeExportTrack('Xlsx'));
 
-        $batch = makeBatch([attributeRow(['translations' => []])]);
+        $batch = makeAttributeExportBatch([attributeRow(['translations' => []])]);
         $result = $this->exporter->prepareAttributes($batch, 'dummy/path/attributes.xlsx');
 
         foreach ($result as $row) {
@@ -358,7 +358,7 @@ describe('prepareAttributes [XLSX]', function () use ($sharedPrepareAssertions) 
     it('handles partial translations for XLSX', function () {
         $this->exporter->setExport(makeExportTrack('Xlsx'));
 
-        $batch = makeBatch([attributeRow([
+        $batch = makeAttributeExportBatch([attributeRow([
             'translations' => [
                 ['locale' => 'en_US', 'name' => 'Color'],
             ],
@@ -377,7 +377,7 @@ describe('prepareAttributes [XLSX]', function () use ($sharedPrepareAssertions) 
     it('increments createdItemsCount once per attribute not per locale for XLSX', function () {
         $this->exporter->setExport(makeExportTrack('Xlsx'));
 
-        $batch = makeBatch([
+        $batch = makeAttributeExportBatch([
             attributeRow(['code' => 'color']),
             attributeRow(['code' => 'size']),
         ]);
@@ -390,7 +390,7 @@ describe('prepareAttributes [XLSX]', function () use ($sharedPrepareAssertions) 
         $this->exporter->setExport(makeExportTrack('Xlsx'));
 
         $locales = core()->getAllActiveLocales()->pluck('code');
-        $batch = makeBatch([
+        $batch = makeAttributeExportBatch([
             attributeRow(['code' => 'color']),
             attributeRow(['code' => 'size']),
         ]);
@@ -416,7 +416,7 @@ describe('output parity across formats', function () {
             $exporter->setExport(makeExportTrack($format));
 
             $results[$format] = $exporter->prepareAttributes(
-                makeBatch([attributeRow()]),
+                makeAttributeExportBatch([attributeRow()]),
                 "dummy/path/attributes.{$format}",
             );
         }
@@ -438,7 +438,7 @@ describe('output parity across formats', function () {
             $exporter->setExport(makeExportTrack($format));
 
             $counts[$format] = count($exporter->prepareAttributes(
-                makeBatch([attributeRow()]),
+                makeAttributeExportBatch([attributeRow()]),
                 "dummy/path/attributes.{$format}",
             ));
         }
