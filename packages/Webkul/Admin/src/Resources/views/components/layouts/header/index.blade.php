@@ -54,13 +54,18 @@
         <!-- Admin profile -->
         <x-admin::dropdown position="bottom-right">
             <x-slot:toggle>
-                @if ($admin->image)
-                    <button class="flex w-9 h-9 overflow-hidden rounded-full cursor-pointer hover:opacity-80 focus:opacity-80">
+                @if ($admin->avatar_url)
+                    <button class="relative flex w-9 h-9 overflow-hidden rounded-full cursor-pointer hover:opacity-80 focus:opacity-80">
                         <img
-                            src="{{ $admin->image_url }}"
+                            src="{{ $admin->avatar_url }}"
                             class="w-full h-full object-cover object-top"
-                            alt="{{ $admin->image_url }}"
+                            alt="{{ $admin->name }}"
+                            onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');"
                         />
+
+                        <span class="hidden flex absolute inset-0 justify-center items-center bg-violet-400 text-sm text-white font-semibold leading-6">
+                            {{ substr($admin->name, 0, 1) }}
+                        </span>
                     </button>
                 @else
                     <button class="flex justify-center items-center w-9 h-9 bg-violet-400 rounded-full text-sm text-white font-semibold cursor-pointer leading-6 transition-all hover:bg-violet-500 focus:bg-violet-500">

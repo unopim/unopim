@@ -71,6 +71,46 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     }
 
     /**
+     * Get avatar url. Priority: uploaded image -> gravatar -> null.
+     */
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->image_url() ?: $this->getGravatarUrlAttribute();
+    }
+
+    /**
+     * Build deterministic gravatar url from email.
+     */
+    public function getGravatarUrlAttribute(): ?string
+    {
+        return self::getGravatarUrlFromEmail($this->email);
+    }
+
+    /**
+     * Build gravatar url from email.
+     */
+    public static function getGravatarUrlFromEmail(?string $email): ?string
+    {
+        if (! $email) {
+            return null;
+        }
+
+        $normalizedEmail = mb_strtolower(trim($email));
+
+        if ($normalizedEmail === '') {
+            return null;
+        }
+
+        $hash = hash('sha256', $normalizedEmail);
+
+        try {
+            return route('admin.avatar.public', ['hash' => $hash]);
+        } catch (\Throwable $exception) {
+            return "https://gravatar.com/avatar/{$hash}?s=200&d=404";
+        }
+    }
+
+    /**
      * @return array
      */
     public function toArray()
