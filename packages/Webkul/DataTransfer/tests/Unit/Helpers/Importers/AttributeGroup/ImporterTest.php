@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Webkul\DataTransfer\Unit\Helpers\Importers\AttributeGroup;
+
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
 use Webkul\Core\Repositories\LocaleRepository;

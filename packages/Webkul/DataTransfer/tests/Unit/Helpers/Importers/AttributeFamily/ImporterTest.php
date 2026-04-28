@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Webkul\DataTransfer\Unit\Helpers\Importers\AttributeFamily;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
@@ -23,7 +25,7 @@ use function Pest\Laravel\mock;
 |--------------------------------------------------------------------------
 */
 
-function makeImporter(array $overrides = []): array
+function makeAttributeFamilyImporter(array $overrides = []): array
 {
     $batchRepo = $overrides['batchRepo'] ?? mock(JobTrackBatchRepository::class);
     $familyRepo = $overrides['familyRepo'] ?? mock(AttributeFamilyRepository::class);

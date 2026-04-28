@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Webkul\DataTransfer\Unit\Helpers\Importers\AttributeOption;
+
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Core\Repositories\LocaleRepository;
@@ -17,7 +19,7 @@ use function Pest\Laravel\mock;
 /**
  * Helper to create importer with mocks
  */
-function makeImporter(array $overrides = []): array
+function makeAttributeOptionImporter(array $overrides = []): array
 {
     $batchRepo = $overrides['batchRepo'] ?? mock(JobTrackBatchRepository::class);
     $optionRepo = $overrides['optionRepo'] ?? mock(AttributeOptionRepository::class);
