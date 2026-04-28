@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Webkul\Admin\Http\Controllers\Settings\AppearanceController;
 use Webkul\Admin\Http\Controllers\Settings\ChannelController;
 use Webkul\Admin\Http\Controllers\Settings\CurrencyController;
 use Webkul\Admin\Http\Controllers\Settings\DataTransfer\ExportController;
@@ -15,6 +16,15 @@ use Webkul\Admin\Http\Controllers\Settings\UserController;
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
     Route::prefix('settings')->group(function () {
+        /**
+         * Appearance routes.
+         */
+        Route::controller(AppearanceController::class)->prefix('appearance')->group(function () {
+            Route::get('', 'index')->name('admin.settings.appearance.index');
+
+            Route::put('', 'update')->name('admin.settings.appearance.update');
+        });
+
         /**
          * Channels routes.
          */
