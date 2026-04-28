@@ -27,6 +27,13 @@ Route::group(['prefix' => config('app.admin_url')], function () {
          * Login post route to admin auth controller.
          */
         Route::post('', 'store')->name('admin.session.store')->middleware('throttle:admin-login');
+
+        /**
+         * Microsoft SSO routes.
+         */
+        Route::get('microsoft', 'redirectToMicrosoft')->name('admin.session.microsoft.redirect');
+
+        Route::get('microsoft/callback', 'handleMicrosoftCallback')->name('admin.session.microsoft.callback');
     });
 
     /**
