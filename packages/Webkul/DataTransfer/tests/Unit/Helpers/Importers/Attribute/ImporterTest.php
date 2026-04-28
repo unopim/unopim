@@ -3,6 +3,8 @@
 namespace Tests\Webkul\DataTransfer\Unit\Helpers\Importers\Attribute;
 
 use Illuminate\Support\Facades\Event;
+use Mockery;
+use stdClass;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
@@ -15,7 +17,7 @@ use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
 use function Pest\Laravel\mock;
 
-function makeAttributeImporter(array $overrides = []): array
+function makeImporter(array $overrides = []): array
 {
     $batchRepo = $overrides['batchRepo'] ?? mock(JobTrackBatchRepository::class);
     $attributeRepo = $overrides['attributeRepo'] ?? mock(AttributeRepository::class);

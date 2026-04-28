@@ -3,6 +3,7 @@
 namespace Tests\Webkul\DataTransfer\Unit\Helpers\Importers\AttributeOption;
 
 use Illuminate\Support\Facades\Event;
+use stdClass;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
@@ -19,7 +20,7 @@ use function Pest\Laravel\mock;
 /**
  * Helper to create importer with mocks
  */
-function makeAttributeOptionImporter(array $overrides = []): array
+function makeImporter(array $overrides = []): array
 {
     $batchRepo = $overrides['batchRepo'] ?? mock(JobTrackBatchRepository::class);
     $optionRepo = $overrides['optionRepo'] ?? mock(AttributeOptionRepository::class);

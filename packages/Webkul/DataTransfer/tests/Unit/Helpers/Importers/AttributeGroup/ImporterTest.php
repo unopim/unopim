@@ -3,6 +3,7 @@
 namespace Tests\Webkul\DataTransfer\Unit\Helpers\Importers\AttributeGroup;
 
 use Illuminate\Support\Facades\Event;
+use stdClass;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
