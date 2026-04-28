@@ -1246,12 +1246,14 @@ class Importer extends AbstractImporter
     protected function saveProductsData(JobTrackBatchContract $batch): bool
     {
         $useBulkMode = config('import.mysql_bulk_mode', true);
+        $connectionDriver = DB::getDriverName();
+        $useMySqlBulkMode = $useBulkMode && in_array($connectionDriver, ['mysql', 'mariadb'], true);
 
         /**
          * MySQL bulk mode: temporarily disable unique_checks and foreign_key_checks
          * for 2-3x faster INSERT/UPSERT. Safe because data is pre-validated.
          */
-        if ($useBulkMode) {
+        if ($useMySqlBulkMode) {
             $this->toggleMysqlBulkMode(false);
         }
 
@@ -1295,7 +1297,7 @@ class Importer extends AbstractImporter
 
             $this->saveProducts($products);
         } finally {
-            if ($useBulkMode) {
+            if ($useMySqlBulkMode) {
                 $this->toggleMysqlBulkMode(true);
             }
         }
