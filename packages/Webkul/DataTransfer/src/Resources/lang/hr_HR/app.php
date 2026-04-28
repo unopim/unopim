@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Polja kategorije',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod polja kategorije :code već je u upotrebi.',
+                    'code_not_found_to_delete' => 'Kod polja kategorije nije pronađen za brisanje.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Značajke',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorije',
+        ],
+        'category-fields' => [
+            'title' => 'Polja kategorije',
         ],
         'attributes' => [
             'title' => 'Značajke',

@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Field Kategori',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kode field kategori :code sudah digunakan.',
+                    'code_not_found_to_delete' => 'Kode field kategori tidak ditemukan untuk dihapus.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Atribut',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategori',
+        ],
+        'category-fields' => [
+            'title' => 'Field Kategori',
         ],
         'attributes' => [
             'title' => 'Atribut',

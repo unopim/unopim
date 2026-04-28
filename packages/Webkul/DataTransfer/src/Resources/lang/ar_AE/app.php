@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'حقول الفئة',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'رمز حقل الفئة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على رمز حقل الفئة للحذف.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'السمات',
             'validation' => [
@@ -103,6 +112,9 @@ return [
         ],
         'attribute-options' => [
             'title' => 'خيارات السمة',
+        ],
+        'category-fields' => [
+            'title' => 'حقول الفئة',
         ],
     ],
     'validation' => [

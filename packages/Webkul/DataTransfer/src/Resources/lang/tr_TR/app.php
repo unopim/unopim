@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Kategori Alanları',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategori alan kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silmek için kategori alan kodu bulunamadı.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Nitelikler',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriler',
+        ],
+        'category-fields' => [
+            'title' => 'Kategori Alanları',
         ],
         'attributes' => [
             'title' => 'Nitelikler',

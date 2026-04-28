@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Mga Field ng Kategorya',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Ang code ng field ng kategorya :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng field ng kategorya para burahin.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Mga Tampok',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Mga Kategorya',
+        ],
+        'category-fields' => [
+            'title' => 'Mga Field ng Kategorya',
         ],
         'attributes' => [
             'title' => 'Mga Tampok',

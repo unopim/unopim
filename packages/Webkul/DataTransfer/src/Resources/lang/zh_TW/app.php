@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => '分類欄位',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '分類欄位代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '找不到要刪除的分類欄位代碼。',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => '屬性',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => '分類',
+        ],
+        'category-fields' => [
+            'title' => '分類欄位',
         ],
         'attributes' => [
             'title' => '屬性',

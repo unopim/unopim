@@ -32,6 +32,16 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Campos de categoría',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El código del campo de categoría :code ya está en uso.',
+                    'code_not_found_to_delete' => 'No se encontró el código del campo de categoría para eliminar.',
+                ],
+            ],
+        ],
+
         'attributes' => [
             'title'      => 'Atributos',
             'validation' => [
@@ -91,6 +101,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorías',
+        ],
+        'category-fields' => [
+            'title' => 'Campos de categoría',
         ],
         'attributes' => [
             'title' => 'Atributos',

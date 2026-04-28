@@ -32,6 +32,16 @@ return [
                 ],
             ],
         ],
+
+        'category-fields' => [
+            'title'      => 'Camps de categoria',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El codi del camp de categoria :code ja està en ús.',
+                    'code_not_found_to_delete' => 'No s\'ha trobat el codi del camp de categoria per eliminar.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Atributs',
             'validation' => [
@@ -91,6 +101,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categories',
+        ],
+        'category-fields' => [
+            'title' => 'Camps de categoria',
         ],
         'attributes' => [
             'title' => 'Atributs',

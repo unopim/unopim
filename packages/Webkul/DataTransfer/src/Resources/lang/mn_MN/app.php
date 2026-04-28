@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Ангиллын талбарууд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Ангиллын талбарын код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах ангиллын талбарын код олдсонгүй.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Шинж чанарууд',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Ангилал',
+        ],
+        'category-fields' => [
+            'title' => 'Ангиллын талбарууд',
         ],
         'attributes' => [
             'title' => 'Шинж чанарууд',

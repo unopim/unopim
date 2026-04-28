@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => '分类字段',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '分类字段代码 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到用于删除的分类字段代码。',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => '属性',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => '类别',
+        ],
+        'category-fields' => [
+            'title' => '分类字段',
         ],
         'attributes' => [
             'title' => '属性',

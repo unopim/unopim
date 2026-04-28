@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Pola kategorii',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod pola kategorii :code jest już używany.',
+                    'code_not_found_to_delete' => 'Nie znaleziono kodu pola kategorii do usunięcia.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Atrybuty',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorie',
+        ],
+        'category-fields' => [
+            'title' => 'Pola kategorii',
         ],
         'attributes' => [
             'title' => 'Atrybuty',

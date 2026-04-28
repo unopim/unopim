@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => '카테고리 필드',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '카테고리 필드 코드 :code 는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 카테고리 필드 코드를 찾을 수 없습니다.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => '속성',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => '카테고리',
+        ],
+        'category-fields' => [
+            'title' => '카테고리 필드',
         ],
         'attributes' => [
             'title' => '속성',

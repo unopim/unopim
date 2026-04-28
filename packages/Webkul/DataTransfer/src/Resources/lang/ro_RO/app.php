@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Câmpuri categorie',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Codul câmpului de categorie :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul câmpului de categorie nu a fost găsit pentru ștergere.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Atribute',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorii',
+        ],
+        'category-fields' => [
+            'title' => 'Câmpuri categorie',
         ],
         'attributes' => [
             'title' => 'Atribute',

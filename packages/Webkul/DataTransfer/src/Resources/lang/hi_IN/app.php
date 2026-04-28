@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'श्रेणी फ़ील्ड',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'श्रेणी फ़ील्ड कोड :code पहले से उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए श्रेणी फ़ील्ड कोड नहीं मिला।',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'विशेषताएँ',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'श्रेणियाँ',
+        ],
+        'category-fields' => [
+            'title' => 'श्रेणी फ़ील्ड',
         ],
         'attributes' => [
             'title' => 'विशेषताएँ',

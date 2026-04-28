@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Category Fields',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Category field code :code is already in use.',
+                    'code_not_found_to_delete' => 'Category field code not found for deletion.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Attributes',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categories',
+        ],
+        'category-fields' => [
+            'title' => 'Category Fields',
         ],
         'attributes' => [
             'title' => 'Attributes',

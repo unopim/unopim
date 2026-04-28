@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'カテゴリフィールド',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'カテゴリフィールドコード :code は既に使用されています。',
+                    'code_not_found_to_delete' => '削除するカテゴリフィールドコードが見つかりません。',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => '属性',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'カテゴリー',
+        ],
+        'category-fields' => [
+            'title' => 'カテゴリフィールド',
         ],
         'attributes' => [
             'title' => '属性',

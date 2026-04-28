@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Categorievelden',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'De code van het categorieveld :code is al in gebruik.',
+                    'code_not_found_to_delete' => 'De code van het categorieveld is niet gevonden om te verwijderen.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Attributen',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorieën',
+        ],
+        'category-fields' => [
+            'title' => 'Categorievelden',
         ],
         'attributes' => [
             'title' => 'Attributen',

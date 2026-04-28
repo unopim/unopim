@@ -32,6 +32,16 @@ return [
                 ],
             ],
         ],
+
+        'category-fields' => [
+            'title'      => 'Kategoriakentät',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategoriakentän koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Kategoriakentän koodia ei löytynyt poistamista varten.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Attribuutit',
             'validation' => [
@@ -88,6 +98,9 @@ return [
                     'super-attribute-not-found' => 'Ylätunnus, jonka koodi on: \'%s\', ei löytynyt tai ei kuulu attribuuttiperheeseen: \'%s\'',
                 ],
             ],
+        ],
+        'category-fields' => [
+            'title' => 'Kategoriakentät',
         ],
         'categories' => [
             'title' => 'Kategoriat',

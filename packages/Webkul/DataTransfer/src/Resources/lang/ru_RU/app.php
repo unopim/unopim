@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Поля категории',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код поля категории :code уже используется.',
+                    'code_not_found_to_delete' => 'Код поля категории не найден для удаления.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Атрибуты',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Категории',
+        ],
+        'category-fields' => [
+            'title' => 'Поля категории',
         ],
         'attributes' => [
             'title' => 'Атрибуты',

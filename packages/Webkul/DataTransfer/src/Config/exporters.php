@@ -87,6 +87,37 @@ return [
         ],
     ],
 
+    'category-fields' => [
+        'title'       => 'data_transfer::app.exporters.category-fields.title',
+        'exporter'    => 'Webkul\\DataTransfer\\Helpers\\Exporters\\CategoryField\\Exporter',
+        'source'      => 'Webkul\\Category\\Repositories\\CategoryFieldRepository',
+        'sample_path' => 'data-transfer/samples/category-fields.csv',
+        'validator'   => 'Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\CategoryFieldJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'File Format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'attributes' => [
         'title'       => 'data_transfer::app.exporters.attributes.title',
         'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Attribute\Exporter',

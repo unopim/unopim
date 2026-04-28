@@ -32,6 +32,16 @@ return [
                 ],
             ],
         ],
+
+        'category-fields' => [
+            'title'      => 'Kategoriefelder',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Der Code des Kategoriefeldes :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Der Code des Kategoriefeldes wurde zum Löschen nicht gefunden.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Attribute',
             'validation' => [
@@ -91,6 +101,10 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorien',
+        ],
+
+        'category-fields' => [
+            'title' => 'Kategoriefelder',
         ],
         'attributes' => [
             'title' => 'Attribute',

@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Kategorifelter',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategorifeltskode :code er allerede i bruk.',
+                    'code_not_found_to_delete' => 'Kategorifeltskode ble ikke funnet for sletting.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Attributter',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorier',
+        ],
+        'category-fields' => [
+            'title' => 'Kategorifelter',
         ],
         'attributes' => [
             'title' => 'Attributter',

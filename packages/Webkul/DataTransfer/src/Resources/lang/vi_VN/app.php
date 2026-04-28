@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Trường danh mục',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Mã trường danh mục :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã trường danh mục để xóa.',
+                ],
+            ],
+        ],
         'attributes' => [
             'title'      => 'Thuộc tính',
             'validation' => [
@@ -91,6 +100,9 @@ return [
         ],
         'categories' => [
             'title' => 'Các danh mục',
+        ],
+        'category-fields' => [
+            'title' => 'Trường danh mục',
         ],
         'attributes' => [
             'title' => 'Thuộc tính',

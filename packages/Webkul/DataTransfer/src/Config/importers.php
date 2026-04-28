@@ -25,6 +25,14 @@ return [
         'has_file_options' => true,
     ],
 
+    'category-fields' => [
+        'title'            => 'data_transfer::app.importers.category-fields.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\CategoryField\Importer',
+        'sample_path'      => 'data-transfer/samples/category-fields.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\CategoryFieldJobValidator',
+        'has_file_options' => true,
+    ],
+
     'attribute-groups' => [
         'title'            => 'data_transfer::app.importers.attribute-groups.title',
         'importer'         => 'Webkul\DataTransfer\Helpers\Importers\AttributeGroup\Importer',
