@@ -286,6 +286,29 @@ describe('prepareAttributes', function () {
         expect($attributes['insert']['size'])->toHaveKeys(['en', 'fr']);
     });
 
+    it('keeps scalar fields scalar when merging locale rows for the same attribute', function () {
+        ['importer' => $importer, 'attributeStorage' => $storage] = makeImporter();
+
+        $storage->shouldReceive('has')->with('size')->andReturn(false);
+
+        $attributes = [];
+
+        $importer->prepareAttributes(
+            ['code' => 'size', 'locale' => 'en', 'type' => 'text', 'name' => 'Size', 'position' => '3', 'is_required' => '1'],
+            $attributes,
+        );
+        $importer->prepareAttributes(
+            ['code' => 'size', 'locale' => 'fr', 'type' => 'text', 'name' => 'Taille', 'position' => '3', 'is_required' => '1'],
+            $attributes,
+        );
+
+        expect($attributes['insert']['size']['code'])->toBe('size')
+            ->and($attributes['insert']['size']['type'])->toBe('text')
+            ->and($attributes['insert']['size']['position'])->toBe(3)
+            ->and($attributes['insert']['size']['is_required'])->toBe(1)
+            ->and($attributes['insert']['size'])->toHaveKeys(['en', 'fr']);
+    });
+
     it('casts boolean-like fields to integers', function () {
         ['importer' => $importer, 'attributeStorage' => $storage] = makeImporter();
 

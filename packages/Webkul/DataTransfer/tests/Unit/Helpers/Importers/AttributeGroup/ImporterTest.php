@@ -186,6 +186,20 @@ describe('prepareAttributeGroups', function () {
 
         expect($data['insert']['grp'])->toHaveKeys(['en', 'fr']);
     });
+
+    it('keeps code scalar when merging locale rows', function () {
+        ['importer' => $importer, 'storage' => $storage] = makeImporter();
+
+        $storage->shouldReceive('has')->with('grp')->andReturn(false);
+
+        $data = [];
+
+        $importer->prepareAttributeGroups(['code' => 'grp', 'locale' => 'en', 'name' => 'Group'], $data);
+        $importer->prepareAttributeGroups(['code' => 'grp', 'locale' => 'fr', 'name' => 'Groupe'], $data);
+
+        expect($data['insert']['grp']['code'])->toBe('grp')
+            ->and($data['insert']['grp'])->toHaveKeys(['en', 'fr']);
+    });
 });
 
 describe('saveAttributeGroups', function () {

@@ -292,7 +292,7 @@ class Importer extends AbstractImporter
             $type = $isAttribute ? 'update' : 'insert';
 
             if (isset($attributes[$type][$rowData['code']])) {
-                $attributes[$type][$rowData['code']] = array_merge_recursive(
+                $attributes[$type][$rowData['code']] = array_replace_recursive(
                     $attributes[$type][$rowData['code']],
                     $data
                 );

@@ -1,4 +1,5 @@
 const { test, expect } = require('../../../../utils/fixtures');
+const { navigateTo } = require('../../../../utils/helpers');
 
 test.describe('UnoPim Export Jobs', () => {
 
@@ -6,9 +7,7 @@ test.describe('UnoPim Export Jobs', () => {
 
     const uniqueCode = 'Attribute Export CSV ' + Math.random().toString(36).slice(2, 6);
 
-    await adminPage.getByRole('link', { name: ' Data Transfer' }).click();
-    await adminPage.getByRole('link', { name: 'Exports' }).click();
-    await adminPage.getByRole('link', { name: 'Create Export' }).click();
+    await adminPage.goto('/admin/settings/data-transfer/exports/create', { waitUntil: 'networkidle' });
 
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(uniqueCode);
 
@@ -79,7 +78,7 @@ test.describe('UnoPim Export Jobs', () => {
       adminPage.getByRole('link', { name: 'Download Exported Files' }).click(),
     ]);
 
-    await adminPage.getByRole('link', { name: 'Exports' }).click();
+    await navigateTo(adminPage, 'exports');
 
     const itemRow = await adminPage.locator('div', { hasText: uniqueCode });
 

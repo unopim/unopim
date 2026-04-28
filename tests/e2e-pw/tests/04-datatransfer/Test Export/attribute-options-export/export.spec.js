@@ -1,4 +1,5 @@
 const { test, expect } = require('../../../../utils/fixtures');
+const { navigateTo } = require('../../../../utils/helpers');
 
 test.describe('UnoPim Export Jobs', () => {
 
@@ -6,9 +7,7 @@ test.describe('UnoPim Export Jobs', () => {
 
     const uniqueCode = 'Attribute Options Export CSV ' + Math.random().toString(36).slice(2, 6);
 
-    await adminPage.getByRole('link', { name: ' Data Transfer' }).click();
-    await adminPage.getByRole('link', { name: 'Exports' }).click();
-    await adminPage.getByRole('link', { name: 'Create Export' }).click();
+    await adminPage.goto('/admin/settings/data-transfer/exports/create', { waitUntil: 'networkidle' });
 
     // Fill Code
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(uniqueCode);
@@ -50,8 +49,7 @@ test.describe('UnoPim Export Jobs', () => {
     // Run Export
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
 
-    const [, csvDownload] = await Promise.all([
-      adminPage.waitForEvent('popup'),
+    const [csvDownload] = await Promise.all([
       adminPage.waitForEvent('download'),
       adminPage.getByRole('link', { name: 'Download Exported Files' }).click(),
     ]);
@@ -81,14 +79,13 @@ test.describe('UnoPim Export Jobs', () => {
     // Export Again
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
 
-    const [, xlsDownload] = await Promise.all([
-      adminPage.waitForEvent('popup'),
+    const [xlsDownload] = await Promise.all([
       adminPage.waitForEvent('download'),
       adminPage.getByRole('link', { name: 'Download Exported Files' }).click(),
     ]);
 
     // Go back to list
-    await adminPage.getByRole('link', { name: 'Exports' }).click();
+    await navigateTo(adminPage, 'exports');
 
     // Delete created export
     const itemRow = adminPage.locator('div', { hasText: uniqueCode });
