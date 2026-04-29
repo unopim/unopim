@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Event;
 use Webkul\DataTransfer\Contracts\JobInstances as JobInstanceContract;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
+use Webkul\DataTransfer\Contracts\JobTrackBatch;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Export as ExportHelper;
 use Webkul\DataTransfer\Helpers\Exporters\Locale\Exporter;
@@ -147,7 +148,7 @@ it('writes locale rows to the export buffer and marks the batch as processed', f
 });
 
 it('returns an empty array and zero count when the batch contains no rows', function () {
-    $emptyBatch = new class implements \Webkul\DataTransfer\Contracts\JobTrackBatch
+    $emptyBatch = new class implements JobTrackBatch
     {
         public int $id = 1;
 
@@ -161,7 +162,7 @@ it('returns an empty array and zero count when the batch contains no rows', func
 });
 
 it('prepares a single locale row correctly', function () {
-    $singleBatch = new class implements \Webkul\DataTransfer\Contracts\JobTrackBatch
+    $singleBatch = new class implements JobTrackBatch
     {
         public int $id = 2;
 
@@ -188,7 +189,7 @@ it('prepares a single locale row correctly', function () {
 });
 
 it('preserves inactive status value (0) without modification', function () {
-    $inactiveBatch = new class implements \Webkul\DataTransfer\Contracts\JobTrackBatch
+    $inactiveBatch = new class implements JobTrackBatch
     {
         public int $id = 3;
 
@@ -208,7 +209,7 @@ it('preserves inactive status value (0) without modification', function () {
 });
 
 it('strips extra source fields and maps only the four expected keys', function () {
-    $extraFieldsBatch = new class implements \Webkul\DataTransfer\Contracts\JobTrackBatch
+    $extraFieldsBatch = new class implements JobTrackBatch
     {
         public int $id = 4;
 
@@ -240,7 +241,7 @@ it('strips extra source fields and maps only the four expected keys', function (
 it('accumulates created items count across multiple prepareLocales calls', function () {
     $this->exporter->prepareLocales($this->batch); // 2 locales
 
-    $secondBatch = new class implements \Webkul\DataTransfer\Contracts\JobTrackBatch
+    $secondBatch = new class implements JobTrackBatch
     {
         public int $id = 5;
 

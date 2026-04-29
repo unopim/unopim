@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Producten',
-
+            'title'      => 'Producten',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'url-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -34,13 +32,21 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Talen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'De taalcode \'%s\' is al geïmporteerd in deze batch.',
+                    'code-not-found-to-delete'    => 'Taal met code \'%s\' niet gevonden in het systeem.',
+                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
+                    'channel-related-locale-root' => 'Je kunt de taal met code :code niet verwijderen omdat deze is gekoppeld aan een kanaal.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Producten',
-
+            'title'      => 'Producten',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -54,8 +60,10 @@ return [
         'categories' => [
             'title' => 'Categorieën',
         ],
+        'locales' => [
+            'title' => 'Talen',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Kolommen nummer "%s" hebben lege kopteksten.',
@@ -68,7 +76,6 @@ return [
             'file-empty'           => 'Het bestand is leeg of bevat geen kopregel. Upload een geldig bestand met gegevens.',
         ],
     ],
-
     'job' => [
         'started'   => 'De uitvoering van de werkzaamheden is begonnen',
         'completed' => 'Uitvoering van de taak voltooid',

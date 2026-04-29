@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Diller',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Dil kodu \'%s\' bu partide zaten içe aktarılmış.',
+                    'code-not-found-to-delete'    => 'Sistemde \'%s\' koduna sahip dil bulunamadı.',
+                    'invalid-status'              => 'Durum 0 veya 1 olmalıdır (veya varsayılan etkin için boş).',
+                    'channel-related-locale-root' => ':code koduna sahip dili silemezsiniz çünkü bir kanala bağlıdır.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +59,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriler',
+        ],
+        'locales' => [
+            'title' => 'Diller',
         ],
     ],
     'validation' => [
