@@ -54,6 +54,10 @@ return [
         'categories' => [
             'title' => 'Categories',
         ],
+
+        'locales' => [
+            'title' => 'Locales',
+        ],
     ],
 
     'validation' => [
