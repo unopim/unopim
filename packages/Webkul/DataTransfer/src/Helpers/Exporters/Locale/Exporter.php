@@ -43,13 +43,25 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Prepare locales from current batch
+     * Prepare locales from current batch.
+     *
+     * Applies the optional `status` filter:
+     *  - 'enable' → export only active locales (status == 1)
+     *  - 'All' or absent → export all locales
      */
     public function prepareLocales(JobTrackBatchContract $batch): array
     {
         $locales = [];
 
+        $statusFilter = $this->getFilters()['status'] ?? null;
+
         foreach ($batch->data as $rowData) {
+            if ($statusFilter === 'enable' && ! $rowData['status']) {
+                $this->skippedItemsCount++;
+
+                continue;
+            }
+
             $locales[] = [
                 'id'     => $rowData['id'],
                 'code'   => $rowData['code'],

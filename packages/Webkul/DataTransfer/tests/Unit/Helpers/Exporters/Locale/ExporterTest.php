@@ -304,3 +304,106 @@ it('dispatches before and after events with the batch as the payload', function 
         fn ($event, $payload) => $payload === $this->batch
     );
 });
+
+// ── Status-filter tests ────────────────────────────────────────────────────────
+
+it('exports only enabled locales when status filter is set to enable', function () {
+    // Override filters to request only enabled locales
+    $this->jobTrack->jobInstance->filters = [
+        'file_format' => 'Csv',
+        'status'      => 'enable',
+    ];
+    $this->exporter->setExport($this->jobTrack);
+
+    // batch has en_US (status=1) and fr_FR (status=0)
+    $locales = $this->exporter->prepareLocales($this->batch);
+
+    expect($locales)->toHaveCount(1);
+    expect($locales[0]['code'])->toBe('en_US');
+    expect($locales[0]['status'])->toBe(1);
+    expect($this->exporter->getCreatedItemsCount())->toBe(1);
+});
+
+it('skips disabled locales and counts them when status filter is enable', function () {
+    $this->jobTrack->jobInstance->filters = [
+        'file_format' => 'Csv',
+        'status'      => 'enable',
+    ];
+    $this->exporter->setExport($this->jobTrack);
+
+    // batch has 1 enabled (en_US) and 1 disabled (fr_FR)
+    $this->exporter->prepareLocales($this->batch);
+
+    // AbstractExporter::getSkippedtemsCount() returns export->summary['skipped'] + skippedItemsCount
+    // summary is empty array so default is 0 + 1 = 1
+    expect($this->exporter->getSkippedtemsCount())->toBe(1);
+});
+
+it('exports all locales when status filter is set to All', function () {
+    $this->jobTrack->jobInstance->filters = [
+        'file_format' => 'Csv',
+        'status'      => 'All',
+    ];
+    $this->exporter->setExport($this->jobTrack);
+
+    $locales = $this->exporter->prepareLocales($this->batch);
+
+    expect($locales)->toHaveCount(2);
+    expect($this->exporter->getCreatedItemsCount())->toBe(2);
+    expect($this->exporter->getSkippedtemsCount())->toBe(0);
+});
+
+it('exports all locales when no status filter is provided', function () {
+    // Default beforeEach filters have no 'status' key
+    $locales = $this->exporter->prepareLocales($this->batch);
+
+    expect($locales)->toHaveCount(2);
+    expect($this->exporter->getCreatedItemsCount())->toBe(2);
+    expect($this->exporter->getSkippedtemsCount())->toBe(0);
+});
+
+it('writes only enabled locales to buffer when status filter is enable', function () {
+    Event::fake();
+
+    $this->jobTrack->jobInstance->filters = [
+        'file_format' => 'Csv',
+        'status'      => 'enable',
+    ];
+    $this->exporter->setExport($this->jobTrack);
+
+    $this->fileBuffer
+        ->shouldReceive('initialize')
+        ->once()
+        ->andReturnSelf();
+
+    $this->exportBatchRepository
+        ->shouldReceive('update')
+        ->once()
+        ->with([
+            'state'   => ExportHelper::STATE_PROCESSED,
+            'summary' => [
+                'processed' => 0,   // created(1) - skipped(1) = 0
+                'created'   => 1,
+                'skipped'   => 1,   // fr_FR was skipped
+            ],
+        ], 99)
+        ->andReturnNull();
+
+    $buffer = new class
+    {
+        public array $writes = [];
+
+        public function write(array $rows): void
+        {
+            $this->writes[] = $rows;
+        }
+    };
+
+    $this->exporter->setExportBuffer($buffer);
+
+    $result = $this->exporter->exportBatch($this->batch, '/tmp/locales.csv');
+
+    expect($result)->toBeTrue();
+    expect($buffer->writes[0])->toHaveCount(1);
+    expect($buffer->writes[0][0]['code'])->toBe('en_US');
+});

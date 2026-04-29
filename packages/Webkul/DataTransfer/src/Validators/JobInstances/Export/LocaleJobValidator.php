@@ -11,6 +11,7 @@ class LocaleJobValidator extends JobValidator
      */
     protected array $rules = [
         'filters.file_format' => 'required',
+        'filters.status'      => 'nullable|in:enable,All',
     ];
 
     /**
@@ -18,5 +19,6 @@ class LocaleJobValidator extends JobValidator
      */
     protected array $attributeNames = [
         'filters.file_format' => 'File Format',
+        'filters.status'      => 'Status',
     ];
 }

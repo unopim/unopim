@@ -88,20 +88,20 @@ return [
     ],
 
     'locales' => [
-        'title' => 'data_transfer::app.exporters.locales.title',
-        'exporter' => 'Webkul\DataTransfer\Helpers\Exporters\Locale\Exporter',
-        'source' => 'Webkul\Core\Repositories\LocaleRepository',
+        'title'       => 'data_transfer::app.exporters.locales.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Locale\Exporter',
+        'source'      => 'Webkul\Core\Repositories\LocaleRepository',
         'sample_path' => 'data-transfer/samples/locales.csv',
-        'validator' => 'Webkul\DataTransfer\Validators\JobInstances\Export\LocaleJobValidator',
-        'filters' => [
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\LocaleJobValidator',
+        'filters'     => [
             'fields' => [
                 [
-                    'name' => 'file_format',
-                    'title' => 'File Format',
-                    'type' => 'select',
-                    'required' => true,
+                    'name'       => 'file_format',
+                    'title'      => 'File Format',
+                    'type'       => 'select',
+                    'required'   => true,
                     'validation' => 'required',
-                    'options' => [
+                    'options'    => [
                         [
                             'value' => 'Csv',
                             'label' => 'CSV',
@@ -110,7 +110,21 @@ return [
                             'label' => 'XLS',
                         ], [
                             'value' => 'Xlsx',
-                            'label' => 'XLSX', 
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ], [
+                    'name'     => 'status',
+                    'title'    => 'Status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
+                        [
+                            'label' => 'Enable',
+                            'value' => 'enable',
+                        ], [
+                            'label' => 'All',
+                            'value' => 'All',
                         ],
                     ],
                 ],
