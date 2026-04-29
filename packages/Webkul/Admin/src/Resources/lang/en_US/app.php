@@ -6,6 +6,8 @@ return [
             'email'                  => 'Email Address',
             'forget-password-link'   => 'Forget Password ?',
             'password'               => 'Password',
+            'sso-divider'            => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
             'submit-btn'             => 'Sign In',
             'title'                  => 'Sign In',
             'powered-by'             => 'Powered by :unopim,',

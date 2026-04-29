@@ -35,7 +35,9 @@ class SessionController extends Controller
 
         session()->put('url.intended', $intendedUrl);
 
-        return view('admin::users.sessions.create');
+        return view('admin::users.sessions.create', [
+            'isMicrosoftSsoConfigured' => $this->isMicrosoftSsoEnabled(),
+        ]);
     }
 
     /**
@@ -192,6 +194,7 @@ class SessionController extends Controller
 
         auth()->guard('admin')->login($admin);
         $request->session()->regenerate();
+        $request->session()->regenerateToken();
 
         return redirect()->intended(route('admin.dashboard.index'));
     }

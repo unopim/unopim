@@ -73,14 +73,54 @@ it('shows microsoft sign-in button only when sso is enabled', function () {
 
     get(route('admin.session.create'))
         ->assertStatus(200)
-        ->assertDontSeeText('Sign in with Microsoft');
+        ->assertDontSeeText(trans('admin::app.users.sessions.sso-sign-in-with-microsoft'));
 
     config()->set('services.microsoft_sso.enabled', true);
+
+    get(route('admin.session.create'))
+        ->assertStatus(200)
+        ->assertDontSeeText(trans('admin::app.users.sessions.sso-sign-in-with-microsoft'));
+
     config()->set('services.microsoft_sso.client_id', 'client-id');
     config()->set('services.microsoft_sso.client_secret', 'client-secret');
     config()->set('services.microsoft_sso.tenant', 'common');
 
     get(route('admin.session.create'))
         ->assertStatus(200)
-        ->assertSeeText('Sign in with Microsoft');
+        ->assertSeeText(trans('admin::app.users.sessions.sso-sign-in-with-microsoft'));
+});
+
+it('does not allow inactive matched admin via microsoft sso', function () {
+    config()->set('services.microsoft_sso.enabled', true);
+    config()->set('services.microsoft_sso.tenant', 'common');
+    config()->set('services.microsoft_sso.client_id', 'client-id');
+    config()->set('services.microsoft_sso.client_secret', 'client-secret');
+
+    $admin = Admin::factory()->create([
+        'email'    => 'inactive-sso-user@example.com',
+        'password' => Hash::make('password'),
+        'status'   => 0,
+    ]);
+
+    Http::fake([
+        'https://login.microsoftonline.com/*/oauth2/v2.0/token' => Http::response([
+            'access_token' => 'access-token',
+        ], 200),
+        'https://graph.microsoft.com/v1.0/me*' => Http::response([
+            'mail'              => 'inactive-sso-user@example.com',
+            'userPrincipalName' => 'inactive-sso-user@example.com',
+        ], 200),
+    ]);
+
+    $response = $this->withSession(['microsoft_sso_state' => 'valid-state'])
+        ->get(route('admin.session.microsoft.callback', [
+            'state' => 'valid-state',
+            'code'  => 'auth-code',
+        ]));
+
+    $response->assertRedirect(route('admin.session.create'));
+    $response->assertSessionHas('warning', trans('admin::app.settings.users.activate-warning'));
+    $this->assertGuest('admin');
+
+    expect($admin->status)->toBe(0);
 });

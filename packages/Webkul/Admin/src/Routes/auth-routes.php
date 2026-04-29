@@ -31,9 +31,13 @@ Route::group(['prefix' => config('app.admin_url')], function () {
         /**
          * Microsoft SSO routes.
          */
-        Route::get('microsoft', 'redirectToMicrosoft')->name('admin.session.microsoft.redirect');
+        Route::get('microsoft', 'redirectToMicrosoft')
+            ->name('admin.session.microsoft.redirect')
+            ->middleware('throttle:admin-login');
 
-        Route::get('microsoft/callback', 'handleMicrosoftCallback')->name('admin.session.microsoft.callback');
+        Route::get('microsoft/callback', 'handleMicrosoftCallback')
+            ->name('admin.session.microsoft.callback')
+            ->middleware('throttle:admin-login');
     });
 
     /**
