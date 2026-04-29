@@ -17,7 +17,8 @@ Route::group(['prefix' => config('app.admin_url')], function () {
      * Public avatar proxy route (no auth middleware).
      */
     Route::get('avatar/u/{hash}.png', [AvatarController::class, 'gravatar'])
-        ->name('admin.avatar.public');
+        ->name('admin.avatar.public')
+        ->middleware('throttle:60,1');
 
     /**
      * Redirect route.

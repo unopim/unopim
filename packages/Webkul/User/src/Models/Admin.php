@@ -101,7 +101,7 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
             return null;
         }
 
-        $hash = hash('sha256', $normalizedEmail);
+        $hash = md5($normalizedEmail);
 
         try {
             return route('admin.avatar.public', ['hash' => $hash]);
