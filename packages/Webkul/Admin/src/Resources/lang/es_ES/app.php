@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Dirección de correo electrónico',
-            'forget-password-link'   => 'Contraseña olvidada ?',
-            'password'               => 'Contraseña',
-            'submit-btn'             => 'Iniciar sesión',
-            'title'                  => 'Iniciar sesión',
-            'powered-by'             => 'Desarrollado por :unopim,',
-            'open-source-project-by' => 'Un proyecto de código abierto de :webkul.',
+            'email'                      => 'Dirección de correo electrónico',
+            'forget-password-link'       => 'Contraseña olvidada ?',
+            'password'                   => 'Contraseña',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Iniciar sesión',
+            'title'                      => 'Iniciar sesión',
+            'powered-by'                 => 'Desarrollado por :unopim,',
+            'open-source-project-by'     => 'Un proyecto de código abierto de :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Por favor, introduce una URL válida.',
                     'regex'                      => 'El valor no coincide con el patrón requerido.',
                     'invalid-pattern'            => 'Patrón personalizado no válido.',
-
                     'numeric'                    => 'El valor del atributo numérico ":attribute" debe ser un número válido.',
                     'select-attribute-or-family' => 'Por favor, seleccione al menos un atributo o una familia de atributos.',
                     'failed'                     => 'La validación ha fallado.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Edición masiva exitosa.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'No hay cambios para guardar.',
-
-                'invalid-datetime'            => 'Introduce una fecha y hora válidas.',
-
-                'resize-column'               => 'Arrastra para redimensionar la columna',
-                'success'                     => 'Operación completada con éxito.',
-                'fetch-failed'                => 'Error al obtener los datos.',
-                'action'                      => 'Edición masiva',
-                'description'                 => 'Editar varios productos a la vez. Los cambios se procesan en segundo plano.',
-                'gallery-preview'             => 'Vista previa de galería',
-                'img-preview'                 => 'Vista previa de imagen',
-                'no-image'                    => 'Sin imagen',
-                'img-fail'                    => 'Fallo al subir la imagen.',
-                'no-option'                   => 'Sin opciones',
-                'keyboard-shortcuts'          => 'Atajos de teclado',
-                'shortcuts-navigation'        => 'Navegación',
-                'shortcuts-editing'           => 'Edición',
-                'shortcuts-selection'         => 'Selección',
-                'shortcuts-clipboard'         => 'Portapapeles y relleno',
-                'shortcuts-move-cell'         => 'Moverse entre celdas',
-                'shortcuts-move-down'         => 'Bajar / confirmar edición',
-                'shortcuts-move-up'           => 'Subir',
-                'shortcuts-move-right-left'   => 'Mover a la derecha / izquierda',
-                'shortcuts-home-end'          => 'Primera / última columna de la fila',
-                'shortcuts-ctrl-home-end'     => 'Primera / última celda de la cuadrícula',
-                'shortcuts-extend-selection'  => 'Ampliar selección',
-                'shortcuts-select-all'        => 'Seleccionar todas las celdas',
-                'shortcuts-enter-edit'        => 'Entrar en modo edición',
-                'shortcuts-confirm-move-down' => 'Confirmar + bajar',
-                'shortcuts-confirm-move-right'=> 'Confirmar + mover a la derecha',
-                'shortcuts-escape-revert'     => 'Revertir valor + salir de la edición',
-                'shortcuts-clear-cell'        => 'Borrar celda',
-                'shortcuts-copy'              => 'Copiar',
-                'shortcuts-cut'               => 'Cortar',
-                'shortcuts-paste'             => 'Pegar',
-                'shortcuts-fill-down'         => 'Rellenar hacia abajo',
-                'shortcuts-fill-right'        => 'Rellenar hacia la derecha',
-                'shortcuts-undo'              => 'Deshacer',
-                'shortcuts-redo'              => 'Rehacer',
-                'shortcuts-help'              => 'Mostrar/ocultar atajos de teclado',
+                'id'                           => 'ID',
+                'no-changes'                   => 'No hay cambios para guardar.',
+                'invalid-datetime'             => 'Introduce una fecha y hora válidas.',
+                'resize-column'                => 'Arrastra para redimensionar la columna',
+                'success'                      => 'Operación completada con éxito.',
+                'fetch-failed'                 => 'Error al obtener los datos.',
+                'action'                       => 'Edición masiva',
+                'description'                  => 'Editar varios productos a la vez. Los cambios se procesan en segundo plano.',
+                'gallery-preview'              => 'Vista previa de galería',
+                'img-preview'                  => 'Vista previa de imagen',
+                'no-image'                     => 'Sin imagen',
+                'img-fail'                     => 'Fallo al subir la imagen.',
+                'no-option'                    => 'Sin opciones',
+                'keyboard-shortcuts'           => 'Atajos de teclado',
+                'shortcuts-navigation'         => 'Navegación',
+                'shortcuts-editing'            => 'Edición',
+                'shortcuts-selection'          => 'Selección',
+                'shortcuts-clipboard'          => 'Portapapeles y relleno',
+                'shortcuts-move-cell'          => 'Moverse entre celdas',
+                'shortcuts-move-down'          => 'Bajar / confirmar edición',
+                'shortcuts-move-up'            => 'Subir',
+                'shortcuts-move-right-left'    => 'Mover a la derecha / izquierda',
+                'shortcuts-home-end'           => 'Primera / última columna de la fila',
+                'shortcuts-ctrl-home-end'      => 'Primera / última celda de la cuadrícula',
+                'shortcuts-extend-selection'   => 'Ampliar selección',
+                'shortcuts-select-all'         => 'Seleccionar todas las celdas',
+                'shortcuts-enter-edit'         => 'Entrar en modo edición',
+                'shortcuts-confirm-move-down'  => 'Confirmar + bajar',
+                'shortcuts-confirm-move-right' => 'Confirmar + mover a la derecha',
+                'shortcuts-escape-revert'      => 'Revertir valor + salir de la edición',
+                'shortcuts-clear-cell'         => 'Borrar celda',
+                'shortcuts-copy'               => 'Copiar',
+                'shortcuts-cut'                => 'Cortar',
+                'shortcuts-paste'              => 'Pegar',
+                'shortcuts-fill-down'          => 'Rellenar hacia abajo',
+                'shortcuts-fill-right'         => 'Rellenar hacia la derecha',
+                'shortcuts-undo'               => 'Deshacer',
+                'shortcuts-redo'               => 'Rehacer',
+                'shortcuts-help'               => 'Mostrar/ocultar atajos de teclado',
             ],
             'create-success'          => 'Producto creado con éxito',
             'delete-failed'           => 'Producto eliminado Falló',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Es filtrable',
                 'ai-translate'          => 'Traducción IA',
                 'invalid-swatch-type'   => 'El :attribute no está permitido para el tipo de atributo :type con el tipo de muestra :swatch_type.',
-
                 'single-object-only'    => 'Cada solicitud de creación debe enviar un único objeto de atributo.',
                 'option'                => [
                     'color'    => 'Muestra de color',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Atributo eliminado con éxito',
             'update-success'    => 'Atributo actualizado correctamente',
             'user-define-error' => 'No puede eliminar el atributo del sistema',
-
             'immutable-fields'  => 'Los siguientes campos no se pueden modificar: :fields.',
             'not-found'         => 'Atributo con el código ":code" no se puede encontrar',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Campo de categoría actualizado correctamente',
             'user-define-error' => 'No puede eliminar el campo de categoría del sistema',
             'not-found'         => 'Campo de categoría con código ":code" no se pudo encontrar',
-
             'immutable-fields'  => 'Los siguientes campos no se pueden modificar: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'No se puede actualizar opciones configurables ya que esta familia ya tiene productos variantes.',
         ],
         'history' => [
-            'view' => 'Ver detalles de la versión',
-
+            'view'  => 'Ver detalles de la versión',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versión',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Pausado',
                         'cancelled'            => 'Cancelado',
                         'failed'               => 'Fallido',
-
-                        'view'       => 'Ver',
+                        'view'                 => 'Ver',
                     ],
                 ],
                 'import' => [
@@ -1602,18 +1596,18 @@ return [
                 'status'           => 'Estado',
                 'title'            => 'editar usuario',
             ],
-            'activate-warning'           => 'Su cuenta aún no se ha activado, comuníquese con el administrador.',
-            'cannot-change'              => 'El usuario no se puede cambiar',
-            'cannot-escalate-role'       => 'No tiene permiso para asignar un rol con acceso completo.',
-            'create-success'             => 'Usuario creado con éxito.',
-            'delete-failed'              => 'Error al eliminar el usuario.',
-            'delete-success'             => 'Usuario eliminado con éxito.',
-            'delete-warning'             => '¿Estás seguro, quieres realizar esta acción?',
-            'incorrect-password'         => 'Contraseña incorrecta',
-            'last-delete-error'          => 'Last User Eliminar falló',
-            'login-error'                => 'Consulte sus credenciales y vuelva a intentarlo.',
-            'update-success'             => 'Usuario actualizado con éxito.',
-            'current-user-delete-error'  => 'El usuario que inició sesión no se puede eliminar',
+            'activate-warning'          => 'Su cuenta aún no se ha activado, comuníquese con el administrador.',
+            'cannot-change'             => 'El usuario no se puede cambiar',
+            'cannot-escalate-role'      => 'No tiene permiso para asignar un rol con acceso completo.',
+            'create-success'            => 'Usuario creado con éxito.',
+            'delete-failed'             => 'Error al eliminar el usuario.',
+            'delete-success'            => 'Usuario eliminado con éxito.',
+            'delete-warning'            => '¿Estás seguro, quieres realizar esta acción?',
+            'incorrect-password'        => 'Contraseña incorrecta',
+            'last-delete-error'         => 'Last User Eliminar falló',
+            'login-error'               => 'Consulte sus credenciales y vuelva a intentarlo.',
+            'update-success'            => 'Usuario actualizado con éxito.',
+            'current-user-delete-error' => 'El usuario que inició sesión no se puede eliminar',
         ],
         'roles' => [
             'index' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompts',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Título',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Prompts del sistema',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Título',

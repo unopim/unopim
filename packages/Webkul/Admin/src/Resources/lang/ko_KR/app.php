@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => '이메일 주소',
-            'forget-password-link'   => '비밀번호를 잊으셨나요?',
-            'password'               => '비밀번호',
-            'submit-btn'             => '로그인',
-            'title'                  => '로그인',
-            'powered-by'             => ':unopim 제공,',
-            'open-source-project-by' => ':webkul의 오픈 소스 프로젝트입니다.',
+            'email'                      => '이메일 주소',
+            'forget-password-link'       => '비밀번호를 잊으셨나요?',
+            'password'                   => '비밀번호',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => '로그인',
+            'title'                      => '로그인',
+            'powered-by'                 => ':unopim 제공,',
+            'open-source-project-by'     => ':webkul의 오픈 소스 프로젝트입니다.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => '유효한 URL을 입력하세요.',
                     'regex'                      => '값이 요구되는 패턴과 일치하지 않습니다.',
                     'invalid-pattern'            => '잘못된 사용자 지정 패턴입니다.',
-
                     'numeric'                    => '숫자 속성 ":attribute"의 값은 유효한 숫자여야 합니다.',
                     'select-attribute-or-family' => '하나 이상의 속성 또는 속성 패밀리를 선택하세요.',
                     'failed'                     => '유효성 검사 실패.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => '일괄 편집이 성공적으로 완료되었습니다.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => '저장할 변경 사항이 없습니다.',
-
-                'invalid-datetime'            => '유효한 날짜와 시간을 입력하세요.',
-
-                'resize-column'               => '드래그하여 열 너비 조정',
-                'success'                     => '작업이 성공적으로 실행되었습니다.',
-                'fetch-failed'                => '가져오기 실패.',
-                'action'                      => '일괄 편집',
-                'description'                 => '여러 제품을 한 번에 편집합니다. 변경 사항은 백그라운드에서 처리됩니다.',
-                'gallery-preview'             => '갤러리 미리보기',
-                'img-preview'                 => '이미지 미리보기',
-                'no-image'                    => '이미지 없음',
-                'img-fail'                    => '이미지 업로드 실패',
-                'no-option'                   => '옵션 없음',
-                'keyboard-shortcuts'          => '키보드 단축키',
-                'shortcuts-navigation'        => '탐색',
-                'shortcuts-editing'           => '편집',
-                'shortcuts-selection'         => '선택',
-                'shortcuts-clipboard'         => '클립보드 및 채우기',
-                'shortcuts-move-cell'         => '셀 간 이동',
-                'shortcuts-move-down'         => '아래로 이동 / 편집 확인',
-                'shortcuts-move-up'           => '위로 이동',
-                'shortcuts-move-right-left'   => '오른쪽 / 왼쪽으로 이동',
-                'shortcuts-home-end'          => '행의 첫 번째 / 마지막 열',
-                'shortcuts-ctrl-home-end'     => '그리드의 첫 번째 / 마지막 셀',
-                'shortcuts-extend-selection'  => '선택 범위 확장',
-                'shortcuts-select-all'        => '모든 셀 선택',
-                'shortcuts-enter-edit'        => '편집 모드 진입',
-                'shortcuts-confirm-move-down' => '확인 + 아래로 이동',
-                'shortcuts-confirm-move-right'=> '확인 + 오른쪽으로 이동',
-                'shortcuts-escape-revert'     => '값 되돌리기 + 편집 종료',
-                'shortcuts-clear-cell'        => '셀 지우기',
-                'shortcuts-copy'              => '복사',
-                'shortcuts-cut'               => '잘라내기',
-                'shortcuts-paste'             => '붙여넣기',
-                'shortcuts-fill-down'         => '아래로 채우기',
-                'shortcuts-fill-right'        => '오른쪽으로 채우기',
-                'shortcuts-undo'              => '실행 취소',
-                'shortcuts-redo'              => '다시 실행',
-                'shortcuts-help'              => '키보드 단축키 표시/숨기기',
+                'id'                           => 'ID',
+                'no-changes'                   => '저장할 변경 사항이 없습니다.',
+                'invalid-datetime'             => '유효한 날짜와 시간을 입력하세요.',
+                'resize-column'                => '드래그하여 열 너비 조정',
+                'success'                      => '작업이 성공적으로 실행되었습니다.',
+                'fetch-failed'                 => '가져오기 실패.',
+                'action'                       => '일괄 편집',
+                'description'                  => '여러 제품을 한 번에 편집합니다. 변경 사항은 백그라운드에서 처리됩니다.',
+                'gallery-preview'              => '갤러리 미리보기',
+                'img-preview'                  => '이미지 미리보기',
+                'no-image'                     => '이미지 없음',
+                'img-fail'                     => '이미지 업로드 실패',
+                'no-option'                    => '옵션 없음',
+                'keyboard-shortcuts'           => '키보드 단축키',
+                'shortcuts-navigation'         => '탐색',
+                'shortcuts-editing'            => '편집',
+                'shortcuts-selection'          => '선택',
+                'shortcuts-clipboard'          => '클립보드 및 채우기',
+                'shortcuts-move-cell'          => '셀 간 이동',
+                'shortcuts-move-down'          => '아래로 이동 / 편집 확인',
+                'shortcuts-move-up'            => '위로 이동',
+                'shortcuts-move-right-left'    => '오른쪽 / 왼쪽으로 이동',
+                'shortcuts-home-end'           => '행의 첫 번째 / 마지막 열',
+                'shortcuts-ctrl-home-end'      => '그리드의 첫 번째 / 마지막 셀',
+                'shortcuts-extend-selection'   => '선택 범위 확장',
+                'shortcuts-select-all'         => '모든 셀 선택',
+                'shortcuts-enter-edit'         => '편집 모드 진입',
+                'shortcuts-confirm-move-down'  => '확인 + 아래로 이동',
+                'shortcuts-confirm-move-right' => '확인 + 오른쪽으로 이동',
+                'shortcuts-escape-revert'      => '값 되돌리기 + 편집 종료',
+                'shortcuts-clear-cell'         => '셀 지우기',
+                'shortcuts-copy'               => '복사',
+                'shortcuts-cut'                => '잘라내기',
+                'shortcuts-paste'              => '붙여넣기',
+                'shortcuts-fill-down'          => '아래로 채우기',
+                'shortcuts-fill-right'         => '오른쪽으로 채우기',
+                'shortcuts-undo'               => '실행 취소',
+                'shortcuts-redo'               => '다시 실행',
+                'shortcuts-help'               => '키보드 단축키 표시/숨기기',
             ],
             'create-success'          => '제품이 성공적으로 생성되었습니다',
             'delete-failed'           => '제품 삭제 실패',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => '필터링 가능',
                 'ai-translate'          => 'AI 번역',
                 'invalid-swatch-type'   => ':attribute는 스와치 유형 :swatch_type의 속성 유형 :type에 대해 허용되지 않습니다.',
-
                 'single-object-only'    => '각 생성 요청은 속성 객체를 하나만 보내야 합니다.',
                 'option'                => [
                     'color'    => '샘플 색상',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => '속성 삭제 성공',
             'update-success'    => '속성 수정 성공',
             'user-define-error' => '시스템 속성은 삭제할 수 없습니다',
-
             'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
             'not-found'         => '코드 ":code"에 해당하는 속성을 찾을 수 없습니다',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => '카테고리 필드 업데이트 성공',
             'user-define-error' => '시스템 카테고리 필드는 삭제할 수 없습니다.',
             'not-found'         => '코드 ":code"의 카테고리 필드를 찾을 수 없습니다.',
-
             'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => '이 가족에는 이미 제품 변형이 있어 구성 옵션을 업데이트할 수 없습니다.',
         ],
         'history' => [
-            'view' => '버전 세부 정보 보기',
-
+            'view'  => '버전 세부 정보 보기',
             'index' => [
                 'datagrid' => [
                     'version'   => '버전',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => '일시 중지됨',
                         'cancelled'            => '취소됨',
                         'failed'               => '실패',
-
-                        'view'       => '보기',
+                        'view'                 => '보기',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => '프롬프트',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '제목',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => '시스템 프롬프트',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '제목',

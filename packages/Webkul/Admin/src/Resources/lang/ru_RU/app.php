@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Адрес электронной почты',
-            'forget-password-link'   => 'Забыть пароль ?',
-            'password'               => 'Пароль',
-            'submit-btn'             => 'Войти',
-            'title'                  => 'Войти',
-            'powered-by'             => 'Под управлением :unopim,',
-            'open-source-project-by' => 'Проект с открытым исходным кодом от :webkul.',
+            'email'                      => 'Адрес электронной почты',
+            'forget-password-link'       => 'Забыть пароль ?',
+            'password'                   => 'Пароль',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Войти',
+            'title'                      => 'Войти',
+            'powered-by'                 => 'Под управлением :unopim,',
+            'open-source-project-by'     => 'Проект с открытым исходным кодом от :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Пожалуйста, введите допустимый URL.',
                     'regex'                      => 'Значение не соответствует требуемому шаблону.',
                     'invalid-pattern'            => 'Указан недопустимый пользовательский шаблон.',
-
                     'numeric'                    => 'Значение числового атрибута «:attribute» должно быть корректным числом.',
                     'select-attribute-or-family' => 'Пожалуйста, выберите хотя бы один атрибут или семейство атрибутов.',
                     'failed'                     => 'Ошибка проверки.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Массовое редактирование выполнено успешно.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Нет изменений для сохранения.',
-
-                'invalid-datetime'            => 'Введите корректную дату и время.',
-
-                'resize-column'               => 'Потяните, чтобы изменить ширину столбца',
-                'success'                     => 'Задание успешно выполнено.',
-                'fetch-failed'                => 'Не удалось получить данные.',
-                'action'                      => 'Массовое редактирование',
-                'description'                 => 'Редактируйте несколько товаров одновременно. Изменения обрабатываются в фоновом режиме.',
-                'gallery-preview'             => 'Предварительный просмотр галереи',
-                'img-preview'                 => 'Предварительный просмотр изображения',
-                'no-image'                    => 'Нет изображения',
-                'img-fail'                    => 'Не удалось загрузить изображение',
-                'no-option'                   => 'Нет вариантов',
-                'keyboard-shortcuts'          => 'Горячие клавиши',
-                'shortcuts-navigation'        => 'Навигация',
-                'shortcuts-editing'           => 'Редактирование',
-                'shortcuts-selection'         => 'Выделение',
-                'shortcuts-clipboard'         => 'Буфер обмена и заполнение',
-                'shortcuts-move-cell'         => 'Перемещение между ячейками',
-                'shortcuts-move-down'         => 'Вниз / подтвердить редактирование',
-                'shortcuts-move-up'           => 'Вверх',
-                'shortcuts-move-right-left'   => 'Вправо / влево',
-                'shortcuts-home-end'          => 'Первый / последний столбец в строке',
-                'shortcuts-ctrl-home-end'     => 'Первая / последняя ячейка в сетке',
-                'shortcuts-extend-selection'  => 'Расширить выделение',
-                'shortcuts-select-all'        => 'Выделить все ячейки',
-                'shortcuts-enter-edit'        => 'Войти в режим редактирования',
-                'shortcuts-confirm-move-down' => 'Подтвердить + вниз',
-                'shortcuts-confirm-move-right'=> 'Подтвердить + вправо',
-                'shortcuts-escape-revert'     => 'Восстановить значение + выйти из редактирования',
-                'shortcuts-clear-cell'        => 'Очистить ячейку',
-                'shortcuts-copy'              => 'Копировать',
-                'shortcuts-cut'               => 'Вырезать',
-                'shortcuts-paste'             => 'Вставить',
-                'shortcuts-fill-down'         => 'Заполнить вниз',
-                'shortcuts-fill-right'        => 'Заполнить вправо',
-                'shortcuts-undo'              => 'Отменить',
-                'shortcuts-redo'              => 'Повторить',
-                'shortcuts-help'              => 'Показать/скрыть горячие клавиши',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Нет изменений для сохранения.',
+                'invalid-datetime'             => 'Введите корректную дату и время.',
+                'resize-column'                => 'Потяните, чтобы изменить ширину столбца',
+                'success'                      => 'Задание успешно выполнено.',
+                'fetch-failed'                 => 'Не удалось получить данные.',
+                'action'                       => 'Массовое редактирование',
+                'description'                  => 'Редактируйте несколько товаров одновременно. Изменения обрабатываются в фоновом режиме.',
+                'gallery-preview'              => 'Предварительный просмотр галереи',
+                'img-preview'                  => 'Предварительный просмотр изображения',
+                'no-image'                     => 'Нет изображения',
+                'img-fail'                     => 'Не удалось загрузить изображение',
+                'no-option'                    => 'Нет вариантов',
+                'keyboard-shortcuts'           => 'Горячие клавиши',
+                'shortcuts-navigation'         => 'Навигация',
+                'shortcuts-editing'            => 'Редактирование',
+                'shortcuts-selection'          => 'Выделение',
+                'shortcuts-clipboard'          => 'Буфер обмена и заполнение',
+                'shortcuts-move-cell'          => 'Перемещение между ячейками',
+                'shortcuts-move-down'          => 'Вниз / подтвердить редактирование',
+                'shortcuts-move-up'            => 'Вверх',
+                'shortcuts-move-right-left'    => 'Вправо / влево',
+                'shortcuts-home-end'           => 'Первый / последний столбец в строке',
+                'shortcuts-ctrl-home-end'      => 'Первая / последняя ячейка в сетке',
+                'shortcuts-extend-selection'   => 'Расширить выделение',
+                'shortcuts-select-all'         => 'Выделить все ячейки',
+                'shortcuts-enter-edit'         => 'Войти в режим редактирования',
+                'shortcuts-confirm-move-down'  => 'Подтвердить + вниз',
+                'shortcuts-confirm-move-right' => 'Подтвердить + вправо',
+                'shortcuts-escape-revert'      => 'Восстановить значение + выйти из редактирования',
+                'shortcuts-clear-cell'         => 'Очистить ячейку',
+                'shortcuts-copy'               => 'Копировать',
+                'shortcuts-cut'                => 'Вырезать',
+                'shortcuts-paste'              => 'Вставить',
+                'shortcuts-fill-down'          => 'Заполнить вниз',
+                'shortcuts-fill-right'         => 'Заполнить вправо',
+                'shortcuts-undo'               => 'Отменить',
+                'shortcuts-redo'               => 'Повторить',
+                'shortcuts-help'               => 'Показать/скрыть горячие клавиши',
             ],
             'create-success'          => 'Продукт создан успешно',
             'delete-failed'           => 'Удален продукта не удалось',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Фильтруемый',
                 'ai-translate'          => 'Перевод ИИ',
                 'invalid-swatch-type'   => 'Тип :attribute не разрешен для типа атрибута :type с типом образца :swatch_type.',
-
                 'single-object-only'    => 'В каждом запросе на создание можно передать только один объект атрибута.',
                 'option'                => [
                     'color'    => 'Образец цвета',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Атрибут удален успешно',
             'update-success'    => 'Атрибут обновлен успешно',
             'user-define-error' => 'Не может удалить атрибут системы',
-
             'immutable-fields'  => 'Следующие поля нельзя изменить: :fields.',
             'not-found'         => 'Атрибут с кодом ":code" не найден',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Поле категории успешно обновлено',
             'user-define-error' => 'Не может удалить поле категории системы',
             'not-found'         => 'Поле категории с кодом ":code" не найдено',
-
             'immutable-fields'  => 'Следующие поля нельзя изменить: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Не может обновить настраиваемые параметры, так как у этого семейства уже есть варианты продуктов.',
         ],
         'history' => [
-            'view' => 'Просмотр деталей версии',
-
+            'view'  => 'Просмотр деталей версии',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Версия',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Приостановлено',
                         'cancelled'            => 'Отменено',
                         'failed'               => 'Неуспешный',
-
-                        'view'       => 'Просмотр',
+                        'view'                 => 'Просмотр',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Подсказки',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Заголовок',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Системные подсказки',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Название',

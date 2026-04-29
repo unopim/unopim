@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Електронна пошта',
-            'forget-password-link'   => 'Забули пароль?',
-            'password'               => 'Пароль',
-            'submit-btn'             => 'Увійти',
-            'title'                  => 'Увійти',
-            'powered-by'             => 'Працює на :unopim,',
-            'open-source-project-by' => 'Відкритий проєкт від :webkul.',
+            'email'                      => 'Електронна пошта',
+            'forget-password-link'       => 'Забули пароль?',
+            'password'                   => 'Пароль',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Увійти',
+            'title'                      => 'Увійти',
+            'powered-by'                 => 'Працює на :unopim,',
+            'open-source-project-by'     => 'Відкритий проєкт від :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Будь ласка, введіть дійсний URL.',
                     'regex'                      => 'Значення не відповідає необхідному шаблону.',
                     'invalid-pattern'            => 'Вказано недійсний користувацький шаблон.',
-
                     'numeric'                    => 'Значення числового атрибута «:attribute» має бути коректним числом.',
                     'select-attribute-or-family' => 'Будь ласка, виберіть принаймні один атрибут або сімейство атрибутів.',
                     'failed'                     => 'Помилка валідації.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Масове редагування виконано успішно.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Немає змін для збереження.',
-
-                'invalid-datetime'            => 'Введіть коректну дату й час.',
-
-                'resize-column'               => 'Потягніть, щоб змінити ширину колонки',
-                'success'                     => 'Завдання успішно виконано.',
-                'fetch-failed'                => 'Не вдалося отримати дані.',
-                'action'                      => 'Масове редагування',
-                'description'                 => 'Редагуйте кілька товарів одночасно. Зміни обробляються у фоновому режимі.',
-                'gallery-preview'             => 'Попередній перегляд галереї',
-                'img-preview'                 => 'Попередній перегляд зображення',
-                'no-image'                    => 'Немає зображення',
-                'img-fail'                    => 'Не вдалося завантажити зображення',
-                'no-option'                   => 'Немає варіантів',
-                'keyboard-shortcuts'          => 'Гарячі клавіші',
-                'shortcuts-navigation'        => 'Навігація',
-                'shortcuts-editing'           => 'Редагування',
-                'shortcuts-selection'         => 'Виділення',
-                'shortcuts-clipboard'         => 'Буфер обміну та заповнення',
-                'shortcuts-move-cell'         => 'Переміщення між комірками',
-                'shortcuts-move-down'         => 'Вниз / підтвердити редагування',
-                'shortcuts-move-up'           => 'Вгору',
-                'shortcuts-move-right-left'   => 'Вправо / вліво',
-                'shortcuts-home-end'          => 'Перший / останній стовпець у рядку',
-                'shortcuts-ctrl-home-end'     => 'Перша / остання комірка у сітці',
-                'shortcuts-extend-selection'  => 'Розширити виділення',
-                'shortcuts-select-all'        => 'Виділити всі комірки',
-                'shortcuts-enter-edit'        => 'Увійти в режим редагування',
-                'shortcuts-confirm-move-down' => 'Підтвердити + вниз',
-                'shortcuts-confirm-move-right'=> 'Підтвердити + вправо',
-                'shortcuts-escape-revert'     => 'Відновити значення + вийти з редагування',
-                'shortcuts-clear-cell'        => 'Очистити комірку',
-                'shortcuts-copy'              => 'Копіювати',
-                'shortcuts-cut'               => 'Вирізати',
-                'shortcuts-paste'             => 'Вставити',
-                'shortcuts-fill-down'         => 'Заповнити вниз',
-                'shortcuts-fill-right'        => 'Заповнити вправо',
-                'shortcuts-undo'              => 'Скасувати',
-                'shortcuts-redo'              => 'Повторити',
-                'shortcuts-help'              => 'Показати/приховати гарячі клавіші',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Немає змін для збереження.',
+                'invalid-datetime'             => 'Введіть коректну дату й час.',
+                'resize-column'                => 'Потягніть, щоб змінити ширину колонки',
+                'success'                      => 'Завдання успішно виконано.',
+                'fetch-failed'                 => 'Не вдалося отримати дані.',
+                'action'                       => 'Масове редагування',
+                'description'                  => 'Редагуйте кілька товарів одночасно. Зміни обробляються у фоновому режимі.',
+                'gallery-preview'              => 'Попередній перегляд галереї',
+                'img-preview'                  => 'Попередній перегляд зображення',
+                'no-image'                     => 'Немає зображення',
+                'img-fail'                     => 'Не вдалося завантажити зображення',
+                'no-option'                    => 'Немає варіантів',
+                'keyboard-shortcuts'           => 'Гарячі клавіші',
+                'shortcuts-navigation'         => 'Навігація',
+                'shortcuts-editing'            => 'Редагування',
+                'shortcuts-selection'          => 'Виділення',
+                'shortcuts-clipboard'          => 'Буфер обміну та заповнення',
+                'shortcuts-move-cell'          => 'Переміщення між комірками',
+                'shortcuts-move-down'          => 'Вниз / підтвердити редагування',
+                'shortcuts-move-up'            => 'Вгору',
+                'shortcuts-move-right-left'    => 'Вправо / вліво',
+                'shortcuts-home-end'           => 'Перший / останній стовпець у рядку',
+                'shortcuts-ctrl-home-end'      => 'Перша / остання комірка у сітці',
+                'shortcuts-extend-selection'   => 'Розширити виділення',
+                'shortcuts-select-all'         => 'Виділити всі комірки',
+                'shortcuts-enter-edit'         => 'Увійти в режим редагування',
+                'shortcuts-confirm-move-down'  => 'Підтвердити + вниз',
+                'shortcuts-confirm-move-right' => 'Підтвердити + вправо',
+                'shortcuts-escape-revert'      => 'Відновити значення + вийти з редагування',
+                'shortcuts-clear-cell'         => 'Очистити комірку',
+                'shortcuts-copy'               => 'Копіювати',
+                'shortcuts-cut'                => 'Вирізати',
+                'shortcuts-paste'              => 'Вставити',
+                'shortcuts-fill-down'          => 'Заповнити вниз',
+                'shortcuts-fill-right'         => 'Заповнити вправо',
+                'shortcuts-undo'               => 'Скасувати',
+                'shortcuts-redo'               => 'Повторити',
+                'shortcuts-help'               => 'Показати/приховати гарячі клавіші',
             ],
             'create-success'          => 'Продукт успішно створений',
             'delete-failed'           => 'Помилка видалення продукту',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Фільтрований',
                 'ai-translate'          => 'Переклад ШІ',
                 'invalid-swatch-type'   => ':attribute не дозволено для типу атрибута :type з типом зразка :swatch_type.',
-
                 'single-object-only'    => 'Кожен запит на створення має містити лише один об\'єкт атрибута.',
                 'option'                => [
                     'color'    => 'Колір шаблону',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Атрибут видалено',
             'update-success'    => 'Атрибут оновлено',
             'user-define-error' => 'Не можна видаляти системні атрибути',
-
             'immutable-fields'  => 'Наступні поля не можна змінювати: :fields.',
             'not-found'         => 'Атрибут з кодом ":code" не знайдено',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Поле категорії успішно оновлено',
             'user-define-error' => 'Поле категорії системи не можна видалити',
             'not-found'         => 'Поле категорії ":code" не знайдено',
-
             'immutable-fields'  => 'Наступні поля не можна змінювати: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Не можна оновити опції конфігурації, оскільки ця родина вже має варіанти продуктів.',
         ],
         'history' => [
-            'view' => 'Переглянути деталі версії',
-
+            'view'  => 'Переглянути деталі версії',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Версія',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Призупинено',
                         'cancelled'            => 'Скасовано',
                         'failed'               => 'Не вдалося',
-
-                        'view'       => 'Переглянути',
+                        'view'                 => 'Переглянути',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Підказки',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Назва',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Системні підказки',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Назва',

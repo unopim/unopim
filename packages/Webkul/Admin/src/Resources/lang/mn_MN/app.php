@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Имэйл хаяг',
-            'forget-password-link'   => 'Нууц үгээ мартах уу?',
-            'password'               => 'Нууц үг',
-            'submit-btn'             => 'Нэвтрэх',
-            'title'                  => 'Нэвтрэх',
-            'powered-by'             => ':unopim-аас дэмжигдсэн,',
-            'open-source-project-by' => ':webkul-ийн нээлттэй эхийн төсөл.',
+            'email'                      => 'Имэйл хаяг',
+            'forget-password-link'       => 'Нууц үгээ мартах уу?',
+            'password'                   => 'Нууц үг',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Нэвтрэх',
+            'title'                      => 'Нэвтрэх',
+            'powered-by'                 => ':unopim-аас дэмжигдсэн,',
+            'open-source-project-by'     => ':webkul-ийн нээлттэй эхийн төсөл.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Зөв URL оруулна уу.',
                     'regex'                      => 'Утга шаардлагатай загварт тохирохгүй байна.',
                     'invalid-pattern'            => 'Буруу хэрэглэгчийн загвар өгөгдсөн.',
-
                     'numeric'                    => '«:attribute» тоон шинж чанарын утга зөв тоо байх ёстой.',
                     'select-attribute-or-family' => 'Дор хаяж нэг атрибут эсвэл атрибутын бүлгийг сонгоно уу.',
                     'failed'                     => 'Шалгалт амжилтгүй боллоо.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Бөөнөөр засвар амжилттай.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Хадгалах өөрчлөлт алга.',
-
-                'invalid-datetime'            => 'Хүчинтэй огноо, цаг оруулна уу.',
-
-                'resize-column'               => 'Баганы өргөнийг өөрчлөх',
-                'success'                     => 'Ажил амжилттай гүйцэтгэгдлээ.',
-                'fetch-failed'                => 'Мэдээлэл татаж чадсангүй.',
-                'action'                      => 'Бөөнөөр засах',
-                'description'                 => 'Олон бүтээгдэхүүнийг нэг дор засварлана. Өөрчлөлтүүд цаана нь боловсруулагдана.',
-                'gallery-preview'             => 'Галлерейн урьдчилсан харагдац',
-                'img-preview'                 => 'Зургийн урьдчилсан харагдац',
-                'no-image'                    => 'Зураг алга',
-                'img-fail'                    => 'Зураг байршуулах амжилтгүй боллоо',
-                'no-option'                   => 'Сонголт байхгүй',
-                'keyboard-shortcuts'          => 'Гарын товчлолууд',
-                'shortcuts-navigation'        => 'Навигаци',
-                'shortcuts-editing'           => 'Засварлах',
-                'shortcuts-selection'         => 'Сонголт',
-                'shortcuts-clipboard'         => 'Хурамтлуур ба дүүргэх',
-                'shortcuts-move-cell'         => 'Нүднүүдийн хооронд шилжих',
-                'shortcuts-move-down'         => 'Доош шилжих / засварыг баталгаажуулах',
-                'shortcuts-move-up'           => 'Дээш шилжих',
-                'shortcuts-move-right-left'   => 'Баруун / зүүн тийш шилжих',
-                'shortcuts-home-end'          => 'Мөрийн эхний / сүүлийн багана',
-                'shortcuts-ctrl-home-end'     => 'Хүснэгтийн эхний / сүүлийн нүд',
-                'shortcuts-extend-selection'  => 'Сонголтыг өргөтгөх',
-                'shortcuts-select-all'        => 'Бүх нүдийг сонгох',
-                'shortcuts-enter-edit'        => 'Засварлах горимд орох',
-                'shortcuts-confirm-move-down' => 'Баталгаажуулах + доош шилжих',
-                'shortcuts-confirm-move-right'=> 'Баталгаажуулах + баруун тийш шилжих',
-                'shortcuts-escape-revert'     => 'Утгыг сэргээх + засварлахаас гарах',
-                'shortcuts-clear-cell'        => 'Нүдийг цэвэрлэх',
-                'shortcuts-copy'              => 'Хуулах',
-                'shortcuts-cut'               => 'Тайрах',
-                'shortcuts-paste'             => 'Буулгах',
-                'shortcuts-fill-down'         => 'Доош дүүргэх',
-                'shortcuts-fill-right'        => 'Баруун тийш дүүргэх',
-                'shortcuts-undo'              => 'Буцаах',
-                'shortcuts-redo'              => 'Дахин хийх',
-                'shortcuts-help'              => 'Гарын товчлолуудыг харуулах/нуух',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Хадгалах өөрчлөлт алга.',
+                'invalid-datetime'             => 'Хүчинтэй огноо, цаг оруулна уу.',
+                'resize-column'                => 'Баганы өргөнийг өөрчлөх',
+                'success'                      => 'Ажил амжилттай гүйцэтгэгдлээ.',
+                'fetch-failed'                 => 'Мэдээлэл татаж чадсангүй.',
+                'action'                       => 'Бөөнөөр засах',
+                'description'                  => 'Олон бүтээгдэхүүнийг нэг дор засварлана. Өөрчлөлтүүд цаана нь боловсруулагдана.',
+                'gallery-preview'              => 'Галлерейн урьдчилсан харагдац',
+                'img-preview'                  => 'Зургийн урьдчилсан харагдац',
+                'no-image'                     => 'Зураг алга',
+                'img-fail'                     => 'Зураг байршуулах амжилтгүй боллоо',
+                'no-option'                    => 'Сонголт байхгүй',
+                'keyboard-shortcuts'           => 'Гарын товчлолууд',
+                'shortcuts-navigation'         => 'Навигаци',
+                'shortcuts-editing'            => 'Засварлах',
+                'shortcuts-selection'          => 'Сонголт',
+                'shortcuts-clipboard'          => 'Хурамтлуур ба дүүргэх',
+                'shortcuts-move-cell'          => 'Нүднүүдийн хооронд шилжих',
+                'shortcuts-move-down'          => 'Доош шилжих / засварыг баталгаажуулах',
+                'shortcuts-move-up'            => 'Дээш шилжих',
+                'shortcuts-move-right-left'    => 'Баруун / зүүн тийш шилжих',
+                'shortcuts-home-end'           => 'Мөрийн эхний / сүүлийн багана',
+                'shortcuts-ctrl-home-end'      => 'Хүснэгтийн эхний / сүүлийн нүд',
+                'shortcuts-extend-selection'   => 'Сонголтыг өргөтгөх',
+                'shortcuts-select-all'         => 'Бүх нүдийг сонгох',
+                'shortcuts-enter-edit'         => 'Засварлах горимд орох',
+                'shortcuts-confirm-move-down'  => 'Баталгаажуулах + доош шилжих',
+                'shortcuts-confirm-move-right' => 'Баталгаажуулах + баруун тийш шилжих',
+                'shortcuts-escape-revert'      => 'Утгыг сэргээх + засварлахаас гарах',
+                'shortcuts-clear-cell'         => 'Нүдийг цэвэрлэх',
+                'shortcuts-copy'               => 'Хуулах',
+                'shortcuts-cut'                => 'Тайрах',
+                'shortcuts-paste'              => 'Буулгах',
+                'shortcuts-fill-down'          => 'Доош дүүргэх',
+                'shortcuts-fill-right'         => 'Баруун тийш дүүргэх',
+                'shortcuts-undo'               => 'Буцаах',
+                'shortcuts-redo'               => 'Дахин хийх',
+                'shortcuts-help'               => 'Гарын товчлолуудыг харуулах/нуух',
             ],
             'create-success'          => 'Бүтээгдэхүүн амжилттай бүтээгдсэн',
             'delete-failed'           => 'Бүтээгдэхүүнийг устгасан бүтэлгүйтэв',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Шүүж болох',
                 'ai-translate'          => 'ХИ Орчуулга',
                 'invalid-swatch-type'   => ':attribute нь :type төрлийн шинж чанарт :swatch_type өнгөний төрлийг ашиглахыг зөвшөөрөхгүй.',
-
                 'single-object-only'    => 'Үүсгэх хүсэлт бүр нь зөвхөн нэг шинж чанарын объект илгээх ёстой.',
                 'option'                => [
                     'color'    => 'Өнгөт сэлгэлт',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Аттрибут амжилттай устгасан',
             'update-success'    => 'Аттрибут амжилттай шинэчлэгдсэн',
             'user-define-error' => 'Системийн шинж чанарыг устгах боломжгүй',
-
             'immutable-fields'  => 'Дараах талбаруудыг өөрчилөх боломжгүй: :fields.',
             'not-found'         => '":code" кодтой атрибут олдсонгүй',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Ангилалын талбар амжилттай шинэчлэгдсэн',
             'user-define-error' => 'Системийн ангиллын талбарыг устгах боломжгүй',
             'not-found'         => '":code" кодтой ангиллын талбар олдсонгүй',
-
             'immutable-fields'  => 'Дараах талбаруудыг өөрчилөх боломжгүй: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Энэ гэр бүлд аль хэдийн хувьсагчдын хувилбаруудтай тохируулах сонголтыг шинэчлэх боломжгүй байна.',
         ],
         'history' => [
-            'view' => 'Хувилбарын дэлгэрэнгүйг харах',
-
+            'view'  => 'Хувилбарын дэлгэрэнгүйг харах',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Таамаглал',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Түр зогссон',
                         'cancelled'            => 'Цуцлагдсан',
                         'failed'               => 'Амсхийээгүй',
-
-                        'view'       => 'Харах',
+                        'view'                 => 'Харах',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Санамжууд',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Гарчиг',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Системийн санамжууд',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Гарчиг',

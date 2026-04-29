@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'E-mailadres',
-            'forget-password-link'   => 'Wachtwoord vergeten ?',
-            'password'               => 'Wachtwoord',
-            'submit-btn'             => 'Aanmelden',
-            'title'                  => 'Aanmelden',
-            'powered-by'             => 'Aangedreven door :unopim,',
-            'open-source-project-by' => 'Een open-source project van :webkul.',
+            'email'                      => 'E-mailadres',
+            'forget-password-link'       => 'Wachtwoord vergeten ?',
+            'password'                   => 'Wachtwoord',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Aanmelden',
+            'title'                      => 'Aanmelden',
+            'powered-by'                 => 'Aangedreven door :unopim,',
+            'open-source-project-by'     => 'Een open-source project van :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Voer een geldige URL in.',
                     'regex'                      => 'Waarde komt niet overeen met het vereiste patroon.',
                     'invalid-pattern'            => 'Ongeldig aangepast patroon opgegeven.',
-
                     'numeric'                    => 'De waarde voor het numerieke attribuut ":attribute" moet een geldig getal zijn.',
                     'select-attribute-or-family' => 'Selecteer ten minste één attribuut of een attribuutfamilie.',
                     'failed'                     => 'Validatie mislukt.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Bulkbewerking succesvol uitgevoerd.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Geen wijzigingen om op te slaan.',
-
-                'invalid-datetime'            => 'Voer een geldige datum en tijd in.',
-
-                'resize-column'               => 'Sleep om kolom te vergroten of verkleinen',
-                'success'                     => 'Taak succesvol uitgevoerd.',
-                'fetch-failed'                => 'Ophalen mislukt.',
-                'action'                      => 'Bulk Bewerken',
-                'description'                 => 'Bewerk meerdere producten tegelijk. Wijzigingen worden op de achtergrond verwerkt.',
-                'gallery-preview'             => 'Galerijvoorbeeld',
-                'img-preview'                 => 'Afbeeldingvoorbeeld',
-                'no-image'                    => 'Geen Afbeelding',
-                'img-fail'                    => 'Uploaden van afbeelding mislukt',
-                'no-option'                   => 'Geen opties',
-                'keyboard-shortcuts'          => 'Sneltoetsen',
-                'shortcuts-navigation'        => 'Navigatie',
-                'shortcuts-editing'           => 'Bewerken',
-                'shortcuts-selection'         => 'Selectie',
-                'shortcuts-clipboard'         => 'Klembord en invullen',
-                'shortcuts-move-cell'         => 'Bewegen tussen cellen',
-                'shortcuts-move-down'         => 'Naar beneden / bewerking bevestigen',
-                'shortcuts-move-up'           => 'Naar boven',
-                'shortcuts-move-right-left'   => 'Naar rechts / links',
-                'shortcuts-home-end'          => 'Eerste / laatste kolom in rij',
-                'shortcuts-ctrl-home-end'     => 'Eerste / laatste cel in raster',
-                'shortcuts-extend-selection'  => 'Selectie uitbreiden',
-                'shortcuts-select-all'        => 'Alle cellen selecteren',
-                'shortcuts-enter-edit'        => 'Bewerkingsmodus activeren',
-                'shortcuts-confirm-move-down' => 'Bevestigen + naar beneden',
-                'shortcuts-confirm-move-right'=> 'Bevestigen + naar rechts',
-                'shortcuts-escape-revert'     => 'Waarde herstellen + bewerking verlaten',
-                'shortcuts-clear-cell'        => 'Cel wissen',
-                'shortcuts-copy'              => 'Kopiëren',
-                'shortcuts-cut'               => 'Knippen',
-                'shortcuts-paste'             => 'Plakken',
-                'shortcuts-fill-down'         => 'Naar beneden vullen',
-                'shortcuts-fill-right'        => 'Naar rechts vullen',
-                'shortcuts-undo'              => 'Ongedaan maken',
-                'shortcuts-redo'              => 'Opnieuw uitvoeren',
-                'shortcuts-help'              => 'Sneltoetsen weergeven/verbergen',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Geen wijzigingen om op te slaan.',
+                'invalid-datetime'             => 'Voer een geldige datum en tijd in.',
+                'resize-column'                => 'Sleep om kolom te vergroten of verkleinen',
+                'success'                      => 'Taak succesvol uitgevoerd.',
+                'fetch-failed'                 => 'Ophalen mislukt.',
+                'action'                       => 'Bulk Bewerken',
+                'description'                  => 'Bewerk meerdere producten tegelijk. Wijzigingen worden op de achtergrond verwerkt.',
+                'gallery-preview'              => 'Galerijvoorbeeld',
+                'img-preview'                  => 'Afbeeldingvoorbeeld',
+                'no-image'                     => 'Geen Afbeelding',
+                'img-fail'                     => 'Uploaden van afbeelding mislukt',
+                'no-option'                    => 'Geen opties',
+                'keyboard-shortcuts'           => 'Sneltoetsen',
+                'shortcuts-navigation'         => 'Navigatie',
+                'shortcuts-editing'            => 'Bewerken',
+                'shortcuts-selection'          => 'Selectie',
+                'shortcuts-clipboard'          => 'Klembord en invullen',
+                'shortcuts-move-cell'          => 'Bewegen tussen cellen',
+                'shortcuts-move-down'          => 'Naar beneden / bewerking bevestigen',
+                'shortcuts-move-up'            => 'Naar boven',
+                'shortcuts-move-right-left'    => 'Naar rechts / links',
+                'shortcuts-home-end'           => 'Eerste / laatste kolom in rij',
+                'shortcuts-ctrl-home-end'      => 'Eerste / laatste cel in raster',
+                'shortcuts-extend-selection'   => 'Selectie uitbreiden',
+                'shortcuts-select-all'         => 'Alle cellen selecteren',
+                'shortcuts-enter-edit'         => 'Bewerkingsmodus activeren',
+                'shortcuts-confirm-move-down'  => 'Bevestigen + naar beneden',
+                'shortcuts-confirm-move-right' => 'Bevestigen + naar rechts',
+                'shortcuts-escape-revert'      => 'Waarde herstellen + bewerking verlaten',
+                'shortcuts-clear-cell'         => 'Cel wissen',
+                'shortcuts-copy'               => 'Kopiëren',
+                'shortcuts-cut'                => 'Knippen',
+                'shortcuts-paste'              => 'Plakken',
+                'shortcuts-fill-down'          => 'Naar beneden vullen',
+                'shortcuts-fill-right'         => 'Naar rechts vullen',
+                'shortcuts-undo'               => 'Ongedaan maken',
+                'shortcuts-redo'               => 'Opnieuw uitvoeren',
+                'shortcuts-help'               => 'Sneltoetsen weergeven/verbergen',
             ],
             'create-success'          => 'Product met succes gemaakt',
             'delete-failed'           => 'Product verwijderd mislukt',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Is filterbaar',
                 'ai-translate'          => 'AI Vertaling',
                 'invalid-swatch-type'   => 'De :attribute is niet toegestaan voor attribuuttype :type met swatchtype :swatch_type.',
-
                 'single-object-only'    => 'Elke aanmaakaanvraag moet één attribuutobject bevatten.',
                 'option'                => [
                     'color'    => 'Kleurstaal',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Kenmerk met succes verwijderd',
             'update-success'    => 'Kenmerk succesvol bijgewerkt',
             'user-define-error' => 'Kan het systeem niet verwijderen',
-
             'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
             'not-found'         => 'Kenmerk met code ":code" kon niet worden gevonden',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Categorie veld met succes bijgewerkt',
             'user-define-error' => 'Kan het veld systeemcategorie niet verwijderen',
             'not-found'         => 'Categorie -veld met code ":code" kon niet worden gevonden',
-
             'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Kan configureerbare opties niet bijwerken, omdat deze familie al variantproducten heeft.',
         ],
         'history' => [
-            'view' => 'Versiedetails bekijken',
-
+            'view'  => 'Versiedetails bekijken',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versie',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Gepauzeerd',
                         'cancelled'            => 'Geannuleerd',
                         'failed'               => 'Mislukt',
-
-                        'view'       => 'Bekijken',
+                        'view'                 => 'Bekijken',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompts',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titel',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Systeemprompts',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titel',
