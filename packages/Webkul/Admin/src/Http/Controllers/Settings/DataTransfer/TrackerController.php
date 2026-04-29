@@ -111,6 +111,10 @@ class TrackerController extends Controller
      */
     public function download(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
+            abort(403, 'This action is unauthorized');
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
         $disk = null;
 

@@ -1083,6 +1083,9 @@
                                     class="cursor-pointer pointer-events-none"
                                     :checked="isSelected(option)"
                                     tabindex="-1"
+                                    disabled
+                                    aria-hidden="true"
+                                    role="presentation"
                                 />
                             </template>
 

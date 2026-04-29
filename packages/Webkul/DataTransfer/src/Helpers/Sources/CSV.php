@@ -52,7 +52,6 @@ class CSV extends AbstractSource
                 stream_set_read_buffer($this->reader, 65536);
             }
 
-<<<<<<< Updated upstream
             $headerRow = $this->normalizeColumnNames(
                 fgetcsv($this->reader, $this->maxLineLength, $delimiter) ?: []
             );
