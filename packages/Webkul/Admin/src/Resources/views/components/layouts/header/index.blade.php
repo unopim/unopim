@@ -21,7 +21,7 @@
                 />
             @else
                 <img
-                    src="{{ request()->cookie('dark_mode') ? unopim_asset('images/dark_logo.svg') : unopim_asset('images/logo.svg') }}"
+                    src="{{ in_array(request()->cookie('dark_mode'), ['1', 'dark'], true) ? unopim_asset('images/dark_logo.svg') : unopim_asset('images/logo.svg') }}"
                     id="logo-image"
                     alt="{{ config('app.name') }}"
                 />
@@ -35,7 +35,7 @@
         <v-dark>
             <div class="flex">
                 <span
-                    class="{{ request()->cookie('dark_mode') ? 'icon-light' : 'icon-dark' }} p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                    class="{{ in_array(request()->cookie('dark_mode'), ['1', 'dark'], true) ? 'icon-light' : 'icon-dark' }} p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
                 ></span>
             </div>
         </v-dark>
@@ -132,7 +132,7 @@
                 />
             @else
                 <img
-                    src="{{ request()->cookie('dark_mode') ? unopim_asset('images/dark_logo.svg') : unopim_asset('images/logo.svg') }}"
+                    src="{{ in_array(request()->cookie('dark_mode'), ['1', 'dark'], true) ? unopim_asset('images/dark_logo.svg') : unopim_asset('images/logo.svg') }}"
                     id="logo-image"
                     alt="{{ config('app.name') }}"
                 />
@@ -315,7 +315,8 @@
         <div class="flex">
             <span
                 class="p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
-                :class="[isDarkMode ? 'icon-light' : 'icon-dark']"
+                :class="[toggleIconClass]"
+                :title="toggleTitle"
                 @click="toggle"
             ></span>
         </div>
@@ -327,50 +328,98 @@
 
             data() {
                 return {
-                    isDarkMode: {{ request()->cookie('dark_mode') ?? 0 }},
+                    darkMode: "{{ request()->cookie('dark_mode', 'auto') }}",
 
                     logo: "{{ unopim_asset('images/logo.svg') }}",
 
                     dark_logo: "{{ unopim_asset('images/dark_logo.svg') }}",
+
+                    mediaQuery: null,
                 };
+            },
+
+            computed: {
+                toggleIconClass() {
+                    if (this.darkMode === 'auto') {
+                        return this.isDarkFromBrowser() ? 'icon-light' : 'icon-dark';
+                    }
+
+                    return this.darkMode === 'dark' ? 'icon-light' : 'icon-dark';
+                },
+
+                toggleTitle() {
+                    if (this.darkMode === 'auto') {
+                        return 'Theme: Auto';
+                    }
+
+                    return this.darkMode === 'dark' ? 'Theme: Dark' : 'Theme: Light';
+                },
             },
 
             methods: {
                 toggle() {
-                    this.isDarkMode = parseInt(this.isDarkModeCookie()) ? 0 : 1;
+                    const sequence = ['auto', 'dark', 'light'];
+                    const currentIndex = sequence.indexOf(this.darkMode);
+                    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % sequence.length;
 
-                    var expiryDate = new Date();
+                    this.darkMode = sequence[nextIndex];
 
-                    expiryDate.setMonth(expiryDate.getMonth() + 1);
+                    this.applyTheme(this.darkMode, true);
+                },
 
-                    document.cookie = 'dark_mode=' + this.isDarkMode + '; path=/; expires=' + expiryDate.toGMTString();
+                applyTheme(mode, persist = false) {
+                    const shouldUseDark = mode === 'dark' || (mode === 'auto' && this.isDarkFromBrowser());
 
-                    document.documentElement.classList.toggle('dark', this.isDarkMode === 1);
+                    document.documentElement.classList.toggle('dark', shouldUseDark);
 
-                    if (this.isDarkMode) {
-                        this.$emitter.emit('change-theme', 'dark');
+                    this.$emitter.emit('change-theme', shouldUseDark ? 'dark' : 'light');
 
-                        document.getElementById('logo-image').src = this.dark_logo;
-                    } else {
-                        this.$emitter.emit('change-theme', 'light');
+                    const logoImage = document.getElementById('logo-image');
 
-                        document.getElementById('logo-image').src = this.logo;
+                    if (logoImage) {
+                        logoImage.src = shouldUseDark ? this.dark_logo : this.logo;
+                    }
+
+                    if (persist) {
+                        const expiryDate = new Date();
+
+                        expiryDate.setMonth(expiryDate.getMonth() + 1);
+
+                        document.cookie = `dark_mode=${mode}; path=/; expires=${expiryDate.toUTCString()}`;
                     }
                 },
 
-                isDarkModeCookie() {
-                    const cookies = document.cookie.split(';');
+                isDarkFromBrowser() {
+                    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                },
 
-                    for (const cookie of cookies) {
-                        const [name, value] = cookie.trim().split('=');
+                normalizeMode(mode) {
+                    if (mode === '1') {
+                        return 'dark';
+                    }
 
-                        if (name === 'dark_mode') {
-                            return value;
+                    if (mode === '0') {
+                        return 'light';
+                    }
+
+                    return ['light', 'dark', 'auto'].includes(mode) ? mode : 'auto';
+                },
+            },
+
+            mounted() {
+                this.darkMode = this.normalizeMode(this.darkMode);
+
+                this.applyTheme(this.darkMode);
+
+                this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+                if (this.mediaQuery?.addEventListener) {
+                    this.mediaQuery.addEventListener('change', () => {
+                        if (this.darkMode === 'auto') {
+                            this.applyTheme('auto');
                         }
-                    }
-
-                    return 0;
-                },
+                    });
+                }
             },
         });
     </script>
