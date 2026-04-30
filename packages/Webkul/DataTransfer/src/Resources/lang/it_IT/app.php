@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Il codice valuta \'%s\' è già stato importato in questo lotto.',
+                    'code-not-found-to-delete'    => 'Valuta con codice \'%s\' non trovata nel sistema.',
+                    'invalid-status'              => 'Lo stato deve essere 0 o 1 (o vuoto per abilitato di default).',
+                    'channel-related-locale-root' => 'Non puoi eliminare la locale con codice :code che è associata a un canale.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [

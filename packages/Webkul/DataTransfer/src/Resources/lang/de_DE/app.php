@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Währungen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Der Währungscode \'%s\' wurde in diesem Batch bereits importiert.',
+                    'code-not-found-to-delete'    => 'Währung mit dem Code \'%s\' wurde im System nicht gefunden.',
+                    'invalid-status'              => 'Der Status muss 0 oder 1 sein (oder leer für standardmäßig aktiviert).',
+                    'channel-related-locale-root' => 'Sie können das Locale mit dem Code :code nicht löschen, da es mit einem Kanal verknüpft ist.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [

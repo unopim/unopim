@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Mga Pera',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Ang code ng pera na \'%s\' ay na-import na sa batch na ito.',
+                    'code-not-found-to-delete'    => 'Hindi mahanap sa system ang pera na may code na \'%s\'.',
+                    'invalid-status'              => 'Ang katayuan ay dapat na 0 o 1 (o walang laman para sa naka-enable bilang default).',
+                    'channel-related-locale-root' => 'Hindi mo matatanggal ang locale na may code :code na nauugnay sa isang channel.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Monedas',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'El código de moneda \'%s\' ya ha sido importado en este lote.',
+                    'code-not-found-to-delete'    => 'No se encontró ninguna moneda con el código \'%s\' en el sistema.',
+                    'invalid-status'              => 'El estado debe ser 0 o 1 (o vacío para habilitado por defecto).',
+                    'channel-related-locale-root' => 'No puedes eliminar el locale con código :code porque está asociado a un canal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [

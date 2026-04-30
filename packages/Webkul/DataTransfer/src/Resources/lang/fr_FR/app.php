@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Devises',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Le code de devise \'%s\' a déjà été importé dans ce lot.',
+                    'code-not-found-to-delete'    => 'Devise avec le code \'%s\' non trouvée dans le système.',
+                    'invalid-status'              => 'Le statut doit être 0 ou 1 (ou vide pour activé par défaut).',
+                    'channel-related-locale-root' => 'Vous ne pouvez pas supprimer la locale avec le code :code qui est associée à un canal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valutor',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Valutakod \'%s\' har redan importerats i denna batch.',
+                    'code-not-found-to-delete'    => 'Valuta med kod \'%s\' hittades inte i systemet.',
+                    'invalid-status'              => 'Status måste vara 0 eller 1 (eller tom för standard aktiverad).',
+                    'channel-related-locale-root' => 'Du kan inte ta bort språkområde med kod :code som är kopplad till en kanal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [

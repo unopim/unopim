@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valutaer',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Valutakoden \'%s\' er allerede importeret i denne batch.',
+                    'code-not-found-to-delete'    => 'Valuta med koden \'%s\' blev ikke fundet i systemet.',
+                    'invalid-status'              => 'Status skal være 0 eller 1 (eller tom for standard aktiveret).',
+                    'channel-related-locale-root' => 'Du kan ikke slette locale med koden :code, da det er tilknyttet en kanal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
