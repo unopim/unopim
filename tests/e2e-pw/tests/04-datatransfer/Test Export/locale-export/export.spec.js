@@ -2,7 +2,7 @@ const { test, expect } = require('../../../../utils/fixtures');
 const { navigateTo, generateUid, clickSaveAndExpect } = require('../../../../utils/helpers');
 
 
-async function createLocaleExportWithStatusFilter(adminPage, code, statusLabel) {
+async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   // Navigate to exports and create a new locale export
   await navigateTo(adminPage, 'exports');
   await adminPage.getByRole('link', { name: 'Create Export' }).click();
@@ -67,7 +67,7 @@ async function deleteExport(adminPage, code) {
   }
 }
 
-test.describe('Export with Status Filter (Issue #243)', () => {
+test.describe('Export with Status Filter', () => {
 
   test('Create Locales Export with Status filter set to Enable and run export', async ({ adminPage }) => {
     const uid = generateUid();
