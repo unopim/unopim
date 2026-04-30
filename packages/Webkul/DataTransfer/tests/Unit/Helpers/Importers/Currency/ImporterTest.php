@@ -9,7 +9,6 @@ use Webkul\DataTransfer\Helpers\Importers\Currency\Importer;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Models\JobTrackBatch;
 
-
 describe('Currency Importer', function () {
     beforeEach(function () {
         $this->loginAsAdmin();
