@@ -49,6 +49,9 @@ return [
         'categories' => [
             'title' => 'Mga Kategorya',
         ],
+        'currencies' => [
+            'title' => 'Mga Pera',
+        ],
     ],
     'validation' => [
         'errors' => [

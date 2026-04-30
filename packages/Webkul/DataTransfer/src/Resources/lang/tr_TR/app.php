@@ -49,6 +49,9 @@ return [
         'categories' => [
             'title' => 'Kategoriler',
         ],
+        'currencies' => [
+            'title' => 'Para Birimleri',
+        ],
     ],
     'validation' => [
         'errors' => [

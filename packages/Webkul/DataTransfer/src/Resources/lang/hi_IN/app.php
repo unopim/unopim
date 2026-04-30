@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'उत्पादों',
-
+            'title'      => 'उत्पादों',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'यूआरएल कुंजी: \'%s\' SKU: \'%s\' वाले आइटम के लिए पहले से ही जेनरेट किया गया था।',
@@ -35,12 +33,9 @@ return [
             ],
         ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'उत्पादों',
-
+            'title'      => 'उत्पादों',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL कुंजी: \'%s\' SKU: \'%s\' वाले आइटम के लिए पहले से ही जेनरेट किया गया था।',
@@ -54,8 +49,10 @@ return [
         'categories' => [
             'title' => 'श्रेणियाँ',
         ],
+        'currencies' => [
+            'title' => 'मुद्राएँ',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'कॉलम संख्या "%s" में खाली हेडर हैं।',
@@ -68,7 +65,6 @@ return [
             'file-empty'           => 'फ़ाइल खाली है या इसमें शीर्षक पंक्ति नहीं है। कृपया डेटा वाली एक वैध फ़ाइल अपलोड करें।',
         ],
     ],
-
     'job' => [
         'started'   => 'कार्य निष्पादन प्रारंभ हुआ',
         'completed' => 'कार्य निष्पादन पूरा हुआ',

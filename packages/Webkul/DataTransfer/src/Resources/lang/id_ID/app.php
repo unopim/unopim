@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Produk',
-
+            'title'      => 'Produk',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'Kunci URL: \'%s\' telah dibuat untuk item dengan SKU: \'%s\'.',
@@ -35,12 +33,9 @@ return [
             ],
         ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Produk',
-
+            'title'      => 'Produk',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Kunci URL: \'%s\' telah dibuat untuk item dengan SKU: \'%s\'.',
@@ -54,8 +49,10 @@ return [
         'categories' => [
             'title' => 'Kategori',
         ],
+        'currencies' => [
+            'title' => 'Mata Uang',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Kolom nomor "%s" memiliki header kosong.',
@@ -68,7 +65,6 @@ return [
             'file-empty'           => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',
         ],
     ],
-
     'job' => [
         'started'   => 'Eksekusi pekerjaan dimulai',
         'completed' => 'Eksekusi pekerjaan selesai',

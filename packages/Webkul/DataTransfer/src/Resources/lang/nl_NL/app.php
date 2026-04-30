@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Producten',
-
+            'title'      => 'Producten',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'url-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -35,12 +33,9 @@ return [
             ],
         ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Producten',
-
+            'title'      => 'Producten',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -54,8 +49,10 @@ return [
         'categories' => [
             'title' => 'Categorieën',
         ],
+        'currencies' => [
+            'title' => "Valuta's",
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Kolommen nummer "%s" hebben lege kopteksten.',
@@ -68,7 +65,6 @@ return [
             'file-empty'           => 'Het bestand is leeg of bevat geen kopregel. Upload een geldig bestand met gegevens.',
         ],
     ],
-
     'job' => [
         'started'   => 'De uitvoering van de werkzaamheden is begonnen',
         'completed' => 'Uitvoering van de taak voltooid',

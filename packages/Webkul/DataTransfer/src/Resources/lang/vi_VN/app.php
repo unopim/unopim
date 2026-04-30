@@ -49,6 +49,9 @@ return [
         'categories' => [
             'title' => 'Các danh mục',
         ],
+        'currencies' => [
+            'title' => 'Tiền tệ',
+        ],
     ],
     'validation' => [
         'errors' => [

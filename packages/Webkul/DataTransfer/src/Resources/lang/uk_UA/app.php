@@ -49,6 +49,9 @@ return [
         'categories' => [
             'title' => 'Категорії',
         ],
+        'currencies' => [
+            'title' => 'Валюти',
+        ],
     ],
     'validation' => [
         'errors' => [

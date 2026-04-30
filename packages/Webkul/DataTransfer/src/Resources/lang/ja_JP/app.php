@@ -33,7 +33,6 @@ return [
             ],
         ],
     ],
-
     'exporters' => [
         'products' => [
             'title'      => '製品',
@@ -50,8 +49,10 @@ return [
         'categories' => [
             'title' => 'カテゴリー',
         ],
+        'currencies' => [
+            'title' => '通貨',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => '列番号「%s」のヘッダーが空です。',
@@ -64,7 +65,6 @@ return [
             'file-empty'           => 'ファイルが空であるか、ヘッダー行が含まれていません。データを含む有効なファイルをアップロードしてください。',
         ],
     ],
-
     'job' => [
         'started'   => 'ジョブの実行が開始されました',
         'completed' => 'ジョブの実行が完了しました',

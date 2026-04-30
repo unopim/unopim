@@ -49,6 +49,9 @@ return [
         'categories' => [
             'title' => 'Kategorier',
         ],
+        'currencies' => [
+            'title' => 'Valutor',
+        ],
     ],
     'validation' => [
         'errors' => [

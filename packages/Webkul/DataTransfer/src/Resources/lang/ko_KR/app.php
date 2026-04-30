@@ -49,6 +49,9 @@ return [
         'categories' => [
             'title' => '카테고리',
         ],
+        'currencies' => [
+            'title' => '통화',
+        ],
     ],
     'validation' => [
         'errors' => [

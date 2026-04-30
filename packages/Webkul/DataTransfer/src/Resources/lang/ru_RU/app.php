@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Продукты',
-
+            'title'      => 'Продукты',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'Ключ URL: \'%s\' уже был создан для элемента с SKU: \'%s\'.',
@@ -35,12 +33,9 @@ return [
             ],
         ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Продукты',
-
+            'title'      => 'Продукты',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Ключ URL: \'%s\' уже был создан для элемента с SKU: \'%s\'.',
@@ -54,8 +49,10 @@ return [
         'categories' => [
             'title' => 'Категории',
         ],
+        'currencies' => [
+            'title' => 'Валюты',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Столбцы с номером «%s» имеют пустые заголовки.',
@@ -68,7 +65,6 @@ return [
             'file-empty'           => 'Файл пуст или не содержит строку заголовка. Пожалуйста, загрузите корректный файл с данными.',
         ],
     ],
-
     'job' => [
         'started'   => 'Выполнение задания началось',
         'completed' => 'Выполнение задания завершено',

@@ -49,6 +49,9 @@ return [
         'categories' => [
             'title' => '分類',
         ],
+        'currencies' => [
+            'title' => '貨幣',
+        ],
     ],
     'validation' => [
         'errors' => [

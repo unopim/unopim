@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => '产品',
-
+            'title'      => '产品',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL 密钥：已为 SKU 为“%s”的商品生成了“%s”。',
@@ -35,12 +33,9 @@ return [
             ],
         ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => '产品',
-
+            'title'      => '产品',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL 密钥：已为 SKU 为“%s”的商品生成了“%s”。',
@@ -54,8 +49,10 @@ return [
         'categories' => [
             'title' => '类别',
         ],
+        'currencies' => [
+            'title' => '货币',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => '列号“%s”的标题为空。',
@@ -68,7 +65,6 @@ return [
             'file-empty'           => '文件为空或不包含标题行。请上传包含数据的有效文件。',
         ],
     ],
-
     'job' => [
         'started'   => '作业执行开始',
         'completed' => '作业执行完成',

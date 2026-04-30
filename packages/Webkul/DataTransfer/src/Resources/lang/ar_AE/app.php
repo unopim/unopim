@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'منتجات',
-
+            'title'      => 'منتجات',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'مفتاح URL: تم إنشاء \'%s\' بالفعل لعنصر يحتوي على SKU: \'%s\'.',
@@ -35,12 +33,9 @@ return [
             ],
         ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'منتجات',
-
+            'title'      => 'منتجات',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'مفتاح URL: تم إنشاء \'%s\' بالفعل لعنصر يحتوي على SKU: \'%s\'.',
@@ -54,8 +49,10 @@ return [
         'categories' => [
             'title' => 'فئات',
         ],
+        'currencies' => [
+            'title' => 'العملات',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'تحتوي الأعمدة رقم "%s" على رؤوس فارغة.',
@@ -68,7 +65,6 @@ return [
             'file-empty'           => 'الملف فارغ أو لا يحتوي على صف رأس. يرجى تحميل ملف صالح يحتوي على بيانات.',
         ],
     ],
-
     'job' => [
         'started'   => 'بدأ تنفيذ المهمة',
         'completed' => 'الانتهاء من تنفيذ المهمة',
