@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Canale',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Canalul cu codul :code nu a fost găsit pentru ștergere.',
+                    'locale-not-found'         => 'Una sau mai multe limbi nu există.',
+                    'root-category-not-found'  => 'Categoria rădăcină nu există.',
+                    'currency-not-found'       => 'Una sau mai multe valute nu există.',
+                    'invalid-locale'           => 'Limba nu există.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorii',
+        ],
+        'channels' => [
+            'title' => 'Canale',
         ],
     ],
     'validation' => [

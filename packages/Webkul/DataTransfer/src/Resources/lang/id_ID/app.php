@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Produk',
-
+            'title'      => 'Produk',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'Kunci URL: \'%s\' telah dibuat untuk item dengan SKU: \'%s\'.',
@@ -34,13 +32,22 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Saluran',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Saluran dengan kode :code tidak ditemukan untuk dihapus.',
+                    'locale-not-found'         => 'Satu atau lebih bahasa tidak ada.',
+                    'root-category-not-found'  => 'Kategori utama tidak ada.',
+                    'currency-not-found'       => 'Satu atau lebih mata uang tidak ada.',
+                    'invalid-locale'           => 'Bahasa tidak ada.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Produk',
-
+            'title'      => 'Produk',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Kunci URL: \'%s\' telah dibuat untuk item dengan SKU: \'%s\'.',
@@ -54,8 +61,10 @@ return [
         'categories' => [
             'title' => 'Kategori',
         ],
+        'channels' => [
+            'title' => 'Saluran',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Kolom nomor "%s" memiliki header kosong.',
@@ -68,7 +77,6 @@ return [
             'file-empty'           => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',
         ],
     ],
-
     'job' => [
         'started'   => 'Eksekusi pekerjaan dimulai',
         'completed' => 'Eksekusi pekerjaan selesai',

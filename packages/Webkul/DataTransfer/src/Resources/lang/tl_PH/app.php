@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Mga Channel',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Hindi nahanap ang channel na may code :code para tanggalin.',
+                    'locale-not-found'         => 'Isa o higit pang wika ay hindi umiiral.',
+                    'root-category-not-found'  => 'Ang root na kategorya ay hindi umiiral.',
+                    'currency-not-found'       => 'Isa o higit pang currency ay hindi umiiral.',
+                    'invalid-locale'           => 'Ang wika ay hindi umiiral.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => 'Mga Kategorya',
+        ],
+        'channels' => [
+            'title' => 'Mga Channel',
         ],
     ],
     'validation' => [

@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'منتجات',
-
+            'title'      => 'منتجات',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'مفتاح URL: تم إنشاء \'%s\' بالفعل لعنصر يحتوي على SKU: \'%s\'.',
@@ -34,13 +32,22 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'القنوات',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'القناة ذات الرمز :code غير موجودة للحذف.',
+                    'locale-not-found'         => 'واحد أو أكثر من اللغات غير موجود.',
+                    'root-category-not-found'  => 'الفئة الجذرية غير موجودة.',
+                    'currency-not-found'       => 'واحدة أو أكثر من العملات غير موجودة.',
+                    'invalid-locale'           => 'اللغة غير موجودة.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'منتجات',
-
+            'title'      => 'منتجات',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'مفتاح URL: تم إنشاء \'%s\' بالفعل لعنصر يحتوي على SKU: \'%s\'.',
@@ -54,8 +61,10 @@ return [
         'categories' => [
             'title' => 'فئات',
         ],
+        'channels' => [
+            'title' => 'القنوات',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'تحتوي الأعمدة رقم "%s" على رؤوس فارغة.',
@@ -68,7 +77,6 @@ return [
             'file-empty'           => 'الملف فارغ أو لا يحتوي على صف رأس. يرجى تحميل ملف صالح يحتوي على بيانات.',
         ],
     ],
-
     'job' => [
         'started'   => 'بدأ تنفيذ المهمة',
         'completed' => 'الانتهاء من تنفيذ المهمة',

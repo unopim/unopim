@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Бүтээгдэхүүн',
-
+            'title'      => 'Бүтээгдэхүүн',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL түлхүүр: \'%s\' SKU-тай зүйлд аль хэдийн үүсгэгдсэн: \'%s\'.',
@@ -34,13 +32,22 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Сувгууд',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => ' :code кодтой суваг устгахад олдсонгүй.',
+                    'locale-not-found'         => 'Нэг эсвэл хэд хэдэн хэл байхгүй байна.',
+                    'root-category-not-found'  => 'Үндсэн ангилал байхгүй байна.',
+                    'currency-not-found'       => 'Нэг эсвэл хэд хэдэн валют байхгүй байна.',
+                    'invalid-locale'           => 'Хэл байхгүй байна.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Бүтээгдэхүүн',
-
+            'title'      => 'Бүтээгдэхүүн',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL түлхүүр: \'%s\' SKU-тай зүйлд аль хэдийн үүсгэгдсэн: \'%s\'.',
@@ -54,8 +61,10 @@ return [
         'categories' => [
             'title' => 'Ангилал',
         ],
+        'channels' => [
+            'title' => 'Сувгууд',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => '"%s" дугаартай баганын толгой хоосон байна.',
@@ -68,7 +77,6 @@ return [
             'file-empty'           => 'Файл хоосон эсвэл толгой мөр агуулаагүй байна. Өгөгдөл бүхий зөв файл байршуулна уу.',
         ],
     ],
-
     'job' => [
         'started'   => 'Ажлын гүйцэтгэл эхэлсэн',
         'completed' => 'Ажлын гүйцэтгэл дууссан',

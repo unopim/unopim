@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kênh',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Không tìm thấy kênh với mã :code để xóa.',
+                    'locale-not-found'         => 'Một hoặc nhiều ngôn ngữ không tồn tại.',
+                    'root-category-not-found'  => 'Danh mục gốc không tồn tại.',
+                    'currency-not-found'       => 'Một hoặc nhiều loại tiền tệ không tồn tại.',
+                    'invalid-locale'           => 'Ngôn ngữ không tồn tại.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => 'Các danh mục',
+        ],
+        'channels' => [
+            'title' => 'Kênh',
         ],
     ],
     'validation' => [

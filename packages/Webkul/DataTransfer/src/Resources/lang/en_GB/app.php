@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Channels',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Channel with code :code not found to delete.',
+                    'locale-not-found'         => 'One or more locales do not exist.',
+                    'root-category-not-found'  => 'Root category does not exist.',
+                    'currency-not-found'       => 'One or more currencies do not exist.',
+                    'invalid-locale'           => 'The locale does not exist.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categories',
+        ],
+        'channels' => [
+            'title' => 'Channels',
         ],
     ],
     'validation' => [

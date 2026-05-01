@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Producten',
-
+            'title'      => 'Producten',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -34,13 +32,22 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kanalen',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Kanaal met code :code niet gevonden om te verwijderen.',
+                    'locale-not-found'         => 'Een of meer talen bestaan niet.',
+                    'root-category-not-found'  => 'De hoofdcategorie bestaat niet.',
+                    'currency-not-found'       => 'Een of meer valuta bestaan niet.',
+                    'invalid-locale'           => 'De taal bestaat niet.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Producten',
-
+            'title'      => 'Producten',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -54,8 +61,11 @@ return [
         'categories' => [
             'title' => 'Categorieën',
         ],
-    ],
 
+        'channels' => [
+            'title' => 'Kanalen',
+        ],
+    ],
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Kolom(men) met nummer "%s" hebben lege kopteksten.',
@@ -68,7 +78,6 @@ return [
             'file-empty'           => 'Het bestand is leeg of bevat geen kopregel. Upload een geldig bestand met gegevens.',
         ],
     ],
-
     'job' => [
         'started'   => 'De taak is gestart.',
         'completed' => 'Taak succesvol voltooid.',

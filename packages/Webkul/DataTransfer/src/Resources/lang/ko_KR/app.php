@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => '채널',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => '코드 :code 인 채널을 삭제할 수 없습니다.',
+                    'locale-not-found'         => '하나 이상의 로케일이 존재하지 않습니다.',
+                    'root-category-not-found'  => '루트 카테고리가 존재하지 않습니다.',
+                    'currency-not-found'       => '하나 이상의 통화가 존재하지 않습니다.',
+                    'invalid-locale'           => '로케일이 존재하지 않습니다.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => '카테고리',
+        ],
+        'channels' => [
+            'title' => '채널',
         ],
     ],
     'validation' => [

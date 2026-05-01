@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Produkte',
-
+            'title'      => 'Produkte',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL-Schlüssel: \'%s\' wurde bereits für einen Artikel mit der SKU: \'%s\' generiert.',
@@ -34,13 +32,22 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kanäle',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Kanal mit dem Code :code wurde zum Löschen nicht gefunden.',
+                    'locale-not-found'         => 'Eine oder mehrere Gebietsschemata existieren nicht.',
+                    'root-category-not-found'  => 'Die Stammkategorie existiert nicht.',
+                    'currency-not-found'       => 'Eine oder mehrere Währungen existieren nicht.',
+                    'invalid-locale'           => 'Das Gebietsschema existiert nicht.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Produkte',
-
+            'title'      => 'Produkte',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-Schlüssel: \'%s\' wurde bereits für einen Artikel mit der SKU: \'%s\' generiert.',
@@ -54,8 +61,10 @@ return [
         'categories' => [
             'title' => 'Kategorien',
         ],
+        'channels' => [
+            'title' => 'Kanäle',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Die Spalten mit der Nummer „%s“ haben leere Kopfzeilen.',
@@ -68,7 +77,6 @@ return [
             'file-empty'           => 'Die Datei ist leer oder enthält keine Kopfzeile. Bitte laden Sie eine gültige Datei mit Daten hoch.',
         ],
     ],
-
     'job' => [
         'started'   => 'Jobausführung gestartet',
         'completed' => 'Jobausführung abgeschlossen',

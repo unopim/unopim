@@ -32,6 +32,19 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kanavat',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Kanavaa koodilla :code ei löytynyt poistettavaksi.',
+                    'locale-not-found'         => 'Yksi tai useampi kieli ei ole olemassa.',
+                    'root-category-not-found'  => 'Juuriluokkaa ei ole olemassa.',
+                    'currency-not-found'       => 'Yksi tai useampi valuutta ei ole olemassa.',
+                    'invalid-locale'           => 'Kieli ei ole olemassa.',
+                ],
+            ],
+        ],
+
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +61,10 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriat',
+        ],
+
+        'channels' => [
+            'title' => 'Kanavat',
         ],
     ],
     'validation' => [

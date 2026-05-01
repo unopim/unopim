@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kanaler',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Kanal med kode :code ble ikke funnet for sletting.',
+                    'locale-not-found'         => 'Ett eller flere språk finnes ikke.',
+                    'root-category-not-found'  => 'Rotkategori finnes ikke.',
+                    'currency-not-found'       => 'En eller flere valutaer finnes ikke.',
+                    'invalid-locale'           => 'Språket finnes ikke.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorier',
+        ],
+        'channels' => [
+            'title' => 'Kanaler',
         ],
     ],
     'validation' => [

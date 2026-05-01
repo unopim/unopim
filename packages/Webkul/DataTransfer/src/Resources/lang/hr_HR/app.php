@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kanali',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Kanal s kodom :code nije pronađen za brisanje.',
+                    'locale-not-found'         => 'Jedan ili više jezika ne postoje.',
+                    'root-category-not-found'  => 'Glavna kategorija ne postoji.',
+                    'currency-not-found'       => 'Jedna ili više valuta ne postoje.',
+                    'invalid-locale'           => 'Jezik ne postoji.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorije',
+        ],
+        'channels' => [
+            'title' => 'Kanali',
         ],
     ],
     'validation' => [

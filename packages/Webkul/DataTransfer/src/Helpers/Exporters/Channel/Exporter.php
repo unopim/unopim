@@ -7,17 +7,14 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
-use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
+use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
 class Exporter extends AbstractExporter
 {
     /**
      * Create a new instance.
      *
-     * @param  JobTrackBatchRepository  $exportBatchRepository
-     * @param  FileExportFileBuffer  $exportFileBuffer
-     * @param  ChannelRepository  $channelRepository
      * @return void
      */
     public function __construct(
@@ -41,9 +38,7 @@ class Exporter extends AbstractExporter
     /**
      * Export a batch of data.
      *
-     * @param  JobTrackBatchContract  $batch
      * @param  mixed  $filePath
-     * @return bool
      */
     public function exportBatch(JobTrackBatchContract $batch, $filePath): bool
     {
@@ -67,9 +62,6 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare channels from current batch.
-     *
-     * @param  JobTrackBatchContract  $batch
-     * @return array
      */
     public function prepareChannels(JobTrackBatchContract $batch): array
     {

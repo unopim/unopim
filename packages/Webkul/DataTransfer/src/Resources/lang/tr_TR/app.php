@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kanallar',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => ':code kodlu kanal silinmek için bulunamadı.',
+                    'locale-not-found'         => 'Bir veya daha fazla dil mevcut değil.',
+                    'root-category-not-found'  => 'Kök kategori mevcut değil.',
+                    'currency-not-found'       => 'Bir veya daha fazla para birimi mevcut değil.',
+                    'invalid-locale'           => 'Dil mevcut değil.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriler',
+        ],
+        'channels' => [
+            'title' => 'Kanallar',
         ],
     ],
     'validation' => [

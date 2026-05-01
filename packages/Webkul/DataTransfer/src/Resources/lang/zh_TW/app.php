@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => '渠道',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => '未找到代碼為 :code 的渠道，無法刪除。',
+                    'locale-not-found'         => '一個或多個語言不存在。',
+                    'root-category-not-found'  => '根分類不存在。',
+                    'currency-not-found'       => '一個或多個貨幣不存在。',
+                    'invalid-locale'           => '語言不存在。',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => '分類',
+        ],
+        'channels' => [
+            'title' => '渠道',
         ],
     ],
     'validation' => [

@@ -32,8 +32,19 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'チャネル',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'コード :code のチャネルは削除対象として見つかりません。',
+                    'locale-not-found'         => '1つ以上のロケールが存在しません。',
+                    'root-category-not-found'  => 'ルートカテゴリが存在しません。',
+                    'currency-not-found'       => '1つ以上の通貨が存在しません。',
+                    'invalid-locale'           => 'ロケールが存在しません。',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
         'products' => [
             'title'      => '製品',
@@ -50,8 +61,10 @@ return [
         'categories' => [
             'title' => 'カテゴリー',
         ],
+        'channels' => [
+            'title' => 'チャネル',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => '列番号「%s」のヘッダーが空です。',
@@ -64,7 +77,6 @@ return [
             'file-empty'           => 'ファイルが空であるか、ヘッダー行が含まれていません。データを含む有効なファイルをアップロードしてください。',
         ],
     ],
-
     'job' => [
         'started'   => 'ジョブの実行が開始されました',
         'completed' => 'ジョブの実行が完了しました',

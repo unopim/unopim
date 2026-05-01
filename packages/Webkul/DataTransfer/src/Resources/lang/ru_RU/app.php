@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Продукты',
-
+            'title'      => 'Продукты',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'Ключ URL: \'%s\' уже был создан для элемента с SKU: \'%s\'.',
@@ -34,13 +32,22 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Каналы',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Канал с кодом :code не найден для удаления.',
+                    'locale-not-found'         => 'Один или несколько языков не существуют.',
+                    'root-category-not-found'  => 'Корневая категория не существует.',
+                    'currency-not-found'       => 'Одна или несколько валют не существуют.',
+                    'invalid-locale'           => 'Язык не существует.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Продукты',
-
+            'title'      => 'Продукты',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Ключ URL: \'%s\' уже был создан для элемента с SKU: \'%s\'.',
@@ -54,8 +61,10 @@ return [
         'categories' => [
             'title' => 'Категории',
         ],
+        'channels' => [
+            'title' => 'Каналы',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Столбцы с номером «%s» имеют пустые заголовки.',
@@ -68,7 +77,6 @@ return [
             'file-empty'           => 'Файл пуст или не содержит строку заголовка. Пожалуйста, загрузите корректный файл с данными.',
         ],
     ],
-
     'job' => [
         'started'   => 'Выполнение задания началось',
         'completed' => 'Выполнение задания завершено',

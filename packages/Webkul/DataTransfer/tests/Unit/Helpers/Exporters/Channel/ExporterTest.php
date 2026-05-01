@@ -1,11 +1,11 @@
 <?php
 
 use Webkul\Core\Models\Channel;
+use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataTransfer\Helpers\Exporters\Channel\Exporter;
+use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer;
 use Webkul\DataTransfer\Models\JobTrackBatch;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
-use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer;
-use Webkul\Core\Repositories\ChannelRepository;
 
 use function Pest\Laravel\mock;
 
@@ -45,7 +45,7 @@ it('can prepare channel data for export', function () {
     $row = $preparedData[0];
     expect($row['code'])->toBe('test-channel');
     expect($row['root_category'])->toBe($channel->root_category->code);
-    
+
     // Check if locales and currencies are correctly imploded
     $locales = explode(',', $row['locales']);
     expect($locales)->toContain($channel->locales->first()->code);

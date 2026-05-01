@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Канали',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Канал з кодом :code не знайдено для видалення.',
+                    'locale-not-found'         => 'Одна або кілька мов не існують.',
+                    'root-category-not-found'  => 'Коренева категорія не існує.',
+                    'currency-not-found'       => 'Одна або кілька валют не існують.',
+                    'invalid-locale'           => 'Мова не існує.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => 'Категорії',
+        ],
+        'channels' => [
+            'title' => 'Канали',
         ],
     ],
     'validation' => [

@@ -32,6 +32,18 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Canali',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Canale con codice :code non trovato per l\'eliminazione.',
+                    'locale-not-found'         => 'Una o più lingue non esistono.',
+                    'root-category-not-found'  => 'La categoria principale non esiste.',
+                    'currency-not-found'       => 'Una o più valute non esistono.',
+                    'invalid-locale'           => 'La lingua non esiste.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +60,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorie',
+        ],
+        'channels' => [
+            'title' => 'Canali',
         ],
     ],
     'validation' => [
