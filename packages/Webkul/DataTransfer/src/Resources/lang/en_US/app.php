@@ -54,6 +54,9 @@ return [
         'categories' => [
             'title' => 'Categories',
         ],
+        'channels' => [
+            'title' => 'Channels',
+        ],
     ],
 
     'validation' => [

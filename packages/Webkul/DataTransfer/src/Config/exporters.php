@@ -86,4 +86,35 @@ return [
             ],
         ],
     ],
+
+    'channels' => [
+        'title'       => 'data_transfer::app.exporters.channels.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Channel\Exporter',
+        'source'      => 'Webkul\Core\Repositories\ChannelRepository',
+        'sample_path' => 'data-transfer/samples/channels.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\ChannelJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'File Format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
 ];
