@@ -14,10 +14,12 @@ it('exports all currencies when status filter is set to all', function () {
     Currency::factory()->create(['code' => 'EUR', 'status' => 0]);
 
     $jobInstance = JobInstances::create([
-        'code'        => 'currency_export',
-        'entity_type' => 'currencies',
-        'type'        => 'export',
-        'filters'     => ['status' => 'all', 'file_format' => 'Csv'],
+        'code'                => 'currency_export',
+        'entity_type'         => 'currencies',
+        'type'                => 'export',
+        'action'              => 'export',
+        'validation_strategy' => 'stop-on-errors',
+        'filters'             => ['status' => 'all', 'file_format' => 'Csv'],
     ]);
 
     $jobTrack = JobTrack::create([
@@ -53,10 +55,12 @@ it('exports only enabled currencies when status filter is set to enable', functi
     Currency::factory()->create(['code' => 'EUR', 'status' => 0]);
 
     $jobInstance = JobInstances::create([
-        'code'        => 'currency_export_enabled',
-        'entity_type' => 'currencies',
-        'type'        => 'export',
-        'filters'     => ['status' => 'enable', 'file_format' => 'Csv'],
+        'code'                => 'currency_export_enabled',
+        'entity_type'         => 'currencies',
+        'type'                => 'export',
+        'action'              => 'export',
+        'validation_strategy' => 'stop-on-errors',
+        'filters'             => ['status' => 'enable', 'file_format' => 'Csv'],
     ]);
 
     $jobTrack = JobTrack::create([
