@@ -23,9 +23,14 @@ it('exports all currencies when status filter is set to all', function () {
     ]);
 
     $jobTrack = JobTrack::create([
-        'job_instances_id' => $jobInstance->id,
-        'state'            => 'pending',
+        'state'               => 'pending',
+        'type'                => $jobInstance->type,
+        'action'              => $jobInstance->action,
+        'validation_strategy' => $jobInstance->validation_strategy,
+        'job_instances_id'    => $jobInstance->id,
+        'meta'                => $jobInstance->toArray(),
     ]);
+
 
     $exporter = new Exporter(
         app(JobTrackBatchRepository::class),
@@ -64,9 +69,14 @@ it('exports only enabled currencies when status filter is set to enable', functi
     ]);
 
     $jobTrack = JobTrack::create([
-        'job_instances_id' => $jobInstance->id,
-        'state'            => 'pending',
+        'state'               => 'pending',
+        'type'                => $jobInstance->type,
+        'action'              => $jobInstance->action,
+        'validation_strategy' => $jobInstance->validation_strategy,
+        'job_instances_id'    => $jobInstance->id,
+        'meta'                => $jobInstance->toArray(),
     ]);
+
 
     $exporter = new Exporter(
         app(JobTrackBatchRepository::class),
