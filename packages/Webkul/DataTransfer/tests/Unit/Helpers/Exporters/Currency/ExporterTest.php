@@ -31,7 +31,6 @@ it('exports all currencies when status filter is set to all', function () {
         'meta'                => $jobInstance->toArray(),
     ]);
 
-
     $exporter = new Exporter(
         app(JobTrackBatchRepository::class),
         app(FileExportFileBuffer::class)
@@ -76,7 +75,6 @@ it('exports only enabled currencies when status filter is set to enable', functi
         'job_instances_id'    => $jobInstance->id,
         'meta'                => $jobInstance->toArray(),
     ]);
-
 
     $exporter = new Exporter(
         app(JobTrackBatchRepository::class),
