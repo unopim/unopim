@@ -99,10 +99,10 @@ module.exports = defineConfig({
     {
       name: 'docs-screenshots',
       testDir: './tests/docs-screenshots',
+      testIgnore: /auth\.setup\.js/,
+      fullyParallel: false,
+      workers: 1,
       use: {
-        viewport: { width: 1920, height: 1200 },
-        deviceScaleFactor: 2,
-        storageState: '.state/admin-auth.json',
         screenshot: 'off',
         trace: 'off',
         video: 'off',
