@@ -168,10 +168,12 @@ describe('User Importer', function () {
 
     it('imports only active users when the import profile filter is active', function () {
         $jobInstance = JobInstances::factory()->create([
-            'entity_type' => 'users',
-            'type'        => 'import',
-            'action'      => Import::ACTION_APPEND,
-            'filters'     => ['status' => 'active'],
+            'entity_type'         => 'users',
+            'type'                => 'import',
+            'action'              => Import::ACTION_APPEND,
+            'validation_strategy' => 'skip-erros',
+            'file_path'           => 'imports/users-active.csv',
+            'filters'             => ['status' => 'active'],
         ]);
 
         $jobTrack = JobTrack::factory()->create([
