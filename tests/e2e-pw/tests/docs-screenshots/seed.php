@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Idempotent seed for DamWebdav docs screenshots. Run from unopim repo root:
  *   php tests/e2e-pw/tests/docs-screenshots/seed.php
@@ -8,14 +9,15 @@
 
 require __DIR__.'/../../../../vendor/autoload.php';
 
-$app = require __DIR__.'/../../../../bootstrap/app.php';
-$app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
-
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
+$app = require __DIR__.'/../../../../bootstrap/app.php';
+$app->make(Kernel::class)->bootstrap();
+
 $adminId = DB::table('admins')->value('id') ?? 1;
-$dirId   = DB::table('dam_directories')->value('id') ?? 1;
+$dirId = DB::table('dam_directories')->value('id') ?? 1;
 
 $credentialId = DB::table('dam_webdav_credentials')->where('username', 'docs-demo')->value('id');
 if (! $credentialId) {
