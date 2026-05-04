@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Uloge',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Pronađeno je duplikatno ime uloge.',
+                    'name-not-found-to-delete' => 'Uloga s navedenim imenom nije pronađena za brisanje.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorije',
+        ],
+        'roles' => [
+            'title' => 'Uloge',
         ],
     ],
     'validation' => [

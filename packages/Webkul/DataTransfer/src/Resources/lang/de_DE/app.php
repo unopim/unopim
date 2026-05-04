@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Produkte',
-
+            'title'      => 'Produkte',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL-Schlüssel: \'%s\' wurde bereits für einen Artikel mit der SKU: \'%s\' generiert.',
@@ -34,13 +32,19 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Rollen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Doppelter Rollenname gefunden.',
+                    'name-not-found-to-delete' => 'Rolle mit dem angegebenen Namen wurde zum Löschen nicht gefunden.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Produkte',
-
+            'title'      => 'Produkte',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-Schlüssel: \'%s\' wurde bereits für einen Artikel mit der SKU: \'%s\' generiert.',
@@ -54,8 +58,10 @@ return [
         'categories' => [
             'title' => 'Kategorien',
         ],
+        'roles' => [
+            'title' => 'Rollen',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Die Spalten mit der Nummer „%s“ haben leere Kopfzeilen.',
@@ -68,7 +74,6 @@ return [
             'file-empty'           => 'Die Datei ist leer oder enthält keine Kopfzeile. Bitte laden Sie eine gültige Datei mit Daten hoch.',
         ],
     ],
-
     'job' => [
         'started'   => 'Jobausführung gestartet',
         'completed' => 'Jobausführung abgeschlossen',

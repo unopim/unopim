@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Продукты',
-
+            'title'      => 'Продукты',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'Ключ URL: \'%s\' уже был создан для элемента с SKU: \'%s\'.',
@@ -34,13 +32,19 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Роли',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Обнаружено дублирующееся имя роли.',
+                    'name-not-found-to-delete' => 'Роль с указанным именем не найдена для удаления.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Продукты',
-
+            'title'      => 'Продукты',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Ключ URL: \'%s\' уже был создан для элемента с SKU: \'%s\'.',
@@ -54,8 +58,10 @@ return [
         'categories' => [
             'title' => 'Категории',
         ],
+        'roles' => [
+            'title' => 'Роли',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Столбцы с номером «%s» имеют пустые заголовки.',
@@ -68,7 +74,6 @@ return [
             'file-empty'           => 'Файл пуст или не содержит строку заголовка. Пожалуйста, загрузите корректный файл с данными.',
         ],
     ],
-
     'job' => [
         'started'   => 'Выполнение задания началось',
         'completed' => 'Выполнение задания завершено',

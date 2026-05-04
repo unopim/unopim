@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roolit',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Päällekkäinen roolin nimi löytyi.',
+                    'name-not-found-to-delete' => 'Annetulla nimellä olevaa roolia ei löytynyt poistettavaksi.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriat',
+        ],
+        'roles' => [
+            'title' => 'Roolit',
         ],
     ],
     'validation' => [

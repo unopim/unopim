@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => '角色',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => '發現重複的角色名稱。',
+                    'name-not-found-to-delete' => '未找到指定名稱的角色以進行刪除。',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,9 @@ return [
         ],
         'categories' => [
             'title' => '分類',
+        ],
+        'roles' => [
+            'title' => '角色',
         ],
     ],
     'validation' => [

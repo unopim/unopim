@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Se encontró un nombre de rol duplicado.',
+                    'name-not-found-to-delete' => 'No se encontró un rol con el nombre especificado para eliminar.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorías',
+        ],
+        'roles' => [
+            'title' => 'Roles',
         ],
     ],
     'validation' => [

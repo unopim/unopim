@@ -32,6 +32,16 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roller',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Yinelenen rol adı bulundu.',
+                    'name-not-found-to-delete' => 'Belirtilen ada sahip rol silinmek için bulunamadı.',
+                ],
+            ],
+        ],
+
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +58,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriler',
+        ],
+        'roles' => [
+            'title' => 'Roller',
         ],
     ],
     'validation' => [

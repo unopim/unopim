@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Ролі',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Знайдено дубльовану назву ролі.',
+                    'name-not-found-to-delete' => 'Роль із зазначеним ім’ям не знайдено для видалення.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,9 @@ return [
         ],
         'categories' => [
             'title' => 'Категорії',
+        ],
+        'roles' => [
+            'title' => 'Ролі',
         ],
     ],
     'validation' => [

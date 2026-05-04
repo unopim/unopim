@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Producten',
-
+            'title'      => 'Producten',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'url-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -34,13 +32,19 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Rollen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Dubbele rolnaam gevonden.',
+                    'name-not-found-to-delete' => 'Rol met de opgegeven naam niet gevonden om te verwijderen.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Producten',
-
+            'title'      => 'Producten',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -54,8 +58,10 @@ return [
         'categories' => [
             'title' => 'Categorieën',
         ],
+        'roles' => [
+            'title' => 'Rollen',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Kolommen nummer "%s" hebben lege kopteksten.',
@@ -68,7 +74,6 @@ return [
             'file-empty'           => 'Het bestand is leeg of bevat geen kopregel. Upload een geldig bestand met gegevens.',
         ],
     ],
-
     'job' => [
         'started'   => 'De uitvoering van de werkzaamheden is begonnen',
         'completed' => 'Uitvoering van de taak voltooid',

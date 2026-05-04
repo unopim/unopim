@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roller',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplikeret rollenavn fundet.',
+                    'name-not-found-to-delete' => 'Rolle med det angivne navn blev ikke fundet til sletning.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorier',
+        ],
+        'roles' => [
+            'title' => 'Roller',
         ],
     ],
     'validation' => [

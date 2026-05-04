@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => '역할',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => '중복된 역할 이름이 발견되었습니다.',
+                    'name-not-found-to-delete' => '지정된 이름의 역할을 삭제할 수 없습니다.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,9 @@ return [
         ],
         'categories' => [
             'title' => '카테고리',
+        ],
+        'roles' => [
+            'title' => '역할',
         ],
     ],
     'validation' => [

@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Vai trò',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Phát hiện tên vai trò trùng lặp.',
+                    'name-not-found-to-delete' => 'Không tìm thấy vai trò với tên đã chỉ định để xóa.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,9 @@ return [
         ],
         'categories' => [
             'title' => 'Các danh mục',
+        ],
+        'roles' => [
+            'title' => 'Vai trò',
         ],
     ],
     'validation' => [

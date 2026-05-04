@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roluri',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Nume de rol duplicat găsit.',
+                    'name-not-found-to-delete' => 'Rolul cu numele specificat nu a fost găsit pentru ștergere.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorii',
+        ],
+        'roles' => [
+            'title' => 'Roluri',
         ],
     ],
     'validation' => [

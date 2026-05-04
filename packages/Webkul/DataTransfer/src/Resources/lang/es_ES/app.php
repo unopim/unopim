@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Productos',
-
+            'title'      => 'Productos',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'La clave URL: \'%s\' ya se generó para un artículo con el SKU: \'%s\'.',
@@ -34,13 +32,19 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Se encontró un nombre de rol duplicado.',
+                    'name-not-found-to-delete' => 'No se encontró un rol con el nombre especificado para eliminar.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Productos',
-
+            'title'      => 'Productos',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'La clave URL: \'%s\' ya se generó para un artículo con el SKU: \'%s\'.',
@@ -54,8 +58,10 @@ return [
         'categories' => [
             'title' => 'Categorías',
         ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Las columnas número "%s" tienen encabezados vacíos.',
@@ -68,7 +74,6 @@ return [
             'file-empty'           => 'El archivo está vacío o no contiene una fila de encabezado. Por favor, suba un archivo válido con datos.',
         ],
     ],
-
     'job' => [
         'started'   => 'La ejecución del trabajo ha comenzado.',
         'completed' => 'Ejecución del trabajo completada',

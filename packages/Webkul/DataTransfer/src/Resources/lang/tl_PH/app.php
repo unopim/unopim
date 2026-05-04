@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Mga Tungkulin',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Natagpuan ang duplicate na pangalan ng tungkulin.',
+                    'name-not-found-to-delete' => 'Walang natagpuang tungkulin na may tinukoy na pangalan para burahin.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,9 @@ return [
         ],
         'categories' => [
             'title' => 'Mga Kategorya',
+        ],
+        'roles' => [
+            'title' => 'Mga Tungkulin',
         ],
     ],
     'validation' => [

@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Funções',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Nome de função duplicado encontrado.',
+                    'name-not-found-to-delete' => 'Função com o nome especificado não encontrada para eliminar.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +57,10 @@ return [
         ],
         'categories' => [
             'title' => 'Categorias',
+        ],
+
+        'roles' => [
+            'title' => 'Funções',
         ],
     ],
     'validation' => [

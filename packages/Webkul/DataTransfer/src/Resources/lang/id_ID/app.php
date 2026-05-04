@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Produk',
-
+            'title'      => 'Produk',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'Kunci URL: \'%s\' telah dibuat untuk item dengan SKU: \'%s\'.',
@@ -34,13 +32,19 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Peran',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Nama peran duplikat ditemukan.',
+                    'name-not-found-to-delete' => 'Peran dengan nama yang ditentukan tidak ditemukan untuk dihapus.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Produk',
-
+            'title'      => 'Produk',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Kunci URL: \'%s\' telah dibuat untuk item dengan SKU: \'%s\'.',
@@ -54,8 +58,10 @@ return [
         'categories' => [
             'title' => 'Kategori',
         ],
+        'roles' => [
+            'title' => 'Peran',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Kolom nomor "%s" memiliki header kosong.',
@@ -68,7 +74,6 @@ return [
             'file-empty'           => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',
         ],
     ],
-
     'job' => [
         'started'   => 'Eksekusi pekerjaan dimulai',
         'completed' => 'Eksekusi pekerjaan selesai',

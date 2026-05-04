@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Бүтээгдэхүүн',
-
+            'title'      => 'Бүтээгдэхүүн',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL түлхүүр: \'%s\' SKU-тай зүйлд аль хэдийн үүсгэгдсэн: \'%s\'.',
@@ -34,13 +32,19 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Дүрүүд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Давхардсан дүрийн нэр олдлоо.',
+                    'name-not-found-to-delete' => 'Устгах нэртэй дүр олдсонгүй.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Бүтээгдэхүүн',
-
+            'title'      => 'Бүтээгдэхүүн',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL түлхүүр: \'%s\' SKU-тай зүйлд аль хэдийн үүсгэгдсэн: \'%s\'.',
@@ -54,8 +58,11 @@ return [
         'categories' => [
             'title' => 'Ангилал',
         ],
-    ],
 
+        'roles' => [
+            'title' => 'Дүрүүд',
+        ],
+    ],
     'validation' => [
         'errors' => [
             'column-empty-headers' => '"%s" дугаартай баганын толгой хоосон байна.',
@@ -68,7 +75,6 @@ return [
             'file-empty'           => 'Файл хоосон эсвэл толгой мөр агуулаагүй байна. Өгөгдөл бүхий зөв файл байршуулна уу.',
         ],
     ],
-
     'job' => [
         'started'   => 'Ажлын гүйцэтгэл эхэлсэн',
         'completed' => 'Ажлын гүйцэтгэл дууссан',

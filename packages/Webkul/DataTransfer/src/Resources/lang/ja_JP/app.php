@@ -32,8 +32,16 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'ロール',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => '重複したロール名が見つかりました。',
+                    'name-not-found-to-delete' => '指定された名前のロールが削除対象として見つかりません。',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
         'products' => [
             'title'      => '製品',
@@ -50,8 +58,11 @@ return [
         'categories' => [
             'title' => 'カテゴリー',
         ],
-    ],
 
+        'roles' => [
+            'title' => 'ロール',
+        ],
+    ],
     'validation' => [
         'errors' => [
             'column-empty-headers' => '列番号「%s」のヘッダーが空です。',
@@ -64,7 +75,6 @@ return [
             'file-empty'           => 'ファイルが空であるか、ヘッダー行が含まれていません。データを含む有効なファイルをアップロードしてください。',
         ],
     ],
-
     'job' => [
         'started'   => 'ジョブの実行が開始されました',
         'completed' => 'ジョブの実行が完了しました',
