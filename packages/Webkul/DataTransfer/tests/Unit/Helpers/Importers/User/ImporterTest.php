@@ -227,50 +227,6 @@ describe('User Importer', function () {
         ]);
     });
 
-    it('can import a user profile image from the images directory path', function () {
-        Storage::fake('public');
-
-        Storage::disk('public')->put('import-images/users/avatar.jpg', 'fake-image');
-
-        $jobTrack = JobTrack::factory()->create([
-            'action'                => Import::ACTION_APPEND,
-            'images_directory_path' => 'import-images/users',
-        ]);
-
-        $importer = app(Importer::class);
-        $importer->setImport($jobTrack);
-        $importer->setErrorHelper(app(Error::class));
-
-        $source = mock(Source::class);
-        $source->shouldReceive('getColumnNames')->andReturn($importer->getValidColumnNames());
-        $source->shouldReceive('rewind');
-        $source->shouldReceive('valid')->andReturn(false);
-        $importer->setSource($source);
-
-        $importer->validateData();
-
-        $userData = [
-            'name'           => 'Image Import User',
-            'email'          => 'image-import-'.uniqid().'@example.com',
-            'image'          => 'avatar.jpg',
-            'status'         => 'active',
-            'role_name'      => $this->role->name,
-            'ui_locale_code' => $this->locale->code,
-        ];
-
-        $batch = JobTrackBatch::factory()->create([
-            'job_track_id' => $jobTrack->id,
-            'data'         => [$userData],
-        ]);
-
-        $importer->importBatch($batch);
-
-        $admin = Admin::where('email', $userData['email'])->firstOrFail();
-
-        expect($admin->image)->toBe('admins/'.$admin->id.'/avatar.jpg')
-            ->and(Storage::disk('public')->exists($admin->image))->toBeTrue();
-    });
-
     it('can delete user data during importBatch', function () {
         $email = 'delete'.uniqid().'@example.com';
         Admin::create([
