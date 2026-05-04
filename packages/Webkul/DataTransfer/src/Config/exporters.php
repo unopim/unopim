@@ -86,4 +86,35 @@ return [
             ],
         ],
     ],
+
+    'roles' => [
+        'title'       => 'data_transfer::app.exporters.roles.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Role\Exporter',
+        'source'      => 'Webkul\User\Repositories\RoleRepository',
+        'sample_path' => 'data-transfer/samples/roles.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\RoleJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'File Format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
 ];

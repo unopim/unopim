@@ -34,6 +34,15 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'            => 'Duplicate Role name found.',
+                    'name-not-found-to-delete'  => 'Role with specified name not found to delete.',
+                ],
+            ],
+        ],
     ],
 
     'exporters' => [
@@ -53,6 +62,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categories',
+        ],
+        'roles' => [
+            'title' => 'Roles',
         ],
     ],
 

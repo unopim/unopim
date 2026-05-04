@@ -450,7 +450,7 @@ class Export
      */
     public function uploadFile(string $filePath, string $temporaryPath, array $filters): void
     {
-        $withMedia = (bool) $filters['with_media'];
+        $withMedia = (bool) ($filters['with_media'] ?? false);
         $filePath = $withMedia ? $temporaryPath : $filePath;
         $export = $this->jobTrackRepository->update([
             'file_path' => $filePath,
