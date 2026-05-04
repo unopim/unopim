@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Пользователи',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Пользователь с указанным email не найден для удаления.',
+                    'invalid-role'              => 'Обнаружено недопустимое имя роли.',
+                    'invalid-locale'            => 'Обнаружен недопустимый код локали UI.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,14 @@ return [
         ],
         'roles' => [
             'title' => 'Роли',
+        ],
+        'users' => [
+            'title'   => 'Пользователи',
+            'filters' => [
+                'status' => 'Статус',
+                'active' => 'Активный',
+                'all'    => 'Все',
+            ],
         ],
     ],
     'validation' => [

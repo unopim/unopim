@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'المستخدمون',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'لم يتم العثور على مستخدم بالبريد الإلكتروني المحدد للحذف.',
+                    'invalid-role'              => 'تم العثور على اسم دور غير صالح.',
+                    'invalid-locale'            => 'تم العثور على رمز لغة واجهة مستخدم غير صالح.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,14 @@ return [
         ],
         'roles' => [
             'title' => 'الأدوار',
+        ],
+        'users' => [
+            'title'   => 'المستخدمون',
+            'filters' => [
+                'status' => 'الحالة',
+                'active' => 'نشط',
+                'all'    => 'الكل',
+            ],
         ],
     ],
     'validation' => [

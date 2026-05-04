@@ -41,7 +41,16 @@ return [
                 ],
             ],
         ],
-
+        'users' => [
+            'title'      => 'Utilisateurs',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Aucun utilisateur avec l\'email spécifié n\'a été trouvé pour suppression.',
+                    'invalid-role'              => 'Nom de rôle invalide trouvé.',
+                    'invalid-locale'            => 'Code de langue de l\'interface invalide trouvé.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -59,9 +68,17 @@ return [
         'categories' => [
             'title' => 'Catégories',
         ],
-
         'roles' => [
             'title' => 'Rôles',
+        ],
+
+        'users' => [
+            'title'   => 'Utilisateurs',
+            'filters' => [
+                'status' => 'Statut',
+                'active' => 'Actif',
+                'all'    => 'Tous',
+            ],
         ],
     ],
     'validation' => [

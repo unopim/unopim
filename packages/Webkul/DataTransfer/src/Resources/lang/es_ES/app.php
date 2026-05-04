@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Usuarios',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'No se encontró el usuario con el correo electrónico especificado para eliminar.',
+                    'invalid-role'              => 'Se encontró un nombre de rol no válido.',
+                    'invalid-locale'            => 'Se encontró un código de configuración regional de interfaz de usuario no válido.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,14 @@ return [
         ],
         'roles' => [
             'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Usuarios',
+            'filters' => [
+                'status' => 'Estado',
+                'active' => 'Activo',
+                'all'    => 'Todo',
+            ],
         ],
     ],
     'validation' => [

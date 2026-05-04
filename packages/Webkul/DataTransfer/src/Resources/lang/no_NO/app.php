@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Brukere',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Bruker med angitt e-post ble ikke funnet for sletting.',
+                    'invalid-role'              => 'Ugyldig rollenavn funnet.',
+                    'invalid-locale'            => 'Ugyldig UI-lokalkode funnet.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,15 @@ return [
         ],
         'roles' => [
             'title' => 'Roller',
+        ],
+
+        'users' => [
+            'title'   => 'Brukere',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alle',
+            ],
         ],
     ],
     'validation' => [

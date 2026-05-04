@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Gebruikers',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Gebruiker met het opgegeven e-mailadres niet gevonden om te verwijderen.',
+                    'invalid-role'              => 'Ongeldige rolnaam gevonden.',
+                    'invalid-locale'            => 'Ongeldige UI-taalcode gevonden.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,14 @@ return [
         ],
         'roles' => [
             'title' => 'Rollen',
+        ],
+        'users' => [
+            'title'   => 'Gebruikers',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Actief',
+                'all'    => 'Alle',
+            ],
         ],
     ],
     'validation' => [

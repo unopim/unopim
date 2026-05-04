@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Käyttäjät',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Annetulla sähköpostiosoitteella olevaa käyttäjää ei löytynyt poistettavaksi.',
+                    'invalid-role'              => 'Virheellinen roolin nimi löydetty.',
+                    'invalid-locale'            => 'Virheellinen käyttöliittymän kielikoodi löydetty.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,15 @@ return [
         ],
         'roles' => [
             'title' => 'Roolit',
+        ],
+
+        'users' => [
+            'title'   => 'Käyttäjät',
+            'filters' => [
+                'status' => 'Tila',
+                'active' => 'Aktiivinen',
+                'all'    => 'Kaikki',
+            ],
         ],
     ],
     'validation' => [

@@ -43,6 +43,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid Role name found.',
+                    'invalid-locale'            => 'Invalid UI Locale code found.',
+                ],
+            ],
+        ],
     ],
 
     'exporters' => [
@@ -65,6 +75,15 @@ return [
         ],
         'roles' => [
             'title' => 'Roles',
+        ],
+        'users' => [
+            'title' => 'Users',
+
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
 

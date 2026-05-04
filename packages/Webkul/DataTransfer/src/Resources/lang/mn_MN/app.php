@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Хэрэглэгчид',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Заасан имэйлтэй хэрэглэгч устгахаар олдсонгүй.',
+                    'invalid-role'              => 'Буруу дүрийн нэр олдлоо.',
+                    'invalid-locale'            => 'Буруу UI локал код олдлоо.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -58,9 +68,16 @@ return [
         'categories' => [
             'title' => 'Ангилал',
         ],
-
         'roles' => [
             'title' => 'Дүрүүд',
+        ],
+        'users' => [
+            'title'   => 'Хэрэглэгчид',
+            'filters' => [
+                'status' => 'Төлөв',
+                'active' => 'Идэвхтэй',
+                'all'    => 'Бүгд',
+            ],
         ],
     ],
     'validation' => [

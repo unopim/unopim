@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Användare',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Användare med angiven e-post hittades inte för borttagning.',
+                    'invalid-role'              => 'Ogiltigt rollnamn hittades.',
+                    'invalid-locale'            => 'Ogiltig UI-lokalkod hittades.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -58,9 +68,17 @@ return [
         'categories' => [
             'title' => 'Kategorier',
         ],
-
         'roles' => [
             'title' => 'Roller',
+        ],
+
+        'users' => [
+            'title'   => 'Användare',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alla',
+            ],
         ],
     ],
     'validation' => [

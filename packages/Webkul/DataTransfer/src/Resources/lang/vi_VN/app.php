@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Người dùng',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Không tìm thấy người dùng với email đã chỉ định để xóa.',
+                    'invalid-role'              => 'Phát hiện tên vai trò không hợp lệ.',
+                    'invalid-locale'            => 'Phát hiện mã locale giao diện không hợp lệ.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,15 @@ return [
         ],
         'roles' => [
             'title' => 'Vai trò',
+        ],
+
+        'users' => [
+            'title'   => 'Người dùng',
+            'filters' => [
+                'status' => 'Trạng thái',
+                'active' => 'Hoạt động',
+                'all'    => 'Tất cả',
+            ],
         ],
     ],
     'validation' => [

@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Utilizadores',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Utilizador com o e-mail especificado não encontrado para eliminação.',
+                    'invalid-role'              => 'Nome de função inválido encontrado.',
+                    'invalid-locale'            => 'Código de localidade de UI inválido encontrado.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -58,9 +68,17 @@ return [
         'categories' => [
             'title' => 'Categorias',
         ],
-
         'roles' => [
             'title' => 'Funções',
+        ],
+
+        'users' => [
+            'title'   => 'Utilizadores',
+            'filters' => [
+                'status' => 'Estado',
+                'active' => 'Ativo',
+                'all'    => 'Todos',
+            ],
         ],
     ],
     'validation' => [

@@ -41,6 +41,17 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => '用户',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => '未找到指定邮箱的用户以进行删除。',
+                    'invalid-role'              => '发现无效的角色名称。',
+                    'invalid-locale'            => '发现无效的界面语言代码。',
+                ],
+            ],
+        ],
+
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +71,14 @@ return [
         ],
         'roles' => [
             'title' => '角色',
+        ],
+        'users' => [
+            'title'   => '用户',
+            'filters' => [
+                'status' => '状态',
+                'active' => '激活',
+                'all'    => '全部',
+            ],
         ],
     ],
     'validation' => [

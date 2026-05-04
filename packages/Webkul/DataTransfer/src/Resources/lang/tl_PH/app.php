@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Mga Gumagamit',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Walang natagpuang gumagamit na may tinukoy na email para burahin.',
+                    'invalid-role'              => 'May nakitang hindi wastong pangalan ng tungkulin.',
+                    'invalid-locale'            => 'May nakitang hindi wastong UI locale code.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,14 @@ return [
         ],
         'roles' => [
             'title' => 'Mga Tungkulin',
+        ],
+        'users' => [
+            'title'   => 'Mga Gumagamit',
+            'filters' => [
+                'status' => 'Katayuan',
+                'active' => 'Aktibo',
+                'all'    => 'Lahat',
+            ],
         ],
     ],
     'validation' => [

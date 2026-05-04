@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Utilizatori',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Utilizatorul cu emailul specificat nu a fost găsit pentru ștergere.',
+                    'invalid-role'              => 'Nume de rol invalid găsit.',
+                    'invalid-locale'            => 'Cod de localizare UI invalid găsit.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,14 @@ return [
         ],
         'roles' => [
             'title' => 'Roluri',
+        ],
+        'users' => [
+            'title'   => 'Utilizatori',
+            'filters' => [
+                'status' => 'Stare',
+                'active' => 'Activ',
+                'all'    => 'Toți',
+            ],
         ],
     ],
     'validation' => [

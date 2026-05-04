@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => '사용자',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => '지정된 이메일의 사용자를 삭제할 수 없습니다.',
+                    'invalid-role'              => '잘못된 역할 이름이 발견되었습니다.',
+                    'invalid-locale'            => '잘못된 UI 로케일 코드가 발견되었습니다.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,15 @@ return [
         ],
         'roles' => [
             'title' => '역할',
+        ],
+
+        'users' => [
+            'title'   => '사용자',
+            'filters' => [
+                'status' => '상태',
+                'active' => '활성',
+                'all'    => '전체',
+            ],
         ],
     ],
     'validation' => [

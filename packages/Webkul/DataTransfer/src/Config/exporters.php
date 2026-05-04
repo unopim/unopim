@@ -117,4 +117,54 @@ return [
             ],
         ],
     ],
+
+    'users' => [
+        'title'       => 'data_transfer::app.exporters.users.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\User\Exporter',
+        'source'      => 'Webkul\User\Repositories\AdminRepository',
+        'sample_path' => 'data-transfer/samples/users.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\UserJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'File Format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ], [
+                    'name'     => 'with_media',
+                    'title'    => 'With Media',
+                    'required' => false,
+                    'type'     => 'boolean',
+                ], [
+                    'name'     => 'status',
+                    'title'    => 'data_transfer::app.exporters.users.filters.status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
+                        [
+                            'label' => 'data_transfer::app.exporters.users.filters.active',
+                            'value' => 'active',
+                        ], [
+                            'label' => 'data_transfer::app.exporters.users.filters.all',
+                            'value' => 'all',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
 ];

@@ -41,6 +41,17 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Користувачі',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Користувача з вказаною електронною поштою не знайдено для видалення.',
+                    'invalid-role'              => 'Знайдено недійсну назву ролі.',
+                    'invalid-locale'            => 'Знайдено недійсний код локалі UI.',
+                ],
+            ],
+        ],
+
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +71,14 @@ return [
         ],
         'roles' => [
             'title' => 'Ролі',
+        ],
+        'users' => [
+            'title'   => 'Користувачі',
+            'filters' => [
+                'status' => 'Статус',
+                'active' => 'Активний',
+                'all'    => 'Усі',
+            ],
         ],
     ],
     'validation' => [

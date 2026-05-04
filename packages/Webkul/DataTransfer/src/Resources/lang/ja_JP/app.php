@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'ユーザー',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => '指定されたメールアドレスのユーザーが削除対象として見つかりません。',
+                    'invalid-role'              => '無効なロール名が見つかりました。',
+                    'invalid-locale'            => '無効なUIロケールコードが見つかりました。',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -58,9 +68,16 @@ return [
         'categories' => [
             'title' => 'カテゴリー',
         ],
-
         'roles' => [
             'title' => 'ロール',
+        ],
+        'users' => [
+            'title'   => 'ユーザー',
+            'filters' => [
+                'status' => 'ステータス',
+                'active' => '有効',
+                'all'    => 'すべて',
+            ],
         ],
     ],
     'validation' => [

@@ -41,6 +41,16 @@ return [
                 ],
             ],
         ],
+        'users' => [
+            'title'      => 'Pengguna',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Pengguna dengan email yang ditentukan tidak ditemukan untuk dihapus.',
+                    'invalid-role'              => 'Nama peran tidak valid ditemukan.',
+                    'invalid-locale'            => 'Kode lokal UI tidak valid ditemukan.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -60,6 +70,14 @@ return [
         ],
         'roles' => [
             'title' => 'Peran',
+        ],
+        'users' => [
+            'title'   => 'Pengguna',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktif',
+                'all'    => 'Semua',
+            ],
         ],
     ],
     'validation' => [
