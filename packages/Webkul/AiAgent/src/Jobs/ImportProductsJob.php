@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
@@ -95,7 +96,7 @@ class ImportProductsJob implements ShouldQueue
                             'attribute_family_id' => $this->familyId,
                         ]);
 
-                        $values['common']['url_key'] = \Illuminate\Support\Str::slug($normalizedRow['name'] ?? $sku);
+                        $values['common']['url_key'] = Str::slug($normalizedRow['name'] ?? $sku);
 
                         if (isset($normalizedRow['product_number'])) {
                             $values['common']['product_number'] = $normalizedRow['product_number'];

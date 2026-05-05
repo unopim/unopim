@@ -33,15 +33,15 @@ it('ProductController catches ValidationException from update and flashes an err
     );
 
     expect($source)
-        ->toContain("productRepository->update(\$data, \$id)")
-        ->toContain("catch (ValidationException \$e)")
+        ->toContain('productRepository->update($data, $id)')
+        ->toContain('catch (ValidationException $e)')
         ->toContain("session()->flash('error'");
 });
 
 it('file-size-exceeds translation key exists in every admin language file', function () {
     $langDir = base_path('packages/Webkul/Admin/src/Resources/lang');
 
-    $files = glob($langDir . '/*/app.php');
+    $files = glob($langDir.'/*/app.php');
 
     expect($files)->not->toBeEmpty();
 
