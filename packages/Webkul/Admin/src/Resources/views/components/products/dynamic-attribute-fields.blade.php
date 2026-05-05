@@ -76,6 +76,7 @@
                     $globaltranslationEnabled == 1
                     && ($fieldType == 'text' || $fieldType == 'textarea')
                     && $field->ai_translate == 1
+                    && bouncer()->hasPermission('ai-agent')
                 )
                     <span>
                         @include('admin::catalog.products.edit.fields.translate-button', [

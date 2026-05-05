@@ -357,6 +357,10 @@ class MagicAIController extends Controller
 
     public function isTranslatable(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $productId = request()->resource_id;
         $product = $this->productRepository->find($productId);
         $productData = $product->toArray();
@@ -372,6 +376,10 @@ class MagicAIController extends Controller
 
     public function translateToManyLocale(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $field = request()->input('field');
         $targetLocales = explode(',', request()->input('targetLocale'));
         $translatedData = [];
@@ -406,6 +414,10 @@ class MagicAIController extends Controller
 
     public function saveTranslatedData(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $id = request()->resource_id;
         $translatedData = json_decode(request()->translatedData, true);
         $channel = request()->input('targetChannel');
@@ -416,8 +428,12 @@ class MagicAIController extends Controller
         return response()->json(['message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed')]);
     }
 
-    public function isAllAttributeTranslatable(): array
+    public function isAllAttributeTranslatable(): array|JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $productId = request()->resource_id;
         $product = $this->productRepository->find($productId);
         $productData = $product->toArray();
@@ -447,6 +463,10 @@ class MagicAIController extends Controller
 
     public function translateAllAttribute(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $attributes = $this->isAllAttributeTranslatable();
 
         if (empty($attributes)) {
@@ -498,6 +518,10 @@ class MagicAIController extends Controller
 
     public function saveAllTranslatedAttributes(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $productId = request()->resource_id;
         $translatedValues = json_decode(request()->translatedData, true);
         $channel = request()->input('targetChannel');

@@ -2512,6 +2512,7 @@ return [
         'enable'         => 'Enabled',
         'disable'        => 'Disabled',
         'no-match-found' => 'No Match Found!',
+        'unauthorized'   => 'You do not have permission to perform this action.',
     ],
 
     'default-prompt' => [
