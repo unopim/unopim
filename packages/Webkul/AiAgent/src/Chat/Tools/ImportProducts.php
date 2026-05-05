@@ -120,6 +120,34 @@ class ImportProducts implements PimTool
                     $normalizedRows[] = $normalizedRow;
                 }
 
+                // Per-row ACL filtering: skip rows the user is not permitted to touch
+                $canCreate = $context->hasPermission('catalog.products.create');
+                $canEdit = $context->hasPermission('catalog.products.edit');
+                $aclSkipped = 0;
+                $aclErrors = [];
+                $filteredRows = [];
+
+                foreach ($normalizedRows as $row) {
+                    $sku = trim((string) ($row['sku'] ?? ''));
+                    $productExists = DB::table('products')->where('sku', $sku)->exists();
+
+                    if ($productExists && ! $canEdit) {
+                        $aclSkipped++;
+                        $aclErrors[] = "SKU '{$sku}' skipped: updating existing products requires 'catalog.products.edit' permission.";
+
+                        continue;
+                    }
+
+                    if (! $productExists && ! $canCreate) {
+                        $aclSkipped++;
+                        $aclErrors[] = "SKU '{$sku}' skipped: creating new products requires 'catalog.products.create' permission.";
+
+                        continue;
+                    }
+
+                    $filteredRows[] = $row;
+                }
+
                 $storedFilePath = $this->storeImportFile($filePath, $originalFileName);
                 $jobInstance = $this->createJobInstance(
                     $storedFilePath,
@@ -134,7 +162,7 @@ class ImportProducts implements PimTool
 
                 ImportProductsJob::dispatch(
                     $jobTrack->id,
-                    $normalizedRows,
+                    $filteredRows,
                     $mode,
                     $familyId,
                     $familyAttrs,
@@ -143,13 +171,28 @@ class ImportProducts implements PimTool
                     $context->locale,
                 );
 
+                // When QUEUE_CONNECTION=sync the job runs inline; read back the actual counts.
+                $jobTrack->refresh();
+                $summary = $jobTrack->summary;
+
+                if ($summary && isset($summary['created'])) {
+                    return json_encode([
+                        'result' => [
+                            'created' => $summary['created'],
+                            'updated' => $summary['updated'],
+                            'skipped' => $aclSkipped,
+                            'errors'  => $aclErrors,
+                        ],
+                    ]);
+                }
+
                 return json_encode([
                     'result' => [
                         'total_rows'  => count($rows),
-                        'queued_rows' => count($normalizedRows),
-                        'skipped'     => count($skippedInvalidSku),
+                        'queued_rows' => count($filteredRows),
+                        'skipped'     => count($skippedInvalidSku) + $aclSkipped,
                         'tracker_id'  => $jobTrack->id,
-                        'message'     => 'Import job has been queued. All '.count($normalizedRows).' rows will be processed in the background. Check the tracker for progress.',
+                        'message'     => 'Import job has been queued. All '.count($filteredRows).' rows will be processed in the background. Check the tracker for progress.',
                     ],
                 ]);
             });
