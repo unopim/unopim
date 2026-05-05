@@ -11,12 +11,11 @@ use Prism\Prism\Tool;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\AiAgent\Jobs\ImportProductsJob;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
-use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
-use Webkul\DataTransfer\Services\JobLogger;
 
 /**
  * Import/update products from an uploaded CSV or XLSX file.
@@ -29,11 +28,6 @@ class ImportProducts implements PimTool
     use ChecksPermission;
 
     /**
-     * Maximum rows to process per import to prevent timeouts.
-     */
-    protected const MAX_ROWS = 200;
-
-    /**
      * Detected CSV delimiter for the current import.
      */
     protected string $detectedDelimiter = ',';
@@ -42,7 +36,6 @@ class ImportProducts implements PimTool
         protected ProductWriterService $writerService,
         protected JobInstancesRepository $jobInstancesRepository,
         protected JobTrackRepository $jobTrackRepository,
-        protected JobTrackBatchRepository $jobTrackBatchRepository,
     ) {}
 
     public function register(ChatContext $context): Tool
@@ -106,6 +99,27 @@ class ImportProducts implements PimTool
                     return json_encode(['error' => "Attribute family '{$family_code}' not found."]);
                 }
 
+                // Normalize all rows to lowercase keys before dispatching
+                $normalizedRows = [];
+                $skippedInvalidSku = [];
+
+                foreach ($rows as $i => $row) {
+                    $normalizedRow = [];
+                    foreach ($row as $key => $value) {
+                        $normalizedRow[strtolower(trim((string) $key))] = $value;
+                    }
+
+                    $sku = trim((string) ($normalizedRow['sku'] ?? ''));
+
+                    if (empty($sku) || ! $this->validateSku($sku)) {
+                        $skippedInvalidSku[] = 'Row '.($i + 2).': Invalid or empty SKU.';
+
+                        continue;
+                    }
+
+                    $normalizedRows[] = $normalizedRow;
+                }
+
                 $storedFilePath = $this->storeImportFile($filePath, $originalFileName);
                 $jobInstance = $this->createJobInstance(
                     $storedFilePath,
@@ -114,125 +128,30 @@ class ImportProducts implements PimTool
                     $context,
                 );
                 $jobTrack = $this->createJobTrack($jobInstance);
-                $logger = JobLogger::make($jobTrack->id);
-
-                $logger->info('AI import request received.');
 
                 $familyAttrs = $this->writerService->getFamilyAttributesPublic($familyId);
                 $currencies = DB::table('currencies')->where('status', 1)->pluck('code')->toArray() ?: ['USD'];
-                $repo = app('Webkul\Product\Repositories\ProductRepository');
 
-                $created = 0;
-                $updated = 0;
-                $skipped = 0;
-                $errors = [];
-                $processedRows = 0;
+                ImportProductsJob::dispatch(
+                    $jobTrack->id,
+                    $normalizedRows,
+                    $mode,
+                    $familyId,
+                    $familyAttrs,
+                    $currencies,
+                    $context->channel,
+                    $context->locale,
+                );
 
-                try {
-                    $this->markTrackAsProcessing($jobTrack->id);
-
-                    foreach ($rows as $i => $row) {
-                        if ($processedRows >= self::MAX_ROWS) {
-                            break;
-                        }
-
-                        $processedRows++;
-
-                        // Re-key with lowercase headers
-                        $normalizedRow = [];
-                        foreach ($row as $key => $value) {
-                            $normalizedRow[strtolower(trim((string) $key))] = $value;
-                        }
-
-                        $sku = trim((string) ($normalizedRow['sku'] ?? ''));
-
-                        if (empty($sku)) {
-                            $skipped++;
-
-                            continue;
-                        }
-
-                        if (! $this->validateSku($sku)) {
-                            $skipped++;
-                            $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): Invalid SKU format. SKU must contain only letters, numbers, hyphens, and underscores.";
-
-                            continue;
-                        }
-
-                        try {
-                            $existingProduct = DB::table('products')->where('sku', $sku)->first();
-
-                            if ($existingProduct && $mode === 'create_only') {
-                                $skipped++;
-
-                                continue;
-                            }
-
-                            if (! $existingProduct && $mode === 'update_only') {
-                                $skipped++;
-
-                                continue;
-                            }
-
-                            if ($existingProduct && ! $context->hasPermission('catalog.products.edit')) {
-                                $skipped++;
-                                $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): Permission denied: you do not have 'catalog.products.edit' access.";
-
-                                continue;
-                            }
-
-                            if (! $existingProduct && ! $context->hasPermission('catalog.products.create')) {
-                                $skipped++;
-                                $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): Permission denied: you do not have 'catalog.products.create' access.";
-
-                                continue;
-                            }
-
-                            if ($existingProduct) {
-                                $this->updateProduct($existingProduct, $normalizedRow, $familyAttrs, $currencies, $context, $repo);
-                                $updated++;
-                            } else {
-                                $this->createProduct($sku, $normalizedRow, $familyId, $familyAttrs, $currencies, $context, $repo);
-                                $created++;
-                            }
-                        } catch (\Throwable $e) {
-                            $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): {$e->getMessage()}";
-                        }
-                    }
-
-                    $result = [
-                        'total_rows' => count($rows),
-                        'processed'  => $processedRows,
-                        'created'    => $created,
-                        'updated'    => $updated,
-                        'skipped'    => $skipped,
-                        'errors'     => empty($errors) ? null : array_slice($errors, 0, 10),
-                        'tracker_id' => $jobTrack->id,
-                    ];
-
-                    if ($processedRows < count($rows)) {
-                        $result['warning'] = 'Only the first '.self::MAX_ROWS.' rows were processed. Remaining rows were skipped.';
-                    }
-
-                    $this->markTrackAsCompleted(
-                        $jobTrack->id,
-                        $processedRows,
-                        $created,
-                        $updated,
-                        $errors,
-                        $logger
-                    );
-
-                    return json_encode(['result' => $result]);
-                } catch (\Throwable $exception) {
-                    $this->markTrackAsFailed($jobTrack->id, $exception->getMessage(), $logger);
-
-                    report($exception);
-
-                    return json_encode([
-                        'error' => 'Failed to import products. Please try again.',
-                    ]);
-                }
+                return json_encode([
+                    'result' => [
+                        'total_rows'  => count($rows),
+                        'queued_rows' => count($normalizedRows),
+                        'skipped'     => count($skippedInvalidSku),
+                        'tracker_id'  => $jobTrack->id,
+                        'message'     => 'Import job has been queued. All '.count($normalizedRows).' rows will be processed in the background. Check the tracker for progress.',
+                    ],
+                ]);
             });
     }
 
@@ -295,76 +214,6 @@ class ImportProducts implements PimTool
             'created_at'            => now(),
             'updated_at'            => now(),
         ]);
-    }
-
-    /**
-     * Mark the tracker row as actively processing.
-     */
-    protected function markTrackAsProcessing(int $jobTrackId): void
-    {
-        $this->jobTrackRepository->update([
-            'state'      => ImportHelper::STATE_PROCESSING,
-            'started_at' => now(),
-            'summary'    => [],
-        ], $jobTrackId);
-    }
-
-    /**
-     * Mark the tracker and its single batch as completed.
-     */
-    protected function markTrackAsCompleted(
-        int $jobTrackId,
-        int $processedRows,
-        int $created,
-        int $updated,
-        array $errors,
-        $logger
-    ): void {
-        $summary = [
-            'created' => $created,
-            'updated' => $updated,
-            'deleted' => 0,
-        ];
-
-        $this->jobTrackBatchRepository->create([
-            'state'        => ImportHelper::STATE_PROCESSED,
-            'data'         => ['processed_rows' => $processedRows],
-            'summary'      => $summary,
-            'job_track_id' => $jobTrackId,
-        ]);
-
-        $this->jobTrackRepository->update([
-            'state'                => ImportHelper::STATE_COMPLETED,
-            'processed_rows_count' => $processedRows,
-            'invalid_rows_count'   => count($errors),
-            'errors_count'         => count($errors),
-            'errors'               => empty($errors) ? null : array_slice($errors, 0, 10),
-            'summary'              => $summary,
-            'completed_at'         => now(),
-        ], $jobTrackId);
-
-        $logger->info(sprintf(
-            'AI import completed successfully. Processed: %d, created: %d, updated: %d, errors: %d.',
-            $processedRows,
-            $created,
-            $updated,
-            count($errors)
-        ));
-    }
-
-    /**
-     * Mark the tracker row as failed.
-     */
-    protected function markTrackAsFailed(int $jobTrackId, string $message, $logger): void
-    {
-        $this->jobTrackRepository->update([
-            'state'        => ImportHelper::STATE_FAILED,
-            'errors_count' => 1,
-            'errors'       => [$message],
-            'completed_at' => now(),
-        ], $jobTrackId);
-
-        $logger->error($message);
     }
 
     /**
@@ -469,154 +318,6 @@ class ImportProducts implements PimTool
             return $rows;
         } catch (\Throwable) {
             return null;
-        }
-    }
-
-    /**
-     * Create a new product from a CSV row.
-     */
-    protected function createProduct(
-        string $sku,
-        array $row,
-        int $familyId,
-        array $familyAttrs,
-        array $currencies,
-        ChatContext $context,
-        mixed $repo,
-    ): void {
-        $product = $repo->create([
-            'sku'                 => $sku,
-            'type'                => $row['type'] ?? 'simple',
-            'attribute_family_id' => $familyId,
-        ]);
-
-        $values = $product->values ?? [];
-        $values['common']['sku'] = $sku;
-        $values['common']['url_key'] = Str::slug($row['name'] ?? $sku);
-
-        if (isset($row['product_number'])) {
-            $values['common']['product_number'] = $row['product_number'];
-        } elseif (isset($familyAttrs['product_number'])) {
-            $values['common']['product_number'] = $sku;
-        }
-
-        // Handle status
-        if (isset($row['status'])) {
-            $isActive = \in_array(strtolower((string) $row['status']), ['1', 'active', 'yes', 'on', 'enabled'], true);
-            DB::table('products')->where('id', $product->id)->update(['status' => $isActive ? 1 : 0]);
-        }
-
-        // Handle categories
-        if (! empty($row['categories'])) {
-            $catCodes = array_map('trim', explode(',', (string) $row['categories']));
-            $validCodes = DB::table('categories')->whereIn('code', $catCodes)->pluck('code')->toArray();
-
-            if (! empty($validCodes)) {
-                $values['categories'] = $validCodes;
-            }
-        }
-
-        $this->applyAttributeValues($values, $row, $familyAttrs, $currencies, $context);
-
-        $repo->updateWithValues(['values' => $values], $product->id);
-    }
-
-    /**
-     * Update an existing product from a CSV row.
-     */
-    protected function updateProduct(
-        object $existingProduct,
-        array $row,
-        array $familyAttrs,
-        array $currencies,
-        ChatContext $context,
-        mixed $repo,
-    ): void {
-        $values = json_decode($existingProduct->values, true) ?? [];
-
-        // Reload family attrs for this specific product's family
-        $productFamilyAttrs = $this->writerService->getFamilyAttributesPublic($existingProduct->attribute_family_id);
-
-        // Handle status
-        if (isset($row['status'])) {
-            $isActive = \in_array(strtolower((string) $row['status']), ['1', 'active', 'yes', 'on', 'enabled'], true);
-            DB::table('products')->where('id', $existingProduct->id)->update(['status' => $isActive ? 1 : 0]);
-        }
-
-        // Handle categories
-        if (! empty($row['categories'])) {
-            $catCodes = array_map('trim', explode(',', (string) $row['categories']));
-            $validCodes = DB::table('categories')->whereIn('code', $catCodes)->pluck('code')->toArray();
-
-            if (! empty($validCodes)) {
-                $values['categories'] = $validCodes;
-            }
-        }
-
-        $this->applyAttributeValues($values, $row, $productFamilyAttrs, $currencies, $context);
-
-        $repo->updateWithValues(['values' => $values], $existingProduct->id);
-    }
-
-    /**
-     * Apply attribute values from a CSV row to the product values array.
-     */
-    protected function applyAttributeValues(
-        array &$values,
-        array $row,
-        array $familyAttrs,
-        array $currencies,
-        ChatContext $context,
-    ): void {
-        $skipColumns = ['sku', 'type', 'status', 'categories', 'product_number'];
-
-        foreach ($row as $column => $cellValue) {
-            $column = strtolower(trim((string) $column));
-
-            if (\in_array($column, $skipColumns, true) || $cellValue === null || $cellValue === '') {
-                continue;
-            }
-
-            if (! isset($familyAttrs[$column])) {
-                continue;
-            }
-
-            $meta = $familyAttrs[$column];
-            $value = $cellValue;
-
-            // Handle price attributes
-            if ($meta['type'] === 'price' && is_numeric($value)) {
-                $priceObj = [];
-                foreach ($currencies as $c) {
-                    $priceObj[$c] = (string) round((float) $value, 2);
-                }
-                $value = $priceObj;
-            }
-
-            // Handle boolean attributes
-            if ($meta['type'] === 'boolean') {
-                $value = \in_array(strtolower((string) $value), ['1', 'true', 'yes', 'on'], true);
-            }
-
-            // Handle select/multiselect attributes
-            if (\in_array($meta['type'], ['select', 'multiselect'], true) && is_string($value)) {
-                $resolved = $this->writerService->resolveSelectValuePublic($column, $value, $meta['attribute_id']);
-                if ($resolved === null) {
-                    continue;
-                }
-                $value = $resolved;
-            }
-
-            // Route to correct value bucket
-            if ($meta['value_per_channel'] && $meta['value_per_locale']) {
-                $values['channel_locale_specific'][$context->channel][$context->locale][$column] = $value;
-            } elseif ($meta['value_per_channel']) {
-                $values['channel_specific'][$context->channel][$column] = $value;
-            } elseif ($meta['value_per_locale']) {
-                $values['locale_specific'][$context->locale][$column] = $value;
-            } else {
-                $values['common'][$column] = $value;
-            }
         }
     }
 
