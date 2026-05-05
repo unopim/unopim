@@ -2338,6 +2338,8 @@ return [
         'enable'         => '启用',
         'disable'        => '残疾人',
         'no-match-found' => '未找到匹配项！',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

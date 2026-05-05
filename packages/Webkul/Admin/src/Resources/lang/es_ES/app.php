@@ -2338,6 +2338,8 @@ return [
         'enable'         => 'Habilitado',
         'disable'        => 'Deshabilitado',
         'no-match-found' => '¡No se encontraron coincidencias!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

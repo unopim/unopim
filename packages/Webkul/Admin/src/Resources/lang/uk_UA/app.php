@@ -2338,6 +2338,8 @@ return [
         'enable'         => 'Активовано',
         'disable'        => 'Деактивовано',
         'no-match-found' => 'Збігів не знайдено!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

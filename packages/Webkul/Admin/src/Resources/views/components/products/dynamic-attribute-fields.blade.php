@@ -17,7 +17,7 @@
         $localeValue = core()->getConfigData('general.magic_ai.translation.source_locale');
         $targetChannel = core()->getConfigData('general.magic_ai.translation.target_channel');
         $targetlocales = core()->getConfigData('general.magic_ai.translation.target_locale');
-        $targetlocales = json_encode(explode(',', $targetlocales) ?? []);
+        $targetlocales = json_encode(is_array($targetlocales) ? $targetlocales : explode(',', $targetlocales ?? ''));
         $model = core()->getConfigData('general.magic_ai.translation.ai_model');
     }
 @endphp

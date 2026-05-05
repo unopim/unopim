@@ -2338,6 +2338,8 @@ return [
         'enable'         => 'ممكّن',
         'disable'        => 'عاجز',
         'no-match-found' => 'لم يتم العثور على تطابق!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

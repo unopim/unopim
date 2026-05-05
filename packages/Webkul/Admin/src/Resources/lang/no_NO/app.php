@@ -2338,6 +2338,8 @@ return [
         'enable'         => 'Aktivert',
         'disable'        => 'Deaktivert',
         'no-match-found' => 'Ingen treff funnet!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

@@ -2338,6 +2338,8 @@ return [
         'enable'         => 'Pinagana',
         'disable'        => 'Walang Bisa',
         'no-match-found' => 'Walang nahanap na tugma!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [
