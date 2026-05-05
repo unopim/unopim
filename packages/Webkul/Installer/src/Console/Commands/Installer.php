@@ -557,7 +557,10 @@ class Installer extends Command
          */
         $databaseConnection = $this->getEnvAtRuntime('DB_CONNECTION');
 
+        $previousDefault = config('database.default');
+
         config([
+            'database.default'                                    => $databaseConnection,
             "database.connections.{$databaseConnection}.host"     => $this->getEnvAtRuntime('DB_HOST'),
             "database.connections.{$databaseConnection}.port"     => $this->getEnvAtRuntime('DB_PORT'),
             "database.connections.{$databaseConnection}.database" => $this->getEnvAtRuntime('DB_DATABASE'),
@@ -565,6 +568,12 @@ class Installer extends Command
             "database.connections.{$databaseConnection}.password" => $this->getEnvAtRuntime('DB_PASSWORD'),
             "database.connections.{$databaseConnection}.prefix"   => $this->getEnvAtRuntime('DB_PREFIX'),
         ]);
+
+        DB::setDefaultConnection($databaseConnection);
+
+        if ($previousDefault && $previousDefault !== $databaseConnection) {
+            DB::purge($previousDefault);
+        }
 
         DB::purge($databaseConnection);
 
