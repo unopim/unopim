@@ -250,6 +250,9 @@ it('should not mass delete a category linked to a channel', function () {
 it('should fall back to database query when Elasticsearch throws an exception on category grid', function () {
     $this->loginAsAdmin();
 
+    // Create the category while ES is disabled so the observer does not attempt a real connection
+    $category = Category::factory()->create();
+
     config([
         'elasticsearch.enabled'                      => true,
         'elasticsearch.prefix'                       => 'testing',
@@ -257,13 +260,11 @@ it('should fall back to database query when Elasticsearch throws an exception on
         'elasticsearch.connections.default.hosts.0'  => 'testhost:9200',
     ]);
 
-    $category = Category::factory()->create();
-
     $elasticClientMock = Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient');
     ElasticSearch::shouldReceive('makeConnection')->andReturn($elasticClientMock);
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->andThrow(new \Exception('No alive nodes found in your cluster'));
+        ->andThrow(new Exception('No alive nodes found in your cluster'));
 
     $response = $this->withHeaders([
         'X-Requested-With' => 'XMLHttpRequest',

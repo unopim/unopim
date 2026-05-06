@@ -1324,7 +1324,7 @@ it('should fall back to database query when Elasticsearch throws an exception on
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->andThrow(new \Exception('No alive nodes found in your cluster'));
+        ->andThrow(new Exception('No alive nodes found in your cluster'));
 
     $response = $this->withHeaders([
         'X-Requested-With' => 'XMLHttpRequest',
