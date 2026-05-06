@@ -151,8 +151,10 @@ abstract class AbstractType
 
         $product->values = $productValues;
 
+        $product->fill($data);
+
         if ($product->isDirty()) {
-            $product->update($data);
+            $product->save();
         }
 
         return $product;
