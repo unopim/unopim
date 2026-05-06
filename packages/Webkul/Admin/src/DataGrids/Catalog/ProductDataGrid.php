@@ -496,11 +496,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ]
             );
         } catch (\Exception $e) {
-            if (str_contains($e->getMessage(), 'index_not_found_exception')) {
-                Log::error('Elasticsearch index not found. Please create an index first.');
-            }
+            Log::error('Elasticsearch unavailable, falling back to database query: '.$e->getMessage());
+            parent::processRequest();
 
-            throw $e;
+            return;
         }
     }
 

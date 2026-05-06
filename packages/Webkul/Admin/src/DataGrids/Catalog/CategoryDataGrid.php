@@ -217,14 +217,10 @@ class CategoryDataGrid extends DataGrid
                 ]
             );
         } catch (\Exception $e) {
-            if (str_contains($e->getMessage(), 'index_not_found_exception')) {
-                Log::error('Elasticsearch index not found. Please create an index first.');
-                parent::processRequest();
+            Log::error('Elasticsearch unavailable, falling back to database query: '.$e->getMessage());
+            parent::processRequest();
 
-                return;
-            } else {
-                throw $e;
-            }
+            return;
         }
     }
 

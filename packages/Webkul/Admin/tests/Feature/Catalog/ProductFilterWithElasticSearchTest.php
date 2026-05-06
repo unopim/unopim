@@ -1317,6 +1317,28 @@ it('should filter products by gallery attribute using Elasticsearch', function (
     $response->assertOk();
 });
 
+it('should fall back to database query when Elasticsearch throws an exception on product grid', function () {
+    config(['elasticsearch.enabled' => false]);
+    Product::factory()->create(['sku' => 'fallback-test-sku']);
+    config(['elasticsearch.enabled' => true]);
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->andThrow(new \Exception('No alive nodes found in your cluster'));
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), [
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+    ]);
+
+    $response->assertOk();
+    expect($response->json())->toHaveKey('records');
+});
+
 it('should filter products by uppercase SKU using Elasticsearch (case-insensitive)', function () {
     $data = [
         'pagination' => [
