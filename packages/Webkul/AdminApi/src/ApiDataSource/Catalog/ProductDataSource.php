@@ -56,7 +56,7 @@ class ProductDataSource extends ApiDataSource
         $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
         return array_map(
-            fn ($item) => $this->normalizeProduct($item, $withCompleteness),
+            fn($item) => $this->normalizeProduct($item, $withCompleteness),
             $paginator['data'] ?? [],
         );
     }
@@ -157,11 +157,11 @@ class ProductDataSource extends ApiDataSource
      */
     public function operatorByFilter($scopeQueryBuilder, $requestedColumn, $value)
     {
-        $filterTable = isset($this->fieldFiltersAndOperators[$requestedColumn]['filterTable']) ? $this->fieldFiltersAndOperators[$requestedColumn]['filterTable'].'.' : 'products.';
+        $filterTable = isset($this->fieldFiltersAndOperators[$requestedColumn]['filterTable']) ? $this->fieldFiltersAndOperators[$requestedColumn]['filterTable'] . '.' : 'products.';
 
         switch ($requestedColumn) {
             case 'parent':
-                $scopeQueryBuilder->where($filterTable.'parent_id', $this->getParentIdByCode($scopeQueryBuilder, $value['value']));
+                $scopeQueryBuilder->where($filterTable . 'parent_id', $this->getParentIdByCode($scopeQueryBuilder, $value['value']));
                 break;
             case 'family':
                 $scopeQueryBuilder = $this->filterByFamily($scopeQueryBuilder, $value['operator'], $value['value']);
@@ -170,10 +170,15 @@ class ProductDataSource extends ApiDataSource
                 $scopeQueryBuilder = $this->filterByCategories($scopeQueryBuilder, $value['operator'], $filterTable, $value['value']);
                 break;
             default:
-                $scopeQueryBuilder->where($filterTable.$requestedColumn, $value['value']);
+                if ($this->operators['IN_LIST'] == $value['operator']) {
+                    $scopeQueryBuilder->whereIn($filterTable . $requestedColumn, $value['value']);
+                } elseif ($this->operators['NOT_IN_LIST'] == $value['operator']) {
+                    $scopeQueryBuilder->whereNotIn($filterTable . $requestedColumn, $value['value']);
+                } else {
+                    $scopeQueryBuilder->where($filterTable . $requestedColumn, $value['operator'], $value['value']);
+                }
                 break;
         }
-
         return $scopeQueryBuilder;
     }
 
@@ -233,9 +238,9 @@ class ProductDataSource extends ApiDataSource
     protected function filterByCategories(Builder $scopeQueryBuilder, string $operator, string $filterTable, array $value)
     {
         if ($this->operators['IN_LIST'] == $operator) {
-            $scopeQueryBuilder->whereJsonContains($filterTable.'values->categories', $value);
+            $scopeQueryBuilder->whereJsonContains($filterTable . 'values->categories', $value);
         } else {
-            $scopeQueryBuilder->whereJsonDoesntContain($filterTable.'values->categories', $value);
+            $scopeQueryBuilder->whereJsonDoesntContain($filterTable . 'values->categories', $value);
         }
 
         return $scopeQueryBuilder;
