@@ -28,26 +28,28 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
-        foreach ($fields as $attribute) {
-            $attribute = $this->attributeService->findAttributeByCode($attribute);
-            if (! $attribute) {
-                continue;
+        $escapedValue = QueryString::escapeValue(current((array) $value));
+
+        $this->queryBuilder->where(function ($query) use ($fields, $options, $escapedValue) {
+            foreach ($fields as $attribute) {
+                $attribute = $this->attributeService->findAttributeByCode($attribute);
+                if (! $attribute) {
+                    continue;
+                }
+
+                $locale = $attribute->value_per_locale ? $options['locale'] : null;
+                $channel = $attribute->value_per_channel ? $options['channel'] : null;
+
+                $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
+
+                $searchPath = DB::rawQueryGrammar()->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
+
+                $query->orWhereRaw(
+                    sprintf("LOWER($searchPath) LIKE ?"),
+                    '%'.strtolower($escapedValue).'%'
+                );
             }
-
-            $locale = $attribute->value_per_locale ? $options['locale'] : null;
-            $channel = $attribute->value_per_channel ? $options['channel'] : null;
-
-            $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
-
-            $escapedValue = QueryString::escapeValue(current((array) $value));
-
-            $searchPath = DB::rawQueryGrammar()->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
-
-            $this->queryBuilder->orWhereRaw(
-                sprintf("LOWER($searchPath) LIKE ?"),
-                '%'.strtolower($escapedValue).'%'
-            );
-        }
+        });
 
         return $this;
     }
