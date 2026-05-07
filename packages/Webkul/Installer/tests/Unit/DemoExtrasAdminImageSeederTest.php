@@ -1,7 +1,5 @@
 <?php
 
-use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
-
 describe('DemoExtrasTableSeeder – admin profile image sanitisation', function () {
     it('nulls out every admin image so a server-specific path never ships as a broken image', function () {
         // Simulate the admins rows exactly as they appear in demo_extras.json
