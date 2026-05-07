@@ -481,7 +481,7 @@
                                 });
                             }
 
-                            editor.on('keyup', () => {
+                            editor.on('keyup change input', () => {
                                 this.field.onInput(editor.getContent());
                             });
                         },
