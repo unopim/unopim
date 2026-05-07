@@ -122,7 +122,7 @@ describe('EditImage tool parameter and source resolution (Issue #683)', function
             base_path('packages/Webkul/AiAgent/src/Chat/Tools/EditImage.php')
         );
 
-        expect($source)->not->toContain("FIELD(type");
+        expect($source)->not->toContain('FIELD(type');
         expect($source)->toContain('orderByField');
         expect($source)->toContain('GrammarQueryManager');
     });
