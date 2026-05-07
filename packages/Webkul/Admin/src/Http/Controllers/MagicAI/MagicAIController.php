@@ -94,6 +94,10 @@ class MagicAIController extends Controller
      */
     public function platforms(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $purpose = request()->input('purpose');
         $platforms = $this->platformRepository->getActivePlatformOptions();
 
@@ -123,6 +127,10 @@ class MagicAIController extends Controller
      */
     public function suggestionValues(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $query = (string) request()->input('query', '');
         $entityName = request()->input('entity_name', 'attribute');
 
@@ -147,6 +155,10 @@ class MagicAIController extends Controller
      */
     public function content(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $this->validate(request(), [
             'model'  => 'required',
             'prompt' => 'required',
@@ -255,6 +267,10 @@ class MagicAIController extends Controller
 
     public function defaultPrompt(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $type = request()->input('entity_type', 'product');
         $purpose = request()->input('purpose', 'text_generation');
 

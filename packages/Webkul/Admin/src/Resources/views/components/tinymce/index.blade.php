@@ -297,7 +297,7 @@
                     isLoading: false,
 
                     ai: {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') }}"),
+                        enabled: @json(!! core()->getConfigData('general.magic_ai.settings.enabled') && bouncer()->hasPermission('ai-agent')),
                         platform_id: null,
                         model: null,
                         prompt: null,

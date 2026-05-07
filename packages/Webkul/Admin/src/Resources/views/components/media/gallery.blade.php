@@ -626,7 +626,7 @@
                     isLoading: false,
 
                     ai: {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
+                        enabled: @json(!! core()->getConfigData('general.magic_ai.image_generation.enabled') && bouncer()->hasPermission('ai-agent')),
 
                         prompt: null,
 
@@ -913,7 +913,7 @@
 
                 resetAIModal() {
                     this.ai = {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
+                        enabled: @json(!! core()->getConfigData('general.magic_ai.image_generation.enabled') && bouncer()->hasPermission('ai-agent')),
 
                         prompt: null,
 
