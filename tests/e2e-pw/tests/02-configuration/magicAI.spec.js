@@ -69,14 +69,16 @@ async function createOpenAIPlatform(adminPage, label) {
  * so TinyMCE's intersection-observer-driven init kicks in.
  */
 async function waitForMagicAIToolbar(adminPage, timeout = 60000) {
-  // Description is rendered further down on the edit page; scroll it in.
-  const descLabel = adminPage.locator('label[for="description"]').first();
-  if (await descLabel.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await descLabel.scrollIntoViewIfNeeded().catch(() => {});
+  // Attribute fields below the fold mount lazily on scroll. Drive the page
+  // down until a TinyMCE root is rendered (or scroll budget exhausted), so
+  // the Magic AI toolbar button has a chance to inject.
+  const start = Date.now();
+  while (Date.now() - start < 20000) {
+    if (await adminPage.locator('.tox-tinymce').first().isVisible().catch(() => false)) break;
+    await adminPage.mouse.wheel(0, 1500);
+    await adminPage.waitForTimeout(300);
   }
-  // TinyMCE root container present.
   await adminPage.locator('.tox-tinymce').first().waitFor({ state: 'visible', timeout }).catch(() => {});
-  // Magic AI toolbar button injected after TinyMCE init resolves.
   await adminPage.getByRole('button', { name: 'Magic AI' }).first().waitFor({ state: 'visible', timeout });
 }
 
