@@ -2331,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Sí',
-        'no'             => 'No',
-        'true'           => 'Veritable',
-        'false'          => 'Fals',
-        'enable'         => 'Activat',
-        'disable'        => 'Desactivat',
-        'no-match-found' => 'No s\'ha trobat cap coincidència!',
+        'yes'               => 'Sí',
+        'no'                => 'No',
+        'true'              => 'Veritable',
+        'false'             => 'Fals',
+        'enable'            => 'Activat',
+        'disable'           => 'Desactivat',
+        'no-match-found'    => 'No s\'ha trobat cap coincidència!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

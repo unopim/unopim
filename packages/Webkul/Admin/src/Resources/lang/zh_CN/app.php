@@ -2331,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => '是的',
-        'no'             => '不',
-        'true'           => '真的',
-        'false'          => '错误的',
-        'enable'         => '启用',
-        'disable'        => '残疾人',
-        'no-match-found' => '未找到匹配项！',
+        'yes'               => '是的',
+        'no'                => '不',
+        'true'              => '真的',
+        'false'             => '错误的',
+        'enable'            => '启用',
+        'disable'           => '残疾人',
+        'no-match-found'    => '未找到匹配项！',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

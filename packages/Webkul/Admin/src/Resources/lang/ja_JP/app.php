@@ -2331,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'はい',
-        'no'             => 'いいえ',
-        'true'           => '正しい',
-        'false'          => '間違い',
-        'enable'         => '有効',
-        'disable'        => '無効',
-        'no-match-found' => '一致するものが見つかりません！',
+        'yes'               => 'はい',
+        'no'                => 'いいえ',
+        'true'              => '正しい',
+        'false'             => '間違い',
+        'enable'            => '有効',
+        'disable'           => '無効',
+        'no-match-found'    => '一致するものが見つかりません！',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [
