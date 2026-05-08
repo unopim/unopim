@@ -2331,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Ya',
-        'no'             => 'TIDAK',
-        'true'           => 'BENAR',
-        'false'          => 'PALSU',
-        'enable'         => 'Diaktifkan',
-        'disable'        => 'Dengan disabilitas',
-        'no-match-found' => 'Tidak ditemukan kecocokan!',
+        'yes'               => 'Ya',
+        'no'                => 'TIDAK',
+        'true'              => 'BENAR',
+        'false'             => 'PALSU',
+        'enable'            => 'Diaktifkan',
+        'disable'           => 'Dengan disabilitas',
+        'no-match-found'    => 'Tidak ditemukan kecocokan!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

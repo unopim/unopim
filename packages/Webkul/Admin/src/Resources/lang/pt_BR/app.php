@@ -2331,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Sim',
-        'no'             => 'No',
-        'true'           => 'Verdadeiro',
-        'false'          => 'Falso',
-        'enable'         => 'Ativado',
-        'disable'        => 'Desativado',
-        'no-match-found' => 'Nenhum resultado encontrado!',
+        'yes'               => 'Sim',
+        'no'                => 'No',
+        'true'              => 'Verdadeiro',
+        'false'             => 'Falso',
+        'enable'            => 'Ativado',
+        'disable'           => 'Desativado',
+        'no-match-found'    => 'Nenhum resultado encontrado!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

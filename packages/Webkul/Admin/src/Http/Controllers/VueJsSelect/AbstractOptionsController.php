@@ -78,13 +78,22 @@ class AbstractOptionsController extends Controller
     }
 
     /**
-     * Get translated label for the entity
+     * Get translated label for the entity, falling back to any available locale when
+     * the requested locale translation is missing.
      */
     protected function getTranslatedLabel(string $currentLocaleCode, TranslatableModel $option, string $entityName = ''): string
     {
+        $translationColumn = $this->getTranslationColumnName($entityName);
+
         $translation = $option->translate($currentLocaleCode);
 
-        return $translation?->{$this->getTranslationColumnName($entityName)};
+        if ($translation && ! empty($translation->{$translationColumn})) {
+            return $translation->{$translationColumn};
+        }
+
+        $fallback = $option->translations->first(fn ($t) => ! empty($t->{$translationColumn}));
+
+        return $fallback?->{$translationColumn} ?? '';
     }
 
     /**
