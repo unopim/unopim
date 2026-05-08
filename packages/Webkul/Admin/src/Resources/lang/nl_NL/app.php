@@ -2336,6 +2336,8 @@ return [
         'enable'         => 'Ingeschakeld',
         'disable'        => 'Uitgeschakeld',
         'no-match-found' => 'Geen resultaten gevonden.',
+        'unauthorized'      => 'Je hebt onvoldoende rechten om deze actie uit te voeren..',
+        'file-size-exceeds' => 'Het geüploade bestand overschrijdt de maximaal toegestane grootte van :max.',
     ],
     'default-prompt' => [
         'detailed' => [

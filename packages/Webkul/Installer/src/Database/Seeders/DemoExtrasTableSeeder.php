@@ -97,6 +97,18 @@ class DemoExtrasTableSeeder extends Seeder
                     $rows = [];
                 }
 
+                // The dump captures whatever profile image was uploaded on the
+                // source server (e.g. "admins/1/download.png"). That file is not
+                // shipped with the seeder assets, so the path resolves to a broken
+                // image. Null it out so the letter-avatar fallback renders instead.
+                if ($table === 'admins') {
+                    $rows = array_map(static function (array $row): array {
+                        $row['image'] = null;
+
+                        return $row;
+                    }, $rows);
+                }
+
                 DB::table($table)->delete();
 
                 if (empty($rows)) {

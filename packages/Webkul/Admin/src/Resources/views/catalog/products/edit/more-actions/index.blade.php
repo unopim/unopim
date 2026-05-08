@@ -23,7 +23,7 @@
                 <ul class="text-gray-700 rounded">
                     {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.list.before', ['product' => $product]) !!}
 
-                    @if (core()->getConfigData('general.magic_ai.translation.enabled'))
+                    @if (core()->getConfigData('general.magic_ai.translation.enabled') && bouncer()->hasPermission('ai-agent'))
                         @include('admin::catalog.products.edit.more-actions.translate-action')
                     @endif
 
