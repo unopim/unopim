@@ -43,11 +43,11 @@ class GenerateContent implements PimTool
                 $common = $values['common'] ?? [];
                 $channelLocale = $values['channel_locale_specific'][$context->channel][$context->locale] ?? [];
 
-                // Build existing attributes for enrichment context
-                $existing = array_merge($common, $channelLocale);
-
+                // Use only the locale-specific bucket for the completeness check so that
+                // content present in another locale (e.g. en_US) does not falsely mark
+                // this locale as already filled.
                 $ctx = new ImageProductContext(
-                    attributes: $existing,
+                    attributes: $channelLocale,
                     detectedProduct: $common['product_type'] ?? null,
                     category: ($values['categories'][0] ?? null),
                 );
@@ -71,6 +71,7 @@ class GenerateContent implements PimTool
                         options: [
                             'locale'      => $context->locale,
                             'instruction' => $instruction ?? '',
+                            'common'      => $common,
                         ],
                     );
 
