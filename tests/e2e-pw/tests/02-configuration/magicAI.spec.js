@@ -665,6 +665,7 @@ test('6.2 - Enable AI Translate on short_description attribute', async ({ adminP
 // ═════════════════════════════════════════════════
 
 test('7.1 - Create product, verify Magic AI button, and clean up', async ({ adminPage }) => {
+  test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — Magic AI button requires configured platform');
   const uid = generateUid();
   const sku = `magicai-prod-${uid}`;
 
@@ -680,6 +681,7 @@ test('7.1 - Create product, verify Magic AI button, and clean up', async ({ admi
   await adminPage.locator('input[name="sku"]').fill(sku);
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
   await expect(adminPage.locator('#app').getByText(/Product created successfully/i)).toBeVisible();
+  await adminPage.waitForLoadState('networkidle');
 
   // Verify Magic AI button in WYSIWYG toolbar
   const magicAIButtons = adminPage.getByRole('button', { name: 'Magic AI' });
