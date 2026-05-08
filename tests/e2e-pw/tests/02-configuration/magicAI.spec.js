@@ -62,6 +62,25 @@ async function createOpenAIPlatform(adminPage, label) {
 }
 
 /**
+ * Helper: Wait for the description WYSIWYG (TinyMCE) on the product edit page
+ * to finish mounting. The Magic AI button is injected by the Vue wrapper after
+ * TinyMCE's async init resolves; on slow CI runners this can exceed 20s if we
+ * assert button visibility before the iframe is ready. Scroll into view first
+ * so TinyMCE's intersection-observer-driven init kicks in.
+ */
+async function waitForMagicAIToolbar(adminPage, timeout = 60000) {
+  // Description is rendered further down on the edit page; scroll it in.
+  const descLabel = adminPage.locator('label[for="description"]').first();
+  if (await descLabel.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await descLabel.scrollIntoViewIfNeeded().catch(() => {});
+  }
+  // TinyMCE root container present.
+  await adminPage.locator('.tox-tinymce').first().waitFor({ state: 'visible', timeout }).catch(() => {});
+  // Magic AI toolbar button injected after TinyMCE init resolves.
+  await adminPage.getByRole('button', { name: 'Magic AI' }).first().waitFor({ state: 'visible', timeout });
+}
+
+/**
  * Helper: Delete a platform by label text.
  */
 async function deletePlatform(adminPage, label) {
@@ -666,6 +685,7 @@ test('6.2 - Enable AI Translate on short_description attribute', async ({ adminP
 
 test('7.1 - Create product, verify Magic AI button, and clean up', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — Magic AI button requires configured platform');
+  test.setTimeout(60000);
   const uid = generateUid();
   const sku = `magicai-prod-${uid}`;
 
@@ -684,6 +704,7 @@ test('7.1 - Create product, verify Magic AI button, and clean up', async ({ admi
   await adminPage.waitForLoadState('networkidle');
 
   // Verify Magic AI button in WYSIWYG toolbar
+  await waitForMagicAIToolbar(adminPage);
   const magicAIButtons = adminPage.getByRole('button', { name: 'Magic AI' });
   await expect(magicAIButtons.first()).toBeVisible({ timeout: 20000 });
   const count = await magicAIButtons.count();
@@ -719,6 +740,7 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   await adminPage.waitForLoadState('networkidle');
 
   // Click Magic AI on Description WYSIWYG toolbar
+  await waitForMagicAIToolbar(adminPage);
   const magicAIBtn = adminPage.getByRole('button', { name: 'Magic AI' }).last();
   await expect(magicAIBtn).toBeVisible({ timeout: 20000 });
   await magicAIBtn.click();
