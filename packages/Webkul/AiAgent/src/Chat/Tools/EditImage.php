@@ -13,6 +13,7 @@ use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\Product\Models\Product;
 
@@ -232,7 +233,7 @@ class EditImage implements PimTool
 
         return $family->customAttributes()
             ->whereIn('type', ['image', 'gallery'])
-            ->orderByRaw("FIELD(type, 'image', 'gallery')")
+            ->orderByRaw(GrammarQueryManager::getGrammar()->orderByField('type', ["'image'", "'gallery'"], 'text'))
             ->first();
     }
 
