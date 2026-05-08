@@ -2,13 +2,19 @@
 
 namespace Webkul\Webhook\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Webkul\Webhook\Jobs\SendBulkProductWebhook;
 use Webkul\Webhook\Repositories\LogsRepository;
 use Webkul\Webhook\Repositories\SettingsRepository;
 use Webkul\Webhook\Services\WebhookService;
 
-class Product
+class Product implements ShouldQueue
 {
+    /**
+     * Connection / queue used for dispatched listener jobs.
+     */
+    public $queue = 'webhooks';
+
     /**
      * Create a new listener instance.
      *
