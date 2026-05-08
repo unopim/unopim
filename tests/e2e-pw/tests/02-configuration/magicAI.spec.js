@@ -212,6 +212,15 @@ test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', async 
   test.setTimeout(30000);
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
+  // Enable Text Generation toggle (general.magic_ai.settings.enabled)
+  // Magic AI WYSIWYG button is gated by this flag — without it, button never injects.
+  const enableToggle = adminPage.locator('input[type="checkbox"][name="general[magic_ai][settings][enabled]"]');
+  if (await enableToggle.count() > 0 && !(await enableToggle.first().isChecked().catch(() => false))) {
+    await adminPage.locator('label[for="general[magic_ai][settings][enabled]"]').first().click().catch(async () => {
+      await enableToggle.first().check({ force: true });
+    });
+  }
+
   const platformDropdown = adminPage.locator('.multiselect__placeholder, .multiselect__single').first();
   if (await platformDropdown.isVisible().catch(() => false)) {
     await platformDropdown.click();
