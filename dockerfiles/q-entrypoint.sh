@@ -4,7 +4,7 @@ set -e
 LOCK_FILE="/var/www/html/storage/unopim.lock"
 
 # Queue configuration (override via docker-compose environment)
-QUEUE_NAMES="${QUEUE_NAMES:-system,completeness,default}"
+QUEUE_NAMES="${QUEUE_NAMES:-webhooks,system,completeness,default}"
 QUEUE_TIMEOUT="${QUEUE_TIMEOUT:-90}"
 QUEUE_TRIES="${QUEUE_TRIES:-3}"
 QUEUE_MAX_JOBS="${QUEUE_MAX_JOBS:-1000}"
