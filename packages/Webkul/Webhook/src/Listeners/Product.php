@@ -2,19 +2,14 @@
 
 namespace Webkul\Webhook\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Webkul\Webhook\Jobs\SendBulkProductWebhook;
+use Webkul\Webhook\Jobs\SendProductWebhook;
 use Webkul\Webhook\Repositories\LogsRepository;
 use Webkul\Webhook\Repositories\SettingsRepository;
 use Webkul\Webhook\Services\WebhookService;
 
-class Product implements ShouldQueue
+class Product
 {
-    /**
-     * Connection / queue used for dispatched listener jobs.
-     */
-    public $queue = 'webhooks';
-
     /**
      * Create a new listener instance.
      *
@@ -34,16 +29,32 @@ class Product implements ShouldQueue
      */
     public function afterUpdate($product)
     {
-        if ($this->settingsRepository->isWebhookActive() && $productChanges = $this->webhookService->getProductChangesForWebhook($product)) {
-            $this->webhookService->sendDataToWebhook($product, $productChanges);
+        if (! $this->settingsRepository->isWebhookActive()) {
+            return;
         }
+
+        $changes = $this->webhookService->getProductChangesForWebhook($product);
+
+        if (! $changes) {
+            return;
+        }
+
+        SendProductWebhook::dispatch($product->id, $changes, 'updated')->onQueue('webhooks');
     }
 
     public function afterCreate($product)
     {
-        if ($this->settingsRepository->isWebhookActive() && $productChanges = $this->webhookService->getProductChangesForWebhook($product)) {
-            $this->webhookService->sendCreatedToWebhook($product, $productChanges);
+        if (! $this->settingsRepository->isWebhookActive()) {
+            return;
         }
+
+        $changes = $this->webhookService->getProductChangesForWebhook($product);
+
+        if (! $changes) {
+            return;
+        }
+
+        SendProductWebhook::dispatch($product->id, $changes, 'created')->onQueue('webhooks');
     }
 
     public function afterBulkUpdate(array $ids)
