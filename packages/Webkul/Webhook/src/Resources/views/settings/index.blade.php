@@ -1,8 +1,8 @@
 @php
     $activeTab = match (true) {
-        request()->has('logs')    => 'logs',
-        request()->has('history') => 'history',
-        default                   => 'general',
+        request()->has('logs') && bouncer()->hasPermission('configuration.webhook.logs') => 'logs',
+        request()->has('history')                                                        => 'history',
+        default                                                                          => 'general',
     };
 @endphp
 
@@ -17,11 +17,13 @@
     </x-slot>
 
     <x-slot:tabs>
-        <a href="?logs">
-            <div class="{{ $activeTab === 'logs' ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
-                @lang('webhook::app.configuration.webhook.settings.index.logs-title')
-            </div>
-        </a>
+        @if (bouncer()->hasPermission('configuration.webhook.logs'))
+            <a href="?logs">
+                <div class="{{ $activeTab === 'logs' ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
+                    @lang('webhook::app.configuration.webhook.settings.index.logs-title')
+                </div>
+            </a>
+        @endif
     </x-slot>
 
     <x-slot:tabContents>
@@ -193,7 +195,7 @@
             @endPushOnce
         @endif
 
-        @if ($activeTab === 'logs')
+        @if ($activeTab === 'logs' && bouncer()->hasPermission('configuration.webhook.logs'))
             @include('webhook::logs.index')
         @endif
     </x-slot>

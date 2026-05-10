@@ -37,7 +37,7 @@ class WebhookSettingsController
             'webhook_url' => 'url',
         ]);
 
-        $active = (int) $request->get('webhook_active', '0');
+        $active = (int) $request->input('webhook_active', '0');
 
         $settings = [
             'webhook_active' => $active,

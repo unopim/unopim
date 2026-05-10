@@ -67,7 +67,14 @@ trait ApiResponse
      */
     protected function storeExceptionLog($e)
     {
-        if ($e instanceof ModelNotFoundException || $e instanceof UnprocessableEntityHttpException) {
+        if ($e instanceof UnprocessableEntityHttpException) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+
+        if ($e instanceof ModelNotFoundException) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),

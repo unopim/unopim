@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'AI Ajaib',
         'general'               => 'Umum',
         'prompt'                => 'Perintah',
         'system-prompt'         => 'Perintah Sistem',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'AI Ajaib',
         'platform'       => 'Platform',
         'settings'       => 'Pengaturan',
         'prompt'         => 'Perintah',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Kembali',
         'unauthorized'              => 'Tindakan ini tidak diizinkan.',
         'error-generic'             => 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.',
+        'error-rate-limit'          => 'Batas permintaan penyedia AI telah tercapai. Silakan tunggu sebentar dan coba lagi.',
+        'error-rate-limit-retry'    => 'Batas permintaan penyedia AI telah tercapai. Silakan coba lagi dalam :seconds detik.',
+        'error-overloaded'          => 'Penyedia AI sedang kelebihan beban. Silakan coba lagi dalam beberapa saat.',
+        'error-request-too-large'   => 'Permintaan Anda terlalu besar untuk penyedia AI. Silakan perpendek pesan Anda atau hapus beberapa lampiran dan coba lagi.',
+        'error-api-key-corrupted'   => 'Kunci API untuk platform ini tidak dapat didekripsi (:error). Kunci enkripsi aplikasi mungkin telah berubah. Silakan edit platform dan masukkan kembali kunci API Anda.',
         'invalid-file-path'         => 'Jalur file tidak valid.',
         'invalid-locale-code'       => 'Kode lokal tidak valid.',
         'invalid-channel-code'      => 'Kode saluran tidak valid.',
@@ -208,6 +213,7 @@ return [
         'attach'                   => 'Lampirkan',
         'attach-csv-xlsx'          => 'Lampirkan CSV atau XLSX',
         'attach-image'             => 'Lampirkan gambar',
+        'remove-attachment'        => 'Hapus lampiran',
         'send'                     => 'Kirim',
         'sending'                  => 'Mengirim…',
         'processing'               => 'Memproses…',
@@ -241,7 +247,7 @@ return [
             'generate-variants-hint'   => 'mis. "Hasilkan S/M/L × Merah/Biru untuk SHIRT-001"',
             'edit-image'               => 'Edit Gambar Produk',
             'edit-image-desc'          => 'Hapus latar belakang, perbaiki & retusan',
-            'edit-image-hint'          => 'Unggah gambar, lalu katakan apa yang ingin diubah — mis. "Hapus latar belakang"',
+            'edit-image-hint'          => 'Berikan SKU produk dan jelaskan apa yang ingin diubah — mis. "Hapus latar belakang dari SKU-123"',
             'search-products'          => 'Cari Produk',
             'search-products-desc'     => 'Temukan produk berdasarkan SKU, nama, atau status',
             'search-products-hint'     => 'mis. "Temukan semua produk aktif" atau "Cari laptop"',
@@ -297,7 +303,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Edit gambar produk yang diunggah sesuai instruksi.',
+            'edit-image-prompt'        => 'Edit gambar produk dengan mengambilnya dari SKU yang diberikan, terapkan perubahan yang diminta, dan simpan kembali.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

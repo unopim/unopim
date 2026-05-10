@@ -16,7 +16,7 @@ return [
                 'email'                  => 'Email registrata',
                 'email-not-exist'        => 'Email non esistente',
                 'page-title'             => 'Recupera password',
-                'reset-link-sent'        => 'Link di reimpostazione password inviato',
+                'reset-link-sent'        => 'Se esiste un account con quell\'indirizzo email, è stato inviato un link per reimpostare la password.',
                 'email-settings-error'   => 'La email non può essere inviata. Verifica le impostazioni della tua email',
                 'sign-in-link'           => 'Torna ad Accedi?',
                 'submit-btn'             => 'Resetta',
@@ -40,7 +40,9 @@ return [
         'description-text' => 'Elenco di tutte le notifiche',
         'marked-success'   => 'Notifica segnata come letta',
         'no-record'        => 'Nessuna registrazione trovata',
+        'of'               => 'di',
         'read-all'         => 'Segna come letta',
+        'showing'          => 'Visualizzazione',
         'title'            => 'Notifiche',
         'view-all'         => 'Visualizza tutte',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Completato',
             'pending'    => 'In attesa',
             'processing' => 'In elaborazione',
+            'read'       => 'Lette',
+            'unread'     => 'Non lette',
         ],
     ],
     'account' => [
@@ -216,7 +220,8 @@ return [
                 'save-btn'   => 'Salva prodotto',
                 'title'      => 'Modifica prodotto',
                 'categories' => [
-                    'title' => 'Categorie',
+                    'title'            => 'Categorie',
+                    'root-not-allowed' => 'La categoria radice non può essere assegnata a un prodotto.',
                 ],
                 'images' => [
                     'info'  => 'La risoluzione dell\'immagine dovrebbe essere 560px X 609px',
@@ -359,6 +364,8 @@ return [
                     'url'                        => 'Inserisci un URL valido.',
                     'regex'                      => 'Il valore non corrisponde al formato richiesto.',
                     'invalid-pattern'            => 'Formato personalizzato non valido.',
+
+                    'numeric'                    => 'Il valore per l\'attributo numerico ":attribute" deve essere un numero valido.',
                     'select-attribute-or-family' => 'Seleziona almeno un attributo o una famiglia di attributi.',
                     'failed'                     => 'Validazione non riuscita.',
                 ],
@@ -378,16 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Modifica massiva completata con successo.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Nessuna modifica da salvare.',
-                'success'         => 'Operazione completata con successo.',
-                'fetch-failed'    => 'Impossibile recuperare i dati.',
-                'action'          => 'Modifica di massa',
-                'gallery-preview' => 'Anteprima Galleria',
-                'img-preview'     => 'Anteprima Immagine',
-                'no-image'        => 'Nessuna Immagine',
-                'img-fail'        => 'Caricamento immagine fallito',
-                'no-option'       => 'Nessuna opzione',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Nessuna modifica da salvare.',
+
+                'invalid-datetime'            => 'Inserisci una data e un\'ora valide.',
+
+                'resize-column'               => 'Trascina per ridimensionare la colonna',
+                'success'                     => 'Operazione completata con successo.',
+                'fetch-failed'                => 'Impossibile recuperare i dati.',
+                'action'                      => 'Modifica di massa',
+                'description'                 => 'Modifica più prodotti contemporaneamente. Le modifiche vengono elaborate in background.',
+                'gallery-preview'             => 'Anteprima Galleria',
+                'img-preview'                 => 'Anteprima Immagine',
+                'no-image'                    => 'Nessuna Immagine',
+                'img-fail'                    => 'Caricamento immagine fallito',
+                'no-option'                   => 'Nessuna opzione',
+                'keyboard-shortcuts'          => 'Scorciatoie da tastiera',
+                'shortcuts-navigation'        => 'Navigazione',
+                'shortcuts-editing'           => 'Modifica',
+                'shortcuts-selection'         => 'Selezione',
+                'shortcuts-clipboard'         => 'Appunti e riempimento',
+                'shortcuts-move-cell'         => 'Spostarsi tra le celle',
+                'shortcuts-move-down'         => 'Scendi / conferma modifica',
+                'shortcuts-move-up'           => 'Sali',
+                'shortcuts-move-right-left'   => 'Sposta a destra / sinistra',
+                'shortcuts-home-end'          => 'Prima / ultima colonna nella riga',
+                'shortcuts-ctrl-home-end'     => 'Prima / ultima cella nella griglia',
+                'shortcuts-extend-selection'  => 'Estendi selezione',
+                'shortcuts-select-all'        => 'Seleziona tutte le celle',
+                'shortcuts-enter-edit'        => 'Entra in modalità modifica',
+                'shortcuts-confirm-move-down' => 'Conferma + scendi',
+                'shortcuts-confirm-move-right'=> 'Conferma + sposta a destra',
+                'shortcuts-escape-revert'     => 'Ripristina valore + esci dalla modifica',
+                'shortcuts-clear-cell'        => 'Svuota cella',
+                'shortcuts-copy'              => 'Copia',
+                'shortcuts-cut'               => 'Taglia',
+                'shortcuts-paste'             => 'Incolla',
+                'shortcuts-fill-down'         => 'Riempi verso il basso',
+                'shortcuts-fill-right'        => 'Riempi verso destra',
+                'shortcuts-undo'              => 'Annulla',
+                'shortcuts-redo'              => 'Ripristina',
+                'shortcuts-help'              => 'Mostra/nascondi scorciatoie da tastiera',
             ],
             'create-success'          => 'Prodotto creato con successo',
             'delete-failed'           => 'Eliminazione del prodotto non riuscita',
@@ -482,6 +520,8 @@ return [
                 'is-filterable'         => 'È filtrabile',
                 'ai-translate'          => 'Traduzione IA',
                 'invalid-swatch-type'   => 'L\'attributo :attribute non è consentito per il tipo di attributo :type con il tipo di campione :swatch_type.',
+
+                'single-object-only'    => 'Ogni richiesta di creazione deve inviare un solo oggetto attributo.',
                 'option'                => [
                     'color'    => 'Colore campione',
                     'dropdown' => 'Menu a discesa',
@@ -564,6 +604,8 @@ return [
             'delete-success'    => 'Attributo eliminato con successo',
             'update-success'    => 'Attributo aggiornato con successo',
             'user-define-error' => 'Non è possibile eliminare un attributo di sistema',
+
+            'immutable-fields'  => 'I seguenti campi non possono essere modificati: :fields.',
             'not-found'         => 'Attributo con codice ":code" non trovato',
         ],
         'attribute-options' => [
@@ -676,6 +718,7 @@ return [
             'delete-success'       => 'Categoria eliminata con successo.',
             'update-success'       => 'Categoria aggiornata con successo.',
             'can-not-update'       => 'Questa categoria radice è associata a un canale e non può avere una categoria genitore.',
+            'invalid-parent'       => 'La categoria padre selezionata non è valida. Una categoria non può essere il proprio padre o un discendente di se stessa.',
             'unique-validation'    => 'Questo valore è già stato preso.',
             'not-found'            => 'Categoria con codice ":code" non trovata',
             'unknown-fields'       => 'Campo categoria con codice ":fields" non trovato',
@@ -844,15 +887,18 @@ return [
             'update-success'    => 'Campo Categoria Aggiornato con Successo',
             'user-define-error' => 'Non puoi eliminare il campo categoria di sistema',
             'not-found'         => 'Campo Categoria con codice ":code" non trovato',
+
+            'immutable-fields'  => 'I seguenti campi non possono essere modificati: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opzione del campo categoria creata con successo',
-            'update-success' => 'Opzione del campo categoria aggiornata con successo',
+            'create-success'      => 'Opzione del campo categoria creata con successo',
+            'update-success'      => 'Opzione del campo categoria aggiornata con successo',
+            'update-unknown-code' => 'Nessuna opzione campo categoria esiste con il codice ":code".',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Crea Famiglia di Attributi',
-                'title'    => 'Famiglie',
+                'title'    => 'Famiglie di attributi',
                 'datagrid' => [
                     'code'           => 'Codice',
                     'delete'         => 'Elimina',
@@ -943,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Impossibile aggiornare le opzioni di configurazione poiché questa famiglia ha già varianti di prodotto.',
         ],
         'history' => [
+            'view' => 'Visualizza dettagli versione',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versione',
@@ -1076,6 +1124,8 @@ return [
                         'paused'               => 'In pausa',
                         'cancelled'            => 'Annullato',
                         'failed'               => 'Fallito',
+
+                        'view'       => 'Visualizza',
                     ],
                 ],
                 'import' => [
@@ -1554,6 +1604,7 @@ return [
             ],
             'activate-warning'          => 'Il tuo account non è ancora stato attivato, contatta l\'amministratore.',
             'cannot-change'             => 'Non è possibile modificare l\'utente',
+            'cannot-escalate-role'      => 'Non hai il permesso di assegnare un ruolo con accesso completo.',
             'create-success'            => 'Utente creato con successo.',
             'delete-failed'             => 'Eliminazione utente fallita.',
             'delete-success'            => 'Utente eliminato con successo.',
@@ -1659,6 +1710,8 @@ return [
                         'title-info'                => 'Configura la chat dell\'agente IA, i flussi di arricchimento autonomo e il monitoraggio della qualità. Queste funzionalità consentono la gestione conversazionale dei prodotti e la manutenzione proattiva del catalogo.',
                         'enabled'                   => 'Abilita chat agente IA',
                         'enabled-info'              => 'Abilita il widget di chat IA flottante per la gestione conversazionale dei prodotti con oltre 27 azioni di strumenti.',
+                        'open-by-default'           => 'Apri il pannello chat al caricamento della pagina',
+                        'open-by-default-info'      => 'Quando abilitato, il pannello chat dell\'agente IA si apre automaticamente la prima volta che un amministratore accede a una pagina. Gli utenti possono comunque chiuderlo manualmente — la preferenza viene ricordata per il resto della sessione del browser.',
                         'max-steps'                 => 'Passi massimi dell\'agente per turno',
                         'max-steps-info'            => 'Numero massimo di iterazioni di chiamata strumenti che l\'agente IA può eseguire per messaggio utente. Valori più alti consentono operazioni multi-step più complesse.',
                         'daily-token-budget'        => 'Budget giornaliero di token',
@@ -1729,6 +1782,12 @@ return [
             'client-not-found'               => 'Cliente non trovato',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompt',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titolo',
@@ -1771,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Prompt di sistema',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titolo',
@@ -1864,16 +1929,21 @@ return [
                 'invalid-model-name'       => 'Nome del modello non valido. Utilizzare solo lettere, numeri, trattini, punti, due punti e barre (es. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'          => 'Piattaforma salvata con successo.',
-                'update-success'        => 'Piattaforma aggiornata con successo.',
-                'delete-success'        => 'Piattaforma eliminata con successo.',
-                'delete-fail'           => 'Eliminazione della piattaforma fallita.',
-                'cannot-delete-default' => 'Impossibile eliminare l\'unica piattaforma predefinita.',
-                'set-default-success'   => 'Piattaforma impostata come predefinita con successo.',
-                'test-success'          => 'Connessione verificata con successo!',
-                'test-fail'             => 'Test di connessione fallito',
-                'fetch-models-fail'     => 'Impossibile recuperare i modelli',
-                'invalid-model-names'   => 'Nomi del modello non validi: :names. I nomi del modello devono iniziare con una lettera o un numero e contenere solo lettere, numeri, trattini, punti, due punti e barre.',
+                'save-success'             => 'Piattaforma salvata con successo.',
+                'update-success'           => 'Piattaforma aggiornata con successo.',
+                'delete-success'           => 'Piattaforma eliminata con successo.',
+                'delete-fail'              => 'Eliminazione della piattaforma fallita.',
+                'not-found'                => 'La piattaforma selezionata non esiste più. Aggiorna la pagina e riprova.',
+                'cannot-delete-default'    => 'Impossibile eliminare l\'unica piattaforma predefinita.',
+                'set-default-success'      => 'Piattaforma impostata come predefinita con successo.',
+                'test-success'             => 'Connessione verificata con successo!',
+                'test-fail'                => 'Test di connessione fallito',
+                'no-test-model'            => 'Seleziona almeno un modello in grado di generare testo per eseguire il test di connessione.',
+                'custom-api-url-required'  => 'L\'API URL è obbligatoria per i provider personalizzati affinché il test di connessione raggiunga il tuo endpoint.',
+                'api-key-corrupted'        => 'La chiave API memorizzata non è stata decifrata (:error). La chiave di crittografia dell\'applicazione potrebbe essere cambiata. Reinserisci la tua chiave API e salva.',
+                'fetch-models-fail'        => 'Impossibile recuperare i modelli',
+                'invalid-model-names'      => 'Nomi del modello non validi: :names. I nomi del modello devono iniziare con una lettera o un numero e contenere solo lettere, numeri, trattini, punti, due punti e barre.',
+                'default-requires-enabled' => 'Una piattaforma disabilitata non può essere impostata come predefinita. Abilitala prima.',
             ],
         ],
     ],
@@ -1959,10 +2029,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Seleziona',
-                'title'    => 'Applica filtri',
-                'save'     => 'Salva',
-                'dropdown' => [
+                'select'        => 'Seleziona',
+                'title'         => 'Applica filtri',
+                'save'          => 'Salva',
+                'add-filter'    => 'Aggiungi filtro',
+                'remove-filter' => 'Rimuovi filtro',
+                'search-filter' => 'Cerca...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Digita almeno 2 caratteri...',
                         'no-results'        => 'Nessun risultato...',
@@ -2038,6 +2111,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Aggiungi immagine',
+                'add-media-btn'      => 'Aggiungi media',
                 'generate-with-ai'   => 'Genera con l’AI',
                 'upload-from-device' => 'Carica dal dispositivo',
                 'cancel'             => 'Annulla',
@@ -2119,6 +2193,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Prompt predefinito',
+                'select-prompt-template' => '-- Seleziona un modello di prompt --',
             ],
         ],
     ],
@@ -2204,6 +2279,7 @@ return [
         '403' => [
             'description' => 'Ops! Questa pagina è off-limits. Sembrava che tu non avessi il permesso di visualizzare questo contenuto.',
             'title'       => '403 Vietato',
+            'message'     => 'Non hai il permesso di accedere a questa pagina. Contatta il tuo amministratore se ritieni che si tratti di un errore.',
         ],
         '413' => [
             'description' => 'Ops! Sembra che stai tentando di caricare un file troppo grande. Se desideri caricare lo stesso, aggiornare la configurazione PHP.',
@@ -2255,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Sì',
-        'no'             => 'No',
-        'true'           => 'Vero',
-        'false'          => 'Falso',
-        'enable'         => 'Abilitato',
-        'disable'        => 'Disabilitato',
-        'no-match-found' => 'Nessun risultato trovato!',
+        'yes'               => 'Sì',
+        'no'                => 'No',
+        'true'              => 'Vero',
+        'false'             => 'Falso',
+        'enable'            => 'Abilitato',
+        'disable'           => 'Disabilitato',
+        'no-match-found'    => 'Nessun risultato trovato!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

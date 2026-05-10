@@ -56,12 +56,17 @@ class AttributeController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $requestData = request()->all();
+
+        if (array_is_list($requestData) && count($requestData) > 0) {
+            return $this->validateErrorResponse([
+                'payload' => [trans('admin::app.catalog.attributes.create.single-object-only')],
+            ]);
+        }
+
         $rules = [
             'type' => [
                 'required',
@@ -110,14 +115,19 @@ class AttributeController extends ApiController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return JsonResponse
      */
-    public function update(string $code)
+    public function update(string $code): JsonResponse
     {
         $attribute = $this->attributeRepository->findOneByField('code', $code);
         if (! $attribute) {
             return $this->modelNotFoundResponse(trans('admin::app.catalog.attributes.not-found', ['code' => $code]));
+        }
+
+        $immutable = array_intersect(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique'], array_keys(request()->all()));
+        if (! empty($immutable)) {
+            return $this->validateErrorResponse([
+                'immutable' => [trans('admin::app.catalog.attributes.immutable-fields', ['fields' => implode(', ', $immutable)])],
+            ]);
         }
 
         $requestData = request()->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
@@ -140,10 +150,8 @@ class AttributeController extends ApiController
 
     /**
      * Display a single result of the resource.
-     *
-     * @return JsonResponse
      */
-    public function getOptions(string $code)
+    public function getOptions(string $code): JsonResponse
     {
         try {
             return response()->json(app(AttributeDataSource::class)->getOptionsByAttributeCode($code));
@@ -154,10 +162,8 @@ class AttributeController extends ApiController
 
     /**
      * Store a newly attribute option in storage.
-     *
-     * @return JsonResponse
      */
-    public function storeOption(string $attributeCode)
+    public function storeOption(string $attributeCode): JsonResponse
     {
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         if (! $attribute) {
@@ -197,10 +203,8 @@ class AttributeController extends ApiController
 
     /**
      * Updates an attribute option in the storage.
-     *
-     * @return JsonResponse
      */
-    public function updateOption(string $attributeCode)
+    public function updateOption(string $attributeCode): JsonResponse
     {
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         if (! $attribute) {

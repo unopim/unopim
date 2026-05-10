@@ -90,11 +90,26 @@ class LogsDataGrid extends DataGrid
         $this->addColumn([
             'index'      => 'status',
             'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.status'),
-            'type'       => 'string',
-            'searchable' => true,
+            'type'       => 'dropdown',
+            'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($row) {
+            'options'    => [
+                'type'   => 'basic',
+                'params' => [
+                    'options' => [
+                        [
+                            'label' => trans('webhook::app.configuration.webhook.logs.index.datagrid.success'),
+                            'value' => 1,
+                        ],
+                        [
+                            'label' => trans('webhook::app.configuration.webhook.logs.index.datagrid.failed'),
+                            'value' => 0,
+                        ],
+                    ],
+                ],
+            ],
+            'closure' => function ($row) {
                 return $row->status
                     ? '<span class="break-words label-completed">'.trans('webhook::app.configuration.webhook.logs.index.datagrid.success').'</span>'
                     : '<span class="break-words label-canceled">'.trans('webhook::app.configuration.webhook.logs.index.datagrid.failed').'</span>';

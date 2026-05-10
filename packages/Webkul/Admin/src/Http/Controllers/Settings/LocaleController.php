@@ -25,7 +25,7 @@ class LocaleController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(LocalesDataGrid::class)->toJson();
@@ -82,7 +82,7 @@ class LocaleController extends Controller
                 'errors' => [
                     'status' => trans('admin::app.settings.locales.index.can-not-disable-error'),
                 ],
-            ], 422);
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $this->localeRepository->update(request()->only([
@@ -104,13 +104,13 @@ class LocaleController extends Controller
         if ($locale->count() == 1) {
             return response()->json([
                 'message' => trans('admin::app.settings.locales.index.last-delete-error'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         if ($locale->isLocaleBeingUsed()) {
             return response()->json([
                 'message' => trans('admin::app.settings.locales.index.can-not-delete-error'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -122,7 +122,7 @@ class LocaleController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => trans('admin::app.settings.locales.index.delete-failed'),
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

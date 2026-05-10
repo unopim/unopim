@@ -65,6 +65,7 @@ return [
             'invalid-attribute'    => '标头包含无效属性：“%s”。',
             'system'               => '发生意外的系统错误。',
             'wrong-quotes'         => '使用弯引号代替直引号。',
+            'file-empty'           => '文件为空或不包含标题行。请上传包含数据的有效文件。',
         ],
     ],
 

@@ -57,6 +57,7 @@
                     instance: null,
                     suppressNextFocus: false,
                     valueCopied: null,
+                    undoStack: [],
                     selected: false,
                     valuesCopied: {},
                     selecting: false,
@@ -180,6 +181,60 @@
 
                     if ((e.ctrlKey || e.metaKey) && e.keyCode === 86) {
                         this.handlePasteFromClipboard(e);
+
+                        return;
+                    }
+
+                    // Ctrl+D → Fill down (copy active cell value to selected range below)
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                        e.preventDefault();
+                        this.fillDown();
+
+                        return;
+                    }
+
+                    // Ctrl+R → Fill right (copy active cell value to selected range right)
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                        e.preventDefault();
+                        this.fillRight();
+
+                        return;
+                    }
+
+                    // Ctrl+Z → Undo last change
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                        e.preventDefault();
+                        this.undo();
+
+                        return;
+                    }
+
+                    // Ctrl+A → Select all cells
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                        e.preventDefault();
+                        this.selectAll();
+
+                        return;
+                    }
+
+                    // Delete / Backspace → Clear active cell
+                    if (e.key === 'Delete' || e.key === 'Backspace') {
+                        e.preventDefault();
+                        this.clearActiveCell();
+
+                        return;
+                    }
+
+                    // Type to start editing — alphanumeric keys start edit mode
+                    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                        this.$nextTick(() => {
+                            const input = this.activeCellInstance?.$refs?.component?.$refs?.input;
+
+                            if (input && typeof input.focus === 'function') {
+                                this.activeCellInstance.isInputFocused = true;
+                                input.focus();
+                            }
+                        });
 
                         return;
                     }
@@ -402,6 +457,106 @@
                     });
                 },
 
+                fillDown() {
+                    if (this.activeRow === null || this.activeCol === null) return;
+
+                    const value = this.activeCellInstance?.internalValue;
+
+                    if (value === null || value === undefined) return;
+
+                    const maxRow = this.initialData.length - 1;
+
+                    if (this.dragStart && this.dragStop) {
+                        const minRow = Math.min(this.dragStart.row, this.dragStop.row);
+                        const maxSelRow = Math.max(this.dragStart.row, this.dragStop.row);
+                        const minCol = Math.min(this.dragStart.col, this.dragStop.col);
+                        const maxCol = Math.max(this.dragStart.col, this.dragStop.col);
+
+                        for (let col = minCol; col <= maxCol; col++) {
+                            const sourceKey = `spreadsheet-cell-value-${minRow}-${col}`;
+                            this.$emitter.emit(sourceKey);
+                            const sourceValue = this.valuesCopied[`${minRow}-${col}`] ?? value;
+
+                            for (let row = minRow + 1; row <= maxSelRow; row++) {
+                                this.$emitter.emit(`spreadsheet-cell-paste-${row}-${col}`, sourceValue);
+                            }
+                        }
+                    } else {
+                        for (let row = this.activeRow + 1; row <= maxRow; row++) {
+                            this.$emitter.emit(`spreadsheet-cell-paste-${row}-${this.activeCol}`, value);
+                        }
+                    }
+                },
+
+                fillRight() {
+                    if (this.activeRow === null || this.activeCol === null) return;
+
+                    const value = this.activeCellInstance?.internalValue;
+
+                    if (value === null || value === undefined) return;
+
+                    const maxCol = this.fltColumns.length - 1;
+
+                    if (this.dragStart && this.dragStop) {
+                        const minRow = Math.min(this.dragStart.row, this.dragStop.row);
+                        const maxRow = Math.max(this.dragStart.row, this.dragStop.row);
+                        const minCol = Math.min(this.dragStart.col, this.dragStop.col);
+                        const maxSelCol = Math.max(this.dragStart.col, this.dragStop.col);
+
+                        for (let row = minRow; row <= maxRow; row++) {
+                            const sourceKey = `spreadsheet-cell-value-${row}-${minCol}`;
+                            this.$emitter.emit(sourceKey);
+                            const sourceValue = this.valuesCopied[`${row}-${minCol}`] ?? value;
+
+                            for (let col = minCol + 1; col <= maxSelCol; col++) {
+                                this.$emitter.emit(`spreadsheet-cell-paste-${row}-${col}`, sourceValue);
+                            }
+                        }
+                    } else {
+                        for (let col = this.activeCol + 1; col <= maxCol; col++) {
+                            this.$emitter.emit(`spreadsheet-cell-paste-${this.activeRow}-${col}`, value);
+                        }
+                    }
+                },
+
+                clearActiveCell() {
+                    if (this.activeCellInstance?.updateValue) {
+                        this.saveUndo(this.activeRow, this.activeCol, this.activeCellInstance.internalValue);
+                        this.activeCellInstance.updateValue(null);
+                    }
+                },
+
+                selectAll() {
+                    const maxRow = this.initialData.length - 1;
+                    const maxCol = this.fltColumns.length - 1;
+
+                    this.dragStart = { row: 0, col: 0 };
+                    this.dragStop = { row: maxRow, col: maxCol };
+                    this.selected = true;
+
+                    for (let row = 0; row <= maxRow; row++) {
+                        for (let col = 0; col <= maxCol; col++) {
+                            this.highlightCell(row, col);
+                        }
+                    }
+                },
+
+                saveUndo(row, col, value) {
+                    this.undoStack.push({ row, col, value });
+
+                    if (this.undoStack.length > 50) {
+                        this.undoStack.shift();
+                    }
+                },
+
+                undo() {
+                    if (this.undoStack.length === 0) return;
+
+                    const { row, col, value } = this.undoStack.pop();
+
+                    this.$emitter.emit(`spreadsheet-cell-paste-${row}-${col}`, value);
+                },
+
                 finalizeDragFill(startRow, lastRow, col) {
                     const value = this.valueCopied;
 
@@ -417,7 +572,7 @@
                         eventKey = `spreadsheet-cell-paste-${row}-${col}`;
                         let cell = this.$el.querySelector(`[data-row="${row}"][data-col="${col}"]`);
                         if (cell) {
-                            cell.classList.remove('bg-violet-200', 'dark:bg-cherry-900');
+                            cell.classList.remove('bg-violet-50', 'dark:bg-violet-900/30');
                         }
                         this.$emitter.emit(eventKey, value);
                     }
@@ -427,7 +582,7 @@
                     const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
 
                     if (cell) {
-                        cell.classList.add('bg-violet-200', 'dark:bg-cherry-900');
+                        cell.classList.add('bg-violet-50', 'dark:bg-violet-900/30');
                     }
                 },
 
@@ -435,7 +590,7 @@
                     const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
 
                     if (cell) {
-                        cell.classList.remove('bg-violet-200', 'dark:bg-cherry-900');
+                        cell.classList.remove('bg-violet-50', 'dark:bg-violet-900/30');
                     }
                 },
 
@@ -617,14 +772,14 @@
                     toUnselect.forEach(row => {
                         const cell = this.$el.querySelector(`[data-row="${row}"][data-col="${col}"]`);
                         if (cell) {
-                            cell.classList.remove('bg-violet-200', 'dark:bg-cherry-900');
+                            cell.classList.remove('bg-violet-50', 'dark:bg-violet-900/30');
                         }
                     });
 
                     toSelect.forEach(row => {
                         const cell = this.$el.querySelector(`[data-row="${row}"][data-col="${col}"]`);
                         if (cell) {
-                            cell.classList.add('bg-violet-200', 'dark:bg-cherry-900');
+                            cell.classList.add('bg-violet-50', 'dark:bg-violet-900/30');
                         }
                     });
 

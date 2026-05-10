@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => '魔法 AI',
         'general'               => '一般',
         'prompt'                => '提示詞',
         'system-prompt'         => '系統提示詞',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => '魔法 AI',
         'platform'       => '平台',
         'settings'       => '設定',
         'prompt'         => '提示詞',
@@ -35,6 +35,11 @@ return [
         'back'                      => '返回',
         'unauthorized'              => '此操作未經授權。',
         'error-generic'             => '發生意外錯誤，請重試。',
+        'error-rate-limit'          => '已達到AI供應商的請求速率限制。請稍等片刻後重試。',
+        'error-rate-limit-retry'    => '已達到AI供應商的請求速率限制。請在 :seconds 秒後重試。',
+        'error-overloaded'          => 'AI供應商目前負載過高。請稍後重試。',
+        'error-request-too-large'   => '您的請求對AI供應商來說太大。請縮短訊息或移除一些附件後重試。',
+        'error-api-key-corrupted'   => '無法解密此平台的API金鑰（:error）。應用程式加密金鑰可能已變更。請編輯平台並重新輸入您的API金鑰。',
         'invalid-file-path'         => '檔案路徑無效。',
         'invalid-locale-code'       => '語言代碼無效。',
         'invalid-channel-code'      => '頻道代碼無效。',
@@ -213,6 +218,7 @@ return [
         'attach'                   => '附加',
         'attach-csv-xlsx'          => '附加 CSV 或 XLSX',
         'attach-image'             => '附加圖片',
+        'remove-attachment'        => '移除附件',
         'send'                     => '傳送',
         'sending'                  => '正在傳送…',
         'processing'               => '正在處理…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'  => '例如 "為 SHIRT-001 產生 S/M/L × 紅/藍"',
             'edit-image'              => '編輯產品圖片',
             'edit-image-desc'         => '去除背景、增強及修飾',
-            'edit-image-hint'         => '上傳圖片，然後說明要變更的內容——例如 "去除背景"',
+            'edit-image-hint'         => '輸入產品SKU並描述要變更的內容 — 例如「移除SKU-123的背景」',
 
             'search-products'         => '搜尋產品',
             'search-products-desc'    => '按 SKU、名稱或狀態尋找產品',
@@ -319,7 +325,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => '按照指示編輯上傳的產品圖片。',
+            'edit-image-prompt'        => '透過指定的SKU取得產品圖片，套用請求的變更並儲存回去。',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

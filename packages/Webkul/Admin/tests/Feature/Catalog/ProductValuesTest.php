@@ -644,10 +644,11 @@ it('should store the categories value when updating simple product', function ()
     $this->loginAsAdmin();
 
     $category = Category::factory()->create();
+    $category2 = Category::factory()->create();
 
     $product = Product::factory()->simple()->create();
 
-    $value = [$category->code, $category->parent?->code];
+    $value = [$category->code, $category2->code];
 
     $data = [
         'sku'    => $product->sku,
@@ -1061,10 +1062,11 @@ it('should store the categories value when updating configurable product', funct
     $this->loginAsAdmin();
 
     $category = Category::factory()->create();
+    $category2 = Category::factory()->create();
 
     $product = Product::factory()->configurable()->create();
 
-    $value = [$category->code, $category->parent?->code];
+    $value = [$category->code, $category2->code];
 
     $data = [
         'sku'    => $product->sku,
@@ -1141,4 +1143,45 @@ it('should allow empty value for optional attribute with numeric validation', fu
 
     $product->refresh();
     $this->assertEquals('', $product->values['common'][$attributeCode] ?? '');
+});
+
+it('should reject root category when assigning categories to a product', function () {
+    $this->loginAsAdmin();
+
+    $rootCategory = Category::factory()->create(['parent_id' => null]);
+
+    $product = Product::factory()->simple()->create();
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'categories' => [$rootCategory->code],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHasErrors();
+});
+
+it('should allow only non-root categories when assigning categories to a product', function () {
+    $this->loginAsAdmin();
+
+    $rootCategory = Category::factory()->create(['parent_id' => null]);
+    $childCategory = Category::factory()->create(['parent_id' => $rootCategory->id]);
+
+    $product = Product::factory()->simple()->create();
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'categories' => [$childCategory->code],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertContains($childCategory->code, $product->values['categories'] ?? []);
 });

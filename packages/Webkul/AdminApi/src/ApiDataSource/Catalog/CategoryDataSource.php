@@ -98,7 +98,7 @@ class CategoryDataSource extends ApiDataSource
 
         return [
             'code'            => $category['code'],
-            'parent'          => $data['parent_category']['code'] ?? null,
+            'parent'          => $category['parent_category']['code'] ?? null,
             'additional_data' => $category['additional_data'],
         ];
     }

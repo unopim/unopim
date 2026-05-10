@@ -146,8 +146,8 @@ it('should return error for invalid filter format', function () {
 
 it('should return empty data for filter matching nothing', function () {
     $filters = json_encode([
-        'status' => [
-            ['operator' => '=', 'value' => '999'],
+        'code' => [
+            ['operator' => '=', 'value' => 'nonexistent_locale_xyz'],
         ],
     ]);
 

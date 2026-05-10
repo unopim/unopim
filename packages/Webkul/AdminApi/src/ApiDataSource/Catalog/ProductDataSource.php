@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\ApiDataSource\Catalog;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
@@ -52,7 +53,7 @@ class ProductDataSource extends ApiDataSource
     {
         $paginator = $this->paginator->toArray();
 
-        $withCompleteness = filter_var(request()->get('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
+        $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
         return array_map(
             fn ($item) => $this->normalizeProduct($item, $withCompleteness),
@@ -90,7 +91,7 @@ class ProductDataSource extends ApiDataSource
             );
         }
 
-        $withCompleteness = filter_var(request()->get('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
+        $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
         return $this->normalizeProduct($product, $withCompleteness);
     }
@@ -187,13 +188,15 @@ class ProductDataSource extends ApiDataSource
     protected function getParentIdByCode(Builder $queryBuilder, string $sku)
     {
         $parentQuery = clone $queryBuilder;
-        $parentQuery->where('products.sku', $sku);
-        $parentQuery->orWhere('products.type', config('product_types.configurable.key'));
+        // Parent lookup must match BOTH a configurable product AND the given SKU — previously an
+        // `orWhere` on type alone returned any configurable product, masking invalid SKUs.
+        $parentQuery->where('products.sku', $sku)
+            ->where('products.type', config('product_types.configurable.key'));
         $parentId = $parentQuery->get()->first()?->id;
 
         if (! $parentId) {
-            throw new ModelNotFoundException(
-                sprintf('Parent with sku %s could not be found.', (string) $sku)
+            throw new UnprocessableEntityHttpException(
+                sprintf('Parent filter value "%s" is not a valid configurable product SKU.', (string) $sku)
             );
         }
 

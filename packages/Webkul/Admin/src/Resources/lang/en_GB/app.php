@@ -16,7 +16,7 @@ return [
                 'email'                  => 'Registered Email',
                 'email-not-exist'        => 'Email Does Not Exist',
                 'page-title'             => 'Forgot Password',
-                'reset-link-sent'        => 'Reset Password link sent',
+                'reset-link-sent'        => 'If an account with that email exists, a password reset link has been sent.',
                 'email-settings-error'   => 'Email could not be sent. Please check your email configuration details',
                 'sign-in-link'           => 'Back to Sign In?',
                 'submit-btn'             => 'Reset',
@@ -40,7 +40,9 @@ return [
         'description-text' => 'List all Notifications',
         'marked-success'   => 'Notification Marked Successfully',
         'no-record'        => 'No Records Found',
+        'of'               => 'of',
         'read-all'         => 'Mark as Read',
+        'showing'          => 'Showing',
         'title'            => 'Notifications',
         'view-all'         => 'View All',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Completed',
             'pending'    => 'Pending',
             'processing' => 'Processing',
+            'read'       => 'Read',
+            'unread'     => 'Unread',
         ],
     ],
     'account' => [
@@ -216,7 +220,8 @@ return [
                 'save-btn'   => 'Save Product',
                 'title'      => 'Edit Product',
                 'categories' => [
-                    'title' => 'Categories',
+                    'title'            => 'Categories',
+                    'root-not-allowed' => 'Root category cannot be assigned to a product.',
                 ],
                 'images' => [
                     'info'  => 'Image resolution should be like 560px X 609px',
@@ -359,6 +364,8 @@ return [
                     'url'                        => 'Please enter a valid URL.',
                     'regex'                      => 'Value does not match the required pattern.',
                     'invalid-pattern'            => 'Invalid custom pattern provided.',
+
+                    'numeric'                    => 'Value for the numeric attribute ":attribute" must be a valid number.',
                     'select-attribute-or-family' => 'Please select at least one attribute or an attribute family.',
                     'failed'                     => 'Validation failed.',
                 ],
@@ -378,16 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Bulk edit successful.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'No changes to save.',
-                'success'         => 'Job executed successfully.',
-                'fetch-failed'    => 'Failed to fetch.',
-                'action'          => 'Bulk Edit',
-                'gallery-preview' => 'Gallery Preview',
-                'img-preview'     => 'Image Preview',
-                'no-image'        => 'No Image',
-                'img-fail'        => 'Image upload failed',
-                'no-option'       => 'No Options',
+                'id'                          => 'ID',
+                'no-changes'                  => 'No changes to save.',
+
+                'invalid-datetime'            => 'Please enter a valid date and time.',
+
+                'resize-column'               => 'Drag to resize column',
+                'success'                     => 'Job executed successfully.',
+                'fetch-failed'                => 'Failed to fetch.',
+                'action'                      => 'Bulk Edit',
+                'description'                 => 'Edit multiple products at once. Changes are processed in the background.',
+                'gallery-preview'             => 'Gallery Preview',
+                'img-preview'                 => 'Image Preview',
+                'no-image'                    => 'No Image',
+                'img-fail'                    => 'Image upload failed',
+                'no-option'                   => 'No Options',
+                'keyboard-shortcuts'          => 'Keyboard Shortcuts',
+                'shortcuts-navigation'        => 'Navigation',
+                'shortcuts-editing'           => 'Editing',
+                'shortcuts-selection'         => 'Selection',
+                'shortcuts-clipboard'         => 'Clipboard & Fill',
+                'shortcuts-move-cell'         => 'Move between cells',
+                'shortcuts-move-down'         => 'Move down / confirm edit',
+                'shortcuts-move-up'           => 'Move up',
+                'shortcuts-move-right-left'   => 'Move right / left',
+                'shortcuts-home-end'          => 'First / last column in row',
+                'shortcuts-ctrl-home-end'     => 'First / last cell in grid',
+                'shortcuts-extend-selection'  => 'Extend selection',
+                'shortcuts-select-all'        => 'Select all cells',
+                'shortcuts-enter-edit'        => 'Enter edit mode',
+                'shortcuts-confirm-move-down' => 'Confirm + move down',
+                'shortcuts-confirm-move-right'=> 'Confirm + move right',
+                'shortcuts-escape-revert'     => 'Revert value + exit edit',
+                'shortcuts-clear-cell'        => 'Clear cell',
+                'shortcuts-copy'              => 'Copy',
+                'shortcuts-cut'               => 'Cut',
+                'shortcuts-paste'             => 'Paste',
+                'shortcuts-fill-down'         => 'Fill down',
+                'shortcuts-fill-right'        => 'Fill right',
+                'shortcuts-undo'              => 'Undo',
+                'shortcuts-redo'              => 'Redo',
+                'shortcuts-help'              => 'Toggle keyboard shortcuts',
             ],
             'create-success'          => 'Product created successfully',
             'delete-failed'           => 'Product deletion failed',
@@ -482,6 +520,8 @@ return [
                 'is-filterable'         => 'Is filterable',
                 'ai-translate'          => 'AI Translate',
                 'invalid-swatch-type'   => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
+
+                'single-object-only'    => 'Each create request must send a single attribute object.',
                 'option'                => [
                     'color'    => 'Colour Swatch',
                     'dropdown' => 'Dropdown',
@@ -564,6 +604,8 @@ return [
             'delete-success'    => 'Attribute Deleted Successfully',
             'update-success'    => 'Attribute Updated Successfully',
             'user-define-error' => 'Cannot delete system Attribute',
+
+            'immutable-fields'  => 'The following fields cannot be modified: :fields.',
             'not-found'         => 'Attribute with code ":code" could not be found',
         ],
         'attribute-options' => [
@@ -676,6 +718,7 @@ return [
             'delete-success'       => 'Category Deleted Successfully.',
             'update-success'       => 'Category Updated Successfully.',
             'can-not-update'       => 'This root category is associated with a channel and cannot have a parent category.',
+            'invalid-parent'       => 'The selected parent category is invalid. A category cannot be its own parent or a descendant of itself.',
             'unique-validation'    => 'This value is already taken.',
             'not-found'            => 'Category with Code ":code" Not Found',
             'unknown-fields'       => 'Category Field with Code ":fields" Not Found',
@@ -844,15 +887,18 @@ return [
             'update-success'    => 'Category Field Updated Successfully',
             'user-define-error' => 'Cannot delete system Category Field',
             'not-found'         => 'Category Field with code ":code" not found',
+
+            'immutable-fields'  => 'The following fields cannot be modified: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Category Field Option Created Successfully',
-            'update-success' => 'Category Field Option Updated Successfully',
+            'create-success'      => 'Category Field Option Created Successfully',
+            'update-success'      => 'Category Field Option Updated Successfully',
+            'update-unknown-code' => 'No category field option exists with code ":code".',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Create Attribute Family',
-                'title'    => 'Families',
+                'title'    => 'Attribute Families',
                 'datagrid' => [
                     'code'           => 'Code',
                     'delete'         => 'Delete',
@@ -943,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Cannot update configurable options as this family already has variant products.',
         ],
         'history' => [
+            'view' => 'View Version Details',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -1076,6 +1124,8 @@ return [
                         'paused'               => 'Paused',
                         'cancelled'            => 'Cancelled',
                         'failed'               => 'Failed',
+
+                        'view'       => 'View',
                     ],
                 ],
                 'import' => [
@@ -1552,17 +1602,18 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Edit User',
             ],
-            'activate-warning'          => 'Your account has yet to be activated, please contact the administrator.',
-            'cannot-change'             => 'User cannot be changed',
-            'create-success'            => 'User created successfully.',
-            'delete-failed'             => 'User delete failed.',
-            'delete-success'            => 'User deleted successfully.',
-            'delete-warning'            => 'Are you sure you want to perform this action?',
-            'incorrect-password'        => 'Incorrect password',
-            'last-delete-error'         => 'Last User delete failed',
-            'login-error'               => 'Please check your credentials and try again.',
-            'update-success'            => 'User updated successfully.',
-            'current-user-delete-error' => 'The logged-in user cannot be deleted.',
+            'activate-warning'           => 'Your account has yet to be activated, please contact the administrator.',
+            'cannot-change'              => 'User cannot be changed',
+            'cannot-escalate-role'       => 'You do not have permission to assign an all-access role.',
+            'create-success'             => 'User created successfully.',
+            'delete-failed'              => 'User delete failed.',
+            'delete-success'             => 'User deleted successfully.',
+            'delete-warning'             => 'Are you sure you want to perform this action?',
+            'incorrect-password'         => 'Incorrect password',
+            'last-delete-error'          => 'Last User delete failed',
+            'login-error'                => 'Please check your credentials and try again.',
+            'update-success'             => 'User updated successfully.',
+            'current-user-delete-error'  => 'The logged-in user cannot be deleted.',
         ],
         'roles' => [
             'index' => [
@@ -1659,6 +1710,8 @@ return [
                         'title-info'                => 'Configure the AI Agent Chat, autonomous enrichment workflows, and quality monitoring. These features enable conversational product management and proactive catalog maintenance.',
                         'enabled'                   => 'Enable AI Agent Chat',
                         'enabled-info'              => 'Enable the floating AI chat widget for conversational product management with 27+ tool actions.',
+                        'open-by-default'           => 'Open Chat Panel on Page Load',
+                        'open-by-default-info'      => 'When enabled, the AI Agent chat panel opens automatically the first time an admin lands on a page. Users can still close it manually — the preference is remembered for the rest of the browser session.',
                         'max-steps'                 => 'Max Agent Steps Per Turn',
                         'max-steps-info'            => 'Maximum number of tool-call iterations the AI agent can perform per user message. Higher values allow more complex multi-step operations.',
                         'daily-token-budget'        => 'Daily Token Budget',
@@ -1729,6 +1782,12 @@ return [
             'client-not-found'               => 'Client Not Found',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Title',
@@ -1771,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'System Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Title',
@@ -1864,16 +1929,21 @@ return [
                 'invalid-model-name'       => 'Invalid model name. Use only letters, numbers, hyphens, dots, colons, and slashes (e.g. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'          => 'Platform saved successfully.',
-                'update-success'        => 'Platform updated successfully.',
-                'delete-success'        => 'Platform deleted successfully.',
-                'delete-fail'           => 'Platform deletion failed.',
-                'cannot-delete-default' => 'Cannot delete the only default platform.',
-                'set-default-success'   => 'Platform set as default successfully.',
-                'test-success'          => 'Connection verified successfully!',
-                'test-fail'             => 'Connection test failed.',
-                'fetch-models-fail'     => 'Could not fetch models.',
-                'invalid-model-names'   => 'Invalid model names: :names. Model names must start with a letter or number and contain only letters, numbers, hyphens, dots, colons, and slashes.',
+                'save-success'             => 'Platform saved successfully.',
+                'update-success'           => 'Platform updated successfully.',
+                'delete-success'           => 'Platform deleted successfully.',
+                'delete-fail'              => 'Platform deletion failed.',
+                'not-found'                => 'The selected platform no longer exists. Please refresh and try again.',
+                'cannot-delete-default'    => 'Cannot delete the only default platform.',
+                'set-default-success'      => 'Platform set as default successfully.',
+                'test-success'             => 'Connection verified successfully!',
+                'test-fail'                => 'Connection test failed.',
+                'no-test-model'            => 'Select at least one text-capable model to run the connection test.',
+                'custom-api-url-required'  => 'API URL is required for custom providers so the connection test reaches your own endpoint.',
+                'api-key-corrupted'        => 'The stored API key cannot be decrypted (:error). The application encryption key may have changed. Please re-enter your API key and save.',
+                'fetch-models-fail'        => 'Could not fetch models.',
+                'invalid-model-names'      => 'Invalid model names: :names. Model names must start with a letter or number and contain only letters, numbers, hyphens, dots, colons, and slashes.',
+                'default-requires-enabled' => 'A disabled platform cannot be marked as default. Please enable the platform first.',
             ],
         ],
     ],
@@ -1959,10 +2029,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Select',
-                'title'    => 'Apply Filters',
-                'save'     => 'Save',
-                'dropdown' => [
+                'select'        => 'Select',
+                'title'         => 'Apply Filters',
+                'save'          => 'Save',
+                'add-filter'    => 'Add Filter',
+                'remove-filter' => 'Remove Filter',
+                'search-filter' => 'Search...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Type at least 2 characters...',
                         'no-results'        => 'No results found...',
@@ -2038,6 +2111,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Add Image',
+                'add-media-btn'      => 'Add Media',
                 'generate-with-ai'   => 'Generate with AI',
                 'upload-from-device' => 'Upload from Device',
                 'cancel'             => 'Cancel',
@@ -2119,6 +2193,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Default Prompt',
+                'select-prompt-template' => '-- Select a prompt template --',
             ],
         ],
     ],
@@ -2204,6 +2279,7 @@ return [
         '403' => [
             'description' => 'Oops! This page is off-limits. You don\'t have the required permissions to view this content.',
             'title'       => '403 Forbidden',
+            'message'     => 'You do not have permission to access this page. Please contact your administrator if you believe this is an error.',
         ],
         '413' => [
             'description' => 'Oops! It seems you are trying to upload a file that is too large. If you wish to upload the same, please update the PHP configuration accordingly.',
@@ -2255,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Yes',
-        'no'             => 'No',
-        'true'           => 'True',
-        'false'          => 'False',
-        'enable'         => 'Enabled',
-        'disable'        => 'Disabled',
-        'no-match-found' => 'No Match Found!',
+        'yes'               => 'Yes',
+        'no'                => 'No',
+        'true'              => 'True',
+        'false'             => 'False',
+        'enable'            => 'Enabled',
+        'disable'           => 'Disabled',
+        'no-match-found'    => 'No Match Found!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

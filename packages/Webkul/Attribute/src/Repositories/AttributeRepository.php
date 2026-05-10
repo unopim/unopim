@@ -6,6 +6,7 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Eloquent\Repository;
@@ -82,6 +83,10 @@ class AttributeRepository extends Repository
         if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options'])) {
             foreach ($data['options'] as $optionId => $optionInputs) {
                 if ($optionInputs['isNew'] == 'true') {
+                    if (empty($optionInputs['code'])) {
+                        $optionInputs['code'] = 'option_'.strtolower(Str::random(8));
+                    }
+
                     $this->attributeOptionRepository->create(array_merge([
                         'attribute_id' => $attribute->id,
                     ], $optionInputs));
@@ -236,8 +241,20 @@ class AttributeRepository extends Repository
      */
     public function getAttributeListBySearch(string $search, array $columns = ['*'], array $excludeTypes = []): array
     {
+        // Resolve ambiguous columns — `name` lives on attribute_translations, not attributes.
+        $resolvedColumns = array_map(function ($col) {
+            if ($col === '*') {
+                return 'attributes.*';
+            }
+            if ($col === 'name') {
+                return 'attribute_name.name as name';
+            }
+
+            return str_contains($col, '.') ? $col : 'attributes.'.$col;
+        }, $columns);
+
         $query = DB::table('attributes')
-            ->select($columns)
+            ->select($resolvedColumns)
             ->leftJoin('attribute_translations as attribute_name', function ($join) {
                 $join->on('attribute_name.attribute_id', '=', 'attributes.id')
                     ->where('attribute_name.locale', '=', core()->getRequestedLocaleCode());

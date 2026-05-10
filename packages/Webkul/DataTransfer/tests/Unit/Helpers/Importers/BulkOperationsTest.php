@@ -76,7 +76,7 @@ describe('Product Importer Bulk Operations', function () {
 
         $updated = DB::table('products')->where('sku', $sku)->first();
 
-        expect($updated->status)->toBe(1);
+        expect((int) $updated->status)->toBe(1);
 
         $values = json_decode($updated->values, true);
         expect($values['common']['name'])->toBe('Updated');

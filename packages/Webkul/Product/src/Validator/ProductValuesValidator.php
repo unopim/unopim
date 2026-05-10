@@ -59,7 +59,7 @@ class ProductValuesValidator
             $locales = array_unique(array_merge($locales, $channelLocales));
         }
 
-        $channelCodes = $channel->pluck('code')->toArray();
+        $channelCodes = $channels->pluck('code')->toArray();
 
         $this->commonValidator->validate(data: $data, id: $productId);
 

@@ -16,7 +16,7 @@ return [
                 'email'                  => 'Rekisteröity sähköposti',
                 'email-not-exist'        => 'Sähköpostiosoitetta ei löydy',
                 'page-title'             => 'Salasanan palauttaminen',
-                'reset-link-sent'        => 'Salasanan palautuslinkki lähetetty',
+                'reset-link-sent'        => 'Jos tili kyseisellä sähköpostiosoitteella on olemassa, salasanan palautuslinkki on lähetetty.',
                 'email-settings-error'   => 'Sähköpostia ei voitu lähettää. Tarkista sähköpostiasetukset',
                 'sign-in-link'           => 'Takaisin kirjautumiseen',
                 'submit-btn'             => 'Palauta',
@@ -40,7 +40,9 @@ return [
         'description-text' => 'Luettelo kaikista ilmoituksista',
         'marked-success'   => 'Ilmoitus merkitty onnistuneesti',
         'no-record'        => 'Tietueita ei löytynyt',
+        'of'               => '/',
         'read-all'         => 'Merkitse luetuksi',
+        'showing'          => 'Näytetään',
         'title'            => 'Ilmoitukset',
         'view-all'         => 'Näytä kaikki',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Valmis',
             'pending'    => 'Odottaa',
             'processing' => 'Käsitellään',
+            'read'       => 'Luettu',
+            'unread'     => 'Lukematon',
         ],
     ],
     'account' => [
@@ -216,7 +220,8 @@ return [
                 'save-btn'   => 'Tallenna tuote',
                 'title'      => 'Muokkaa tuotetta',
                 'categories' => [
-                    'title' => 'Kategoriat',
+                    'title'            => 'Kategoriat',
+                    'root-not-allowed' => 'Juuriluokkaa ei voi liittää tuotteeseen.',
                 ],
                 'images' => [
                     'info'  => 'Kuvan tarkkuuden tulisi olla 560px X 609px',
@@ -359,6 +364,8 @@ return [
                     'url'                        => 'Anna kelvollinen URL.',
                     'regex'                      => 'Arvo ei vastaa vaadittua kaavaa.',
                     'invalid-pattern'            => 'Virheellinen mukautettu kaava annettu.',
+
+                    'numeric'                    => 'Numeerisen määritteen ":attribute" arvon on oltava kelvollinen luku.',
                     'select-attribute-or-family' => 'Valitse vähintään yksi attribuutti tai attribuuttiperhe.',
                     'failed'                     => 'Validointi epäonnistui.',
                 ],
@@ -378,16 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Massamuokkaus onnistui.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Ei muutoksia tallennettavaksi.',
-                'success'         => 'Toiminto suoritettu onnistuneesti.',
-                'fetch-failed'    => 'Tietojen haku epäonnistui.',
-                'action'          => 'Massamuokkaus',
-                'gallery-preview' => 'Gallerian esikatselu',
-                'img-preview'     => 'Kuvan esikatselu',
-                'no-image'        => 'Ei kuvaa',
-                'img-fail'        => 'Kuvan lataus epäonnistui.',
-                'no-option'       => 'Ei vaihtoehtoja',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Ei muutoksia tallennettavaksi.',
+
+                'invalid-datetime'            => 'Anna kelvollinen päivämäärä ja kellonaika.',
+
+                'resize-column'               => 'Vedä muuttaaksesi sarakkeen leveyttä',
+                'success'                     => 'Toiminto suoritettu onnistuneesti.',
+                'fetch-failed'                => 'Tietojen haku epäonnistui.',
+                'action'                      => 'Massamuokkaus',
+                'description'                 => 'Muokkaa useita tuotteita kerralla. Muutokset käsitellään taustalla.',
+                'gallery-preview'             => 'Gallerian esikatselu',
+                'img-preview'                 => 'Kuvan esikatselu',
+                'no-image'                    => 'Ei kuvaa',
+                'img-fail'                    => 'Kuvan lataus epäonnistui.',
+                'no-option'                   => 'Ei vaihtoehtoja',
+                'keyboard-shortcuts'          => 'Pikanäppäimet',
+                'shortcuts-navigation'        => 'Navigointi',
+                'shortcuts-editing'           => 'Muokkaus',
+                'shortcuts-selection'         => 'Valinta',
+                'shortcuts-clipboard'         => 'Leikepöytä ja täyttö',
+                'shortcuts-move-cell'         => 'Siirry solujen välillä',
+                'shortcuts-move-down'         => 'Siirry alas / vahvista muokkaus',
+                'shortcuts-move-up'           => 'Siirry ylös',
+                'shortcuts-move-right-left'   => 'Siirry oikealle / vasemmalle',
+                'shortcuts-home-end'          => 'Ensimmäinen / viimeinen sarake rivillä',
+                'shortcuts-ctrl-home-end'     => 'Ensimmäinen / viimeinen solu ruudukossa',
+                'shortcuts-extend-selection'  => 'Laajenna valintaa',
+                'shortcuts-select-all'        => 'Valitse kaikki solut',
+                'shortcuts-enter-edit'        => 'Siirry muokkaustilaan',
+                'shortcuts-confirm-move-down' => 'Vahvista + siirry alas',
+                'shortcuts-confirm-move-right'=> 'Vahvista + siirry oikealle',
+                'shortcuts-escape-revert'     => 'Palauta arvo + poistu muokkauksesta',
+                'shortcuts-clear-cell'        => 'Tyhjennä solu',
+                'shortcuts-copy'              => 'Kopioi',
+                'shortcuts-cut'               => 'Leikkaa',
+                'shortcuts-paste'             => 'Liitä',
+                'shortcuts-fill-down'         => 'Täytä alas',
+                'shortcuts-fill-right'        => 'Täytä oikealle',
+                'shortcuts-undo'              => 'Kumoa',
+                'shortcuts-redo'              => 'Tee uudelleen',
+                'shortcuts-help'              => 'Näytä/piilota pikanäppäimet',
             ],
             'create-success'          => 'Tuote luotiin onnistuneesti',
             'delete-failed'           => 'Tuotteen poistaminen epäonnistui',
@@ -482,6 +520,8 @@ return [
                 'is-filterable'         => 'On suodatettavissa',
                 'ai-translate'          => 'AI Käännös',
                 'invalid-swatch-type'   => ':attribute ei ole sallittu attribuuttityypille :type, jossa on swatch-tyyppi :swatch_type.',
+
+                'single-object-only'    => 'Jokaisen luontipyynnön tulee sisältää vain yksi attribuuttiolio.',
                 'option'                => [
                     'color'    => 'Väri',
                     'dropdown' => 'Pudotusvalikko',
@@ -564,6 +604,8 @@ return [
             'delete-success'    => 'Ominaisuus poistettu onnistuneesti',
             'update-success'    => 'Ominaisuus päivitetty onnistuneesti',
             'user-define-error' => 'Ei voi poistaa järjestelmän ominaisuutta',
+
+            'immutable-fields'  => 'Seuraavia kenttiä ei voi muokata: :fields.',
             'not-found'         => 'Ominaisuutta koodilla ":code" ei löytynyt',
         ],
         'attribute-options' => [
@@ -676,6 +718,7 @@ return [
             'delete-success'       => 'Kategoria poistettiin onnistuneesti.',
             'update-success'       => 'Kategoria päivitettiin onnistuneesti.',
             'can-not-update'       => 'Tätä pääkategoriaa ei voi päivittää, koska se on liitetty kanavaan.',
+            'invalid-parent'       => 'Valittu yläkategoria ei kelpaa. Kategoria ei voi olla oma vanhempansa tai itsensä jälkeläinen.',
             'unique-validation'    => 'Tämä arvo on jo käytössä.',
             'not-found'            => 'Kategoria koodilla ":code" ei löytynyt',
             'unknown-fields'       => 'Kategoriakenttä koodilla ":fields" ei löytynyt',
@@ -844,15 +887,18 @@ return [
             'update-success'    => 'Kategoriakenttä päivitettiin onnistuneesti',
             'user-define-error' => 'Ei voida poistaa järjestelmän kategoria kenttää',
             'not-found'         => 'Kategoria kenttää koodilla ":code" ei löydy',
+
+            'immutable-fields'  => 'Seuraavia kenttiä ei voi muokata: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategoriakenttävaihtoehto luotu onnistuneesti',
-            'update-success' => 'Kategoriakenttävaihtoehto päivitetty onnistuneesti',
+            'create-success'      => 'Kategoriakenttävaihtoehto luotu onnistuneesti',
+            'update-success'      => 'Kategoriakenttävaihtoehto päivitetty onnistuneesti',
+            'update-unknown-code' => 'Luokkakenttävalintaa koodilla ":code" ei ole olemassa.',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Luo Attribuuttiperhe',
-                'title'    => 'Perheet',
+                'title'    => 'Attribuuttiperheet',
                 'datagrid' => [
                     'code'           => 'Koodi',
                     'delete'         => 'Poista',
@@ -943,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Ei voida päivittää määritettäväviä vaihtoehtoja, koska tällä perheellä on jo varianttituotteita.',
         ],
         'history' => [
+            'view' => 'Näytä version tiedot',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versio',
@@ -1076,6 +1124,8 @@ return [
                         'paused'               => 'Keskeytetty',
                         'cancelled'            => 'Peruutettu',
                         'failed'               => 'Epäonnistui',
+
+                        'view'       => 'Näytä',
                     ],
                 ],
                 'import' => [
@@ -1552,17 +1602,18 @@ return [
                 'status'           => 'Tila',
                 'title'            => 'Muokkaa Käyttäjää',
             ],
-            'activate-warning'          => 'Tilisi ei ole vielä aktivoitu, ota yhteys järjestelmänvalvojaan.',
-            'cannot-change'             => 'Käyttäjää ei voi muuttaa',
-            'create-success'            => 'Käyttäjä luotu onnistuneesti.',
-            'delete-failed'             => 'Käyttäjän poistaminen epäonnistui.',
-            'delete-success'            => 'Käyttäjä poistettu onnistuneesti.',
-            'delete-warning'            => 'Oletko varma, että haluat suorittaa tämän toiminnon?',
-            'incorrect-password'        => 'Virheellinen salasana',
-            'last-delete-error'         => 'Viimeinen käyttäjän poisto epäonnistui',
-            'login-error'               => 'Tarkista tunnuksesi ja yritä uudelleen.',
-            'update-success'            => 'Käyttäjä päivitettiin onnistuneesti.',
-            'current-user-delete-error' => 'Kirjautunutta käyttäjää ei voi poistaa.',
+            'activate-warning'           => 'Tilisi ei ole vielä aktivoitu, ota yhteys järjestelmänvalvojaan.',
+            'cannot-change'              => 'Käyttäjää ei voi muuttaa',
+            'cannot-escalate-role'       => 'Sinulla ei ole oikeutta määrittää täyden pääsyn roolia.',
+            'create-success'             => 'Käyttäjä luotu onnistuneesti.',
+            'delete-failed'              => 'Käyttäjän poistaminen epäonnistui.',
+            'delete-success'             => 'Käyttäjä poistettu onnistuneesti.',
+            'delete-warning'             => 'Oletko varma, että haluat suorittaa tämän toiminnon?',
+            'incorrect-password'         => 'Virheellinen salasana',
+            'last-delete-error'          => 'Viimeinen käyttäjän poisto epäonnistui',
+            'login-error'                => 'Tarkista tunnuksesi ja yritä uudelleen.',
+            'update-success'             => 'Käyttäjä päivitettiin onnistuneesti.',
+            'current-user-delete-error'  => 'Kirjautunutta käyttäjää ei voi poistaa.',
         ],
         'roles' => [
             'index' => [
@@ -1659,6 +1710,8 @@ return [
                         'title-info'                => 'Määritä tekoälyagentin chat, itsenäiset rikastustyönkulut ja laadunvalvonta. Nämä ominaisuudet mahdollistavat keskustelupohjaisen tuotehallinnan ja ennakoivan katalogien ylläpidon.',
                         'enabled'                   => 'Ota tekoälyagentin chat käyttöön',
                         'enabled-info'              => 'Ota käyttöön kelluva tekoälykeskusteluwidget keskustelupohjaiseen tuotehallintaan yli 27 työkalutoiminnolla.',
+                        'open-by-default'           => 'Avaa keskustelupaneeli sivun latautuessa',
+                        'open-by-default-info'      => 'Kun tämä on käytössä, tekoälyagentin keskustelupaneeli avautuu automaattisesti, kun järjestelmänvalvoja saapuu sivulle ensimmäistä kertaa. Käyttäjät voivat edelleen sulkea sen manuaalisesti — valinta muistetaan selainistunnon loppuajan.',
                         'max-steps'                 => 'Agentin max. askeleet per vuoro',
                         'max-steps-info'            => 'Työkalukutsun iteraatioiden enimmäismäärä, jotka tekoälyagentti voi suorittaa käyttäjäviestiä kohden. Suuremmat arvot mahdollistavat monimutkaisemmat monivaihetoiminnot.',
                         'daily-token-budget'        => 'Päivittäinen tokenibudjetti',
@@ -1729,6 +1782,12 @@ return [
             'client-not-found'               => 'Asiakasta ei löytynyt',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Kehotteet',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'Tunnus',
                 'title'            => 'Otsikko',
@@ -1771,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Järjestelmäkehotteet',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Otsikko',
@@ -1864,16 +1929,21 @@ return [
                 'invalid-model-name'       => 'Virheellinen mallin nimi. Käytä vain kirjaimia, numeroita, väliviivoja, pisteitä, kaksoispisteitä ja kauttaviivoja (esim. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'          => 'Alusta tallennettu onnistuneesti.',
-                'update-success'        => 'Alusta päivitetty onnistuneesti.',
-                'delete-success'        => 'Alusta poistettu onnistuneesti.',
-                'delete-fail'           => 'Alustan poistaminen epäonnistui.',
-                'cannot-delete-default' => 'Ainoaa oletusalustaa ei voi poistaa.',
-                'set-default-success'   => 'Alusta asetettu oletukseksi onnistuneesti.',
-                'test-success'          => 'Yhteys vahvistettu onnistuneesti!',
-                'test-fail'             => 'Yhteystesti epäonnistui',
-                'fetch-models-fail'     => 'Mallien haku epäonnistui',
-                'invalid-model-names'   => 'Virheelliset mallien nimet: :names. Mallien nimien on alettava kirjaimella tai numerolla ja sisällettävä vain kirjaimia, numeroita, väliviivoja, pisteitä, kaksoispisteitä ja kauttaviivoja.',
+                'save-success'             => 'Alusta tallennettu onnistuneesti.',
+                'update-success'           => 'Alusta päivitetty onnistuneesti.',
+                'delete-success'           => 'Alusta poistettu onnistuneesti.',
+                'delete-fail'              => 'Alustan poistaminen epäonnistui.',
+                'not-found'                => 'Valittua alustaa ei enää ole olemassa. Päivitä ja yritä uudelleen.',
+                'cannot-delete-default'    => 'Ainoaa oletusalustaa ei voi poistaa.',
+                'set-default-success'      => 'Alusta asetettu oletukseksi onnistuneesti.',
+                'test-success'             => 'Yhteys vahvistettu onnistuneesti!',
+                'test-fail'                => 'Yhteystesti epäonnistui',
+                'no-test-model'            => 'Valitse vähintään yksi tekstiä tukeva malli yhteystestin suorittamiseksi.',
+                'custom-api-url-required'  => 'API URL vaaditaan mukautetuille tarjoajille, jotta yhteystesti saavuttaa oman päätepisteesi.',
+                'api-key-corrupted'        => 'Tallennettua API-avainta ei voitu purkaa (:error). Sovelluksen salausavain on saattanut muuttua. Syötä API-avaimesi uudelleen ja tallenna.',
+                'fetch-models-fail'        => 'Mallien haku epäonnistui',
+                'invalid-model-names'      => 'Virheelliset mallien nimet: :names. Mallien nimien on alettava kirjaimella tai numerolla ja sisällettävä vain kirjaimia, numeroita, väliviivoja, pisteitä, kaksoispisteitä ja kauttaviivoja.',
+                'default-requires-enabled' => 'Poistettua alustaa ei voi merkitä oletukseksi. Ota alusta ensin käyttöön.',
             ],
         ],
     ],
@@ -1959,10 +2029,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Valitse',
-                'title'    => 'Määritä suodattimet',
-                'save'     => 'Tallenna',
-                'dropdown' => [
+                'select'        => 'Valitse',
+                'title'         => 'Määritä suodattimet',
+                'save'          => 'Tallenna',
+                'add-filter'    => 'Lisää suodatin',
+                'remove-filter' => 'Poista suodatin',
+                'search-filter' => 'Haku...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Kirjoita vähintään 2 merkkiä...',
                         'no-results'        => 'Ei tuloksia...',
@@ -2038,6 +2111,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Lisää kuva',
+                'add-media-btn'      => 'Lisää mediaa',
                 'generate-with-ai'   => 'Luo tekoälyllä',
                 'upload-from-device' => 'Lataa laitteelta',
                 'cancel'             => 'Peruuta',
@@ -2119,6 +2193,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Oletuskehotus',
+                'select-prompt-template' => '-- Valitse kehotepohja --',
             ],
         ],
     ],
@@ -2204,6 +2279,7 @@ return [
         '403' => [
             'description' => 'Voi ei! Tämä sivu on rajoitettu. Sinulla ei ole tarvittavia oikeuksia nähdä tätä sisältöä.',
             'title'       => '403 Pääsy kielletty',
+            'message'     => 'Sinulla ei ole lupaa käyttää tätä sivua. Ota yhteyttä järjestelmänvalvojaan, jos uskot tämän olevan virhe.',
         ],
         '413' => [
             'description' => 'Voi ei! Näyttää siltä, että yrität ladata liian suuren tiedoston. Jos haluat ladata sen, päivitä PHP-konfiguraatio.',
@@ -2255,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Kyllä',
-        'no'             => 'No',
-        'true'           => 'Tosi',
-        'false'          => 'Epätosi',
-        'enable'         => 'Ota käyttöön',
-        'disable'        => 'Poista käytöstä',
-        'no-match-found' => 'Osumia ei löytynyt!',
+        'yes'               => 'Kyllä',
+        'no'                => 'No',
+        'true'              => 'Tosi',
+        'false'             => 'Epätosi',
+        'enable'            => 'Ota käyttöön',
+        'disable'           => 'Poista käytöstä',
+        'no-match-found'    => 'Osumia ei löytynyt!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

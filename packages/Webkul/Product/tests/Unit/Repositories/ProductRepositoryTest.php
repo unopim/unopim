@@ -170,4 +170,111 @@ describe('isUniqueVariantForProduct', function () {
 
         expect($result)->toBeTrue();
     });
+
+    it('returns false when a sibling variant has the same configurable attributes', function () {
+        $parent = Product::factory()->configurable()->create();
+
+        Product::factory()->create([
+            'parent_id' => $parent->id,
+            'values'    => [
+                'common' => ['color' => 'red'],
+            ],
+        ]);
+
+        $result = $this->productRepository->isUniqueVariantForProduct(
+            $parent->id,
+            ['color' => 'red']
+        );
+
+        expect($result)->toBeFalse();
+    });
+
+    it('ignores the same variant id when checking uniqueness', function () {
+        $parent = Product::factory()->configurable()->create();
+
+        $variant = Product::factory()->create([
+            'parent_id' => $parent->id,
+            'values'    => [
+                'common' => ['color' => 'green'],
+            ],
+        ]);
+
+        $result = $this->productRepository->isUniqueVariantForProduct(
+            $parent->id,
+            ['color' => 'green'],
+            null,
+            $variant->id
+        );
+
+        expect($result)->toBeTrue();
+    });
+
+    it('returns false when another variant under the same parent already uses the SKU', function () {
+        $parent = Product::factory()->configurable()->create();
+
+        Product::factory()->create([
+            'parent_id' => $parent->id,
+            'sku'       => 'duplicate-sku',
+            'values'    => [
+                'common' => ['color' => 'blue'],
+            ],
+        ]);
+
+        $result = $this->productRepository->isUniqueVariantForProduct(
+            $parent->id,
+            ['color' => 'yellow'],
+            'duplicate-sku'
+        );
+
+        expect($result)->toBeFalse();
+    });
+});
+
+describe('updateWithValues', function () {
+    it('updates the values payload on a simple product', function () {
+        $product = Product::factory()->withInitialValues()->create([
+            'type' => 'simple',
+        ]);
+
+        $newValues = [
+            'sku'    => $product->sku,
+            'values' => [
+                'common' => [
+                    'sku'  => $product->sku,
+                    'name' => 'Updated Product Name',
+                ],
+            ],
+        ];
+
+        $updated = $this->productRepository->updateWithValues($newValues, $product->id);
+
+        expect($updated)->toBeInstanceOf(Product::class)
+            ->and($updated->id)->toBe($product->id)
+            ->and($updated->values['common']['name'] ?? null)->toBe('Updated Product Name');
+    });
+
+    it('returns a refreshed product after update', function () {
+        $product = Product::factory()->withInitialValues()->create([
+            'type' => 'simple',
+        ]);
+
+        $updated = $this->productRepository->updateWithValues([
+            'sku'    => $product->sku,
+            'values' => [
+                'common' => [
+                    'sku' => $product->sku,
+                ],
+            ],
+        ], $product->id);
+
+        expect($updated->wasRecentlyCreated)->toBeFalse()
+            ->and($updated->exists)->toBeTrue();
+    });
+
+    it('throws when the product does not exist', function () {
+        $this->productRepository->updateWithValues([
+            'sku'    => 'whatever',
+            'values' => ['common' => ['sku' => 'whatever']],
+        ], 999999);
+    })->throws(ModelNotFoundException::class);
 });

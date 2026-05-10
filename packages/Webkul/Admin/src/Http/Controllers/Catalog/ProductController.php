@@ -3,11 +3,12 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
@@ -47,7 +48,7 @@ class ProductController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse|BinaryFileResponse
     {
         if (request()->ajax()) {
             return app(ProductDataGrid::class)->toJson();
@@ -58,14 +59,12 @@ class ProductController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         if (request()->has('super_attributes')) {
             request()->merge([
-                'super_attributes' => json_decode(request()->get('super_attributes'), true),
+                'super_attributes' => json_decode(request()->input('super_attributes'), true),
             ]);
         }
 
@@ -132,10 +131,8 @@ class ProductController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $product = $this->productRepository->findOrFail($id);
 
@@ -155,10 +152,8 @@ class ProductController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return Response
      */
-    public function update(ProductForm $request, int $id)
+    public function update(ProductForm $request, int $id): RedirectResponse
     {
         Event::dispatch('catalog.product.update.before', $id);
 
@@ -210,7 +205,16 @@ class ProductController extends Controller
             throw $e;
         }
 
-        $product = $this->productRepository->update($data, $id);
+        try {
+            $product = $this->productRepository->update($data, $id);
+        } catch (ValidationException $e) {
+            $errors = $e->errors();
+            $firstMessage = ! empty($errors) ? (array_values($errors)[0][0] ?? $e->getMessage()) : $e->getMessage();
+
+            session()->flash('error', $firstMessage);
+
+            return back()->withInput();
+        }
 
         Event::dispatch('catalog.product.update.after', $product);
 
@@ -225,17 +229,15 @@ class ProductController extends Controller
 
     /**
      * Copy a given Product.
-     *
-     * @return Response
      */
-    public function copy(int $id)
+    public function copy(int $id): JsonResponse
     {
         try {
             $product = $this->productRepository->copy($id);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'message' => $e->getMessage(),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         session()->flash('success', trans('admin::app.catalog.products.product-copied'));
@@ -266,7 +268,7 @@ class ProductController extends Controller
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.products.delete-failed'),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -295,7 +297,7 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse([
                 'message' => $e->getMessage(),
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -318,15 +320,13 @@ class ProductController extends Controller
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.products.index.datagrid.mass-update-success'),
-        ], 200);
+        ], JsonResponse::HTTP_OK);
     }
 
     /**
      * To be manually invoked when data is seeded into products.
-     *
-     * @return Response
      */
-    public function sync()
+    public function sync(): RedirectResponse
     {
         Event::dispatch('products.datagrid.sync', true);
 
@@ -335,10 +335,8 @@ class ProductController extends Controller
 
     /**
      * Result of search product.
-     *
-     * @return JsonResponse
      */
-    public function search()
+    public function search(): JsonResponse
     {
         $results = [];
 
@@ -367,7 +365,7 @@ class ProductController extends Controller
      */
     public function checkVariantUniqueness(): JsonResponse
     {
-        $variantAttributes = request()->get('variantAttributes');
+        $variantAttributes = request()->input('variantAttributes');
 
         $data = request()->except('variantAttributes');
 

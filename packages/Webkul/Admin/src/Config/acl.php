@@ -214,7 +214,7 @@ return [
         'key'    => 'data_transfer',
         'name'   => 'admin::app.acl.data-transfer',
         'route'  => 'admin.settings.data_transfer.tracker.index',
-        'sort'   => 7,
+        'sort'   => 8,
     ], [
         'key'   => 'data_transfer.job_tracker',
         'name'  => 'admin::app.acl.tracker',
@@ -386,9 +386,19 @@ return [
         'route' => 'admin.settings.users.edit',
         'sort'  => 2,
     ], [
+        'key'   => 'settings.users.users.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.users.update',
+        'sort'  => 2,
+    ], [
         'key'   => 'settings.users.users.delete',
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.settings.users.delete',
+        'sort'  => 3,
+    ], [
+        'key'   => 'settings.users.users.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.settings.users.destroy',
         'sort'  => 3,
     ], [
         'key'   => 'settings.roles',

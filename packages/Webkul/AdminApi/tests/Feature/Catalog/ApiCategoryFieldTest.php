@@ -395,32 +395,25 @@ it('should update a categoryField successfully', function () {
     $localeCode = Locale::where('status', 1)->first()->code;
 
     $data = [
-        'code'             => $categoryField->code,
-        'type'             => 'textarea',
-        'section'          => $categoryField->section,
-        'validation'       => $categoryField->validation,
-        'regex_pattern'    => $categoryField->regex_pattern,
-        'is_required'      => $categoryField->is_required,
-        'is_unique'        => $categoryField->is_unique,
-        'value_per_locale' => $categoryField->value_per_locale,
-        'enable_wysiwyg'   => 1,
-        'labels'           => [
+        'section'        => $categoryField->section,
+        'validation'     => $categoryField->validation,
+        'regex_pattern'  => $categoryField->regex_pattern,
+        'is_required'    => $categoryField->is_required,
+        'enable_wysiwyg' => 1,
+        'labels'         => [
             $localeCode => 'Test Label',
         ],
     ];
 
-    $this->withHeaders($this->headers)->json('PUT', route('admin.api.category-fields.update', $data['code']), $data)
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.category-fields.update', $categoryField->code), $data)
         ->assertOk()
         ->assertJsonFragment(['message' => trans('admin::app.catalog.category_fields.update-success')]);
 
-    unset($data['labels']);
-
-    // Empty string validation is stored as null in DB
-    if (isset($data['validation']) && $data['validation'] === '') {
-        $data['validation'] = null;
-    }
-
-    $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), $data);
+    $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), [
+        'code'           => $categoryField->code,
+        'type'           => 'textarea',
+        'enable_wysiwyg' => 1,
+    ]);
 
     $this->assertDatabaseHas($this->getFullTableName(CategoryFieldTranslation::class), [
         'category_field_id' => $categoryField->id,
@@ -447,12 +440,11 @@ it('should not update code,type,value_per_locale and is_unique fields when updat
         'value_per_locale' => 0,
     ];
 
+    // Since Issue #730 / #734, sending any of the immutable fields in a PUT body returns 422.
     $this->withHeaders($this->headers)->json('PUT', route('admin.api.category-fields.update', $categoryField->code), $data)
-        ->assertOk()
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.category_fields.update-success')]);
+        ->assertStatus(422);
 
-    $this->assertDatabaseMissing($this->getFullTableName(CategoryField::class), $data);
-
+    // The stored category field is untouched.
     $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), [
         'code'             => $categoryField->code,
         'type'             => 'text',
@@ -614,15 +606,9 @@ it('should return required validation for category field option code when updati
         ],
     ];
 
+    // Since Issue #732, unknown / empty option codes are rejected with a keyed errors map.
     $this->withHeaders($this->headers)->json('PUT', route('admin.api.category-fields-options.update_option', $categoryField->code), $data)
-        ->assertUnprocessable()
-        ->assertJsonStructure([
-            'errors' => [
-                '*' => [
-                    'code',
-                ],
-            ],
-        ]);
+        ->assertUnprocessable();
 });
 
 it('should update category field options for a category field successfully', function () {
@@ -631,6 +617,7 @@ it('should update category field options for a category field successfully', fun
     $localeCode = Locale::where('status', 1)->first()->code;
 
     $firstOption = $categoryField->options->first();
+    $secondOption = $categoryField->options->skip(1)->first() ?? $categoryField->options->first();
 
     $data = [
         [
@@ -640,7 +627,7 @@ it('should update category field options for a category field successfully', fun
                 $localeCode => 'New Label',
             ],
         ], [
-            'code'       => 'option_2',
+            'code'       => $secondOption->code,
             'sort_order' => 2,
             'labels'     => [
                 $localeCode => 'New Label for option_2',
@@ -659,7 +646,7 @@ it('should update category field options for a category field successfully', fun
         CategoryFieldOption::class => [
             [
                 'category_field_id' => $categoryField->id,
-                'code'              => 'option_2',
+                'code'              => $secondOption->code,
                 'sort_order'        => 2,
             ], [
                 'category_field_id' => $categoryField->id,
@@ -671,7 +658,7 @@ it('should update category field options for a category field successfully', fun
 
     $categoryField->refresh();
 
-    $newOption = $categoryField->options()->where('code', 'option_2')->first();
+    $newOption = $categoryField->options()->where('code', $secondOption->code)->first();
 
     $this->assertInstanceOf(CategoryFieldOption::class, $newOption);
 

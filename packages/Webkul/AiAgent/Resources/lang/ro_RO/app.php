@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'AI Magic',
         'general'               => 'General',
         'prompt'                => 'Prompt',
         'system-prompt'         => 'Prompt de Sistem',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'AI Magic',
         'platform'       => 'Platforme',
         'settings'       => 'Setări',
         'prompt'         => 'Prompturi',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Înapoi',
         'unauthorized'              => 'Această acțiune nu este autorizată.',
         'error-generic'             => 'A apărut o eroare neașteptată. Încercați din nou.',
+        'error-rate-limit'          => 'Limita de solicitări a furnizorului AI a fost atinsă. Așteptați un moment și încercați din nou.',
+        'error-rate-limit-retry'    => 'Limita de solicitări a furnizorului AI a fost atinsă. Încercați din nou în :seconds secunde.',
+        'error-overloaded'          => 'Furnizorul AI este în prezent supraîncărcat. Încercați din nou peste câteva momente.',
+        'error-request-too-large'   => 'Solicitarea dvs. este prea mare pentru furnizorul AI. Scurtați mesajul sau eliminați unele atașamente și încercați din nou.',
+        'error-api-key-corrupted'   => 'Cheia API pentru această platformă nu a putut fi decriptată (:error). Cheia de criptare a aplicației s-ar fi putut schimba. Editați platforma și reintroduceți cheia API.',
         'invalid-file-path'         => 'Cale de fișier invalidă.',
         'invalid-locale-code'       => 'Cod de localizare invalid.',
         'invalid-channel-code'      => 'Cod de canal invalid.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'Atașează',
         'attach-csv-xlsx'          => 'Atașează CSV sau XLSX',
         'attach-image'             => 'Atașează imagine',
+        'remove-attachment'        => 'Elimină atașamentul',
         'send'                     => 'Trimite',
         'sending'                  => 'Se trimite…',
         'processing'               => 'Se procesează…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'  => 'ex. "Generează S/M/L × Roșu/Albastru pentru SHIRT-001"',
             'edit-image'              => 'Editare Imagine Produs',
             'edit-image-desc'         => 'Eliminare fundal, îmbunătățire și retușare',
-            'edit-image-hint'         => 'Încărcați o imagine, apoi spuneți ce doriți să modificați — ex. "Elimină fundalul"',
+            'edit-image-hint'         => 'Furnizați un SKU de produs și descrieți ce doriți să modificați — ex. "Eliminați fundalul din SKU-123"',
 
             'search-products'         => 'Căutare Produse',
             'search-products-desc'    => 'Găsiți produse după SKU, nume sau stare',
@@ -319,7 +325,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Editează imaginea produsului încărcată conform instrucțiunilor.',
+            'edit-image-prompt'        => 'Editați imaginea produsului preluând-o din SKU-ul furnizat, aplicați modificările solicitate și salvați-o.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

@@ -1,13 +1,13 @@
 @props(['isMultiRow' => false])
 
-<v-datagrid-table>
+<v-history-table>
     {{ $slot }}
-</v-datagrid-table>
+</v-history-table>
 
 @pushOnce('scripts')
     <script
         type="text/x-template"
-        id="v-datagrid-table-template"
+        id="v-history-table-template"
     >
         <div class="w-full">
             <div class="table-responsive grid w-full box-shadow rounded bg-white dark:bg-cherry-900 overflow-hidden">
@@ -62,7 +62,7 @@
                             </p>
 
                             <!-- Actions -->
-                             
+
                             <div
                                 class="flex gap-2.5 items-center justify-end select-none"
                             >
@@ -99,7 +99,6 @@
                                             :value="record[$parent.available.meta.primary_column]"
                                             :id="`mass_action_select_record_${record[$parent.available.meta.primary_column]}`"
                                             v-model="$parent.applied.massActions.indices"
-                                            @change="$parent.setCurrentSelectionMode"
                                         >
 
                                         <span class="icon-checkbox-normal peer-checked:icon-checkbox-check peer-checked:text-violet-700 cursor-pointer rounded-md text-2xl">
@@ -125,7 +124,7 @@
                                 </p>
 
                                 <!-- Actions -->
-                             
+
                                 <div
                                     class="flex gap-2.5 items-center justify-end select-none"
                                 >
@@ -138,6 +137,7 @@
                                             :class="action.icon"
                                             v-text="!action.icon ? action.title : ''"
                                             v-for="action in record.actions"
+                                            :title="action.title ?? ''"
                                             @click="$parent.performAction(action)"
                                         >
                                         </span>
@@ -160,8 +160,8 @@
     </script>
 
     <script type="module">
-        app.component('v-datagrid-table', {
-            template: '#v-datagrid-table-template',
+        app.component('v-history-table', {
+            template: '#v-history-table-template',
 
             computed: {
                 gridsCount() {

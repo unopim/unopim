@@ -16,7 +16,7 @@ return [
                 'email'                  => '已註冊的電子郵件',
                 'email-not-exist'        => '電子郵件不存在',
                 'page-title'             => '忘記密碼',
-                'reset-link-sent'        => '重置密碼鏈接已發送',
+                'reset-link-sent'        => '如果該電子郵件地址存在帳戶，密碼重設連結已發送。',
                 'email-settings-error'   => '無法發送電子郵件。請檢查您的電子郵件配置詳情',
                 'sign-in-link'           => '返回登入？',
                 'submit-btn'             => '重設',
@@ -40,7 +40,9 @@ return [
         'description-text' => '列出所有通知',
         'marked-success'   => '通知成功標記',
         'no-record'        => '找不到記錄',
+        'of'               => '共',
         'read-all'         => '標記為已讀',
+        'showing'          => '顯示',
         'title'            => '通知',
         'view-all'         => '查看全部',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => '已完成',
             'pending'    => '待處理',
             'processing' => '處理中',
+            'read'       => '已讀',
+            'unread'     => '未讀',
         ],
     ],
     'account' => [
@@ -216,7 +220,8 @@ return [
                 'save-btn'   => '保存產品',
                 'title'      => '編輯產品',
                 'categories' => [
-                    'title' => '分類',
+                    'title'            => '分類',
+                    'root-not-allowed' => '根類別不能指派給產品。',
                 ],
                 'images' => [
                     'info'  => '圖片尺寸應為560px X 609px',
@@ -359,6 +364,8 @@ return [
                     'url'                        => '請輸入有效的網址。',
                     'regex'                      => '值不符合所需的格式。',
                     'invalid-pattern'            => '提供了無效的自訂模式。',
+
+                    'numeric'                    => '數字屬性「:attribute」的值必須為有效的數字。',
                     'select-attribute-or-family' => '請至少選擇一個屬性或屬性族。',
                     'failed'                     => '驗證失敗。',
                 ],
@@ -378,16 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => '批次編輯成功。',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => '沒有要儲存的變更。',
-                'success'         => '任務執行成功。',
-                'fetch-failed'    => '取得資料失敗。',
-                'action'          => '批次編輯',
-                'gallery-preview' => '圖庫預覽',
-                'img-preview'     => '圖片預覽',
-                'no-image'        => '無圖片',
-                'img-fail'        => '圖片上傳失敗',
-                'no-option'       => '無選項',
+                'id'                          => 'ID',
+                'no-changes'                  => '沒有要儲存的變更。',
+
+                'invalid-datetime'            => '請輸入有效的日期與時間。',
+
+                'resize-column'               => '拖動以調整欄寬',
+                'success'                     => '任務執行成功。',
+                'fetch-failed'                => '取得資料失敗。',
+                'action'                      => '批次編輯',
+                'description'                 => '一次編輯多個產品。變更將在背景中處理。',
+                'gallery-preview'             => '圖庫預覽',
+                'img-preview'                 => '圖片預覽',
+                'no-image'                    => '無圖片',
+                'img-fail'                    => '圖片上傳失敗',
+                'no-option'                   => '無選項',
+                'keyboard-shortcuts'          => '鍵盤快捷鍵',
+                'shortcuts-navigation'        => '導覽',
+                'shortcuts-editing'           => '編輯',
+                'shortcuts-selection'         => '選取',
+                'shortcuts-clipboard'         => '剪貼簿與填入',
+                'shortcuts-move-cell'         => '在儲存格間移動',
+                'shortcuts-move-down'         => '向下移動 / 確認編輯',
+                'shortcuts-move-up'           => '向上移動',
+                'shortcuts-move-right-left'   => '向右 / 向左移動',
+                'shortcuts-home-end'          => '列中第一 / 最後一欄',
+                'shortcuts-ctrl-home-end'     => '格中第一 / 最後一個儲存格',
+                'shortcuts-extend-selection'  => '延伸選取',
+                'shortcuts-select-all'        => '選取所有儲存格',
+                'shortcuts-enter-edit'        => '進入編輯模式',
+                'shortcuts-confirm-move-down' => '確認 + 向下移動',
+                'shortcuts-confirm-move-right'=> '確認 + 向右移動',
+                'shortcuts-escape-revert'     => '還原值 + 退出編輯',
+                'shortcuts-clear-cell'        => '清除儲存格',
+                'shortcuts-copy'              => '複製',
+                'shortcuts-cut'               => '剪下',
+                'shortcuts-paste'             => '貼上',
+                'shortcuts-fill-down'         => '向下填入',
+                'shortcuts-fill-right'        => '向右填入',
+                'shortcuts-undo'              => '復原',
+                'shortcuts-redo'              => '取消復原',
+                'shortcuts-help'              => '顯示/隱藏鍵盤快捷鍵',
             ],
             'create-success'          => '產品創建成功',
             'delete-failed'           => '刪除產品時出錯',
@@ -482,6 +520,8 @@ return [
                 'is-filterable'         => '可篩選',
                 'ai-translate'          => '人工智慧翻譯',
                 'invalid-swatch-type'   => ':attribute 不允許用於屬性類型 :type，搭配色板類型 :swatch_type。',
+
+                'single-object-only'    => '每個建立請求只能傳送一個屬性物件。',
                 'option'                => [
                     'color'    => '顏色樣本',
                     'dropdown' => '下拉選單',
@@ -564,6 +604,8 @@ return [
             'delete-success'    => '屬性已成功刪除',
             'update-success'    => '屬性已成功更新',
             'user-define-error' => '無法刪除系統屬性',
+
+            'immutable-fields'  => '以下欄位無法修改：:fields。',
             'not-found'         => '找不到代碼 ":code" 的屬性',
         ],
         'attribute-options' => [
@@ -676,6 +718,7 @@ return [
             'delete-success'       => '類別已成功刪除。',
             'update-success'       => '類別已成功更新。',
             'can-not-update'       => '此根類別已與通道相關聯，無法擁有父類別。',
+            'invalid-parent'       => '所選父類別無效。類別不能是其自身的父類別或其自身的後代。',
             'unique-validation'    => '此值已經被使用。',
             'not-found'            => '未找到代碼為 ":code" 的類別',
             'unknown-fields'       => '未找到代碼為 ":fields" 的類別字段',
@@ -844,15 +887,18 @@ return [
             'update-success'    => '類別欄位更新成功',
             'user-define-error' => '無法刪除系統預設類別欄位',
             'not-found'         => '找不到代碼為 ":code" 的類別欄位',
+
+            'immutable-fields'  => '以下欄位無法修改：:fields。',
         ],
         'category-fields-options' => [
-            'create-success' => '類別欄位選項建立成功',
-            'update-success' => '類別欄位選項更新成功',
+            'create-success'      => '類別欄位選項建立成功',
+            'update-success'      => '類別欄位選項更新成功',
+            'update-unknown-code' => '不存在代碼為「:code」的類別欄位選項。',
         ],
         'families' => [
             'index' => [
                 'add'      => '建立屬性組',
-                'title'    => '屬性家族',
+                'title'    => '屬性族',
                 'datagrid' => [
                     'code'           => '代碼',
                     'delete'         => '刪除',
@@ -943,6 +989,8 @@ return [
             'can-not-update-variant-options' => '此家族已有產品變體，因此無法更新配置選項。',
         ],
         'history' => [
+            'view' => '檢視版本詳情',
+
             'index' => [
                 'datagrid' => [
                     'version'   => '版本',
@@ -1076,6 +1124,8 @@ return [
                         'paused'               => '已暫停',
                         'cancelled'            => '已取消',
                         'failed'               => '失敗',
+
+                        'view'       => '查看',
                     ],
                 ],
                 'import' => [
@@ -1554,6 +1604,7 @@ return [
             ],
             'activate-warning'          => '您的帳號尚未啟用，請聯繫管理員。',
             'cannot-change'             => '無法修改用戶',
+            'cannot-escalate-role'      => '您沒有權限指派全權限角色。',
             'create-success'            => '用戶創建成功。',
             'delete-failed'             => '無法刪除用戶。',
             'delete-success'            => '用戶刪除成功。',
@@ -1659,6 +1710,8 @@ return [
                         'title-info'                => '設定AI代理聊天、自主豐富工作流程和品質監控。這些功能支援對話式產品管理和主動目錄維護。',
                         'enabled'                   => '啟用AI代理聊天',
                         'enabled-info'              => '啟用浮動AI聊天小工具，用於對話式產品管理，支援27+工具操作。',
+                        'open-by-default'           => '在頁面載入時開啟聊天面板',
+                        'open-by-default-info'      => '啟用後，AI 代理聊天面板會在管理員首次進入頁面時自動開啟。使用者仍可手動關閉 — 此偏好會在瀏覽器工作階段的其餘時間內被記住。',
                         'max-steps'                 => '每輪最大代理步驟數',
                         'max-steps-info'            => 'AI代理每條使用者訊息可執行的最大工具呼叫迭代次數。較高的值允許更複雜的多步驟操作。',
                         'daily-token-budget'        => '每日令牌預算',
@@ -1729,6 +1782,12 @@ return [
             'client-not-found'               => '客戶端未找到',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => '提示詞',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '標題',
@@ -1771,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => '系統提示詞',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '標題',
@@ -1864,16 +1929,21 @@ return [
                 'invalid-model-name'       => '無效的模型名稱。僅可使用字母、數字、連字號、點、冒號和斜線（如 gpt-4o、claude-3-sonnet）。',
             ],
             'message' => [
-                'save-success'          => '平台儲存成功。',
-                'update-success'        => '平台更新成功。',
-                'delete-success'        => '平台刪除成功。',
-                'delete-fail'           => '平台刪除失敗。',
-                'cannot-delete-default' => '無法刪除唯一的預設平台。',
-                'set-default-success'   => '平台已成功設為預設。',
-                'test-success'          => '連線驗證成功！',
-                'test-fail'             => '連線測試失敗',
-                'fetch-models-fail'     => '無法取得模型',
-                'invalid-model-names'   => '無效的模型名稱：:names。模型名稱必須以字母或數字開頭，且僅包含字母、數字、連字號、點、冒號和斜線。',
+                'save-success'             => '平台儲存成功。',
+                'update-success'           => '平台更新成功。',
+                'delete-success'           => '平台刪除成功。',
+                'delete-fail'              => '平台刪除失敗。',
+                'not-found'                => '所選平台已不存在。請重新整理後再試一次。',
+                'cannot-delete-default'    => '無法刪除唯一的預設平台。',
+                'set-default-success'      => '平台已成功設為預設。',
+                'test-success'             => '連線驗證成功！',
+                'test-fail'                => '連線測試失敗',
+                'no-test-model'            => '請至少選擇一個支援文字的模型來執行連線測試。',
+                'custom-api-url-required'  => '自訂提供者必須提供 API URL，連線測試才能抵達您自己的端點。',
+                'api-key-corrupted'        => '無法解密儲存的API金鑰（:error）。應用程式加密金鑰可能已變更。請重新輸入您的API金鑰並儲存。',
+                'fetch-models-fail'        => '無法取得模型',
+                'invalid-model-names'      => '無效的模型名稱：:names。模型名稱必須以字母或數字開頭，且僅包含字母、數字、連字號、點、冒號和斜線。',
+                'default-requires-enabled' => '無法將已停用的平台設為預設。請先啟用該平台。',
             ],
         ],
     ],
@@ -1959,10 +2029,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => '選擇',
-                'title'    => '應用過濾器',
-                'save'     => '保存',
-                'dropdown' => [
+                'select'        => '選擇',
+                'title'         => '應用過濾器',
+                'save'          => '保存',
+                'add-filter'    => '新增篩選',
+                'remove-filter' => '移除篩選',
+                'search-filter' => '搜尋...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => '至少輸入2個字符...',
                         'no-results'        => '未找到結果...',
@@ -2038,6 +2111,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => '添加圖片',
+                'add-media-btn'      => '新增媒體',
                 'generate-with-ai'   => '使用 AI 生成',
                 'upload-from-device' => '從設備上傳',
                 'cancel'             => '取消',
@@ -2119,6 +2193,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => '預設提示',
+                'select-prompt-template' => '-- 選擇提示範本 --',
             ],
         ],
     ],
@@ -2204,6 +2279,7 @@ return [
         '403' => [
             'description' => '哎呀！此頁面禁止訪問。似乎您無權查看此內容。',
             'title'       => '403 禁止',
+            'message'     => '您沒有權限存取此頁面。如果您認為這是個錯誤，請聯繫您的管理員。',
         ],
         '413' => [
             'description' => '哎呀！似乎您嘗試上傳一個太大的文件。如果要上傳該文件，請根據需要更新PHP配置。',
@@ -2255,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => '是',
-        'no'             => '否',
-        'true'           => '真實',
-        'false'          => '虛假',
-        'enable'         => '啟用',
-        'disable'        => '停用',
-        'no-match-found' => '未找到匹配項！',
+        'yes'               => '是',
+        'no'                => '否',
+        'true'              => '真實',
+        'false'             => '虛假',
+        'enable'            => '啟用',
+        'disable'           => '停用',
+        'no-match-found'    => '未找到匹配項！',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

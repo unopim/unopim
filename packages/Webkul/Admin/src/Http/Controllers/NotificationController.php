@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Webkul\Notification\Repositories\NotificationRepository;
 
@@ -16,20 +17,16 @@ class NotificationController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return View
      */
-    public function index()
+    public function index(): View
     {
         return view('admin::notifications.index');
     }
 
     /**
      * Display a listing of the resource.
-     *
-     * @return array
      */
-    public function getNotifications()
+    public function getNotifications(): array
     {
         $params = request()->except('page');
 
@@ -51,9 +48,8 @@ class NotificationController extends Controller
      * Mark notification as read and redirect to its route.
      *
      * @param  int  $id
-     * @return View
      */
-    public function viewedNotifications($id)
+    public function viewedNotifications($id): RedirectResponse
     {
         $notification = $this->notificationRepository->find($id);
 
@@ -75,10 +71,8 @@ class NotificationController extends Controller
 
     /**
      * Update the notification is reade or not.
-     *
-     * @return array
      */
-    public function readAllNotifications()
+    public function readAllNotifications(): array
     {
         $user = auth()->user();
         $user->notifications()->where('read', 0)->update(['read' => 1]);

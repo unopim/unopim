@@ -16,7 +16,7 @@ return [
                 'email'                  => 'Email terdaftar',
                 'email-not-exist'        => 'Email tidak ada',
                 'page-title'             => 'Lupa Password',
-                'reset-link-sent'        => 'Setel ulang tautan kata sandi terkirim',
+                'reset-link-sent'        => 'Jika akun dengan email tersebut ada, tautan pengaturan ulang kata sandi telah dikirim.',
                 'email-settings-error'   => 'Email tidak bisa dikirim.Silakan periksa detail konfigurasi email Anda',
                 'sign-in-link'           => 'Kembali untuk Masuk?',
                 'submit-btn'             => 'Mengatur ulang',
@@ -40,7 +40,9 @@ return [
         'description-text' => 'Sebutkan semua pemberitahuan',
         'marked-success'   => 'Pemberitahuan berhasil ditandai',
         'no-record'        => 'Tidak ada catatan yang ditemukan',
+        'of'               => 'dari',
         'read-all'         => 'Tandai sebagai membaca',
+        'showing'          => 'Menampilkan',
         'title'            => 'Pemberitahuan',
         'view-all'         => 'Lihat semua',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Lengkap',
             'pending'    => 'Tertunda',
             'processing' => 'Pengolahan',
+            'read'       => 'Dibaca',
+            'unread'     => 'Belum dibaca',
         ],
     ],
     'account' => [
@@ -216,7 +220,8 @@ return [
                 'save-btn'   => 'Simpan produk',
                 'title'      => 'Edit produk',
                 'categories' => [
-                    'title' => 'Kategori',
+                    'title'            => 'Kategori',
+                    'root-not-allowed' => 'Kategori induk tidak dapat ditetapkan ke produk.',
                 ],
                 'images' => [
                     'info'  => 'Resolusi gambar harus seperti 560px x 609px',
@@ -359,6 +364,8 @@ return [
                     'url'                        => 'Silakan masukkan URL yang valid.',
                     'regex'                      => 'Nilai tidak sesuai dengan pola yang diperlukan.',
                     'invalid-pattern'            => 'Pola khusus tidak valid.',
+
+                    'numeric'                    => 'Nilai untuk atribut numerik ":attribute" harus berupa angka yang valid.',
                     'select-attribute-or-family' => 'Silakan pilih setidaknya satu atribut atau satu keluarga atribut.',
                     'failed'                     => 'Validasi gagal.',
                 ],
@@ -378,16 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Sunting massal berhasil.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Tidak ada perubahan untuk disimpan.',
-                'success'         => 'Pekerjaan berhasil dijalankan.',
-                'fetch-failed'    => 'Gagal mengambil data.',
-                'action'          => 'Edit Massal',
-                'gallery-preview' => 'Pratinjau Galeri',
-                'img-preview'     => 'Pratinjau Gambar',
-                'no-image'        => 'Tidak Ada Gambar',
-                'img-fail'        => 'Unggah gambar gagal',
-                'no-option'       => 'Tidak Ada Opsi',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Tidak ada perubahan untuk disimpan.',
+
+                'invalid-datetime'            => 'Masukkan tanggal dan waktu yang valid.',
+
+                'resize-column'               => 'Seret untuk mengubah lebar kolom',
+                'success'                     => 'Pekerjaan berhasil dijalankan.',
+                'fetch-failed'                => 'Gagal mengambil data.',
+                'action'                      => 'Edit Massal',
+                'description'                 => 'Edit beberapa produk sekaligus. Perubahan diproses di latar belakang.',
+                'gallery-preview'             => 'Pratinjau Galeri',
+                'img-preview'                 => 'Pratinjau Gambar',
+                'no-image'                    => 'Tidak Ada Gambar',
+                'img-fail'                    => 'Unggah gambar gagal',
+                'no-option'                   => 'Tidak Ada Opsi',
+                'keyboard-shortcuts'          => 'Pintasan Keyboard',
+                'shortcuts-navigation'        => 'Navigasi',
+                'shortcuts-editing'           => 'Pengeditan',
+                'shortcuts-selection'         => 'Pemilihan',
+                'shortcuts-clipboard'         => 'Papan Klip & Isi',
+                'shortcuts-move-cell'         => 'Berpindah antar sel',
+                'shortcuts-move-down'         => 'Turun / konfirmasi edit',
+                'shortcuts-move-up'           => 'Naik',
+                'shortcuts-move-right-left'   => 'Kanan / kiri',
+                'shortcuts-home-end'          => 'Kolom pertama / terakhir dalam baris',
+                'shortcuts-ctrl-home-end'     => 'Sel pertama / terakhir dalam kisi',
+                'shortcuts-extend-selection'  => 'Perluas pilihan',
+                'shortcuts-select-all'        => 'Pilih semua sel',
+                'shortcuts-enter-edit'        => 'Masuk mode edit',
+                'shortcuts-confirm-move-down' => 'Konfirmasi + turun',
+                'shortcuts-confirm-move-right'=> 'Konfirmasi + ke kanan',
+                'shortcuts-escape-revert'     => 'Kembalikan nilai + keluar dari edit',
+                'shortcuts-clear-cell'        => 'Hapus sel',
+                'shortcuts-copy'              => 'Salin',
+                'shortcuts-cut'               => 'Potong',
+                'shortcuts-paste'             => 'Tempel',
+                'shortcuts-fill-down'         => 'Isi ke bawah',
+                'shortcuts-fill-right'        => 'Isi ke kanan',
+                'shortcuts-undo'              => 'Urungkan',
+                'shortcuts-redo'              => 'Ulangi',
+                'shortcuts-help'              => 'Tampilkan/sembunyikan pintasan keyboard',
             ],
             'create-success'          => 'Produk berhasil dibuat',
             'delete-failed'           => 'Produk dihapus gagal',
@@ -482,6 +520,8 @@ return [
                 'is-filterable'         => 'Dapat difilter',
                 'ai-translate'          => 'AI Terjemahan',
                 'invalid-swatch-type'   => 'Atribut :attribute tidak diperbolehkan untuk tipe atribut :type dengan tipe swatch :swatch_type.',
+
+                'single-object-only'    => 'Setiap permintaan pembuatan harus mengirim satu objek atribut.',
                 'option'                => [
                     'color'    => 'Swatch Warna',
                     'dropdown' => 'Dropdown',
@@ -564,6 +604,8 @@ return [
             'delete-success'    => 'Atribut berhasil dihapus',
             'update-success'    => 'Atribut berhasil diperbarui',
             'user-define-error' => 'Tidak dapat menghapus atribut sistem',
+
+            'immutable-fields'  => 'Field berikut tidak dapat diubah: :fields.',
             'not-found'         => 'Atribut dengan kode ":code" tidak dapat ditemukan',
         ],
         'attribute-options' => [
@@ -676,6 +718,7 @@ return [
             'delete-success'       => 'Kategori ini telah berhasil dihapus.',
             'update-success'       => 'Kategori berhasil diperbarui.',
             'can-not-update'       => 'Kategori root ini terkait dengan saluran dan tidak dapat memiliki kategori induk.',
+            'invalid-parent'       => 'Kategori induk yang dipilih tidak valid. Kategori tidak dapat menjadi induknya sendiri atau turunan dari dirinya sendiri.',
             'unique-validation'    => 'Nilai ini sudah diambil.',
             'not-found'            => 'Kategori dengan kode ":code" tidak dapat ditemukan',
             'unknown-fields'       => 'Bidang kategori dengan kode ":fields" tidak dapat ditemukan',
@@ -844,15 +887,18 @@ return [
             'update-success'    => 'Bidang kategori berhasil diperbarui',
             'user-define-error' => 'Tidak dapat menghapus bidang kategori sistem',
             'not-found'         => 'Bidang kategori dengan kode ":code" tidak dapat ditemukan',
+
+            'immutable-fields'  => 'Field berikut tidak dapat diubah: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opsi bidang kategori berhasil dibuat',
-            'update-success' => 'Opsi bidang kategori berhasil diperbarui',
+            'create-success'      => 'Opsi bidang kategori berhasil dibuat',
+            'update-success'      => 'Opsi bidang kategori berhasil diperbarui',
+            'update-unknown-code' => 'Opsi field kategori dengan kode ":code" tidak ditemukan.',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Buat keluarga atribut',
-                'title'    => 'Keluarga',
+                'title'    => 'Keluarga Atribut',
                 'datagrid' => [
                     'code'           => 'Kode',
                     'delete'         => 'Menghapus',
@@ -943,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Tidak dapat memperbarui opsi yang dapat dikonfigurasi karena keluarga ini sudah memiliki produk varian.',
         ],
         'history' => [
+            'view' => 'Lihat Detail Versi',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versi',
@@ -1076,6 +1124,8 @@ return [
                         'paused'               => 'Dijeda',
                         'cancelled'            => 'Dibatalkan',
                         'failed'               => 'Gagal',
+
+                        'view'       => 'Lihat',
                     ],
                 ],
                 'import' => [
@@ -1554,6 +1604,7 @@ return [
             ],
             'activate-warning'          => 'Akun Anda belum diaktifkan, silakan hubungi Administrator.',
             'cannot-change'             => 'Pengguna tidak dapat diubah',
+            'cannot-escalate-role'      => 'Anda tidak memiliki izin untuk menetapkan peran dengan akses penuh.',
             'create-success'            => 'Pengguna berhasil dibuat.',
             'delete-failed'             => 'Pengguna dihapus gagal.',
             'delete-success'            => 'Pengguna berhasil dihapus.',
@@ -1659,6 +1710,8 @@ return [
                         'title-info'                => 'Konfigurasikan obrolan agen AI, alur kerja pengayaan otonom, dan pemantauan kualitas. Fitur-fitur ini memungkinkan manajemen produk percakapan dan pemeliharaan katalog proaktif.',
                         'enabled'                   => 'Aktifkan obrolan agen AI',
                         'enabled-info'              => 'Aktifkan widget obrolan AI mengambang untuk manajemen produk percakapan dengan 27+ tindakan alat.',
+                        'open-by-default'           => 'Buka Panel Obrolan saat Halaman Dimuat',
+                        'open-by-default-info'      => 'Saat diaktifkan, panel obrolan Agen AI otomatis terbuka saat pertama kali admin mengakses sebuah halaman. Pengguna masih dapat menutupnya secara manual — preferensi akan diingat selama sisa sesi peramban.',
                         'max-steps'                 => 'Langkah maks. agen per giliran',
                         'max-steps-info'            => 'Jumlah maksimum iterasi panggilan alat yang dapat dilakukan agen AI per pesan pengguna. Nilai yang lebih tinggi memungkinkan operasi multi-langkah yang lebih kompleks.',
                         'daily-token-budget'        => 'Anggaran token harian',
@@ -1729,6 +1782,12 @@ return [
             'client-not-found'               => 'Klien tidak ditemukan',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompt',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Judul',
@@ -1771,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'System Prompt',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Judul',
@@ -1864,16 +1929,21 @@ return [
                 'invalid-model-name'       => 'Nama model tidak valid. Gunakan hanya huruf, angka, tanda hubung, titik, titik dua, dan garis miring (mis. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'          => 'Platform berhasil disimpan.',
-                'update-success'        => 'Platform berhasil diperbarui.',
-                'delete-success'        => 'Platform berhasil dihapus.',
-                'delete-fail'           => 'Gagal menghapus platform.',
-                'cannot-delete-default' => 'Tidak dapat menghapus satu-satunya platform default.',
-                'set-default-success'   => 'Platform berhasil ditetapkan sebagai default.',
-                'test-success'          => 'Koneksi berhasil diverifikasi!',
-                'test-fail'             => 'Uji koneksi gagal',
-                'fetch-models-fail'     => 'Tidak dapat mengambil model',
-                'invalid-model-names'   => 'Nama model tidak valid: :names. Nama model harus dimulai dengan huruf atau angka dan hanya berisi huruf, angka, tanda hubung, titik, titik dua, dan garis miring.',
+                'save-success'             => 'Platform berhasil disimpan.',
+                'update-success'           => 'Platform berhasil diperbarui.',
+                'delete-success'           => 'Platform berhasil dihapus.',
+                'delete-fail'              => 'Gagal menghapus platform.',
+                'not-found'                => 'Platform yang dipilih tidak lagi ada. Silakan muat ulang dan coba lagi.',
+                'cannot-delete-default'    => 'Tidak dapat menghapus satu-satunya platform default.',
+                'set-default-success'      => 'Platform berhasil ditetapkan sebagai default.',
+                'test-success'             => 'Koneksi berhasil diverifikasi!',
+                'test-fail'                => 'Uji koneksi gagal',
+                'no-test-model'            => 'Pilih setidaknya satu model yang mendukung teks untuk menjalankan uji koneksi.',
+                'custom-api-url-required'  => 'API URL diperlukan untuk penyedia kustom agar uji koneksi dapat mencapai endpoint Anda sendiri.',
+                'api-key-corrupted'        => 'Kunci API yang tersimpan tidak dapat didekripsi (:error). Kunci enkripsi aplikasi mungkin telah berubah. Silakan masukkan kembali kunci API Anda dan simpan.',
+                'fetch-models-fail'        => 'Tidak dapat mengambil model',
+                'invalid-model-names'      => 'Nama model tidak valid: :names. Nama model harus dimulai dengan huruf atau angka dan hanya berisi huruf, angka, tanda hubung, titik, titik dua, dan garis miring.',
+                'default-requires-enabled' => 'Platform yang nonaktif tidak dapat dijadikan default. Aktifkan platform terlebih dahulu.',
             ],
         ],
     ],
@@ -1959,10 +2029,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Pilih',
-                'title'    => 'Menerapkan filter',
-                'save'     => 'Menyimpan',
-                'dropdown' => [
+                'select'        => 'Pilih',
+                'title'         => 'Menerapkan filter',
+                'save'          => 'Menyimpan',
+                'add-filter'    => 'Tambah Filter',
+                'remove-filter' => 'Hapus Filter',
+                'search-filter' => 'Cari...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Ketik setidaknya 2 karakter ...',
                         'no-results'        => 'Tidak ada hasil yang ditemukan ...',
@@ -2038,6 +2111,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Menambahkan gambar',
+                'add-media-btn'      => 'Menambahkan media',
                 'generate-with-ai'   => 'Hasilkan dengan AI',
                 'upload-from-device' => 'Unggah dari Perangkat',
                 'cancel'             => 'Batalkan',
@@ -2119,6 +2193,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'Lava',
                 'default-prompt'         => 'Permintaan default',
+                'select-prompt-template' => '-- Pilih templat prompt --',
             ],
         ],
     ],
@@ -2204,6 +2279,7 @@ return [
         '403' => [
             'description' => 'Ups!Halaman ini terlarang.Tampaknya Anda tidak \'t have the required permissions to view this content.',
             'title'       => '403 dilarang',
+            'message'     => 'Anda tidak memiliki izin untuk mengakses halaman ini. Hubungi administrator Anda jika Anda yakin ini adalah kesalahan.',
         ],
         '413' => [
             'description' => 'Ups!Sepertinya Anda mencoba mengunggah file yang terlalu besar.Jika Anda ingin mengunggah yang sama, harap perbarui konfigurasi PHP yang sesuai.',
@@ -2255,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Ya',
-        'no'             => 'TIDAK',
-        'true'           => 'BENAR',
-        'false'          => 'PALSU',
-        'enable'         => 'Diaktifkan',
-        'disable'        => 'Dengan disabilitas',
-        'no-match-found' => 'Tidak ditemukan kecocokan!',
+        'yes'               => 'Ya',
+        'no'                => 'TIDAK',
+        'true'              => 'BENAR',
+        'false'             => 'PALSU',
+        'enable'            => 'Diaktifkan',
+        'disable'           => 'Dengan disabilitas',
+        'no-match-found'    => 'Tidak ditemukan kecocokan!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

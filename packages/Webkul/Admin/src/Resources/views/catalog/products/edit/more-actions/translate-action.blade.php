@@ -575,6 +575,7 @@
                     formData.append('resource_id', this.resourceId);
                     formData.append('resource_type', 'product');
                     formData.append('translatedData', JSON.stringify(translatedData));
+                    formData.append('targetChannel', this.targetChannel);
 
                     this.$axios.post("{{ route('admin.magic_ai.store.translated.all_attribute') }}", formData)
                         .then((response) => {

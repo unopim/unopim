@@ -16,7 +16,7 @@ return [
                 'email'                  => 'Correu electrònic registrat',
                 'email-not-exist'        => 'El correu no existeix',
                 'page-title'             => 'Oblidar contrasenya',
-                'reset-link-sent'        => 'Enllaç per restablir la contrasenya enviat',
+                'reset-link-sent'        => 'Si existeix un compte amb aquest correu electrònic, s\'ha enviat un enllaç per restablir la contrasenya.',
                 'email-settings-error'   => 'No s’ha pogut enviar el correu electrònic. Reviseu els detalls de configuració del correu',
                 'sign-in-link'           => 'Tornar a Iniciar sessió?',
                 'submit-btn'             => 'Restablir',
@@ -40,7 +40,9 @@ return [
         'description-text' => 'Llistar totes les notificacions',
         'marked-success'   => 'Notificació marcada correctament',
         'no-record'        => 'No s’ha trobat cap registre',
+        'of'               => 'de',
         'read-all'         => 'Marcar com a llegides',
+        'showing'          => 'Mostrant',
         'title'            => 'Notificacions',
         'view-all'         => 'Veure totes',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Completades',
             'pending'    => 'Pendents',
             'processing' => 'En procés',
+            'read'       => 'Llegides',
+            'unread'     => 'No llegides',
         ],
     ],
     'account' => [
@@ -216,7 +220,8 @@ return [
                 'save-btn'   => 'Desar Producte',
                 'title'      => 'Editar Producte',
                 'categories' => [
-                    'title' => 'Categories',
+                    'title'            => 'Categories',
+                    'root-not-allowed' => 'La categoria arrel no es pot assignar a un producte.',
                 ],
                 'images' => [
                     'info'  => 'La resolució de la imatge hauria de ser com 560px X 609px',
@@ -359,6 +364,8 @@ return [
                     'url'                        => 'Si us plau, introdueix una URL vàlida.',
                     'regex'                      => 'El valor no coincideix amb el patró requerit.',
                     'invalid-pattern'            => 'S\'ha proporcionat un patró personalitzat no vàlid.',
+
+                    'numeric'                    => 'El valor de l\'atribut numèric ":attribute" ha de ser un número vàlid.',
                     'select-attribute-or-family' => 'Si us plau, seleccioneu almenys un atribut o una família d’atributs.',
                     'failed'                     => 'La validació ha fallat.',
                 ],
@@ -378,16 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Edició massiva realitzada amb èxit.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'No hi ha canvis per desar.',
-                'success'         => 'Operació completada amb èxit.',
-                'fetch-failed'    => 'Error en obtenir les dades.',
-                'action'          => 'Edició en massa',
-                'gallery-preview' => 'Previsualització de la galeria',
-                'img-preview'     => 'Previsualització de la imatge',
-                'no-image'        => 'Sense imatge',
-                'img-fail'        => 'Error en la pujada de la imatge.',
-                'no-option'       => 'Sense opcions',
+                'id'                          => 'ID',
+                'no-changes'                  => 'No hi ha canvis per desar.',
+
+                'invalid-datetime'            => 'Introdueix una data i hora vàlides.',
+
+                'resize-column'               => 'Arrossega per redimensionar la columna',
+                'success'                     => 'Operació completada amb èxit.',
+                'fetch-failed'                => 'Error en obtenir les dades.',
+                'action'                      => 'Edició en massa',
+                'description'                 => 'Editeu diversos productes alhora. Els canvis es processen en segon pla.',
+                'gallery-preview'             => 'Previsualització de la galeria',
+                'img-preview'                 => 'Previsualització de la imatge',
+                'no-image'                    => 'Sense imatge',
+                'img-fail'                    => 'Error en la pujada de la imatge.',
+                'no-option'                   => 'Sense opcions',
+                'keyboard-shortcuts'          => 'Dreceres de teclat',
+                'shortcuts-navigation'        => 'Navegació',
+                'shortcuts-editing'           => 'Edició',
+                'shortcuts-selection'         => 'Selecció',
+                'shortcuts-clipboard'         => 'Porta-retalls i omplir',
+                'shortcuts-move-cell'         => 'Moure entre cel·les',
+                'shortcuts-move-down'         => 'Baixar / confirmar edició',
+                'shortcuts-move-up'           => 'Pujar',
+                'shortcuts-move-right-left'   => 'Moure a la dreta / esquerra',
+                'shortcuts-home-end'          => 'Primera / última columna de la fila',
+                'shortcuts-ctrl-home-end'     => 'Primera / última cel·la de la graella',
+                'shortcuts-extend-selection'  => 'Ampliar la selecció',
+                'shortcuts-select-all'        => 'Seleccionar totes les cel·les',
+                'shortcuts-enter-edit'        => 'Entrar en mode edició',
+                'shortcuts-confirm-move-down' => 'Confirmar + baixar',
+                'shortcuts-confirm-move-right'=> 'Confirmar + moure a la dreta',
+                'shortcuts-escape-revert'     => 'Revertir valor + sortir de l\'edició',
+                'shortcuts-clear-cell'        => 'Buidar cel·la',
+                'shortcuts-copy'              => 'Copiar',
+                'shortcuts-cut'               => 'Retallar',
+                'shortcuts-paste'             => 'Enganxar',
+                'shortcuts-fill-down'         => 'Omplir cap avall',
+                'shortcuts-fill-right'        => 'Omplir cap a la dreta',
+                'shortcuts-undo'              => 'Desfer',
+                'shortcuts-redo'              => 'Refer',
+                'shortcuts-help'              => 'Mostrar/amagar dreceres de teclat',
             ],
             'create-success'          => 'Producte creat amb èxit',
             'delete-failed'           => 'Eliminació del producte fallida',
@@ -482,6 +520,8 @@ return [
                 'is-filterable'         => 'És filtrable',
                 'ai-translate'          => 'Traducció IA',
                 'invalid-swatch-type'   => 'L\':attribute no està permès per al tipus d\'atribut :type amb el tipus de mostra :swatch_type.',
+
+                'single-object-only'    => 'Cada sol·licitud de creació ha d\'enviar només un objecte d\'atribut.',
                 'option'                => [
                     'color'    => 'Muestra de color',
                     'dropdown' => 'Desplegable',
@@ -564,6 +604,8 @@ return [
             'delete-success'    => 'Atribut eliminat amb èxit',
             'update-success'    => 'Atribut actualitzat amb èxit',
             'user-define-error' => 'No es pot eliminar un atribut del sistema',
+
+            'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
             'not-found'         => 'No s\'ha trobat l\'atribut amb codi ":code"',
         ],
         'attribute-options' => [
@@ -676,6 +718,7 @@ return [
             'delete-success'       => 'La categoria s\'ha eliminat amb èxit.',
             'update-success'       => 'Categoria actualitzada amb èxit.',
             'can-not-update'       => 'Aquesta categoria arrel està associada a un canal i no pot tenir una categoria pare.',
+            'invalid-parent'       => 'La categoria pare seleccionada no és vàlida. Una categoria no pot ser el seu propi pare ni un descendent d\'ella mateixa.',
             'unique-validation'    => 'Aquest valor ja està en ús.',
             'not-found'            => 'No s\'ha pogut trobar la categoria amb codi ":code"',
             'unknown-fields'       => 'No s\'ha pogut trobar el camp de categoria amb codi ":fields"',
@@ -844,15 +887,18 @@ return [
             'update-success'    => 'Camp de Categoria Actualitzat Correctament',
             'user-define-error' => 'No es pot eliminar un Camp de Categoria del sistema',
             'not-found'         => 'No s\'ha trobat el Camp de Categoria amb el codi ":code"',
+
+            'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opció de Camp de Categoria Creada Correctament',
-            'update-success' => 'Opció de Camp de Categoria Actualitzada Correctament',
+            'create-success'      => 'Opció de Camp de Categoria Creada Correctament',
+            'update-success'      => 'Opció de Camp de Categoria Actualitzada Correctament',
+            'update-unknown-code' => 'No existeix cap opció de camp de categoria amb el codi «:code».',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Crear Família d\'Atributs',
-                'title'    => 'Famílies',
+                'title'    => 'Famílies d\'atributs',
                 'datagrid' => [
                     'code'           => 'Codi',
                     'delete'         => 'Eliminar',
@@ -943,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'No es poden actualitzar les opcions configurables ja que aquesta família ja té productes variants.',
         ],
         'history' => [
+            'view' => 'Veure els detalls de la versió',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versió',
@@ -1076,6 +1124,8 @@ return [
                         'paused'               => 'En pausa',
                         'cancelled'            => 'Cancel·lat',
                         'failed'               => 'Fallat',
+
+                        'view'       => 'Veure',
                     ],
                 ],
                 'import' => [
@@ -1552,17 +1602,18 @@ return [
                 'status'           => 'Estat',
                 'title'            => 'Editar Usuari',
             ],
-            'activate-warning'          => 'El teu compte encara no està activat, contacta amb l\'administrador.',
-            'cannot-change'             => 'L\'usuari no pot ser modificat',
-            'create-success'            => 'Usuari creat correctament.',
-            'delete-failed'             => 'Error en eliminar l\'usuari.',
-            'delete-success'            => 'Usuari eliminat correctament.',
-            'delete-warning'            => 'Estàs segur de voler realitzar aquesta acció?',
-            'incorrect-password'        => 'Contrasenya incorrecta',
-            'last-delete-error'         => 'Última eliminació d\'usuari fallida',
-            'login-error'               => 'Comprova les teves credencials i torna a provar.',
-            'update-success'            => 'Usuari actualitzat correctament.',
-            'current-user-delete-error' => 'L\'usuari connectat no es pot eliminar.',
+            'activate-warning'           => 'El teu compte encara no està activat, contacta amb l\'administrador.',
+            'cannot-change'              => 'L\'usuari no pot ser modificat',
+            'cannot-escalate-role'       => 'No teniu permís per assignar un rol amb accés complet.',
+            'create-success'             => 'Usuari creat correctament.',
+            'delete-failed'              => 'Error en eliminar l\'usuari.',
+            'delete-success'             => 'Usuari eliminat correctament.',
+            'delete-warning'             => 'Estàs segur de voler realitzar aquesta acció?',
+            'incorrect-password'         => 'Contrasenya incorrecta',
+            'last-delete-error'          => 'Última eliminació d\'usuari fallida',
+            'login-error'                => 'Comprova les teves credencials i torna a provar.',
+            'update-success'             => 'Usuari actualitzat correctament.',
+            'current-user-delete-error'  => 'L\'usuari connectat no es pot eliminar.',
         ],
         'roles' => [
             'index' => [
@@ -1659,6 +1710,8 @@ return [
                         'title-info'                => 'Configureu el xat de l\'agent IA, els fluxos de treball d\'enriquiment autònom i el monitoratge de qualitat. Aquestes funcions permeten la gestió conversacional de productes i el manteniment proactiu del catàleg.',
                         'enabled'                   => 'Activar el xat de l\'agent IA',
                         'enabled-info'              => 'Activeu el widget de xat flotant d\'IA per a la gestió conversacional de productes amb més de 27 accions d\'eines.',
+                        'open-by-default'           => 'Obre el tauler de xat en carregar la pàgina',
+                        'open-by-default-info'      => 'Quan s\'habilita, el tauler de xat de l\'Agent d\'IA s\'obre automàticament la primera vegada que un administrador arriba a una pàgina. Els usuaris encara poden tancar-lo manualment — la preferència es recorda durant la resta de la sessió del navegador.',
                         'max-steps'                 => 'Passos màxims de l\'agent per torn',
                         'max-steps-info'            => 'Nombre màxim d\'iteracions de crida d\'eines que l\'agent IA pot realitzar per missatge d\'usuari. Valors més alts permeten operacions de múltiples passos més complexes.',
                         'daily-token-budget'        => 'Pressupost diari de tokens',
@@ -1729,6 +1782,12 @@ return [
             'client-not-found'               => 'Cliente Não Encontrado',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Títol',
@@ -1771,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Prompts del sistema',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Títol',
@@ -1864,16 +1929,21 @@ return [
                 'invalid-model-name'       => 'Nom de model no vàlid. Utilitzeu només lletres, números, guions, punts, dos punts i barres (p. ex. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'          => 'Plataforma desada correctament.',
-                'update-success'        => 'Plataforma actualitzada correctament.',
-                'delete-success'        => 'Plataforma eliminada correctament.',
-                'delete-fail'           => 'Error en eliminar la plataforma.',
-                'cannot-delete-default' => 'No es pot eliminar l\'única plataforma per defecte.',
-                'set-default-success'   => 'Plataforma establerta com a predeterminada correctament.',
-                'test-success'          => 'Connexió verificada correctament!',
-                'test-fail'             => 'La prova de connexió ha fallat',
-                'fetch-models-fail'     => 'No s\'han pogut obtenir els models',
-                'invalid-model-names'   => 'Noms de model no vàlids: :names. Els noms de model han de començar amb una lletra o un número i contenir només lletres, números, guions, punts, dos punts i barres.',
+                'save-success'             => 'Plataforma desada correctament.',
+                'update-success'           => 'Plataforma actualitzada correctament.',
+                'delete-success'           => 'Plataforma eliminada correctament.',
+                'delete-fail'              => 'Error en eliminar la plataforma.',
+                'not-found'                => 'La plataforma seleccionada ja no existeix. Actualitzeu i torneu-ho a provar.',
+                'cannot-delete-default'    => 'No es pot eliminar l\'única plataforma per defecte.',
+                'set-default-success'      => 'Plataforma establerta com a predeterminada correctament.',
+                'test-success'             => 'Connexió verificada correctament!',
+                'test-fail'                => 'La prova de connexió ha fallat',
+                'no-test-model'            => 'Seleccioneu almenys un model capaç de generar text per executar la prova de connexió.',
+                'custom-api-url-required'  => 'L\'API URL és obligatòria per als proveïdors personalitzats perquè la prova de connexió arribi al vostre propi endpoint.',
+                'api-key-corrupted'        => 'No s\'ha pogut desxifrar la clau API emmagatzemada (:error). La clau de xifrat de l\'aplicació pot haver canviat. Torneu a introduir la vostra clau API i deseu.',
+                'fetch-models-fail'        => 'No s\'han pogut obtenir els models',
+                'invalid-model-names'      => 'Noms de model no vàlids: :names. Els noms de model han de començar amb una lletra o un número i contenir només lletres, números, guions, punts, dos punts i barres.',
+                'default-requires-enabled' => 'Una plataforma desactivada no es pot marcar com a per defecte. Activa-la primer.',
             ],
         ],
     ],
@@ -1959,10 +2029,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Seleccionar',
-                'title'    => 'Aplicar filtros',
-                'save'     => 'Guardar',
-                'dropdown' => [
+                'select'        => 'Seleccionar',
+                'title'         => 'Aplicar filtros',
+                'save'          => 'Guardar',
+                'add-filter'    => 'Afegir filtre',
+                'remove-filter' => 'Eliminar filtre',
+                'search-filter' => 'Cerca...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Escribe al menos 2 caracteres...',
                         'no-results'        => 'No se encontraron resultados...',
@@ -2038,6 +2111,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Añadir imagen',
+                'add-media-btn'      => 'Afegir multimèdia',
                 'generate-with-ai'   => 'Generar amb IA',
                 'upload-from-device' => 'Carregar des del dispositiu',
                 'cancel'             => 'Cancel·lar',
@@ -2119,6 +2193,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Sol·licitud per defecte',
+                'select-prompt-template' => '-- Seleccioneu una plantilla d\'indicació --',
             ],
         ],
     ],
@@ -2204,6 +2279,7 @@ return [
         '403' => [
             'description' => 'Oops! Aquesta pàgina està prohibida. No tens els permisos necessaris per veure aquest contingut.',
             'title'       => '403 Prohibit',
+            'message'     => 'No teniu permís per accedir a aquesta pàgina. Poseu-vos en contacte amb l\'administrador si creieu que això és un error.',
         ],
         '413' => [
             'description' => 'Oops! Estàs intentant pujar un fitxer que és massa gran. Si vols pujar-lo, actualitza la configuració PHP.',
@@ -2255,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Sí',
-        'no'             => 'No',
-        'true'           => 'Veritable',
-        'false'          => 'Fals',
-        'enable'         => 'Activat',
-        'disable'        => 'Desactivat',
-        'no-match-found' => 'No s\'ha trobat cap coincidència!',
+        'yes'               => 'Sí',
+        'no'                => 'No',
+        'true'              => 'Veritable',
+        'false'             => 'Fals',
+        'enable'            => 'Activat',
+        'disable'           => 'Desactivat',
+        'no-match-found'    => 'No s\'ha trobat cap coincidència!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

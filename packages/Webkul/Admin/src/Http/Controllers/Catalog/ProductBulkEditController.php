@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Illuminate\View\View;
@@ -47,10 +48,8 @@ class ProductBulkEditController extends Controller
 
     /**
      * Apply filters for bulk edit and store filtered product & attribute IDs in session.
-     *
-     * @return JsonResponse
      */
-    public function filters(BulkEditRequest $bulkEditRequest)
+    public function filters(BulkEditRequest $bulkEditRequest): JsonResponse
     {
         $productIds = $bulkEditRequest->input('indices', []);
         $filters = $bulkEditRequest->input('filter', []);
@@ -58,7 +57,7 @@ class ProductBulkEditController extends Controller
         if (count($productIds) > 100) {
             return response()->json([
                 'message' => trans('admin::app.catalog.products.bulk-edit.filter.many-product'),
-            ], 422);
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         session(['bulk_edit_product_ids' => $productIds]);
@@ -79,10 +78,8 @@ class ProductBulkEditController extends Controller
 
     /**
      * Show the bulk edit page with filtered products and attributes.
-     *
-     * @return View|RedirectResponse
      */
-    public function index()
+    public function index(): View|RedirectResponse
     {
         $productIds = session('bulk_edit_product_ids', []);
         $attributeIds = session('bulk_edit_attribute_ids');
@@ -109,10 +106,8 @@ class ProductBulkEditController extends Controller
 
     /**
      * Store uploaded product media for a given attribute.
-     *
-     * @return JsonResponse
      */
-    public function storeProductMedia()
+    public function storeProductMedia(): JsonResponse
     {
         request()->validate([
             'sku'       => 'required|string',
@@ -169,10 +164,8 @@ class ProductBulkEditController extends Controller
 
     /**
      * Return a formatted JSON response for validation errors.
-     *
-     * @return JsonResponse
      */
-    protected function validateErrorResponse(mixed $validator, string $message = 'Validation failed.', int $code = 422)
+    protected function validateErrorResponse(mixed $validator, string $message = 'Validation failed.', int $code = JsonResponse::HTTP_UNPROCESSABLE_ENTITY): JsonResponse
     {
         $errors = $validator instanceof Validator ? (new ValidationException($validator))->errors() : $validator;
 
@@ -185,16 +178,23 @@ class ProductBulkEditController extends Controller
 
     /**
      * Handle bulk save of product updates via queued job.
-     *
-     * @return JsonResponse
      */
-    public function handleBulkSave()
+    public function handleBulkSave(): JsonResponse
     {
         $data = request()->all();
 
         $this->validate(request(), [
             'data' => 'required',
         ]);
+
+        $errors = $this->validateNumericAttributeValues($data['data'] ?? []);
+
+        if (! empty($errors)) {
+            return response()->json([
+                'message' => trans('admin::app.catalog.products.bulk-edit.validation.failed'),
+                'errors'  => $errors,
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         $jobInstance = $this->jobInstancesRepository->find(['code' => 'bulk_product_update']);
 
@@ -217,6 +217,81 @@ class ProductBulkEditController extends Controller
     }
 
     /**
+     * Flatten the bulk-edit payload and return ["<attribute_code>" => [messages]]
+     * for attributes whose numeric types (price, integer, decimal) got non-numeric values.
+     */
+    protected function validateNumericAttributeValues(array $data): array
+    {
+        $attributeCodes = [];
+
+        foreach ($data as $perProduct) {
+            if (! is_array($perProduct)) {
+                continue;
+            }
+
+            foreach (array_keys($perProduct) as $code) {
+                $attributeCodes[$code] = true;
+            }
+        }
+
+        if (empty($attributeCodes)) {
+            return [];
+        }
+
+        $numericTypes = ['price', 'integer', 'decimal'];
+
+        $numericCodes = $this->attributeRepository
+            ->whereIn('code', array_keys($attributeCodes))
+            ->whereIn('type', $numericTypes)
+            ->pluck('type', 'code');
+
+        if ($numericCodes->isEmpty()) {
+            return [];
+        }
+
+        $errors = [];
+
+        foreach ($data as $perProduct) {
+            if (! is_array($perProduct)) {
+                continue;
+            }
+
+            foreach ($perProduct as $code => $value) {
+                if (! $numericCodes->has($code)) {
+                    continue;
+                }
+
+                foreach ($this->flattenScalarValues($value) as $scalar) {
+                    if ($scalar === '' || $scalar === null) {
+                        continue;
+                    }
+
+                    if (! is_numeric($scalar)) {
+                        $errors[$code][] = trans('admin::app.catalog.products.bulk-edit.validation.numeric', ['attribute' => $code]);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Yield every scalar leaf from an arbitrarily-nested array.
+     */
+    protected function flattenScalarValues(mixed $value): \Generator
+    {
+        if (is_array($value)) {
+            foreach ($value as $v) {
+                yield from $this->flattenScalarValues($v);
+            }
+        } else {
+            yield $value;
+        }
+    }
+
+    /**
      * Create a new job instance for bulk product update.
      *
      * @return mixed
@@ -235,21 +310,34 @@ class ProductBulkEditController extends Controller
 
     /**
      * Retrieve attributes for bulk edit.
-     *
-     * @return JsonResponse
      */
-    public function getAttributes(Request $request)
+    public function getAttributes(Request $request): JsonResponse
     {
         $query = $this->attributeRepository
             ->whereNotIn('code', ['sku'])
             ->whereNotIn('type', ['table', 'file']);
+
+        $productIds = session('bulk_edit_product_ids', []);
+
+        if (! empty($productIds)) {
+            $familyAttributeIds = DB::table('attributes as a')
+                ->distinct()
+                ->join('attribute_group_mappings as agm', 'agm.attribute_id', '=', 'a.id')
+                ->join('attribute_family_group_mappings as afgm', 'afgm.id', '=', 'agm.attribute_family_group_id')
+                ->join('products as p', 'p.attribute_family_id', '=', 'afgm.attribute_family_id')
+                ->whereIn('p.id', $productIds)
+                ->pluck('a.id')
+                ->toArray();
+
+            $query = $query->whereIn('id', $familyAttributeIds);
+        }
 
         if ($request->filled('ids')) {
             $ids = (array) $request->input('ids');
             $attributes = $query->whereIn('id', $ids)->paginate(self::DEFAULT_PER_PAGE);
 
         } elseif ($request->filled('query')) {
-            $queryParam = $request->get('query', '');
+            $queryParam = $request->input('query', '');
 
             $attributes = $query->where(function ($queryBuilder) use ($queryParam) {
                 $queryBuilder->whereTranslationLike('name', '%'.$queryParam.'%')

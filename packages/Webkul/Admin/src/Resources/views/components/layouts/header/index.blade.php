@@ -77,11 +77,12 @@
                         src="{{ url('cache/logo/unopim.png') }}"
                         width="24"
                         height="24"
+                        onerror="this.style.display='none'"
                     />
 
                     <!-- Version -->
                     <p class="text-gray-400">
-                        @lang('admin::app.components.layouts.header.app-version', ['version' => 'v' . core()->version()])
+                        @lang('admin::app.components.layouts.header.app-version', ['version' => core()->version()])
                     </p>
                 </div>
 

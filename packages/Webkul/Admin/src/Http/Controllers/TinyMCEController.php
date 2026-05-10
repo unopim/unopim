@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Core\Filesystem\FileStorer;
 
@@ -21,10 +22,8 @@ class TinyMCEController extends Controller
 
     /**
      * Upload file from tinymce.
-     *
-     * @return void
      */
-    public function upload()
+    public function upload(): JsonResponse
     {
         $media = $this->storeMedia();
 
@@ -39,10 +38,8 @@ class TinyMCEController extends Controller
 
     /**
      * Store media.
-     *
-     * @return array
      */
-    public function storeMedia()
+    public function storeMedia(): array
     {
         if (! request()->hasFile('file')) {
             return [];

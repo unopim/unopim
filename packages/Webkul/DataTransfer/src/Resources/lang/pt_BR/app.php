@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'O cabeçalho contém atributos inválidos: "%s".',
             'system'               => 'Ocorreu um erro do sistema inesperado.',
             'wrong-quotes'         => 'Aspas inclinadas usadas em vez de aspas diretas.',
+            'file-empty'           => 'O arquivo está vazio ou não contém uma linha de cabeçalho. Por favor, envie um arquivo válido com dados.',
         ],
     ],
     'job' => [

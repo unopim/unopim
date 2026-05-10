@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Magiczna AI',
         'general'               => 'Ogólne',
         'prompt'                => 'Zapytanie',
         'system-prompt'         => 'Zapytanie systemowe',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Magiczna AI',
         'platform'       => 'Platformy',
         'settings'       => 'Ustawienia',
         'prompt'         => 'Zapytania',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Wstecz',
         'unauthorized'              => 'Ta akcja jest nieautoryzowana.',
         'error-generic'             => 'Wystąpił nieoczekiwany błąd. Spróbuj ponownie.',
+        'error-rate-limit'          => 'Osiągnięto limit żądań dostawcy AI. Poczekaj chwilę i spróbuj ponownie.',
+        'error-rate-limit-retry'    => 'Osiągnięto limit żądań dostawcy AI. Spróbuj ponownie za :seconds sekund.',
+        'error-overloaded'          => 'Dostawca AI jest obecnie przeciążony. Spróbuj ponownie za chwilę.',
+        'error-request-too-large'   => 'Twoje żądanie jest za duże dla dostawcy AI. Skróć wiadomość lub usuń niektóre załączniki i spróbuj ponownie.',
+        'error-api-key-corrupted'   => 'Klucz API dla tej platformy nie mógł zostać odszyfrowany (:error). Klucz szyfrowania aplikacji mógł zostać zmieniony. Edytuj platformę i wprowadź ponownie swój klucz API.',
         'invalid-file-path'         => 'Nieprawidłowa ścieżka pliku.',
         'invalid-locale-code'       => 'Nieprawidłowy kod lokalizacji.',
         'invalid-channel-code'      => 'Nieprawidłowy kod kanału.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'Załącz',
         'attach-csv-xlsx'          => 'Załącz CSV lub XLSX',
         'attach-image'             => 'Załącz obraz',
+        'remove-attachment'        => 'Usuń załącznik',
         'send'                     => 'Wyślij',
         'sending'                  => 'Wysyłanie…',
         'processing'               => 'Przetwarzanie…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'  => 'np. "Generuj S/M/L × Czerwony/Niebieski dla SHIRT-001"',
             'edit-image'              => 'Edytuj obraz produktu',
             'edit-image-desc'         => 'Usuwanie tła, ulepszanie i retusz',
-            'edit-image-hint'         => 'Prześlij obraz, a następnie powiedz, co zmienić — np. "Usuń tło"',
+            'edit-image-hint'         => 'Podaj SKU produktu i opisz, co zmienić — np. "Usuń tło z SKU-123"',
 
             'search-products'         => 'Szukaj produktów',
             'search-products-desc'    => 'Znajdź produkty według SKU, nazwy lub statusu',
@@ -319,7 +325,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Edytuj przesłany obraz produktu zgodnie z instrukcjami.',
+            'edit-image-prompt'        => 'Edytuj obraz produktu, pobierając go z podanego SKU, zastosuj żądane zmiany i zapisz go z powrotem.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

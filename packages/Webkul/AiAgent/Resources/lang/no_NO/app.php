@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Magisk AI',
         'general'               => 'Generelt',
         'prompt'                => 'Ledetekst',
         'system-prompt'         => 'Systemledetekst',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Magisk AI',
         'platform'       => 'Plattformer',
         'settings'       => 'Innstillinger',
         'prompt'         => 'Ledetekster',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Tilbake',
         'unauthorized'              => 'Denne handlingen er ikke autorisert.',
         'error-generic'             => 'En uventet feil oppstod. Vennligst prøv igjen.',
+        'error-rate-limit'          => 'Forespørselsgrensen for AI-leverandøren er nådd. Vent et øyeblikk og prøv igjen.',
+        'error-rate-limit-retry'    => 'Forespørselsgrensen for AI-leverandøren er nådd. Prøv igjen om :seconds sekunder.',
+        'error-overloaded'          => 'AI-leverandøren er for øyeblikket overbelastet. Prøv igjen om et øyeblikk.',
+        'error-request-too-large'   => 'Forespørselen din er for stor for AI-leverandøren. Forkort meldingen eller fjern noen vedlegg og prøv igjen.',
+        'error-api-key-corrupted'   => 'API-nøkkelen for denne plattformen kunne ikke dekrypteres (:error). Applikasjonens krypteringsnøkkel kan ha blitt endret. Rediger plattformen og skriv inn API-nøkkelen din på nytt.',
         'invalid-file-path'         => 'Ugyldig filbane.',
         'invalid-locale-code'       => 'Ugyldig språkkode.',
         'invalid-channel-code'      => 'Ugyldig kanalkode.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'Legg ved',
         'attach-csv-xlsx'          => 'Legg ved CSV eller XLSX',
         'attach-image'             => 'Legg ved bilde',
+        'remove-attachment'        => 'Fjern vedlegg',
         'send'                     => 'Send',
         'sending'                  => 'Sender…',
         'processing'               => 'Behandler…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'  => 'f.eks. "Generer S/M/L × Rød/Blå for SHIRT-001"',
             'edit-image'              => 'Rediger produktbilde',
             'edit-image-desc'         => 'Bakgrunnsfjerning, forbedring og retusjering',
-            'edit-image-hint'         => 'Last opp et bilde, og si hva du vil endre — f.eks. "Fjern bakgrunnen"',
+            'edit-image-hint'         => 'Oppgi en produkt-SKU og beskriv hva som skal endres — f.eks. "Fjern bakgrunn fra SKU-123"',
 
             'search-products'         => 'Søk etter produkter',
             'search-products-desc'    => 'Finn produkter etter SKU, navn eller status',
@@ -319,7 +325,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Rediger det opplastede produktbildet som instruert.',
+            'edit-image-prompt'        => 'Rediger produktbildet ved å hente det fra den oppgitte SKU-en, bruk de ønskede endringene og lagre det tilbake.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

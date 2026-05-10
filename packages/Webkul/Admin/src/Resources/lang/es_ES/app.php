@@ -16,7 +16,7 @@ return [
                 'email'                  => 'Correo electrónico registrado',
                 'email-not-exist'        => 'El correo electrónico no existe',
                 'page-title'             => 'Contraseña olvidada',
-                'reset-link-sent'        => 'Restablecer el enlace de contraseña enviado',
+                'reset-link-sent'        => 'Si existe una cuenta con ese correo electrónico, se ha enviado un enlace para restablecer la contraseña.',
                 'email-settings-error'   => 'El correo electrónico no pudo ser enviado.Verifique los detalles de su configuración de correo electrónico',
                 'sign-in-link'           => '¿Volver para iniciar sesión?',
                 'submit-btn'             => 'Reiniciar',
@@ -40,7 +40,9 @@ return [
         'description-text' => 'Enumere todas las notificaciones',
         'marked-success'   => 'Notificación marcada con éxito',
         'no-record'        => 'ningún record fue encontrado',
+        'of'               => 'de',
         'read-all'         => 'Marcar como leído',
+        'showing'          => 'Mostrando',
         'title'            => 'Notificaciones',
         'view-all'         => 'Ver todo',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Completado',
             'pending'    => 'Pendiente',
             'processing' => 'Procesando',
+            'read'       => 'Leídas',
+            'unread'     => 'No leídas',
         ],
     ],
     'account' => [
@@ -216,7 +220,8 @@ return [
                 'save-btn'   => 'Guardar el producto',
                 'title'      => 'Editar producto',
                 'categories' => [
-                    'title' => 'Categorías',
+                    'title'            => 'Categorías',
+                    'root-not-allowed' => 'La categoría raíz no se puede asignar a un producto.',
                 ],
                 'images' => [
                     'info'  => 'La resolución de la imagen debe ser como 560px x 609px',
@@ -359,6 +364,8 @@ return [
                     'url'                        => 'Por favor, introduce una URL válida.',
                     'regex'                      => 'El valor no coincide con el patrón requerido.',
                     'invalid-pattern'            => 'Patrón personalizado no válido.',
+
+                    'numeric'                    => 'El valor del atributo numérico ":attribute" debe ser un número válido.',
                     'select-attribute-or-family' => 'Por favor, seleccione al menos un atributo o una familia de atributos.',
                     'failed'                     => 'La validación ha fallado.',
                 ],
@@ -378,16 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Edición masiva exitosa.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'No hay cambios para guardar.',
-                'success'         => 'Operación completada con éxito.',
-                'fetch-failed'    => 'Error al obtener los datos.',
-                'action'          => 'Edición masiva',
-                'gallery-preview' => 'Vista previa de galería',
-                'img-preview'     => 'Vista previa de imagen',
-                'no-image'        => 'Sin imagen',
-                'img-fail'        => 'Fallo al subir la imagen.',
-                'no-option'       => 'Sin opciones',
+                'id'                          => 'ID',
+                'no-changes'                  => 'No hay cambios para guardar.',
+
+                'invalid-datetime'            => 'Introduce una fecha y hora válidas.',
+
+                'resize-column'               => 'Arrastra para redimensionar la columna',
+                'success'                     => 'Operación completada con éxito.',
+                'fetch-failed'                => 'Error al obtener los datos.',
+                'action'                      => 'Edición masiva',
+                'description'                 => 'Editar varios productos a la vez. Los cambios se procesan en segundo plano.',
+                'gallery-preview'             => 'Vista previa de galería',
+                'img-preview'                 => 'Vista previa de imagen',
+                'no-image'                    => 'Sin imagen',
+                'img-fail'                    => 'Fallo al subir la imagen.',
+                'no-option'                   => 'Sin opciones',
+                'keyboard-shortcuts'          => 'Atajos de teclado',
+                'shortcuts-navigation'        => 'Navegación',
+                'shortcuts-editing'           => 'Edición',
+                'shortcuts-selection'         => 'Selección',
+                'shortcuts-clipboard'         => 'Portapapeles y relleno',
+                'shortcuts-move-cell'         => 'Moverse entre celdas',
+                'shortcuts-move-down'         => 'Bajar / confirmar edición',
+                'shortcuts-move-up'           => 'Subir',
+                'shortcuts-move-right-left'   => 'Mover a la derecha / izquierda',
+                'shortcuts-home-end'          => 'Primera / última columna de la fila',
+                'shortcuts-ctrl-home-end'     => 'Primera / última celda de la cuadrícula',
+                'shortcuts-extend-selection'  => 'Ampliar selección',
+                'shortcuts-select-all'        => 'Seleccionar todas las celdas',
+                'shortcuts-enter-edit'        => 'Entrar en modo edición',
+                'shortcuts-confirm-move-down' => 'Confirmar + bajar',
+                'shortcuts-confirm-move-right'=> 'Confirmar + mover a la derecha',
+                'shortcuts-escape-revert'     => 'Revertir valor + salir de la edición',
+                'shortcuts-clear-cell'        => 'Borrar celda',
+                'shortcuts-copy'              => 'Copiar',
+                'shortcuts-cut'               => 'Cortar',
+                'shortcuts-paste'             => 'Pegar',
+                'shortcuts-fill-down'         => 'Rellenar hacia abajo',
+                'shortcuts-fill-right'        => 'Rellenar hacia la derecha',
+                'shortcuts-undo'              => 'Deshacer',
+                'shortcuts-redo'              => 'Rehacer',
+                'shortcuts-help'              => 'Mostrar/ocultar atajos de teclado',
             ],
             'create-success'          => 'Producto creado con éxito',
             'delete-failed'           => 'Producto eliminado Falló',
@@ -482,6 +520,8 @@ return [
                 'is-filterable'         => 'Es filtrable',
                 'ai-translate'          => 'Traducción IA',
                 'invalid-swatch-type'   => 'El :attribute no está permitido para el tipo de atributo :type con el tipo de muestra :swatch_type.',
+
+                'single-object-only'    => 'Cada solicitud de creación debe enviar un único objeto de atributo.',
                 'option'                => [
                     'color'    => 'Muestra de color',
                     'dropdown' => 'Desplegable',
@@ -564,6 +604,8 @@ return [
             'delete-success'    => 'Atributo eliminado con éxito',
             'update-success'    => 'Atributo actualizado correctamente',
             'user-define-error' => 'No puede eliminar el atributo del sistema',
+
+            'immutable-fields'  => 'Los siguientes campos no se pueden modificar: :fields.',
             'not-found'         => 'Atributo con el código ":code" no se puede encontrar',
         ],
         'attribute-options' => [
@@ -676,6 +718,7 @@ return [
             'delete-success'       => 'La categoría se ha eliminado con éxito.',
             'update-success'       => 'Categoría actualizada con éxito.',
             'can-not-update'       => 'Esta categoría de raíz está relacionada con un canal y no puede tener categoría de padres.',
+            'invalid-parent'       => 'La categoría padre seleccionada no es válida. Una categoría no puede ser su propio padre ni un descendiente de sí misma.',
             'unique-validation'    => 'Este valor ya está tomado.',
             'not-found'            => 'Categoría con código ":code" No se pudo encontrar',
             'unknown-fields'       => 'Campo de categoría con código ":fields" no se pudo encontrar',
@@ -844,15 +887,18 @@ return [
             'update-success'    => 'Campo de categoría actualizado correctamente',
             'user-define-error' => 'No puede eliminar el campo de categoría del sistema',
             'not-found'         => 'Campo de categoría con código ":code" no se pudo encontrar',
+
+            'immutable-fields'  => 'Los siguientes campos no se pueden modificar: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opción de campo de categoría creada correctamente',
-            'update-success' => 'Opción de campo de categoría actualizada correctamente',
+            'create-success'      => 'Opción de campo de categoría creada correctamente',
+            'update-success'      => 'Opción de campo de categoría actualizada correctamente',
+            'update-unknown-code' => 'No existe ninguna opción de campo de categoría con el código «:code».',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Crear familia de atributos',
-                'title'    => 'Familias',
+                'title'    => 'Familias de atributos',
                 'datagrid' => [
                     'code'           => 'Código',
                     'delete'         => 'Borrar',
@@ -943,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'No se puede actualizar opciones configurables ya que esta familia ya tiene productos variantes.',
         ],
         'history' => [
+            'view' => 'Ver detalles de la versión',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versión',
@@ -1076,6 +1124,8 @@ return [
                         'paused'               => 'Pausado',
                         'cancelled'            => 'Cancelado',
                         'failed'               => 'Fallido',
+
+                        'view'       => 'Ver',
                     ],
                 ],
                 'import' => [
@@ -1552,17 +1602,18 @@ return [
                 'status'           => 'Estado',
                 'title'            => 'editar usuario',
             ],
-            'activate-warning'          => 'Su cuenta aún no se ha activado, comuníquese con el administrador.',
-            'cannot-change'             => 'El usuario no se puede cambiar',
-            'create-success'            => 'Usuario creado con éxito.',
-            'delete-failed'             => 'Error al eliminar el usuario.',
-            'delete-success'            => 'Usuario eliminado con éxito.',
-            'delete-warning'            => '¿Estás seguro, quieres realizar esta acción?',
-            'incorrect-password'        => 'Contraseña incorrecta',
-            'last-delete-error'         => 'Last User Eliminar falló',
-            'login-error'               => 'Consulte sus credenciales y vuelva a intentarlo.',
-            'update-success'            => 'Usuario actualizado con éxito.',
-            'current-user-delete-error' => 'El usuario que inició sesión no se puede eliminar',
+            'activate-warning'           => 'Su cuenta aún no se ha activado, comuníquese con el administrador.',
+            'cannot-change'              => 'El usuario no se puede cambiar',
+            'cannot-escalate-role'       => 'No tiene permiso para asignar un rol con acceso completo.',
+            'create-success'             => 'Usuario creado con éxito.',
+            'delete-failed'              => 'Error al eliminar el usuario.',
+            'delete-success'             => 'Usuario eliminado con éxito.',
+            'delete-warning'             => '¿Estás seguro, quieres realizar esta acción?',
+            'incorrect-password'         => 'Contraseña incorrecta',
+            'last-delete-error'          => 'Last User Eliminar falló',
+            'login-error'                => 'Consulte sus credenciales y vuelva a intentarlo.',
+            'update-success'             => 'Usuario actualizado con éxito.',
+            'current-user-delete-error'  => 'El usuario que inició sesión no se puede eliminar',
         ],
         'roles' => [
             'index' => [
@@ -1659,6 +1710,8 @@ return [
                         'title-info'                => 'Configure el chat del agente IA, los flujos de trabajo de enriquecimiento autónomo y la supervisión de calidad. Estas funciones permiten la gestión conversacional de productos y el mantenimiento proactivo del catálogo.',
                         'enabled'                   => 'Habilitar chat del agente IA',
                         'enabled-info'              => 'Habilite el widget flotante de chat IA para la gestión conversacional de productos con más de 27 acciones de herramientas.',
+                        'open-by-default'           => 'Abrir el panel de chat al cargar la página',
+                        'open-by-default-info'      => 'Cuando está habilitado, el panel de chat del Agente de IA se abre automáticamente la primera vez que un administrador accede a una página. Los usuarios pueden seguir cerrándolo manualmente — la preferencia se recuerda durante el resto de la sesión del navegador.',
                         'max-steps'                 => 'Pasos máx. del agente por turno',
                         'max-steps-info'            => 'Número máximo de iteraciones de llamadas a herramientas que el agente IA puede realizar por mensaje de usuario. Valores más altos permiten operaciones de varios pasos más complejas.',
                         'daily-token-budget'        => 'Presupuesto diario de tokens',
@@ -1729,6 +1782,12 @@ return [
             'client-not-found'               => 'Cliente no encontrado',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Título',
@@ -1771,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Prompts del sistema',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Título',
@@ -1864,16 +1929,21 @@ return [
                 'invalid-model-name'       => 'Nombre de modelo no válido. Use solo letras, números, guiones, puntos, dos puntos y barras (p. ej. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'          => 'Plataforma guardada correctamente.',
-                'update-success'        => 'Plataforma actualizada correctamente.',
-                'delete-success'        => 'Plataforma eliminada correctamente.',
-                'delete-fail'           => 'Error al eliminar la plataforma.',
-                'cannot-delete-default' => 'No se puede eliminar la única plataforma predeterminada.',
-                'set-default-success'   => 'Plataforma establecida como predeterminada correctamente.',
-                'test-success'          => '¡Conexión verificada correctamente!',
-                'test-fail'             => 'La prueba de conexión ha fallado',
-                'fetch-models-fail'     => 'No se pudieron obtener los modelos',
-                'invalid-model-names'   => 'Nombres de modelo no válidos: :names. Los nombres de modelo deben comenzar con una letra o número y contener solo letras, números, guiones, puntos, dos puntos y barras.',
+                'save-success'             => 'Plataforma guardada correctamente.',
+                'update-success'           => 'Plataforma actualizada correctamente.',
+                'delete-success'           => 'Plataforma eliminada correctamente.',
+                'delete-fail'              => 'Error al eliminar la plataforma.',
+                'not-found'                => 'La plataforma seleccionada ya no existe. Actualice la página e inténtelo de nuevo.',
+                'cannot-delete-default'    => 'No se puede eliminar la única plataforma predeterminada.',
+                'set-default-success'      => 'Plataforma establecida como predeterminada correctamente.',
+                'test-success'             => '¡Conexión verificada correctamente!',
+                'test-fail'                => 'La prueba de conexión ha fallado',
+                'no-test-model'            => 'Seleccione al menos un modelo con capacidad de texto para ejecutar la prueba de conexión.',
+                'custom-api-url-required'  => 'La API URL es obligatoria para los proveedores personalizados para que la prueba de conexión llegue a su propio endpoint.',
+                'api-key-corrupted'        => 'No se pudo descifrar la clave API almacenada (:error). La clave de cifrado de la aplicación puede haber cambiado. Vuelva a introducir su clave API y guarde.',
+                'fetch-models-fail'        => 'No se pudieron obtener los modelos',
+                'invalid-model-names'      => 'Nombres de modelo no válidos: :names. Los nombres de modelo deben comenzar con una letra o número y contener solo letras, números, guiones, puntos, dos puntos y barras.',
+                'default-requires-enabled' => 'Una plataforma desactivada no se puede marcar como predeterminada. Actívala primero.',
             ],
         ],
     ],
@@ -1959,10 +2029,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Seleccionar',
-                'title'    => 'Aplicar filtros',
-                'save'     => 'Ahorrar',
-                'dropdown' => [
+                'select'        => 'Seleccionar',
+                'title'         => 'Aplicar filtros',
+                'save'          => 'Ahorrar',
+                'add-filter'    => 'Agregar filtro',
+                'remove-filter' => 'Eliminar filtro',
+                'search-filter' => 'Buscar...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Escriba al menos 2 caracteres ...',
                         'no-results'        => 'No se han encontrado resultados...',
@@ -2038,6 +2111,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Añadir imagen',
+                'add-media-btn'      => 'Añadir multimedia',
                 'generate-with-ai'   => 'Generar con IA',
                 'upload-from-device' => 'Subir desde el dispositivo',
                 'cancel'             => 'Cancelar',
@@ -2119,6 +2193,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'La lava',
                 'default-prompt'         => 'Prompt predeterminado',
+                'select-prompt-template' => '-- Selecciona una plantilla de prompt --',
             ],
         ],
     ],
@@ -2204,6 +2279,7 @@ return [
         '403' => [
             'description' => '¡Ups!Esta página está fuera de los límites.Parece que no\'t have the required permissions to view this content.',
             'title'       => '403 Prohibido',
+            'message'     => 'No tiene permiso para acceder a esta página. Póngase en contacto con su administrador si cree que esto es un error.',
         ],
         '413' => [
             'description' => '¡Ups!Parece que está tratando de cargar un archivo que sea demasiado grande.Si desea cargar lo mismo, actualice la configuración de PHP en consecuencia.',
@@ -2255,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Sí',
-        'no'             => 'No',
-        'true'           => 'Verdadero',
-        'false'          => 'FALSO',
-        'enable'         => 'Habilitado',
-        'disable'        => 'Deshabilitado',
-        'no-match-found' => '¡No se encontraron coincidencias!',
+        'yes'               => 'Sí',
+        'no'                => 'No',
+        'true'              => 'Verdadero',
+        'false'             => 'FALSO',
+        'enable'            => 'Habilitado',
+        'disable'           => 'Deshabilitado',
+        'no-match-found'    => '¡No se encontraron coincidencias!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

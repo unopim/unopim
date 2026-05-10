@@ -49,7 +49,7 @@ class AttributeFactory extends Factory
         ];
 
         return [
-            'code'              => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'code'              => 'attr_'.$this->faker->unique()->regexify('[a-z]{5}[0-9]{3}'),
             'type'              => array_rand($types),
             'validation'        => '',
             'position'          => $this->faker->randomDigit,

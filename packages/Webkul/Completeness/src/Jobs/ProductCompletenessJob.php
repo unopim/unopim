@@ -2,6 +2,7 @@
 
 namespace Webkul\Completeness\Jobs;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -17,7 +18,7 @@ use Webkul\Product\Repositories\ProductRepository;
 
 class ProductCompletenessJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected array $productIds;
 
@@ -112,7 +113,8 @@ class ProductCompletenessJob implements ShouldQueue
             }
 
             $prefix = DB::getTablePrefix();
-            DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CASE id {$cases} END WHERE id IN ({$idList})");
+            $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
+            DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CAST(CASE id {$cases} END AS {$castType}) WHERE id IN ({$idList})");
         }
     }
 

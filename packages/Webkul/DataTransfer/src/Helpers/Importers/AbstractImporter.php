@@ -260,8 +260,16 @@ abstract class AbstractImporter
             $errors[self::ERROR_CODE_COLUMN_NOT_FOUND] = $absentColumns;
         }
 
-        foreach ($this->getSource()->getColumnNames() as $columnNumber => $columnName) {
-            if (empty($columnName)) {
+        $columnNames = $this->getSource()->getColumnNames();
+
+        // Trim trailing empty columns — XLSX readers often report thousands of blank
+        // trailing columns when a file has been opened in Excel.
+        while (! empty($columnNames) && empty(trim((string) end($columnNames)))) {
+            array_pop($columnNames);
+        }
+
+        foreach ($columnNames as $columnNumber => $columnName) {
+            if (empty(trim((string) $columnName))) {
                 $errors[self::ERROR_CODE_COLUMN_EMPTY_HEADER][] = $columnNumber + 1;
             } elseif (! in_array($columnName, $this->getValidColumnNames())) {
                 $errors[self::ERROR_CODE_INVALID_ATTRIBUTE][] = $columnName;

@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Webkul\Core\ElasticSearch;
+use Webkul\Installer\Database\Seeders\CategoryDemoTableSeeder;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
+use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
 use Webkul\Installer\Database\Seeders\ProductTableSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 
@@ -25,7 +27,8 @@ class Installer extends Command
      */
     protected $signature = 'unopim:install
         { --skip-env-check : Skip env check. }
-        { --skip-admin-creation : Skip admin creation. }';
+        { --skip-admin-creation : Skip admin creation. }
+        { --with-demo-data : Seed sample products and demo data. }';
 
     /**
      * The console command description.
@@ -150,6 +153,10 @@ class Installer extends Command
         if (! $this->option('skip-admin-creation')) {
             $this->warn('Step: Create admin credentials...');
             $this->createAdminCredentials();
+        }
+
+        if ($this->option('with-demo-data')) {
+            $this->seedSampleProducts();
         }
 
         ComposerEvents::postCreateProject();
@@ -292,6 +299,11 @@ class Installer extends Command
             'DB_PREFIX' => text(
                 label: 'Please enter the database prefix',
                 default: env('DB_PREFIX') ?? '',
+                validate: fn (string $value) => match (true) {
+                    strlen($value) > 4                     => 'The database prefix should not exceed 4 characters.',
+                    preg_match('/[^a-zA-Z0-9_]/', $value)  => 'The database prefix can only contain letters, numbers, and underscores.',
+                    default                                => null
+                },
                 hint: 'or press enter to continue'
             ),
 
@@ -413,18 +425,18 @@ class Installer extends Command
             }
         );
 
-        $adminPassword = text(
+        $adminPassword = password(
             label: 'Input a Password for Administrator',
-            default: 'admin123',
-            required: true
+            required: true,
+            hint: 'Minimum 6 characters',
         );
 
         while (strlen($adminPassword) < 6) {
             $this->error('Password must be at least 6 characters.');
 
-            $adminPassword = text(
+            $adminPassword = password(
                 label: 'Input a Secure Password for Administrator',
-                required: true
+                required: true,
             );
         }
 
@@ -471,21 +483,48 @@ class Installer extends Command
     protected function seedSampleProducts(): void
     {
         try {
-            $this->warn('Step: Seeding sample products...');
+            $this->warn('Step: Seeding demo extras (channels, attributes, families, core config, ...)...');
+            app(DemoExtrasTableSeeder::class)->run();
 
-            app(ProductTableSeeder::class)->run([
-                'default_locale'     => core()->getDefaultLocaleCodeFromDefaultChannel(),
-                'allowed_locales'    => [core()->getDefaultLocaleCodeFromDefaultChannel()],
-            ]);
+            $this->warn('Step: Seeding demo categories...');
+            app(CategoryDemoTableSeeder::class)->run();
+
+            $this->warn('Step: Seeding sample products...');
+            app(ProductTableSeeder::class)->run();
 
             $this->info('Sample products seeded successfully.');
 
             if (config('elasticsearch.enabled') == 'true') {
+                $this->warn('Step: Re-indexing categories to Elasticsearch...');
+                $this->call('unopim:category:index');
+
                 $this->warn('Step: Re-indexing products to Elasticsearch...');
                 $this->call('unopim:product:index');
             }
+
+            $this->warn('Step: Recalculating product completeness...');
+            $this->recalculateCompleteness();
         } catch (\Exception $e) {
             $this->error("Failed to seed sample products: {$e->getMessage()}");
+        }
+    }
+
+    /**
+     * Recalculate product completeness synchronously. The
+     * `unopim:completeness:recalculate` command dispatches queue jobs, so
+     * we temporarily force the sync driver to guarantee the jobs run
+     * before the installer finishes.
+     */
+    protected function recalculateCompleteness(): void
+    {
+        $originalDefault = config('queue.default');
+
+        try {
+            config(['queue.default' => 'sync']);
+
+            $this->call('unopim:completeness:recalculate', ['--all' => true]);
+        } finally {
+            config(['queue.default' => $originalDefault]);
         }
     }
 
@@ -518,7 +557,10 @@ class Installer extends Command
          */
         $databaseConnection = $this->getEnvAtRuntime('DB_CONNECTION');
 
+        $previousDefault = config('database.default');
+
         config([
+            'database.default'                                    => $databaseConnection,
             "database.connections.{$databaseConnection}.host"     => $this->getEnvAtRuntime('DB_HOST'),
             "database.connections.{$databaseConnection}.port"     => $this->getEnvAtRuntime('DB_PORT'),
             "database.connections.{$databaseConnection}.database" => $this->getEnvAtRuntime('DB_DATABASE'),
@@ -526,6 +568,12 @@ class Installer extends Command
             "database.connections.{$databaseConnection}.password" => $this->getEnvAtRuntime('DB_PASSWORD'),
             "database.connections.{$databaseConnection}.prefix"   => $this->getEnvAtRuntime('DB_PREFIX'),
         ]);
+
+        DB::setDefaultConnection($databaseConnection);
+
+        if ($previousDefault && $previousDefault !== $databaseConnection) {
+            DB::purge($previousDefault);
+        }
 
         DB::purge($databaseConnection);
 

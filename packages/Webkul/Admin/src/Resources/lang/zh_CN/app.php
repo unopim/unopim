@@ -16,7 +16,7 @@ return [
                 'email'                  => '注册的电子邮件',
                 'email-not-exist'        => '电子邮件不存在',
                 'page-title'             => '忘记密码',
-                'reset-link-sent'        => '重置密码链接发送',
+                'reset-link-sent'        => '如果该邮箱地址存在账户，密码重置链接已发送。',
                 'email-settings-error'   => '电子邮件无法发出。请检查您的电子邮件配置详细信息',
                 'sign-in-link'           => '返回登录？',
                 'submit-btn'             => '重置',
@@ -40,7 +40,9 @@ return [
         'description-text' => '列出所有通知',
         'marked-success'   => '通知成功地标记了',
         'no-record'        => '没有找到记录',
+        'of'               => '共',
         'read-all'         => '标记为已读',
+        'showing'          => '显示',
         'title'            => '通知',
         'view-all'         => '查看全部',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => '完全的',
             'pending'    => '待办的',
             'processing' => '加工',
+            'read'       => '已读',
+            'unread'     => '未读',
         ],
     ],
     'account' => [
@@ -216,7 +220,8 @@ return [
                 'save-btn'   => '保存产品',
                 'title'      => '编辑产品',
                 'categories' => [
-                    'title' => '类别',
+                    'title'            => '类别',
+                    'root-not-allowed' => '根类别不能分配给产品。',
                 ],
                 'images' => [
                     'info'  => '图像分辨率应像560px x 609px',
@@ -359,6 +364,8 @@ return [
                     'url'                        => '请输入有效的URL地址。',
                     'regex'                      => '该值不符合所需的模式。',
                     'invalid-pattern'            => '提供了无效的自定义模式。',
+
+                    'numeric'                    => '数字属性":attribute"的值必须为有效的数字。',
                     'select-attribute-or-family' => '请选择至少一个属性或一个属性族。',
                     'failed'                     => '验证失败。',
                 ],
@@ -378,16 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => '批量编辑成功。',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => '没有可保存的更改。',
-                'success'         => '任务已成功执行。',
-                'fetch-failed'    => '获取失败。',
-                'action'          => '批量编辑',
-                'gallery-preview' => '图库预览',
-                'img-preview'     => '图片预览',
-                'no-image'        => '无图片',
-                'img-fail'        => '图片上传失败',
-                'no-option'       => '无选项',
+                'id'                          => 'ID',
+                'no-changes'                  => '没有可保存的更改。',
+
+                'invalid-datetime'            => '请输入有效的日期和时间。',
+
+                'resize-column'               => '拖动以调整列宽',
+                'success'                     => '任务已成功执行。',
+                'fetch-failed'                => '获取失败。',
+                'action'                      => '批量编辑',
+                'description'                 => '一次编辑多个产品。更改将在后台处理。',
+                'gallery-preview'             => '图库预览',
+                'img-preview'                 => '图片预览',
+                'no-image'                    => '无图片',
+                'img-fail'                    => '图片上传失败',
+                'no-option'                   => '无选项',
+                'keyboard-shortcuts'          => '键盘快捷键',
+                'shortcuts-navigation'        => '导航',
+                'shortcuts-editing'           => '编辑',
+                'shortcuts-selection'         => '选择',
+                'shortcuts-clipboard'         => '剪贴板与填充',
+                'shortcuts-move-cell'         => '在单元格间移动',
+                'shortcuts-move-down'         => '向下移动 / 确认编辑',
+                'shortcuts-move-up'           => '向上移动',
+                'shortcuts-move-right-left'   => '向右 / 向左移动',
+                'shortcuts-home-end'          => '行中第一 / 最后一列',
+                'shortcuts-ctrl-home-end'     => '网格中第一 / 最后一个单元格',
+                'shortcuts-extend-selection'  => '扩展选择',
+                'shortcuts-select-all'        => '选择所有单元格',
+                'shortcuts-enter-edit'        => '进入编辑模式',
+                'shortcuts-confirm-move-down' => '确认 + 向下移动',
+                'shortcuts-confirm-move-right'=> '确认 + 向右移动',
+                'shortcuts-escape-revert'     => '恢复值 + 退出编辑',
+                'shortcuts-clear-cell'        => '清除单元格',
+                'shortcuts-copy'              => '复制',
+                'shortcuts-cut'               => '剪切',
+                'shortcuts-paste'             => '粘贴',
+                'shortcuts-fill-down'         => '向下填充',
+                'shortcuts-fill-right'        => '向右填充',
+                'shortcuts-undo'              => '撤销',
+                'shortcuts-redo'              => '重做',
+                'shortcuts-help'              => '显示/隐藏键盘快捷键',
             ],
             'create-success'          => '成功创建的产品',
             'delete-failed'           => '产品删除失败',
@@ -482,6 +520,8 @@ return [
                 'is-filterable'         => '可筛选',
                 'ai-translate'          => 'AI翻译',
                 'invalid-swatch-type'   => ':attribute 不允许用于属性类型 :type 和样本类型 :swatch_type。',
+
+                'single-object-only'    => '每个创建请求只能发送一个属性对象。',
                 'option'                => [
                     'color'    => '色板',
                     'dropdown' => '落下',
@@ -564,6 +604,8 @@ return [
             'delete-success'    => '属性成功删除',
             'update-success'    => '属性成功更新',
             'user-define-error' => '无法删除系统属性',
+
+            'immutable-fields'  => '以下字段无法修改：:fields。',
             'not-found'         => '无法找到代码为“:code”的属性',
         ],
         'attribute-options' => [
@@ -676,6 +718,7 @@ return [
             'delete-success'       => '该类别已成功删除。',
             'update-success'       => '类别成功更新。',
             'can-not-update'       => '此根类别与通道有关，无法具有父级类别。',
+            'invalid-parent'       => '所选父类别无效。类别不能是其自身的父类别或其自身的后代。',
             'unique-validation'    => '此值已经采用。',
             'not-found'            => '找不到代码为“:code”的类别',
             'unknown-fields'       => '无法找到代码为“:fields”的类别字段',
@@ -844,15 +887,18 @@ return [
             'update-success'    => '类别字段成功更新',
             'user-define-error' => '无法删除系统类别字段',
             'not-found'         => '无法找到代码为“:code”的类别字段',
+
+            'immutable-fields'  => '以下字段无法修改：:fields。',
         ],
         'category-fields-options' => [
-            'create-success' => '类别字段选项成功创建了',
-            'update-success' => '类别字段选项成功更新',
+            'create-success'      => '类别字段选项成功创建了',
+            'update-success'      => '类别字段选项成功更新',
+            'update-unknown-code' => '不存在代码为":code"的类别字段选项。',
         ],
         'families' => [
             'index' => [
                 'add'      => '创建属性家庭',
-                'title'    => '家庭',
+                'title'    => '属性族',
                 'datagrid' => [
                     'code'           => '代码',
                     'delete'         => '删除',
@@ -943,6 +989,8 @@ return [
             'can-not-update-variant-options' => '无法更新可配置的选项，因为该家族已经拥有变体产品。',
         ],
         'history' => [
+            'view' => '查看版本详情',
+
             'index' => [
                 'datagrid' => [
                     'version'   => '版本',
@@ -1076,6 +1124,8 @@ return [
                         'paused'               => '已暂停',
                         'cancelled'            => '已取消',
                         'failed'               => '失败的',
+
+                        'view'       => '查看',
                     ],
                 ],
                 'import' => [
@@ -1554,6 +1604,7 @@ return [
             ],
             'activate-warning'          => '您的帐户尚未激活，请联系管理员。',
             'cannot-change'             => '用户无法更改',
+            'cannot-escalate-role'      => '您没有权限分配全权限角色。',
             'create-success'            => '用户成功创建了。',
             'delete-failed'             => '用户删除失败。',
             'delete-success'            => '用户成功删除。',
@@ -1659,6 +1710,8 @@ return [
                         'title-info'                => '配置AI代理聊天、自主丰富工作流和质量监控。这些功能支持对话式产品管理和主动目录维护。',
                         'enabled'                   => '启用AI代理聊天',
                         'enabled-info'              => '启用浮动AI聊天小部件，用于对话式产品管理，支持27+工具操作。',
+                        'open-by-default'           => '页面加载时打开聊天面板',
+                        'open-by-default-info'      => '启用后，AI 代理聊天面板会在管理员首次访问页面时自动打开。用户仍可手动关闭 — 此偏好将在浏览器会话的其余时间内被记住。',
                         'max-steps'                 => '每轮最大代理步骤数',
                         'max-steps-info'            => 'AI代理每条用户消息可执行的最大工具调用迭代次数。较高的值允许更复杂的多步骤操作。',
                         'daily-token-budget'        => '每日令牌预算',
@@ -1729,6 +1782,12 @@ return [
             'client-not-found'               => '未找到客户',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => '提示词',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '标题',
@@ -1771,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => '系统提示词',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '标题',
@@ -1864,16 +1929,21 @@ return [
                 'invalid-model-name'       => '无效的模型名称。仅可使用字母、数字、连字符、点、冒号和斜杠（如 gpt-4o、claude-3-sonnet）。',
             ],
             'message' => [
-                'save-success'          => '平台保存成功。',
-                'update-success'        => '平台更新成功。',
-                'delete-success'        => '平台删除成功。',
-                'delete-fail'           => '平台删除失败。',
-                'cannot-delete-default' => '无法删除唯一的默认平台。',
-                'set-default-success'   => '平台已成功设为默认。',
-                'test-success'          => '连接验证成功！',
-                'test-fail'             => '连接测试失败',
-                'fetch-models-fail'     => '无法获取模型',
-                'invalid-model-names'   => '无效的模型名称：:names。模型名称必须以字母或数字开头，且仅包含字母、数字、连字符、点、冒号和斜杠。',
+                'save-success'             => '平台保存成功。',
+                'update-success'           => '平台更新成功。',
+                'delete-success'           => '平台删除成功。',
+                'delete-fail'              => '平台删除失败。',
+                'not-found'                => '所选平台已不存在。请刷新后重试。',
+                'cannot-delete-default'    => '无法删除唯一的默认平台。',
+                'set-default-success'      => '平台已成功设为默认。',
+                'test-success'             => '连接验证成功！',
+                'test-fail'                => '连接测试失败',
+                'no-test-model'            => '请至少选择一个支持文本的模型来运行连接测试。',
+                'custom-api-url-required'  => '自定义提供商必须提供 API URL，以便连接测试能够访问您自己的端点。',
+                'api-key-corrupted'        => '无法解密存储的API密钥（:error）。应用加密密钥可能已更改。请重新输入您的API密钥并保存。',
+                'fetch-models-fail'        => '无法获取模型',
+                'invalid-model-names'      => '无效的模型名称：:names。模型名称必须以字母或数字开头，且仅包含字母、数字、连字符、点、冒号和斜杠。',
+                'default-requires-enabled' => '不能将已禁用的平台设为默认。请先启用该平台。',
             ],
         ],
     ],
@@ -1959,10 +2029,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => '选择',
-                'title'    => '应用过滤器',
-                'save'     => '节省',
-                'dropdown' => [
+                'select'        => '选择',
+                'title'         => '应用过滤器',
+                'save'          => '节省',
+                'add-filter'    => '添加筛选',
+                'remove-filter' => '移除筛选',
+                'search-filter' => '搜索...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => '输入至少2个字符...',
                         'no-results'        => '找不到结果...',
@@ -2038,6 +2111,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => '添加图片',
+                'add-media-btn'      => '添加媒体',
                 'generate-with-ai'   => '使用 AI 生成',
                 'upload-from-device' => '从设备上传',
                 'cancel'             => '取消',
@@ -2119,6 +2193,7 @@ return [
                 'vicuna'                 => '维库纳',
                 'llava'                  => '熔岩',
                 'default-prompt'         => '默认提示',
+                'select-prompt-template' => '-- 选择提示模板 --',
             ],
         ],
     ],
@@ -2204,6 +2279,7 @@ return [
         '403' => [
             'description' => '哎呀！此页面是禁止访问的。您似乎没有查看此内容所需的权限。',
             'title'       => '403 禁忌',
+            'message'     => '您没有权限访问此页面。如果您认为这是一个错误，请联系您的管理员。',
         ],
         '413' => [
             'description' => '哎呀！您似乎正在尝试上传太大的文件。如果您想上传相同的内容，请相应地更新 PHP 配置。',
@@ -2255,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => '是的',
-        'no'             => '不',
-        'true'           => '真的',
-        'false'          => '错误的',
-        'enable'         => '启用',
-        'disable'        => '残疾人',
-        'no-match-found' => '未找到匹配项！',
+        'yes'               => '是的',
+        'no'                => '不',
+        'true'              => '真的',
+        'false'             => '错误的',
+        'enable'            => '启用',
+        'disable'           => '残疾人',
+        'no-match-found'    => '未找到匹配项！',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

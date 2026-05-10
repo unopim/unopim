@@ -15,6 +15,7 @@ trait HtmlPurifier
         $value = htmlspecialchars_decode($value, ENT_QUOTES);
 
         $config = HTMLPurifier_Config::createDefault();
+        $config->set('Cache.SerializerPath', storage_path('app/purifier'));
         $config->set('HTML.Allowed', 'p,b,a[href],i,em,strong,ul,ol,li,br,img[src|alt|width|height],h2,h3,h4,table,thead,tbody,tr,th,td');
         $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true]);
         $config->set('AutoFormat.AutoParagraph', true);

@@ -25,7 +25,10 @@ The standard development workflow:
 1. Make code changes
 2. Run code formatter: `./vendor/bin/pint`
 3. Run relevant tests: `./vendor/bin/pest --filter YourTest`
-4. Build assets if frontend changed: `npm run build`
+4. Build assets if frontend changed:
+   - **Admin package** (files under `packages/Webkul/Admin/src/Resources/assets/`): `cd packages/Webkul/Admin && npx vite build`
+   - **Root assets** (files under `resources/`): `npm run build`
+   - **NOTE**: `npm run build` does NOT build Admin package assets — they have separate Vite configs
 5. Clear caches: `php artisan optimize:clear`
 6. Commit changes only after tests pass
 

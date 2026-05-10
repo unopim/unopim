@@ -24,12 +24,37 @@ class AppServiceProvider extends ServiceProvider
         });
 
         ParallelTesting::setUpTestDatabase(function (string $database, int $token) {
-            Artisan::call('db:seed');
+            try {
+                Artisan::call('db:seed');
+            } catch (\Throwable $e) {
+                logger()->error("Parallel DB seed failed for {$database}: ".$e->getMessage());
+            }
         });
     }
 
     /**
      * Register any application services.
      */
-    public function register(): void {}
+    public function register(): void
+    {
+        $this->configureDebugbar();
+    }
+
+    /**
+     * Conditionally disable debugbar based on allowed IPs.
+     */
+    protected function configureDebugbar(): void
+    {
+        $allowedIps = config('app.debug_allowed_ips');
+
+        if (empty($allowedIps)) {
+            return;
+        }
+
+        $allowedIpList = array_filter(array_map('trim', explode(',', $allowedIps)));
+
+        if (! in_array(request()->ip(), $allowedIpList)) {
+            config(['debugbar.enabled' => false]);
+        }
+    }
 }

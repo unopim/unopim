@@ -40,9 +40,9 @@ class ProductCursor extends AbstractElasticCursor
         $boolQuery = [];
 
         if (! empty($filters['status'])) {
-            $value = $filters['status'] == 'enable' ? 1 : 0;
+            $value = $filters['status'] == 'enable' ? true : false;
             $boolQuery['filter'][] = [
-                'terms' => ['status' => [$value]],
+                'term' => ['status' => $value],
             ];
         }
 

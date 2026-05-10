@@ -41,9 +41,19 @@ class StatusFilter extends AbstractPropertyFilter
 
         switch ($operator) {
             case FilterOperators::IN:
+                // The ES mapping for `status` is a boolean field (see
+                // ProductIndexer). ES8's strict parser rejects the raw "1"/"0"
+                // strings the DataGrid forwards from filter option values, so
+                // coerce each candidate to a real boolean before emitting the
+                // terms clause.
+                $values = array_values(array_unique(array_map(
+                    fn ($item) => filter_var($item, FILTER_VALIDATE_BOOLEAN),
+                    (array) $value
+                )));
+
                 $clause = [
                     'terms' => [
-                        $property => $value,
+                        $property => $values,
                     ],
                 ];
 

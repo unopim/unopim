@@ -43,6 +43,7 @@
                             :meta="available.meta"
                             :setCurrentSelectionMode="setCurrentSelectionMode"
                             :performAction="performAction"
+                            :handleRowClick="handleRowClick"
                             :available="available"
                             :applied="applied"
                             :is-loading="isLoading"
@@ -69,6 +70,16 @@
                     previousPriceValue: '',
 
                     selectedCurrency: null,
+
+                    urlFilterIndices: [],
+
+                    defaultFilterIndices: [],
+
+                    activeFilterIndices: [],
+
+                    showFilterPicker: false,
+
+                    filterPickerSearch: '',
 
                     available: {
                         id: null,
@@ -125,6 +136,16 @@
                 this.boot();
             },
 
+            watch: {
+                'applied.massActions.indices': {
+                    handler() {
+                        this.setCurrentSelectionMode();
+                    },
+
+                    deep: true,
+                },
+            },
+
             methods: {
                 /**
                  * Initialization: This function checks for any previously saved filters in local storage and applies them as needed.
@@ -135,6 +156,8 @@
                     let datagrids = this.getDatagrids();
 
                     const urlParams = new URLSearchParams(window.location.search);
+                    const urlFilters = this.parseUrlFilters();
+                    const hasUrlFilters = Object.keys(urlFilters).length > 0;
 
                     if (urlParams.has('search')) {
                         let searchAppliedColumn = this.findAppliedColumn('all');
@@ -154,16 +177,24 @@
 
                             this.available.meta = currentDatagrid.available.meta;
 
+                            if (currentDatagrid.activeFilterIndices?.length) {
+                                this.activeFilterIndices = currentDatagrid.activeFilterIndices;
+                            }
+
+                            if (currentDatagrid.defaultFilterIndices?.length) {
+                                this.defaultFilterIndices = currentDatagrid.defaultFilterIndices;
+                            }
+
                             if (urlParams.has('search')) {
                                 let searchAppliedColumn = this.findAppliedColumn('all');
 
                                 searchAppliedColumn.value = [urlParams.get('search')];
                             }
-
-                            this.get();
-
-                            return;
                         }
+                    }
+
+                    if (hasUrlFilters) {
+                        this.applyUrlFilters(urlFilters);
                     }
 
                     this.get();
@@ -237,6 +268,20 @@
                             this.available.meta = meta;
 
                             this.available.searchPlaceholder = search_placeholder;
+
+                            // Initialize active filters on first load
+                            if (this.activeFilterIndices.length === 0) {
+                                this.activeFilterIndices = this.available.columns
+                                    .filter(col => col.filterable && col.visible !== false)
+                                    .map(col => col.index);
+                            }
+
+                            // Track default filter indices so they cannot be removed
+                            if (this.defaultFilterIndices.length === 0) {
+                                this.defaultFilterIndices = this.available.columns
+                                    .filter(col => col.filterable && col.visible !== false)
+                                    .map(col => col.index);
+                            }
 
                             // Remove filters for attribute columns which have been disabled
                             if (this.available?.meta?.managedColumn?.enabled && this.available?.columns?.length) {
@@ -566,6 +611,68 @@
                 // Filters logic, will move it from here once completed.
                 //================================================================
 
+                /**
+                 * Parse filter parameters from URL query string.
+                 * Supports format: ?filters[column][]=value
+                 *
+                 * @returns {object}
+                 */
+                parseUrlFilters() {
+                    const filters = {};
+                    const params = new URLSearchParams(window.location.search);
+
+                    for (const [key, value] of params.entries()) {
+                        const match = key.match(/^filters\[([^\]]+)\]\[\]$/);
+
+                        if (match) {
+                            const filterIndex = match[1];
+
+                            if (! filters[filterIndex]) {
+                                filters[filterIndex] = [];
+                            }
+
+                            filters[filterIndex].push(value);
+                        }
+                    }
+
+                    return filters;
+                },
+
+                /**
+                 * Apply URL filter params, replacing any localStorage filters entirely.
+                 * URL-sourced filters are tracked so they are excluded from localStorage persistence.
+                 *
+                 * @param {object} urlFilters
+                 * @returns {void}
+                 */
+                applyUrlFilters(urlFilters) {
+                    /**
+                     * Clear all existing column filters (except global search) so URL filters
+                     * are the sole source of truth — no stale localStorage filters leak through.
+                     */
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        col => col.index === 'all'
+                    );
+
+                    for (const [index, values] of Object.entries(urlFilters)) {
+                        this.applied.filters.columns.push({
+                            index: index,
+                            value: values,
+                        });
+
+                        this.urlFilterIndices.push(index);
+
+                        if (! this.activeFilterIndices.includes(index)) {
+                            this.activeFilterIndices.push(index);
+                        }
+                    }
+
+                    /**
+                     * Reset pagination when applying URL filters.
+                     */
+                    this.applied.pagination.page = 1;
+                },
+
                 findAppliedColumn(columnIndex) {
                     return this.applied.filters.columns.find(column => column.index === columnIndex);
                 },
@@ -779,6 +886,20 @@
                 updateDatagrids() {
                     let datagrids = this.getDatagrids();
 
+                    /**
+                     * Strip URL-sourced filters before persisting to localStorage so they
+                     * do not leak into future visits without URL params.
+                     */
+                    let appliedForStorage = this.applied;
+
+                    if (this.urlFilterIndices.length) {
+                        appliedForStorage = JSON.parse(JSON.stringify(this.applied));
+
+                        appliedForStorage.filters.columns = appliedForStorage.filters.columns.filter(
+                            col => ! this.urlFilterIndices.includes(col.index)
+                        );
+                    }
+
                     if (datagrids?.length) {
                         const currentDatagrid = datagrids.find(({ src }) => src === this.src);
 
@@ -789,7 +910,9 @@
                                         ...datagrid,
                                         requestCount: ++datagrid.requestCount,
                                         available: this.available,
-                                        applied: this.applied,
+                                        applied: appliedForStorage,
+                                        activeFilterIndices: this.activeFilterIndices,
+                                        defaultFilterIndices: this.defaultFilterIndices,
                                     };
                                 }
 
@@ -806,11 +929,23 @@
                 },
 
                 getDatagridInitialProperties() {
+                    let appliedForStorage = this.applied;
+
+                    if (this.urlFilterIndices.length) {
+                        appliedForStorage = JSON.parse(JSON.stringify(this.applied));
+
+                        appliedForStorage.filters.columns = appliedForStorage.filters.columns.filter(
+                            col => ! this.urlFilterIndices.includes(col.index)
+                        );
+                    }
+
                     return {
                         src: this.src,
                         requestCount: 0,
                         available: this.available,
-                        applied: this.applied,
+                        applied: appliedForStorage,
+                        activeFilterIndices: this.activeFilterIndices,
+                        defaultFilterIndices: this.defaultFilterIndices,
                     };
                 },
 
@@ -837,7 +972,16 @@
                 // Remaining logic, will check.
                 //================================================================
 
-                // refactor when not in that much use case...
+                handleRowClick($event, record) {
+                    const selection = $event.view.getSelection();
+
+                    if (selection && selection.toString().length > 0) {
+                        return;
+                    }
+
+                    this.performAction(record.actions.find(action => action.index === 'edit'));
+                },
+
                 performAction(action) {
                     if (!action) {
                         return;
@@ -882,6 +1026,40 @@
 
                             break;
                     }
+                },
+
+                getActiveFilterColumns() {
+                    return this.available.columns.filter(
+                        col => col.filterable && this.activeFilterIndices.includes(col.index)
+                    );
+                },
+
+                getInactiveFilterColumns() {
+                    return this.available.columns.filter(
+                        col => col.filterable && !this.activeFilterIndices.includes(col.index)
+                    );
+                },
+
+                addActiveFilter(columnIndex) {
+                    if (!this.activeFilterIndices.includes(columnIndex)) {
+                        this.activeFilterIndices.push(columnIndex);
+                    }
+
+                    this.updateDatagrids();
+                },
+
+                removeActiveFilter(columnIndex) {
+                    if (this.defaultFilterIndices.includes(columnIndex)) {
+                        return;
+                    }
+
+                    this.activeFilterIndices = this.activeFilterIndices.filter(i => i !== columnIndex);
+
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        col => col.index !== columnIndex
+                    );
+
+                    this.updateDatagrids();
                 },
 
                 checkAndFilter(column) {

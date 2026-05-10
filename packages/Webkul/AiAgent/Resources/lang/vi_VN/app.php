@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'AI Kỳ Diệu',
         'general'               => 'Chung',
         'prompt'                => 'Lệnh nhắc',
         'system-prompt'         => 'Lệnh nhắc hệ thống',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'AI Kỳ Diệu',
         'platform'       => 'Nền tảng',
         'settings'       => 'Cài đặt',
         'prompt'         => 'Lệnh nhắc',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Quay lại',
         'unauthorized'              => 'Hành động này không được phép.',
         'error-generic'             => 'Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.',
+        'error-rate-limit'          => 'Đã đạt giới hạn yêu cầu của nhà cung cấp AI. Vui lòng đợi một chút và thử lại.',
+        'error-rate-limit-retry'    => 'Đã đạt giới hạn yêu cầu của nhà cung cấp AI. Vui lòng thử lại sau :seconds giây.',
+        'error-overloaded'          => 'Nhà cung cấp AI hiện đang quá tải. Vui lòng thử lại sau giây lát.',
+        'error-request-too-large'   => 'Yêu cầu của bạn quá lớn đối với nhà cung cấp AI. Vui lòng rút ngắn tin nhắn hoặc xóa một số tệp đính kèm và thử lại.',
+        'error-api-key-corrupted'   => 'Không thể giải mã khóa API cho nền tảng này (:error). Khóa mã hóa của ứng dụng có thể đã thay đổi. Vui lòng chỉnh sửa nền tảng và nhập lại khóa API của bạn.',
         'invalid-file-path'         => 'Đường dẫn tệp không hợp lệ.',
         'invalid-locale-code'       => 'Mã ngôn ngữ không hợp lệ.',
         'invalid-channel-code'      => 'Mã kênh không hợp lệ.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'Đính kèm',
         'attach-csv-xlsx'          => 'Đính kèm CSV hoặc XLSX',
         'attach-image'             => 'Đính kèm hình ảnh',
+        'remove-attachment'        => 'Xóa tệp đính kèm',
         'send'                     => 'Gửi',
         'sending'                  => 'Đang gửi…',
         'processing'               => 'Đang xử lý…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'  => 'vd. "Tạo S/M/L × Đỏ/Xanh cho SHIRT-001"',
             'edit-image'              => 'Sửa hình ảnh sản phẩm',
             'edit-image-desc'         => 'Xóa nền, nâng cao & chỉnh sửa',
-            'edit-image-hint'         => 'Tải lên hình ảnh, sau đó nói muốn thay đổi gì — vd. "Xóa nền"',
+            'edit-image-hint'         => 'Cung cấp SKU sản phẩm và mô tả muốn thay đổi gì — vd. "Xóa nền của SKU-123"',
 
             'search-products'         => 'Tìm kiếm sản phẩm',
             'search-products-desc'    => 'Tìm sản phẩm theo SKU, tên hoặc trạng thái',
@@ -319,7 +325,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Chỉnh sửa hình ảnh sản phẩm đã tải lên theo hướng dẫn.',
+            'edit-image-prompt'        => 'Chỉnh sửa hình ảnh sản phẩm bằng cách lấy từ SKU đã cho, áp dụng các thay đổi yêu cầu và lưu lại.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

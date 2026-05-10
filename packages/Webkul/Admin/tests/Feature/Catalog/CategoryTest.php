@@ -1,6 +1,7 @@
 <?php
 
 use Webkul\Category\Models\Category;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Models\Channel;
 
 it('should return the category index page', function () {
@@ -42,6 +43,26 @@ it('should return the category datagrid', function () {
         'id'   => $data['records'][0]['category_id'],
         'code' => $data['records'][0]['code'],
     ]);
+});
+
+it('should return the category datagrid with mass actions and meta configuration', function () {
+    $this->loginAsAdmin();
+
+    Category::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.categories.index'));
+
+    $response->assertStatus(200);
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('mass_actions', $data);
+    $this->assertNotEmpty($data['mass_actions']);
+    $this->assertArrayHasKey('meta', $data);
+    $this->assertArrayHasKey('primary_column', $data['meta']);
+    $this->assertEquals('category_id', $data['meta']['primary_column']);
 });
 
 it('should create a category successfully', function () {
@@ -224,4 +245,35 @@ it('should not mass delete a category linked to a channel', function () {
     $this->assertDatabaseHas($this->getFullTableName(Category::class), [
         'id' => $channelLinkedCategory,
     ]);
+});
+
+it('should fall back to database query when Elasticsearch throws an exception on category grid', function () {
+    $this->loginAsAdmin();
+
+    // Create the category while ES is disabled so the observer does not attempt a real connection
+    $category = Category::factory()->create();
+
+    config([
+        'elasticsearch.enabled'                      => true,
+        'elasticsearch.prefix'                       => 'testing',
+        'elasticsearch.connection'                   => 'default',
+        'elasticsearch.connections.default.hosts.0'  => 'testhost:9200',
+    ]);
+
+    $elasticClientMock = Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient');
+    ElasticSearch::shouldReceive('makeConnection')->andReturn($elasticClientMock);
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->andThrow(new Exception('No alive nodes found in your cluster'));
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.categories.index'));
+
+    $response->assertOk();
+    $data = $response->json();
+    $this->assertArrayHasKey('records', $data);
+    $this->assertNotEmpty($data['records']);
+
+    config(['elasticsearch.enabled' => false]);
 });

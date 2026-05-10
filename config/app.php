@@ -44,6 +44,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Maintenance Mode Allowed IPs
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated list of IPs that can access the application during
+    | maintenance mode.
+    |
+    */
+
+    'maintenance_allowed_ips' => env('MAINTENANCE_ALLOWED_IPS'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Debug Allowed IPs
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated list of IPs that can see the debug bar. When set,
+    | debug bar is hidden from all other IPs even if APP_DEBUG is true.
+    |
+    */
+
+    'debug_allowed_ips' => env('APP_DEBUG_ALLOWED_IPS'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     */

@@ -5,6 +5,7 @@ namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
@@ -87,7 +88,9 @@ class ProductController extends ApiController
             $product->status = (int) $data['status'];
         }
 
-        if ($product->isDirty()) {
+        $wasDirty = $product->isDirty();
+
+        if ($wasDirty) {
             $product->update($data);
         }
 
@@ -97,10 +100,14 @@ class ProductController extends ApiController
 
         $product->refresh();
 
+        if ($wasDirty) {
+            Event::dispatch('catalog.product.update.after', $product);
+        }
+
         return $product;
     }
 
-    public function sanitizeData($product, $attributes)
+    public function sanitizeData($product, $attributes): ?array
     {
         foreach ($attributes as $attribute) {
             if ($attribute->value_per_channel && $attribute->value_per_locale) {
@@ -142,7 +149,7 @@ class ProductController extends ApiController
     /**
      * Partial Updates the simple product.
      */
-    public function patchProduct(Product $product, array $data)
+    public function patchProduct(Product $product, array $data): Product
     {
         foreach (['additional', 'status'] as $key) {
             if (isset($data[$key])) {
@@ -163,7 +170,13 @@ class ProductController extends ApiController
             $product->values = $updatedValues;
         }
 
+        $wasDirty = $product->isDirty();
+
         $product->saveOrFail();
+
+        if ($wasDirty) {
+            Event::dispatch('catalog.product.update.after', $product);
+        }
 
         return $product;
     }

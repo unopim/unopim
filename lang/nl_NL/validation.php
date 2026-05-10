@@ -12,16 +12,16 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-    'accepted'        => 'Het kenmerk :attribute moet geaccepteerd worden.',
-    'active_url'      => 'Het kenmerk :attribute is geen geldige URL.',
-    'after'           => 'Het kenmerk :attribute moet een datum na :date zijn.',
-    'after_or_equal'  => 'Het kenmerk :attribute moet een datum na of gelijk aan :date zijn.',
-    'alpha'           => 'Het kenmerk :attribute mag alleen letters bevatten.',
-    'alpha_dash'      => 'Het kenmerk :attribute mag alleen letters, cijfers, streepjes en underscores bevatten.',
-    'alpha_num'       => 'Het kenmerk :attribute mag alleen letters en cijfers bevatten.',
-    'array'           => 'Het kenmerk :attribute moet een array zijn.',
-    'before'          => 'Het kenmerk :attribute moet een datum vóór :date zijn.',
-    'before_or_equal' => 'Het kenmerk :attribute moet een datum vóór of gelijk aan :date zijn.',
+    'accepted'        => 'Het :attribute moet geaccepteerd worden.',
+    'active_url'      => 'Het :attribute is geen geldige URL.',
+    'after'           => 'Het :attribute moet een datum na :date zijn.',
+    'after_or_equal'  => 'Het :attribute moet een datum na of gelijk aan :date zijn.',
+    'alpha'           => 'Het :attribute mag alleen letters bevatten.',
+    'alpha_dash'      => 'Het :attribute mag alleen letters, cijfers, streepjes en underscores bevatten.',
+    'alpha_num'       => 'Het :attribute mag alleen letters en cijfers bevatten.',
+    'array'           => 'Het :attribute moet een array zijn.',
+    'before'          => 'Het :attribute moet een datum vóór :date zijn.',
+    'before_or_equal' => 'Het :attribute moet een datum vóór of gelijk aan :date zijn.',
 
     'between' => [
         'numeric' => 'Het :attribute moet tussen :min en :max liggen.',
@@ -42,7 +42,7 @@ return [
     'email'          => 'Het :attribute moet een geldig e-mailadres zijn.',
     'exists'         => 'Het geselecteerde :attribute is ongeldig.',
     'exists-value'   => 'De :input bestaat niet.',
-    'extensions'     => 'Het :attribute veld moet een van de volgende extensies hebben: :values.',
+    'extensions'     => 'Het veld :attribute moet een van de volgende extensies hebben: :values.',
     'file'           => 'Het :attribute moet een bestand zijn.',
     'filled'         => 'Het veld :attribute moet een waarde hebben.',
 
@@ -101,17 +101,17 @@ return [
     ],
 
     'not_in'               => 'De geselecteerde :attribute is ongeldig.',
-    'not_regex'            => 'De :attribute indeling is ongeldig.',
-    'numeric'              => 'De :attribute moet een getal zijn.',
-    'present'              => 'Het :attribute veld moet aanwezig zijn.',
-    'regex'                => 'De :attribute indeling is ongeldig.',
-    'required'             => 'Het :attribute veld is verplicht.',
-    'required_if'          => 'Het :attribute veld is verplicht wanneer :other :value is.',
-    'required_unless'      => 'Het :attribute veld is verplicht tenzij :other in :values ​​staat.',
-    'required_with'        => 'Het :attribute veld is verplicht wanneer :values ​​aanwezig is.',
-    'required_with_all'    => 'Het :attribute veld is verplicht wanneer :values ​​aanwezig is.',
-    'required_without'     => 'Het :attribute veld is verplicht wanneer :values ​​niet aanwezig is.',
-    'required_without_all' => 'Het :attribute veld is verplicht wanneer geen van de :values ​​aanwezig is.',
+    'not_regex'            => 'De indeling van :attribute is ongeldig.',
+    'numeric'              => 'Het veld :attribute moet een getal zijn.',
+    'present'              => 'Het veld :attribute moet aanwezig zijn.',
+    'regex'                => 'De indeling van :attribute is ongeldig.',
+    'required'             => 'Het veld :attribute is verplicht.',
+    'required_if'          => 'Het veld :attribute is verplicht wanneer :other :value is.',
+    'required_unless'      => 'Het veld :attribute is verplicht tenzij :other gelijk is aan :values.',
+    'required_with'        => 'Het veld :attribute is verplicht wanneer :values aanwezig is.',
+    'required_with_all'    => 'Het veld :attribute is verplicht wanneer :values aanwezig is.',
+    'required_without'     => 'Het veld :attribute is verplicht wanneer :values niet aanwezig is.',
+    'required_without_all' => 'Het veld :attribute is verplicht wanneer geen van de :values aanwezig is.',
     'same'                 => 'De :attribute en :other moeten overeenkomen.',
 
     'size' => [
@@ -121,11 +121,11 @@ return [
         'array'   => 'Het :attribute moet :size items bevatten.',
     ],
 
-    'string'   => 'Het kenmerk :attribute moet een string zijn.',
-    'timezone' => 'Het kenmerk :attribute moet een geldige zone zijn.',
-    'unique'   => 'Het kenmerk :attribute is al in gebruik.',
-    'uploaded' => 'Het kenmerk :attribute kon niet worden geüpload.',
-    'url'      => 'Het kenmerk :attribute formaat is ongeldig.',
+    'string'   => 'Het :attribute moet een tekenreeks zijn.',
+    'timezone' => 'Het :attribute moet een geldige tijdzone zijn.',
+    'unique'   => 'Het :attribute is al in gebruik.',
+    'uploaded' => 'Het :attribute kon niet worden geüpload.',
+    'url'      => 'De indeling van :attribute is ongeldig.',
 
     /*
     |--------------------------------------------------------------------------
@@ -139,7 +139,7 @@ return [
     */
     'custom' => [
         'attribute-name' => [
-            'rule-name' => 'aangepast bericht',
+            'rule-name' => 'Aangepast bericht',
         ],
     ],
 

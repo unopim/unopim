@@ -47,7 +47,7 @@ class UserForm extends FormRequest
                 'email',
                 Rule::unique('admins', 'email')->ignore($id, 'id'),
             ],
-            'password'              => 'nullable',
+            'password'              => 'nullable|min:6',
             'password_confirmation' => 'nullable|required_with:password|same:password',
             'status'                => 'sometimes',
             'ui_locale_id'          => 'required',

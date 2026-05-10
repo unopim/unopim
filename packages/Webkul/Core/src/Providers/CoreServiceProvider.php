@@ -34,6 +34,12 @@ class CoreServiceProvider extends ServiceProvider
     {
         include __DIR__.'/../Http/helpers.php';
 
+        $purifierCachePath = storage_path('app/purifier');
+
+        if (! is_dir($purifierCachePath)) {
+            mkdir($purifierCachePath, 0755, true);
+        }
+
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'core');

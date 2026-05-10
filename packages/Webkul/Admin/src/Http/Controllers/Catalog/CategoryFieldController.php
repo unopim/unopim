@@ -3,7 +3,8 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\CategoryFieldDataGrid;
@@ -34,7 +35,7 @@ class CategoryFieldController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(CategoryFieldDataGrid::class)->toJson();
@@ -45,20 +46,16 @@ class CategoryFieldController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
-    public function create()
+    public function create(): View
     {
         return view('admin::catalog.categories.field.create', ['locales' => $this->localeRepository->getActiveLocales()]);
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $this->validate(request(), [
             'code'     => ['required', 'unique:category_fields,code', new Code, new NotSupportedFields],
@@ -83,10 +80,8 @@ class CategoryFieldController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         return view('admin::catalog.categories.field.edit', [
             'categoryField' => $this->categoryFieldRepository->findOrFail($id),
@@ -96,10 +91,8 @@ class CategoryFieldController extends Controller
 
     /**
      * Get attribute options associated with attribute.
-     *
-     * @return View
      */
-    public function getCategoryFieldOptions(int $id)
+    public function getCategoryFieldOptions(int $id): Collection
     {
         $categoryField = $this->categoryFieldRepository->findOrFail($id);
 
@@ -108,10 +101,8 @@ class CategoryFieldController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return Response
      */
-    public function update(int $id)
+    public function update(int $id): RedirectResponse
     {
         $this->validate(request(), [
             'code'     => ['required', 'unique:category_fields,code,'.$id, new Code],
@@ -163,7 +154,7 @@ class CategoryFieldController extends Controller
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.category_fields.delete-failed'),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**

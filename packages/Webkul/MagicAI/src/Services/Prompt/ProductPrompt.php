@@ -38,8 +38,13 @@ class ProductPrompt extends AbstractPrompt
      */
     public function updatePrompt(string $prompt, int $productId): string
     {
-        $attributes = $this->searchStringWithAt($prompt);
         $product = $this->getProductById($productId);
+
+        if (! $product) {
+            return $prompt;
+        }
+
+        $attributes = $this->searchStringWithAt($prompt);
         $productData = $product->toArray();
         $locale = core()->getRequestedLocaleCode();
         $channel = core()->getRequestedChannelCode();

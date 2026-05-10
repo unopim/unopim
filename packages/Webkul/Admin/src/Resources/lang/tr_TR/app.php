@@ -16,7 +16,7 @@ return [
                 'email'                  => 'Kayıtlı E-posta',
                 'email-not-exist'        => 'E-posta bulunamadı',
                 'page-title'             => 'Şifreyi Unuttum',
-                'reset-link-sent'        => 'Şifre sıfırlama bağlantısı gönderildi',
+                'reset-link-sent'        => 'Bu e-posta adresine ait bir hesap varsa, şifre sıfırlama bağlantısı gönderilmiştir.',
                 'email-settings-error'   => 'E-posta gönderilemedi. Lütfen e-posta ayarlarınızı kontrol edin',
                 'sign-in-link'           => 'Geri Giriş Yap?',
                 'submit-btn'             => 'Sıfırla',
@@ -40,7 +40,9 @@ return [
         'description-text' => 'Tüm Bildirimlerin Listesi',
         'marked-success'   => 'Bildirim Başarıyla İşaretlendi',
         'no-record'        => 'Kayıt Bulunamadı',
+        'of'               => '/',
         'read-all'         => 'Tümünü Okundu Olarak İşaretle',
+        'showing'          => 'Gösteriliyor',
         'title'            => 'Bildirimler',
         'view-all'         => 'Tümünü Görüntüle',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Tamamlandı',
             'pending'    => 'Bekliyor',
             'processing' => 'İşleniyor',
+            'read'       => 'Okunmuş',
+            'unread'     => 'Okunmamış',
         ],
     ],
     'account' => [
@@ -216,7 +220,8 @@ return [
                 'save-btn'   => 'Ürünü kaydet',
                 'title'      => 'Ürünü düzenle',
                 'categories' => [
-                    'title' => 'Kategoriler',
+                    'title'            => 'Kategoriler',
+                    'root-not-allowed' => 'Kök kategori bir ürüne atanamaz.',
                 ],
                 'images' => [
                     'info'  => 'Resimler 560px X 609px çözünürlüğünde olmalıdır',
@@ -359,6 +364,8 @@ return [
                     'url'                        => 'Lütfen geçerli bir URL girin.',
                     'regex'                      => 'Değer gerekli desenle eşleşmiyor.',
                     'invalid-pattern'            => 'Geçersiz özel desen sağlandı.',
+
+                    'numeric'                    => '":attribute" sayısal özelliğinin değeri geçerli bir sayı olmalıdır.',
                     'select-attribute-or-family' => 'Lütfen en az bir özellik veya özellik ailesi seçin.',
                     'failed'                     => 'Doğrulama başarısız oldu.',
                 ],
@@ -378,16 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Toplu düzenleme başarıyla tamamlandı.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Kaydedilecek değişiklik yok.',
-                'success'         => 'İşlem başarıyla gerçekleştirildi.',
-                'fetch-failed'    => 'Veri alınamadı.',
-                'action'          => 'Toplu Düzenleme',
-                'gallery-preview' => 'Galeri Önizleme',
-                'img-preview'     => 'Resim Önizleme',
-                'no-image'        => 'Resim Yok',
-                'img-fail'        => 'Resim yüklenemedi',
-                'no-option'       => 'Seçenek Yok',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Kaydedilecek değişiklik yok.',
+
+                'invalid-datetime'            => 'Geçerli bir tarih ve saat girin.',
+
+                'resize-column'               => 'Sütun genişliğini değiştirmek için sürükleyin',
+                'success'                     => 'İşlem başarıyla gerçekleştirildi.',
+                'fetch-failed'                => 'Veri alınamadı.',
+                'action'                      => 'Toplu Düzenleme',
+                'description'                 => 'Birden fazla ürünü aynı anda düzenleyin. Değişiklikler arka planda işlenir.',
+                'gallery-preview'             => 'Galeri Önizleme',
+                'img-preview'                 => 'Resim Önizleme',
+                'no-image'                    => 'Resim Yok',
+                'img-fail'                    => 'Resim yüklenemedi',
+                'no-option'                   => 'Seçenek Yok',
+                'keyboard-shortcuts'          => 'Klavye Kısayolları',
+                'shortcuts-navigation'        => 'Gezinme',
+                'shortcuts-editing'           => 'Düzenleme',
+                'shortcuts-selection'         => 'Seçim',
+                'shortcuts-clipboard'         => 'Pano ve Doldurma',
+                'shortcuts-move-cell'         => 'Hücreler arasında gezin',
+                'shortcuts-move-down'         => 'Aşağı taşı / düzenlemeyi onayla',
+                'shortcuts-move-up'           => 'Yukarı taşı',
+                'shortcuts-move-right-left'   => 'Sağa / sola taşı',
+                'shortcuts-home-end'          => 'Satırdaki ilk / son sütun',
+                'shortcuts-ctrl-home-end'     => 'Izgaradaki ilk / son hücre',
+                'shortcuts-extend-selection'  => 'Seçimi genişlet',
+                'shortcuts-select-all'        => 'Tüm hücreleri seç',
+                'shortcuts-enter-edit'        => 'Düzenleme moduna gir',
+                'shortcuts-confirm-move-down' => 'Onayla + aşağı taşı',
+                'shortcuts-confirm-move-right'=> 'Onayla + sağa taşı',
+                'shortcuts-escape-revert'     => 'Değeri geri al + düzenlemeden çık',
+                'shortcuts-clear-cell'        => 'Hücreyi temizle',
+                'shortcuts-copy'              => 'Kopyala',
+                'shortcuts-cut'               => 'Kes',
+                'shortcuts-paste'             => 'Yapıştır',
+                'shortcuts-fill-down'         => 'Aşağı doldur',
+                'shortcuts-fill-right'        => 'Sağa doldur',
+                'shortcuts-undo'              => 'Geri al',
+                'shortcuts-redo'              => 'Yinele',
+                'shortcuts-help'              => 'Klavye kısayollarını göster/gizle',
             ],
             'create-success'          => 'Ürün başarıyla oluşturuldu',
             'delete-failed'           => 'Ürün silinirken hata oluştu',
@@ -482,6 +520,8 @@ return [
                 'is-filterable'         => 'Filtrelenebilir',
                 'ai-translate'          => 'AI Çeviri',
                 'invalid-swatch-type'   => ':attribute, :type türü için :swatch_type swatch türü ile kullanılamaz.',
+
+                'single-object-only'    => 'Her oluşturma isteği yalnızca bir öznitelik nesnesi göndermelidir.',
                 'option'                => [
                     'color'    => 'Renk Örneği',
                     'dropdown' => 'Açılır Menü',
@@ -564,6 +604,8 @@ return [
             'delete-success'    => 'Öznitelik Silindi',
             'update-success'    => 'Öznitelik Güncellendi',
             'user-define-error' => 'Sistem öznitelikleri silinemez',
+
+            'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
             'not-found'         => '":code" kodlu öznitelik bulunamadı',
         ],
         'attribute-options' => [
@@ -676,6 +718,7 @@ return [
             'delete-success'       => 'Kategori başarıyla silindi.',
             'update-success'       => 'Kategori başarıyla güncellendi.',
             'can-not-update'       => 'Bu kök kategori bir kanal ile ilişkilidir ve bir üst kategoriye sahip olamaz.',
+            'invalid-parent'       => 'Seçilen üst kategori geçersiz. Bir kategori kendi üst kategorisi veya kendi alt öğesi olamaz.',
             'unique-validation'    => 'Bu değer zaten kullanılıyor.',
             'not-found'            => '":code" koduna sahip kategori bulunamadı',
             'unknown-fields'       => '":fields" koduna sahip kategori için bilinmeyen alanlar',
@@ -844,15 +887,18 @@ return [
             'update-success'    => 'Kategori Alanı başarıyla güncellendi',
             'user-define-error' => 'Sistem tanımlı kategori alanı silinemez',
             'not-found'         => 'Kategori Alanı ":code" bulunamadı',
+
+            'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategori alanı seçeneği başarıyla oluşturuldu',
-            'update-success' => 'Kategori alanı seçeneği başarıyla güncellendi',
+            'create-success'      => 'Kategori alanı seçeneği başarıyla oluşturuldu',
+            'update-success'      => 'Kategori alanı seçeneği başarıyla güncellendi',
+            'update-unknown-code' => '":code" kodlu kategori alanı seçeneği bulunamadı.',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Özellik ailesi oluştur',
-                'title'    => 'Aileler',
+                'title'    => 'Öznitelik Aileleri',
                 'datagrid' => [
                     'code'           => 'Kod',
                     'delete'         => 'Sil',
@@ -943,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Bu ailede zaten ürün varyantları olduğu için konfigürasyon seçenekleri güncellenemiyor.',
         ],
         'history' => [
+            'view' => 'Sürüm Ayrıntılarını Görüntüle',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versiyon',
@@ -1076,6 +1124,8 @@ return [
                         'paused'               => 'Duraklatıldı',
                         'cancelled'            => 'İptal Edildi',
                         'failed'               => 'Başarısız',
+
+                        'view'       => 'Görüntüle',
                     ],
                 ],
                 'import' => [
@@ -1554,6 +1604,7 @@ return [
             ],
             'activate-warning'          => 'Hesabınız henüz etkinleştirilmedi, lütfen yöneticinizle iletişime geçin.',
             'cannot-change'             => 'Kullanıcı değiştirilemez',
+            'cannot-escalate-role'      => 'Tam erişim rolü atama izniniz bulunmamaktadır.',
             'create-success'            => 'Kullanıcı başarıyla oluşturuldu.',
             'delete-failed'             => 'Kullanıcı silinemedi.',
             'delete-success'            => 'Kullanıcı başarıyla silindi.',
@@ -1659,6 +1710,8 @@ return [
                         'title-info'                => 'AI ajan sohbetini, otonom zenginleştirme iş akışlarını ve kalite izlemeyi yapılandırın. Bu özellikler konuşmaya dayalı ürün yönetimi ve proaktif katalog bakımını mümkün kılar.',
                         'enabled'                   => 'AI ajan sohbetini etkinleştir',
                         'enabled-info'              => '27\'den fazla araç eylemiyle konuşmaya dayalı ürün yönetimi için kayan AI sohbet widget\'ını etkinleştirin.',
+                        'open-by-default'           => 'Sayfa yüklenirken sohbet panelini aç',
+                        'open-by-default-info'      => 'Etkinleştirildiğinde, AI Ajanı sohbet paneli bir yönetici bir sayfaya ilk kez ulaştığında otomatik olarak açılır. Kullanıcılar yine de manuel olarak kapatabilir — tercih, tarayıcı oturumunun geri kalanı için hatırlanır.',
                         'max-steps'                 => 'Tur başına maks. ajan adımı',
                         'max-steps-info'            => 'AI ajanın kullanıcı mesajı başına gerçekleştirebileceği maksimum araç çağrısı iterasyonu sayısı. Daha yüksek değerler daha karmaşık çok adımlı işlemlere olanak tanır.',
                         'daily-token-budget'        => 'Günlük token bütçesi',
@@ -1729,6 +1782,12 @@ return [
             'client-not-found'               => 'Müşteri Bulunamadı',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'İstemler',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Başlık',
@@ -1771,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Sistem istemleri',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Başlık',
@@ -1864,16 +1929,21 @@ return [
                 'invalid-model-name'       => 'Geçersiz model adı. Yalnızca harf, rakam, tire, nokta, iki nokta üst üste ve eğik çizgi kullanın (ör. gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'          => 'Platform başarıyla kaydedildi.',
-                'update-success'        => 'Platform başarıyla güncellendi.',
-                'delete-success'        => 'Platform başarıyla silindi.',
-                'delete-fail'           => 'Platform silinemedi.',
-                'cannot-delete-default' => 'Tek varsayılan platform silinemez.',
-                'set-default-success'   => 'Platform başarıyla varsayılan olarak ayarlandı.',
-                'test-success'          => 'Bağlantı başarıyla doğrulandı!',
-                'test-fail'             => 'Bağlantı testi başarısız oldu',
-                'fetch-models-fail'     => 'Modeller alınamadı',
-                'invalid-model-names'   => 'Geçersiz model adları: :names. Model adları bir harf veya rakamla başlamalı ve yalnızca harf, rakam, tire, nokta, iki nokta üst üste ve eğik çizgi içermelidir.',
+                'save-success'             => 'Platform başarıyla kaydedildi.',
+                'update-success'           => 'Platform başarıyla güncellendi.',
+                'delete-success'           => 'Platform başarıyla silindi.',
+                'delete-fail'              => 'Platform silinemedi.',
+                'not-found'                => 'Seçilen platform artık mevcut değil. Lütfen sayfayı yenileyip tekrar deneyin.',
+                'cannot-delete-default'    => 'Tek varsayılan platform silinemez.',
+                'set-default-success'      => 'Platform başarıyla varsayılan olarak ayarlandı.',
+                'test-success'             => 'Bağlantı başarıyla doğrulandı!',
+                'test-fail'                => 'Bağlantı testi başarısız oldu',
+                'no-test-model'            => 'Bağlantı testini çalıştırmak için en az bir metin destekli model seçin.',
+                'custom-api-url-required'  => 'Bağlantı testinin kendi uç noktanıza ulaşabilmesi için özel sağlayıcılarda API URL gereklidir.',
+                'api-key-corrupted'        => 'Kayıtlı API anahtarının şifresi çözülemedi (:error). Uygulamanın şifreleme anahtarı değişmiş olabilir. Lütfen API anahtarınızı yeniden girin ve kaydedin.',
+                'fetch-models-fail'        => 'Modeller alınamadı',
+                'invalid-model-names'      => 'Geçersiz model adları: :names. Model adları bir harf veya rakamla başlamalı ve yalnızca harf, rakam, tire, nokta, iki nokta üst üste ve eğik çizgi içermelidir.',
+                'default-requires-enabled' => 'Devre dışı bir platform varsayılan olarak işaretlenemez. Lütfen platformu önce etkinleştirin.',
             ],
         ],
     ],
@@ -1959,10 +2029,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Seç',
-                'title'    => 'Filtre Uygula',
-                'save'     => 'Kaydet',
-                'dropdown' => [
+                'select'        => 'Seç',
+                'title'         => 'Filtre Uygula',
+                'save'          => 'Kaydet',
+                'add-filter'    => 'Filtre Ekle',
+                'remove-filter' => 'Filtreyi Kaldır',
+                'search-filter' => 'Ara...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'En az 2 karakter girin...',
                         'no-results'        => 'Sonuç bulunamadı...',
@@ -2038,6 +2111,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Görsel Ekle',
+                'add-media-btn'      => 'Medya Ekle',
                 'generate-with-ai'   => 'Yapay Zeka ile Oluştur',
                 'upload-from-device' => 'Cihazdan Yükle',
                 'cancel'             => 'İptal',
@@ -2119,6 +2193,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Varsayılan Komut',
+                'select-prompt-template' => '-- Bir komut şablonu seçin --',
             ],
         ],
     ],
@@ -2204,6 +2279,7 @@ return [
         '403' => [
             'description' => 'Oops! Bu sayfa erişilemez durumda. Bu içeriği görüntülemek için gerekli yetkilere sahip değilsiniz.',
             'title'       => '403 Yasak',
+            'message'     => 'Bu sayfaya erişim izniniz yok. Bunun bir hata olduğunu düşünüyorsanız lütfen yöneticinizle iletişime geçin.',
         ],
         '413' => [
             'description' => 'Oops! Yüklemek istediğiniz dosya çok büyük gibi görünüyor. Yüklemek istiyorsanız, PHP yapılandırmasını güncelleyin.',
@@ -2255,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Evet',
-        'no'             => 'Hayır',
-        'true'           => 'Doğru',
-        'false'          => 'Yanlış',
-        'enable'         => 'Aktif',
-        'disable'        => 'Pasif',
-        'no-match-found' => 'Eşleşme bulunamadı!',
+        'yes'               => 'Evet',
+        'no'                => 'Hayır',
+        'true'              => 'Doğru',
+        'false'             => 'Yanlış',
+        'enable'            => 'Aktif',
+        'disable'           => 'Pasif',
+        'no-match-found'    => 'Eşleşme bulunamadı!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

@@ -20,6 +20,8 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen('catalog.product.create.after', [Product::class, 'afterCreate']);
 
+        Event::listen('catalog.product.bulk.edit.after', [Product::class, 'afterBulkEdit']);
+
         Event::listen('data_transfer.imports.batch.product.save.after', [Product::class, 'afterBulkUpdate']);
 
         Event::listen('data_transfer.imports.batch.import.before', ImportBatch::class);

@@ -23,7 +23,7 @@ class Core
      *
      * @var string
      */
-    const VERSION = '2.0.0';
+    const VERSION = '2.0.1';
 
     /**
      * Current Channel.
@@ -223,7 +223,7 @@ class Core
      */
     public function getRequestedChannelCode($fallback = true)
     {
-        $channelCode = request()->get('channel');
+        $channelCode = request()->input('channel');
 
         if (! $fallback) {
             return $channelCode;
@@ -258,6 +258,23 @@ class Core
     public function getAllActiveLocales()
     {
         return $this->localeRepository->getActiveLocales();
+    }
+
+    /**
+     * Return all locales that have translation files in the Admin package.
+     *
+     * @return Collection
+     */
+    public function getTranslatableLocales()
+    {
+        $langPath = base_path('packages/Webkul/Admin/src/Resources/lang');
+
+        $availableDirs = array_map('basename', glob($langPath.'/*', GLOB_ONLYDIR) ?: []);
+
+        return $this->localeRepository->all()
+            ->filter(fn ($locale) => in_array($locale->code, $availableDirs))
+            ->sortBy('name')
+            ->values();
     }
 
     /**
@@ -306,7 +323,7 @@ class Core
      */
     public function getRequestedLocaleCode($localeKey = 'locale', $fallback = true)
     {
-        $localeCode = request()->get($localeKey);
+        $localeCode = request()->input($localeKey);
 
         if (! $fallback) {
             return $localeCode;

@@ -16,7 +16,7 @@ return [
                 'email'                  => 'Email đã đăng ký',
                 'email-not-exist'        => 'Email không tồn tại',
                 'page-title'             => 'Quên mật khẩu',
-                'reset-link-sent'        => 'Liên kết đặt lại mật khẩu đã được gửi',
+                'reset-link-sent'        => 'Nếu tài khoản với email đó tồn tại, liên kết đặt lại mật khẩu đã được gửi.',
                 'email-settings-error'   => 'Email không thể gửi. Vui lòng kiểm tra cài đặt email của bạn',
                 'sign-in-link'           => 'Quay lại Đăng nhập?',
                 'submit-btn'             => 'Đặt lại',
@@ -40,7 +40,9 @@ return [
         'description-text' => 'Danh sách tất cả các thông báo',
         'marked-success'   => 'Thông báo đã được đánh dấu thành công',
         'no-record'        => 'Không tìm thấy bản ghi nào',
+        'of'               => 'trong',
         'read-all'         => 'Đánh dấu tất cả là đã đọc',
+        'showing'          => 'Đang hiển thị',
         'title'            => 'Thông báo',
         'view-all'         => 'Xem tất cả',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Hoàn thành',
             'pending'    => 'Đang chờ xử lý',
             'processing' => 'Đang xử lý',
+            'read'       => 'Đã đọc',
+            'unread'     => 'Chưa đọc',
         ],
     ],
     'account' => [
@@ -216,7 +220,8 @@ return [
                 'save-btn'   => 'Lưu sản phẩm',
                 'title'      => 'Chỉnh sửa sản phẩm',
                 'categories' => [
-                    'title' => 'Danh mục',
+                    'title'            => 'Danh mục',
+                    'root-not-allowed' => 'Danh mục gốc không thể được gán cho sản phẩm.',
                 ],
                 'images' => [
                     'info'  => 'Hình ảnh phải có độ phân giải 560px X 609px',
@@ -359,6 +364,8 @@ return [
                     'url'                        => 'Vui lòng nhập một URL hợp lệ.',
                     'regex'                      => 'Giá trị không khớp với mẫu yêu cầu.',
                     'invalid-pattern'            => 'Mẫu tùy chỉnh không hợp lệ.',
+
+                    'numeric'                    => 'Giá trị cho thuộc tính số ":attribute" phải là một số hợp lệ.',
                     'select-attribute-or-family' => 'Vui lòng chọn ít nhất một thuộc tính hoặc một nhóm thuộc tính.',
                     'failed'                     => 'Xác thực không thành công.',
                 ],
@@ -378,16 +385,47 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Chỉnh sửa hàng loạt thành công.',
                 ],
-                'id'              => 'ID',
-                'no-changes'      => 'Không có thay đổi nào để lưu.',
-                'success'         => 'Thực thi công việc thành công.',
-                'fetch-failed'    => 'Lấy dữ liệu thất bại.',
-                'action'          => 'Chỉnh sửa hàng loạt',
-                'gallery-preview' => 'Xem trước thư viện',
-                'img-preview'     => 'Xem trước hình ảnh',
-                'no-image'        => 'Không có hình ảnh',
-                'img-fail'        => 'Tải hình ảnh thất bại',
-                'no-option'       => 'Không có tùy chọn',
+                'id'                          => 'ID',
+                'no-changes'                  => 'Không có thay đổi nào để lưu.',
+
+                'invalid-datetime'            => 'Vui lòng nhập ngày và giờ hợp lệ.',
+
+                'resize-column'               => 'Kéo để thay đổi kích thước cột',
+                'success'                     => 'Thực thi công việc thành công.',
+                'fetch-failed'                => 'Lấy dữ liệu thất bại.',
+                'action'                      => 'Chỉnh sửa hàng loạt',
+                'description'                 => 'Chỉnh sửa nhiều sản phẩm cùng lúc. Các thay đổi được xử lý trong nền.',
+                'gallery-preview'             => 'Xem trước thư viện',
+                'img-preview'                 => 'Xem trước hình ảnh',
+                'no-image'                    => 'Không có hình ảnh',
+                'img-fail'                    => 'Tải hình ảnh thất bại',
+                'no-option'                   => 'Không có tùy chọn',
+                'keyboard-shortcuts'          => 'Phím tắt bàn phím',
+                'shortcuts-navigation'        => 'Điều hướng',
+                'shortcuts-editing'           => 'Chỉnh sửa',
+                'shortcuts-selection'         => 'Chọn',
+                'shortcuts-clipboard'         => 'Bộ nhớ tạm & Điền',
+                'shortcuts-move-cell'         => 'Di chuyển giữa các ô',
+                'shortcuts-move-down'         => 'Di chuyển xuống / xác nhận chỉnh sửa',
+                'shortcuts-move-up'           => 'Di chuyển lên',
+                'shortcuts-move-right-left'   => 'Di chuyển phải / trái',
+                'shortcuts-home-end'          => 'Cột đầu / cuối trong hàng',
+                'shortcuts-ctrl-home-end'     => 'Ô đầu / cuối trong lưới',
+                'shortcuts-extend-selection'  => 'Mở rộng vùng chọn',
+                'shortcuts-select-all'        => 'Chọn tất cả các ô',
+                'shortcuts-enter-edit'        => 'Vào chế độ chỉnh sửa',
+                'shortcuts-confirm-move-down' => 'Xác nhận + di chuyển xuống',
+                'shortcuts-confirm-move-right'=> 'Xác nhận + di chuyển phải',
+                'shortcuts-escape-revert'     => 'Hoàn tác giá trị + thoát chỉnh sửa',
+                'shortcuts-clear-cell'        => 'Xóa ô',
+                'shortcuts-copy'              => 'Sao chép',
+                'shortcuts-cut'               => 'Cắt',
+                'shortcuts-paste'             => 'Dán',
+                'shortcuts-fill-down'         => 'Điền xuống',
+                'shortcuts-fill-right'        => 'Điền phải',
+                'shortcuts-undo'              => 'Hoàn tác',
+                'shortcuts-redo'              => 'Làm lại',
+                'shortcuts-help'              => 'Hiện/ẩn phím tắt bàn phím',
             ],
             'create-success'          => 'Sản phẩm đã được tạo thành công',
             'delete-failed'           => 'Đã có lỗi khi xóa sản phẩm',
@@ -482,6 +520,8 @@ return [
                 'is-filterable'         => 'Có thể lọc',
                 'ai-translate'          => 'Dịch thuật AI',
                 'invalid-swatch-type'   => ':attribute không được phép cho loại thuộc tính :type với loại mẫu :swatch_type.',
+
+                'single-object-only'    => 'Mỗi yêu cầu tạo chỉ được gửi một đối tượng thuộc tính.',
                 'option'                => [
                     'color'    => 'Mẫu màu sắc',
                     'dropdown' => 'Danh sách thả xuống',
@@ -564,6 +604,8 @@ return [
             'delete-success'    => 'Thuộc tính đã bị xoá',
             'update-success'    => 'Thuộc tính đã được cập nhật',
             'user-define-error' => 'Không thể xoá thuộc tính hệ thống',
+
+            'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
             'not-found'         => 'Không tìm thấy thuộc tính với mã ":code"',
         ],
         'attribute-options' => [
@@ -676,6 +718,7 @@ return [
             'delete-success'       => 'Danh mục đã được xóa thành công.',
             'update-success'       => 'Danh mục đã được cập nhật thành công.',
             'can-not-update'       => 'Danh mục gốc này đã liên kết với một kênh và không thể có danh mục cha.',
+            'invalid-parent'       => 'Danh mục cha được chọn không hợp lệ. Một danh mục không thể là cha hoặc con cháu của chính nó.',
             'unique-validation'    => 'Giá trị này đã được sử dụng.',
             'not-found'            => 'Không tìm thấy danh mục với mã ":code"',
             'unknown-fields'       => 'Không tìm thấy trường trong danh mục với mã ":fields"',
@@ -844,15 +887,18 @@ return [
             'update-success'    => 'Cập Nhật Trường Danh Mục Thành Công',
             'user-define-error' => 'Không thể xóa Trường Danh Mục hệ thống',
             'not-found'         => 'Không tìm thấy Trường Danh Mục với mã ":code"',
+
+            'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
         ],
         'category-fields-options' => [
-            'create-success' => 'Tùy chọn trường danh mục đã được tạo thành công',
-            'update-success' => 'Tùy chọn trường danh mục đã được cập nhật thành công',
+            'create-success'      => 'Tùy chọn trường danh mục đã được tạo thành công',
+            'update-success'      => 'Tùy chọn trường danh mục đã được cập nhật thành công',
+            'update-unknown-code' => 'Không có tuỳ chọn trường danh mục với mã ":code".',
         ],
         'families' => [
             'index' => [
                 'add'      => 'Tạo nhóm thuộc tính',
-                'title'    => 'Các gia đình',
+                'title'    => 'Họ thuộc tính',
                 'datagrid' => [
                     'code'           => 'Mã',
                     'delete'         => 'Xóa',
@@ -943,6 +989,8 @@ return [
             'can-not-update-variant-options' => 'Không thể cập nhật tùy chọn cấu hình vì gia đình này đã có sản phẩm biến thể.',
         ],
         'history' => [
+            'view' => 'Xem chi tiết phiên bản',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Phiên bản',
@@ -1076,6 +1124,8 @@ return [
                         'paused'               => 'Đã tạm dừng',
                         'cancelled'            => 'Đã hủy',
                         'failed'               => 'Thất bại',
+
+                        'view'       => 'Xem',
                     ],
                 ],
                 'import' => [
@@ -1554,6 +1604,7 @@ return [
             ],
             'activate-warning'          => 'Tài khoản của bạn chưa được kích hoạt, vui lòng liên hệ với quản trị viên.',
             'cannot-change'             => 'Không thể thay đổi người dùng',
+            'cannot-escalate-role'      => 'Bạn không có quyền gán vai trò truy cập đầy đủ.',
             'create-success'            => 'Người dùng đã được tạo thành công.',
             'delete-failed'             => 'Không thể xóa người dùng.',
             'delete-success'            => 'Người dùng đã bị xóa thành công.',
@@ -1659,6 +1710,8 @@ return [
                         'title-info'                => 'Cấu hình trò chuyện tác nhân AI, quy trình làm giàu tự động và giám sát chất lượng. Các tính năng này cho phép quản lý sản phẩm theo hội thoại và bảo trì danh mục chủ động.',
                         'enabled'                   => 'Bật trò chuyện tác nhân AI',
                         'enabled-info'              => 'Bật widget trò chuyện AI nổi để quản lý sản phẩm theo hội thoại với hơn 27 hành động công cụ.',
+                        'open-by-default'           => 'Mở bảng trò chuyện khi tải trang',
+                        'open-by-default-info'      => 'Khi được bật, bảng trò chuyện Tác nhân AI sẽ tự động mở lần đầu khi quản trị viên truy cập một trang. Người dùng vẫn có thể đóng thủ công — tùy chọn được ghi nhớ trong suốt phần còn lại của phiên trình duyệt.',
                         'max-steps'                 => 'Số bước tối đa của tác nhân mỗi lượt',
                         'max-steps-info'            => 'Số lần lặp gọi công cụ tối đa mà tác nhân AI có thể thực hiện cho mỗi tin nhắn người dùng. Giá trị cao hơn cho phép các thao tác nhiều bước phức tạp hơn.',
                         'daily-token-budget'        => 'Ngân sách token hàng ngày',
@@ -1729,6 +1782,12 @@ return [
             'client-not-found'               => 'Không tìm thấy khách hàng',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Lời nhắc',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Tiêu đề',
@@ -1771,6 +1830,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Lời nhắc hệ thống',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Tiêu đề',
@@ -1864,16 +1929,21 @@ return [
                 'invalid-model-name'       => 'Tên mô hình không hợp lệ. Chỉ sử dụng chữ cái, số, dấu gạch ngang, dấu chấm, dấu hai chấm và dấu gạch chéo (ví dụ: gpt-4o, claude-3-sonnet).',
             ],
             'message' => [
-                'save-success'          => 'Nền tảng đã được lưu thành công.',
-                'update-success'        => 'Nền tảng đã được cập nhật thành công.',
-                'delete-success'        => 'Nền tảng đã được xóa thành công.',
-                'delete-fail'           => 'Xóa nền tảng thất bại.',
-                'cannot-delete-default' => 'Không thể xóa nền tảng mặc định duy nhất.',
-                'set-default-success'   => 'Nền tảng đã được đặt làm mặc định thành công.',
-                'test-success'          => 'Kết nối đã được xác minh thành công!',
-                'test-fail'             => 'Kiểm tra kết nối thất bại',
-                'fetch-models-fail'     => 'Không thể lấy danh sách mô hình',
-                'invalid-model-names'   => 'Tên mô hình không hợp lệ: :names. Tên mô hình phải bắt đầu bằng chữ cái hoặc số và chỉ chứa chữ cái, số, dấu gạch ngang, dấu chấm, dấu hai chấm và dấu gạch chéo.',
+                'save-success'             => 'Nền tảng đã được lưu thành công.',
+                'update-success'           => 'Nền tảng đã được cập nhật thành công.',
+                'delete-success'           => 'Nền tảng đã được xóa thành công.',
+                'delete-fail'              => 'Xóa nền tảng thất bại.',
+                'not-found'                => 'Nền tảng đã chọn không còn tồn tại. Vui lòng làm mới và thử lại.',
+                'cannot-delete-default'    => 'Không thể xóa nền tảng mặc định duy nhất.',
+                'set-default-success'      => 'Nền tảng đã được đặt làm mặc định thành công.',
+                'test-success'             => 'Kết nối đã được xác minh thành công!',
+                'test-fail'                => 'Kiểm tra kết nối thất bại',
+                'no-test-model'            => 'Chọn ít nhất một mô hình hỗ trợ văn bản để chạy kiểm tra kết nối.',
+                'custom-api-url-required'  => 'API URL là bắt buộc đối với các nhà cung cấp tùy chỉnh để kiểm tra kết nối có thể đến được điểm cuối của riêng bạn.',
+                'api-key-corrupted'        => 'Không thể giải mã khóa API đã lưu (:error). Khóa mã hóa của ứng dụng có thể đã thay đổi. Vui lòng nhập lại khóa API của bạn và lưu.',
+                'fetch-models-fail'        => 'Không thể lấy danh sách mô hình',
+                'invalid-model-names'      => 'Tên mô hình không hợp lệ: :names. Tên mô hình phải bắt đầu bằng chữ cái hoặc số và chỉ chứa chữ cái, số, dấu gạch ngang, dấu chấm, dấu hai chấm và dấu gạch chéo.',
+                'default-requires-enabled' => 'Không thể đặt nền tảng đã vô hiệu hóa làm mặc định. Vui lòng kích hoạt nền tảng trước.',
             ],
         ],
     ],
@@ -1959,10 +2029,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Chọn',
-                'title'    => 'Áp dụng bộ lọc',
-                'save'     => 'Lưu',
-                'dropdown' => [
+                'select'        => 'Chọn',
+                'title'         => 'Áp dụng bộ lọc',
+                'save'          => 'Lưu',
+                'add-filter'    => 'Thêm bộ lọc',
+                'remove-filter' => 'Xóa bộ lọc',
+                'search-filter' => 'Tìm kiếm...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Nhập ít nhất 2 ký tự...',
                         'no-results'        => 'Không tìm thấy kết quả...',
@@ -2038,6 +2111,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Thêm ảnh',
+                'add-media-btn'      => 'Thêm phương tiện',
                 'generate-with-ai'   => 'Tạo bằng AI',
                 'upload-from-device' => 'Tải lên từ thiết bị',
                 'cancel'             => 'Hủy',
@@ -2119,6 +2193,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Lời nhắc mặc định',
+                'select-prompt-template' => '-- Chọn một mẫu lời nhắc --',
             ],
         ],
     ],
@@ -2204,6 +2279,7 @@ return [
         '403' => [
             'description' => 'Oops! Trang này không thể truy cập được. Có vẻ như bạn không có quyền xem nội dung này.',
             'title'       => '403 Cấm',
+            'message'     => 'Bạn không có quyền truy cập trang này. Vui lòng liên hệ với quản trị viên nếu bạn cho rằng đây là lỗi.',
         ],
         '413' => [
             'description' => 'Oops! Có vẻ như bạn đang cố tải lên một tệp rất lớn. Nếu muốn tải lên, vui lòng cập nhật cấu hình PHP của bạn.',
@@ -2255,13 +2331,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Có',
-        'no'             => 'Không',
-        'true'           => 'Đúng',
-        'false'          => 'Sai',
-        'enable'         => 'Bật',
-        'disable'        => 'Tắt',
-        'no-match-found' => 'Không tìm thấy kết quả!',
+        'yes'               => 'Có',
+        'no'                => 'Không',
+        'true'              => 'Đúng',
+        'false'             => 'Sai',
+        'enable'            => 'Bật',
+        'disable'           => 'Tắt',
+        'no-match-found'    => 'Không tìm thấy kết quả!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

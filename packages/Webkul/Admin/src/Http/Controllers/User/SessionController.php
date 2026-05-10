@@ -2,7 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\User;
 
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
 
@@ -13,14 +13,18 @@ class SessionController extends Controller
      *
      * @return View
      */
-    public function create()
+    public function create(): View|RedirectResponse
     {
         if (auth()->guard('admin')->check()) {
             return redirect()->route('admin.dashboard.index');
         }
 
-        if (strpos(url()->previous(), 'admin') !== false) {
-            $intendedUrl = url()->previous();
+        $previous = url()->previous();
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $previousHost = parse_url($previous, PHP_URL_HOST);
+
+        if ($previousHost === $appHost && str_contains($previous, 'admin')) {
+            $intendedUrl = $previous;
         } else {
             $intendedUrl = route('admin.dashboard.index');
         }
@@ -32,10 +36,8 @@ class SessionController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $this->validate(request(), [
             'email'    => 'required|email',
@@ -47,7 +49,7 @@ class SessionController extends Controller
         if (! auth()->guard('admin')->attempt(request(['email', 'password']), $remember)) {
             session()->flash('error', trans('admin::app.settings.users.login-error'));
 
-            return redirect()->back();
+            return redirect()->route('admin.session.create')->withInput(request()->only('email'));
         }
 
         if (! auth()->guard('admin')->user()->status) {
@@ -55,7 +57,7 @@ class SessionController extends Controller
 
             auth()->guard('admin')->logout();
 
-            return redirect()->route('admin.session.create');
+            return redirect()->route('admin.session.create')->withInput(request()->only('email'));
         }
 
         return redirect()->intended(route('admin.dashboard.index'));
@@ -65,9 +67,8 @@ class SessionController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return Response
      */
-    public function destroy()
+    public function destroy(): RedirectResponse
     {
         auth()->guard('admin')->logout();
 

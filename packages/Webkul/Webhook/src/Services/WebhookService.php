@@ -122,6 +122,17 @@ class WebhookService
     }
 
     /**
+     * Send a batch of products to the webhook without requiring change detection.
+     * Used for bulk-edit operations where no per-product audit diff may exist.
+     */
+    public function sendBatchForBulkEdit(array $ids): ?Response
+    {
+        $products = $this->productRepository->findWhereIn('id', $ids);
+
+        return $this->sendBatch($products, requireChanges: false);
+    }
+
+    /**
      * Send a batch of products to the webhook by their SKUs.
      */
     public function sendBatchBySkus(array $skus): ?Response
@@ -133,8 +144,11 @@ class WebhookService
 
     /**
      * Internal helper to send a collection of product models as a single batch payload.
+     *
+     * @param  bool  $requireChanges  When false, every product is included regardless
+     *                                of whether an audit diff was detected (e.g. bulk-edit).
      */
-    protected function sendBatch($products): ?Response
+    protected function sendBatch($products, bool $requireChanges = true): ?Response
     {
         $webhookData = [];
 
@@ -147,9 +161,11 @@ class WebhookService
         $normalized = [];
 
         foreach ($products as $product) {
-            $productChanges = $this->getProductChangesForWebhook($product);
+            $productChanges = $requireChanges
+                ? $this->getProductChangesForWebhook($product)
+                : [];
 
-            if (empty($productChanges)) {
+            if ($requireChanges && empty($productChanges)) {
                 continue;
             }
 
