@@ -13,34 +13,52 @@ const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/system-prompt';
  *
  * The Magic AI WYSIWYG button is gated by general.magic_ai.settings.enabled
  * (see tinymce/index.blade.php). Section 7 tests depend on the button being
- * visible — without this guarantee they time out. Test 2.7 attempts to flip
- * the toggle but is fragile in CI when other tests share the config form,
- * so we re-assert state here and verify by reload before continuing.
+ * visible — without this guarantee they time out.
+ *
+ * Why we POST directly instead of using the UI form: Vue's :checked binding
+ * on the sr-only boolean toggle is applied async after module ESM load, so
+ * any click-then-save sequence races the binding and can either invert the
+ * desired state or submit a form without the field at all. Posting the full
+ * settings payload with explicit enabled=1 sidesteps the race entirely.
  */
 async function ensureMagicAITextEnabled(adminPage) {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
   const cbSelector = 'input[type="checkbox"][name="general[magic_ai][settings][enabled]"]';
-  // Wait for Vue to mount the boolean toggle before reading its state.
   await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
 
-  const isOn = await adminPage.locator(cbSelector).first().isChecked().catch(() => false);
-  if (!isOn) {
-    // Use raw DOM click on the sr-only checkbox — bypasses Vue's :checked binding
-    // and reliably fires the @input handler plus form-submit DOM state.
-    await adminPage.evaluate((sel) => {
-      const cb = document.querySelector(sel);
-      if (cb && !cb.checked) cb.click();
-    }, cbSelector);
+  const result = await adminPage.evaluate(async () => {
+    // The config page has two forms (logout + config). Pick the one that
+    // owns the Magic AI checkbox.
+    const cb = document.querySelector('input[type="checkbox"][name="general[magic_ai][settings][enabled]"]');
+    if (!cb) return { ok: false, reason: 'no-cb' };
+    const form = cb.closest('form');
+    if (!form) return { ok: false, reason: 'no-form' };
 
-    await adminPage.getByRole('button', { name: 'Save Configuration' }).click();
-    await adminPage.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
+    // Force the boolean toggle on, regardless of the current Vue render state.
+    cb.checked = true;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
 
-    // Reload and verify persisted state — if save validation failed, we want
-    // to know now instead of hitting an opaque "button not visible" timeout.
-    await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
-    await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
-  }
+    const fd = new FormData(form);
+    const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
+    const action = form.getAttribute('action') || window.location.pathname;
+    const res = await fetch(action || window.location.pathname, {
+      method:      'POST',
+      credentials: 'same-origin',
+      headers: {
+        'X-XSRF-TOKEN': decodeURIComponent(xsrf),
+        Accept:         'text/html,*/*',
+      },
+      body:     fd,
+      redirect: 'follow',
+    });
+    return { ok: res.ok, status: res.status };
+  });
+
+  expect(result, `Magic AI config save failed: ${JSON.stringify(result)}`).toMatchObject({ ok: true });
+
+  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+  await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
 }
 
 /**
