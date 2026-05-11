@@ -9,6 +9,41 @@ const MAGIC_AI_PROMPT_URL = '/admin/magic-ai/prompt';
 const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/system-prompt';
 
 /**
+ * Helper: Ensure Magic AI text-generation is enabled in the global config.
+ *
+ * The Magic AI WYSIWYG button is gated by general.magic_ai.settings.enabled
+ * (see tinymce/index.blade.php). Section 7 tests depend on the button being
+ * visible — without this guarantee they time out. Test 2.7 attempts to flip
+ * the toggle but is fragile in CI when other tests share the config form,
+ * so we re-assert state here and verify by reload before continuing.
+ */
+async function ensureMagicAITextEnabled(adminPage) {
+  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+
+  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][settings][enabled]"]';
+  // Wait for Vue to mount the boolean toggle before reading its state.
+  await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
+
+  const isOn = await adminPage.locator(cbSelector).first().isChecked().catch(() => false);
+  if (!isOn) {
+    // Use raw DOM click on the sr-only checkbox — bypasses Vue's :checked binding
+    // and reliably fires the @input handler plus form-submit DOM state.
+    await adminPage.evaluate((sel) => {
+      const cb = document.querySelector(sel);
+      if (cb && !cb.checked) cb.click();
+    }, cbSelector);
+
+    await adminPage.getByRole('button', { name: 'Save Configuration' }).click();
+    await adminPage.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
+
+    // Reload and verify persisted state — if save validation failed, we want
+    // to know now instead of hitting an opaque "button not visible" timeout.
+    await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+    await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
+  }
+}
+
+/**
  * Helper: Open the datagrid on Prompt / System Prompt pages.
  * Clicking the "Create" button loads the datagrid AND opens a modal.
  * We close the modal immediately so we can interact with the grid.
@@ -214,11 +249,13 @@ test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', async 
 
   // Enable Text Generation toggle (general.magic_ai.settings.enabled)
   // Magic AI WYSIWYG button is gated by this flag — without it, button never injects.
-  const enableToggle = adminPage.locator('input[type="checkbox"][name="general[magic_ai][settings][enabled]"]');
+  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][settings][enabled]"]';
+  const enableToggle = adminPage.locator(cbSelector);
   if (await enableToggle.count() > 0 && !(await enableToggle.first().isChecked().catch(() => false))) {
-    await adminPage.locator('label[for="general[magic_ai][settings][enabled]"]').first().click().catch(async () => {
-      await enableToggle.first().check({ force: true });
-    });
+    await adminPage.evaluate((sel) => {
+      const cb = document.querySelector(sel);
+      if (cb && !cb.checked) cb.click();
+    }, cbSelector);
   }
 
   const platformDropdown = adminPage.locator('.multiselect__placeholder, .multiselect__single').first();
@@ -675,6 +712,8 @@ test('6.2 - Enable AI Translate on short_description attribute', async ({ adminP
 
 test('7.1 - Create product, verify Magic AI button, and clean up', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — Magic AI button requires configured platform');
+  test.setTimeout(60000);
+  await ensureMagicAITextEnabled(adminPage);
   const uid = generateUid();
   const sku = `magicai-prod-${uid}`;
 
@@ -709,7 +748,8 @@ test('7.1 - Create product, verify Magic AI button, and clean up', async ({ admi
 
 test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — Magic AI button requires configured platform');
-  test.setTimeout(60000);
+  test.setTimeout(90000);
+  await ensureMagicAITextEnabled(adminPage);
 
   const uid = generateUid();
   const sku = `magicai-modal-${uid}`;
