@@ -2,7 +2,7 @@
 # UnoPim Queue Worker (PHP 8.3 CLI)
 # =============================================================================
 # Lightweight CLI image for processing background jobs.
-# Processes system, completeness, and default queues.
+# Processes webhooks, system, completeness, and default queues.
 #
 # Multi-stage build:
 #   Stage 1 (composer) — install PHP dependencies

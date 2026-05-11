@@ -9,6 +9,59 @@ const MAGIC_AI_PROMPT_URL = '/admin/magic-ai/prompt';
 const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/system-prompt';
 
 /**
+ * Helper: Ensure Magic AI text-generation is enabled in the global config.
+ *
+ * The Magic AI WYSIWYG button is gated by general.magic_ai.settings.enabled
+ * (see tinymce/index.blade.php). Section 7 tests depend on the button being
+ * visible — without this guarantee they time out.
+ *
+ * Why we POST directly instead of using the UI form: Vue's :checked binding
+ * on the sr-only boolean toggle is applied async after module ESM load, so
+ * any click-then-save sequence races the binding and can either invert the
+ * desired state or submit a form without the field at all. Posting the full
+ * settings payload with explicit enabled=1 sidesteps the race entirely.
+ */
+async function ensureMagicAITextEnabled(adminPage) {
+  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+
+  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][settings][enabled]"]';
+  await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
+
+  const result = await adminPage.evaluate(async () => {
+    // The config page has two forms (logout + config). Pick the one that
+    // owns the Magic AI checkbox.
+    const cb = document.querySelector('input[type="checkbox"][name="general[magic_ai][settings][enabled]"]');
+    if (!cb) return { ok: false, reason: 'no-cb' };
+    const form = cb.closest('form');
+    if (!form) return { ok: false, reason: 'no-form' };
+
+    // Force the boolean toggle on, regardless of the current Vue render state.
+    cb.checked = true;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
+
+    const fd = new FormData(form);
+    const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
+    const action = form.getAttribute('action') || window.location.pathname;
+    const res = await fetch(action || window.location.pathname, {
+      method:      'POST',
+      credentials: 'same-origin',
+      headers: {
+        'X-XSRF-TOKEN': decodeURIComponent(xsrf),
+        Accept:         'text/html,*/*',
+      },
+      body:     fd,
+      redirect: 'follow',
+    });
+    return { ok: res.ok, status: res.status };
+  });
+
+  expect(result, `Magic AI config save failed: ${JSON.stringify(result)}`).toMatchObject({ ok: true });
+
+  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+  await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
+}
+
+/**
  * Helper: Open the datagrid on Prompt / System Prompt pages.
  * Clicking the "Create" button loads the datagrid AND opens a modal.
  * We close the modal immediately so we can interact with the grid.
@@ -211,6 +264,17 @@ test('2.6 - Verify platform dropdown shows OpenAI platform on config page', asyn
 test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', async ({ adminPage }) => {
   test.setTimeout(30000);
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+
+  // Enable Text Generation toggle (general.magic_ai.settings.enabled)
+  // Magic AI WYSIWYG button is gated by this flag — without it, button never injects.
+  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][settings][enabled]"]';
+  const enableToggle = adminPage.locator(cbSelector);
+  if (await enableToggle.count() > 0 && !(await enableToggle.first().isChecked().catch(() => false))) {
+    await adminPage.evaluate((sel) => {
+      const cb = document.querySelector(sel);
+      if (cb && !cb.checked) cb.click();
+    }, cbSelector);
+  }
 
   const platformDropdown = adminPage.locator('.multiselect__placeholder, .multiselect__single').first();
   if (await platformDropdown.isVisible().catch(() => false)) {
@@ -666,6 +730,8 @@ test('6.2 - Enable AI Translate on short_description attribute', async ({ adminP
 
 test('7.1 - Create product, verify Magic AI button, and clean up', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — Magic AI button requires configured platform');
+  test.setTimeout(60000);
+  await ensureMagicAITextEnabled(adminPage);
   const uid = generateUid();
   const sku = `magicai-prod-${uid}`;
 
@@ -700,7 +766,8 @@ test('7.1 - Create product, verify Magic AI button, and clean up', async ({ admi
 
 test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — Magic AI button requires configured platform');
-  test.setTimeout(60000);
+  test.setTimeout(90000);
+  await ensureMagicAITextEnabled(adminPage);
 
   const uid = generateUid();
   const sku = `magicai-modal-${uid}`;

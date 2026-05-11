@@ -118,7 +118,7 @@ jobs:
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
           php artisan serve --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
-          php artisan queue:work --queue=default,system,completeness > /tmp/queue.log 2>&1 &
+          php artisan queue:work --queue=webhooks,default,system,completeness > /tmp/queue.log 2>&1 &
           echo "Waiting for server..."
           timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (cat /tmp/server.log && exit 1)
 
