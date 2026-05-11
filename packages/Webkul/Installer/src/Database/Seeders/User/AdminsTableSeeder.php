@@ -34,6 +34,7 @@ class AdminsTableSeeder extends Seeder
             'updated_at'    => date('Y-m-d H:i:s'),
             'status'        => 1,
             'role_id'       => 1,
+            'timezone'      => config('app.timezone') ?: 'UTC',
             'ui_locale_id'  => $defaultLocaleId,
         ]);
 
