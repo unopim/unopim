@@ -451,6 +451,7 @@ class Installer extends Command
                     'password' => $password,
                     'role_id'  => 1,
                     'status'   => 1,
+                    'timezone' => config('app.timezone') ?: 'UTC',
                 ]
             );
 

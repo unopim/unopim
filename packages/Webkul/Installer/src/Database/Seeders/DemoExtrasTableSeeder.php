@@ -97,16 +97,16 @@ class DemoExtrasTableSeeder extends Seeder
                     $rows = [];
                 }
 
-                // The dump captures whatever profile image was uploaded on the
-                // source server (e.g. "admins/1/download.png"). That file is not
-                // shipped with the seeder assets, so the path resolves to a broken
-                // image. Null it out so the letter-avatar fallback renders instead.
+                // The demo dump captures the admin@example.com / admin123 row
+                // that was created on the source server. Replaying it here would
+                // wipe out the admin record the user just configured via the
+                // installer (see Installer::createAdminCredentials and
+                // InstallerController::adminConfigSetup) and replace it with the
+                // hardcoded demo credentials, locking the user out with their
+                // chosen password. AdminsTableSeeder + the admin-config step
+                // already own admin provisioning, so leave the table untouched.
                 if ($table === 'admins') {
-                    $rows = array_map(static function (array $row): array {
-                        $row['image'] = null;
-
-                        return $row;
-                    }, $rows);
+                    continue;
                 }
 
                 DB::table($table)->delete();
