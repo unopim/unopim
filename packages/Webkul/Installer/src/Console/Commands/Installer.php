@@ -544,6 +544,12 @@ class Installer extends Command
      * Drop every table in the connection's current database. Used to
      * scrub residue from prior installs (different prefixes, partial
      * runs) before migrate:fresh recreates the schema.
+     *
+     * Uses Laravel's driver-aware Schema::dropAllTables() rather than
+     * raw `SHOW TABLES` + `DROP TABLE` so the same code works on MySQL,
+     * PostgreSQL and SQLite — `SHOW TABLES` is MySQL-only and blew up
+     * the PostgreSQL CI install with SQLSTATE[42704] "unrecognized
+     * configuration parameter 'tables'".
      */
     protected function dropAllTablesInConfiguredSchema(): void
     {
@@ -556,36 +562,33 @@ class Installer extends Command
             return;
         }
 
-        $tables = $this->listTablesInConfiguredSchema();
+        $tablesBefore = $this->listTablesInConfiguredSchema();
 
-        if (empty($tables)) {
+        if (empty($tablesBefore)) {
             return;
         }
 
-        $quoted = array_map(static fn (string $t): string => '`'.str_replace('`', '``', $t).'`', $tables);
+        $connection->getSchemaBuilder()->dropAllTables();
 
-        $connection->statement('SET FOREIGN_KEY_CHECKS = 0');
-        try {
-            $connection->statement('DROP TABLE IF EXISTS '.implode(',', $quoted));
-        } finally {
-            $connection->statement('SET FOREIGN_KEY_CHECKS = 1');
-        }
-
-        $this->info('Dropped '.\count($tables).' table(s) from `'.$database.'`.');
+        $this->info('Dropped '.\count($tablesBefore).' table(s) from `'.$database.'`.');
     }
 
     /**
-     * Names of every table visible in the current MySQL schema.
-     *s
+     * Names of every table in the configured schema, driver-agnostic.
+     * Split out so orphan-prefix cleanup can be exercised by tests
+     * without the destructive DROP that dropAllTablesInConfiguredSchema
+     * executes.
      *
      * @return list<string>
      */
     protected function listTablesInConfiguredSchema(): array
     {
-        return array_map(
-            static fn (object $row): string => array_values((array) $row)[0],
-            DB::connection()->select('SHOW TABLES')
-        );
+        // Pass the current schema explicitly — calling getTableListing()
+        // with no args lists every table from every schema on the
+        // server, which would over-report in shared-MySQL environments.
+        $schema = DB::connection()->getDatabaseName();
+
+        return DB::connection()->getSchemaBuilder()->getTableListing($schema, false);
     }
 
     /**
