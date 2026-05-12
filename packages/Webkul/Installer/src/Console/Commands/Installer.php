@@ -299,12 +299,27 @@ class Installer extends Command
             'DB_PREFIX' => text(
                 label: 'Please enter the database prefix',
                 default: env('DB_PREFIX') ?? '',
-                validate: fn (string $value) => match (true) {
-                    strlen($value) > 4                     => 'The database prefix should not exceed 4 characters.',
-                    preg_match('/[^a-zA-Z0-9_]/', $value)  => 'The database prefix can only contain letters, numbers, and underscores.',
-                    default                                => null
+                validate: function (string $value): ?string {
+                    // Trim first so a user typing "  uno  " is silently
+                    // accepted, but "a a" (internal whitespace) still gets
+                    // rejected because the trimmed value still contains
+                    // a space.
+                    $trimmed = trim($value);
+
+                    return match (true) {
+                        // preg_match returns int 1 on match, not bool true —
+                        // `match (true)` uses strict equality, so we must
+                        // cast to bool or the regex cases silently never
+                        // fire (which is what let "a a" through to .env in
+                        // issue #538).
+                        (bool) preg_match('/\s/', $trimmed)             => 'The database prefix cannot contain spaces.',
+                        strlen($trimmed) > 4                            => 'The database prefix should not exceed 4 characters.',
+                        (bool) preg_match('/[^a-zA-Z0-9_]/', $trimmed)  => 'The database prefix can only contain letters, numbers, and underscores.',
+                        default                                         => null,
+                    };
                 },
-                hint: 'or press enter to continue'
+                transform: trim(...),
+                hint: 'or press enter to continue (leave empty to clear)'
             ),
 
             'DB_USERNAME' => text(
@@ -319,6 +334,8 @@ class Installer extends Command
             ),
         ];
 
+        $databaseDetails['DB_PREFIX'] = trim((string) ($databaseDetails['DB_PREFIX'] ?? ''));
+
         if (
             ! $databaseDetails['DB_DATABASE']
             || ! $databaseDetails['DB_USERNAME']
@@ -328,7 +345,14 @@ class Installer extends Command
         }
 
         foreach ($databaseDetails as $key => $value) {
-            if ($value) {
+            // DB_PREFIX may legitimately be cleared (an empty prefix is
+            // valid), so always write it — otherwise the previous stale
+            // value (e.g. a corrupt `"a a"` from a botched earlier run)
+            // stays in .env and breaks subsequent boots. For credentials
+            // (DB_DATABASE / DB_USERNAME / DB_PASSWORD), keep the
+            // non-empty guard so an accidental blank prompt doesn't
+            // overwrite a working value.
+            if ($value || $key === 'DB_PREFIX') {
                 $this->envUpdate($key, $value);
             }
         }
