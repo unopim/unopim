@@ -299,12 +299,18 @@ class Installer extends Command
             'DB_PREFIX' => text(
                 label: 'Please enter the database prefix',
                 default: env('DB_PREFIX') ?? '',
-                validate: fn (string $value) => match (true) {
-                    strlen($value) > 4                     => 'The database prefix should not exceed 4 characters.',
-                    preg_match('/[^a-zA-Z0-9_]/', $value)  => 'The database prefix can only contain letters, numbers, and underscores.',
-                    default                                => null
+                validate: function (string $value): ?string {
+                    $trimmed = trim($value);
+
+                    return match (true) {
+                        (bool) preg_match('/\s/', $trimmed)             => 'The database prefix cannot contain spaces.',
+                        strlen($trimmed) > 4                            => 'The database prefix should not exceed 4 characters.',
+                        (bool) preg_match('/[^a-zA-Z0-9_]/', $trimmed)  => 'The database prefix can only contain letters, numbers, and underscores.',
+                        default                                         => null,
+                    };
                 },
-                hint: 'or press enter to continue'
+                transform: trim(...),
+                hint: 'or press enter to continue (leave empty to clear)'
             ),
 
             'DB_USERNAME' => text(
@@ -319,6 +325,8 @@ class Installer extends Command
             ),
         ];
 
+        $databaseDetails['DB_PREFIX'] = trim((string) ($databaseDetails['DB_PREFIX'] ?? ''));
+
         if (
             ! $databaseDetails['DB_DATABASE']
             || ! $databaseDetails['DB_USERNAME']
@@ -328,7 +336,7 @@ class Installer extends Command
         }
 
         foreach ($databaseDetails as $key => $value) {
-            if ($value) {
+            if ($value || $key === 'DB_PREFIX') {
                 $this->envUpdate($key, $value);
             }
         }

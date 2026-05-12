@@ -64,13 +64,17 @@ class InstallerController extends Controller
     public function envFileSetup(Request $request): JsonResponse
     {
         $rules = [
-            'db_prefix' => 'not_regex:/[^A-Za-z0-9_]/',
+            'db_prefix' => 'not_regex:/[^A-Za-z0-9_]/|max:4',
         ];
 
         $request = $request->all();
 
+        if (isset($request['db_prefix'])) {
+            $request['db_prefix'] = trim((string) $request['db_prefix']);
+        }
+
         $request = array_map(function ($input) {
-            return strip_tags($input);
+            return strip_tags((string) $input);
         }, $request);
 
         $validator = Validator::make($request, $rules);
