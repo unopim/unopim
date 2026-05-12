@@ -48,13 +48,7 @@ class Product
             return;
         }
 
-        $changes = $this->webhookService->getProductChangesForWebhook($product);
-
-        if (! $changes) {
-            return;
-        }
-
-        SendProductWebhook::dispatch($product->id, $changes, 'created')->onQueue('webhooks');
+        SendProductWebhook::dispatch($product->id, [], 'created')->onQueue('webhooks');
     }
 
     public function afterBulkUpdate(array $ids)
