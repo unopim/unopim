@@ -39,7 +39,7 @@ class Product
             return;
         }
 
-        SendProductWebhook::dispatch($product->id, $changes, 'updated')->onQueue('webhooks');
+        SendProductWebhook::dispatch($product->id, $changes, 'updated', auth('admin')?->user()?->id)->onQueue('webhooks');
     }
 
     public function afterCreate($product)
@@ -48,7 +48,15 @@ class Product
             return;
         }
 
-        SendProductWebhook::dispatch($product->id, [], 'created')->onQueue('webhooks');
+        $product->refresh();
+
+        $changes = $this->webhookService->getProductChangesForWebhook($product);
+
+        $changes['added']['sku'] = $product->sku;
+        $changes['added']['type'] = $product->type;
+        $changes['added']['status'] = (bool) $product->status;
+
+        SendProductWebhook::dispatch($product->id, $changes, 'created', auth('admin')?->user()?->id)->onQueue('webhooks');
     }
 
     public function afterBulkUpdate(array $ids)

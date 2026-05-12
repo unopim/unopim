@@ -23,7 +23,7 @@ afterEach(function () {
     DB::table('webhook_settings')->whereIn('field', ['webhook_url', 'webhook_active'])->delete();
 });
 
-it('dispatches SendProductWebhook with the created event when a simple product is created', function () {
+it('dispatches SendProductWebhook with the created event and the new product sku in changes.added', function () {
     $this->loginAsAdmin();
 
     Bus::fake([SendProductWebhook::class]);
@@ -44,10 +44,16 @@ it('dispatches SendProductWebhook with the created event when a simple product i
         $productIdProp = $reflection->getProperty('productId');
         $productIdProp->setAccessible(true);
 
+        $changesProp = $reflection->getProperty('changes');
+        $changesProp->setAccessible(true);
+
         $createdProduct = Product::where('sku', $data['sku'])->first();
+        $changes = $changesProp->getValue($job);
 
         return $eventTypeProp->getValue($job) === 'created'
-            && $productIdProp->getValue($job) === $createdProduct->id;
+            && $productIdProp->getValue($job) === $createdProduct->id
+            && ($changes['added']['sku'] ?? null) === $createdProduct->sku
+            && ($changes['added']['type'] ?? null) === 'simple';
     });
 });
 
@@ -67,6 +73,27 @@ it('does not dispatch SendProductWebhook when the webhook is inactive', function
         ->assertOk();
 
     Bus::assertNotDispatched(SendProductWebhook::class);
+});
+
+it('passes the dispatching admin id into the SendProductWebhook job', function () {
+    $admin = $this->loginAsAdmin();
+
+    Bus::fake([SendProductWebhook::class]);
+
+    $data = Product::factory()->definition();
+    $data['type'] = 'simple';
+
+    $this->post(route('admin.catalog.products.store'), $data)
+        ->assertOk();
+
+    Bus::assertDispatched(SendProductWebhook::class, function (SendProductWebhook $job) use ($admin) {
+        $reflection = new ReflectionClass($job);
+
+        $userIdProp = $reflection->getProperty('userId');
+        $userIdProp->setAccessible(true);
+
+        return $userIdProp->getValue($job) === $admin->id;
+    });
 });
 
 it('produces a product.created payload via the webhook service for a created product', function () {
