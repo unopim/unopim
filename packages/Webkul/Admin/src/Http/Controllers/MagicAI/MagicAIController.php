@@ -403,7 +403,7 @@ class MagicAIController extends Controller
         $magicAi = $this->resolveTranslationPlatform();
 
         foreach ($targetLocales as $locale) {
-            $p = "Translate @$field into $locale. Return only the translated value wrapped in a single <p> tag. Do not include any additional text, descriptions, or explanations.";
+            $p = "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text.";
             $prompt = $this->promptService->getPrompt(
                 $p,
                 request()->input('resource_id'),
@@ -414,9 +414,9 @@ class MagicAIController extends Controller
                 ->setModel(request()->input('model'))
                 ->setPrompt($prompt)
                 ->ask();
-            preg_match_all('/<p>(.*?)<\/p>/', $response, $matches);
+            preg_match_all('/<p\b[^>]*>.*?<\/p>/s', $response, $matches);
 
-            $value = end($matches[1]);
+            $value = empty($matches[0]) ? trim($response) : implode('', $matches[0]);
             $translatedData[] = [
                 'locale'  => $locale,
                 'content' => $value,
@@ -504,7 +504,7 @@ class MagicAIController extends Controller
             foreach ($attributes as $key => $attribute) {
                 $field = $attribute['fieldName'];
 
-                $p = "Translate @$field into $locale. Return only the translated value wrapped in a single <p> tag. Do not include any additional text, descriptions, or explanations.";
+                $p = "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text.";
 
                 $prompt = $this->promptService->getPrompt(
                     $p,
@@ -517,8 +517,8 @@ class MagicAIController extends Controller
                     ->setPrompt($prompt)
                     ->ask();
 
-                preg_match_all('/<p>(.*?)<\/p>/', $response, $matches);
-                $value = end($matches[1]);
+                preg_match_all('/<p\b[^>]*>.*?<\/p>/s', $response, $matches);
+                $value = empty($matches[0]) ? trim($response) : implode('', $matches[0]);
 
                 $translatedDataForLocale[$field] = [
                     'field'   => $field,
