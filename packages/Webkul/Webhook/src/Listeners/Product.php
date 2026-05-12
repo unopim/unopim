@@ -48,13 +48,10 @@ class Product
             return;
         }
 
-        $product->refresh();
-
         $changes = $this->webhookService->getProductChangesForWebhook($product);
-
-        $changes['added']['sku'] = $product->sku;
-        $changes['added']['type'] = $product->type;
-        $changes['added']['status'] = (bool) $product->status;
+        if (! $changes) {
+            return;
+        }
 
         SendProductWebhook::dispatch($product->id, $changes, 'created', auth('admin')?->user()?->id)->onQueue('webhooks');
     }
