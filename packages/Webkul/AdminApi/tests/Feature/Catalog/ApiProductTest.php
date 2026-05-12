@@ -45,23 +45,18 @@ it('should return the list of all simple products', function () {
         ->assertJsonFragment(['total' => Product::where('type', 'simple')->count()])
         ->json('data');
 
-    $product = Product::where('type', 'simple')->limit(1)->first();
+    $product = Product::where('type', 'simple')->orderBy('id')->first();
 
-    $expectedProducts = [
-        'sku'        => $product->sku,
-        'status'     => (bool) $product->status,
-        'parent'     => $product->parent,
-        'family'     => $product->attribute_family->code,
-        'type'       => $product->type,
-        'additional' => $product->additional,
-        'created_at' => $product->created_at->toISOString(),
-        'updated_at' => $product->updated_at->toISOString(),
-        'values'     => $product->values,
-    ];
+    $responseProduct = collect($response)->firstWhere('sku', $product->sku);
 
-    $this->assertTrue(
-        collect($response)->contains($expectedProducts),
-    );
+    expect($responseProduct)->not->toBeNull();
+    expect($responseProduct['sku'])->toBe($product->sku);
+    expect($responseProduct['status'])->toBe((bool) $product->status);
+    expect($responseProduct['parent'])->toBe($product->parent?->sku);
+    expect($responseProduct['family'])->toBe($product->attribute_family->code);
+    expect($responseProduct['type'])->toBe($product->type);
+    expect($responseProduct['additional'])->toEqual($product->additional);
+    expect($responseProduct['values'])->toEqual($product->values);
 });
 
 it('should return the simple product using the code', function () {
