@@ -19,10 +19,11 @@ it('falls back to a non-current-locale label for the column when the current loc
     $attribute = Attribute::factory()->create(['type' => 'text']);
 
     $attribute->translations()->delete();
-    $attribute->translations()->create([
-        'locale' => 'de_DE',
-        'name'   => 'Deutscher Name',
-    ]);
+
+    $translation = $attribute->translations()->make(['name' => 'Deutscher Name']);
+    $translation->locale = 'de_DE';
+    $translation->save();
+
     $attribute->load('translations');
 
     expect($attribute->getTranslatedValueWithFallback('name', 'en_US'))
