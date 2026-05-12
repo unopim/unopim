@@ -122,6 +122,9 @@ class Installer extends Command
             }
         }
 
+        $this->warn('Step: Dropping any tables left over from a previous install...');
+        $this->dropAllTablesInConfiguredSchema();
+
         $this->warn('Step: Migrating all tables...');
         $this->call('migrate:fresh');
 
@@ -535,6 +538,54 @@ class Installer extends Command
         } finally {
             config(['queue.default' => $originalDefault]);
         }
+    }
+
+    /**
+     * Drop every table in the connection's current database. Used to
+     * scrub residue from prior installs (different prefixes, partial
+     * runs) before migrate:fresh recreates the schema.
+     */
+    protected function dropAllTablesInConfiguredSchema(): void
+    {
+        $connection = DB::connection();
+        $database = $connection->getDatabaseName();
+
+        if (! $database) {
+            $this->warn('No database selected; skipping pre-migration drop.');
+
+            return;
+        }
+
+        $tables = $this->listTablesInConfiguredSchema();
+
+        if (empty($tables)) {
+            return;
+        }
+
+        $quoted = array_map(static fn (string $t): string => '`'.str_replace('`', '``', $t).'`', $tables);
+
+        $connection->statement('SET FOREIGN_KEY_CHECKS = 0');
+        try {
+            $connection->statement('DROP TABLE IF EXISTS '.implode(',', $quoted));
+        } finally {
+            $connection->statement('SET FOREIGN_KEY_CHECKS = 1');
+        }
+
+        $this->info('Dropped '.\count($tables).' table(s) from `'.$database.'`.');
+    }
+
+    /**
+     * Names of every table visible in the current MySQL schema.
+     *s
+     *
+     * @return list<string>
+     */
+    protected function listTablesInConfiguredSchema(): array
+    {
+        return array_map(
+            static fn (object $row): string => array_values((array) $row)[0],
+            DB::connection()->select('SHOW TABLES')
+        );
     }
 
     /**
