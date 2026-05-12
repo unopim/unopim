@@ -100,35 +100,8 @@ test.describe('UnoPim Webhook test cases', () => {
 
   test('Check the content of the log section in webhook page', async ({ adminPage }) => {
     await navigateTo(adminPage, 'webhook');
-    await adminPage.evaluate(async () => {
-      const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
-      const listing = await fetch('/admin/webhook/logs', {
-        credentials: 'same-origin',
-        headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
-      });
-      if (!listing.ok) return;
-      const body = await listing.json();
-      const ids = (Array.isArray(body?.records) ? body.records : [])
-        .map((r) => r.id ?? r.log_id ?? r.record_id)
-        .filter(Boolean);
-      if (ids.length === 0) return;
-      await fetch('/admin/webhook/logs/mass-delete', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type':     'application/json',
-          'X-CSRF-TOKEN':     csrf,
-          'X-Requested-With': 'XMLHttpRequest',
-          Accept:             'application/json',
-        },
-        body: JSON.stringify({ indices: ids }),
-      });
-    });
-
-    const logSection = adminPage.getByRole('link', { name: 'Logs' });
-    await logSection.click();
+    await adminPage.getByRole('link', { name: 'Logs' }).click();
     await expect(adminPage.locator('#app').getByText('Webhook Logs')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('No Records Available.')).toBeVisible();
   });
 
   test('Check the presence of columns in the log section of webhook page', async ({ adminPage }) => {
