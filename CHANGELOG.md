@@ -4,7 +4,7 @@
 
 ### Features
 - Added **ManageAssociations AI Agent Tool** — manage product associations (related, cross-sell, up-sell) via natural language in the AI Agent Chat, with clickable product links in search results for internal navigation.
-- Added **Demo Data Seeding** — `php artisan unopim:install --with-demo-data` CLI flag, installer wizard toggle, Docker setup option, and standalone `php artisan unopim:seed-demo` command to seed sample products during/after installation ([#392](https://github.com/unopim/unopim/pull/392)).
+- Added **Demo Data Seeding** — `php artisan unopim:install --with-demo-data` CLI flag, installer wizard toggle, Docker setup option, and standalone `php artisan unopim:install:demo-data` command to seed sample products during/after installation ([#392](https://github.com/unopim/unopim/pull/392)).
 - Added **Production-Ready Docker Setup** — multi-container stack (Nginx + PHP-FPM default, Apache fallback) with Docker Hub images, healthchecks, Redis, Elasticsearch, Mailpit services, OPcache-tuned `php.ini`, and auto-publish workflow ([#334](https://github.com/unopim/unopim/pull/334)).
 - Added **`clean_content()` XSS sanitization helper** — uses HTMLPurifier to strip Blade directives, PHP tags, and dangerous HTML from user-generated content.
 - Added **IP-based debug filtering** — `APP_DEBUG_ALLOWED_IPS` environment variable restricts debugbar access to specific IP addresses in production.
