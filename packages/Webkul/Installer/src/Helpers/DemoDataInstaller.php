@@ -64,9 +64,42 @@ class DemoDataInstaller
             $report('Recalculating product completeness...');
             $this->recalculateCompleteness();
 
+            // Sanity check: a "default" attribute family with zero group
+            // mappings would render the catalog unusable (products can't
+            // be created against an empty family). Surface this loudly
+            // rather than leaving the install silently broken.
+            if (! $this->defaultFamilyHasGroups()) {
+                return [
+                    'success' => false,
+                    'error'   => 'Demo seeding completed but the default attribute family has no group mappings — refusing to leave the catalog in an unusable state.',
+                ];
+            }
+
             return ['success' => true];
         } catch (Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Returns true when the `default` attribute family has at least one
+     * attribute-group mapping. Defensive guard against partial seeds
+     * leaving the catalog without a usable default family.
+     */
+    public function defaultFamilyHasGroups(): bool
+    {
+        try {
+            $familyId = DB::table('attribute_families')->where('code', 'default')->value('id');
+
+            if (! $familyId) {
+                return false;
+            }
+
+            return DB::table('attribute_family_group_mappings')
+                ->where('attribute_family_id', $familyId)
+                ->exists();
+        } catch (Throwable) {
+            return false;
         }
     }
 
