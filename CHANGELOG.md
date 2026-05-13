@@ -16,7 +16,7 @@
 - Added **PIM-specific test assertions** — `CoreAssertions` trait with `assertProductExists()`, `assertCategoryExists()`, `assertAttributeExists()`, `assertChannelExists()`, `assertLocaleExists()`, and `assertSuccessJsonResponse()` helpers for Pest tests.
 
 ### Improvements
-- Replaced **deprecated `Request::get()`** with `->input()` across remaining controllers for Symfony 7.4 compatibility.
+- Replaced **deprecated `Request::get()`** with `->input()` across remaining controllers (the underlying `symfony/http-foundation` 7.x dependency deprecates `Request::get()` — Laravel inherits the deprecation).
 - Added **return type hints** and adopted **HTTP status constants** (`JsonResponse::HTTP_OK`, etc.) in additional controllers across Admin and AdminApi packages in place of magic numbers.
 - Removed **auto-discovered providers** from `bootstrap/providers.php` — third-party packages (DomPDF, Translatable, Concord, Excel) are auto-discovered by Laravel and no longer need explicit registration.
 - Standardized **exception handling** — use `wantsJson()` instead of `ajax()` for API detection, added `report($e)` to silent catch blocks.
