@@ -16,9 +16,8 @@
 - Added **PIM-specific test assertions** — `CoreAssertions` trait with `assertProductExists()`, `assertCategoryExists()`, `assertAttributeExists()`, `assertChannelExists()`, `assertLocaleExists()`, and `assertSuccessJsonResponse()` helpers for Pest tests.
 
 ### Improvements
-- Upgraded **Vite** from `4.0` to `6.3` with manual chunk splitting (Vue, VeeValidate, vendor), CSS code splitting, and esbuild minifier for faster builds. Upgraded `laravel-vite-plugin` to `1.2`, `vue` to `3.5`, and `@vitejs/plugin-vue` to `5.x`.
-- Replaced **deprecated `Request::get()`** with `->input()` across 30 occurrences in 13 files for Symfony 7.4 compatibility.
-- Added **return type hints** and **HTTP status constants** (`JsonResponse::HTTP_OK`, etc.) to all public controller methods across Admin and AdminApi packages, replacing 70+ magic numbers.
+- Replaced **deprecated `Request::get()`** with `->input()` across remaining controllers for Symfony 7.4 compatibility.
+- Added **return type hints** and adopted **HTTP status constants** (`JsonResponse::HTTP_OK`, etc.) in additional controllers across Admin and AdminApi packages in place of magic numbers.
 - Removed **auto-discovered providers** from `bootstrap/providers.php` — third-party packages (DomPDF, Translatable, Concord, Excel) are auto-discovered by Laravel and no longer need explicit registration.
 - Standardized **exception handling** — use `wantsJson()` instead of `ajax()` for API detection, added `report($e)` to silent catch blocks.
 - Extracted **ImportProducts** into a queued `ImportProductsJob`, enabling reliable imports of 10k+ products via the AI Agent ([#372](https://github.com/unopim/unopim/pull/372)).
@@ -79,7 +78,7 @@
 - Added **database indexes** on `channels.code`, `locales.status`, `currencies.status`, and a composite index on `core_config(code, channel_code, locale_code)` for faster config lookups and queries.
 
 ### Tests
-- Added **11 Pest security tests** in `packages/Webkul/User/tests/Feature/SecurityTest.php` covering all 5 vulnerabilities including the Burp replay privilege escalation scenario.
+- Added **Pest security tests** in `packages/Webkul/User/tests/Feature/SecurityTest.php` (13 tests) covering all 5 audit vulnerabilities including the Burp replay privilege escalation scenario.
 - Added **4 Playwright E2E security tests** in `tests/e2e-pw/tests/08-security/security.spec.js` for login redirect, rate limiting, password validation, and forgot-password enumeration.
 - Updated `UserAclTest` to use a custom role instead of all-access `role_id=1` for user creation ACL test (aligned with new privilege escalation guard).
 - Added webhook variant, attribute-family empty-groups, Bouncer 403, chat rate feedback, attribute history tooltip, and Excel rich-text test coverage; `ManageUsers` email masking ([#352](https://github.com/unopim/unopim/pull/352)).
@@ -89,9 +88,8 @@
 - Refactored Playwright `magicAI-acl.spec.js` to inline full ACL coverage and tuned CI timeout settings ([#383](https://github.com/unopim/unopim/pull/383)).
 
 ### Dependency Updates
-- Bumped `phpseclib/phpseclib` from `3.0.48` to `3.0.52` ([#289](https://github.com/unopim/unopim/pull/289), [#345](https://github.com/unopim/unopim/pull/345), [#384](https://github.com/unopim/unopim/pull/384)).
+- Bumped `phpseclib/phpseclib` from `3.0.50` to `3.0.52` ([#345](https://github.com/unopim/unopim/pull/345), [#384](https://github.com/unopim/unopim/pull/384)).
 - Bumped `phpoffice/phpspreadsheet` from `1.30.2` to `1.30.4` ([#364](https://github.com/unopim/unopim/pull/364)).
-- Upgraded `vite` to `^6.3`, `laravel-vite-plugin` to `^1.2`, `vue` to `^3.5`, `@vitejs/plugin-vue` to `^5.0`.
 
 ### Contributors
 
