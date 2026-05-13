@@ -11,15 +11,23 @@ use Webkul\Installer\Helpers\DemoDataInstaller;
  * Avoids touching the real `categories` table from tests since these
  * unit tests don't run migrations.
  */
-function demoInstaller(bool $alreadySeeded): DemoDataInstaller
+function demoInstaller(bool $alreadySeeded, bool $familyHasGroups = true): DemoDataInstaller
 {
-    return new class($alreadySeeded) extends DemoDataInstaller
+    return new class($alreadySeeded, $familyHasGroups) extends DemoDataInstaller
     {
-        public function __construct(private bool $alreadySeeded) {}
+        public function __construct(
+            private bool $alreadySeeded,
+            private bool $familyHasGroups,
+        ) {}
 
         public function isAlreadySeeded(): bool
         {
             return $this->alreadySeeded;
+        }
+
+        public function defaultFamilyHasGroups(): bool
+        {
+            return $this->familyHasGroups;
         }
     };
 }
@@ -145,6 +153,30 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
                 CategoryDemoTableSeeder::class,
                 ProductTableSeeder::class,
             ]);
+    });
+
+    it('returns success=false when the default attribute family has no group mappings after seeding', function () {
+        foreach ([
+            DemoExtrasTableSeeder::class,
+            CategoryDemoTableSeeder::class,
+            ProductTableSeeder::class,
+        ] as $class) {
+            app()->instance($class, new class
+            {
+                public function run(): void {}
+            });
+        }
+
+        config(['elasticsearch.enabled' => 'false']);
+        Artisan::shouldReceive('call')
+            ->with('unopim:completeness:recalculate', ['--all' => true])
+            ->once()
+            ->andReturn(0);
+
+        $result = demoInstaller(alreadySeeded: false, familyHasGroups: false)->seed();
+
+        expect($result['success'])->toBeFalse()
+            ->and($result['error'])->toContain('default attribute family has no group mappings');
     });
 
     it('also reindexes elasticsearch when it is enabled', function () {

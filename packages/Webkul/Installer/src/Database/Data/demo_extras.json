@@ -3747,12 +3747,12 @@
             {
                 "id": 1,
                 "code": "default",
-                "status": 0
+                "status": 1
             },
             {
                 "id": 2,
                 "code": "Camcorders",
-                "status": 0
+                "status": 1
             }
         ],
         "attribute_family_translations": [
