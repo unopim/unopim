@@ -3,12 +3,10 @@ set -e
 
 LOCK_FILE="/var/www/html/storage/unopim.lock"
 
-# Generate APP_KEY if empty (must happen before any artisan/composer step)
-if grep -q '^APP_KEY=$' /var/www/html/.env; then
-    KEY="base64:$(openssl rand -base64 32)"
-    sed -i "s|^APP_KEY=$|APP_KEY=${KEY}|" /var/www/html/.env
-fi
-export APP_KEY=$(grep '^APP_KEY=' /var/www/html/.env | cut -d= -f2-)
+# Ensure APP_KEY is set before any artisan command runs.
+# Auto-generates for dev/local; fails fast in production (never silently regenerate).
+source /var/www/html/dockerfiles/lib/ensure-app-key.sh
+ensure_app_key
 
 # ─── First-time setup ───────────────────────────────────────────────
 if [ ! -f "$LOCK_FILE" ]; then
