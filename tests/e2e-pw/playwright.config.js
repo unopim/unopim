@@ -96,17 +96,5 @@ module.exports = defineConfig({
         },
       },
     },
-    {
-      name: 'docs-screenshots',
-      testDir: './tests/docs-screenshots',
-      testIgnore: /auth\.setup\.js/,
-      fullyParallel: false,
-      workers: 1,
-      use: {
-        screenshot: 'off',
-        trace: 'off',
-        video: 'off',
-      },
-    },
   ],
 });
