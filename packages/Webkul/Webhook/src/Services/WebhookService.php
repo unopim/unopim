@@ -309,6 +309,16 @@ class WebhookService
 
         $diff = ProductComparer::compare($oldRaw, $newRaw);
 
+        if ($latestChanges->event === 'created') {
+            $product->refresh();
+
+            $diff['added']['sku'] = $product->sku;
+            $diff['added']['type'] = $product->type;
+            $diff['added']['status'] = (bool) $product->status;
+
+            return $diff;
+        }
+
         if (! empty($diff['added']) || ! empty($diff['removed']) || ! empty($diff['changed'])) {
             return $diff;
         }
