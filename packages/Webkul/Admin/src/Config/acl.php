@@ -411,9 +411,19 @@ return [
         'route' => 'admin.settings.roles.create',
         'sort'  => 1,
     ], [
+        'key'   => 'settings.roles.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.settings.roles.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'settings.roles.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.settings.roles.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'settings.roles.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.roles.update',
         'sort'  => 2,
     ], [
         'key'   => 'settings.roles.delete',
