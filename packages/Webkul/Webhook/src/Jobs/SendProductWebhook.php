@@ -7,7 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 use Webkul\Product\Models\ProductProxy;
+use Webkul\User\Models\AdminProxy;
 use Webkul\Webhook\Services\WebhookService;
 
 class SendProductWebhook implements ShouldQueue
@@ -25,7 +27,8 @@ class SendProductWebhook implements ShouldQueue
     public function __construct(
         protected int $productId,
         protected array $changes,
-        protected string $eventType
+        protected string $eventType,
+        protected ?int $userId = null,
     ) {}
 
     public function handle(WebhookService $webhookService): void
@@ -34,6 +37,10 @@ class SendProductWebhook implements ShouldQueue
 
         if (! $product) {
             return;
+        }
+
+        if ($this->userId && ($admin = AdminProxy::find($this->userId))) {
+            Auth::login($admin);
         }
 
         match ($this->eventType) {

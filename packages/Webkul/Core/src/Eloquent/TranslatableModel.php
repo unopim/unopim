@@ -59,4 +59,28 @@ class TranslatableModel extends Model
             }
         });
     }
+
+    /**
+     * Resolve a translated field for the requested locale, falling back to any
+     * locale that has a non-empty value. Returns null when every translation
+     * is empty so callers can apply their own placeholder (e.g. "[code]").
+     */
+    public function getTranslatedValueWithFallback(string $column, ?string $locale = null): ?string
+    {
+        $locale = $locale ?: core()->getRequestedLocaleCode();
+
+        $value = $this->translate($locale)?->{$column};
+
+        if (! empty($value)) {
+            return $value;
+        }
+
+        foreach ($this->translations as $translation) {
+            if (! empty($translation->{$column})) {
+                return $translation->{$column};
+            }
+        }
+
+        return null;
+    }
 }

@@ -3,6 +3,13 @@ set -e
 
 LOCK_FILE="/var/www/html/storage/unopim.lock"
 
+# Generate APP_KEY if empty (must happen before any artisan/composer step)
+if grep -q '^APP_KEY=$' /var/www/html/.env; then
+    KEY="base64:$(openssl rand -base64 32)"
+    sed -i "s|^APP_KEY=$|APP_KEY=${KEY}|" /var/www/html/.env
+fi
+export APP_KEY=$(grep '^APP_KEY=' /var/www/html/.env | cut -d= -f2-)
+
 # ─── First-time setup ───────────────────────────────────────────────
 if [ ! -f "$LOCK_FILE" ]; then
 
@@ -30,14 +37,6 @@ if [ ! -f "$LOCK_FILE" ]; then
         # Sync APP_URL with APP_PORT if port was changed
         if [ -n "$APP_PORT" ] && [ "$APP_PORT" != "8000" ] && [ -f /var/www/html/.env ]; then
             sed -i "s|APP_URL=http://localhost:8000|APP_URL=http://localhost:${APP_PORT}|" /var/www/html/.env
-        fi
-
-        # Generate APP_KEY if not already set in .env
-        if grep -q "^APP_KEY=$" /var/www/html/.env 2>/dev/null || [ -z "$APP_KEY" ]; then
-            echo "→ Generating application key..."
-            php artisan key:generate --force
-            # Export into current process so PHP-FPM inherits the new key
-            export APP_KEY=$(grep "^APP_KEY=" /var/www/html/.env | cut -d '=' -f 2-)
         fi
 
         echo "→ Running database migrations..."
