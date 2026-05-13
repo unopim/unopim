@@ -2291,6 +2291,7 @@ class Importer extends AbstractImporter
              */
             $productDB['created_at'] = $this->formatDateForIndex($productDB['created_at']);
             $productDB['updated_at'] = $this->formatDateForIndex($productDB['updated_at']);
+            $productDB['status'] = (bool) ($productDB['status'] ?? true);
 
             $productsToUpdate['body'][] = [
                 'index' => [
