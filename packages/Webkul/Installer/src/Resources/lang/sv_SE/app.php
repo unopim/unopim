@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Administratör',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Bekräfta Lösenord',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'E-post',
-                'password'         => 'Lösenord',
-                'title'            => 'Skapa Administratör',
+                'admin'                   => 'Administratör',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Bekräfta Lösenord',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'E-post',
+                'password'                => 'Lösenord',
+                'title'                   => 'Skapa Administratör',
+                'seed-sample-data'        => 'Installera exempelprodukter och demodata',
+                'seeding-sample-data'     => 'Skapar exempelprodukter och demodata, detta kan ta några minuter...',
+                'seed-sample-data-failed' => 'Demodata kunde inte skapas. Du kan installera det senare via `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Tillåtna Valutor',

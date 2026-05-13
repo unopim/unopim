@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => '관리자',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => '비밀번호 확인',
-                'email-address'    => 'admin@example.com',
-                'email'            => '이메일',
-                'password'         => '비밀번호',
-                'title'            => '관리자 생성',
+                'admin'                   => '관리자',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => '비밀번호 확인',
+                'email-address'           => 'admin@example.com',
+                'email'                   => '이메일',
+                'password'                => '비밀번호',
+                'title'                   => '관리자 생성',
+                'seed-sample-data'        => '샘플 제품 및 데모 데이터 설치',
+                'seeding-sample-data'     => '샘플 제품 및 데모 데이터를 생성 중입니다. 몇 분 정도 걸릴 수 있습니다...',
+                'seed-sample-data-failed' => '샘플 데이터를 생성하지 못했습니다. 나중에 `php artisan unopim:install:demo-data` 명령으로 설치할 수 있습니다.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => '허용된 통화',

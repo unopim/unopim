@@ -108,9 +108,9 @@ return [
                 'email'                   => 'E-mail',
                 'password'                => 'Mot de passe',
                 'title'                   => 'Créer un administrateur',
-                'seed-sample-data'        => 'Install sample products and demo data',
-                'seeding-sample-data'     => 'Seeding sample products and demo data, this may take a few minutes...',
-                'seed-sample-data-failed' => 'Sample data could not be seeded. You can install it later via `php artisan unopim:install:demo-data`.',
+                'seed-sample-data'        => 'Installer les produits d\'exemple et les données de démonstration',
+                'seeding-sample-data'     => 'Création des produits d\'exemple et des données de démonstration, cela peut prendre quelques minutes...',
+                'seed-sample-data-failed' => 'Les données d\'exemple n\'ont pas pu être installées. Vous pouvez les installer plus tard via `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Devises autorisées',
