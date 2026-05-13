@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Yönetici',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Şifreyi Onayla',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'E-posta',
-                'password'         => 'Şifre',
-                'title'            => 'Yönetici Oluştur',
+                'admin'                   => 'Yönetici',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Şifreyi Onayla',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'E-posta',
+                'password'                => 'Şifre',
+                'title'                   => 'Yönetici Oluştur',
+                'seed-sample-data'        => 'Örnek ürünleri ve demo verileri kur',
+                'seeding-sample-data'     => 'Örnek ürünler ve demo veriler oluşturuluyor, bu işlem birkaç dakika sürebilir...',
+                'seed-sample-data-failed' => 'Örnek veriler oluşturulamadı. Daha sonra `php artisan unopim:install:demo-data` komutuyla kurabilirsiniz.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'İzin Verilen Para Birimleri',
