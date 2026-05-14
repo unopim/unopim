@@ -28,7 +28,8 @@ class LogsDataGrid extends DataGrid
             'created_at',
             'sku',
             'user',
-            'status'
+            'status',
+            'extra'
         );
 
         return $queryBuilder;
@@ -110,9 +111,28 @@ class LogsDataGrid extends DataGrid
                 ],
             ],
             'closure' => function ($row) {
-                return $row->status
-                    ? '<span class="break-words label-completed">'.trans('webhook::app.configuration.webhook.logs.index.datagrid.success').'</span>'
-                    : '<span class="break-words label-canceled">'.trans('webhook::app.configuration.webhook.logs.index.datagrid.failed').'</span>';
+                $extra = is_string($row->extra ?? null) ? json_decode($row->extra, true) : ($row->extra ?? []);
+                $code = $extra['response']['status'] ?? null;
+
+                if ($row->status) {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.success');
+
+                    if (is_numeric($code) && (int) $code > 0) {
+                        $label .= ' ('.(int) $code.')';
+                    }
+
+                    return '<span class="break-words label-completed">'.$label.'</span>';
+                }
+
+                if (! is_numeric($code) || (int) $code === 0) {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.timeout_or_error');
+                } elseif ((int) $code >= 500) {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.server_error').' ('.(int) $code.')';
+                } else {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.failed').' ('.(int) $code.')';
+                }
+
+                return '<span class="break-words label-canceled">'.$label.'</span>';
             },
         ]);
     }
