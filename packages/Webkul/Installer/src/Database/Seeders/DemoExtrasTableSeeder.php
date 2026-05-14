@@ -65,6 +65,13 @@ class DemoExtrasTableSeeder extends Seeder
         $driver = DB::getDriverName();
         $isMysql = in_array($driver, ['mysql', 'mariadb'], true);
 
+        // Capture the locale / currency / channel-wiring the user picked
+        // during the base installer. The demo dump replays a hardcoded
+        // snapshot (de_DE / en_US / fr_FR + EUR / USD wired to channels
+        // default / ecommerce / Sales) and would otherwise silently
+        // overwrite the user's selections — see restoreUserConfig().
+        $userConfig = $this->snapshotUserConfig();
+
         try {
             if ($isMysql) {
                 DB::statement('SET FOREIGN_KEY_CHECKS = 0');
@@ -131,12 +138,127 @@ class DemoExtrasTableSeeder extends Seeder
 
             DatabaseSequenceHelper::fixSequences($appliedTables);
 
+            $this->restoreUserConfig($userConfig);
+
             $this->command?->info('Demo extras seeded successfully ('.count($appliedTables).' tables).');
         } catch (Throwable $e) {
             if ($isMysql) {
                 DB::statement('SET FOREIGN_KEY_CHECKS = 1');
             }
             $this->command?->error('Failed to seed demo extras: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Snapshot the locale / currency / channel-wiring the user configured
+     * during the base installer so it can be re-applied after the demo
+     * dump replaces these tables wholesale. Channels are keyed by code
+     * because the demo dump reassigns their ids.
+     *
+     * @return array{
+     *     locale_codes: array<int, string>,
+     *     currency_codes: array<int, string>,
+     *     channel_wiring: array<string, array{locale_codes: array<int, string>, currency_codes: array<int, string>, translations: array<int, array{locale: string, name: string}>}>
+     * }
+     */
+    protected function snapshotUserConfig(): array
+    {
+        $enabledLocaleCodes = DB::table('locales')->where('status', 1)->pluck('code')->all();
+        $enabledCurrencyCodes = DB::table('currencies')->where('status', 1)->pluck('code')->all();
+
+        $channelWiring = [];
+
+        foreach (DB::table('channels')->get(['id', 'code']) as $channel) {
+            $channelWiring[$channel->code] = [
+                'locale_codes' => DB::table('channel_locales')
+                    ->join('locales', 'locales.id', '=', 'channel_locales.locale_id')
+                    ->where('channel_locales.channel_id', $channel->id)
+                    ->pluck('locales.code')
+                    ->all(),
+                'currency_codes' => DB::table('channel_currencies')
+                    ->join('currencies', 'currencies.id', '=', 'channel_currencies.currency_id')
+                    ->where('channel_currencies.channel_id', $channel->id)
+                    ->pluck('currencies.code')
+                    ->all(),
+                'translations' => DB::table('channel_translations')
+                    ->where('channel_id', $channel->id)
+                    ->get(['locale', 'name'])
+                    ->map(static fn ($t) => ['locale' => $t->locale, 'name' => $t->name])
+                    ->all(),
+            ];
+        }
+
+        return [
+            'locale_codes'   => $enabledLocaleCodes,
+            'currency_codes' => $enabledCurrencyCodes,
+            'channel_wiring' => $channelWiring,
+        ];
+    }
+
+    /**
+     * Re-apply the user's locale / currency / channel selections on top of
+     * the demo dump. The dump's own enabled locales (en_US, de_DE, fr_FR)
+     * and currencies (USD, EUR) stay enabled too — they are required by
+     * the demo product translations — but the user's picks are added
+     * back so installing with sample products no longer wipes them.
+     *
+     * @param  array{
+     *     locale_codes: array<int, string>,
+     *     currency_codes: array<int, string>,
+     *     channel_wiring: array<string, array{locale_codes: array<int, string>, currency_codes: array<int, string>, translations: array<int, array{locale: string, name: string}>}>
+     * }  $state
+     */
+    protected function restoreUserConfig(array $state): void
+    {
+        if (! empty($state['locale_codes'])) {
+            DB::table('locales')
+                ->whereIn('code', $state['locale_codes'])
+                ->update(['status' => 1]);
+        }
+
+        if (! empty($state['currency_codes'])) {
+            DB::table('currencies')
+                ->whereIn('code', $state['currency_codes'])
+                ->update(['status' => 1]);
+        }
+
+        foreach ($state['channel_wiring'] as $code => $wiring) {
+            $channelId = DB::table('channels')->where('code', $code)->value('id');
+
+            if (! $channelId) {
+                continue;
+            }
+
+            $localeIds = DB::table('locales')
+                ->whereIn('code', $wiring['locale_codes'])
+                ->pluck('id')
+                ->all();
+
+            foreach ($localeIds as $localeId) {
+                DB::table('channel_locales')->updateOrInsert(
+                    ['channel_id' => $channelId, 'locale_id' => $localeId],
+                    []
+                );
+            }
+
+            $currencyIds = DB::table('currencies')
+                ->whereIn('code', $wiring['currency_codes'])
+                ->pluck('id')
+                ->all();
+
+            foreach ($currencyIds as $currencyId) {
+                DB::table('channel_currencies')->updateOrInsert(
+                    ['channel_id' => $channelId, 'currency_id' => $currencyId],
+                    []
+                );
+            }
+
+            foreach ($wiring['translations'] as $translation) {
+                DB::table('channel_translations')->updateOrInsert(
+                    ['channel_id' => $channelId, 'locale' => $translation['locale']],
+                    ['name' => $translation['name']]
+                );
+            }
         }
     }
 }
