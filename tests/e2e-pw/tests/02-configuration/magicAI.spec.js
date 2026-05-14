@@ -62,6 +62,54 @@ async function ensureMagicAITextEnabled(adminPage) {
 }
 
 /**
+ * Helper: Ensure Magic AI translation is enabled in the global config.
+ *
+ * The "More Actions" dropdown on the product edit page is gated by
+ * general.magic_ai.translation.enabled (its only menu item is Translate).
+ * Without this guarantee, the More button is intentionally hidden and the
+ * Section 7 translate tests can't find it.
+ *
+ * Uses the same direct-POST pattern as ensureMagicAITextEnabled to bypass
+ * the Vue toggle render race.
+ */
+async function ensureMagicAITranslationEnabled(adminPage) {
+  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+
+  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][translation][enabled]"]';
+  await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
+
+  const result = await adminPage.evaluate(async () => {
+    const cb = document.querySelector('input[type="checkbox"][name="general[magic_ai][translation][enabled]"]');
+    if (!cb) return { ok: false, reason: 'no-cb' };
+    const form = cb.closest('form');
+    if (!form) return { ok: false, reason: 'no-form' };
+
+    cb.checked = true;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
+
+    const fd = new FormData(form);
+    const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
+    const action = form.getAttribute('action') || window.location.pathname;
+    const res = await fetch(action || window.location.pathname, {
+      method:      'POST',
+      credentials: 'same-origin',
+      headers: {
+        'X-XSRF-TOKEN': decodeURIComponent(xsrf),
+        Accept:         'text/html,*/*',
+      },
+      body:     fd,
+      redirect: 'follow',
+    });
+    return { ok: res.ok, status: res.status };
+  });
+
+  expect(result, `Magic AI translation config save failed: ${JSON.stringify(result)}`).toMatchObject({ ok: true });
+
+  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+  await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
+}
+
+/**
  * Helper: Open the datagrid on Prompt / System Prompt pages.
  * Clicking the "Create" button loads the datagrid AND opens a modal.
  * We close the modal immediately so we can interact with the grid.
@@ -810,6 +858,10 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
 });
 
 test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }) => {
+  // The More button is now gated on general.magic_ai.translation.enabled:
+  // without translation enabled the dropdown is empty and we hide it.
+  await ensureMagicAITranslationEnabled(adminPage);
+
   const uid = generateUid();
   const sku = `magicai-more-${uid}`;
 
@@ -844,8 +896,73 @@ test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }
   await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
+test('7.5b - More Actions button is hidden when AI translation is disabled', async ({ adminPage }) => {
+  // Regression guard: the More dropdown's only menu item is the AI Translate
+  // action. When translation is disabled the dropdown has nothing useful, so
+  // the button must not render at all.
+  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][translation][enabled]"]';
+  await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
+
+  await adminPage.evaluate(async () => {
+    const cb = document.querySelector('input[type="checkbox"][name="general[magic_ai][translation][enabled]"]');
+    if (!cb) return;
+    const form = cb.closest('form');
+    if (!form) return;
+    cb.checked = false;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
+    const fd = new FormData(form);
+    // Explicitly disable: the boolean toggle ships a hidden 0 + visible 1
+    // checkbox; remove the "1" so the POST body carries only the disabled state.
+    fd.set('general[magic_ai][translation][enabled]', '0');
+    const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
+    const action = form.getAttribute('action') || window.location.pathname;
+    await fetch(action || window.location.pathname, {
+      method:      'POST',
+      credentials: 'same-origin',
+      headers: {
+        'X-XSRF-TOKEN': decodeURIComponent(xsrf),
+        Accept:         'text/html,*/*',
+      },
+      body:     fd,
+      redirect: 'follow',
+    });
+  });
+
+  const uid = generateUid();
+  const sku = `magicai-nomore-${uid}`;
+
+  // Create product
+  await navigateTo(adminPage, 'products');
+  await adminPage.getByRole('button', { name: 'Create Product' }).click();
+  await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
+  await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
+  await adminPage.getByRole('option', { name: 'Simple' }).first().click();
+  await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
+  await adminPage.getByRole('option', { name: 'Default' }).first().click();
+  await adminPage.locator('input[name="sku"]').fill(sku);
+  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
+  await adminPage.waitForLoadState('networkidle');
+
+  // The More Actions trigger must not exist when translation is disabled.
+  await expect(adminPage.locator('[title="More Actions"]')).toHaveCount(0);
+
+  // Cleanup: delete the product, then restore translation enabled so the
+  // rest of the suite (7.6, 7.7) starts from a clean slate.
+  await navigateTo(adminPage, 'products');
+  await searchInDataGrid(adminPage, sku);
+  const row = adminPage.locator('div', { hasText: sku });
+  await row.locator('span[title="Delete"]').first().click();
+  await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
+
+  await ensureMagicAITranslationEnabled(adminPage);
+});
+
 test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   test.setTimeout(30000);
+  await ensureMagicAITranslationEnabled(adminPage);
 
   const uid = generateUid();
   const sku = `magicai-trans-${uid}`;
@@ -887,6 +1004,7 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
 test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — translation requires configured platform');
   test.setTimeout(120000);
+  await ensureMagicAITranslationEnabled(adminPage);
 
   const uid = generateUid();
   const sku = `magicai-hindi-${uid}`;

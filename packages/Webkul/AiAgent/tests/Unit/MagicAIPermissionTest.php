@@ -26,6 +26,17 @@ describe('Magic AI permission guard (Issue #647)', function () {
         expect($source)->toContain("bouncer()->hasPermission('ai-agent')");
     });
 
+    it('More button dropdown itself is hidden when no actions are available', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Resources/views/catalog/products/edit/more-actions/index.blade.php')
+        );
+
+        // The <v-custom-dropdown> trigger must be wrapped in the same gate as its
+        // only menu item so the empty "More" button is not rendered when magic AI
+        // translation is disabled (issue: empty dropdown served no purpose).
+        expect($source)->toMatch('/@if\s*\(\s*\$hasTranslateAction\s*\)\s*\R\s*<v-custom-dropdown><\/v-custom-dropdown>\s*\R\s*@endif/');
+    });
+
     it('image generation enabled flag also checks ai-agent permission in file and images components', function () {
         $fileSource = file_get_contents(
             base_path('packages/Webkul/Admin/src/Resources/views/components/media/file.blade.php')
