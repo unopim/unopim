@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Oluşturulma Tarihi',
                     'product-type' => 'Ürün Türü',
                 ],
+                'more'         => 'Daha Fazla',
                 'more-actions' => 'Daha Fazla İşlem',
             ],
             'bulk-edit' => [

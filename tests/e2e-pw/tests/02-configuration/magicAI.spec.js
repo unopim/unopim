@@ -8,19 +8,6 @@ const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platform';
 const MAGIC_AI_PROMPT_URL = '/admin/magic-ai/prompt';
 const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/system-prompt';
 
-/**
- * Helper: Ensure Magic AI text-generation is enabled in the global config.
- *
- * The Magic AI WYSIWYG button is gated by general.magic_ai.settings.enabled
- * (see tinymce/index.blade.php). Section 7 tests depend on the button being
- * visible — without this guarantee they time out.
- *
- * Why we POST directly instead of using the UI form: Vue's :checked binding
- * on the sr-only boolean toggle is applied async after module ESM load, so
- * any click-then-save sequence races the binding and can either invert the
- * desired state or submit a form without the field at all. Posting the full
- * settings payload with explicit enabled=1 sidesteps the race entirely.
- */
 async function ensureMagicAITextEnabled(adminPage) {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
@@ -858,8 +845,6 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
 });
 
 test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }) => {
-  // The More button is now gated on general.magic_ai.translation.enabled:
-  // without translation enabled the dropdown is empty and we hide it.
   await ensureMagicAITranslationEnabled(adminPage);
 
   const uid = generateUid();
@@ -897,9 +882,6 @@ test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }
 });
 
 test('7.5b - More Actions button is hidden when AI translation is disabled', async ({ adminPage }) => {
-  // Regression guard: the More dropdown's only menu item is the AI Translate
-  // action. When translation is disabled the dropdown has nothing useful, so
-  // the button must not render at all.
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
   const cbSelector = 'input[type="checkbox"][name="general[magic_ai][translation][enabled]"]';
   await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
@@ -912,8 +894,6 @@ test('7.5b - More Actions button is hidden when AI translation is disabled', asy
     cb.checked = false;
     cb.dispatchEvent(new Event('change', { bubbles: true }));
     const fd = new FormData(form);
-    // Explicitly disable: the boolean toggle ships a hidden 0 + visible 1
-    // checkbox; remove the "1" so the POST body carries only the disabled state.
     fd.set('general[magic_ai][translation][enabled]', '0');
     const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
     const action = form.getAttribute('action') || window.location.pathname;
@@ -945,11 +925,8 @@ test('7.5b - More Actions button is hidden when AI translation is disabled', asy
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
   await adminPage.waitForLoadState('networkidle');
 
-  // The More Actions trigger must not exist when translation is disabled.
   await expect(adminPage.locator('[title="More Actions"]')).toHaveCount(0);
 
-  // Cleanup: delete the product, then restore translation enabled so the
-  // rest of the suite (7.6, 7.7) starts from a clean slate.
   await navigateTo(adminPage, 'products');
   await searchInDataGrid(adminPage, sku);
   const row = adminPage.locator('div', { hasText: sku });
@@ -985,12 +962,19 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   await expect(moreBtn).toBeVisible({ timeout: 20000 });
   await moreBtn.click();
 
-  const translateOption = adminPage.locator('span[title="Translate"]');
-  if (await translateOption.isVisible().catch(() => false)) {
-    await translateOption.click();
-    await expect(adminPage.locator('#app').getByText('Step 1: Select Source Channel, Language and Attributes')).toBeVisible();
-    await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
-  }
+  // Translation is force-enabled via ensureMagicAITranslationEnabled above,
+  // so the Translate option must be present — wait for it instead of skipping
+  // silently if it isn't (the previous if-guard hid real failures).
+  const translateOption = adminPage.locator('span[title="Translate"]').first();
+  await expect(translateOption).toBeVisible({ timeout: 10000 });
+  await translateOption.click();
+
+  // Redesigned modal renders step-indicator circles (1, 2) with "Select Source"
+  // / "Select Target" labels and a "Source content" card — verify those plus
+  // the Step 1 "Next" button.
+  await expect(adminPage.locator('#app').getByRole('heading', { name: /Source content/i })).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText('Select Source', { exact: true })).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
 
   // Cleanup: delete the product
   await navigateTo(adminPage, 'products');

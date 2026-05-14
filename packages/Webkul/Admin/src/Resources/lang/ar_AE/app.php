@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'تاريخ الإنشاء',
                     'product-type' => 'نوع المنتج',
                 ],
+                'more'         => 'المزيد',
                 'more-actions' => 'إجراءات إضافية',
             ],
             'bulk-edit' => [

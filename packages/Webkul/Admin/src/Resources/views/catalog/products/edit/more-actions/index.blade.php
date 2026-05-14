@@ -19,7 +19,7 @@
                 @click="toggleDropdown"
                 title="@lang('admin::app.catalog.products.edit.more-actions')"
             >
-                More
+                @lang('admin::app.catalog.products.edit.more')
                 <i class="text-2xl icon-chevron-down"></i>
             </span>
 

@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'निर्माण तिथि',
                     'product-type' => 'उत्पाद प्रकार',
                 ],
+                'more'         => 'अधिक',
                 'more-actions' => 'अधिक कार्रवाई',
             ],
             'bulk-edit' => [

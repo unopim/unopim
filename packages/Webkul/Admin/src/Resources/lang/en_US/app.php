@@ -379,6 +379,7 @@ return [
                     'product-type' => 'Product Type',
                 ],
 
+                'more'         => 'More',
                 'more-actions' => 'More Actions',
             ],
             'bulk-edit' => [

@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Créé le',
                     'product-type' => 'Type de produit',
                 ],
+                'more'         => 'Plus',
                 'more-actions' => 'Plus d\'actions',
             ],
             'bulk-edit' => [
@@ -364,7 +365,6 @@ return [
                     'url'                        => 'Veuillez entrer une URL valide.',
                     'regex'                      => 'La valeur ne correspond pas au modèle requis.',
                     'invalid-pattern'            => 'Modèle personnalisé invalide fourni.',
-
                     'numeric'                    => 'La valeur de l\'attribut numérique « :attribute » doit être un nombre valide.',
                     'select-attribute-or-family' => 'Veuillez sélectionner au moins un attribut ou une famille d’attributs.',
                     'failed'                     => 'La validation a échoué.',
@@ -385,47 +385,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Édition en masse réussie.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Aucun changement à enregistrer.',
-
-                'invalid-datetime'            => 'Veuillez saisir une date et une heure valides.',
-
-                'resize-column'               => 'Faites glisser pour redimensionner la colonne',
-                'success'                     => 'Opération réussie.',
-                'fetch-failed'                => 'Échec de la récupération.',
-                'action'                      => 'Édition en masse',
-                'description'                 => 'Edit multiple products at once. Changes are processed in the background.',
-                'gallery-preview'             => 'Aperçu de la galerie',
-                'img-preview'                 => 'Aperçu de l’image',
-                'no-image'                    => 'Pas d’image',
-                'img-fail'                    => 'Échec du téléchargement de l’image.',
-                'no-option'                   => 'Aucune option',
-                'keyboard-shortcuts'          => 'Raccourcis clavier',
-                'shortcuts-navigation'        => 'Navigation',
-                'shortcuts-editing'           => 'Édition',
-                'shortcuts-selection'         => 'Sélection',
-                'shortcuts-clipboard'         => 'Presse-papiers et remplissage',
-                'shortcuts-move-cell'         => 'Se déplacer entre les cellules',
-                'shortcuts-move-down'         => 'Descendre / confirmer la modification',
-                'shortcuts-move-up'           => 'Monter',
-                'shortcuts-move-right-left'   => 'Aller à droite / gauche',
-                'shortcuts-home-end'          => 'Première / dernière colonne de la ligne',
-                'shortcuts-ctrl-home-end'     => 'Première / dernière cellule de la grille',
-                'shortcuts-extend-selection'  => 'Étendre la sélection',
-                'shortcuts-select-all'        => 'Sélectionner toutes les cellules',
-                'shortcuts-enter-edit'        => 'Passer en mode édition',
-                'shortcuts-confirm-move-down' => 'Confirmer + descendre',
-                'shortcuts-confirm-move-right'=> 'Confirmer + aller à droite',
-                'shortcuts-escape-revert'     => 'Rétablir la valeur + quitter l\'édition',
-                'shortcuts-clear-cell'        => 'Vider la cellule',
-                'shortcuts-copy'              => 'Copier',
-                'shortcuts-cut'               => 'Couper',
-                'shortcuts-paste'             => 'Coller',
-                'shortcuts-fill-down'         => 'Remplir vers le bas',
-                'shortcuts-fill-right'        => 'Remplir vers la droite',
-                'shortcuts-undo'              => 'Annuler',
-                'shortcuts-redo'              => 'Rétablir',
-                'shortcuts-help'              => 'Afficher/masquer les raccourcis clavier',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Aucun changement à enregistrer.',
+                'invalid-datetime'             => 'Veuillez saisir une date et une heure valides.',
+                'resize-column'                => 'Faites glisser pour redimensionner la colonne',
+                'success'                      => 'Opération réussie.',
+                'fetch-failed'                 => 'Échec de la récupération.',
+                'action'                       => 'Édition en masse',
+                'description'                  => 'Edit multiple products at once. Changes are processed in the background.',
+                'gallery-preview'              => 'Aperçu de la galerie',
+                'img-preview'                  => 'Aperçu de l’image',
+                'no-image'                     => 'Pas d’image',
+                'img-fail'                     => 'Échec du téléchargement de l’image.',
+                'no-option'                    => 'Aucune option',
+                'keyboard-shortcuts'           => 'Raccourcis clavier',
+                'shortcuts-navigation'         => 'Navigation',
+                'shortcuts-editing'            => 'Édition',
+                'shortcuts-selection'          => 'Sélection',
+                'shortcuts-clipboard'          => 'Presse-papiers et remplissage',
+                'shortcuts-move-cell'          => 'Se déplacer entre les cellules',
+                'shortcuts-move-down'          => 'Descendre / confirmer la modification',
+                'shortcuts-move-up'            => 'Monter',
+                'shortcuts-move-right-left'    => 'Aller à droite / gauche',
+                'shortcuts-home-end'           => 'Première / dernière colonne de la ligne',
+                'shortcuts-ctrl-home-end'      => 'Première / dernière cellule de la grille',
+                'shortcuts-extend-selection'   => 'Étendre la sélection',
+                'shortcuts-select-all'         => 'Sélectionner toutes les cellules',
+                'shortcuts-enter-edit'         => 'Passer en mode édition',
+                'shortcuts-confirm-move-down'  => 'Confirmer + descendre',
+                'shortcuts-confirm-move-right' => 'Confirmer + aller à droite',
+                'shortcuts-escape-revert'      => 'Rétablir la valeur + quitter l\'édition',
+                'shortcuts-clear-cell'         => 'Vider la cellule',
+                'shortcuts-copy'               => 'Copier',
+                'shortcuts-cut'                => 'Couper',
+                'shortcuts-paste'              => 'Coller',
+                'shortcuts-fill-down'          => 'Remplir vers le bas',
+                'shortcuts-fill-right'         => 'Remplir vers la droite',
+                'shortcuts-undo'               => 'Annuler',
+                'shortcuts-redo'               => 'Rétablir',
+                'shortcuts-help'               => 'Afficher/masquer les raccourcis clavier',
             ],
             'create-success'          => 'Produit créé avec succès',
             'delete-failed'           => 'Erreur lors de la suppression du produit',
@@ -520,7 +518,6 @@ return [
                 'is-filterable'         => 'Disponible dans la navigation par filtre',
                 'ai-translate'          => 'Traduction IA',
                 'invalid-swatch-type'   => 'Le :attribute n\'est pas autorisé pour le type d\'attribut :type avec le type d\'échantillon :swatch_type.',
-
                 'single-object-only'    => 'Chaque requête de création doit contenir un seul objet d\'attribut.',
                 'option'                => [
                     'color'    => 'Couleur',
@@ -604,7 +601,6 @@ return [
             'delete-success'    => 'Attribut supprimé avec succès',
             'update-success'    => 'Attribut mis à jour avec succès',
             'user-define-error' => 'Impossible de supprimer un attribut système',
-
             'immutable-fields'  => 'Les champs suivants ne peuvent pas être modifiés : :fields.',
             'not-found'         => 'L\'attribut avec le code ":code" est introuvable',
         ],
@@ -887,7 +883,6 @@ return [
             'update-success'    => 'Le champ de catégorie a été mis à jour avec succès',
             'user-define-error' => 'Impossible de supprimer un champ de catégorie système',
             'not-found'         => 'Le champ de catégorie avec le code ":code" est introuvable',
-
             'immutable-fields'  => 'Les champs suivants ne peuvent pas être modifiés : :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +984,7 @@ return [
             'can-not-update-variant-options' => 'Impossible de mettre à jour les options configurables car cette famille dispose déjà de variations.',
         ],
         'history' => [
-            'view' => 'Voir les détails de la version',
-
+            'view'  => 'Voir les détails de la version',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -1124,8 +1118,7 @@ return [
                         'paused'               => 'En pause',
                         'cancelled'            => 'Annulé',
                         'failed'               => 'Échoué',
-
-                        'view'       => 'Voir',
+                        'view'                 => 'Voir',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1776,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompts',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titre',
@@ -1831,11 +1821,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Prompts système',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titre',
