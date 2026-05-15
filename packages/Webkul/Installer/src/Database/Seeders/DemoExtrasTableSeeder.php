@@ -65,11 +65,6 @@ class DemoExtrasTableSeeder extends Seeder
         $driver = DB::getDriverName();
         $isMysql = in_array($driver, ['mysql', 'mariadb'], true);
 
-        // Capture the locale / currency / channel-wiring the user picked
-        // during the base installer. The demo dump replays a hardcoded
-        // snapshot (de_DE / en_US / fr_FR + EUR / USD wired to channels
-        // default / ecommerce / Sales) and would otherwise silently
-        // overwrite the user's selections — see restoreUserConfig().
         $userConfig = $this->snapshotUserConfig();
 
         try {
@@ -84,13 +79,6 @@ class DemoExtrasTableSeeder extends Seeder
                     continue;
                 }
 
-                // The Magic AI config entries in the demo dump point at hardcoded
-                // platform/model/channel/locale values that don't reflect the
-                // target install (encrypted api_key with a different APP_KEY,
-                // model names the user hasn't configured, translation channels
-                // the user hasn't set up). Strip these so Magic AI starts in the
-                // same empty-placeholder state a fresh install has — the user
-                // can opt into their own values via Configuration → Magic AI.
                 if ($table === 'core_config') {
                     $rows = array_values(array_filter(
                         $rows,
@@ -98,20 +86,10 @@ class DemoExtrasTableSeeder extends Seeder
                     ));
                 }
 
-                // The seeded platform row has an api_key encrypted with a
-                // different APP_KEY and is thus useless on any install. Skip it.
                 if ($table === 'magic_ai_platforms') {
                     $rows = [];
                 }
 
-                // The demo dump captures the admin@example.com / admin123 row
-                // that was created on the source server. Replaying it here would
-                // wipe out the admin record the user just configured via the
-                // installer (see Installer::createAdminCredentials and
-                // InstallerController::adminConfigSetup) and replace it with the
-                // hardcoded demo credentials, locking the user out with their
-                // chosen password. AdminsTableSeeder + the admin-config step
-                // already own admin provisioning, so leave the table untouched.
                 if ($table === 'admins') {
                     continue;
                 }
@@ -122,9 +100,6 @@ class DemoExtrasTableSeeder extends Seeder
                     continue;
                 }
 
-                // DB::table()->insert() supports chunked inserts; chunk to
-                // avoid MySQL max_allowed_packet limits on large payloads
-                // (audits has 137 rows with big JSON columns).
                 foreach (array_chunk($rows, 200) as $chunk) {
                     DB::table($table)->insert($chunk);
                 }
