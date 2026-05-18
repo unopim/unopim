@@ -94,7 +94,6 @@ class DatabaseManager
      * every UI-installer retry would re-encrypt the session cookie with a new
      * cipher key, so the user's existing session (and CSRF token) would be
      * silently discarded on the next request — surfacing as a 419 Page Expired
-     * the second time the user submits database credentials (issue #867).
      */
     public function generateKey()
     {
