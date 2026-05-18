@@ -5,6 +5,7 @@ namespace Webkul\Installer\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use JsonException;
 use Throwable;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
@@ -115,6 +116,19 @@ class DemoExtrasTableSeeder extends Seeder
                     continue;
                 }
 
+                // Coerce 0/1 to true/false for columns declared as boolean.
+                // The JSON dump was produced against MySQL (where boolean is
+                // tinyint(1) and silently accepts 0/1), but PostgreSQL is
+                // strict: inserting an int into a `boolean` column throws
+                // SQLSTATE 42804 ("column ... is of type boolean but
+                // expression is of type integer") and the whole INSERT fails.
+                // That cascades into the original report (issue #874):
+                // locales is wiped by the preceding DELETE, the INSERT
+                // bombs, control returns to DemoDataInstaller which
+                // continues into the category/product seeders, leaving the
+                // user with products but no channels/families/locales.
+                $rows = $this->castBooleanColumns($table, $rows);
+
                 // DB::table()->insert() supports chunked inserts; chunk to
                 // avoid MySQL max_allowed_packet limits on large payloads
                 // (audits has 137 rows with big JSON columns).
@@ -137,6 +151,65 @@ class DemoExtrasTableSeeder extends Seeder
                 DB::statement('SET FOREIGN_KEY_CHECKS = 1');
             }
             $this->command?->error('Failed to seed demo extras: '.$e->getMessage());
+
+            // Re-throw so callers without a $command (DemoDataInstaller
+            // invoking us via app(...)->run(), UI installer endpoint, tests)
+            // surface the failure instead of silently continuing into the
+            // category / product seeders with the extras tables half-wiped.
+            // Without this re-throw, an INSERT failure on `locales` (the
+            // first table) leaves the user with products+categories but no
+            // channels/families/locales — exactly the symptom in issue #874.
+            throw $e;
         }
+    }
+
+    /**
+     * Convert integer 0/1 values to PHP bools for columns the schema
+     * declares as `boolean`. PostgreSQL rejects integers in boolean columns
+     * (SQLSTATE 42804); MySQL silently coerces them. Casting at the value
+     * level keeps the JSON dump portable across both drivers without
+     * having to ship two parallel demo datasets.
+     *
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    protected function castBooleanColumns(string $table, array $rows): array
+    {
+        try {
+            $columns = Schema::getColumns($table);
+        } catch (Throwable) {
+            return $rows;
+        }
+
+        $boolColumns = [];
+
+        foreach ($columns as $column) {
+            $name = $column['name'] ?? null;
+            $typeName = strtolower((string) ($column['type_name'] ?? ''));
+            $type = strtolower((string) ($column['type'] ?? ''));
+
+            // Postgres returns 'bool'/'boolean'; MySQL stores boolean as
+            // tinyint(1) and reports type_name='tinyint' / type='tinyint(1)'.
+            $isBool = in_array($typeName, ['bool', 'boolean'], true)
+                || $type === 'tinyint(1)';
+
+            if ($name && $isBool) {
+                $boolColumns[] = $name;
+            }
+        }
+
+        if (empty($boolColumns)) {
+            return $rows;
+        }
+
+        foreach ($rows as &$row) {
+            foreach ($boolColumns as $col) {
+                if (array_key_exists($col, $row) && is_int($row[$col])) {
+                    $row[$col] = (bool) $row[$col];
+                }
+            }
+        }
+
+        return $rows;
     }
 }
