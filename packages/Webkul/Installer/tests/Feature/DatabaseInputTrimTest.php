@@ -35,7 +35,7 @@ function bindInstallerCapturingDbEnvUpdate(array &$captured): Closure
     };
 }
 
-it('trims trailing whitespace on DB_HOST so quote-wrapping in .env never breaks DNS resolution (issue #863)', function () {
+it('trims trailing whitespace on DB_HOST so quote-wrapping in .env never breaks DNS resolution ', function () {
     $captured = [];
     $this->app->extend(Installer::class, bindInstallerCapturingDbEnvUpdate($captured));
 
@@ -52,7 +52,7 @@ it('trims trailing whitespace on DB_HOST so quote-wrapping in .env never breaks 
     expect($captured['DB_HOST'])->toBe('127.0.0.1');
 });
 
-it('rejects DB_HOST containing internal whitespace (issue #863)', function () {
+it('rejects DB_HOST containing internal whitespace ', function () {
     $captured = [];
     $this->app->extend(Installer::class, bindInstallerCapturingDbEnvUpdate($captured));
 
@@ -64,7 +64,7 @@ it('rejects DB_HOST containing internal whitespace (issue #863)', function () {
     expect($captured)->not->toHaveKey('DB_HOST');
 });
 
-it('trims surrounding whitespace on DB_PORT and rejects non-numeric port (issue #863)', function () {
+it('trims surrounding whitespace on DB_PORT and rejects non-numeric port ', function () {
     $captured = [];
     $this->app->extend(Installer::class, bindInstallerCapturingDbEnvUpdate($captured));
 
@@ -81,7 +81,7 @@ it('trims surrounding whitespace on DB_PORT and rejects non-numeric port (issue 
     expect($captured['DB_PORT'])->toBe('3306');
 });
 
-it('trims surrounding whitespace on DB_DATABASE so the schema lookup uses the bare name (issue #863)', function () {
+it('trims surrounding whitespace on DB_DATABASE so the schema lookup uses the bare name ', function () {
     $captured = [];
     $this->app->extend(Installer::class, bindInstallerCapturingDbEnvUpdate($captured));
 
@@ -98,7 +98,7 @@ it('trims surrounding whitespace on DB_DATABASE so the schema lookup uses the ba
     expect($captured['DB_DATABASE'])->toBe('unopim');
 });
 
-it('trims surrounding whitespace on DB_USERNAME so PDO auth uses the bare name (issue #863)', function () {
+it('trims surrounding whitespace on DB_USERNAME so PDO auth uses the bare name ', function () {
     $captured = [];
     $this->app->extend(Installer::class, bindInstallerCapturingDbEnvUpdate($captured));
 
