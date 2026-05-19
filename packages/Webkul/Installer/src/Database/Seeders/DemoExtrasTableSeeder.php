@@ -120,22 +120,8 @@ class DemoExtrasTableSeeder extends Seeder
                     continue;
                 }
 
-                // Coerce 0/1 to true/false for columns declared as boolean.
-                // The JSON dump was produced against MySQL (where boolean is
-                // tinyint(1) and silently accepts 0/1), but PostgreSQL is
-                // strict: inserting an int into a `boolean` column throws
-                // SQLSTATE 42804 ("column ... is of type boolean but
-                // expression is of type integer") and the whole INSERT fails.
-                // That cascades into the original report (issue #874):
-                // locales is wiped by the preceding DELETE, the INSERT
-                // bombs, control returns to DemoDataInstaller which
-                // continues into the category/product seeders, leaving the
-                // user with products but no channels/families/locales.
                 $rows = $this->castBooleanColumns($table, $rows);
 
-                // DB::table()->insert() supports chunked inserts; chunk to
-                // avoid MySQL max_allowed_packet limits on large payloads
-                // (audits has 137 rows with big JSON columns).
                 foreach (array_chunk($rows, 200) as $chunk) {
                     DB::table($table)->insert($chunk);
                 }

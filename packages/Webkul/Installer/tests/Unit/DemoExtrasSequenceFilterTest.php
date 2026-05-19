@@ -23,7 +23,7 @@ class StubSequenceFilterSeeder extends DemoExtrasTableSeeder
     }
 }
 
-describe('DemoExtrasTableSeeder sequence-filter (issue #874)', function () {
+describe('DemoExtrasTableSeeder sequence-filter', function () {
     it('keeps tables whose id is a pgsql bigint/integer column', function () {
         $seeder = new StubSequenceFilterSeeder;
         $seeder->columnsByTable['locales'] = [
@@ -83,7 +83,7 @@ describe('DemoExtrasTableSeeder sequence-filter (issue #874)', function () {
     });
 });
 
-describe('demo_extras.json payload guard (issue #874)', function () {
+describe('demo_extras.json payload guard', function () {
     it('demo_extras.json contains the three join tables that have no id column (channel_locales, channel_currencies, attribute_group_mappings)', function () {
         $jsonPath = __DIR__.'/../../src/Database/Data/demo_extras.json';
         $decoded = json_decode(file_get_contents($jsonPath), true, 512, JSON_THROW_ON_ERROR);

@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
 
 /**
- * Regression for the second half of issue #874 (PostgreSQL).
- *
  * The CLI run reproduced the failure verbatim:
  */
 beforeEach(function () {

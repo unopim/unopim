@@ -2,18 +2,6 @@
 
 use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
 
-/**
- * Regression: the demo_extras.json dump stores int 0/1 for columns the
- * migrations declare as `boolean`. MySQL coerces silently; PostgreSQL
- * fails with SQLSTATE 42804 ("column ... is of type boolean but expression
- * is of type integer"), aborting the very first locales INSERT and leaving
- * the user with categories + products but no channels/families/locales/
- * currencies. Fix casts the values before INSERT (issue #874).
- *
- * Exercises the cast in isolation against a stub seeder so we don't need
- * a real DB connection — the production code path uses the same logic
- * fed by Schema::getColumns() on the live tables.
- */
 class StubBooleanCastSeeder extends DemoExtrasTableSeeder
 {
     /** @var array<string, list<string>> */
@@ -45,7 +33,7 @@ class StubBooleanCastSeeder extends DemoExtrasTableSeeder
     }
 }
 
-describe('DemoExtrasTableSeeder boolean casting (issue #874)', function () {
+describe('DemoExtrasTableSeeder boolean casting', function () {
     it('rewrites int 0/1 to PHP bools for columns the schema declares as boolean', function () {
         $seeder = new StubBooleanCastSeeder;
         $seeder->boolColumnsByTable['locales'] = ['status'];
