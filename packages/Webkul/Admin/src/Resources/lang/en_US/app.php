@@ -2148,8 +2148,9 @@ return [
                 ],
 
                 'search_by' => [
-                    'code'       => 'Search by code',
-                    'code_or_id' => 'Search by code or id',
+                    'code'        => 'Search by code',
+                    'code_or_id'  => 'Search by code or id',
+                    'sku_or_user' => 'Search by SKU or user',
                 ],
 
                 'search' => [
