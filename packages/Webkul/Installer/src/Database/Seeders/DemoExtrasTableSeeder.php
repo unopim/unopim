@@ -65,10 +65,14 @@ class DemoExtrasTableSeeder extends Seeder
 
         $driver = DB::getDriverName();
         $isMysql = in_array($driver, ['mysql', 'mariadb'], true);
+        $isPgsql = $driver === 'pgsql';
 
         try {
             if ($isMysql) {
                 DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+            } elseif ($isPgsql) {
+
+                DB::statement("SET session_replication_role = 'replica'");
             }
 
             $appliedTables = [];
@@ -141,24 +145,30 @@ class DemoExtrasTableSeeder extends Seeder
 
             if ($isMysql) {
                 DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            } elseif ($isPgsql) {
+                DB::statement("SET session_replication_role = 'origin'");
             }
 
-            DatabaseSequenceHelper::fixSequences($appliedTables);
+            $tablesWithIdSequence = array_values(array_filter(
+                $appliedTables,
+                fn (string $table): bool => $this->hasIntegerIdSequence($table)
+            ));
+
+            DatabaseSequenceHelper::fixSequences($tablesWithIdSequence);
 
             $this->command?->info('Demo extras seeded successfully ('.count($appliedTables).' tables).');
         } catch (Throwable $e) {
             if ($isMysql) {
                 DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            } elseif ($isPgsql) {
+
+                try {
+                    DB::statement("SET session_replication_role = 'origin'");
+                } catch (Throwable) {
+                }
             }
             $this->command?->error('Failed to seed demo extras: '.$e->getMessage());
 
-            // Re-throw so callers without a $command (DemoDataInstaller
-            // invoking us via app(...)->run(), UI installer endpoint, tests)
-            // surface the failure instead of silently continuing into the
-            // category / product seeders with the extras tables half-wiped.
-            // Without this re-throw, an INSERT failure on `locales` (the
-            // first table) leaves the user with products+categories but no
-            // channels/families/locales — exactly the symptom in issue #874.
             throw $e;
         }
     }
@@ -211,5 +221,49 @@ class DemoExtrasTableSeeder extends Seeder
         }
 
         return $rows;
+    }
+
+    /**
+     * True if `$table` has an `id` column whose type is an integer-family
+     * column backed by a sequence — i.e. the only shape
+     * DatabaseSequenceHelper::fixSequence() knows how to handle.
+     */
+    protected function hasIntegerIdSequence(string $table): bool
+    {
+        try {
+            $columns = $this->getTableColumns($table);
+        } catch (Throwable) {
+            return false;
+        }
+
+        foreach ($columns as $column) {
+            if (($column['name'] ?? null) !== 'id') {
+                continue;
+            }
+
+            $typeName = strtolower((string) ($column['type_name'] ?? ''));
+            $type = strtolower((string) ($column['type'] ?? ''));
+
+            return in_array($typeName, ['int', 'int2', 'int4', 'int8', 'integer', 'bigint', 'smallint', 'tinyint', 'mediumint'], true)
+                || str_starts_with($type, 'int')
+                || str_starts_with($type, 'bigint')
+                || str_starts_with($type, 'smallint')
+                || str_starts_with($type, 'tinyint')
+                || str_starts_with($type, 'mediumint');
+        }
+
+        return false;
+    }
+
+    /**
+     * Indirection so tests can stub the schema source without mocking the
+     * Schema facade (which needs a real DB connection). Production callers
+     * get the live introspection.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function getTableColumns(string $table): array
+    {
+        return Schema::getColumns($table);
     }
 }
