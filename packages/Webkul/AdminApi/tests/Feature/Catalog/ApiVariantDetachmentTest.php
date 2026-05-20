@@ -3,7 +3,6 @@
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Models\Product;
 
-
 beforeEach(function () {
     $this->headers = $this->getAuthenticationHeaders();
 });
@@ -11,7 +10,6 @@ beforeEach(function () {
 it('creates the variants supplied in the POST payload to /configrable-products', function () {
     $family = AttributeFamily::where('code', 'default')->first()
         ?? AttributeFamily::factory()->withMinimalAttributesForProductTypes()->create();
-
 
     $configurableAttributes = $family->getConfigurableAttributes();
 
