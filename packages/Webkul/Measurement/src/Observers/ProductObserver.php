@@ -93,6 +93,16 @@ class ProductObserver
 
             if ($attribute && $attribute->type === 'measurement' && is_array($value)) {
 
+                // Skip if already in full format (has amount key from helper)
+                if (isset($value['amount'])) {
+                    continue;
+                }
+
+                // Skip if already in locale/channel format (has <all_channels> structure)
+                if (isset($value['<all_channels>'])) {
+                    continue;
+                }
+
                 if (! isset($value['value']) || $value['value'] === '' || $value['value'] === null) {
                     unset($scopedValues[$attributeCode]);
 

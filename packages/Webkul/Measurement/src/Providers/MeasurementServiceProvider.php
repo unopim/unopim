@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Attribute\Services\AttributeNormalizerFactory;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
 use Webkul\Measurement\Database\Seeders\MeasurementFamilySeeder;
 use Webkul\Measurement\Helpers\Exporters\ProductExporter;
 use Webkul\Measurement\Observers\ProductObserver;
+use Webkul\Measurement\Services\Normalizers\MeasurementNormalizer;
 use Webkul\Product\Models\Product;
 
 class MeasurementServiceProvider extends ServiceProvider
@@ -52,6 +54,14 @@ class MeasurementServiceProvider extends ServiceProvider
     {
         $this->app->register(MeasurementEventServiceProvider::class);
 
+        $this->app->extend(AttributeNormalizerFactory::class, function ($factory) {
+            \Closure::bind(function () {
+                $this->normalizers['measurement'] = MeasurementNormalizer::class;
+            }, $factory, AttributeNormalizerFactory::class)();
+
+            return $factory;
+        });
+
         $this->app->bind(
             FieldProcessor::class,
             \Webkul\Measurement\Helpers\Importers\FieldProcessor::class
@@ -73,7 +83,7 @@ class MeasurementServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/menu.php', 'menu.admin');
         $this->mergeConfigFrom(
-            dirname(__DIR__) . '/Config/acl.php', 'acl'
+            dirname(__DIR__).'/Config/acl.php', 'acl'
         );
     }
 }

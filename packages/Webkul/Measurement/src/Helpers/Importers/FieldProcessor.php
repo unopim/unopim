@@ -20,21 +20,25 @@ class FieldProcessor extends CoreFieldProcessor
 
         if ($field->type === 'measurement' && ! empty($value)) {
 
+            $measurementValue = null;
+            $measurementUnit = null;
+
             if (is_string($value)) {
                 $value = str_replace('|', ',', $value);
                 [$unit, $val] = array_map('trim', explode(',', $value, 2));
-
-                return [
-                    'value' => $val,
-                    'unit'  => $unit,
-                ];
+                $measurementValue = $val;
+                $measurementUnit = $unit;
+            } elseif (is_array($value) && isset($value['value'], $value['unit'])) {
+                $measurementValue = $value['value'];
+                $measurementUnit = $value['unit'];
             }
 
-            if (is_array($value) && isset($value['value'], $value['unit'])) {
-                return [
-                    'value' => $value['value'],
-                    'unit'  => $value['unit'],
-                ];
+            if ($measurementValue !== null && $measurementUnit !== null) {
+                return $this->measurementHelper->getMeasurementValueStructure(
+                    (float) $measurementValue,
+                    $measurementUnit,
+                    $field
+                );
             }
 
             return $value;

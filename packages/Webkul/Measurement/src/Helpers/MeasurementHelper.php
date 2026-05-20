@@ -76,15 +76,11 @@ class MeasurementHelper
         $baseValue = $this->calculateBaseValue($value, $unit, $family);
 
         return [
-            '<all_channels>' => [
-                '<all_locales>' => [
-                    'unit'      => $unit,
-                    'amount'    => $value,
-                    'family'    => $attributeMeasurement->family_code,
-                    'base_data' => $baseValue,
-                    'base_unit' => $family->standard_unit,
-                ],
-            ],
+            'unit'      => $unit,
+            'amount'    => number_format((float) $value, 4, '.', ''),
+            'family'    => $attributeMeasurement->family_code,
+            'base_data' => number_format((float) $baseValue, 6, '.', ''),
+            'base_unit' => $family->standard_unit,
         ];
     }
 }

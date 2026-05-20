@@ -52,7 +52,7 @@ return [
         'standard_unit'   => 'Standard Unit',
         'unit_count'      => 'Number Of Units',
         'standard_unit'   => 'Standard Unit',
-        'is_standard'     => 'Mark Standard Units',
+        'is_standard'     => 'Mark Standard Unit',
     ],
 
     'messages' => [
