@@ -20,8 +20,6 @@ const {
 } = require('../../../utils/api/response-validator');
 const schemas = require('../../../schemas');
 
-// Refreshed in beforeEach after the worker-scoped `apiToken` fixture has
-// bootstrapped credentials (otherwise this is empty on first CI run).
 let creds = getCredentials();
 
 test.describe('OAuth Authentication API', () => {
