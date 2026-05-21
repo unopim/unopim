@@ -58,7 +58,8 @@ async function authenticate(request, { forceRefresh = false } = {}) {
     try {
       await ensureApiCredentials({
         baseUrl: (process.env.API_BASE_URL || process.env.BASE_URL || 'http://127.0.0.1:8000').replace(/\/$/, ''),
-        adminEmail: process.env.ADMIN_EMAIL,
+        // CI sets ADMIN_USERNAME (matches existing UI workflow); local devs may set ADMIN_EMAIL.
+        adminEmail: process.env.ADMIN_EMAIL || process.env.ADMIN_USERNAME,
         adminPassword: process.env.ADMIN_PASSWORD,
         integrationName: process.env.API_INTEGRATION_NAME,
       });

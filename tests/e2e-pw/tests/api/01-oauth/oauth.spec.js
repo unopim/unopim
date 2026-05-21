@@ -20,12 +20,14 @@ const {
 } = require('../../../utils/api/response-validator');
 const schemas = require('../../../schemas');
 
-const creds = getCredentials();
-const credsReady = Boolean(creds.client_id && creds.client_secret);
+// Refreshed in beforeEach after the worker-scoped `apiToken` fixture has
+// bootstrapped credentials (otherwise this is empty on first CI run).
+let creds = getCredentials();
 
 test.describe('OAuth Authentication API', () => {
-  test.beforeEach(() => {
-    if (!credsReady) test.skip(true, 'API credentials not configured — set .api-config.json or env vars.');
+  test.beforeEach(async ({ apiToken }) => {
+    if (!apiToken) test.skip(true, 'API credentials not configured — bootstrap failed.');
+    creds = getCredentials();
   });
 
   // ── Positive ─────────────────────────────────────────────────────────────
