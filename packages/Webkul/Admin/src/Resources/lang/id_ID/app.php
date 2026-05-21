@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Tanggal Dibuat',
                     'product-type' => 'Tipe Produk',
                 ],
+                'more'         => 'Lainnya',
                 'more-actions' => 'Tindakan Lainnya',
             ],
             'bulk-edit' => [

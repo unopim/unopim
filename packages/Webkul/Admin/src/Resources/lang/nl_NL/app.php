@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Aanmaakdatum',
                     'product-type' => 'Producttype',
                 ],
+                'more'         => 'Meer',
                 'more-actions' => 'Meer acties',
             ],
             'bulk-edit' => [

@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Ngày tạo',
                     'product-type' => 'Loại sản phẩm',
                 ],
+                'more'         => 'Thêm',
                 'more-actions' => 'Hành động khác',
             ],
             'bulk-edit' => [

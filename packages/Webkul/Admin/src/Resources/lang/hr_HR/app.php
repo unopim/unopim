@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Datum izrade',
                     'product-type' => 'Vrsta proizvoda',
                 ],
+                'more'         => 'Više',
                 'more-actions' => 'Više radnji',
             ],
             'bulk-edit' => [

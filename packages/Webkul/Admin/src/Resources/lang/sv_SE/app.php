@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Skapad datum',
                     'product-type' => 'Produkttyp',
                 ],
+                'more'         => 'Fler',
                 'more-actions' => 'Fler åtgärder',
             ],
             'bulk-edit' => [

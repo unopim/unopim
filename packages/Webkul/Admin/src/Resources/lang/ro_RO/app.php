@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Data Creării',
                     'product-type' => 'Tip Produs',
                 ],
+                'more'         => 'Mai multe',
                 'more-actions' => 'Mai multe acțiuni',
             ],
             'bulk-edit' => [

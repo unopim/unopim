@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Luotu',
                     'product-type' => 'Tuotetyyppi',
                 ],
+                'more'         => 'Lisää',
                 'more-actions' => 'Lisää toimintoja',
             ],
             'bulk-edit' => [

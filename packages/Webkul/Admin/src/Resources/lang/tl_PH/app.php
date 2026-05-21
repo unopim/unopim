@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Petsa ng Pagkakalikha',
                     'product-type' => 'Uri ng Produkto',
                 ],
+                'more'         => 'Higit Pa',
                 'more-actions' => 'Higit Pang Aksyon',
             ],
             'bulk-edit' => [

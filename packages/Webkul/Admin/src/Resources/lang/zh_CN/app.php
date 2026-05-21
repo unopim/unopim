@@ -354,6 +354,7 @@ return [
                     'created-at'   => '创建日期',
                     'product-type' => '产品类型',
                 ],
+                'more'         => '更多',
                 'more-actions' => '更多操作',
             ],
             'bulk-edit' => [

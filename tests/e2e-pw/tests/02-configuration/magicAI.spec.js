@@ -8,19 +8,6 @@ const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platform';
 const MAGIC_AI_PROMPT_URL = '/admin/magic-ai/prompt';
 const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/system-prompt';
 
-/**
- * Helper: Ensure Magic AI text-generation is enabled in the global config.
- *
- * The Magic AI WYSIWYG button is gated by general.magic_ai.settings.enabled
- * (see tinymce/index.blade.php). Section 7 tests depend on the button being
- * visible — without this guarantee they time out.
- *
- * Why we POST directly instead of using the UI form: Vue's :checked binding
- * on the sr-only boolean toggle is applied async after module ESM load, so
- * any click-then-save sequence races the binding and can either invert the
- * desired state or submit a form without the field at all. Posting the full
- * settings payload with explicit enabled=1 sidesteps the race entirely.
- */
 async function ensureMagicAITextEnabled(adminPage) {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
@@ -56,6 +43,54 @@ async function ensureMagicAITextEnabled(adminPage) {
   });
 
   expect(result, `Magic AI config save failed: ${JSON.stringify(result)}`).toMatchObject({ ok: true });
+
+  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+  await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
+}
+
+/**
+ * Helper: Ensure Magic AI translation is enabled in the global config.
+ *
+ * The "More Actions" dropdown on the product edit page is gated by
+ * general.magic_ai.translation.enabled (its only menu item is Translate).
+ * Without this guarantee, the More button is intentionally hidden and the
+ * Section 7 translate tests can't find it.
+ *
+ * Uses the same direct-POST pattern as ensureMagicAITextEnabled to bypass
+ * the Vue toggle render race.
+ */
+async function ensureMagicAITranslationEnabled(adminPage) {
+  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+
+  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][translation][enabled]"]';
+  await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
+
+  const result = await adminPage.evaluate(async () => {
+    const cb = document.querySelector('input[type="checkbox"][name="general[magic_ai][translation][enabled]"]');
+    if (!cb) return { ok: false, reason: 'no-cb' };
+    const form = cb.closest('form');
+    if (!form) return { ok: false, reason: 'no-form' };
+
+    cb.checked = true;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
+
+    const fd = new FormData(form);
+    const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
+    const action = form.getAttribute('action') || window.location.pathname;
+    const res = await fetch(action || window.location.pathname, {
+      method:      'POST',
+      credentials: 'same-origin',
+      headers: {
+        'X-XSRF-TOKEN': decodeURIComponent(xsrf),
+        Accept:         'text/html,*/*',
+      },
+      body:     fd,
+      redirect: 'follow',
+    });
+    return { ok: res.ok, status: res.status };
+  });
+
+  expect(result, `Magic AI translation config save failed: ${JSON.stringify(result)}`).toMatchObject({ ok: true });
 
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
   await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
@@ -810,6 +845,8 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
 });
 
 test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }) => {
+  await ensureMagicAITranslationEnabled(adminPage);
+
   const uid = generateUid();
   const sku = `magicai-more-${uid}`;
 
@@ -844,8 +881,65 @@ test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }
   await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
+test('7.5b - More Actions button is hidden when AI translation is disabled', async ({ adminPage }) => {
+  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][translation][enabled]"]';
+  await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
+
+  await adminPage.evaluate(async () => {
+    const cb = document.querySelector('input[type="checkbox"][name="general[magic_ai][translation][enabled]"]');
+    if (!cb) return;
+    const form = cb.closest('form');
+    if (!form) return;
+    cb.checked = false;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
+    const fd = new FormData(form);
+    fd.set('general[magic_ai][translation][enabled]', '0');
+    const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
+    const action = form.getAttribute('action') || window.location.pathname;
+    await fetch(action || window.location.pathname, {
+      method:      'POST',
+      credentials: 'same-origin',
+      headers: {
+        'X-XSRF-TOKEN': decodeURIComponent(xsrf),
+        Accept:         'text/html,*/*',
+      },
+      body:     fd,
+      redirect: 'follow',
+    });
+  });
+
+  const uid = generateUid();
+  const sku = `magicai-nomore-${uid}`;
+
+  // Create product
+  await navigateTo(adminPage, 'products');
+  await adminPage.getByRole('button', { name: 'Create Product' }).click();
+  await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
+  await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
+  await adminPage.getByRole('option', { name: 'Simple' }).first().click();
+  await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
+  await adminPage.getByRole('option', { name: 'Default' }).first().click();
+  await adminPage.locator('input[name="sku"]').fill(sku);
+  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
+  await adminPage.waitForLoadState('networkidle');
+
+  await expect(adminPage.locator('[title="More Actions"]')).toHaveCount(0);
+
+  await navigateTo(adminPage, 'products');
+  await searchInDataGrid(adminPage, sku);
+  const row = adminPage.locator('div', { hasText: sku });
+  await row.locator('span[title="Delete"]').first().click();
+  await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
+
+  await ensureMagicAITranslationEnabled(adminPage);
+});
+
 test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   test.setTimeout(30000);
+  await ensureMagicAITranslationEnabled(adminPage);
 
   const uid = generateUid();
   const sku = `magicai-trans-${uid}`;
@@ -868,12 +962,19 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   await expect(moreBtn).toBeVisible({ timeout: 20000 });
   await moreBtn.click();
 
-  const translateOption = adminPage.locator('span[title="Translate"]');
-  if (await translateOption.isVisible().catch(() => false)) {
-    await translateOption.click();
-    await expect(adminPage.locator('#app').getByText('Step 1: Select Source Channel, Language and Attributes')).toBeVisible();
-    await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
-  }
+  // Translation is force-enabled via ensureMagicAITranslationEnabled above,
+  // so the Translate option must be present — wait for it instead of skipping
+  // silently if it isn't (the previous if-guard hid real failures).
+  const translateOption = adminPage.locator('span[title="Translate"]').first();
+  await expect(translateOption).toBeVisible({ timeout: 10000 });
+  await translateOption.click();
+
+  // Redesigned modal renders step-indicator circles (1, 2) with "Select Source"
+  // / "Select Target" labels and a "Source content" card — verify those plus
+  // the Step 1 "Next" button.
+  await expect(adminPage.locator('#app').getByRole('heading', { name: /Source content/i })).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText('Select Source', { exact: true })).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
 
   // Cleanup: delete the product
   await navigateTo(adminPage, 'products');
@@ -887,6 +988,7 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
 test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — translation requires configured platform');
   test.setTimeout(120000);
+  await ensureMagicAITranslationEnabled(adminPage);
 
   const uid = generateUid();
   const sku = `magicai-hindi-${uid}`;

@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Үүсгэсэн огноо',
                     'product-type' => 'Бүтээгдэхүүний төрөл',
                 ],
+                'more'         => 'Нэмэлт',
                 'more-actions' => 'Нэмэлт үйлдлүүд',
             ],
             'bulk-edit' => [

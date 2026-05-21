@@ -354,6 +354,7 @@ return [
                     'created-at'   => 'Data di creazione',
                     'product-type' => 'Tipo di prodotto',
                 ],
+                'more'         => 'Altro',
                 'more-actions' => 'Altre azioni',
             ],
             'bulk-edit' => [

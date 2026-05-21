@@ -354,6 +354,7 @@ return [
                     'created-at'   => '생성일',
                     'product-type' => '제품 유형',
                 ],
+                'more'         => '더보기',
                 'more-actions' => '추가 작업',
             ],
             'bulk-edit' => [
