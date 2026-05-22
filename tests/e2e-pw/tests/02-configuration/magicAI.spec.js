@@ -1068,7 +1068,9 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
   }
 
   await translateOption.click();
-  await expect(adminPage.locator('#app').getByText('Step 1')).toBeVisible({ timeout: 10000 });
+  // Modal renders step indicators as circles with "Select Source" / "Select Target"
+  // labels; the literal "Step 1" text was removed in #372.
+  await expect(adminPage.locator('#app').getByText('Select Source').first()).toBeVisible({ timeout: 10000 });
 
   // Step 4: Select Hindi as target language and proceed
   const nextBtn = adminPage.getByRole('button', { name: 'Next' });
