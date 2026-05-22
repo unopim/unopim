@@ -103,7 +103,17 @@ class AdminServiceProvider extends ServiceProvider
             $tree->items = core()->sortItems($tree->items);
             $tree->items = $tree->removeUnauthorizedUrls();
 
+            $landingUrl = null;
+
+            foreach ($tree->items as $item) {
+                if (! empty($item['url'])) {
+                    $landingUrl = $item['url'];
+                    break;
+                }
+            }
+
             $view->with('menu', $tree);
+            $view->with('adminLandingUrl', $landingUrl ?? route('admin.session.create'));
         });
 
         view()->composer([
