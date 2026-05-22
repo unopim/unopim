@@ -57,10 +57,6 @@ test.describe('OAuth Authentication API', () => {
     expect(response.ok()).toBe(true);
     const body = await response.json();
     expectMatchesSchema(schemas.oauthToken, body, 'oauthToken');
-    // OAuth password-grant runs bcrypt password verification, which is
-    // intentionally CPU-bound and slows further under parallel-worker
-    // contention. Allow the upload-tier budget (15s) so the assertion stays
-    // meaningful at default workers=5 without false-positiving on cold runs.
     expect(durationMs).toBeLessThanOrEqual(RESPONSE_TIME.upload);
     await ctx.dispose();
   });
@@ -177,9 +173,6 @@ test.describe('OAuth Authentication API', () => {
   });
 
   test('1.14 - Empty Bearer value → 4xx', async ({ playwright }) => {
-    // UnoPim's middleware can't parse an empty Bearer and returns 404 on this
-    // env (the route falls through). Any 4xx is acceptable — we only need to
-    // prove the server didn't silently accept the empty token.
     const ctx = await playwright.request.newContext({ baseURL: REST_ROOT });
     const response = await ctx.get('/locales', {
       headers: { Authorization: 'Bearer ', Accept: 'application/json' },
@@ -207,8 +200,6 @@ test.describe('OAuth Authentication API', () => {
       clientId: creds.client_id, clientSecret: creds.client_secret,
       username: creds.username, password: creds.password,
     });
-    // See 1.2 — bcrypt password verification + worker contention requires the
-    // upload-tier budget, not the write-tier.
     expect(Date.now() - startedAt).toBeLessThanOrEqual(RESPONSE_TIME.upload);
     await ctx.dispose();
   });
