@@ -7,6 +7,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Webkul\Core\Http\Middleware\CheckForMaintenanceMode;
 use Webkul\Core\Http\Middleware\NoCacheMiddleware;
 use Webkul\Core\Http\Middleware\SecureHeaders;
@@ -69,6 +70,20 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             exit($e->getMessage());
+        });
+
+        $exceptions->render(function (MethodNotAllowedHttpException $e, $request) {
+            $errorCode = 405;
+            $headers = $e->getHeaders();
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'message'   => trans('admin::app.errors.'.$errorCode.'.title'),
+                    'errorCode' => $errorCode,
+                ], $errorCode, $headers);
+            }
+
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode], $errorCode, $headers);
         });
 
         $exceptions->dontFlash(['current_password', 'password', 'password_confirmation']);
