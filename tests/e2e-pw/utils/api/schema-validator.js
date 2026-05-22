@@ -5,8 +5,7 @@
  * gracefully degrades to a small built-in recursive validator so the suite
  * never fails to *load* on a host that hasn't installed ajv yet. The built-in
  * checker covers the subset of JSON Schema actually used by these contracts:
- * `type`, `required`, `properties`, `items`, `enum`, `additionalProperties`,
- * `minLength`, `minimum`, `format` (limited).
+ * `type`, `required`, `properties`, `items`, `enum`, `minLength`, `minimum`.
  *
  * `validateSchema(schema, data)` throws a readable assertion error on failure
  * — pair it with `expect(() => validateSchema(...)).not.toThrow()` if you
@@ -27,6 +26,17 @@ try {
 
 const ajvInstance = Ajv ? new Ajv({ allErrors: true, strict: false }) : null;
 if (ajvInstance && addFormats) addFormats(ajvInstance);
+
+const compiledCache = new WeakMap();
+
+function getCompiledValidator(schema) {
+  let fn = compiledCache.get(schema);
+  if (!fn) {
+    fn = ajvInstance.compile(schema);
+    compiledCache.set(schema, fn);
+  }
+  return fn;
+}
 
 /** ── built-in fallback ──────────────────────────────────────────────────── */
 function checkType(value, type) {
@@ -93,7 +103,7 @@ function validateBuiltIn(schema, data, pathPrefix = '$') {
  */
 function validate(schema, data) {
   if (ajvInstance) {
-    const fn = ajvInstance.compile(schema);
+    const fn = getCompiledValidator(schema);
     const valid = fn(data);
     return {
       valid: !!valid,

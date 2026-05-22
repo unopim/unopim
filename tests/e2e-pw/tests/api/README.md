@@ -121,7 +121,10 @@ This means:
 - You can filter to any single test by title (`-g "12.5"`) and it will pass.
 - Failures are localised — one failing test never cascades.
 
-`playwright.config.js` already sets `fullyParallel: true`. Default `workers: 5`.
+`playwright.config.js` sets `fullyParallel: false` (files run in parallel across
+workers, tests within a file run sequentially). Workers are computed
+dynamically: 1 worker per shard in CI (since `artisan serve` is single-threaded
+and shards already run in parallel), or `max(2, cpus - 1)` locally.
 
 ## What every spec covers
 

@@ -7,7 +7,7 @@
  *
  * Precedence (high → low):
  *   1. Explicit env var (API_BASE_URL, API_CLIENT_ID, ...)
- *   2. `.api-config.json` at repo root (UI-generated integration credentials)
+ *   2. `tests/e2e-pw/.api-config.json` (UI-generated integration credentials)
  *   3. Hard-coded fallback (admin@example.com / admin123)
  */
 'use strict';
