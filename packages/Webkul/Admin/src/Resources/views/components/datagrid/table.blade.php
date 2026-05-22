@@ -178,7 +178,7 @@
                                             v-text="!action.icon ? action.title : ''"
                                             v-for="action in record.actions"
                                             :title="action.title ?? ''"
-                                            @click="$parent.performAction(action)"
+                                            @click="$parent.performAction(action, record)"
                                         >
                                         </span>
                                     </p>

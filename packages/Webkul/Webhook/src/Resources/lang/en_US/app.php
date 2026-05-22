@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -43,7 +43,11 @@ return [
                         'label' => 'Active Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook URL',
+                        'label'             => 'Webhook URL',
+                        'required'          => 'A Webhook URL is required when the webhook is active.',
+                        'scheme'            => 'The Webhook URL must start with http:// or https://.',
+                        'connection_failed' => 'The Webhook URL could not be reached. Please check the URL.',
+                        'unreachable'       => 'The Webhook URL is not valid (HTTP :code).',
                     ],
                     'success'    => 'Webhook settings saved successfully',
                     'title'      => 'Webhook Settings',
@@ -54,14 +58,16 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'Id',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Date/Time',
-                        'user'       => 'User',
-                        'status'     => 'Status',
-                        'success'    => 'Success',
-                        'failed'     => 'Failed',
-                        'delete'     => 'Delete',
+                        'id'               => 'Id',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Date/Time',
+                        'user'             => 'User',
+                        'status'           => 'Status',
+                        'success'          => 'Success',
+                        'failed'           => 'Failed',
+                        'server_error'     => 'Server Error',
+                        'timeout_or_error' => 'Timeout/Error',
+                        'delete'           => 'Delete',
                     ],
                     'title'          => 'Webhook Logs',
                     'delete-success' => 'Webhook logs deleted successfully',
