@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Tanggal Dibuat',
                     'product-type' => 'Tipe Produk',
                 ],
-                'more'         => 'Lainnya',
                 'more-actions' => 'Tindakan Lainnya',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Tidak ada catatan yang dipilih.',
                 'must-select-a-mass-action-option' => 'Anda harus memilih tindakan massa \'s option.',
                 'must-select-a-mass-action'        => 'Anda harus memilih tindakan massa.',
+                'link-copied'                      => 'Tautan disalin ke papan klip.',
+                'copy-failed'                      => 'Penyalinan gagal. Silakan salin tautan secara manual.',
             ],
             'toolbar' => [
                 'length-of'    => ':length dari',

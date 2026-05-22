@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Oprettelsesdato',
                     'product-type' => 'Produkttype',
                 ],
-                'more'         => 'Flere',
                 'more-actions' => 'Flere handlinger',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Ingen poster er valgt.',
                 'must-select-a-mass-action-option' => 'Du skal vælge en massehandling.',
                 'must-select-a-mass-action'        => 'Du skal vælge en massehandling.',
+                'link-copied'                      => 'Linket er kopieret til udklipsholderen.',
+                'copy-failed'                      => 'Kopiering mislykkedes. Kopier venligst linket manuelt.',
             ],
             'toolbar' => [
                 'length-of'    => ':length af',

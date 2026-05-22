@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Skapad datum',
                     'product-type' => 'Produkttyp',
                 ],
-                'more'         => 'Fler',
                 'more-actions' => 'Fler åtgärder',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Inga poster har valts.',
                 'must-select-a-mass-action-option' => 'Du måste välja ett massaktionsval.',
                 'must-select-a-mass-action'        => 'Du måste välja en massaktion.',
+                'link-copied'                      => 'Länken har kopierats till urklipp.',
+                'copy-failed'                      => 'Kopiering misslyckades. Kopiera länken manuellt.',
             ],
             'toolbar' => [
                 'length-of'    => ':length av',

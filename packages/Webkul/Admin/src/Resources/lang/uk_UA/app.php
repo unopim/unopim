@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Дата створення',
                     'product-type' => 'Тип продукту',
                 ],
-                'more'         => 'Більше',
                 'more-actions' => 'Більше дій',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Не вибрано жодного запису.',
                 'must-select-a-mass-action-option' => 'Ви повинні вибрати опцію масової дії.',
                 'must-select-a-mass-action'        => 'Ви повинні вибрати масову дію.',
+                'link-copied'                      => 'Посилання скопійовано в буфер обміну.',
+                'copy-failed'                      => 'Не вдалося скопіювати. Будь ласка, скопіюйте посилання вручну.',
             ],
             'toolbar' => [
                 'length-of'    => ':length з',

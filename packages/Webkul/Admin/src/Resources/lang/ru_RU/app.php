@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Дата создания',
                     'product-type' => 'Тип продукта',
                 ],
-                'more'         => 'Ещё',
                 'more-actions' => 'Дополнительные действия',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Записи не были выбраны.',
                 'must-select-a-mass-action-option' => 'Вы должны выбрать массовое действие \'s option.',
                 'must-select-a-mass-action'        => 'Вы должны выбрать массовое действие.',
+                'link-copied'                      => 'Ссылка скопирована в буфер обмена.',
+                'copy-failed'                      => 'Не удалось скопировать. Пожалуйста, скопируйте ссылку вручную.',
             ],
             'toolbar' => [
                 'length-of'    => ':length из',

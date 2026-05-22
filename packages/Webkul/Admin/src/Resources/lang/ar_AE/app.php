@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'تاريخ الإنشاء',
                     'product-type' => 'نوع المنتج',
                 ],
-                'more'         => 'المزيد',
                 'more-actions' => 'إجراءات إضافية',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'لم يتم اختيار سجلات.',
                 'must-select-a-mass-action-option' => 'يجب عليك تحديد خيار لإجراء جماعي.',
                 'must-select-a-mass-action'        => 'يجب عليك تحديد إجراء جماعي.',
+                'link-copied'                      => 'تم نسخ الرابط إلى الحافظة.',
+                'copy-failed'                      => 'فشل النسخ. يرجى نسخ الرابط يدويًا.',
             ],
             'toolbar' => [
                 'length-of'    => ':length من',

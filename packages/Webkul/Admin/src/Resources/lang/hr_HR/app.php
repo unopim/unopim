@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Datum izrade',
                     'product-type' => 'Vrsta proizvoda',
                 ],
-                'more'         => 'Više',
                 'more-actions' => 'Više radnji',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Nijedna stavka nije odabrana.',
                 'must-select-a-mass-action-option' => 'Morate odabrati opciju masovne akcije.',
                 'must-select-a-mass-action'        => 'Morate odabrati masovnu akciju.',
+                'link-copied'                      => 'Veza je kopirana u međuspremnik.',
+                'copy-failed'                      => 'Kopiranje nije uspjelo. Molimo kopirajte vezu ručno.',
             ],
             'toolbar' => [
                 'length-of'    => ':length od',

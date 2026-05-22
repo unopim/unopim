@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Luotu',
                     'product-type' => 'Tuotetyyppi',
                 ],
-                'more'         => 'Lisää',
                 'more-actions' => 'Lisää toimintoja',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Mikään tallenne ei ole valittuna.',
                 'must-select-a-mass-action-option' => 'Sinun täytyy valita massatoiminto.',
                 'must-select-a-mass-action'        => 'Sinun täytyy valita massatoiminto.',
+                'link-copied'                      => 'Linkki kopioitu leikepöydälle.',
+                'copy-failed'                      => 'Kopiointi epäonnistui. Kopioi linkki manuaalisesti.',
             ],
             'toolbar' => [
                 'length-of'    => ':length of',

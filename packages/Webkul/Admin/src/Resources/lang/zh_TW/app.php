@@ -354,7 +354,6 @@ return [
                     'created-at'   => '創建日期',
                     'product-type' => '產品類型',
                 ],
-                'more'         => '更多',
                 'more-actions' => '更多操作',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => '未選擇任何記錄。',
                 'must-select-a-mass-action-option' => '必須選擇一個批量操作選項。',
                 'must-select-a-mass-action'        => '必須選擇一個批量操作。',
+                'link-copied'                      => '連結已複製到剪貼簿。',
+                'copy-failed'                      => '複製失敗。請手動複製連結。',
             ],
             'toolbar' => [
                 'length-of'    => ':length 的',

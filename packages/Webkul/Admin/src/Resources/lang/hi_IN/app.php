@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'निर्माण तिथि',
                     'product-type' => 'उत्पाद प्रकार',
                 ],
-                'more'         => 'अधिक',
                 'more-actions' => 'अधिक कार्रवाई',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'कोई रिकॉर्ड नहीं चुना गया है।',
                 'must-select-a-mass-action-option' => 'आपको एक मास एक्शन का चयन करना होगा \ _\'s option.',
                 'must-select-a-mass-action'        => 'आपको एक मास एक्शन का चयन करना होगा।',
+                'link-copied'                      => 'लिंक क्लिपबोर्ड पर कॉपी किया गया।',
+                'copy-failed'                      => 'कॉपी विफल। कृपया लिंक मैन्युअल रूप से कॉपी करें।',
             ],
             'toolbar' => [
                 'length-of'    => ':length का',

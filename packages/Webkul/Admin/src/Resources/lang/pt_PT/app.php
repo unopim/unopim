@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Data de Criação',
                     'product-type' => 'Tipo de Produto',
                 ],
-                'more'         => 'Mais',
                 'more-actions' => 'Mais ações',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Nenhum registro selecionado.',
                 'must-select-a-mass-action-option' => 'Você deve selecionar uma opção de ação em massa.',
                 'must-select-a-mass-action'        => 'Você deve selecionar uma ação em massa.',
+                'link-copied'                      => 'Link copiado para a área de transferência.',
+                'copy-failed'                      => 'Falha na cópia. Por favor, copie o link manualmente.',
             ],
             'toolbar' => [
                 'length-of'    => ':length de',

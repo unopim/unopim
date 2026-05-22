@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Aanmaakdatum',
                     'product-type' => 'Producttype',
                 ],
-                'more'         => 'Meer',
                 'more-actions' => 'Meer acties',
             ],
             'bulk-edit' => [
@@ -1994,6 +1993,8 @@ return [
                 'no-records-selected'              => 'Er zijn geen records geselecteerd.',
                 'must-select-a-mass-action-option' => 'Je moet een optie voor de bulkactie selecteren.',
                 'must-select-a-mass-action'        => 'Je moet een bulkactie selecteren.',
+                'link-copied'                      => 'Link gekopieerd naar het klembord.',
+                'copy-failed'                      => 'Kopiëren mislukt. Kopieer de link handmatig.',
             ],
             'toolbar' => [
                 'length-of'    => ':length van',

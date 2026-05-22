@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Petsa ng Pagkakalikha',
                     'product-type' => 'Uri ng Produkto',
                 ],
-                'more'         => 'Higit Pa',
                 'more-actions' => 'Higit Pang Aksyon',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Walang napiling tala.',
                 'must-select-a-mass-action-option' => 'Dapat kang pumili ng opsyon para sa mass action.',
                 'must-select-a-mass-action'        => 'Dapat kang pumili ng mass action.',
+                'link-copied'                      => 'Nakopya na ang link sa clipboard.',
+                'copy-failed'                      => 'Nabigo ang pagkopya. Mangyaring kopyahin ang link nang manu-mano.',
             ],
             'toolbar' => [
                 'length-of'    => ':length ng',

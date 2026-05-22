@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Үүсгэсэн огноо',
                     'product-type' => 'Бүтээгдэхүүний төрөл',
                 ],
-                'more'         => 'Нэмэлт',
                 'more-actions' => 'Нэмэлт үйлдлүүд',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Бичлэгийг сонгоогүй байна.',
                 'must-select-a-mass-action-option' => 'Та массын үйлдлийг сонгох ёстой \'s option.',
                 'must-select-a-mass-action'        => 'Та массын үйлдлийг сонгох ёстой.',
+                'link-copied'                      => 'Холбоосыг түр санах ой руу хууллаа.',
+                'copy-failed'                      => 'Хуулж чадсангүй. Холбоосыг гараар хуулна уу.',
             ],
             'toolbar' => [
                 'length-of'    => ':length -ын',

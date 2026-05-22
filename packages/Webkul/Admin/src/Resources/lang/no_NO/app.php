@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Opprettet',
                     'product-type' => 'Produkttype',
                 ],
-                'more'         => 'Flere',
                 'more-actions' => 'Flere handlinger',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Ingen oppføringer valgt.',
                 'must-select-a-mass-action-option' => 'Du må velge et mass action-alternativ.',
                 'must-select-a-mass-action'        => 'Du må velge en mass action.',
+                'link-copied'                      => 'Lenken er kopiert til utklippstavlen.',
+                'copy-failed'                      => 'Kopiering mislyktes. Vennligst kopier lenken manuelt.',
             ],
             'toolbar' => [
                 'length-of'    => ':length av',

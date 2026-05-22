@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Data de creació',
                     'product-type' => 'Tipus de producte',
                 ],
-                'more'         => 'Més',
                 'more-actions' => 'Més accions',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'No se han seleccionado registros.',
                 'must-select-a-mass-action-option' => 'Debes seleccionar una opción de acción masiva.',
                 'must-select-a-mass-action'        => 'Debes seleccionar una acción masiva.',
+                'link-copied'                      => 'Enllaç copiat al porta-retalls.',
+                'copy-failed'                      => 'La còpia ha fallat. Si us plau, copia l\'enllaç manualment.',
             ],
             'toolbar' => [
                 'length-of'    => ':length de',

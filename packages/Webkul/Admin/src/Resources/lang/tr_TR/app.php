@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Oluşturulma Tarihi',
                     'product-type' => 'Ürün Türü',
                 ],
-                'more'         => 'Daha Fazla',
                 'more-actions' => 'Daha Fazla İşlem',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Seçili kayıt yok.',
                 'must-select-a-mass-action-option' => 'Bir toplu eylem seçmelisiniz.',
                 'must-select-a-mass-action'        => 'Bir toplu eylem seçmelisiniz.',
+                'link-copied'                      => 'Bağlantı panoya kopyalandı.',
+                'copy-failed'                      => 'Kopyalama başarısız oldu. Lütfen bağlantıyı manuel olarak kopyalayın.',
             ],
             'toolbar' => [
                 'length-of'    => ':length içinden',

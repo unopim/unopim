@@ -354,7 +354,6 @@ return [
                     'created-at'   => '作成日',
                     'product-type' => '製品タイプ',
                 ],
-                'more'         => 'その他',
                 'more-actions' => 'その他の操作',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'レコードが選択されていません。',
                 'must-select-a-mass-action-option' => '一括アクションのオプションを選択する必要があります。',
                 'must-select-a-mass-action'        => '一括アクションを選択する必要があります。',
+                'link-copied'                      => 'リンクをクリップボードにコピーしました。',
+                'copy-failed'                      => 'コピーに失敗しました。手動でリンクをコピーしてください。',
             ],
             'toolbar' => [
                 'length-of'    => ':length の',

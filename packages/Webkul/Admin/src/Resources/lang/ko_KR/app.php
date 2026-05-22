@@ -354,7 +354,6 @@ return [
                     'created-at'   => '생성일',
                     'product-type' => '제품 유형',
                 ],
-                'more'         => '더보기',
                 'more-actions' => '추가 작업',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => '선택된 기록이 없습니다.',
                 'must-select-a-mass-action-option' => '대량 작업 옵션을 선택해야 합니다.',
                 'must-select-a-mass-action'        => '대량 작업을 선택해야 합니다.',
+                'link-copied'                      => '링크가 클립보드에 복사되었습니다.',
+                'copy-failed'                      => '복사 실패. 수동으로 링크를 복사해 주세요.',
             ],
             'toolbar' => [
                 'length-of'    => ':length',

@@ -354,7 +354,6 @@ return [
                     'created-at'   => '创建日期',
                     'product-type' => '产品类型',
                 ],
-                'more'         => '更多',
                 'more-actions' => '更多操作',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => '没有选择记录。',
                 'must-select-a-mass-action-option' => '您必须选择质量行动\'s option.',
                 'must-select-a-mass-action'        => '您必须选择质量行动。',
+                'link-copied'                      => '链接已复制到剪贴板。',
+                'copy-failed'                      => '复制失败。请手动复制链接。',
             ],
             'toolbar' => [
                 'length-of'    => ':length 的',

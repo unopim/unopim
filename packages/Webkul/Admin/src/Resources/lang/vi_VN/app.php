@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Ngày tạo',
                     'product-type' => 'Loại sản phẩm',
                 ],
-                'more'         => 'Thêm',
                 'more-actions' => 'Hành động khác',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Không có bản ghi nào được chọn.',
                 'must-select-a-mass-action-option' => 'Bạn phải chọn một tùy chọn cho hành động hàng loạt.',
                 'must-select-a-mass-action'        => 'Bạn phải chọn một hành động hàng loạt.',
+                'link-copied'                      => 'Đã sao chép liên kết vào bộ nhớ tạm.',
+                'copy-failed'                      => 'Sao chép thất bại. Vui lòng sao chép liên kết theo cách thủ công.',
             ],
             'toolbar' => [
                 'length-of'    => ':length của',

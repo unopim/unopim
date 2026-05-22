@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Date Created',
                     'product-type' => 'Product Type',
                 ],
-                'more'         => 'More',
                 'more-actions' => 'More Actions',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'No records have been selected.',
                 'must-select-a-mass-action-option' => 'You must select a mass action\'s option.',
                 'must-select-a-mass-action'        => 'You must select a mass action.',
+                'link-copied'                      => 'Link copied to clipboard.',
+                'copy-failed'                      => 'Copy failed. Please copy the link manually.',
             ],
             'toolbar' => [
                 'length-of'    => ':length of',

@@ -354,7 +354,6 @@ return [
                     'created-at'   => 'Data Creării',
                     'product-type' => 'Tip Produs',
                 ],
-                'more'         => 'Mai multe',
                 'more-actions' => 'Mai multe acțiuni',
             ],
             'bulk-edit' => [
@@ -1996,6 +1995,8 @@ return [
                 'no-records-selected'              => 'Nu au fost selectate înregistrări.',
                 'must-select-a-mass-action-option' => 'Trebuie să selectați o opțiune de acțiune în masă.',
                 'must-select-a-mass-action'        => 'Trebuie să selectați o acțiune în masă.',
+                'link-copied'                      => 'Linkul a fost copiat în clipboard.',
+                'copy-failed'                      => 'Copierea a eșuat. Vă rugăm să copiați linkul manual.',
             ],
             'toolbar' => [
                 'length-of'    => ':length de',
