@@ -1,5 +1,10 @@
 # v2.0.x
 
+## v2.0.1 - 2026-05-25
+
+### Security
+- Patched an authorization gap on several admin write-verb routes (`*.store` / `*.update`) — they were missing from `packages/Webkul/Admin/src/Config/acl.php`, so the `Bouncer` middleware did not enforce a permission check. Mapped each missing route to the same ACL key as its sibling GET form (`.create` / `.edit`) and added regression coverage. Also corrected the response status code from `401` to `403` on permission-denied responses (user is authenticated, just unauthorized).
+
 ## v2.0.0
 
 ### Features
