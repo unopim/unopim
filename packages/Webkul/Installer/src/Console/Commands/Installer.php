@@ -344,9 +344,9 @@ class Installer extends Command
         }
 
         if (
-            ! $databaseDetails['DB_DATABASE']
-            || ! $databaseDetails['DB_USERNAME']
-            || ! $databaseDetails['DB_PASSWORD']
+            $databaseDetails['DB_DATABASE'] === ''
+            || $databaseDetails['DB_USERNAME'] === ''
+            || $databaseDetails['DB_PASSWORD'] === ''
         ) {
             return $this->error('Please enter the database credentials.');
         }
@@ -607,7 +607,7 @@ class Installer extends Command
             transform: trim(...),
         );
 
-        $this->envUpdate($key, $input ?: $defaultValue);
+        $this->envUpdate($key, $input === '' ? $defaultValue : $input);
     }
 
     /**

@@ -35,7 +35,7 @@ function bindInstallerCapturingDbEnvUpdate(array &$captured): Closure
     };
 }
 
-it('trims trailing whitespace on DB_HOST so quote-wrapping in .env never breaks DNS resolution ', function () {
+it('trims trailing whitespace on DB_HOST so quote-wrapping in .env never breaks DNS resolution', function () {
     $captured = [];
     $this->app->extend(Installer::class, bindInstallerCapturingDbEnvUpdate($captured));
 
@@ -64,7 +64,7 @@ it('rejects DB_HOST containing internal whitespace ', function () {
     expect($captured)->not->toHaveKey('DB_HOST');
 });
 
-it('trims surrounding whitespace on DB_PORT and rejects non-numeric port ', function () {
+it('trims surrounding whitespace on DB_PORT', function () {
     $captured = [];
     $this->app->extend(Installer::class, bindInstallerCapturingDbEnvUpdate($captured));
 
@@ -79,6 +79,19 @@ it('trims surrounding whitespace on DB_PORT and rejects non-numeric port ', func
         ->assertExitCode(0);
 
     expect($captured['DB_PORT'])->toBe('3306');
+});
+
+it('rejects a non-numeric DB_PORT so the connection cannot be written with garbage', function () {
+    $captured = [];
+    $this->app->extend(Installer::class, bindInstallerCapturingDbEnvUpdate($captured));
+
+    $this->artisan('unopim:install', ['--skip-admin-creation' => true])
+        ->expectsQuestion('Please select the database connection', 'mysql')
+        ->expectsQuestion('Please enter the database host', '127.0.0.1')
+        ->expectsQuestion('Please enter the database port', '33a06')
+        ->assertExitCode(1);
+
+    expect($captured)->not->toHaveKey('DB_PORT');
 });
 
 it('trims surrounding whitespace on DB_DATABASE so the schema lookup uses the bare name ', function () {
