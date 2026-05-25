@@ -67,3 +67,89 @@ it('creates the variants supplied in the POST payload to /configrable-products',
     expect($parent->variants()->count())
         ->toBe(1, 'parent should expose the created variant in its variants() relation');
 });
+
+it('creates the variants supplied in the POST payload to the legacy typo-spelled /configrable-products route', function () {
+    $family = AttributeFamily::where('code', 'default')->first()
+        ?? AttributeFamily::factory()->withMinimalAttributesForProductTypes()->create();
+
+    $configurableAttributes = $family->getConfigurableAttributes();
+
+    expect($configurableAttributes->count())
+        ->toBeGreaterThanOrEqual(2, 'family must expose at least 2 configurable attributes for this scenario');
+
+    $firstAttr = $configurableAttributes->first();
+    $secondAttr = $configurableAttributes->skip(1)->first();
+
+    $firstAttrOption = $firstAttr->options->first()->code;
+    $secondAttrOption = $secondAttr->options->first()->code;
+
+    $parentSku = 'issue841-legacy-parent-'.fake()->unique()->randomNumber();
+    $variantSku = 'issue841-legacy-variant-'.fake()->unique()->randomNumber();
+
+    $payload = [
+        'sku'              => $parentSku,
+        'status'           => true,
+        'parent'           => null,
+        'family'           => $family->code,
+        'additional'       => null,
+        'values'           => [
+            'common' => [
+                'sku' => $parentSku,
+            ],
+        ],
+        'super_attributes' => [$firstAttr->code, $secondAttr->code],
+        'variants'         => [
+            [
+                'sku'        => $variantSku,
+                'attributes' => [
+                    $firstAttr->code  => $firstAttrOption,
+                    $secondAttr->code => $secondAttrOption,
+                ],
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.configrable_products.store'), $payload)
+        ->assertStatus(201);
+
+    $variant = Product::where('sku', $variantSku)->first();
+
+    expect($variant)
+        ->not->toBeNull('legacy typo-route must also create the variant — same controller, same shim')
+        ->and($variant->parent_id)
+        ->toBe(Product::where('sku', $parentSku)->first()->id);
+});
+
+it('rejects a malformed variants payload with a 422 instead of silently dropping the entry', function () {
+    $family = AttributeFamily::where('code', 'default')->first()
+        ?? AttributeFamily::factory()->withMinimalAttributesForProductTypes()->create();
+
+    $configurableAttributes = $family->getConfigurableAttributes();
+
+    $firstAttr = $configurableAttributes->first();
+    $secondAttr = $configurableAttributes->skip(1)->first();
+
+    $parentSku = 'issue841-malformed-parent-'.fake()->unique()->randomNumber();
+
+    $payload = [
+        'sku'              => $parentSku,
+        'status'           => true,
+        'parent'           => null,
+        'family'           => $family->code,
+        'additional'       => null,
+        'values'           => [
+            'common' => [
+                'sku' => $parentSku,
+            ],
+        ],
+        'super_attributes' => [$firstAttr->code, $secondAttr->code],
+        'variants'         => [
+            ['attributes' => [$firstAttr->code => $firstAttr->options->first()->code]],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.configurable_products.store'), $payload)
+        ->assertStatus(422);
+});

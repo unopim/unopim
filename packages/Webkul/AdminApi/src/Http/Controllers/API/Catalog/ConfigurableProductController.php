@@ -84,7 +84,11 @@ class ConfigurableProductController extends ProductController
             }
 
             if (! empty($data['variants']) && is_array($data['variants'])) {
-                $data['variants'] = $this->normalizeVariantsPayload($data['variants']);
+                try {
+                    $data['variants'] = $this->normalizeVariantsPayload($data['variants']);
+                } catch (ValidationException $e) {
+                    return $this->validateErrorResponse($e->validator->errors()->messages());
+                }
             }
 
             Event::dispatch('catalog.product.create.before');
@@ -234,9 +238,25 @@ class ConfigurableProductController extends ProductController
      *
      * @param  array<int, array<string, mixed>>  $variants
      * @return array<string, array<string, mixed>>
+     *
+     * @throws ValidationException
      */
     protected function normalizeVariantsPayload(array $variants): array
     {
+        $validator = Validator::make(
+            ['variants' => $variants],
+            [
+                'variants'              => ['array'],
+                'variants.*'            => ['required', 'array'],
+                'variants.*.sku'        => ['required', 'string'],
+                'variants.*.attributes' => ['required', 'array'],
+            ]
+        );
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
         $normalized = [];
 
         foreach (array_values($variants) as $index => $variant) {
