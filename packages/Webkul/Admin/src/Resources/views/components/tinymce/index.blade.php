@@ -290,7 +290,7 @@
                                 relative_urls: false,
                                 menubar: false,
                                 remove_script_host: false,
-                                document_base_url: '{{ asset('/') }}',
+                                document_base_url: '{{ rtrim(config('app.url'), '/') }}/',
                                 uploadRoute: '{{ route('admin.tinymce.upload') }}',
                                 csrfToken: '{{ csrf_token() }}',
                                 ...extraConfiguration,
