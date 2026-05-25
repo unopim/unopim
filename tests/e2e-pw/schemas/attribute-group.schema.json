@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Attribute Group",
+  "type": "object",
+  "required": ["code"],
+  "properties": {
+    "code": { "type": "string" },
+    "position": { "type": ["integer", "string"] },
+    "labels": { "type": ["object", "null"] }
+  }
+}
