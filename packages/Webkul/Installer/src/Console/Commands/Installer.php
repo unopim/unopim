@@ -7,11 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Webkul\Core\ElasticSearch;
-use Webkul\Installer\Database\Seeders\CategoryDemoTableSeeder;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
-use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
-use Webkul\Installer\Database\Seeders\ProductTableSeeder;
 use Webkul\Installer\Events\ComposerEvents;
+use Webkul\Installer\Helpers\DemoDataInstaller;
 
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\password;
@@ -299,12 +297,18 @@ class Installer extends Command
             'DB_PREFIX' => text(
                 label: 'Please enter the database prefix',
                 default: env('DB_PREFIX') ?? '',
-                validate: fn (string $value) => match (true) {
-                    strlen($value) > 4                     => 'The database prefix should not exceed 4 characters.',
-                    preg_match('/[^a-zA-Z0-9_]/', $value)  => 'The database prefix can only contain letters, numbers, and underscores.',
-                    default                                => null
+                validate: function (string $value): ?string {
+                    $trimmed = trim($value);
+
+                    return match (true) {
+                        (bool) preg_match('/\s/', $trimmed)             => 'The database prefix cannot contain spaces.',
+                        strlen($trimmed) > 4                            => 'The database prefix should not exceed 4 characters.',
+                        (bool) preg_match('/[^a-zA-Z0-9_]/', $trimmed)  => 'The database prefix can only contain letters, numbers, and underscores.',
+                        default                                         => null,
+                    };
                 },
-                hint: 'or press enter to continue'
+                transform: trim(...),
+                hint: 'or press enter to continue (leave empty to clear)'
             ),
 
             'DB_USERNAME' => text(
@@ -319,6 +323,8 @@ class Installer extends Command
             ),
         ];
 
+        $databaseDetails['DB_PREFIX'] = trim((string) ($databaseDetails['DB_PREFIX'] ?? ''));
+
         if (
             ! $databaseDetails['DB_DATABASE']
             || ! $databaseDetails['DB_USERNAME']
@@ -328,7 +334,7 @@ class Installer extends Command
         }
 
         foreach ($databaseDetails as $key => $value) {
-            if ($value) {
+            if ($value || $key === 'DB_PREFIX') {
                 $this->envUpdate($key, $value);
             }
         }
@@ -451,6 +457,7 @@ class Installer extends Command
                     'password' => $password,
                     'role_id'  => 1,
                     'status'   => 1,
+                    'timezone' => config('app.timezone') ?: 'UTC',
                 ]
             );
 
@@ -482,49 +489,13 @@ class Installer extends Command
 
     protected function seedSampleProducts(): void
     {
-        try {
-            $this->warn('Step: Seeding demo extras (channels, attributes, families, core config, ...)...');
-            app(DemoExtrasTableSeeder::class)->run();
+        $result = app(DemoDataInstaller::class)
+            ->seed(fn (string $message) => $this->warn('Step: '.$message));
 
-            $this->warn('Step: Seeding demo categories...');
-            app(CategoryDemoTableSeeder::class)->run();
-
-            $this->warn('Step: Seeding sample products...');
-            app(ProductTableSeeder::class)->run();
-
+        if ($result['success']) {
             $this->info('Sample products seeded successfully.');
-
-            if (config('elasticsearch.enabled') == 'true') {
-                $this->warn('Step: Re-indexing categories to Elasticsearch...');
-                $this->call('unopim:category:index');
-
-                $this->warn('Step: Re-indexing products to Elasticsearch...');
-                $this->call('unopim:product:index');
-            }
-
-            $this->warn('Step: Recalculating product completeness...');
-            $this->recalculateCompleteness();
-        } catch (\Exception $e) {
-            $this->error("Failed to seed sample products: {$e->getMessage()}");
-        }
-    }
-
-    /**
-     * Recalculate product completeness synchronously. The
-     * `unopim:completeness:recalculate` command dispatches queue jobs, so
-     * we temporarily force the sync driver to guarantee the jobs run
-     * before the installer finishes.
-     */
-    protected function recalculateCompleteness(): void
-    {
-        $originalDefault = config('queue.default');
-
-        try {
-            config(['queue.default' => 'sync']);
-
-            $this->call('unopim:completeness:recalculate', ['--all' => true]);
-        } finally {
-            config(['queue.default' => $originalDefault]);
+        } else {
+            $this->error("Failed to seed sample products: {$result['error']}");
         }
     }
 
@@ -557,7 +528,10 @@ class Installer extends Command
          */
         $databaseConnection = $this->getEnvAtRuntime('DB_CONNECTION');
 
+        $previousDefault = config('database.default');
+
         config([
+            'database.default'                                    => $databaseConnection,
             "database.connections.{$databaseConnection}.host"     => $this->getEnvAtRuntime('DB_HOST'),
             "database.connections.{$databaseConnection}.port"     => $this->getEnvAtRuntime('DB_PORT'),
             "database.connections.{$databaseConnection}.database" => $this->getEnvAtRuntime('DB_DATABASE'),
@@ -565,6 +539,12 @@ class Installer extends Command
             "database.connections.{$databaseConnection}.password" => $this->getEnvAtRuntime('DB_PASSWORD'),
             "database.connections.{$databaseConnection}.prefix"   => $this->getEnvAtRuntime('DB_PREFIX'),
         ]);
+
+        DB::setDefaultConnection($databaseConnection);
+
+        if ($previousDefault && $previousDefault !== $databaseConnection) {
+            DB::purge($previousDefault);
+        }
 
         DB::purge($databaseConnection);
 

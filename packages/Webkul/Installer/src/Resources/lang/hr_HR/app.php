@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Administrator',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Potvrdite Lozinku',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'E-mail',
-                'password'         => 'Lozinka',
-                'title'            => 'Kreiraj Administratora',
+                'admin'                   => 'Administrator',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Potvrdite Lozinku',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'E-mail',
+                'password'                => 'Lozinka',
+                'title'                   => 'Kreiraj Administratora',
+                'seed-sample-data'        => 'Instaliraj ogledne proizvode i demo podatke',
+                'seeding-sample-data'     => 'Stvaranje oglednih proizvoda i demo podataka, ovo može potrajati nekoliko minuta...',
+                'seed-sample-data-failed' => 'Demo podaci nisu mogli biti učitani. Možete ih instalirati kasnije putem `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Dopuštene Valute',

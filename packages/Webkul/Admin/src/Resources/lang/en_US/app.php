@@ -2130,6 +2130,8 @@ return [
                 'no-records-selected'              => 'No records have been selected.',
                 'must-select-a-mass-action-option' => 'You must select a mass action\'s option.',
                 'must-select-a-mass-action'        => 'You must select a mass action.',
+                'link-copied'                      => 'Link copied to clipboard.',
+                'copy-failed'                      => 'Copy failed. Please copy the link manually.',
             ],
 
             'toolbar' => [
@@ -2150,8 +2152,9 @@ return [
                 ],
 
                 'search_by' => [
-                    'code'       => 'Search by code',
-                    'code_or_id' => 'Search by code or id',
+                    'code'        => 'Search by code',
+                    'code_or_id'  => 'Search by code or id',
+                    'sku_or_user' => 'Search by SKU or user',
                 ],
 
                 'search' => [
@@ -2507,13 +2510,15 @@ return [
     ],
 
     'common' => [
-        'yes'            => 'Yes',
-        'no'             => 'No',
-        'true'           => 'True',
-        'false'          => 'False',
-        'enable'         => 'Enabled',
-        'disable'        => 'Disabled',
-        'no-match-found' => 'No Match Found!',
+        'yes'               => 'Yes',
+        'no'                => 'No',
+        'true'              => 'True',
+        'false'             => 'False',
+        'enable'            => 'Enabled',
+        'disable'           => 'Disabled',
+        'no-match-found'    => 'No Match Found!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
 
     'default-prompt' => [

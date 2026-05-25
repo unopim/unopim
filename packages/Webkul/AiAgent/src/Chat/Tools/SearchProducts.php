@@ -8,6 +8,7 @@ use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\SemanticRankingService;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 
 class SearchProducts implements PimTool
 {
@@ -38,21 +39,22 @@ class SearchProducts implements PimTool
                 // alias explicitly so JSON selects resolve to the same alias
                 // Laravel generates for the FROM clause.
                 $prefix = DB::getTablePrefix();
+                $grammar = GrammarQueryManager::getGrammar();
 
                 $qb = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
                     ->select(
                         'p.id', 'p.sku', 'p.type', 'p.status', 'af.code as family_code',
-                        DB::raw("JSON_UNQUOTE(JSON_EXTRACT(`{$prefix}p`.`values`, '$.channel_locale_specific.{$context->channel}.{$context->locale}.name')) as product_name"),
-                        DB::raw("JSON_UNQUOTE(JSON_EXTRACT(`{$prefix}p`.`values`, '$.common.url_key')) as url_key"),
+                        DB::raw($grammar->jsonExtract("{$prefix}p.values", 'channel_locale_specific', $context->channel, $context->locale, 'name').' as product_name'),
+                        DB::raw($grammar->jsonExtract("{$prefix}p.values", 'common', 'url_key').' as url_key'),
                     );
 
                 if ($query) {
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $query);
-                    $qb->where(function ($q) use ($escaped, $context, $prefix) {
+                    $qb->where(function ($q) use ($escaped, $context, $prefix, $grammar) {
                         $q->where('p.sku', 'like', "%{$escaped}%")
                             ->orWhere('p.values->common->url_key', 'like', "%{$escaped}%")
-                            ->orWhereRaw("JSON_EXTRACT(`{$prefix}p`.`values`, '$.channel_locale_specific.{$context->channel}.{$context->locale}.name') LIKE ?", ["%{$escaped}%"]);
+                            ->orWhereRaw($grammar->jsonExtract("{$prefix}p.values", 'channel_locale_specific', $context->channel, $context->locale, 'name').' LIKE ?', ["%{$escaped}%"]);
                     });
                 }
 

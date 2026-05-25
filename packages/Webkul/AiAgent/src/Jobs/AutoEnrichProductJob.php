@@ -74,12 +74,14 @@ class AutoEnrichProductJob implements ShouldQueue
         $common = $values['common'] ?? [];
         $cl = $values['channel_locale_specific'][$this->channel][$this->locale] ?? [];
 
-        // Only enrich if key fields are missing
-        $hasName = ! empty($cl['name'] ?? $common['name'] ?? null);
-        $hasDescription = ! empty($cl['description'] ?? $common['description'] ?? null);
+        // Check completeness against the locale-specific bucket only — do not
+        // fall back to $common so that en_US content does not suppress generation
+        // for fr_FR or de_DE.
+        $hasName = ! empty($cl['name'] ?? null);
+        $hasDescription = ! empty($cl['description'] ?? null);
 
         if ($hasName && $hasDescription) {
-            return; // Product already has core content
+            return; // Product already has core content for this locale
         }
 
         // Resolve AI platform
@@ -103,9 +105,10 @@ class AutoEnrichProductJob implements ShouldQueue
                 model: $platform->model_list[0] ?? 'gpt-4o',
             ));
 
-            $existing = array_merge($common, $cl);
+            // Pass only the locale-specific bucket as attributes so the completeness
+            // check inside EnrichmentService is not fooled by $common data.
             $ctx = new ImageProductContext(
-                attributes: $existing,
+                attributes: $cl,
                 detectedProduct: $common['product_type'] ?? null,
                 category: $values['categories'][0] ?? null,
             );
@@ -114,7 +117,7 @@ class AutoEnrichProductJob implements ShouldQueue
                 ctx: $ctx,
                 credentialId: 0,
                 apiClient: $apiClient,
-                options: ['locale' => $this->locale],
+                options: ['locale' => $this->locale, 'common' => $common],
             );
 
             $generated = $enriched->enrichment;

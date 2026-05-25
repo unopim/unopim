@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Image tag to publish (e.g., 2.0.1)"
+        description: "Image tag to publish (e.g., 2.1.0)"
         required: true
 
 permissions:
@@ -36,7 +36,7 @@ jobs:
           else
             TAG="${{ github.event.inputs.tag }}"
           fi
-          # Strip 'v' prefix if present (v2.0.1 -> 2.0.1)
+          # Strip 'v' prefix if present (v2.1.0 -> 2.1.0)
           VERSION="${TAG#v}"
           MINOR="${VERSION%.*}"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
