@@ -6,6 +6,8 @@ return [
             'email'                  => 'E-mailadres',
             'forget-password-link'   => 'Wachtwoord vergeten?',
             'password'               => 'Wachtwoord',
+            'sso-divider'            => 'of',
+            'sso-sign-in-with-microsoft' => 'Aanmelden met Microsoft',
             'submit-btn'             => 'Inloggen',
             'title'                  => 'Inloggen',
             'powered-by'             => 'Aangedreven door :unopim,',
