@@ -1999,8 +1999,9 @@ return [
                     'title' => 'Filtre',
                 ],
                 'search_by' => [
-                    'code'       => 'Recherche par code',
-                    'code_or_id' => 'Recherche par code ou identifiant',
+                    'code'        => 'Recherche par code',
+                    'code_or_id'  => 'Recherche par code ou identifiant',
+                    'sku_or_user' => 'Recherche par SKU ou utilisateur',
                 ],
                 'search' => [
                     'title' => 'Recherche',

@@ -364,7 +364,6 @@ return [
                     'url'                        => 'Ange en giltig URL.',
                     'regex'                      => 'Värdet matchar inte det krävs mönstret.',
                     'invalid-pattern'            => 'Ogiltigt anpassat mönster angivet.',
-
                     'numeric'                    => 'Värdet för det numeriska attributet ":attribute" måste vara ett giltigt tal.',
                     'select-attribute-or-family' => 'Välj minst ett attribut eller en attributfamilj.',
                     'failed'                     => 'Valideringen misslyckades.',
@@ -385,47 +384,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Massredigeringen lyckades.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Inga ändringar att spara.',
-
-                'invalid-datetime'            => 'Ange ett giltigt datum och klockslag.',
-
-                'resize-column'               => 'Dra för att ändra kolumnbredd',
-                'success'                     => 'Uppgiften har utförts.',
-                'fetch-failed'                => 'Misslyckades med att hämta.',
-                'action'                      => 'Massredigering',
-                'description'                 => 'Redigera flera produkter samtidigt. Ändringar bearbetas i bakgrunden.',
-                'gallery-preview'             => 'Galleri Förhandsgranskning',
-                'img-preview'                 => 'Bildförhandsvisning',
-                'no-image'                    => 'Ingen bild',
-                'img-fail'                    => 'Misslyckades med att ladda upp bilden',
-                'no-option'                   => 'Inga alternativ',
-                'keyboard-shortcuts'          => 'Tangentbordsgenvägar',
-                'shortcuts-navigation'        => 'Navigering',
-                'shortcuts-editing'           => 'Redigering',
-                'shortcuts-selection'         => 'Markering',
-                'shortcuts-clipboard'         => 'Urklipp och fyllning',
-                'shortcuts-move-cell'         => 'Flytta mellan celler',
-                'shortcuts-move-down'         => 'Flytta ned / bekräfta redigering',
-                'shortcuts-move-up'           => 'Flytta upp',
-                'shortcuts-move-right-left'   => 'Flytta höger / vänster',
-                'shortcuts-home-end'          => 'Första / sista kolumnen i raden',
-                'shortcuts-ctrl-home-end'     => 'Första / sista cellen i rutnätet',
-                'shortcuts-extend-selection'  => 'Utöka markering',
-                'shortcuts-select-all'        => 'Markera alla celler',
-                'shortcuts-enter-edit'        => 'Gå till redigeringsläge',
-                'shortcuts-confirm-move-down' => 'Bekräfta + flytta ned',
-                'shortcuts-confirm-move-right'=> 'Bekräfta + flytta höger',
-                'shortcuts-escape-revert'     => 'Återställ värde + lämna redigering',
-                'shortcuts-clear-cell'        => 'Rensa cell',
-                'shortcuts-copy'              => 'Kopiera',
-                'shortcuts-cut'               => 'Klipp ut',
-                'shortcuts-paste'             => 'Klistra in',
-                'shortcuts-fill-down'         => 'Fyll nedåt',
-                'shortcuts-fill-right'        => 'Fyll åt höger',
-                'shortcuts-undo'              => 'Ångra',
-                'shortcuts-redo'              => 'Gör om',
-                'shortcuts-help'              => 'Visa/dölj tangentbordsgenvägar',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Inga ändringar att spara.',
+                'invalid-datetime'             => 'Ange ett giltigt datum och klockslag.',
+                'resize-column'                => 'Dra för att ändra kolumnbredd',
+                'success'                      => 'Uppgiften har utförts.',
+                'fetch-failed'                 => 'Misslyckades med att hämta.',
+                'action'                       => 'Massredigering',
+                'description'                  => 'Redigera flera produkter samtidigt. Ändringar bearbetas i bakgrunden.',
+                'gallery-preview'              => 'Galleri Förhandsgranskning',
+                'img-preview'                  => 'Bildförhandsvisning',
+                'no-image'                     => 'Ingen bild',
+                'img-fail'                     => 'Misslyckades med att ladda upp bilden',
+                'no-option'                    => 'Inga alternativ',
+                'keyboard-shortcuts'           => 'Tangentbordsgenvägar',
+                'shortcuts-navigation'         => 'Navigering',
+                'shortcuts-editing'            => 'Redigering',
+                'shortcuts-selection'          => 'Markering',
+                'shortcuts-clipboard'          => 'Urklipp och fyllning',
+                'shortcuts-move-cell'          => 'Flytta mellan celler',
+                'shortcuts-move-down'          => 'Flytta ned / bekräfta redigering',
+                'shortcuts-move-up'            => 'Flytta upp',
+                'shortcuts-move-right-left'    => 'Flytta höger / vänster',
+                'shortcuts-home-end'           => 'Första / sista kolumnen i raden',
+                'shortcuts-ctrl-home-end'      => 'Första / sista cellen i rutnätet',
+                'shortcuts-extend-selection'   => 'Utöka markering',
+                'shortcuts-select-all'         => 'Markera alla celler',
+                'shortcuts-enter-edit'         => 'Gå till redigeringsläge',
+                'shortcuts-confirm-move-down'  => 'Bekräfta + flytta ned',
+                'shortcuts-confirm-move-right' => 'Bekräfta + flytta höger',
+                'shortcuts-escape-revert'      => 'Återställ värde + lämna redigering',
+                'shortcuts-clear-cell'         => 'Rensa cell',
+                'shortcuts-copy'               => 'Kopiera',
+                'shortcuts-cut'                => 'Klipp ut',
+                'shortcuts-paste'              => 'Klistra in',
+                'shortcuts-fill-down'          => 'Fyll nedåt',
+                'shortcuts-fill-right'         => 'Fyll åt höger',
+                'shortcuts-undo'               => 'Ångra',
+                'shortcuts-redo'               => 'Gör om',
+                'shortcuts-help'               => 'Visa/dölj tangentbordsgenvägar',
             ],
             'create-success'          => 'Produkten skapades framgångsrikt',
             'delete-failed'           => 'Fel vid radering av produkt',
@@ -520,7 +517,6 @@ return [
                 'is-filterable'         => 'Är filtrerbar',
                 'ai-translate'          => 'AI Översättning',
                 'invalid-swatch-type'   => 'Attributet :attribute är inte tillåtet för attributtyp :type med swatchtyp :swatch_type.',
-
                 'single-object-only'    => 'Varje skapandeförfrågan får endast innehålla ett attributobjekt.',
                 'option'                => [
                     'color'    => 'Färgväljare',
@@ -604,7 +600,6 @@ return [
             'delete-success'    => 'Attribut borttaget',
             'update-success'    => 'Attribut uppdaterad',
             'user-define-error' => 'Det går inte att ta bort systemattribut',
-
             'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
             'not-found'         => 'Attributet med koden ":code" hittades inte',
         ],
@@ -887,7 +882,6 @@ return [
             'update-success'    => 'Kategori fält uppdaterades framgångsrikt',
             'user-define-error' => 'Det går inte att radera systemdefinierade fält',
             'not-found'         => 'Kategori fält med kod ":code" kunde inte hittas',
-
             'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +983,7 @@ return [
             'can-not-update-variant-options' => 'Kan inte uppdatera konfigurationsalternativ eftersom denna familj redan har produktvarianter.',
         ],
         'history' => [
-            'view' => 'Visa versionsdetaljer',
-
+            'view'  => 'Visa versionsdetaljer',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -1124,8 +1117,7 @@ return [
                         'paused'               => 'Pausad',
                         'cancelled'            => 'Avbruten',
                         'failed'               => 'Misslyckades',
-
-                        'view'       => 'Visa',
+                        'view'                 => 'Visa',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1775,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompts',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titel',
@@ -1831,11 +1820,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Systemprompts',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titel',
@@ -2013,8 +1999,9 @@ return [
                     'title' => 'Filter',
                 ],
                 'search_by' => [
-                    'code'       => 'Sök efter kod',
-                    'code_or_id' => 'Sök efter kod eller ID',
+                    'code'        => 'Sök efter kod',
+                    'code_or_id'  => 'Sök efter kod eller ID',
+                    'sku_or_user' => 'Sök efter SKU eller användare',
                 ],
                 'search' => [
                     'title' => 'Sök',

@@ -364,7 +364,6 @@ return [
                     'url'                        => 'Unesite valjani URL.',
                     'regex'                      => 'Vrijednost ne odgovara traženom obrascu.',
                     'invalid-pattern'            => 'Unesen je nevažeći prilagođeni obrazac.',
-
                     'numeric'                    => 'Vrijednost numeričkog atributa „:attribute“ mora biti valjani broj.',
                     'select-attribute-or-family' => 'Molimo odaberite barem jedan atribut ili obitelj atributa.',
                     'failed'                     => 'Provjera valjanosti nije uspjela.',
@@ -385,47 +384,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Grupno uređivanje je uspješno.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Nema promjena za spremiti.',
-
-                'invalid-datetime'            => 'Unesite valjani datum i vrijeme.',
-
-                'resize-column'               => 'Povucite za promjenu širine stupca',
-                'success'                     => 'Operacija uspješno izvršena.',
-                'fetch-failed'                => 'Preuzimanje nije uspjelo.',
-                'action'                      => 'Grupno uređivanje',
-                'description'                 => 'Uredite više proizvoda odjednom. Promjene se obrađuju u pozadini.',
-                'gallery-preview'             => 'Pregled galerije',
-                'img-preview'                 => 'Pregled slike',
-                'no-image'                    => 'Nema slike',
-                'img-fail'                    => 'Neuspješno učitavanje slike.',
-                'no-option'                   => 'Nema opcija',
-                'keyboard-shortcuts'          => 'Tipkovnički prečaci',
-                'shortcuts-navigation'        => 'Navigacija',
-                'shortcuts-editing'           => 'Uređivanje',
-                'shortcuts-selection'         => 'Odabir',
-                'shortcuts-clipboard'         => 'Međuspremnik i ispuna',
-                'shortcuts-move-cell'         => 'Premještanje između ćelija',
-                'shortcuts-move-down'         => 'Premjesti dolje / potvrdi uređivanje',
-                'shortcuts-move-up'           => 'Premjesti gore',
-                'shortcuts-move-right-left'   => 'Premjesti desno / lijevo',
-                'shortcuts-home-end'          => 'Prvi / zadnji stupac u retku',
-                'shortcuts-ctrl-home-end'     => 'Prva / zadnja ćelija u mreži',
-                'shortcuts-extend-selection'  => 'Proširi odabir',
-                'shortcuts-select-all'        => 'Odaberi sve ćelije',
-                'shortcuts-enter-edit'        => 'Uđi u način uređivanja',
-                'shortcuts-confirm-move-down' => 'Potvrdi + premjesti dolje',
-                'shortcuts-confirm-move-right'=> 'Potvrdi + premjesti desno',
-                'shortcuts-escape-revert'     => 'Vrati vrijednost + izađi iz uređivanja',
-                'shortcuts-clear-cell'        => 'Očisti ćeliju',
-                'shortcuts-copy'              => 'Kopiraj',
-                'shortcuts-cut'               => 'Izreži',
-                'shortcuts-paste'             => 'Zalijepi',
-                'shortcuts-fill-down'         => 'Ispuni prema dolje',
-                'shortcuts-fill-right'        => 'Ispuni prema desno',
-                'shortcuts-undo'              => 'Poništi',
-                'shortcuts-redo'              => 'Ponovi',
-                'shortcuts-help'              => 'Uključi/isključi tipkovničke prečace',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Nema promjena za spremiti.',
+                'invalid-datetime'             => 'Unesite valjani datum i vrijeme.',
+                'resize-column'                => 'Povucite za promjenu širine stupca',
+                'success'                      => 'Operacija uspješno izvršena.',
+                'fetch-failed'                 => 'Preuzimanje nije uspjelo.',
+                'action'                       => 'Grupno uređivanje',
+                'description'                  => 'Uredite više proizvoda odjednom. Promjene se obrađuju u pozadini.',
+                'gallery-preview'              => 'Pregled galerije',
+                'img-preview'                  => 'Pregled slike',
+                'no-image'                     => 'Nema slike',
+                'img-fail'                     => 'Neuspješno učitavanje slike.',
+                'no-option'                    => 'Nema opcija',
+                'keyboard-shortcuts'           => 'Tipkovnički prečaci',
+                'shortcuts-navigation'         => 'Navigacija',
+                'shortcuts-editing'            => 'Uređivanje',
+                'shortcuts-selection'          => 'Odabir',
+                'shortcuts-clipboard'          => 'Međuspremnik i ispuna',
+                'shortcuts-move-cell'          => 'Premještanje između ćelija',
+                'shortcuts-move-down'          => 'Premjesti dolje / potvrdi uređivanje',
+                'shortcuts-move-up'            => 'Premjesti gore',
+                'shortcuts-move-right-left'    => 'Premjesti desno / lijevo',
+                'shortcuts-home-end'           => 'Prvi / zadnji stupac u retku',
+                'shortcuts-ctrl-home-end'      => 'Prva / zadnja ćelija u mreži',
+                'shortcuts-extend-selection'   => 'Proširi odabir',
+                'shortcuts-select-all'         => 'Odaberi sve ćelije',
+                'shortcuts-enter-edit'         => 'Uđi u način uređivanja',
+                'shortcuts-confirm-move-down'  => 'Potvrdi + premjesti dolje',
+                'shortcuts-confirm-move-right' => 'Potvrdi + premjesti desno',
+                'shortcuts-escape-revert'      => 'Vrati vrijednost + izađi iz uređivanja',
+                'shortcuts-clear-cell'         => 'Očisti ćeliju',
+                'shortcuts-copy'               => 'Kopiraj',
+                'shortcuts-cut'                => 'Izreži',
+                'shortcuts-paste'              => 'Zalijepi',
+                'shortcuts-fill-down'          => 'Ispuni prema dolje',
+                'shortcuts-fill-right'         => 'Ispuni prema desno',
+                'shortcuts-undo'               => 'Poništi',
+                'shortcuts-redo'               => 'Ponovi',
+                'shortcuts-help'               => 'Uključi/isključi tipkovničke prečace',
             ],
             'create-success'          => 'Proizvod uspješno stvoren',
             'delete-failed'           => 'Brisanje proizvoda nije uspjelo',
@@ -520,7 +517,6 @@ return [
                 'is-filterable'         => 'Je filtrabilno',
                 'ai-translate'          => 'AI Prevod',
                 'invalid-swatch-type'   => ':attribute nije dozvoljen za tip atributa :type s tipom uzorka :swatch_type.',
-
                 'single-object-only'    => 'Svaki zahtjev za stvaranje mora sadržavati samo jedan objekt atributa.',
                 'option'                => [
                     'color'    => 'Boja uzorka',
@@ -604,7 +600,6 @@ return [
             'delete-success'    => 'Atribut uspješno izbrisan',
             'update-success'    => 'Atribut uspješno ažuriran',
             'user-define-error' => 'Ne možete obrisati sistemski atribut',
-
             'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
             'not-found'         => 'Atribut s kodom ":code" nije pronađen',
         ],
@@ -887,7 +882,6 @@ return [
             'update-success'    => 'Polje Kategorije Ažurirano Uspješno',
             'user-define-error' => 'Ne možete obrisati sistemsko Polje Kategorije',
             'not-found'         => 'Polje Kategorije s kodom ":code" nije pronađeno',
-
             'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +983,7 @@ return [
             'can-not-update-variant-options' => 'Ne možete ažurirati opcije konfiguracije jer ova obitelj već ima varijante proizvoda.',
         ],
         'history' => [
-            'view' => 'Pogledaj detalje verzije',
-
+            'view'  => 'Pogledaj detalje verzije',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Verzija',
@@ -1124,8 +1117,7 @@ return [
                         'paused'               => 'Pauzirano',
                         'cancelled'            => 'Otkazano',
                         'failed'               => 'Neuspješno',
-
-                        'view'       => 'Pregled',
+                        'view'                 => 'Pregled',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1775,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Promptovi',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Naslov',
@@ -1831,11 +1820,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Sustavni promptovi',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Naslov',
@@ -2013,8 +1999,9 @@ return [
                     'title' => 'Filtriraj',
                 ],
                 'search_by' => [
-                    'code'       => 'Pretraži prema kodu',
-                    'code_or_id' => 'Pretraži prema kodu ili ID-u',
+                    'code'        => 'Pretraži prema kodu',
+                    'code_or_id'  => 'Pretraži prema kodu ili ID-u',
+                    'sku_or_user' => 'Pretraži prema SKU ili korisniku',
                 ],
                 'search' => [
                     'title' => 'Pretraži',

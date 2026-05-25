@@ -364,7 +364,6 @@ return [
                     'url'                        => 'يرجى إدخال عنوان URL صالح.',
                     'regex'                      => 'القيمة لا تطابق النمط المطلوب.',
                     'invalid-pattern'            => 'تم تقديم نمط مخصص غير صالح.',
-
                     'numeric'                    => 'يجب أن تكون القيمة المدخلة في السمة الرقمية ":attribute" رقماً صالحاً.',
                     'select-attribute-or-family' => 'يرجى اختيار سمة واحدة على الأقل أو عائلة سمات.',
                     'failed'                     => 'فشلت عملية التحقق.',
@@ -385,47 +384,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'تم التحرير الجماعي بنجاح.',
                 ],
-                'id'                          => 'المعرف',
-                'no-changes'                  => 'لا توجد تغييرات للحفظ.',
-
-                'invalid-datetime'            => 'يرجى إدخال تاريخ ووقت صالح.',
-
-                'resize-column'               => 'اسحب لتغيير عرض العمود',
-                'success'                     => 'تم تنفيذ العملية بنجاح.',
-                'fetch-failed'                => 'فشل في الجلب.',
-                'action'                      => 'تحرير جماعي',
-                'description'                 => 'تحرير منتجات متعددة دفعة واحدة. تتم معالجة التغييرات في الخلفية.',
-                'gallery-preview'             => 'معاينة المعرض',
-                'img-preview'                 => 'معاينة الصورة',
-                'no-image'                    => 'لا توجد صورة',
-                'img-fail'                    => 'فشل تحميل الصورة.',
-                'no-option'                   => 'لا توجد خيارات',
-                'keyboard-shortcuts'          => 'اختصارات لوحة المفاتيح',
-                'shortcuts-navigation'        => 'التنقل',
-                'shortcuts-editing'           => 'التحرير',
-                'shortcuts-selection'         => 'التحديد',
-                'shortcuts-clipboard'         => 'الحافظة والتعبئة',
-                'shortcuts-move-cell'         => 'التنقل بين الخلايا',
-                'shortcuts-move-down'         => 'التنقل للأسفل / تأكيد التعديل',
-                'shortcuts-move-up'           => 'التنقل للأعلى',
-                'shortcuts-move-right-left'   => 'التنقل يميناً / يساراً',
-                'shortcuts-home-end'          => 'أول / آخر عمود في الصف',
-                'shortcuts-ctrl-home-end'     => 'أول / آخر خلية في الشبكة',
-                'shortcuts-extend-selection'  => 'توسيع التحديد',
-                'shortcuts-select-all'        => 'تحديد كل الخلايا',
-                'shortcuts-enter-edit'        => 'الدخول إلى وضع التحرير',
-                'shortcuts-confirm-move-down' => 'تأكيد + التنقل للأسفل',
-                'shortcuts-confirm-move-right'=> 'تأكيد + التنقل يميناً',
-                'shortcuts-escape-revert'     => 'استعادة القيمة + الخروج من التحرير',
-                'shortcuts-clear-cell'        => 'مسح الخلية',
-                'shortcuts-copy'              => 'نسخ',
-                'shortcuts-cut'               => 'قص',
-                'shortcuts-paste'             => 'لصق',
-                'shortcuts-fill-down'         => 'تعبئة للأسفل',
-                'shortcuts-fill-right'        => 'تعبئة لليمين',
-                'shortcuts-undo'              => 'تراجع',
-                'shortcuts-redo'              => 'إعادة',
-                'shortcuts-help'              => 'تبديل اختصارات لوحة المفاتيح',
+                'id'                           => 'المعرف',
+                'no-changes'                   => 'لا توجد تغييرات للحفظ.',
+                'invalid-datetime'             => 'يرجى إدخال تاريخ ووقت صالح.',
+                'resize-column'                => 'اسحب لتغيير عرض العمود',
+                'success'                      => 'تم تنفيذ العملية بنجاح.',
+                'fetch-failed'                 => 'فشل في الجلب.',
+                'action'                       => 'تحرير جماعي',
+                'description'                  => 'تحرير منتجات متعددة دفعة واحدة. تتم معالجة التغييرات في الخلفية.',
+                'gallery-preview'              => 'معاينة المعرض',
+                'img-preview'                  => 'معاينة الصورة',
+                'no-image'                     => 'لا توجد صورة',
+                'img-fail'                     => 'فشل تحميل الصورة.',
+                'no-option'                    => 'لا توجد خيارات',
+                'keyboard-shortcuts'           => 'اختصارات لوحة المفاتيح',
+                'shortcuts-navigation'         => 'التنقل',
+                'shortcuts-editing'            => 'التحرير',
+                'shortcuts-selection'          => 'التحديد',
+                'shortcuts-clipboard'          => 'الحافظة والتعبئة',
+                'shortcuts-move-cell'          => 'التنقل بين الخلايا',
+                'shortcuts-move-down'          => 'التنقل للأسفل / تأكيد التعديل',
+                'shortcuts-move-up'            => 'التنقل للأعلى',
+                'shortcuts-move-right-left'    => 'التنقل يميناً / يساراً',
+                'shortcuts-home-end'           => 'أول / آخر عمود في الصف',
+                'shortcuts-ctrl-home-end'      => 'أول / آخر خلية في الشبكة',
+                'shortcuts-extend-selection'   => 'توسيع التحديد',
+                'shortcuts-select-all'         => 'تحديد كل الخلايا',
+                'shortcuts-enter-edit'         => 'الدخول إلى وضع التحرير',
+                'shortcuts-confirm-move-down'  => 'تأكيد + التنقل للأسفل',
+                'shortcuts-confirm-move-right' => 'تأكيد + التنقل يميناً',
+                'shortcuts-escape-revert'      => 'استعادة القيمة + الخروج من التحرير',
+                'shortcuts-clear-cell'         => 'مسح الخلية',
+                'shortcuts-copy'               => 'نسخ',
+                'shortcuts-cut'                => 'قص',
+                'shortcuts-paste'              => 'لصق',
+                'shortcuts-fill-down'          => 'تعبئة للأسفل',
+                'shortcuts-fill-right'         => 'تعبئة لليمين',
+                'shortcuts-undo'               => 'تراجع',
+                'shortcuts-redo'               => 'إعادة',
+                'shortcuts-help'               => 'تبديل اختصارات لوحة المفاتيح',
             ],
             'create-success'          => 'تم إنشاء المنتج بنجاح',
             'delete-failed'           => 'فشل حذف المنتج',
@@ -520,7 +517,6 @@ return [
                 'is-filterable'         => 'قابل للتصفية',
                 'ai-translate'          => 'ترجمة الذكاء الاصطناعي',
                 'invalid-swatch-type'   => 'ال:attribute غير مسموح به لنوع السمة :type مع نوع العينة :swatch_type.',
-
                 'single-object-only'    => 'يجب إرسال كائن سمة واحد فقط لكل طلب إنشاء.',
                 'option'                => [
                     'color'    => 'تغيير الالوان',
@@ -604,7 +600,6 @@ return [
             'delete-success'    => 'تم حذف السمة بنجاح',
             'update-success'    => 'سمة تحديث بنجاح',
             'user-define-error' => 'لا يمكن حذف سمة النظام',
-
             'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
             'not-found'         => 'لم يتم العثور على السمة برمز ":code"',
         ],
@@ -887,7 +882,6 @@ return [
             'update-success'    => 'تحديث حقل الفئة بنجاح',
             'user-define-error' => 'لا يمكن حذف حقل فئة النظام',
             'not-found'         => 'لم يتم العثور على عائلة السمات برمز ":code"',
-
             'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +983,7 @@ return [
             'can-not-update-variant-options' => 'لا يمكن تحديث الخيارات القابلة للتكوين لأن هذه العائلة لديها بالفعل منتجات متغيرة.',
         ],
         'history' => [
-            'view' => 'عرض تفاصيل الإصدار',
-
+            'view'  => 'عرض تفاصيل الإصدار',
             'index' => [
                 'datagrid' => [
                     'version'   => 'إصدار',
@@ -1124,8 +1117,7 @@ return [
                         'paused'               => 'متوقف مؤقتاً',
                         'cancelled'            => 'ملغي',
                         'failed'               => 'فشل',
-
-                        'view'       => 'عرض',
+                        'view'                 => 'عرض',
                     ],
                 ],
                 'import' => [
@@ -1602,18 +1594,18 @@ return [
                 'status'           => 'حالة',
                 'title'            => 'تحرير العضو',
             ],
-            'activate-warning'           => 'لم يتم تنشيط حسابك بعد ، يرجى الاتصال بالمسؤول.',
-            'cannot-change'              => 'لا يمكن تغيير المستخدم',
-            'cannot-escalate-role'       => 'ليس لديك إذن لتعيين دور بصلاحيات كاملة.',
-            'create-success'             => 'تم إنشاء المستخدم بنجاح.',
-            'delete-failed'              => 'فشل حذف المستخدم.',
-            'delete-success'             => 'تم حذف المستخدم بنجاح.',
-            'delete-warning'             => 'هل أنت متأكد من أنك تريد تنفيذ هذا الإجراء؟',
-            'incorrect-password'         => 'كلمة سر خاطئة',
-            'last-delete-error'          => 'فشل آخر حذف المستخدم',
-            'login-error'                => 'يرجى التحقق من بيانات الاعتماد الخاصة بك والمحاولة مرة أخرى.',
-            'update-success'             => 'تم تحديث المستخدم بنجاح.',
-            'current-user-delete-error'  => 'لا يمكن حذف المستخدم الذي قام بتسجيل الدخول',
+            'activate-warning'          => 'لم يتم تنشيط حسابك بعد ، يرجى الاتصال بالمسؤول.',
+            'cannot-change'             => 'لا يمكن تغيير المستخدم',
+            'cannot-escalate-role'      => 'ليس لديك إذن لتعيين دور بصلاحيات كاملة.',
+            'create-success'            => 'تم إنشاء المستخدم بنجاح.',
+            'delete-failed'             => 'فشل حذف المستخدم.',
+            'delete-success'            => 'تم حذف المستخدم بنجاح.',
+            'delete-warning'            => 'هل أنت متأكد من أنك تريد تنفيذ هذا الإجراء؟',
+            'incorrect-password'        => 'كلمة سر خاطئة',
+            'last-delete-error'         => 'فشل آخر حذف المستخدم',
+            'login-error'               => 'يرجى التحقق من بيانات الاعتماد الخاصة بك والمحاولة مرة أخرى.',
+            'update-success'            => 'تم تحديث المستخدم بنجاح.',
+            'current-user-delete-error' => 'لا يمكن حذف المستخدم الذي قام بتسجيل الدخول',
         ],
         'roles' => [
             'index' => [
@@ -1783,11 +1775,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'المحفزات',
-
             ],
-
             'datagrid' => [
                 'id'               => 'المعرف',
                 'title'            => 'العنوان',
@@ -1831,11 +1820,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'محفزات النظام',
-
             ],
-
             'datagrid' => [
                 'id'          => 'المعرف',
                 'title'       => 'العنوان',
@@ -2013,8 +1999,9 @@ return [
                     'title' => 'منقي',
                 ],
                 'search_by' => [
-                    'code'       => 'البحث حسب الرمز',
-                    'code_or_id' => 'ابحث حسب الرمز أو الهوية',
+                    'code'        => 'البحث حسب الرمز',
+                    'code_or_id'  => 'ابحث حسب الرمز أو الهوية',
+                    'sku_or_user' => 'البحث حسب SKU أو المستخدم',
                 ],
                 'search' => [
                     'title' => 'يبحث',

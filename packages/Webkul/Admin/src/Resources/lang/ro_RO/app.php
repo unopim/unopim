@@ -364,7 +364,6 @@ return [
                     'url'                        => 'Introduceți un URL valid.',
                     'regex'                      => 'Valoarea nu se potrivește cu modelul necesar.',
                     'invalid-pattern'            => 'Model personalizat invalid furnizat.',
-
                     'numeric'                    => 'Valoarea atributului numeric „:attribute” trebuie să fie un număr valid.',
                     'select-attribute-or-family' => 'Vă rugăm să selectați cel puțin un atribut sau o familie de atribute.',
                     'failed'                     => 'Validarea a eșuat.',
@@ -385,47 +384,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Editarea în masă a reușit.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Nicio modificare de salvat.',
-
-                'invalid-datetime'            => 'Introduceți o dată și oră valide.',
-
-                'resize-column'               => 'Trageți pentru a redimensiona coloana',
-                'success'                     => 'Sarcină executată cu succes.',
-                'fetch-failed'                => 'Eroare la preluare.',
-                'action'                      => 'Editare în masă',
-                'description'                 => 'Editați mai multe produse simultan. Modificările sunt procesate în fundal.',
-                'gallery-preview'             => 'Previzualizare galerie',
-                'img-preview'                 => 'Previzualizare imagine',
-                'no-image'                    => 'Nicio imagine',
-                'img-fail'                    => 'Încărcarea imaginii a eșuat',
-                'no-option'                   => 'Fără opțiuni',
-                'keyboard-shortcuts'          => 'Comenzi rapide de la tastatură',
-                'shortcuts-navigation'        => 'Navigare',
-                'shortcuts-editing'           => 'Editare',
-                'shortcuts-selection'         => 'Selecție',
-                'shortcuts-clipboard'         => 'Clipboard și completare',
-                'shortcuts-move-cell'         => 'Deplasare între celule',
-                'shortcuts-move-down'         => 'Deplasare în jos / confirmare editare',
-                'shortcuts-move-up'           => 'Deplasare în sus',
-                'shortcuts-move-right-left'   => 'Deplasare la dreapta / stânga',
-                'shortcuts-home-end'          => 'Prima / ultima coloană din rând',
-                'shortcuts-ctrl-home-end'     => 'Prima / ultima celulă din grilă',
-                'shortcuts-extend-selection'  => 'Extinde selecția',
-                'shortcuts-select-all'        => 'Selectează toate celulele',
-                'shortcuts-enter-edit'        => 'Intră în modul de editare',
-                'shortcuts-confirm-move-down' => 'Confirmă + deplasare în jos',
-                'shortcuts-confirm-move-right'=> 'Confirmă + deplasare la dreapta',
-                'shortcuts-escape-revert'     => 'Revenire la valoare + ieșire din editare',
-                'shortcuts-clear-cell'        => 'Șterge celula',
-                'shortcuts-copy'              => 'Copiază',
-                'shortcuts-cut'               => 'Taie',
-                'shortcuts-paste'             => 'Lipește',
-                'shortcuts-fill-down'         => 'Completează în jos',
-                'shortcuts-fill-right'        => 'Completează la dreapta',
-                'shortcuts-undo'              => 'Anulează',
-                'shortcuts-redo'              => 'Refă',
-                'shortcuts-help'              => 'Afișează/ascunde comenzile rapide',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Nicio modificare de salvat.',
+                'invalid-datetime'             => 'Introduceți o dată și oră valide.',
+                'resize-column'                => 'Trageți pentru a redimensiona coloana',
+                'success'                      => 'Sarcină executată cu succes.',
+                'fetch-failed'                 => 'Eroare la preluare.',
+                'action'                       => 'Editare în masă',
+                'description'                  => 'Editați mai multe produse simultan. Modificările sunt procesate în fundal.',
+                'gallery-preview'              => 'Previzualizare galerie',
+                'img-preview'                  => 'Previzualizare imagine',
+                'no-image'                     => 'Nicio imagine',
+                'img-fail'                     => 'Încărcarea imaginii a eșuat',
+                'no-option'                    => 'Fără opțiuni',
+                'keyboard-shortcuts'           => 'Comenzi rapide de la tastatură',
+                'shortcuts-navigation'         => 'Navigare',
+                'shortcuts-editing'            => 'Editare',
+                'shortcuts-selection'          => 'Selecție',
+                'shortcuts-clipboard'          => 'Clipboard și completare',
+                'shortcuts-move-cell'          => 'Deplasare între celule',
+                'shortcuts-move-down'          => 'Deplasare în jos / confirmare editare',
+                'shortcuts-move-up'            => 'Deplasare în sus',
+                'shortcuts-move-right-left'    => 'Deplasare la dreapta / stânga',
+                'shortcuts-home-end'           => 'Prima / ultima coloană din rând',
+                'shortcuts-ctrl-home-end'      => 'Prima / ultima celulă din grilă',
+                'shortcuts-extend-selection'   => 'Extinde selecția',
+                'shortcuts-select-all'         => 'Selectează toate celulele',
+                'shortcuts-enter-edit'         => 'Intră în modul de editare',
+                'shortcuts-confirm-move-down'  => 'Confirmă + deplasare în jos',
+                'shortcuts-confirm-move-right' => 'Confirmă + deplasare la dreapta',
+                'shortcuts-escape-revert'      => 'Revenire la valoare + ieșire din editare',
+                'shortcuts-clear-cell'         => 'Șterge celula',
+                'shortcuts-copy'               => 'Copiază',
+                'shortcuts-cut'                => 'Taie',
+                'shortcuts-paste'              => 'Lipește',
+                'shortcuts-fill-down'          => 'Completează în jos',
+                'shortcuts-fill-right'         => 'Completează la dreapta',
+                'shortcuts-undo'               => 'Anulează',
+                'shortcuts-redo'               => 'Refă',
+                'shortcuts-help'               => 'Afișează/ascunde comenzile rapide',
             ],
             'create-success'          => 'Produs creat cu succes',
             'delete-failed'           => 'Ștergerea produsului a eșuat',
@@ -520,7 +517,6 @@ return [
                 'is-filterable'         => 'Este filtrabil',
                 'ai-translate'          => 'Traducere IA',
                 'invalid-swatch-type'   => 'Atributul :attribute nu este permis pentru tipul de atribut :type cu tipul de eșantion :swatch_type.',
-
                 'single-object-only'    => 'Fiecare cerere de creare trebuie să trimită un singur obiect de atribut.',
                 'option'                => [
                     'color'    => 'Eșantion de culoare',
@@ -604,7 +600,6 @@ return [
             'delete-success'    => 'Atribut șters',
             'update-success'    => 'Atribut actualizat',
             'user-define-error' => 'Nu se poate șterge atributul de sistem',
-
             'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
             'not-found'         => 'Atributul cu codul ":code" nu a fost găsit',
         ],
@@ -887,7 +882,6 @@ return [
             'update-success'    => 'Câmp de categorie actualizat cu succes',
             'user-define-error' => 'Nu se poate șterge câmpul de categorie sistem',
             'not-found'         => 'Câmp de categorie cu codul ":code" nu a fost găsit',
-
             'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +983,7 @@ return [
             'can-not-update-variant-options' => 'Nu se pot actualiza opțiunile de configurare deoarece această familie are deja variante de produse.',
         ],
         'history' => [
-            'view' => 'Vizualizare detalii versiune',
-
+            'view'  => 'Vizualizare detalii versiune',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versiune',
@@ -1124,8 +1117,7 @@ return [
                         'paused'               => 'Suspendat',
                         'cancelled'            => 'Anulat',
                         'failed'               => 'Eșuat',
-
-                        'view'       => 'Vizualizare',
+                        'view'                 => 'Vizualizare',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1775,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompturi',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titlu',
@@ -1831,11 +1820,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Prompturi de sistem',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titlu',
@@ -2013,8 +1999,9 @@ return [
                     'title' => 'Filtru',
                 ],
                 'search_by' => [
-                    'code'       => 'Căutare după cod',
-                    'code_or_id' => 'Căutare după cod sau ID',
+                    'code'        => 'Căutare după cod',
+                    'code_or_id'  => 'Căutare după cod sau ID',
+                    'sku_or_user' => 'Căutare după SKU sau utilizator',
                 ],
                 'search' => [
                     'title' => 'Căutare',

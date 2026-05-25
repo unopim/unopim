@@ -14,7 +14,7 @@ class LogsDataGrid extends DataGrid
      *
      * @var string
      */
-    protected $searchPlaceholder = 'admin::app.components.datagrid.toolbar.search_by.code';
+    protected $searchPlaceholder = 'admin::app.components.datagrid.toolbar.search_by.sku_or_user';
 
     /**
      * Prepare query builder.

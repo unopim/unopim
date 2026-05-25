@@ -364,7 +364,6 @@ return [
                     'url'                        => 'Lütfen geçerli bir URL girin.',
                     'regex'                      => 'Değer gerekli desenle eşleşmiyor.',
                     'invalid-pattern'            => 'Geçersiz özel desen sağlandı.',
-
                     'numeric'                    => '":attribute" sayısal özelliğinin değeri geçerli bir sayı olmalıdır.',
                     'select-attribute-or-family' => 'Lütfen en az bir özellik veya özellik ailesi seçin.',
                     'failed'                     => 'Doğrulama başarısız oldu.',
@@ -385,47 +384,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Toplu düzenleme başarıyla tamamlandı.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Kaydedilecek değişiklik yok.',
-
-                'invalid-datetime'            => 'Geçerli bir tarih ve saat girin.',
-
-                'resize-column'               => 'Sütun genişliğini değiştirmek için sürükleyin',
-                'success'                     => 'İşlem başarıyla gerçekleştirildi.',
-                'fetch-failed'                => 'Veri alınamadı.',
-                'action'                      => 'Toplu Düzenleme',
-                'description'                 => 'Birden fazla ürünü aynı anda düzenleyin. Değişiklikler arka planda işlenir.',
-                'gallery-preview'             => 'Galeri Önizleme',
-                'img-preview'                 => 'Resim Önizleme',
-                'no-image'                    => 'Resim Yok',
-                'img-fail'                    => 'Resim yüklenemedi',
-                'no-option'                   => 'Seçenek Yok',
-                'keyboard-shortcuts'          => 'Klavye Kısayolları',
-                'shortcuts-navigation'        => 'Gezinme',
-                'shortcuts-editing'           => 'Düzenleme',
-                'shortcuts-selection'         => 'Seçim',
-                'shortcuts-clipboard'         => 'Pano ve Doldurma',
-                'shortcuts-move-cell'         => 'Hücreler arasında gezin',
-                'shortcuts-move-down'         => 'Aşağı taşı / düzenlemeyi onayla',
-                'shortcuts-move-up'           => 'Yukarı taşı',
-                'shortcuts-move-right-left'   => 'Sağa / sola taşı',
-                'shortcuts-home-end'          => 'Satırdaki ilk / son sütun',
-                'shortcuts-ctrl-home-end'     => 'Izgaradaki ilk / son hücre',
-                'shortcuts-extend-selection'  => 'Seçimi genişlet',
-                'shortcuts-select-all'        => 'Tüm hücreleri seç',
-                'shortcuts-enter-edit'        => 'Düzenleme moduna gir',
-                'shortcuts-confirm-move-down' => 'Onayla + aşağı taşı',
-                'shortcuts-confirm-move-right'=> 'Onayla + sağa taşı',
-                'shortcuts-escape-revert'     => 'Değeri geri al + düzenlemeden çık',
-                'shortcuts-clear-cell'        => 'Hücreyi temizle',
-                'shortcuts-copy'              => 'Kopyala',
-                'shortcuts-cut'               => 'Kes',
-                'shortcuts-paste'             => 'Yapıştır',
-                'shortcuts-fill-down'         => 'Aşağı doldur',
-                'shortcuts-fill-right'        => 'Sağa doldur',
-                'shortcuts-undo'              => 'Geri al',
-                'shortcuts-redo'              => 'Yinele',
-                'shortcuts-help'              => 'Klavye kısayollarını göster/gizle',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Kaydedilecek değişiklik yok.',
+                'invalid-datetime'             => 'Geçerli bir tarih ve saat girin.',
+                'resize-column'                => 'Sütun genişliğini değiştirmek için sürükleyin',
+                'success'                      => 'İşlem başarıyla gerçekleştirildi.',
+                'fetch-failed'                 => 'Veri alınamadı.',
+                'action'                       => 'Toplu Düzenleme',
+                'description'                  => 'Birden fazla ürünü aynı anda düzenleyin. Değişiklikler arka planda işlenir.',
+                'gallery-preview'              => 'Galeri Önizleme',
+                'img-preview'                  => 'Resim Önizleme',
+                'no-image'                     => 'Resim Yok',
+                'img-fail'                     => 'Resim yüklenemedi',
+                'no-option'                    => 'Seçenek Yok',
+                'keyboard-shortcuts'           => 'Klavye Kısayolları',
+                'shortcuts-navigation'         => 'Gezinme',
+                'shortcuts-editing'            => 'Düzenleme',
+                'shortcuts-selection'          => 'Seçim',
+                'shortcuts-clipboard'          => 'Pano ve Doldurma',
+                'shortcuts-move-cell'          => 'Hücreler arasında gezin',
+                'shortcuts-move-down'          => 'Aşağı taşı / düzenlemeyi onayla',
+                'shortcuts-move-up'            => 'Yukarı taşı',
+                'shortcuts-move-right-left'    => 'Sağa / sola taşı',
+                'shortcuts-home-end'           => 'Satırdaki ilk / son sütun',
+                'shortcuts-ctrl-home-end'      => 'Izgaradaki ilk / son hücre',
+                'shortcuts-extend-selection'   => 'Seçimi genişlet',
+                'shortcuts-select-all'         => 'Tüm hücreleri seç',
+                'shortcuts-enter-edit'         => 'Düzenleme moduna gir',
+                'shortcuts-confirm-move-down'  => 'Onayla + aşağı taşı',
+                'shortcuts-confirm-move-right' => 'Onayla + sağa taşı',
+                'shortcuts-escape-revert'      => 'Değeri geri al + düzenlemeden çık',
+                'shortcuts-clear-cell'         => 'Hücreyi temizle',
+                'shortcuts-copy'               => 'Kopyala',
+                'shortcuts-cut'                => 'Kes',
+                'shortcuts-paste'              => 'Yapıştır',
+                'shortcuts-fill-down'          => 'Aşağı doldur',
+                'shortcuts-fill-right'         => 'Sağa doldur',
+                'shortcuts-undo'               => 'Geri al',
+                'shortcuts-redo'               => 'Yinele',
+                'shortcuts-help'               => 'Klavye kısayollarını göster/gizle',
             ],
             'create-success'          => 'Ürün başarıyla oluşturuldu',
             'delete-failed'           => 'Ürün silinirken hata oluştu',
@@ -520,7 +517,6 @@ return [
                 'is-filterable'         => 'Filtrelenebilir',
                 'ai-translate'          => 'AI Çeviri',
                 'invalid-swatch-type'   => ':attribute, :type türü için :swatch_type swatch türü ile kullanılamaz.',
-
                 'single-object-only'    => 'Her oluşturma isteği yalnızca bir öznitelik nesnesi göndermelidir.',
                 'option'                => [
                     'color'    => 'Renk Örneği',
@@ -604,7 +600,6 @@ return [
             'delete-success'    => 'Öznitelik Silindi',
             'update-success'    => 'Öznitelik Güncellendi',
             'user-define-error' => 'Sistem öznitelikleri silinemez',
-
             'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
             'not-found'         => '":code" kodlu öznitelik bulunamadı',
         ],
@@ -887,7 +882,6 @@ return [
             'update-success'    => 'Kategori Alanı başarıyla güncellendi',
             'user-define-error' => 'Sistem tanımlı kategori alanı silinemez',
             'not-found'         => 'Kategori Alanı ":code" bulunamadı',
-
             'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +983,7 @@ return [
             'can-not-update-variant-options' => 'Bu ailede zaten ürün varyantları olduğu için konfigürasyon seçenekleri güncellenemiyor.',
         ],
         'history' => [
-            'view' => 'Sürüm Ayrıntılarını Görüntüle',
-
+            'view'  => 'Sürüm Ayrıntılarını Görüntüle',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versiyon',
@@ -1124,8 +1117,7 @@ return [
                         'paused'               => 'Duraklatıldı',
                         'cancelled'            => 'İptal Edildi',
                         'failed'               => 'Başarısız',
-
-                        'view'       => 'Görüntüle',
+                        'view'                 => 'Görüntüle',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1775,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'İstemler',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Başlık',
@@ -1831,11 +1820,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Sistem istemleri',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Başlık',
@@ -2013,8 +1999,9 @@ return [
                     'title' => 'Filtre',
                 ],
                 'search_by' => [
-                    'code'       => 'Kod ile Ara',
-                    'code_or_id' => 'Kod veya ID ile Ara',
+                    'code'        => 'Kod ile Ara',
+                    'code_or_id'  => 'Kod veya ID ile Ara',
+                    'sku_or_user' => 'SKU veya Kullanıcı ile Ara',
                 ],
                 'search' => [
                     'title' => 'Ara',

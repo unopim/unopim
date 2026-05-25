@@ -364,7 +364,6 @@ return [
                     'url'                        => '有効なURLを入力してください。',
                     'regex'                      => '値が必要なパターンと一致しません。',
                     'invalid-pattern'            => '無効なカスタムパターンが指定されました。',
-
                     'numeric'                    => '数値属性「:attribute」の値は有効な数値である必要があります。',
                     'select-attribute-or-family' => '少なくとも1つの属性または属性ファミリーを選択してください。',
                     'failed'                     => '検証に失敗しました。',
@@ -385,47 +384,45 @@ return [
                 'handle-save' => [
                     'edit-success' => '一括編集に成功しました。',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => '保存する変更はありません。',
-
-                'invalid-datetime'            => '有効な日付と時刻を入力してください。',
-
-                'resize-column'               => 'ドラッグして列幅を変更',
-                'success'                     => 'ジョブが正常に実行されました。',
-                'fetch-failed'                => '取得に失敗しました。',
-                'action'                      => '一括編集',
-                'description'                 => '複数の商品を一括編集します。変更はバックグラウンドで処理されます。',
-                'gallery-preview'             => 'ギャラリープレビュー',
-                'img-preview'                 => '画像プレビュー',
-                'no-image'                    => '画像なし',
-                'img-fail'                    => '画像のアップロードに失敗しました',
-                'no-option'                   => 'オプションなし',
-                'keyboard-shortcuts'          => 'キーボードショートカット',
-                'shortcuts-navigation'        => 'ナビゲーション',
-                'shortcuts-editing'           => '編集',
-                'shortcuts-selection'         => '選択',
-                'shortcuts-clipboard'         => 'クリップボードと入力',
-                'shortcuts-move-cell'         => 'セル間の移動',
-                'shortcuts-move-down'         => '下に移動 / 編集を確定',
-                'shortcuts-move-up'           => '上に移動',
-                'shortcuts-move-right-left'   => '右 / 左に移動',
-                'shortcuts-home-end'          => '行の最初 / 最後の列',
-                'shortcuts-ctrl-home-end'     => 'グリッドの最初 / 最後のセル',
-                'shortcuts-extend-selection'  => '選択範囲を拡張',
-                'shortcuts-select-all'        => 'すべてのセルを選択',
-                'shortcuts-enter-edit'        => '編集モードに入る',
-                'shortcuts-confirm-move-down' => '確定 + 下に移動',
-                'shortcuts-confirm-move-right'=> '確定 + 右に移動',
-                'shortcuts-escape-revert'     => '値を元に戻す + 編集を終了',
-                'shortcuts-clear-cell'        => 'セルをクリア',
-                'shortcuts-copy'              => 'コピー',
-                'shortcuts-cut'               => '切り取り',
-                'shortcuts-paste'             => '貼り付け',
-                'shortcuts-fill-down'         => '下にフィル',
-                'shortcuts-fill-right'        => '右にフィル',
-                'shortcuts-undo'              => '元に戻す',
-                'shortcuts-redo'              => 'やり直し',
-                'shortcuts-help'              => 'キーボードショートカットの表示切替',
+                'id'                           => 'ID',
+                'no-changes'                   => '保存する変更はありません。',
+                'invalid-datetime'             => '有効な日付と時刻を入力してください。',
+                'resize-column'                => 'ドラッグして列幅を変更',
+                'success'                      => 'ジョブが正常に実行されました。',
+                'fetch-failed'                 => '取得に失敗しました。',
+                'action'                       => '一括編集',
+                'description'                  => '複数の商品を一括編集します。変更はバックグラウンドで処理されます。',
+                'gallery-preview'              => 'ギャラリープレビュー',
+                'img-preview'                  => '画像プレビュー',
+                'no-image'                     => '画像なし',
+                'img-fail'                     => '画像のアップロードに失敗しました',
+                'no-option'                    => 'オプションなし',
+                'keyboard-shortcuts'           => 'キーボードショートカット',
+                'shortcuts-navigation'         => 'ナビゲーション',
+                'shortcuts-editing'            => '編集',
+                'shortcuts-selection'          => '選択',
+                'shortcuts-clipboard'          => 'クリップボードと入力',
+                'shortcuts-move-cell'          => 'セル間の移動',
+                'shortcuts-move-down'          => '下に移動 / 編集を確定',
+                'shortcuts-move-up'            => '上に移動',
+                'shortcuts-move-right-left'    => '右 / 左に移動',
+                'shortcuts-home-end'           => '行の最初 / 最後の列',
+                'shortcuts-ctrl-home-end'      => 'グリッドの最初 / 最後のセル',
+                'shortcuts-extend-selection'   => '選択範囲を拡張',
+                'shortcuts-select-all'         => 'すべてのセルを選択',
+                'shortcuts-enter-edit'         => '編集モードに入る',
+                'shortcuts-confirm-move-down'  => '確定 + 下に移動',
+                'shortcuts-confirm-move-right' => '確定 + 右に移動',
+                'shortcuts-escape-revert'      => '値を元に戻す + 編集を終了',
+                'shortcuts-clear-cell'         => 'セルをクリア',
+                'shortcuts-copy'               => 'コピー',
+                'shortcuts-cut'                => '切り取り',
+                'shortcuts-paste'              => '貼り付け',
+                'shortcuts-fill-down'          => '下にフィル',
+                'shortcuts-fill-right'         => '右にフィル',
+                'shortcuts-undo'               => '元に戻す',
+                'shortcuts-redo'               => 'やり直し',
+                'shortcuts-help'               => 'キーボードショートカットの表示切替',
             ],
             'create-success'          => '製品が正常に作成されました',
             'delete-failed'           => '製品の削除に失敗しました',
@@ -520,7 +517,6 @@ return [
                 'is-filterable'         => 'フィルタリング可能',
                 'ai-translate'          => 'AI翻訳',
                 'invalid-swatch-type'   => ':attribute は、スウォッチタイプ :swatch_type の属性タイプ :type には許可されていません。',
-
                 'single-object-only'    => '属性の作成リクエストには属性オブジェクトを1つだけ送信してください。',
                 'option'                => [
                     'color'    => 'カラー スウォッチ',
@@ -604,7 +600,6 @@ return [
             'delete-success'    => '属性が正常に削除されました',
             'update-success'    => '属性が正常に更新されました',
             'user-define-error' => 'システム属性を削除できません',
-
             'immutable-fields'  => '次のフィールドは変更できません: :fields。',
             'not-found'         => 'コード ":code" の属性が見つかりませんでした',
         ],
@@ -887,7 +882,6 @@ return [
             'update-success'    => 'カテゴリ フィールドが正常に更新されました',
             'user-define-error' => 'システム カテゴリ フィールドを削除できません',
             'not-found'         => 'コード ":code" のカテゴリ フィールドが見つかりませんでした',
-
             'immutable-fields'  => '次のフィールドは変更できません: :fields。',
         ],
         'category-fields-options' => [
@@ -989,8 +983,7 @@ return [
             'can-not-update-variant-options' => 'このファミリにはすでにバリアント製品があるため、構成可能なオプションを更新できません。',
         ],
         'history' => [
-            'view' => 'バージョンの詳細を表示',
-
+            'view'  => 'バージョンの詳細を表示',
             'index' => [
                 'datagrid' => [
                     'version'   => 'バージョン',
@@ -1124,8 +1117,7 @@ return [
                         'paused'               => '一時停止中',
                         'cancelled'            => 'キャンセル済み',
                         'failed'               => '失敗',
-
-                        'view'       => '表示',
+                        'view'                 => '表示',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1775,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'プロンプト',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'タイトル',
@@ -1831,11 +1820,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'システムプロンプト',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'タイトル',
@@ -2013,8 +1999,9 @@ return [
                     'title' => 'フィルター',
                 ],
                 'search_by' => [
-                    'code'       => 'コードで検索',
-                    'code_or_id' => 'コードまたはIDで検索',
+                    'code'        => 'コードで検索',
+                    'code_or_id'  => 'コードまたはIDで検索',
+                    'sku_or_user' => 'SKUまたはユーザーで検索',
                 ],
                 'search' => [
                     'title' => '検索',

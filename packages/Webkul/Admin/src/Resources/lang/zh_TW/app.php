@@ -364,7 +364,6 @@ return [
                     'url'                        => '請輸入有效的網址。',
                     'regex'                      => '值不符合所需的格式。',
                     'invalid-pattern'            => '提供了無效的自訂模式。',
-
                     'numeric'                    => '數字屬性「:attribute」的值必須為有效的數字。',
                     'select-attribute-or-family' => '請至少選擇一個屬性或屬性族。',
                     'failed'                     => '驗證失敗。',
@@ -385,47 +384,45 @@ return [
                 'handle-save' => [
                     'edit-success' => '批次編輯成功。',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => '沒有要儲存的變更。',
-
-                'invalid-datetime'            => '請輸入有效的日期與時間。',
-
-                'resize-column'               => '拖動以調整欄寬',
-                'success'                     => '任務執行成功。',
-                'fetch-failed'                => '取得資料失敗。',
-                'action'                      => '批次編輯',
-                'description'                 => '一次編輯多個產品。變更將在背景中處理。',
-                'gallery-preview'             => '圖庫預覽',
-                'img-preview'                 => '圖片預覽',
-                'no-image'                    => '無圖片',
-                'img-fail'                    => '圖片上傳失敗',
-                'no-option'                   => '無選項',
-                'keyboard-shortcuts'          => '鍵盤快捷鍵',
-                'shortcuts-navigation'        => '導覽',
-                'shortcuts-editing'           => '編輯',
-                'shortcuts-selection'         => '選取',
-                'shortcuts-clipboard'         => '剪貼簿與填入',
-                'shortcuts-move-cell'         => '在儲存格間移動',
-                'shortcuts-move-down'         => '向下移動 / 確認編輯',
-                'shortcuts-move-up'           => '向上移動',
-                'shortcuts-move-right-left'   => '向右 / 向左移動',
-                'shortcuts-home-end'          => '列中第一 / 最後一欄',
-                'shortcuts-ctrl-home-end'     => '格中第一 / 最後一個儲存格',
-                'shortcuts-extend-selection'  => '延伸選取',
-                'shortcuts-select-all'        => '選取所有儲存格',
-                'shortcuts-enter-edit'        => '進入編輯模式',
-                'shortcuts-confirm-move-down' => '確認 + 向下移動',
-                'shortcuts-confirm-move-right'=> '確認 + 向右移動',
-                'shortcuts-escape-revert'     => '還原值 + 退出編輯',
-                'shortcuts-clear-cell'        => '清除儲存格',
-                'shortcuts-copy'              => '複製',
-                'shortcuts-cut'               => '剪下',
-                'shortcuts-paste'             => '貼上',
-                'shortcuts-fill-down'         => '向下填入',
-                'shortcuts-fill-right'        => '向右填入',
-                'shortcuts-undo'              => '復原',
-                'shortcuts-redo'              => '取消復原',
-                'shortcuts-help'              => '顯示/隱藏鍵盤快捷鍵',
+                'id'                           => 'ID',
+                'no-changes'                   => '沒有要儲存的變更。',
+                'invalid-datetime'             => '請輸入有效的日期與時間。',
+                'resize-column'                => '拖動以調整欄寬',
+                'success'                      => '任務執行成功。',
+                'fetch-failed'                 => '取得資料失敗。',
+                'action'                       => '批次編輯',
+                'description'                  => '一次編輯多個產品。變更將在背景中處理。',
+                'gallery-preview'              => '圖庫預覽',
+                'img-preview'                  => '圖片預覽',
+                'no-image'                     => '無圖片',
+                'img-fail'                     => '圖片上傳失敗',
+                'no-option'                    => '無選項',
+                'keyboard-shortcuts'           => '鍵盤快捷鍵',
+                'shortcuts-navigation'         => '導覽',
+                'shortcuts-editing'            => '編輯',
+                'shortcuts-selection'          => '選取',
+                'shortcuts-clipboard'          => '剪貼簿與填入',
+                'shortcuts-move-cell'          => '在儲存格間移動',
+                'shortcuts-move-down'          => '向下移動 / 確認編輯',
+                'shortcuts-move-up'            => '向上移動',
+                'shortcuts-move-right-left'    => '向右 / 向左移動',
+                'shortcuts-home-end'           => '列中第一 / 最後一欄',
+                'shortcuts-ctrl-home-end'      => '格中第一 / 最後一個儲存格',
+                'shortcuts-extend-selection'   => '延伸選取',
+                'shortcuts-select-all'         => '選取所有儲存格',
+                'shortcuts-enter-edit'         => '進入編輯模式',
+                'shortcuts-confirm-move-down'  => '確認 + 向下移動',
+                'shortcuts-confirm-move-right' => '確認 + 向右移動',
+                'shortcuts-escape-revert'      => '還原值 + 退出編輯',
+                'shortcuts-clear-cell'         => '清除儲存格',
+                'shortcuts-copy'               => '複製',
+                'shortcuts-cut'                => '剪下',
+                'shortcuts-paste'              => '貼上',
+                'shortcuts-fill-down'          => '向下填入',
+                'shortcuts-fill-right'         => '向右填入',
+                'shortcuts-undo'               => '復原',
+                'shortcuts-redo'               => '取消復原',
+                'shortcuts-help'               => '顯示/隱藏鍵盤快捷鍵',
             ],
             'create-success'          => '產品創建成功',
             'delete-failed'           => '刪除產品時出錯',
@@ -520,7 +517,6 @@ return [
                 'is-filterable'         => '可篩選',
                 'ai-translate'          => '人工智慧翻譯',
                 'invalid-swatch-type'   => ':attribute 不允許用於屬性類型 :type，搭配色板類型 :swatch_type。',
-
                 'single-object-only'    => '每個建立請求只能傳送一個屬性物件。',
                 'option'                => [
                     'color'    => '顏色樣本',
@@ -604,7 +600,6 @@ return [
             'delete-success'    => '屬性已成功刪除',
             'update-success'    => '屬性已成功更新',
             'user-define-error' => '無法刪除系統屬性',
-
             'immutable-fields'  => '以下欄位無法修改：:fields。',
             'not-found'         => '找不到代碼 ":code" 的屬性',
         ],
@@ -887,7 +882,6 @@ return [
             'update-success'    => '類別欄位更新成功',
             'user-define-error' => '無法刪除系統預設類別欄位',
             'not-found'         => '找不到代碼為 ":code" 的類別欄位',
-
             'immutable-fields'  => '以下欄位無法修改：:fields。',
         ],
         'category-fields-options' => [
@@ -989,8 +983,7 @@ return [
             'can-not-update-variant-options' => '此家族已有產品變體，因此無法更新配置選項。',
         ],
         'history' => [
-            'view' => '檢視版本詳情',
-
+            'view'  => '檢視版本詳情',
             'index' => [
                 'datagrid' => [
                     'version'   => '版本',
@@ -1124,8 +1117,7 @@ return [
                         'paused'               => '已暫停',
                         'cancelled'            => '已取消',
                         'failed'               => '失敗',
-
-                        'view'       => '查看',
+                        'view'                 => '查看',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1775,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => '提示詞',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '標題',
@@ -1831,11 +1820,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => '系統提示詞',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '標題',
@@ -2013,8 +1999,9 @@ return [
                     'title' => '過濾',
                 ],
                 'search_by' => [
-                    'code'       => '按代碼搜索',
-                    'code_or_id' => '按代碼或ID搜索',
+                    'code'        => '按代碼搜索',
+                    'code_or_id'  => '按代碼或ID搜索',
+                    'sku_or_user' => '按 SKU 或使用者搜尋',
                 ],
                 'search' => [
                     'title' => '搜索',
