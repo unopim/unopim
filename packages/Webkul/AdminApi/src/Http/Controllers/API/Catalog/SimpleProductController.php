@@ -64,7 +64,7 @@ class SimpleProductController extends ProductController
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store()
     {
@@ -138,7 +138,7 @@ class SimpleProductController extends ProductController
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(string $sku)
     {
@@ -195,7 +195,7 @@ class SimpleProductController extends ProductController
     /**
      * Partial Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function partialUpdate(string $sku)
     {

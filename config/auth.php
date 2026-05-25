@@ -1,5 +1,7 @@
 <?php
 
+use Webkul\User\Models\Admin;
+
 return [
     'defaults' => [
         'guard'     => 'admin',
@@ -21,7 +23,7 @@ return [
     'providers' => [
         'admins' => [
             'driver' => 'eloquent',
-            'model'  => Webkul\User\Models\Admin::class,
+            'model'  => Admin::class,
         ],
     ],
 

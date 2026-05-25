@@ -5,6 +5,7 @@ namespace Webkul\Theme\Providers;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Theme\Themes;
+use Webkul\Theme\ThemeViewFinder;
 
 class ThemeServiceProvider extends ServiceProvider
 {
@@ -34,7 +35,7 @@ class ThemeServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton('view.finder', function ($app) {
-            return new \Webkul\Theme\ThemeViewFinder(
+            return new ThemeViewFinder(
                 $app['files'],
                 $app['config']['view.paths'],
                 null

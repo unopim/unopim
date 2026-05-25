@@ -4,6 +4,7 @@ namespace Webkul\Attribute\Repositories;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Webkul\Attribute\Contracts\AttributeOption;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeOptionRepository extends Repository
@@ -17,7 +18,7 @@ class AttributeOptionRepository extends Repository
     }
 
     /**
-     * @return \Webkul\Attribute\Contracts\AttributeOption
+     * @return AttributeOption
      */
     public function create(array $data)
     {

@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\ApiDataSource;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Query\Builder;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Core\Repositories\LocaleRepository;
 
@@ -18,7 +19,7 @@ class LocaleDataSource extends ApiDataSource
     /**
      * Prepares the query builder for API requests.
      *
-     * @return \Illuminate\Database\Query\Builder The query builder for the locale repository.
+     * @return Builder The query builder for the locale repository.
      */
     public function prepareApiQueryBuilder()
     {

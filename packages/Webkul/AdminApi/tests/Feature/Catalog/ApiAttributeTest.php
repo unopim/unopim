@@ -159,8 +159,8 @@ it('should create attributes with certain attribute types', function () {
                 ->assertJsonFragment(['success' => true, 'message' => trans('admin::app.catalog.attributes.create-success')]);
 
             $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $data);
-        } catch (\Exception $e) {
-            throw new \Exception('Failed with attribute code: '.$code.'. '.$e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception('Failed with attribute code: '.$code.'. '.$e->getMessage());
         }
     }
 });
@@ -256,8 +256,8 @@ it('should not create attributes with certain codes', function () {
             unset($data['labels']);
 
             $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), $data);
-        } catch (\Exception $e) {
-            throw new \Exception('Failed with attribute code: '.$code.'. '.$e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception('Failed with attribute code: '.$code.'. '.$e->getMessage());
         }
     }
 });
@@ -369,8 +369,8 @@ it('should create text attribute with these validation types', function () {
                 ->assertCreated();
 
             $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $data);
-        } catch (\Exception $e) {
-            throw new \Exception('Failed with validation type code: '.$validation.'. '.$e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception('Failed with validation type code: '.$validation.'. '.$e->getMessage());
         }
     }
 });
