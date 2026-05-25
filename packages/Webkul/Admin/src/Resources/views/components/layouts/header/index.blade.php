@@ -12,7 +12,7 @@
         </i>
 
         <!-- Logo -->
-        <a href="{{ route('admin.dashboard.index') }}">
+        <a href="{{ $adminLandingUrl ?? route('admin.dashboard.index') }}">
             @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
                 <img
                     class="h-10"

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Paginated List Envelope",
+  "type": "object",
+  "required": ["data"],
+  "properties": {
+    "data": { "type": "array" },
+    "current_page": { "type": "integer", "minimum": 1 },
+    "last_page": { "type": "integer", "minimum": 1 },
+    "total": { "type": "integer", "minimum": 0 },
+    "per_page": { "type": ["integer", "string"] },
+    "links": {
+      "type": "object",
+      "properties": {
+        "first": { "type": ["string", "null"] },
+        "last": { "type": ["string", "null"] },
+        "next": { "type": ["string", "null"] },
+        "prev": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

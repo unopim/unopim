@@ -21,7 +21,8 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 */
 
 if (! file_exists(__DIR__.'/../vendor/autoload.php')) {
-    header('Location:install.php');
+    header('Location: install.php');
+    exit;
 }
 
 require __DIR__.'/../vendor/autoload.php';

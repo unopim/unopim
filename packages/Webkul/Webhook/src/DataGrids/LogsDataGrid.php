@@ -28,7 +28,8 @@ class LogsDataGrid extends DataGrid
             'created_at',
             'sku',
             'user',
-            'status'
+            'status',
+            'extra'
         );
 
         return $queryBuilder;
@@ -97,24 +98,131 @@ class LogsDataGrid extends DataGrid
             'options'    => [
                 'type'   => 'basic',
                 'params' => [
-                    'options' => [
-                        [
-                            'label' => trans('webhook::app.configuration.webhook.logs.index.datagrid.success'),
-                            'value' => 1,
-                        ],
-                        [
-                            'label' => trans('webhook::app.configuration.webhook.logs.index.datagrid.failed'),
-                            'value' => 0,
-                        ],
-                    ],
+                    'options' => $this->buildStatusFilterOptions(),
                 ],
             ],
             'closure' => function ($row) {
-                return $row->status
-                    ? '<span class="break-words label-completed">'.trans('webhook::app.configuration.webhook.logs.index.datagrid.success').'</span>'
-                    : '<span class="break-words label-canceled">'.trans('webhook::app.configuration.webhook.logs.index.datagrid.failed').'</span>';
+                $extra = is_string($row->extra ?? null) ? json_decode($row->extra, true) : ($row->extra ?? []);
+                $code = $extra['response']['status'] ?? null;
+
+                if ($row->status) {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.success');
+
+                    if (is_numeric($code) && (int) $code > 0) {
+                        $label .= ' ('.(int) $code.')';
+                    }
+
+                    return '<span class="break-words label-completed">'.$label.'</span>';
+                }
+
+                if (! is_numeric($code) || (int) $code === 0) {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.timeout_or_error');
+                } elseif ((int) $code >= 500) {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.server_error').' ('.(int) $code.')';
+                } else {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.failed').' ('.(int) $code.')';
+                }
+
+                return '<span class="break-words label-canceled">'.$label.'</span>';
             },
         ]);
+    }
+
+    /**
+     * Build the status dropdown from the actual (status, http-code) pairs
+     * present in webhook_logs so the filter mirrors the column badges.
+     */
+    protected function buildStatusFilterOptions(): array
+    {
+        // Laravel translates the `extra->response->status` JSON path to the
+        // right operator per driver (JSON_UNQUOTE/JSON_EXTRACT on MySQL, ->>
+        // on PostgreSQL), so this stays portable across both deployments.
+        $rows = DB::table('webhook_logs')
+            ->select('status', 'extra->response->status as code')
+            ->distinct()
+            ->get();
+
+        $pairs = [];
+        $hasTimeout = false;
+
+        foreach ($rows as $row) {
+            if ($row->code === null || ! is_numeric($row->code) || (int) $row->code === 0) {
+                $hasTimeout = true;
+
+                continue;
+            }
+
+            $pairs[] = [(int) $row->status, (int) $row->code];
+        }
+
+        usort($pairs, fn ($a, $b) => $b[0] <=> $a[0] ?: $a[1] <=> $b[1]);
+
+        $options = [];
+
+        foreach ($pairs as [$status, $code]) {
+            if ($status === 1) {
+                $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.success').' ('.$code.')';
+            } elseif ($code >= 500) {
+                $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.server_error').' ('.$code.')';
+            } else {
+                $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.failed').' ('.$code.')';
+            }
+
+            $options[] = [
+                'label' => $label,
+                'value' => $status.':'.$code,
+            ];
+        }
+
+        if ($hasTimeout) {
+            $options[] = [
+                'label' => trans('webhook::app.configuration.webhook.logs.index.datagrid.timeout_or_error'),
+                'value' => 'timeout_or_error',
+            ];
+        }
+
+        return $options;
+    }
+
+    /**
+     * Translate each selected dropdown value into the matching SQL predicate.
+     * Values are either "<status>:<code>" pairs (mirroring rows in the DB) or
+     * the "timeout_or_error" sentinel for null/0 codes.
+     */
+    public function processRequestedFilters(array $requestedFilters)
+    {
+        if (isset($requestedFilters['status'])) {
+            $statusValues = $requestedFilters['status'];
+            unset($requestedFilters['status']);
+
+            $this->queryBuilder->where(function ($outer) use ($statusValues) {
+                foreach ($statusValues as $value) {
+                    $outer->orWhere(function ($q) use ($value) {
+                        if ($value === 'timeout_or_error') {
+                            $q->where('status', 0)->where(function ($inner) {
+                                $inner->whereNull('extra->response->status')
+                                    ->orWhere('extra->response->status', 0);
+                            });
+
+                            return;
+                        }
+
+                        if (! is_string($value) || ! preg_match('/^[01]:\d+$/', $value)) {
+                            $q->whereRaw('1 = 0');
+
+                            return;
+                        }
+
+                        [$status, $code] = explode(':', $value, 2);
+
+                        $q->where('status', (int) $status)
+                            ->where('extra->response->status', (int) $code);
+                    });
+                }
+            });
+        }
+
+        return parent::processRequestedFilters($requestedFilters);
     }
 
     /**
