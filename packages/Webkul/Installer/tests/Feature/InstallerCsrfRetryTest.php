@@ -24,8 +24,8 @@ beforeEach(function () {
     });
 });
 
-describe('UI installer CSRF survives a second env-file-setup submit', function () {
-    it('does not rotate APP_KEY on retry when APP_KEY is already set, so the second submit does not 419', function () {
+describe('UI installer env-file-setup retries do not rotate APP_KEY', function () {
+    it('skips key:generate on retry when APP_KEY is already set', function () {
 
         config(['app.key' => 'base64:'.base64_encode(random_bytes(32))]);
 

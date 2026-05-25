@@ -97,7 +97,7 @@ class DatabaseManager
      */
     public function generateKey()
     {
-        if (! empty(config('app.key')) || ! empty(env('APP_KEY'))) {
+        if (! empty(config('app.key'))) {
             return;
         }
 
