@@ -3,7 +3,7 @@
 ## v2.0.1 - 2026-05-25
 
 ### Security
-- Patched an authorization gap on several admin write-verb routes (`*.store` / `*.update`) — they were missing from `packages/Webkul/Admin/src/Config/acl.php`, so the `Bouncer` middleware did not enforce a permission check. Mapped each missing route to the same ACL key as its sibling GET form (`.create` / `.edit`) and added regression coverage. Also corrected the response status code from `401` to `403` on permission-denied responses (user is authenticated, just unauthorized).
+- Patched an authorization gap on several admin write-verb routes (`*.store` / `*.update`) — they were missing from `packages/Webkul/Admin/src/Config/acl.php`, so the `Bouncer` middleware did not enforce a permission check. Mapped each missing route to the same ACL key as its sibling GET form (`.create` / `.edit`) and added regression coverage.
 - Hardened against `Host` / `X-Forwarded-Host` header poisoning. Asset and URL helpers (`url()`, `asset()`, Vite) previously resolved against the request `Host` header, so a crafted header could cause the admin layout to load JavaScript from an attacker origin. URL generation is now pinned to `APP_URL` via `URL::forceRootUrl()` + `URL::forceScheme()`, the four templates that rendered `url()->to('/')` / `asset('/')` were switched to `config('app.url')`, `trustProxies` is restricted via the new `TRUSTED_PROXIES` env variable (defaults to `127.0.0.1`), and `trustHosts` is enabled seeded from `APP_URL` + the new `TRUSTED_HOSTS` env variable.
 
 ## v2.0.0
