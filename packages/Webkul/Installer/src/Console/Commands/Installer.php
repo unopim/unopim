@@ -291,7 +291,17 @@ class Installer extends Command
             'DB_DATABASE' => text(
                 label: 'Please enter the database name',
                 default: env('DB_DATABASE') ?? '',
-                required: true
+                required: true,
+                validate: function (string $value): ?string {
+                    $trimmed = trim($value);
+
+                    return match (true) {
+                        $trimmed === ''                                 => 'The database name is required.',
+                        (bool) preg_match('/[^A-Za-z0-9_]/', $trimmed)  => 'The database name can only contain letters, numbers, and underscores. Characters like dots, dashes, and spaces are not allowed because they break SQL identifier quoting.',
+                        default                                         => null,
+                    };
+                },
+                transform: trim(...),
             ),
 
             'DB_PREFIX' => text(
