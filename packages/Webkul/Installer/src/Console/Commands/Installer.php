@@ -297,7 +297,7 @@ class Installer extends Command
 
                     return match (true) {
                         $trimmed === ''                                 => 'The database name is required.',
-                        (bool) preg_match('/[^A-Za-z0-9_]/', $trimmed)  => 'The database name can only contain letters, numbers, and underscores. Characters like dots, dashes, and spaces are not allowed because they break SQL identifier quoting .',
+                        (bool) preg_match('/[^A-Za-z0-9_]/', $trimmed)  => 'The database name can only contain letters, numbers, and underscores. Characters like dots, dashes, and spaces are not allowed because they break SQL identifier quoting.',
                         default                                         => null,
                     };
                 },

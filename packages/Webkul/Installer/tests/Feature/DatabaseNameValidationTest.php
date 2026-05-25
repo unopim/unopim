@@ -35,7 +35,7 @@ function bindInstallerCapturingDbNameEnvUpdate(array &$captured): Closure
     };
 }
 
-it('rejects DB_DATABASE containing a dot so DROP TABLE wk_db.table cannot be parsed as a multi-segment identifier ', function () {
+it('rejects DB_DATABASE containing a dot so DROP TABLE wk_db.table cannot be parsed as a multi-segment identifier', function () {
     $captured = [];
     $this->app->extend(Installer::class, bindInstallerCapturingDbNameEnvUpdate($captured));
 
@@ -49,7 +49,7 @@ it('rejects DB_DATABASE containing a dot so DROP TABLE wk_db.table cannot be par
     expect($captured)->not->toHaveKey('DB_DATABASE');
 });
 
-it('rejects DB_DATABASE containing a dash ', function () {
+it('rejects DB_DATABASE containing a dash', function () {
     $captured = [];
     $this->app->extend(Installer::class, bindInstallerCapturingDbNameEnvUpdate($captured));
 
