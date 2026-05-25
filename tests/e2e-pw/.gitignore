@@ -4,15 +4,3 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-/playwright/.auth/
-/.state/
-/.playwright-mcp/
-
-# Local credentials (keep .env.example for reference)
-.api-config.json
-.env
-
-# Editor / OS noise
-.DS_Store
-*.log
-*.tmp

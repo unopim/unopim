@@ -16,7 +16,6 @@ class Action
         public string $title,
         public string $method,
         public mixed $url,
-        public ?string $frontendView = null,
-        public mixed $condition = null,
+        public ?string $frontendView = null
     ) {}
 }

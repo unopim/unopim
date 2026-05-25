@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -42,11 +42,7 @@ return [
                         'label' => 'Webhook activ',
                     ],
                     'webhook_url' => [
-                        'label'             => 'URL Webhook',
-                        'required'          => 'Un URL Webhook este obligatoriu când Webhook-ul este activ.',
-                        'scheme'            => 'URL-ul Webhook trebuie să înceapă cu http:// sau https://.',
-                        'connection_failed' => 'URL-ul Webhook nu a putut fi accesat. Verificați URL-ul.',
-                        'unreachable'       => 'URL-ul Webhook nu este valid (HTTP :code).',
+                        'label' => 'URL Webhook',
                     ],
                     'success'    => 'Setările Webhook au fost salvate cu succes',
                     'logs-title' => 'Jurnale',
@@ -55,16 +51,14 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Data/Ora',
-                        'user'             => 'Utilizator',
-                        'status'           => 'Stare',
-                        'success'          => 'Succes',
-                        'failed'           => 'Eșuat',
-                        'server_error'     => 'Eroare server',
-                        'timeout_or_error' => 'Expirare/Eroare',
-                        'delete'           => 'Ștergere',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Data/Ora',
+                        'user'       => 'Utilizator',
+                        'status'     => 'Stare',
+                        'success'    => 'Succes',
+                        'failed'     => 'Eșuat',
+                        'delete'     => 'Ștergere',
                     ],
                     'title'          => 'Jurnale Webhook',
                     'delete-success' => 'Jurnalele Webhook au fost șterse cu succes',

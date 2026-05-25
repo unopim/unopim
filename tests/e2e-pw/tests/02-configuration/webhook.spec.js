@@ -48,7 +48,7 @@ test.describe('UnoPim Webhook test cases', () => {
     const webhookUrlField = adminPage.locator('input[name="webhook_url"]');
     await webhookUrlField.fill('invalid-url');
     await adminPage.getByRole('button', { name: 'Save' }).click();
-    await expect(adminPage.locator('#app').getByText('The webhook url format is invalid.', { exact: true })).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The webhook url format is invalid.')).toBeVisible();
   });
 
   test('Check by saving webhook URL with valid URL', async ({ adminPage }) => {

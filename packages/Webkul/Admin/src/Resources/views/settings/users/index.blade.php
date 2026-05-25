@@ -121,8 +121,7 @@
                                     <img
                                         class="h-9 object-cover"
                                         :src="record.user_img"
-                                        :alt="record.user_name"
-                                        v-on:error="record.user_img = null"
+                                        alt="record.user_name"
                                     />
                                 </div>
 

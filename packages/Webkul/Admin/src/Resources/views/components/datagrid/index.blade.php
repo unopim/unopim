@@ -134,15 +134,6 @@
 
             mounted() {
                 this.boot();
-
-                this._onShareLinkChanged = () => this.get();
-                this.$emitter.on('share-link-changed', this._onShareLinkChanged);
-            },
-
-            beforeUnmount() {
-                if (this._onShareLinkChanged) {
-                    this.$emitter.off('share-link-changed', this._onShareLinkChanged);
-                }
             },
 
             watch: {
@@ -988,10 +979,10 @@
                         return;
                     }
 
-                    this.performAction(record.actions.find(action => action.index === 'edit'), record);
+                    this.performAction(record.actions.find(action => action.index === 'edit'));
                 },
 
-                performAction(action, record) {
+                performAction(action) {
                     if (!action) {
                         return;
                     }
@@ -1001,19 +992,6 @@
                     switch (method) {
                         case 'get':
                             window.location.href = action.url;
-
-                            break;
-
-                        case 'copy':
-                            this.copyToClipboard(action.url);
-
-                            break;
-
-                        case 'edit-share':
-                            this.$emitter.emit('open-share-edit-modal', {
-                                url:    action.url,
-                                record: record,
-                            });
 
                             break;
 
@@ -1048,33 +1026,6 @@
 
                             break;
                     }
-                },
-
-                copyToClipboard(text) {
-                    const success = () => this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.components.datagrid.index.link-copied')" });
-                    const failure = () => this.$emitter.emit('add-flash', { type: 'error', message: "@lang('admin::app.components.datagrid.index.copy-failed')" });
-
-                    if (navigator.clipboard && window.isSecureContext) {
-                        navigator.clipboard.writeText(text).then(success).catch(failure);
-
-                        return;
-                    }
-
-                    const textarea = document.createElement('textarea');
-                    textarea.value = text;
-                    textarea.style.position = 'fixed';
-                    textarea.style.opacity = '0';
-                    document.body.appendChild(textarea);
-                    textarea.focus();
-                    textarea.select();
-
-                    try {
-                        document.execCommand('copy') ? success() : failure();
-                    } catch (e) {
-                        failure();
-                    }
-
-                    document.body.removeChild(textarea);
                 },
 
                 getActiveFilterColumns() {

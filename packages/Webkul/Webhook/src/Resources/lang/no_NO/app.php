@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -42,11 +42,7 @@ return [
                         'label' => 'Aktiv Webhook',
                     ],
                     'webhook_url' => [
-                        'label'             => 'Webhook-URL',
-                        'required'          => 'En Webhook-URL er påkrevd når webhooken er aktiv.',
-                        'scheme'            => 'Webhook-URL-en må begynne med http:// eller https://.',
-                        'connection_failed' => 'Webhook-URL-en kunne ikke nås. Sjekk URL-en.',
-                        'unreachable'       => 'Webhook-URL-en er ikke gyldig (HTTP :code).',
+                        'label' => 'Webhook-URL',
                     ],
                     'success'    => 'Webhook-innstillinger lagret',
                     'logs-title' => 'Logger',
@@ -55,16 +51,14 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Dato/Tid',
-                        'user'             => 'Bruker',
-                        'status'           => 'Status',
-                        'success'          => 'Vellykket',
-                        'failed'           => 'Mislyktes',
-                        'server_error'     => 'Serverfeil',
-                        'timeout_or_error' => 'Tidsavbrudd/Feil',
-                        'delete'           => 'Slett',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Dato/Tid',
+                        'user'       => 'Bruker',
+                        'status'     => 'Status',
+                        'success'    => 'Vellykket',
+                        'failed'     => 'Mislyktes',
+                        'delete'     => 'Slett',
                     ],
                     'title'          => 'Webhook-logger',
                     'delete-success' => 'Webhook-logger slettet',

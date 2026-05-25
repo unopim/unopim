@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -42,11 +42,7 @@ return [
                         'label' => 'Webhook actiu',
                     ],
                     'webhook_url' => [
-                        'label'             => 'URL del Webhook',
-                        'required'          => 'Es requereix una URL del Webhook quan el Webhook està actiu.',
-                        'scheme'            => 'L\'URL del Webhook ha de començar amb http:// o https://.',
-                        'connection_failed' => 'No s\'ha pogut accedir a l\'URL del Webhook. Verifiqueu l\'URL.',
-                        'unreachable'       => 'L\'URL del Webhook no és vàlid (HTTP :code).',
+                        'label' => 'URL del Webhook',
                     ],
                     'success'    => 'La configuració del Webhook s\'ha desat correctament',
                     'logs-title' => 'Registres',
@@ -55,16 +51,14 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Data/Hora',
-                        'user'             => 'Usuari',
-                        'status'           => 'Estat',
-                        'success'          => 'Èxit',
-                        'failed'           => 'Fallat',
-                        'server_error'     => 'Error del servidor',
-                        'timeout_or_error' => 'Temps d\'espera/Error',
-                        'delete'           => 'Eliminar',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Data/Hora',
+                        'user'       => 'Usuari',
+                        'status'     => 'Estat',
+                        'success'    => 'Èxit',
+                        'failed'     => 'Fallat',
+                        'delete'     => 'Eliminar',
                     ],
                     'title'          => 'Registres del Webhook',
                     'delete-success' => 'Els registres del Webhook s\'han eliminat correctament',

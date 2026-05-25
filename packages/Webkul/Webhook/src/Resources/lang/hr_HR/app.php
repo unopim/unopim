@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -42,11 +42,7 @@ return [
                         'label' => 'Aktivan Webhook',
                     ],
                     'webhook_url' => [
-                        'label'             => 'Webhook URL',
-                        'required'          => 'Webhook URL je obavezan kada je Webhook aktivan.',
-                        'scheme'            => 'Webhook URL mora počinjati s http:// ili https://.',
-                        'connection_failed' => 'Nije moguće pristupiti Webhook URL-u. Provjerite URL.',
-                        'unreachable'       => 'Webhook URL nije ispravan (HTTP :code).',
+                        'label' => 'Webhook URL',
                     ],
                     'success'    => 'Postavke Webhooka uspješno spremljene',
                     'logs-title' => 'Zapisi',
@@ -55,16 +51,14 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Datum/Vrijeme',
-                        'user'             => 'Korisnik',
-                        'status'           => 'Status',
-                        'success'          => 'Uspjeh',
-                        'failed'           => 'Neuspjeh',
-                        'server_error'     => 'Pogreška poslužitelja',
-                        'timeout_or_error' => 'Istek vremena/Pogreška',
-                        'delete'           => 'Obriši',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Datum/Vrijeme',
+                        'user'       => 'Korisnik',
+                        'status'     => 'Status',
+                        'success'    => 'Uspjeh',
+                        'failed'     => 'Neuspjeh',
+                        'delete'     => 'Obriši',
                     ],
                     'title'          => 'Zapisi Webhooka',
                     'delete-success' => 'Zapisi Webhooka uspješno obrisani',

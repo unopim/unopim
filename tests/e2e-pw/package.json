@@ -2,32 +2,13 @@
   "name": "unopim-automation",
   "version": "2.1.0",
   "main": "index.js",
-  "scripts": {
-    "test": "npx playwright test",
-    "test:headed": "npx playwright test --headed",
-    "test:ui": "npx playwright test --ui",
-    "test:api": "npx playwright test tests/api",
-    "test:api:oauth": "npx playwright test tests/api/01-oauth",
-    "test:api:locales": "npx playwright test tests/api/02-locales",
-    "test:api:currencies": "npx playwright test tests/api/03-currencies",
-    "test:api:channels": "npx playwright test tests/api/04-channels",
-    "test:api:categories": "npx playwright test tests/api/05-categories",
-    "test:api:category-fields": "npx playwright test tests/api/06-category-fields tests/api/07-category-field-options",
-    "test:api:attributes": "npx playwright test tests/api/08-attributes tests/api/09-attribute-options tests/api/10-attribute-groups tests/api/11-attribute-families",
-    "test:api:products": "npx playwright test tests/api/12-products tests/api/13-configurable-products tests/api/14-variants",
-    "test:api:media": "npx playwright test tests/api/15-media-upload",
-    "test:api:ci": "CI=1 npx playwright test tests/api --reporter=list,html,junit",
-    "test:api:debug": "DEBUG=pw:api npx playwright test tests/api --workers=1",
-    "report": "npx playwright show-report"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "@playwright/test": "1.52.0",
-    "@types/node": "^22.15.2",
-    "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1"
+    "@types/node": "^22.15.2"
   }
 }

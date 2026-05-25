@@ -12,7 +12,7 @@ const STORAGE_STATE = path.resolve(__dirname, '.state/admin-auth.json');
  * - Minimum 2 workers to parallelize across test files
  */
 const workerCount = isCI
-  ? 1  // artisan serve is single-threaded — 1 worker per shard (shards run in parallel; count set in CI workflow)
+  ? 1  // artisan serve is single-threaded — 1 worker per shard (4 shards run in parallel)
   : Math.max(2, os.cpus().length - 1);
 
 module.exports = defineConfig({
@@ -94,6 +94,18 @@ module.exports = defineConfig({
             '--no-sandbox',
           ],
         },
+      },
+    },
+    {
+      name: 'docs-screenshots',
+      testDir: './tests/docs-screenshots',
+      testIgnore: /auth\.setup\.js/,
+      fullyParallel: false,
+      workers: 1,
+      use: {
+        screenshot: 'off',
+        trace: 'off',
+        video: 'off',
       },
     },
   ],

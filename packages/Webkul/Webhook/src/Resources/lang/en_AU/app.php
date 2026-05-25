@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -42,11 +42,7 @@ return [
                         'label' => 'Active Webhook',
                     ],
                     'webhook_url' => [
-                        'label'             => 'Webhook URL',
-                        'required'          => 'A Webhook URL is required when the webhook is active.',
-                        'scheme'            => 'The Webhook URL must start with http:// or https://.',
-                        'connection_failed' => 'The Webhook URL could not be reached. Please check the URL.',
-                        'unreachable'       => 'The Webhook URL is not valid (HTTP :code).',
+                        'label' => 'Webhook URL',
                     ],
                     'success'    => 'Webhook settings saved successfully',
                     'logs-title' => 'Logs',
@@ -55,16 +51,14 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Date/Time',
-                        'user'             => 'User',
-                        'status'           => 'Status',
-                        'success'          => 'Success',
-                        'failed'           => 'Failed',
-                        'server_error'     => 'Server Error',
-                        'timeout_or_error' => 'Timeout/Error',
-                        'delete'           => 'Delete',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Date/Time',
+                        'user'       => 'User',
+                        'status'     => 'Status',
+                        'success'    => 'Success',
+                        'failed'     => 'Failed',
+                        'delete'     => 'Delete',
                     ],
                     'title'          => 'Webhook Logs',
                     'delete-success' => 'Webhook logs deleted successfully',

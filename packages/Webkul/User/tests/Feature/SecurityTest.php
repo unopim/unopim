@@ -30,12 +30,9 @@ it('should not allow open redirect via spoofed referer header on login page', fu
 
     $intendedUrl = session('url.intended');
 
-    // External referers must not be stored as the intended redirect target.
-    // Either null (controller skipped the put) or an internal URL is acceptable.
-    if ($intendedUrl !== null) {
-        expect($intendedUrl)->not->toContain('attacker.com');
-        expect($intendedUrl)->toContain(config('app.url'));
-    }
+    // The intended URL should NOT be an external URL
+    expect($intendedUrl)->not->toContain('attacker.com');
+    expect($intendedUrl)->toContain(config('app.url'));
 });
 
 it('should not allow open redirect via spoofed referer header on forgot password page', function () {
@@ -47,10 +44,9 @@ it('should not allow open redirect via spoofed referer header on forgot password
 
     $intendedUrl = session('url.intended');
 
-    if ($intendedUrl !== null) {
-        expect($intendedUrl)->not->toContain('evil.com');
-        expect($intendedUrl)->toContain(config('app.url'));
-    }
+    // The intended URL should NOT be an external URL
+    expect($intendedUrl)->not->toContain('evil.com');
+    expect($intendedUrl)->toContain(config('app.url'));
 });
 
 // ─── Vulnerability 2: No Rate Limiting on Login ──────────────────────

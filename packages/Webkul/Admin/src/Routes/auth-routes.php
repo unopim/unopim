@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\Admin\Http\Controllers\User\AvatarController;
 use Webkul\Admin\Http\Controllers\User\ForgetPasswordController;
 use Webkul\Admin\Http\Controllers\User\ResetPasswordController;
 use Webkul\Admin\Http\Controllers\User\SessionController;
@@ -13,13 +12,6 @@ Route::get('/', [Controller::class, 'redirectToLogin']);
  * Auth routes.
  */
 Route::group(['prefix' => config('app.admin_url')], function () {
-    /**
-     * Public avatar proxy route (no auth middleware).
-     */
-    Route::get('avatar/u/{hash}.png', [AvatarController::class, 'gravatar'])
-        ->name('admin.avatar.public')
-        ->middleware('throttle:60,1');
-
     /**
      * Redirect route.
      */

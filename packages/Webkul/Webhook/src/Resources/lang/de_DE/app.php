@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -42,11 +42,7 @@ return [
                         'label' => 'Webhook aktiv',
                     ],
                     'webhook_url' => [
-                        'label'             => 'Webhook-URL',
-                        'required'          => 'Eine Webhook-URL ist erforderlich, wenn der Webhook aktiv ist.',
-                        'scheme'            => 'Die Webhook-URL muss mit http:// oder https:// beginnen.',
-                        'connection_failed' => 'Die Webhook-URL konnte nicht erreicht werden. Bitte überprüfen Sie die URL.',
-                        'unreachable'       => 'Die Webhook-URL ist ungültig (HTTP :code).',
+                        'label' => 'Webhook-URL',
                     ],
                     'success'    => 'Webhook-Einstellungen erfolgreich gespeichert',
                     'logs-title' => 'Protokolle',
@@ -55,16 +51,14 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Datum/Uhrzeit',
-                        'user'             => 'Benutzer',
-                        'status'           => 'Status',
-                        'success'          => 'Erfolgreich',
-                        'failed'           => 'Fehlgeschlagen',
-                        'server_error'     => 'Serverfehler',
-                        'timeout_or_error' => 'Zeitüberschreitung/Fehler',
-                        'delete'           => 'Löschen',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Datum/Uhrzeit',
+                        'user'       => 'Benutzer',
+                        'status'     => 'Status',
+                        'success'    => 'Erfolgreich',
+                        'failed'     => 'Fehlgeschlagen',
+                        'delete'     => 'Löschen',
                     ],
                     'title'          => 'Webhook-Protokolle',
                     'delete-success' => 'Webhook-Protokolle erfolgreich gelöscht',

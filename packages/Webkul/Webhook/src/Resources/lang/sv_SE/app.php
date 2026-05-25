@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -42,11 +42,7 @@ return [
                         'label' => 'Aktiv Webhook',
                     ],
                     'webhook_url' => [
-                        'label'             => 'Webhook-URL',
-                        'required'          => 'En Webhook-URL krävs när webhooken är aktiv.',
-                        'scheme'            => 'Webhook-URL:en måste börja med http:// eller https://.',
-                        'connection_failed' => 'Webhook-URL:en kunde inte nås. Kontrollera URL:en.',
-                        'unreachable'       => 'Webhook-URL:en är inte giltig (HTTP :code).',
+                        'label' => 'Webhook-URL',
                     ],
                     'success'    => 'Webhook-inställningar sparades framgångsrikt',
                     'logs-title' => 'Loggar',
@@ -55,16 +51,14 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Datum/Tid',
-                        'user'             => 'Användare',
-                        'status'           => 'Status',
-                        'success'          => 'Lyckades',
-                        'failed'           => 'Misslyckades',
-                        'server_error'     => 'Serverfel',
-                        'timeout_or_error' => 'Tidsgräns/Fel',
-                        'delete'           => 'Radera',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Datum/Tid',
+                        'user'       => 'Användare',
+                        'status'     => 'Status',
+                        'success'    => 'Lyckades',
+                        'failed'     => 'Misslyckades',
+                        'delete'     => 'Radera',
                     ],
                     'title'          => 'Webhook-loggar',
                     'delete-success' => 'Webhook-loggar raderades framgångsrikt',

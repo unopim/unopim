@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -42,11 +42,7 @@ return [
                         'label' => 'Webhook actif',
                     ],
                     'webhook_url' => [
-                        'label'             => 'URL du Webhook',
-                        'required'          => 'Une URL de Webhook est requise lorsque le Webhook est actif.',
-                        'scheme'            => 'L\'URL du Webhook doit commencer par http:// ou https://.',
-                        'connection_failed' => 'L\'URL du Webhook n\'a pas pu être atteinte. Veuillez vérifier l\'URL.',
-                        'unreachable'       => 'L\'URL du Webhook n\'est pas valide (HTTP :code).',
+                        'label' => 'URL du Webhook',
                     ],
                     'success'    => 'Paramètres du Webhook enregistrés avec succès',
                     'logs-title' => 'Journaux',
@@ -55,16 +51,14 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Date/Heure',
-                        'user'             => 'Utilisateur',
-                        'status'           => 'Statut',
-                        'success'          => 'Succès',
-                        'failed'           => 'Échoué',
-                        'server_error'     => 'Erreur du serveur',
-                        'timeout_or_error' => 'Délai dépassé/Erreur',
-                        'delete'           => 'Supprimer',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Date/Heure',
+                        'user'       => 'Utilisateur',
+                        'status'     => 'Statut',
+                        'success'    => 'Succès',
+                        'failed'     => 'Échoué',
+                        'delete'     => 'Supprimer',
                     ],
                     'title'          => 'Journaux du Webhook',
                     'delete-success' => 'Journaux du Webhook supprimés avec succès',

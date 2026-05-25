@@ -306,14 +306,12 @@
                 },
 
                 normalizeSelectedColumns() {
-                    this.selectedColumns = this.$parent.available.columns
-                        .filter((el) => el.visible !== false)
-                        .map((el) => {
-                            return {
-                                code: el.index,
-                                label: el.label,
-                            };
-                        });
+                    this.selectedColumns = this.$parent.available.columns.map((el) => {
+                        return {
+                            code: el.index,
+                            label: el.label,
+                        };
+                    });
                 },
 
                 getColumnsList() {
