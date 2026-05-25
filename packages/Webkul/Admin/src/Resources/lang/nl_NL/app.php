@@ -3,15 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'E-mailadres',
-            'forget-password-link'   => 'Wachtwoord vergeten?',
-            'password'               => 'Wachtwoord',
-            'sso-divider'            => 'of',
+            'email'                      => 'E-mailadres',
+            'forget-password-link'       => 'Wachtwoord vergeten?',
+            'password'                   => 'Wachtwoord',
+            'sso-divider'                => 'of',
             'sso-sign-in-with-microsoft' => 'Aanmelden met Microsoft',
-            'submit-btn'             => 'Inloggen',
-            'title'                  => 'Inloggen',
-            'powered-by'             => 'Aangedreven door :unopim,',
-            'open-source-project-by' => 'Een open-source project van :webkul.',
+            'submit-btn'                 => 'Inloggen',
+            'title'                      => 'Inloggen',
+            'powered-by'                 => 'Aangedreven door :unopim,',
+            'open-source-project-by'     => 'Een open-source project van :webkul.',
         ],
         'forget-password' => [
             'create' => [
