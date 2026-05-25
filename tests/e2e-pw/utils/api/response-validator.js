@@ -75,8 +75,9 @@ function expectSuccessEnvelope(body, expectedKeyword) {
  * UnoPim validation errors typically return 422 with `errors: { field: [msg] }`
  * but the framework also 500s on some malformed inputs (e.g. empty payload
  * passed to category/category-field/product create), which is a server quirk
- * rather than a test fault. Accept any 4xx or 5xx so the test still proves
- * "server didn't silently accept the bad payload".
+ * rather than a test fault. Accept the specific set of statuses we've actually
+ * observed for validation failures so the test still proves "server didn't
+ * silently accept the bad payload" without masking unrelated error responses.
  */
 function expectValidationError(result) {
   expectStatusIn(result, [400, 422, 500]);

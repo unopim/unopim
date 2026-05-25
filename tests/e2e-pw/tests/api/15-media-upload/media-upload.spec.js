@@ -24,6 +24,7 @@ const testData = require('../../../fixtures/test-data');
 test.describe('Media Upload API', () => {
   const createdProducts = new Set();
   const createdCategories = new Set();
+  const createdCategoryFields = new Set();
   let productSku;
   let categoryCode;
 
@@ -49,6 +50,7 @@ test.describe('Media Upload API', () => {
     const ctx = await playwright.request.newContext({ baseURL: REST_ROOT });
     for (const sku of createdProducts) await deleteIfExists(ctx, apiToken, `/products/${encodeURIComponent(sku)}`);
     for (const code of createdCategories) await deleteIfExists(ctx, apiToken, `/categories/${encodeURIComponent(code)}`);
+    for (const code of createdCategoryFields) await deleteIfExists(ctx, apiToken, `/category-fields/${encodeURIComponent(code)}`);
     await ctx.dispose();
   });
 
@@ -122,9 +124,10 @@ test.describe('Media Upload API', () => {
       baseURL: REST_ROOT,
       extraHTTPHeaders: { Authorization: `Bearer ${apiToken}`, Accept: 'application/json', 'Content-Type': 'application/json' },
     });
-    await post(ctx, '/category-fields', {
+    const cf = await post(ctx, '/category-fields', {
       data: payloads.categoryFields.build({ code: fieldCode, type: 'image' }),
     });
+    if (cf.ok) createdCategoryFields.add(fieldCode);
     await ctx.dispose();
 
     const payload = payloads.media.buildCategoryUpload({ code: categoryCode, categoryField: fieldCode });
