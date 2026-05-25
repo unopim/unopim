@@ -6,6 +6,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use Webkul\Attribute\Contracts\Group;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
@@ -96,7 +98,7 @@ abstract class AbstractType
     /**
      * Create product.
      *
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      */
     public function create(array $data)
     {
@@ -114,7 +116,7 @@ abstract class AbstractType
      *
      * @param  int  $id
      * @param  string  $attribute
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      */
     public function update(array $data, $id, $attribute = 'id')
     {
@@ -150,8 +152,10 @@ abstract class AbstractType
 
         $product->values = $productValues;
 
+        $product->fill($data);
+
         if ($product->isDirty()) {
-            $product->update($data);
+            $product->save();
         }
 
         return $product;
@@ -338,6 +342,16 @@ abstract class AbstractType
 
                     if ($type === 'gallery') {
                         $values[$field] = array_map(function ($val) use ($path) {
+                            if ($val instanceof UploadedFile && ! $val->isValid()) {
+                                if (in_array($val->getError(), [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE])) {
+                                    throw ValidationException::withMessages([
+                                        $path => [trans('admin::app.common.file-size-exceeds', ['max' => ini_get('upload_max_filesize')])],
+                                    ]);
+                                }
+
+                                return $val;
+                            }
+
                             return $val instanceof UploadedFile
                                 ? $this->fileStorer->store($path, $val, [FileStorer::HASHED_FOLDER_NAME_KEY => true])
                                 : $val;
@@ -345,7 +359,17 @@ abstract class AbstractType
 
                         $values[$field] = array_values($values[$field]);
                     } elseif (! empty($fieldValue) && current($fieldValue) instanceof UploadedFile) {
-                        $values[$field] = $this->fileStorer->store($path, current($fieldValue), [FileStorer::HASHED_FOLDER_NAME_KEY => true]);
+                        $uploadedFile = current($fieldValue);
+
+                        if (! $uploadedFile->isValid()) {
+                            if (in_array($uploadedFile->getError(), [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE])) {
+                                throw ValidationException::withMessages([
+                                    $field => [trans('admin::app.common.file-size-exceeds', ['max' => ini_get('upload_max_filesize')])],
+                                ]);
+                            }
+                        } else {
+                            $values[$field] = $this->fileStorer->store($path, $uploadedFile, [FileStorer::HASHED_FOLDER_NAME_KEY => true]);
+                        }
                     }
 
                     continue;
@@ -380,7 +404,7 @@ abstract class AbstractType
     /**
      * Copy product.
      *
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      *
      * @throws \Exception
      */
@@ -444,8 +468,8 @@ abstract class AbstractType
     /**
      * Specify type instance product.
      *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return \Webkul\Product\Type\AbstractType
+     * @param  Product  $product
+     * @return AbstractType
      */
     public function setProduct($product)
     {
@@ -495,9 +519,9 @@ abstract class AbstractType
     /**
      * Retrieve product attributes.
      *
-     * @param  \Webkul\Attribute\Contracts\Group  $group
+     * @param  Group  $group
      * @param  bool  $skipSuperAttribute
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getEditableAttributes($group = null, $skipSuperAttribute = true)
     {

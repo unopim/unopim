@@ -76,7 +76,7 @@
                                     @lang('admin::app.catalog.attributes.edit.general')
                                 </p>
                                 <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label class="!text-gray-800 dark:!text-white">
+                                    <x-admin::form.control-group.label class="required !text-gray-800 dark:!text-white">
                                         @lang('admin::app.catalog.families.edit.code')
                                     </x-admin::form.control-group.label>
 

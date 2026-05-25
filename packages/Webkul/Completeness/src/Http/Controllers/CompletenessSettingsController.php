@@ -62,7 +62,7 @@ class CompletenessSettingsController extends Controller
         }
 
         if (! empty($toDelete) || ! empty($toInsert)) {
-            BulkProductCompletenessJob::dispatch([], $familyId);
+            BulkProductCompletenessJob::dispatch([], $familyId, auth()->guard('admin')->id());
         }
 
         return response()->json([
@@ -121,7 +121,7 @@ class CompletenessSettingsController extends Controller
         }
 
         if ($hasChanged) {
-            BulkProductCompletenessJob::dispatch([], $familyId);
+            BulkProductCompletenessJob::dispatch([], $familyId, auth()->guard('admin')->id());
         }
 
         return response()->json([

@@ -12,7 +12,7 @@
         </i>
 
         <!-- Logo -->
-        <a href="{{ route('admin.dashboard.index') }}">
+        <a href="{{ $adminLandingUrl ?? route('admin.dashboard.index') }}">
             @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
                 <img
                     class="h-10"
@@ -77,11 +77,12 @@
                         src="{{ url('cache/logo/unopim.png') }}"
                         width="24"
                         height="24"
+                        onerror="this.style.display='none'"
                     />
 
                     <!-- Version -->
                     <p class="text-gray-400">
-                        @lang('admin::app.components.layouts.header.app-version', ['version' => 'v' . core()->version()])
+                        @lang('admin::app.components.layouts.header.app-version', ['version' => core()->version()])
                     </p>
                 </div>
 

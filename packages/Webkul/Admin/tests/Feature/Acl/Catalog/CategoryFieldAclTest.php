@@ -6,7 +6,7 @@ it('should not display the category field list if does not have permission', fun
     $this->loginWithPermissions();
 
     $this->get(route('admin.catalog.category_fields.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the category field list if have permission', function () {
@@ -21,7 +21,7 @@ it('should not display create form for creating the category field if does not h
     $this->loginWithPermissions(permissions: ['catalog', 'catalog.category_fields']);
 
     $this->get(route('admin.catalog.category_fields.create'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display create form for category field if have permission', function () {
@@ -37,7 +37,7 @@ it('should not display edit form for category field if does not have permission'
     $categoryField = CategoryField::factory()->create();
 
     $this->get(route('admin.catalog.category_fields.edit', ['id' => $categoryField->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display edit form for category field if have permission', function () {
@@ -54,7 +54,7 @@ it('should not be able to delete category field if does not have permission', fu
     $categoryField = CategoryField::factory()->create();
 
     $this->delete(route('admin.catalog.category_fields.delete', ['id' => $categoryField->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), ['id' => $categoryField->id]);
 });
@@ -76,7 +76,7 @@ it('should not be able to mass delete category fields if does not have permissio
     $categoryFieldIds = CategoryField::factory()->count(3)->create()->pluck('id')->toArray();
 
     $this->post(route('admin.catalog.category_fields.mass_delete'), ['indices' => $categoryFieldIds])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     foreach ($categoryFieldIds as $id) {
         $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), ['id' => $id]);
@@ -102,7 +102,7 @@ it('should not be able to mass update category fields if does not have permissio
     $categoryFieldIds = CategoryField::factory()->count(3)->create(['status' => 0])->pluck('id')->toArray();
 
     $this->post(route('admin.catalog.category_fields.mass_update'), ['indices' => $categoryFieldIds, 'value' => 1])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     foreach ($categoryFieldIds as $id) {
         $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), ['id' => $id, 'status' => 0]);

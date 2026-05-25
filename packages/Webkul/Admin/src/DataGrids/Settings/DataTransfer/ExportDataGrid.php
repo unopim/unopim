@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\DataGrids\Settings\DataTransfer;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -10,7 +11,7 @@ class ExportDataGrid extends DataGrid
     protected $exporters;
 
     /**
-     * Intitialize the exporters
+     * Initialize the exporters
      */
     public function __construct()
     {
@@ -20,7 +21,7 @@ class ExportDataGrid extends DataGrid
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {

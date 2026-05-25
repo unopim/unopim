@@ -105,11 +105,11 @@
                                     ></label>
                                 </div>
 
-                                <p v-text="record.code" class="text-nowrap overflow-hidden text-ellipsis"></p>
+                                <p v-text="record.code" class="truncate" :title="record.code"></p>
                             </div>
 
                             <div class="overflow-hidden">
-                                <p v-text="record.name" class="text-nowrap overflow-hidden text-ellipsis" :title="record.name"></p>
+                                <p v-text="record.name" class="truncate" :title="record.name"></p>
                             </div>
 
                             <div class="">
@@ -118,7 +118,7 @@
                                         type="multiselect"
                                         :ref="'channel_requirements_multiselect_' + record.id"
                                         name="channel_requirements"
-                                        :options="{{ json_encode($allChannels) }}"
+                                        options='{!! $allChannels !!}'
                                         :value="record.channel_required
                                             ? record.channel_required.split(',').map(channel => channel.trim())
                                             : []"

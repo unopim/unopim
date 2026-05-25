@@ -13,7 +13,9 @@ use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
+use Webkul\Attribute\Rules\SwatchTypes;
 use Webkul\Attribute\Rules\ValidationTypes;
+use Webkul\Attribute\Rules\ValidSwatchValue;
 use Webkul\Core\Rules\Code;
 
 class AttributeController extends ApiController
@@ -54,12 +56,17 @@ class AttributeController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $requestData = request()->all();
+
+        if (array_is_list($requestData) && count($requestData) > 0) {
+            return $this->validateErrorResponse([
+                'payload' => [trans('admin::app.catalog.attributes.create.single-object-only')],
+            ]);
+        }
+
         $rules = [
             'type' => [
                 'required',
@@ -70,6 +77,10 @@ class AttributeController extends ApiController
                 sprintf('unique:%s,code', 'attributes'),
                 new Code,
                 new NotSupportedAttributes,
+            ],
+            'swatch_type' => [
+                'nullable',
+                new SwatchTypes,
             ],
         ];
 
@@ -104,17 +115,22 @@ class AttributeController extends ApiController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(string $code)
+    public function update(string $code): JsonResponse
     {
         $attribute = $this->attributeRepository->findOneByField('code', $code);
         if (! $attribute) {
             return $this->modelNotFoundResponse(trans('admin::app.catalog.attributes.not-found', ['code' => $code]));
         }
 
-        $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
+        $immutable = array_intersect(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique'], array_keys(request()->all()));
+        if (! empty($immutable)) {
+            return $this->validateErrorResponse([
+                'immutable' => [trans('admin::app.catalog.attributes.immutable-fields', ['fields' => implode(', ', $immutable)])],
+            ]);
+        }
+
+        $requestData = request()->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
         $requestData = $this->setLabels($requestData);
         $id = $attribute->id;
 
@@ -134,10 +150,8 @@ class AttributeController extends ApiController
 
     /**
      * Display a single result of the resource.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function getOptions(string $code)
+    public function getOptions(string $code): JsonResponse
     {
         try {
             return response()->json(app(AttributeDataSource::class)->getOptionsByAttributeCode($code));
@@ -148,10 +162,8 @@ class AttributeController extends ApiController
 
     /**
      * Store a newly attribute option in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function storeOption(string $attributeCode)
+    public function storeOption(string $attributeCode): JsonResponse
     {
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         if (! $attribute) {
@@ -191,10 +203,8 @@ class AttributeController extends ApiController
 
     /**
      * Updates an attribute option in the storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function updateOption(string $attributeCode)
+    public function updateOption(string $attributeCode): JsonResponse
     {
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         if (! $attribute) {
@@ -251,6 +261,7 @@ class AttributeController extends ApiController
                 }),
                 new Code,
             ],
+            'swatch_value' => [new ValidSwatchValue($attributeId)],
         ];
 
         return Validator::make($requestData, $rules);

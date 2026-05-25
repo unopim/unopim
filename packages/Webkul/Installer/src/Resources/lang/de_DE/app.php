@@ -6,7 +6,6 @@ return [
             'attribute-families' => [
                 'default' => 'Standard',
             ],
-
             'attribute-groups' => [
                 'description'      => 'Beschreibung',
                 'general'          => 'Allgemein',
@@ -14,7 +13,6 @@ return [
                 'price'            => 'Preis',
                 'media'            => 'Medien',
             ],
-
             'attributes' => [
                 'brand'                => 'Marke',
                 'color'                => 'Farbe',
@@ -45,7 +43,6 @@ return [
                 'weight'               => 'Gewicht',
                 'width'                => 'Breite',
             ],
-
             'attribute-options' => [
                 'black'  => 'Schwarz',
                 'green'  => 'Grün',
@@ -58,19 +55,16 @@ return [
                 'yellow' => 'Gelb',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => 'Beschreibung der Stammkategorie',
                 'name'        => 'Wurzel',
             ],
-
             'category_fields' => [
                 'name'        => 'Name',
                 'description' => 'Beschreibung',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo-Shop',
@@ -78,12 +72,11 @@ return [
                 'meta-description' => 'Meta-Beschreibung des Demo-Shops',
                 'name'             => 'Standard',
             ],
-
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Israelischer Schekel',
                 'CNY' => 'Chinesischer Yuan',
-                'EUR' => 'EURO',
+                'EUR' => 'Euro',
                 'GBP' => 'Pfund Sterling',
                 'INR' => 'Indische Rupie',
                 'IRR' => 'Iranischer Rial',
@@ -95,31 +88,30 @@ return [
                 'USD' => 'US-Dollar',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => 'Benutzer dieser Rolle haben sämtlichen Zugriff',
                 'name'        => 'Administrator',
             ],
-
             'users' => [
                 'name' => 'Beispiel',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Admin',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Passwort bestätigen',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'E-Mail',
-                'password'         => 'Passwort',
-                'title'            => 'Erstellen Sie einen Administrator',
+                'admin'                   => 'Admin',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Passwort bestätigen',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'E-Mail',
+                'password'                => 'Passwort',
+                'title'                   => 'Erstellen Sie einen Administrator',
+                'seed-sample-data'        => 'Beispielprodukte und Demodaten installieren',
+                'seeding-sample-data'     => 'Beispielprodukte und Demodaten werden geladen, dies kann einige Minuten dauern...',
+                'seed-sample-data-failed' => 'Demodaten konnten nicht geladen werden. Sie können sie später über `php artisan unopim:install:demo-data` installieren.',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Zulässige Währungen',
                 'allowed-locales'     => 'Zulässige Gebietsschemata',
@@ -157,13 +149,11 @@ return [
                 'usd'                 => 'US-Dollar (USD)',
                 'warning-message'     => 'Vorsicht! Die Einstellungen für Ihre Standardsystemsprachen sowie die Standardwährung sind dauerhaft und können nie wieder geändert werden.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'UnoPim-Installation',
                 'unopim-info' => 'Das Erstellen der Datenbanktabellen kann einige Momente dauern',
                 'title'       => 'Installation',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Admin-Panel',
                 'unopim-forums'             => 'UnoPim-Forum',
@@ -171,7 +161,6 @@ return [
                 'title-info'                => 'UnoPim wurde erfolgreich auf Ihrem System installiert.',
                 'title'                     => 'Installation abgeschlossen',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Erstellen Sie die Datenbanktabelle',
                 'install-info-button'     => 'Klicken Sie auf die Schaltfläche unten, um',
@@ -181,7 +170,6 @@ return [
                 'start-installation'      => 'Starten Sie die Installation',
                 'title'                   => 'Bereit zur Installation',
             ],
-
             'start' => [
                 'locale'        => 'Gebietsschema',
                 'main'          => 'Start',
@@ -189,7 +177,6 @@ return [
                 'title'         => 'Ihre UnoPim-Installation',
                 'welcome-title' => 'Willkommen bei UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Kalender',
                 'ctype'       => 'cType',
@@ -212,7 +199,6 @@ return [
                 'tokenizer'   => 'Tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Zurück',
             'unopim-info'              => 'ein Community-Projekt von',
             'unopim-logo'              => 'UnoPim-Logo',

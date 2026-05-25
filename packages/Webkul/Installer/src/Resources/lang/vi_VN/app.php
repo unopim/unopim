@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => 'Các gia đình thuộc tính',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => 'Mặc định',
+            ],
+            'attribute-groups' => [
                 'description'      => 'Mô tả',
                 'general'          => 'Chung',
                 'meta-description' => 'Mô tả meta',
@@ -96,19 +98,20 @@ return [
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Quản trị viên',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Xác nhận mật khẩu',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'Email',
-                'password'         => 'Mật khẩu',
-                'title'            => 'Tạo quản trị viên',
+                'admin'                   => 'Quản trị viên',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Xác nhận mật khẩu',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'Email',
+                'password'                => 'Mật khẩu',
+                'title'                   => 'Tạo quản trị viên',
+                'seed-sample-data'        => 'Cài đặt sản phẩm mẫu và dữ liệu demo',
+                'seeding-sample-data'     => 'Đang tạo sản phẩm mẫu và dữ liệu demo, quá trình này có thể mất vài phút...',
+                'seed-sample-data-failed' => 'Không thể tạo dữ liệu mẫu. Bạn có thể cài đặt sau qua lệnh `php artisan unopim:install:demo-data`.',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Đồng tiền được phép',
                 'allowed-locales'     => 'Các địa phương được phép',
@@ -146,13 +149,11 @@ return [
                 'usd'                 => 'Đô la Mỹ (USD)',
                 'warning-message'     => 'Cảnh báo! Cấu hình này sẽ không thể thay đổi sau này.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Cài đặt UnoPim',
                 'unopim-info' => 'Đang tạo các bảng cơ sở dữ liệu, điều này có thể mất vài phút.',
                 'title'       => 'Quá trình cài đặt',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Bảng điều khiển quản trị',
                 'unopim-forums'             => 'Diễn đàn UnoPim',
@@ -160,7 +161,6 @@ return [
                 'title-info'                => 'UnoPim đã được cài đặt thành công.',
                 'title'                     => 'Cài đặt hoàn tất',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Tạo bảng cơ sở dữ liệu',
                 'install-info-button'     => 'Nhấn nút bên dưới để bắt đầu',
@@ -170,7 +170,6 @@ return [
                 'start-installation'      => 'Bắt đầu cài đặt',
                 'title'                   => 'Sẵn sàng cho cài đặt',
             ],
-
             'start' => [
                 'locale'        => 'Ngôn ngữ',
                 'main'          => 'Trang chủ',
@@ -178,7 +177,6 @@ return [
                 'title'         => 'Cài đặt UnoPim',
                 'welcome-title' => 'Chào mừng bạn đến với UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Lịch',
                 'ctype'       => 'cType',
@@ -201,7 +199,6 @@ return [
                 'tokenizer'   => 'Bộ phân tách từ',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Trở lại',
             'unopim-info'              => 'Dự án cộng đồng',
             'unopim-logo'              => 'Logo UnoPim',

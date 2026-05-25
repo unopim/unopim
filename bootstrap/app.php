@@ -1,55 +1,76 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Create The Application
-|--------------------------------------------------------------------------
-|
-| The first thing we will do is create a new Laravel application instance
-| which serves as the "glue" for all the components of Laravel, and is
-| the IoC container for the system binding all of the various parts.
-|
-*/
+use Dotenv\Exception\InvalidFileException;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Exceptions\PostTooLargeException;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Webkul\Core\Http\Middleware\CheckForMaintenanceMode;
+use Webkul\Core\Http\Middleware\NoCacheMiddleware;
+use Webkul\Core\Http\Middleware\SecureHeaders;
+use Webkul\Installer\Http\Middleware\CanInstall;
 
-$app = new Illuminate\Foundation\Application(
-    realpath(__DIR__.'/../')
-);
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        channels: __DIR__.'/../routes/channels.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->trustProxies(at: '*');
+        $middleware->encryptCookies(except: ['sidebar_collapsed', 'dark_mode']);
+        $middleware->trimStrings(except: ['current_password', 'password', 'password_confirmation']);
+        $middleware->append([
+            SecureHeaders::class,
+            NoCacheMiddleware::class,
+            CheckForMaintenanceMode::class,
+            CanInstall::class,
+        ]);
+        $middleware->api(remove: [
+            SubstituteBindings::class,
+        ]);
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        // Elasticsearch re-indexing (twice daily)
+        $schedule->command('unopim:product:index')->dailyAt('00:01');
+        $schedule->command('unopim:product:index')->dailyAt('12:01');
+        $schedule->command('unopim:category:index')->dailyAt('00:01');
+        $schedule->command('unopim:category:index')->dailyAt('12:01');
 
-/*
-|--------------------------------------------------------------------------
-| Bind Important Interfaces
-|--------------------------------------------------------------------------
-|
-| Next, we need to bind some important interfaces into the container so
-| we will be able to resolve them when needed. The kernels serve the
-| incoming requests to this application from both the web and CLI.
-|
-*/
+        // Completeness recalculation (daily at 2 AM)
+        $schedule->command('unopim:completeness:recalculate --all')->dailyAt('02:00');
 
-$app->singleton(
-    Illuminate\Contracts\Http\Kernel::class,
-    App\Http\Kernel::class
-);
+        // Dashboard cache refresh (every 10 minutes)
+        $schedule->command('unopim:dashboard:refresh')->everyTenMinutes();
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->render(function (PostTooLargeException $e, $request) {
+            $errorCode = $e->getStatusCode() ?? 413;
 
-$app->singleton(
-    Illuminate\Contracts\Console\Kernel::class,
-    App\Console\Kernel::class
-);
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'message'   => trans('admin::app.errors.413.title'),
+                    'errorCode' => $errorCode,
+                ], $errorCode);
+            }
 
-$app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
-);
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode]);
+        });
 
-/*
-|--------------------------------------------------------------------------
-| Return The Application
-|--------------------------------------------------------------------------
-|
-| This script returns the application instance. The instance is given to
-| the calling script so we can separate the building of the instances
-| from the actual running of the application and sending responses.
-|
-*/
+        $exceptions->render(function (InvalidFileException $e, $request) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
 
-return $app;
+            exit($e->getMessage());
+        });
+
+        $exceptions->dontFlash(['current_password', 'password', 'password_confirmation']);
+    })
+    ->create();

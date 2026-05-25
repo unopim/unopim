@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeOptionDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AttributeOptionForm;
+use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
 
 class AttributeOptionController extends Controller
 {
@@ -18,30 +20,39 @@ class AttributeOptionController extends Controller
      */
     public function __construct(
         protected AttributeOptionRepository $attributeOptionRepository,
+        protected AttributeRepository $attributeRepository,
     ) {}
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function index(int $id)
+    public function index(int $id): JsonResponse
     {
         return app(AttributeOptionDataGrid::class)->setAttributeId($id)->toJson();
     }
 
     /**
      * Store a newly created option.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(int $attributeId, AttributeOptionForm $request): JsonResponse
     {
-        $requestData = $request->get('locales');
+        $requestData = $request->input('locales');
 
         $requestData['attribute_id'] = $attributeId;
 
-        $requestData['code'] = $request->get('code');
+        $requestData['code'] = $request->input('code');
+
+        $attribute = $this->attributeRepository->find($attributeId);
+
+        if (in_array($attribute->swatch_type, SwatchTypeEnum::getValues(), true)) {
+            $swatchValue = $request->file('swatch_value') ?? $request->input('swatch_value');
+
+            if ($attribute->swatch_type === 'color' && blank($swatchValue)) {
+                $swatchValue = '#000000';
+            }
+
+            $requestData['swatch_value'] = $swatchValue;
+        }
 
         Event::dispatch('catalog.attribute.option.create.before', $requestData);
 
@@ -85,11 +96,12 @@ class AttributeOptionController extends Controller
     {
         $this->validate(request(), ['locales.*.label' => 'nullable|string']);
 
-        $requestData = request()->only('locales');
-
+        $requestData = request()->only('locales', 'swatch_value');
         Event::dispatch('catalog.attribute.option.update.before', $id);
 
-        $option = $this->attributeOptionRepository->update($requestData['locales'], $id);
+        $option = $this->attributeOptionRepository->update(array_merge($requestData['locales'], [
+            'swatch_value' => $requestData['swatch_value'] ?? '',
+        ]), $id);
 
         Event::dispatch('catalog.attribute.option.update.after', $option);
 

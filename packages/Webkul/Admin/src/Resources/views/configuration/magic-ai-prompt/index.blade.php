@@ -1,11 +1,11 @@
 <x-admin::layouts>
     <x-slot:title>
-        @lang('admin::app.configuration.prompt.create.title')
+        @lang('admin::app.configuration.prompt.index.title')
     </x-slot>
     <v-create-prompt-form>
         <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
             <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.configuration.prompt.create.title')
+                @lang('admin::app.configuration.prompt.index.title')
             </p>
             <div class="flex gap-x-2.5 items-center">
                 <button
@@ -41,22 +41,25 @@
                 <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
+                        @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)"
                     >
-                        <!-- Code -->
-                        <p v-text="record.title"></p>
+                        <!-- Title -->
+                        <p v-text="record.title" class="truncate" :title="record.title"></p>
 
-                        <!-- Name -->
-                        <p v-text="record.prompt"></p>
+                        <!-- Prompt -->
+                        <p v-text="record.prompt" class="truncate" :title="record.prompt"></p>
 
                         <p v-html="record.type"></p>
+
+                        <p v-html="record.purpose"></p>
 
                         <p v-html="record.created_at"></p>
                         <p v-html="record.updated_at"></p>
 
                         <!-- Actions -->
-                        <div class="flex justify-end">
+                        <div class="flex justify-end" @click.stop>
                             <a @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)">
                                 <span
                                     :class="record.actions.find(action => action.index === 'action_1')?.icon"
@@ -116,7 +119,35 @@
                                     <x-admin::form.control-group.error control-name="title" />
                                 </x-admin::form.control-group>
 
-                                <!-- Type Input -->
+                                <!-- Purpose (Action) -->
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.configuration.prompt.create.purpose')
+                                    </x-admin::form.control-group.label>
+
+                                    @php
+                                        $purposeOptions = json_encode([
+                                            ['id' => 'text_generation', 'label' => trans('admin::app.configuration.prompt.create.text-generation')],
+                                            ['id' => 'image_generation', 'label' => trans('admin::app.configuration.prompt.create.image-generation')],
+                                        ]);
+                                    @endphp
+
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        id="purpose"
+                                        name="purpose"
+                                        ::value="purpose"
+                                        :options="$purposeOptions"
+                                        :label="trans('admin::app.configuration.prompt.create.purpose')"
+                                        :placeholder="trans('admin::app.configuration.prompt.create.select-purpose')"
+                                        track-by="id"
+                                        label-by="label"
+                                        @input="setPurpose"
+                                    />
+                                    <x-admin::form.control-group.error control-name="purpose" />
+                                </x-admin::form.control-group>
+
+                                <!-- Entity Type (Product/Category) -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.configuration.prompt.create.type')
@@ -133,7 +164,7 @@
                                         }
                                         $optionsInJson = json_encode($options);
                                     @endphp
-                                    
+
                                     <x-admin::form.control-group.control
                                         type="select"
                                         id="type"
@@ -148,7 +179,7 @@
                                     >
                                     </x-admin::form.control-group.control>
 
-                                    <x-admin::form.control-group.error control-name="section" />
+                                    <x-admin::form.control-group.error control-name="type" />
                                 </x-admin::form.control-group>
 
 
@@ -252,6 +283,7 @@
                         selectedPrompt: 0,
                         title: null,
                         type: null,
+                        purpose: 'text_generation',
                         id: null,
                         entityName: null,
                         tone: @json($defaultPrompt),
@@ -271,6 +303,14 @@
                 },
 
                 methods: {
+                    setPurpose(value) {
+                        try {
+                            this.purpose = value ? JSON.parse(value).id : 'text_generation';
+                        } catch (error) {
+                            this.purpose = 'text_generation';
+                        }
+                    },
+
                     checkType(value) {
                         let selectedField = JSON.parse(value).id;
                         if (selectedField == 'category') {
@@ -365,6 +405,7 @@
                                 this.title = data.title;
                                 this.ai.prompt = data.prompt;
                                 this.type = data.type;
+                                this.purpose = data.purpose || 'text_generation';
                                 this.tone = data.tone;
                                 this.$refs.promptUpdateOrCreateModal.toggle();
                                 this.toggleMagicAIModal();
@@ -374,6 +415,7 @@
                     resetForm() {
                         this.title = null;
                         this.type = "product";
+                        this.purpose = "text_generation";
                         this.ai.prompt = '';
                         this.id = null;
                         this.entityName = null;

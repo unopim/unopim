@@ -589,3 +589,29 @@ it('should not allow invalid files upload for file type field', function () {
         }
     }
 });
+
+it('should allow empty value for optional category field with regex validation', function () {
+    $this->loginAsAdmin();
+
+    $categoryFieldCode = 'optional_regex_field';
+
+    CategoryField::factory()->create([
+        'status'         => 1,
+        'code'           => $categoryFieldCode,
+        'is_required'    => 0,
+        'validation'     => 'regex',
+        'regex_pattern'  => '^[0-9]+$', // Only numbers
+        'type'           => 'text',
+    ]);
+
+    $category = Category::factory()->create();
+
+    $data = $category->toArray();
+    $data['additional_data']['common'] = [$categoryFieldCode => '']; // Empty value
+
+    $this->put(route('admin.catalog.categories.update', $category->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.categories.update-success'));
+
+    $category->refresh();
+    $this->assertEquals('', ($category->additional_data['common'][$categoryFieldCode] ?? ''));
+});

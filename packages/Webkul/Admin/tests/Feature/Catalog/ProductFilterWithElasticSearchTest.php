@@ -86,9 +86,12 @@ it('should filter products by SKU using Elasticsearch', function () {
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'sku',
-                                        'query'         => '*testSku123*',
+                                    'wildcard' => [
+                                        'sku' => [
+                                            'value'            => '*testsku123*',
+                                            'case_insensitive' => true,
+                                            'rewrite'          => 'top_terms_1024',
+                                        ],
                                     ],
                                 ],
                             ],
@@ -506,9 +509,26 @@ it('should filter products by text attribute using Elasticsearch', function () {
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => '*test_value* OR *test_value2*',
+                                    'bool' => [
+                                        'should'               => [
+                                            [
+                                                'match_phrase_prefix' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'query'          => 'test_value',
+                                                        'max_expansions' => 1000,
+                                                    ],
+                                                ],
+                                            ],
+                                            [
+                                                'match_phrase_prefix' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'query'          => 'test_value2',
+                                                        'max_expansions' => 1000,
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                        'minimum_should_match' => 1,
                                     ],
                                 ],
                             ],
@@ -570,9 +590,11 @@ it('should filter products by textarea attribute using Elasticsearch', function 
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => '*test_value*',
+                                    'match_phrase_prefix' => [
+                                        'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                            'query'          => 'test_value',
+                                            'max_expansions' => 1000,
+                                        ],
                                     ],
                                 ],
                             ],
@@ -758,9 +780,8 @@ it('should filter products by select attribute using Elasticsearch', function ()
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => 'option1',
+                                    'terms' => [
+                                        'values.common.'.$attribute->code.'-'.$attribute->type => ['option1'],
                                     ],
                                 ],
                             ],
@@ -821,9 +842,26 @@ it('should filter products by multiselect attribute using Elasticsearch', functi
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => '*option1* OR *option2*',
+                                    'bool' => [
+                                        'should'               => [
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*option1*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
+                                                ],
+                                            ],
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*option2*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                        'minimum_should_match' => 1,
                                     ],
                                 ],
                             ],
@@ -1017,7 +1055,10 @@ it('should filter products by image attribute using Elasticsearch', function () 
                                         'should' => [
                                             [
                                                 'wildcard' => [
-                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*image1.jpg*',
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*image1.jpg*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
                                                 ],
                                             ],
                                         ],
@@ -1086,7 +1127,10 @@ it('should filter products by file attribute using Elasticsearch', function () {
                                         'should' => [
                                             [
                                                 'wildcard' => [
-                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*file1.pdf*',
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*file1.pdf*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
                                                 ],
                                             ],
                                         ],
@@ -1151,9 +1195,26 @@ it('should filter products by checkbox attribute using Elasticsearch', function 
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => '*option1* OR *option2*',
+                                    'bool' => [
+                                        'should'               => [
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*option1*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
+                                                ],
+                                            ],
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*option2*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                        'minimum_should_match' => 1,
                                     ],
                                 ],
                             ],
@@ -1214,11 +1275,17 @@ it('should filter products by gallery attribute using Elasticsearch', function (
                                         'should' => [
                                             [
                                                 'wildcard' => [
-                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*image1.jpg*',
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*image1.jpg*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
                                                 ],
                                             ], [
                                                 'wildcard' => [
-                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*image2.jpg*',
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*image2.jpg*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
                                                 ],
                                             ],
                                         ],
@@ -1230,6 +1297,87 @@ it('should filter products by gallery attribute using Elasticsearch', function (
                     ],
                 ],
             ];
+
+            expect($args['body']['query'])->toEqual($expectedQuery);
+
+            return true;
+        })
+        ->andReturn([
+            'hits' => [
+                'total' => 0,
+                'hits'  => [],
+            ],
+            '_scroll_id' => '83h84747',
+        ]);
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), $data);
+
+    $response->assertOk();
+});
+
+it('should fall back to database query when Elasticsearch throws an exception on product grid', function () {
+    config(['elasticsearch.enabled' => false]);
+    Product::factory()->create(['sku' => 'fallback-test-sku']);
+    config(['elasticsearch.enabled' => true]);
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->andThrow(new Exception('No alive nodes found in your cluster'));
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), [
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+    ]);
+
+    $response->assertOk();
+    expect($response->json())->toHaveKey('records');
+});
+
+it('should filter products by uppercase SKU using Elasticsearch (case-insensitive)', function () {
+    $data = [
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+
+        'filters' => [
+            'sku' => ['TESTSKU123'],
+        ],
+    ];
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(function ($args) {
+            $expectedQuery = [
+                'constant_score' => [
+                    'filter' => [
+                        'bool' => [
+                            'filter' => [
+                                [
+                                    'wildcard' => [
+                                        'sku' => [
+                                            'value'            => '*testsku123*',
+                                            'case_insensitive' => true,
+                                            'rewrite'          => 'top_terms_1024',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
+            expect($args)->toBeArray();
+            expect($args)->toHaveKey('index');
+            expect($args)->toHaveKey('body');
+            expect($args['body'])->toHaveKey('query');
 
             expect($args['body']['query'])->toEqual($expectedQuery);
 

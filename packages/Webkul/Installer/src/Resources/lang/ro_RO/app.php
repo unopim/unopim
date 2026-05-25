@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => 'Default',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => 'Implicit',
+            ],
+            'attribute-groups' => [
                 'description'      => 'Descriere',
                 'general'          => 'General',
                 'meta-description' => 'Meta descriere',
@@ -68,7 +70,7 @@ return [
                 'meta-title'       => 'Magazin demo',
                 'meta-keywords'    => 'Cuvinte cheie meta magazin demo',
                 'meta-description' => 'Descriere meta magazin demo',
-                'name'             => 'Default',
+                'name'             => 'Implicit',
             ],
             'currencies' => [
                 'AED' => 'Dirham',
@@ -96,19 +98,20 @@ return [
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Administrator',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Confirmare Parolă',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'Email',
-                'password'         => 'Parolă',
-                'title'            => 'Creare Administrator',
+                'admin'                   => 'Administrator',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Confirmare Parolă',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'Email',
+                'password'                => 'Parolă',
+                'title'                   => 'Creare Administrator',
+                'seed-sample-data'        => 'Instalează produse de eșantion și date demo',
+                'seeding-sample-data'     => 'Se inserează produse de eșantion și date demo, această operațiune poate dura câteva minute...',
+                'seed-sample-data-failed' => 'Datele de eșantion nu au putut fi inserate. Le poți instala mai târziu prin `php artisan unopim:install:demo-data`.',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Monede Permise',
                 'allowed-locales'     => 'Localizări Permise',
@@ -146,13 +149,11 @@ return [
                 'usd'                 => 'Dolar American (USD)',
                 'warning-message'     => 'Atenție! Localizarea și moneda implicită nu pot fi modificate ulterior.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Instalare UnoPim',
                 'unopim-info' => 'Crearea tabelelor în baza de date poate dura câteva minute.',
                 'title'       => 'Proces de Instalare',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Panou Administrativ',
                 'unopim-forums'             => 'Forumuri UnoPim',
@@ -160,7 +161,6 @@ return [
                 'title-info'                => 'UnoPim a fost instalat cu succes.',
                 'title'                     => 'Instalare Finalizată',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Creare tabele pentru baza de date',
                 'install-info-button'     => 'Apăsați butonul de mai jos pentru a începe',
@@ -170,7 +170,6 @@ return [
                 'start-installation'      => 'Începeți Instalarea',
                 'title'                   => 'Pregătit pentru Instalare',
             ],
-
             'start' => [
                 'locale'        => 'Localizare',
                 'main'          => 'Principal',
@@ -178,7 +177,6 @@ return [
                 'title'         => 'Instalare UnoPim',
                 'welcome-title' => 'Bine ați venit la UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Calendar',
                 'ctype'       => 'cType',
@@ -201,7 +199,6 @@ return [
                 'tokenizer'   => 'Tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Înapoi',
             'unopim-info'              => 'Proiect Comunitar',
             'unopim-logo'              => 'Logo UnoPim',

@@ -3,7 +3,9 @@
 namespace Webkul\Attribute\Repositories;
 
 use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Event;
+use Webkul\Attribute\Contracts\AttributeFamily;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeFamilyRepository extends Repository
@@ -31,7 +33,7 @@ class AttributeFamilyRepository extends Repository
     }
 
     /**
-     * @return \Webkul\Attribute\Contracts\AttributeFamily
+     * @return AttributeFamily
      */
     public function create(array $data)
     {
@@ -72,7 +74,7 @@ class AttributeFamilyRepository extends Repository
     /**
      * @param  int  $id
      * @param  string  $attribute
-     * @return \Webkul\Attribute\Contracts\AttributeFamily
+     * @return AttributeFamily
      */
     public function update(array $data, $id, $attribute = 'id')
     {
@@ -81,6 +83,8 @@ class AttributeFamilyRepository extends Repository
 
         $newValue = [];
         $oldValue = [];
+
+        $familyGroupMapping = null;
 
         $addedAndRemovedAttributes = [
             'added'   => [],
@@ -185,7 +189,9 @@ class AttributeFamilyRepository extends Repository
             ]);
         }
 
-        Event::dispatch('core.model.proxy.sync.AttributeFamilyGroupMapping', ['old_values' => $oldValue, 'new_values' => $newValue, 'model' => $familyGroupMapping]);
+        if ($familyGroupMapping) {
+            Event::dispatch('core.model.proxy.sync.AttributeFamilyGroupMapping', ['old_values' => $oldValue, 'new_values' => $newValue, 'model' => $familyGroupMapping]);
+        }
 
         return $family;
     }
@@ -219,7 +225,7 @@ class AttributeFamilyRepository extends Repository
      * This function returns a query builder instance for the family model.
      * It eager loads the 'translations' relationship for the family.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function queryBuilder()
     {

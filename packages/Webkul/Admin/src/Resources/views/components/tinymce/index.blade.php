@@ -22,39 +22,14 @@
                     <x-slot:header>
                         <p class="flex gap-2.5 items-center text-lg text-gray-800 dark:text-white font-bold">
                             <span class="icon-magic text-2xl text-gray-800"></span>
-
                             @lang('admin::app.components.tinymce.ai-generation.title')
                         </p>
                     </x-slot>
 
                     <!-- Modal Content -->
                     <x-slot:content>
-                        <!-- LLM Model -->
                         <div v-show="! ai.content">
-                            <template v-if="aiModels.length">
-                                <x-admin::form.control-group >
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.components.tinymce.ai-generation.model')
-                                    </x-admin::form.control-group.label>
-                                    <x-admin::form.control-group.control
-                                        type="select"
-                                        name="model"
-                                        rules="required"
-                                        ::value="selectedModel"
-                                        v-model="ai.model"
-                                        :label="trans('admin::app.components.tinymce.ai-generation.model')"
-                                        ::options="aiModels"
-                                        track-by="id"
-                                        label-by="label"
-                                    >
-                                    </x-admin::form.control-group.control>
-
-                                    <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
-                                </x-admin::form.control-group>
-                            </template>
-
-
-                            <!-- default prompt -->
+                            <!-- Default Prompt -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label>
                                     @lang('admin::app.components.tinymce.ai-generation.default-prompt')
@@ -69,55 +44,7 @@
                                     @input="onChangePrompt"
                                 >
                                 </x-admin::form.control-group.control>
-
-                                <x-admin::form.control-group.error control-name="default_prompt"></x-admin::form.control-group.error>
                             </x-admin::form.control-group>
-
-                             <!-- Tone Input -->
-                                <x-admin::form.control-group>
-                                    <!-- Label for the Select Element -->
-                                    <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.configuration.system-prompt.create.prompt-tone')
-                                    </x-admin::form.control-group.label>
-
-                                    @php
-                                        $promptOptions = app(\Webkul\MagicAI\Repository\MagicAISystemPromptRepository::class)->getAllPromptOptions();
-                                        $options = [];
-                                        $defaultPrompt = null;
-
-                                        foreach ($promptOptions as $prompt) {
-                                            $options[] = [
-                                                'id'    => $prompt['id'],
-                                                'label' => $prompt['label'],
-                                            ];
-
-                                            if ($defaultPrompt === null && $prompt['is_enabled']) {
-                                                $defaultPrompt = $prompt['id'];
-                                            }
-                                        }
-                                        
-                                        if ($defaultPrompt === null && count($options)) {
-                                            $defaultPrompt = $options[0]['id'];
-                                        }
-
-                                        $optionsJson = json_encode($options);
-                                        
-                                    @endphp
-
-                   
-                                    <x-admin::form.control-group.control
-                                        type="select"
-                                        id="tone"
-                                        name="tone"
-                                        rules="required"
-                                        :options="$optionsJson"
-                                        :value="old('tone') ?? $defaultPrompt"
-                                        track-by="id"
-                                        label-by="label"
-                                        >
-                                    </x-admin::form.control-group.control>
-                                    <x-admin::form.control-group.error control-name="tone" />
-                                </x-admin::form.control-group>
 
                             <!-- Prompt -->
                             <x-admin::form.control-group>
@@ -128,7 +55,7 @@
                                 <div class="relative w-full">
                                     <x-admin::form.control-group.control
                                         type="textarea"
-                                        class="h-[180px]"
+                                        class="h-[150px]"
                                         name="prompt"
                                         rules="required"
                                         v-model="ai.prompt"
@@ -136,7 +63,6 @@
                                         :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
                                     />
 
-                                    <!-- Icon inside textarea -->
                                     <div
                                         class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
                                         @click="openSuggestions"
@@ -147,70 +73,196 @@
 
                                 <x-admin::form.control-group.error control-name="prompt" />
                             </x-admin::form.control-group>
+
+                            <!-- System Prompt Section -->
+                            <div class="border rounded-md dark:border-cherry-800 mt-2">
+                                <div
+                                    class="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-cherry-800 rounded-t-md"
+                                    @click="showSystemPrompt = !showSystemPrompt"
+                                >
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        @lang('admin::app.components.tinymce.ai-generation.system-prompt')
+                                        <span class="text-xs text-gray-400 ml-1" v-if="selectedSystemPrompt">(@{{ selectedSystemPrompt.title }})</span>
+                                    </span>
+                                    <span class="text-gray-400 text-lg" v-text="showSystemPrompt ? '&#9650;' : '&#9660;'"></span>
+                                </div>
+
+                                <div v-show="showSystemPrompt" class="px-3 pb-3 border-t dark:border-cherry-800">
+                                    <!-- System Prompt Selector -->
+                                    <x-admin::form.control-group class="mt-2">
+                                        <x-admin::form.control-group.label class="required">
+                                            @lang('admin::app.components.tinymce.ai-generation.select-system-prompt')
+                                        </x-admin::form.control-group.label>
+                                        <select
+                                            name="tone"
+                                            v-model="ai.system_prompt_id"
+                                            @change="onSystemPromptChange()"
+                                            class="w-full py-2 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
+                                        >
+                                            <option v-for="sp in systemPrompts" :key="sp.id" :value="sp.id">
+                                                @{{ sp.title }}
+                                            </option>
+                                        </select>
+                                    </x-admin::form.control-group>
+
+                                    <!-- Editable tone, max_tokens, temperature -->
+                                    <x-admin::form.control-group class="mt-1">
+                                        <x-admin::form.control-group.label>
+                                            @lang('admin::app.components.tinymce.ai-generation.tone-instructions')
+                                        </x-admin::form.control-group.label>
+                                        <textarea
+                                            v-model="ai.tone"
+                                            rows="3"
+                                            class="w-full py-2 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
+                                        ></textarea>
+                                    </x-admin::form.control-group>
+
+                                    <div class="grid grid-cols-2 gap-3 mt-1">
+                                        <x-admin::form.control-group>
+                                            <x-admin::form.control-group.label>
+                                                @lang('admin::app.components.tinymce.ai-generation.max-tokens')
+                                            </x-admin::form.control-group.label>
+                                            <input
+                                                type="number"
+                                                v-model.number="ai.max_tokens"
+                                                min="1"
+                                                max="32768"
+                                                class="w-full py-2 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
+                                            />
+                                        </x-admin::form.control-group>
+
+                                        <x-admin::form.control-group>
+                                            <x-admin::form.control-group.label>
+                                                @lang('admin::app.components.tinymce.ai-generation.temperature')
+                                            </x-admin::form.control-group.label>
+                                            <input
+                                                type="number"
+                                                v-model.number="ai.temperature"
+                                                min="0"
+                                                max="2"
+                                                step="0.05"
+                                                class="w-full py-2 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
+                                            />
+                                        </x-admin::form.control-group>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-
-
                         <!-- Generated Content -->
-                        <x-admin::form.control-group class="mt-5" v-show="ai.content">
-                            <x-admin::form.control-group.label class="text-left">
-                                @lang('admin::app.components.tinymce.ai-generation.generated-content')
-                            </x-admin::form.control-group.label>
+                        <div class="mt-5" v-show="ai.content">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs text-gray-800 dark:text-white font-medium">
+                                    @lang('admin::app.components.tinymce.ai-generation.generated-content')
+                                </label>
 
-                            <x-admin::form.control-group.control
-                                type="textarea"
-                                class="h-[180px]"
-                                name="content"
+                                <label v-if="contentHasHtml" class="flex items-center gap-1.5 cursor-pointer text-xs text-gray-600 dark:text-gray-300">
+                                    <input type="checkbox" v-model="showRichPreview" class="rounded text-violet-600" />
+                                    @lang('admin::app.components.tinymce.ai-generation.rich-preview')
+                                </label>
+                            </div>
+
+                            <!-- Rich HTML Preview -->
+                            <div
+                                v-if="contentHasHtml && showRichPreview"
+                                class="h-[180px] overflow-y-auto p-3 border rounded-md bg-white dark:bg-cherry-800 dark:border-cherry-800 text-sm text-gray-700 dark:text-gray-300 max-w-none rich-content-preview"
+                                v-html="ai.content"
+                            ></div>
+
+                            <style>
+                                .rich-content-preview h1, .rich-content-preview h2, .rich-content-preview h3, .rich-content-preview h4 { font-weight: 700; margin: 0.5em 0 0.25em; }
+                                .rich-content-preview h1 { font-size: 1.5em; }
+                                .rich-content-preview h2 { font-size: 1.25em; }
+                                .rich-content-preview h3 { font-size: 1.1em; }
+                                .rich-content-preview p { margin: 0.4em 0; }
+                                .rich-content-preview strong, .rich-content-preview b { font-weight: 700; }
+                                .rich-content-preview em, .rich-content-preview i { font-style: italic; }
+                                .rich-content-preview ul, .rich-content-preview ol { padding-left: 1.5em; margin: 0.4em 0; }
+                                .rich-content-preview ul { list-style-type: disc; }
+                                .rich-content-preview ol { list-style-type: decimal; }
+                                .rich-content-preview li { margin: 0.2em 0; }
+                                .rich-content-preview a { color: #6d28d9; text-decoration: underline; }
+                                .rich-content-preview table { border-collapse: collapse; width: 100%; margin: 0.5em 0; }
+                                .rich-content-preview th, .rich-content-preview td { border: 1px solid #e5e7eb; padding: 0.4em 0.6em; text-align: left; }
+                                .rich-content-preview th { background: #f3f4f6; font-weight: 600; }
+                            </style>
+
+                            <!-- Plain text editor -->
+                            <textarea
+                                v-else
                                 v-model="ai.content"
-                            />
+                                class="w-full h-[180px] py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
+                            ></textarea>
 
-                            <span class="text-xs text-gray-500">
+                            <span class="text-xs text-gray-500 mt-1 block">
                                 @lang('admin::app.components.tinymce.ai-generation.generated-content-info')
                             </span>
-                        </x-admin::form.control-group>
+                        </div>
                     </x-slot>
 
                     <!-- Modal Footer -->
                     <x-slot:footer>
-                        <div class="flex gap-x-2.5 items-center">
-                            <template v-if="! ai.content">
+                        <div class="flex items-center justify-between w-full">
+                            <!-- Platform & Model compact selectors (left side, copilot-style) -->
+                            <div class="flex items-center gap-2" v-if="!ai.content">
+                                <select
+                                    v-model="ai.platform_id"
+                                    @change="onPlatformChange()"
+                                    class="py-1.5 px-2 border rounded-md text-xs text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800 max-w-[140px]"
+                                    title="@lang('admin::app.components.tinymce.ai-generation.platform')"
+                                >
+                                    <option v-for="p in platforms" :key="p.id" :value="p.id">@{{ p.label }}</option>
+                                </select>
+                                <select
+                                    v-model="ai.model"
+                                    class="py-1.5 px-2 border rounded-md text-xs text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800 max-w-[160px]"
+                                    title="@lang('admin::app.components.tinymce.ai-generation.model')"
+                                >
+                                    <option v-for="m in aiModels" :key="m.id" :value="m.id">@{{ m.label }}</option>
+                                </select>
+                            </div>
+                            <div v-else></div>
+
+                            <!-- Action buttons (right side) -->
+                            <div class="flex gap-x-2.5 items-center">
+                            <template v-if="!ai.content">
                                 <button
                                     type="submit"
                                     class="secondary-button"
+                                    :disabled="isLoading"
+                                    :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
                                 >
-                                    <!-- Spinner -->
                                     <template v-if="isLoading">
                                         <img
                                             class="animate-spin h-5 w-5 text-violet-700"
                                             src="{{ unopim_asset('images/spinner.svg') }}"
                                         />
-
                                         @lang('admin::app.components.tinymce.ai-generation.generating')
                                     </template>
 
                                     <template v-else>
                                         <span class="icon-magic text-2xl text-violet-700"></span>
-
                                         @lang('admin::app.components.tinymce.ai-generation.generate')
                                     </template>
                                 </button>
                             </template>
 
                             <template v-else>
-                                <button class="secondary-button">
-                                    <!-- Spinner -->
+                                <button
+                                    class="secondary-button"
+                                    :disabled="isLoading"
+                                    :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
+                                >
                                     <template v-if="isLoading">
                                         <img
                                             class="animate-spin h-5 w-5 text-violet-700"
                                             src="{{ unopim_asset('images/spinner.svg') }}"
                                         />
-
                                         @lang('admin::app.components.media.images.ai-generation.regenerating')
                                     </template>
 
                                     <template v-else>
                                         <span class="icon-magic text-2xl text-violet-700"></span>
-
                                         @lang('admin::app.components.media.images.ai-generation.regenerate')
                                     </template>
                                 </button>
@@ -224,6 +276,7 @@
                                     @lang('admin::app.components.tinymce.ai-generation.apply')
                                 </button>
                             </template>
+                            </div>
                         </div>
                     </x-slot>
                 </x-admin::modal>
@@ -240,40 +293,47 @@
             data() {
                 return {
                     currentSkin: document.documentElement.classList.contains('dark') ? 'oxide-dark' : 'oxide',
-
                     currentContentCSS: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
-
                     isLoading: false,
 
                     ai: {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') }}"),
-
+                        enabled: @json(!! core()->getConfigData('general.magic_ai.settings.enabled') && bouncer()->hasPermission('ai-agent')),
+                        platform_id: null,
                         model: null,
-
                         prompt: null,
-
                         content: null,
+                        system_prompt_id: null,
+                        tone: '',
+                        max_tokens: 1024,
+                        temperature: 0.7,
                     },
 
+                    showRichPreview: true,
+                    showSystemPrompt: false,
+                    selectedSystemPrompt: null,
+                    systemPrompts: @json(app(\Webkul\MagicAI\Repository\MagicAISystemPromptRepository::class)->all()->toArray()),
+                    platforms: [],
                     aiModels: [],
                     defaultPrompts: [],
-                    tone: null,
-                    systemPrompts: [],
-                    selectedModel: null,
                     suggestionValues: [],
                     resourceId: "{{ request()->id }}",
                     entityName: "{{ $attributes->get('entity-name', 'attribute') }}",
                 };
             },
 
+            computed: {
+                contentHasHtml() {
+                    if (!this.ai.content) return false;
+                    return /<[a-z][\s\S]*>/i.test(this.ai.content);
+                },
+            },
+
             mounted() {
                 this.init();
                 this.$emitter.on('change-theme', (theme) => {
                     tinymce.get(0).destroy();
-
                     this.currentSkin = (theme === 'dark') ? 'oxide-dark' : 'oxide';
                     this.currentContentCSS = (theme === 'dark') ? 'dark' : 'default';
-
                     this.init();
                 });
             },
@@ -389,35 +449,39 @@
                         },
                     };
 
+                    const baseToolbar = 'formatselect | fontsize bold italic strikethrough forecolor backcolor image alignleft aligncenter alignright alignjustify | link hr numlist bullist outdent indent removeformat code table';
+                    const toolbar1 = self.ai.enabled ? baseToolbar + ' | aibutton' : baseToolbar;
+
                     tinyMCEHelper.initTinyMCE({
                         selector: this.selector,
                         plugins: 'image media wordcount save fullscreen code table lists link',
-                        toolbar1: 'formatselect | fontsize bold italic strikethrough forecolor backcolor image alignleft aligncenter alignright alignjustify | link hr numlist bullist outdent indent removeformat code table | aibutton',
+                        toolbar1: toolbar1,
                         image_advtab: true,
                         directionality: "ltr",
 
                         setup: editor => {
-                            editor.ui.registry.addIcon('magic',
-                                '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"> <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9"/> <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#6d28d9"/> <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9"/> <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9"/> </g> <defs> <clipPath id="clip0_3148_2242"> <rect width="24" height="24" fill="white"/> </clipPath> </defs> </svg>'
-                                );
+                            if (self.ai.enabled) {
+                                editor.ui.registry.addIcon('magic',
+                                    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"> <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9"/> <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#6d28d9"/> <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9"/> <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9"/> </g> <defs> <clipPath id="clip0_3148_2242"> <rect width="24" height="24" fill="white"/> </clipPath> </defs> </svg>'
+                                    );
 
-                            editor.ui.registry.addButton('aibutton', {
-                                text: "@lang('admin::app.components.tinymce.ai-btn-tile')",
-                                icon: 'magic',
-                                enabled: self.ai.enabled,
+                                editor.ui.registry.addButton('aibutton', {
+                                    text: "@lang('admin::app.components.tinymce.ai-btn-tile')",
+                                    icon: 'magic',
 
-                                onAction: function() {
-                                    self.ai = {
-                                        prompt: self.prompt,
+                                    onAction: function() {
+                                        self.ai = {
+                                            ...self.ai,
+                                            prompt: self.prompt,
+                                            content: null,
+                                        };
 
-                                        content: null,
-                                    };
+                                        self.magicAIModalToggle()
+                                    }
+                                });
+                            }
 
-                                    self.magicAIModalToggle()
-                                }
-                            });
-
-                            editor.on('keyup', () => {
+                            editor.on('keyup change input', () => {
                                 this.field.onInput(editor.getContent());
                             });
                         },
@@ -431,14 +495,13 @@
                 toggleMagicAIModal() {
                     this.$nextTick(() => {
                         if (this.$refs.promptInput) {
-                            if (this.aiModels.length === 0) {
-                                this.fetchModels();
+                            if (this.platforms.length === 0) {
+                                this.fetchPlatforms();
                             }
 
                             if (this.defaultPrompts.length === 0) {
                                 this.fetchDefaultPrompts();
                             }
-
 
                             const tribute = this.$tribute.init({
                                 values: this.fetchSuggestionValues,
@@ -451,10 +514,61 @@
                             });
 
                             tribute.attach(this.$refs.promptInput);
-
-
                         }
                     });
+                },
+
+                async fetchPlatforms() {
+                    try {
+                        const response = await axios.get("{{ route('admin.magic_ai.platforms') }}");
+                        this.platforms = response.data.platforms || [];
+
+                        if (this.platforms.length) {
+                            let defaultPlatform = this.platforms.find(p => p.is_default);
+                            this.ai.platform_id = defaultPlatform ? defaultPlatform.id : this.platforms[0].id;
+                            this.loadModelsForPlatform();
+                        }
+
+                        // Set default system prompt
+                        if (this.systemPrompts.length && !this.ai.system_prompt_id) {
+                            let enabled = this.systemPrompts.find(sp => sp.is_enabled);
+                            let sp = enabled || this.systemPrompts[0];
+                            this.ai.system_prompt_id = sp.id;
+                            this.applySystemPrompt(sp);
+                        }
+                    } catch (error) {
+                        console.error("Failed to fetch platforms:", error);
+                    }
+                },
+
+                onSystemPromptChange() {
+                    let sp = this.systemPrompts.find(s => s.id == this.ai.system_prompt_id);
+                    if (sp) {
+                        this.applySystemPrompt(sp);
+                    }
+                },
+
+                applySystemPrompt(sp) {
+                    this.selectedSystemPrompt = sp;
+                    this.ai.tone = sp.tone;
+                    this.ai.max_tokens = sp.max_tokens;
+                    this.ai.temperature = sp.temperature;
+                },
+
+                onPlatformChange() {
+                    this.loadModelsForPlatform();
+                },
+
+                loadModelsForPlatform() {
+                    let platform = this.platforms.find(p => p.id === this.ai.platform_id);
+
+                    if (platform && platform.models) {
+                        this.aiModels = platform.models.map(m => ({ id: m, label: m }));
+                        this.ai.model = this.aiModels[0]?.id || null;
+                    } else {
+                        this.aiModels = [];
+                        this.ai.model = null;
+                    }
                 },
 
                 openSuggestions() {
@@ -475,22 +589,12 @@
                     });
                 },
 
-                async fetchModels() {
-                    try {
-                        const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
-                        this.aiModels = response.data.models.filter(model => model.id !== 'dall-e-2' && model
-                            .id !== 'dall-e-3');
-                        this.selectedModel = this.aiModels[0].id;
-                    } catch (error) {
-                        console.error("Failed to fetch AI models:", error);
-                    }
-                },
-
                 async fetchDefaultPrompts() {
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.default_prompt') }}", {
                             params: {
-                                field: this.entityName
+                                field: this.entityName,
+                                purpose: 'text_generation',
                             }
                         });
 
@@ -524,21 +628,14 @@
                 }) {
                     this.isLoading = true;
 
-                    var formData = new FormData(this.$refs.magicAiGenerateForm);
-
-                    let model = formData.getAll('model');
-
-                    model = model.filter((value) => value !== '')[0];
-
-                    params['model'] = model;
-
-                    let tones = formData.getAll('tone');
-                    let tone = tones.find(value => value !== '');
-
                     this.$axios.post("{{ route('admin.magic_ai.content') }}", {
                             prompt: params['prompt'],
-                            model: params['model'],
-                            tone: tone,
+                            model: this.ai.model,
+                            tone: this.ai.system_prompt_id,
+                            system_prompt_text: this.ai.tone,
+                            max_tokens: this.ai.max_tokens,
+                            temperature: this.ai.temperature,
+                            platform_id: this.ai.platform_id,
                             resource_id: this.resourceId,
                             resource_type: this.getResourceType(),
                             field_type: 'tinymce',

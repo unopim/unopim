@@ -11,13 +11,12 @@ return [
             'powered-by'             => ':unopim tarafından desteklenmektedir,',
             'open-source-project-by' => ':webkul tarafından sunulan açık kaynak projesi.',
         ],
-
         'forget-password' => [
             'create' => [
                 'email'                  => 'Kayıtlı E-posta',
                 'email-not-exist'        => 'E-posta bulunamadı',
                 'page-title'             => 'Şifreyi Unuttum',
-                'reset-link-sent'        => 'Şifre sıfırlama bağlantısı gönderildi',
+                'reset-link-sent'        => 'Bu e-posta adresine ait bir hesap varsa, şifre sıfırlama bağlantısı gönderilmiştir.',
                 'email-settings-error'   => 'E-posta gönderilemedi. Lütfen e-posta ayarlarınızı kontrol edin',
                 'sign-in-link'           => 'Geri Giriş Yap?',
                 'submit-btn'             => 'Sıfırla',
@@ -26,7 +25,6 @@ return [
                 'open-source-project-by' => ':webkul tarafından sunulan açık kaynak projesi.',
             ],
         ],
-
         'reset-password' => [
             'back-link-title'        => 'Geri Giriş Yap?',
             'confirm-password'       => 'Şifreyi Onayla',
@@ -38,12 +36,13 @@ return [
             'open-source-project-by' => ':webkul tarafından sunulan açık kaynak projesi.',
         ],
     ],
-
     'notifications' => [
         'description-text' => 'Tüm Bildirimlerin Listesi',
         'marked-success'   => 'Bildirim Başarıyla İşaretlendi',
         'no-record'        => 'Kayıt Bulunamadı',
+        'of'               => '/',
         'read-all'         => 'Tümünü Okundu Olarak İşaretle',
+        'showing'          => 'Gösteriliyor',
         'title'            => 'Bildirimler',
         'view-all'         => 'Tümünü Görüntüle',
         'status'           => [
@@ -53,9 +52,10 @@ return [
             'completed'  => 'Tamamlandı',
             'pending'    => 'Bekliyor',
             'processing' => 'İşleniyor',
+            'read'       => 'Okunmuş',
+            'unread'     => 'Okunmamış',
         ],
     ],
-
     'account' => [
         'edit' => [
             'back-btn'          => 'Geri',
@@ -76,25 +76,89 @@ return [
             'user-timezone'     => 'Saat Dilimi',
         ],
     ],
-
     'dashboard' => [
-        'index' => [
-            'title'            => 'Gösterge Paneli',
-            'user-info'        => 'Hızlı izleme, PIM\'nizde neyin sayıldığını',
-            'user-name'        => 'Merhaba! :user_name',
-            'catalog-details'  => 'Katalog',
-            'total-families'   => 'Toplam Aileler',
-            'total-attributes' => 'Toplam Nitelikler',
-            'total-groups'     => 'Toplam Gruplar',
-            'total-categories' => 'Toplam Kategoriler',
-            'total-products'   => 'Toplam Ürünler',
-            'settings-details' => 'Katalog Yapısı',
-            'total-locales'    => 'Toplam Yerelleştirmeler',
-            'total-currencies' => 'Toplam Para Birimleri',
-            'total-channels'   => 'Toplam Kanallar',
+        'invalid-type' => 'Geçersiz pano bileşen türü.',
+        'index'        => [
+            'title'                => 'Gösterge Paneli',
+            'user-info'            => 'Hızlı izleme, PIM\'nizde neyin sayıldığını',
+            'user-name'            => 'Merhaba! :user_name',
+            'catalog-details'      => 'Katalog',
+            'total-families'       => 'Toplam Aileler',
+            'total-attributes'     => 'Toplam Nitelikler',
+            'total-groups'         => 'Toplam Gruplar',
+            'total-categories'     => 'Toplam Kategoriler',
+            'total-products'       => 'Toplam Ürünler',
+            'settings-details'     => 'Katalog Yapısı',
+            'total-locales'        => 'Toplam Yerelleştirmeler',
+            'total-currencies'     => 'Toplam Para Birimleri',
+            'total-channels'       => 'Toplam Kanallar',
+            'completeness'         => 'Tamlık',
+            'active'               => 'Aktif',
+            'inactive'             => 'Pasif',
+            'simple'               => 'Basit',
+            'configurable'         => 'Yapılandırılabilir',
+            'product-stats'        => 'Ürün İstatistikleri',
+            'product-type-dist'    => 'Ürün Tipi Dağılımı',
+            'products-by-status'   => 'Duruma Göre Ürünler',
+            'products-over-time'   => 'Ürün Etkinliği (Son 7 Gün)',
+            'legend-created'       => 'Oluşturulan',
+            'legend-updated'       => 'Güncellenen',
+            'recent-activity'      => 'Son Etkinlik',
+            'no-activity'          => 'Son etkinlik bulunamadı.',
+            'updated'              => 'güncellendi',
+            'created'              => 'oluşturuldu',
+            'deleted'              => 'silindi',
+            'ago'                  => 'önce',
+            'just-now'             => 'az önce',
+            'data-transfer'        => 'Veri Aktarımı',
+            'no-jobs'              => 'Son içe/dışa aktarma işi bulunamadı.',
+            'job-type-import'      => 'İçe Aktarma',
+            'job-type-export'      => 'Dışa Aktarma',
+            'job-state-completed'  => 'Tamamlandı',
+            'job-state-failed'     => 'Başarısız',
+            'job-state-processing' => 'İşleniyor',
+            'job-state-pending'    => 'Beklemede',
+            'job-state-validated'  => 'Doğrulandı',
+            'rows-processed'       => 'İşlenen Satırlar',
+            'errors'               => 'Hatalar',
+            'quick-links'          => 'Hızlı Bağlantılar',
+            'create-product'       => 'Ürün Oluştur',
+            'import-data'          => 'Veri İçe Aktar',
+            'export-data'          => 'Veri Dışa Aktar',
+            'manage-attributes'    => 'Öznitelikleri Yönet',
+            'view-all-activity'    => 'Tümünü Gör',
+            'view-all-jobs'        => 'Tüm İşleri Gör',
+            'new-this-week'        => 'Bu Hafta Yeni',
+            'with-variants'        => 'Varyantlı',
+            'avg-completeness'     => 'Ort. Tamlık',
+            'enriched'             => 'Zenginleştirilmiş',
+            'analytics-section'    => 'Analitik',
+            'operations-section'   => 'Operasyonlar',
+            'needs-attention'      => 'Dikkat Gerekiyor',
+            'unenriched-products'  => 'Zenginleştirilmemiş Ürünler',
+            'failed-jobs-24h'      => 'Başarısız İşler (24s)',
+            'low-completeness'     => 'Düşük Tamlık',
+            'all-good'             => 'Her şey yolunda!',
+            'channel-readiness'    => 'Kanal Hazırlığı',
+            'ready-to-publish'     => 'yayına hazır',
+            'of'                   => '/',
+            'products-ready'       => 'ürün hazır',
+            'no-readiness-data'    => 'Henüz tamlık verisi yok.',
+            'entity-types'         => [
+                'product'          => 'Ürün',
+                'category'         => 'Kategori',
+                'attribute'        => 'Özellik',
+                'attribute-family' => 'Aile',
+                'attribute-group'  => 'Grup',
+                'category-field'   => 'Kategori Alanı',
+                'channel'          => 'Kanal',
+                'role'             => 'Rol',
+                'job-instance'     => 'Görev',
+                'webhook'          => 'Webhook',
+                'api-key'          => 'API Anahtarı',
+            ],
         ],
     ],
-
     'catalog' => [
         'products' => [
             'index' => [
@@ -104,8 +168,7 @@ return [
                 'magic-ai-error'            => 'Magic AI kimlik bilgilerinizi kontrol edin ve doğru modelin seçildiğinden emin olun.',
                 'magic-ai-validate-error'   => 'Lütfen Magic AI kimlik bilgilerini doğrulayın.',
                 'magic-ai-validate-success' => 'Magic AI kimlik bilgileri başarıyla doğrulandı.',
-
-                'create' => [
+                'create'                    => [
                     'back-btn'                          => 'Geri',
                     'configurable-attributes'           => 'Yapılandırılabilir Özellikler',
                     'create-btn'                        => 'Ürün oluştur',
@@ -118,7 +181,6 @@ return [
                     'not-config-super-attributes-error' => '":super_attributes" süper özelliği bulunamadı',
                     'sku-exists-error'                  => '":sku" SKU\'su zaten kullanılıyor',
                 ],
-
                 'datagrid' => [
                     'active'                 => 'Aktif',
                     'attribute-family'       => 'Özellik ailesi',
@@ -148,49 +210,44 @@ return [
                     'update-status'          => 'Durum güncelle',
                     'parent'                 => 'Ana',
                     'parent-identifier'      => 'Ana: :sku',
+                    'created-at'             => 'Oluşturulma Tarihi',
+                    'updated-at'             => 'Güncellenme Tarihi',
                 ],
             ],
-
             'edit' => [
-                'preview'  => 'Önizleme',
-                'remove'   => 'Kaldır',
-                'save-btn' => 'Ürünü kaydet',
-                'title'    => 'Ürünü düzenle',
-
+                'preview'    => 'Önizleme',
+                'remove'     => 'Kaldır',
+                'save-btn'   => 'Ürünü kaydet',
+                'title'      => 'Ürünü düzenle',
                 'categories' => [
-                    'title' => 'Kategoriler',
+                    'title'            => 'Kategoriler',
+                    'root-not-allowed' => 'Kök kategori bir ürüne atanamaz.',
                 ],
-
                 'images' => [
                     'info'  => 'Resimler 560px X 609px çözünürlüğünde olmalıdır',
                     'title' => 'Resimler',
                 ],
-
                 'videos' => [
                     'error' => ':attribute, :max kilobayttan büyük olamaz. Daha küçük bir dosya seçin.',
                     'info'  => 'Video boyutu :size olmalıdır.',
                     'title' => 'Videolar',
                 ],
-
                 'links' => [
                     'related-products' => [
                         'empty-info' => 'İlgili ürünler ekleyin.',
                         'info'       => 'Görüntülenen ürüne ek olarak, müşteriler ilgili ürünleri görecektir.',
                         'title'      => 'İlgili Ürünler',
                     ],
-
                     'up-sells' => [
                         'empty-info' => 'Üst satış ürünleri ekleyin.',
                         'info'       => 'Müşteriler, görüntülenen üründen daha kaliteli premium ürünleri görecektir.',
                         'title'      => 'Üst Satış Ürünleri',
                     ],
-
                     'cross-sells' => [
                         'empty-info' => 'Çapraz satış ürünleri ekleyin.',
                         'info'       => 'Müşteriler, sepetlerinde bulunan ürünle birlikte alabilecekleri diğer ürünleri görecektir.',
                         'title'      => 'Çapraz Satış Ürünleri',
                     ],
-
                     'add-btn'           => 'Ekle',
                     'delete'            => 'Sil',
                     'empty-info'        => 'Bir kerede :type ürün ekleyin.',
@@ -199,7 +256,6 @@ return [
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Ürünler',
                 ],
-
                 'types' => [
                     'configurable' => [
                         'add-btn'                            => 'Varyasyon ekle',
@@ -213,18 +269,16 @@ return [
                         'sku'                                => 'SKU - :sku',
                         'title'                              => 'Varyasyon',
                         'variant-exists'                     => 'Bu varyasyon veya SKU zaten mevcut.',
-                        'variant-attribute-option-not-found' => 'Varyasyon için attribute seçeneği bulunamadı',
-                        'supper-attribute-not-found'         => 'Süper attribute bulunamadı',
-                        'variant-given-exists'               => 'Bu varyasyon zaten var',
-
-                        'create' => [
+                        'variant-attribute-option-not-found' => 'Varyasyon için attribute seçeneği bulunamadı :attributes',
+                        'supper-attribute-not-found'         => 'Süper attribute bulunamadı :attribute',
+                        'variant-given-exists'               => 'Bu varyasyon zaten var :variants',
+                        'create'                             => [
                             'description'            => 'Açıklama',
                             'name'                   => 'Ad',
                             'save-btn'               => 'Ekle',
                             'title'                  => 'Varyasyon ekle',
                             'variant-already-exists' => 'Bu varyasyon zaten mevcut.',
                         ],
-
                         'edit' => [
                             'disabled'        => 'Devre dışı',
                             'edit-info'       => 'Ürün bilgilerini güncellemek için sayfayı ziyaret edin',
@@ -240,7 +294,6 @@ return [
                             'title'           => 'Ürün',
                             'weight'          => 'Ağırlık',
                         ],
-
                         'mass-edit' => [
                             'add-images'          => 'Resim ekle',
                             'apply-to-all-btn'    => 'Hepsine uygula',
@@ -267,23 +320,31 @@ return [
                         ],
                     ],
                 ],
-
                 'translate' => [
-                    'translate-btn'            => 'Çevir',
-                    'title'                    => 'Çevir',
-                    'source-channel'           => 'Kaynak Kanalı',
-                    'locale'                   => 'Kaynak Yerel Ayarı',
-                    'translated-content'       => 'Çevrilmiş İçerik',
-                    'translating'              => 'Çeviriliyor',
-                    'apply'                    => 'Uygula',
-                    'cancel'                   => 'İptal',
-                    'target-locales'           => 'Hedef Yerel Ayarlar',
-                    'target-channel'           => 'Hedef Kanal',
-                    'attributes'               => 'Özellikler',
-                    'source-content'           => 'Kaynak İçerik',
-                    'tranlated-job-processed'  => 'Çevrilmiş içeriğin kaydedilmesi işlemi tamamlandı.',
+                    'translate-btn'               => 'Çevir',
+                    'title'                       => 'Çevir',
+                    'source-channel'              => 'Kaynak Kanalı',
+                    'locale'                      => 'Kaynak Yerel Ayarı',
+                    'translated-content'          => 'Çevrilmiş İçerik',
+                    'translating'                 => 'Çeviriliyor',
+                    'apply'                       => 'Uygula',
+                    'back'                        => 'Geri',
+                    'cancel'                      => 'İptal',
+                    'target-locales'              => 'Hedef Yerel Ayarlar',
+                    'target-channel'              => 'Hedef Kanal',
+                    'attributes'                  => 'Özellikler',
+                    'tranlated-job-processed'     => 'Çevrilmiş içeriğin kaydedilmesi işlemi tamamlandı.',
+                    'step'                        => 'Adım',
+                    'select-source'               => 'Kaynak Seçin',
+                    'select-target'               => 'Hedef Seçin',
+                    'first-step-title'            => 'Adım 1: Kaynak Kanal, Dil ve Özellikleri Seçin',
+                    'first-step-title-attributes' => 'Adım 1: Kaynak Kanal ve Dili Seçin',
+                    'source-content'              => 'Kaynak İçerik',
+                    'second-step-title'           => 'Adım 2: Hedef Kanal ve Dilleri Seçin',
+                    'target-content'              => 'Hedef İçerik',
+                    'next'                        => 'İleri',
+                    'empty-translation-data'      => 'Kaynak kanal ve yerel ayara göre çeviri için veri mevcut değil',
                 ],
-
                 'product-info' => [
                     'title'        => 'Ürün Bilgisi',
                     'status'       => 'Durum',
@@ -293,6 +354,7 @@ return [
                     'created-at'   => 'Oluşturulma Tarihi',
                     'product-type' => 'Ürün Türü',
                 ],
+                'more-actions' => 'Daha Fazla İşlem',
             ],
             'bulk-edit' => [
                 'validation' => [
@@ -302,42 +364,69 @@ return [
                     'url'                        => 'Lütfen geçerli bir URL girin.',
                     'regex'                      => 'Değer gerekli desenle eşleşmiyor.',
                     'invalid-pattern'            => 'Geçersiz özel desen sağlandı.',
+
+                    'numeric'                    => '":attribute" sayısal özelliğinin değeri geçerli bir sayı olmalıdır.',
                     'select-attribute-or-family' => 'Lütfen en az bir özellik veya özellik ailesi seçin.',
                     'failed'                     => 'Doğrulama başarısız oldu.',
                 ],
-
-                'modal'                      => [
+                'modal' => [
                     'title'            => 'Toplu düzenleme için özellikler',
                     'btn-cancel'       => 'İptal',
                     'btn-proceed'      => 'Devam et',
                     'attribute-family' => 'Özellik ailesi seçin',
                 ],
-
                 'index' => [
-                    'no-product'    => 'Toplu düzenleme için ürün seçilmedi.',
+                    'no-product' => 'Toplu düzenleme için ürün seçilmedi.',
                 ],
-
                 'filter' => [
-                    'many-product'      => 'Çok fazla ürün seçildi.',
-                    'redirect-message'  => 'Toplu düzenleme görünümüne yönlendiriliyor.',
+                    'many-product'     => 'Çok fazla ürün seçildi.',
+                    'redirect-message' => 'Toplu düzenleme görünümüne yönlendiriliyor.',
                 ],
-
                 'handle-save' => [
-                    'edit-success'  => 'Toplu düzenleme başarıyla tamamlandı.',
+                    'edit-success' => 'Toplu düzenleme başarıyla tamamlandı.',
                 ],
+                'id'                          => 'ID',
+                'no-changes'                  => 'Kaydedilecek değişiklik yok.',
 
-                'id'              => 'ID',
-                'no-changes'      => 'Kaydedilecek değişiklik yok.',
-                'success'         => 'İşlem başarıyla gerçekleştirildi.',
-                'fetch-failed'    => 'Veri alınamadı.',
-                'action'          => 'Toplu Düzenleme',
-                'gallery-preview' => 'Galeri Önizleme',
-                'img-preview'     => 'Resim Önizleme',
-                'no-image'        => 'Resim Yok',
-                'img-fail'        => 'Resim yüklenemedi',
-                'no-opton'        => 'Seçenek Yok',
+                'invalid-datetime'            => 'Geçerli bir tarih ve saat girin.',
+
+                'resize-column'               => 'Sütun genişliğini değiştirmek için sürükleyin',
+                'success'                     => 'İşlem başarıyla gerçekleştirildi.',
+                'fetch-failed'                => 'Veri alınamadı.',
+                'action'                      => 'Toplu Düzenleme',
+                'description'                 => 'Birden fazla ürünü aynı anda düzenleyin. Değişiklikler arka planda işlenir.',
+                'gallery-preview'             => 'Galeri Önizleme',
+                'img-preview'                 => 'Resim Önizleme',
+                'no-image'                    => 'Resim Yok',
+                'img-fail'                    => 'Resim yüklenemedi',
+                'no-option'                   => 'Seçenek Yok',
+                'keyboard-shortcuts'          => 'Klavye Kısayolları',
+                'shortcuts-navigation'        => 'Gezinme',
+                'shortcuts-editing'           => 'Düzenleme',
+                'shortcuts-selection'         => 'Seçim',
+                'shortcuts-clipboard'         => 'Pano ve Doldurma',
+                'shortcuts-move-cell'         => 'Hücreler arasında gezin',
+                'shortcuts-move-down'         => 'Aşağı taşı / düzenlemeyi onayla',
+                'shortcuts-move-up'           => 'Yukarı taşı',
+                'shortcuts-move-right-left'   => 'Sağa / sola taşı',
+                'shortcuts-home-end'          => 'Satırdaki ilk / son sütun',
+                'shortcuts-ctrl-home-end'     => 'Izgaradaki ilk / son hücre',
+                'shortcuts-extend-selection'  => 'Seçimi genişlet',
+                'shortcuts-select-all'        => 'Tüm hücreleri seç',
+                'shortcuts-enter-edit'        => 'Düzenleme moduna gir',
+                'shortcuts-confirm-move-down' => 'Onayla + aşağı taşı',
+                'shortcuts-confirm-move-right'=> 'Onayla + sağa taşı',
+                'shortcuts-escape-revert'     => 'Değeri geri al + düzenlemeden çık',
+                'shortcuts-clear-cell'        => 'Hücreyi temizle',
+                'shortcuts-copy'              => 'Kopyala',
+                'shortcuts-cut'               => 'Kes',
+                'shortcuts-paste'             => 'Yapıştır',
+                'shortcuts-fill-down'         => 'Aşağı doldur',
+                'shortcuts-fill-right'        => 'Sağa doldur',
+                'shortcuts-undo'              => 'Geri al',
+                'shortcuts-redo'              => 'Yinele',
+                'shortcuts-help'              => 'Klavye kısayollarını göster/gizle',
             ],
-
             'create-success'          => 'Ürün başarıyla oluşturuldu',
             'delete-failed'           => 'Ürün silinirken hata oluştu',
             'delete-success'          => 'Ürün başarıyla silindi',
@@ -351,30 +440,28 @@ return [
             'upload-success'          => 'Ürün dosyası başarıyla yüklendi.',
             'update-failure'          => 'Ürün güncellenemedi.',
         ],
-
         'attributes' => [
             'index' => [
                 'create-btn' => 'Öznitelik Oluştur',
                 'title'      => 'Öznitelikler',
-
-                'datagrid' => [
-                    'channel-based'       => 'Kanala Dayalı',
-                    'code'                => 'Kod',
-                    'created-at'          => 'Oluşturulma Tarihi',
-                    'delete'              => 'Sil',
-                    'edit'                => 'Düzenle',
-                    'id'                  => 'ID',
-                    'locale-based'        => 'Yerelaya Dayalı',
-                    'mass-delete-success' => 'Seçilen öznitelikler başarıyla silindi',
-                    'name'                => 'Ad',
-                    'required'            => 'Gerekli',
-                    'type'                => 'Tür',
-                    'unique'              => 'Benzersiz',
-                    'delete-failed'       => 'Bu öznitelik silinemedi.',
-                    'mass-delete-failed'  => 'Seçilen öznitelikler silinemedi.',
+                'datagrid'   => [
+                    'channel-based'            => 'Kanala Dayalı',
+                    'code'                     => 'Kod',
+                    'created-at'               => 'Oluşturulma Tarihi',
+                    'delete'                   => 'Sil',
+                    'edit'                     => 'Düzenle',
+                    'id'                       => 'ID',
+                    'locale-based'             => 'Yerelaya Dayalı',
+                    'mass-delete-success'      => 'Seçilen öznitelikler başarıyla silindi',
+                    'name'                     => 'Ad',
+                    'required'                 => 'Gerekli',
+                    'type'                     => 'Tür',
+                    'unique'                   => 'Benzersiz',
+                    'delete-failed'            => 'Bu öznitelik silinemedi.',
+                    'mass-delete-failed'       => 'Seçilen öznitelikler silinemedi.',
+                    'delete-attribute-failure' => ':attribute, konfigüre edilebilir ürünlerde kullanıldığı için kaldırılamaz.',
                 ],
             ],
-
             'create' => [
                 'add-attribute-options' => 'Öznitelik Seçenekleri Ekle',
                 'add-option'            => 'Seçenek Ekle',
@@ -397,13 +484,12 @@ return [
                 'enable-wysiwyg'        => 'WYSIWYG Düzenleyicisini Etkinleştir',
                 'file'                  => 'Dosya',
                 'general'               => 'Genel',
-                'image'                 => 'Resim',
                 'gallery'               => 'Galeri',
+                'image'                 => 'Resim',
                 'input-options'         => 'Girdi Seçenekleri',
                 'input-validation'      => 'Girdi Doğrulama',
                 'is-comparable'         => 'Bu öznitelik karşılaştırılabilir',
                 'is-configurable'       => 'Konfigüre Edilebilir Ürünler İçin Kullanılır',
-                'is-filterable'         => 'Filtrelerde Kullanılabilir',
                 'is-required'           => 'Gerekli',
                 'is-unique'             => 'Benzersiz',
                 'is-visible-on-front'   => 'Ürün Detaylarında Görünür (ön yüz)',
@@ -418,7 +504,7 @@ return [
                 'save-btn'              => 'Özniteliği Kaydet',
                 'select'                => 'Seç',
                 'select-type'           => 'Öznitelik Türü Seç',
-                'swatch'                => 'Örnek',
+                'swatch'                => 'Örnek Türü',
                 'text'                  => 'Metin',
                 'textarea'              => 'Metin Alanı',
                 'title'                 => 'Öznitelik Ekle',
@@ -433,8 +519,10 @@ return [
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
                 'is-filterable'         => 'Filtrelenebilir',
                 'ai-translate'          => 'AI Çeviri',
+                'invalid-swatch-type'   => ':attribute, :type türü için :swatch_type swatch türü ile kullanılamaz.',
 
-                'option' => [
+                'single-object-only'    => 'Her oluşturma isteği yalnızca bir öznitelik nesnesi göndermelidir.',
+                'option'                => [
                     'color'    => 'Renk Örneği',
                     'dropdown' => 'Açılır Menü',
                     'image'    => 'Resim Örneği',
@@ -442,7 +530,6 @@ return [
                     'text'     => 'Metin Örneği',
                 ],
             ],
-
             'edit' => [
                 'add-attribute-options' => 'Öznitelik Seçenekleri Ekle',
                 'add-option'            => 'Seçenek Ekle',
@@ -466,12 +553,10 @@ return [
                 'file'                  => 'Dosya',
                 'general'               => 'Genel',
                 'image'                 => 'Resim',
-                'gallery'               => 'Galeri',
                 'input-options'         => 'Girdi Seçenekleri',
                 'input-validation'      => 'Girdi Doğrulama',
                 'is-comparable'         => 'Bu öznitelik karşılaştırılabilir',
                 'is-configurable'       => 'Konfigüre Edilebilir Ürünler İçin Kullanılır',
-                'is-filterable'         => 'Filtrelerde Kullanılabilir',
                 'is-required'           => 'Gerekli',
                 'is-unique'             => 'Benzersiz',
                 'is-visible-on-front'   => 'Ürün Detaylarında Görünür (ön yüz)',
@@ -486,7 +571,7 @@ return [
                 'save-btn'              => 'Özniteliği Kaydet',
                 'select'                => 'Seç',
                 'select-type'           => 'Öznitelik Türü Seç',
-                'swatch'                => 'Örnek',
+                'swatch'                => 'Örnek Türü',
                 'text'                  => 'Metin',
                 'textarea'              => 'Metin Alanı',
                 'title'                 => 'Öznitelik Düzenle',
@@ -501,37 +586,38 @@ return [
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
                 'is-filterable'         => 'Filtrelenebilir',
                 'ai-translate'          => 'AI Çeviri',
-
-                'option' => [
-                    'create-success'      => 'Öznitelik Seçeneği Başarıyla Oluşturuldu',
-                    'delete-success'      => 'Öznitelik Seçeneği Başarıyla Silindi',
+                'option'                => [
                     'save-btn'            => 'Seçeneği Kaydet',
-                    'sort-update-failure' => 'Sıralama Güncellenemedi',
-                    'sort-update-success' => 'Sıralama Başarıyla Güncellendi',
+                    'create-success'      => 'Öznitelik Seçeneği Başarıyla Oluşturuldu',
                     'update-success'      => 'Öznitelik Seçeneği Başarıyla Güncellendi',
+                    'sort-update-success' => 'Sıralama Başarıyla Güncellendi',
+                    'sort-update-failure' => 'Sıralama Güncellenemedi',
+                    'delete-success'      => 'Öznitelik Seçeneği Başarıyla Silindi',
+                    'color'               => 'Renk Örneği',
+                    'dropdown'            => 'Açılır Menü',
+                    'image'               => 'Resim Örneği',
+                    'text'                => 'Metin Örneği',
                 ],
             ],
-
             'create-success'    => 'Öznitelik Oluşturuldu',
             'delete-failed'     => 'Öznitelik Silinemedi',
             'delete-success'    => 'Öznitelik Silindi',
             'update-success'    => 'Öznitelik Güncellendi',
             'user-define-error' => 'Sistem öznitelikleri silinemez',
+
+            'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
             'not-found'         => '":code" kodlu öznitelik bulunamadı',
         ],
-
         'attribute-options' => [
             'create-success'       => 'Öznitelik seçeneği başarıyla oluşturuldu',
             'update-success'       => 'Öznitelik seçeneği başarıyla güncellendi',
             'usable-in-grid-error' => 'Sadece 4 öznitelik ızgarada kullanılabilir olarak işaretlenebilir.',
         ],
-
         'attribute-groups' => [
             'index' => [
                 'create-btn' => 'Öznitelik grubu oluştur',
                 'title'      => 'Öznitelik grupları',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'code'                => 'Kod',
                     'delete'              => 'Sil',
                     'mass-delete-success' => 'Seçilen öznitelik grupları silindi',
@@ -543,7 +629,6 @@ return [
                     'update-status'       => 'Durumu güncelle',
                 ],
             ],
-
             'create' => [
                 'title'    => 'Yeni öznitelik grubu oluştur',
                 'save-btn' => 'Öznitelik grubunu kaydet',
@@ -552,7 +637,6 @@ return [
                 'code'     => 'Kod',
                 'label'    => 'Etiket',
             ],
-
             'edit' => [
                 'title'    => 'Öznitelik grubunu düzenle',
                 'back-btn' => 'Geri dön',
@@ -561,7 +645,6 @@ return [
                 'code'     => 'Kod',
                 'label'    => 'Etiket',
             ],
-
             'create-success'        => 'Öznitelik grubu başarıyla oluşturuldu',
             'delete-failed'         => 'Öznitelik grubunu silme işlemi başarısız',
             'delete-success'        => 'Öznitelik grubu başarıyla silindi',
@@ -570,29 +653,26 @@ return [
             'attribute-group-error' => 'Bu grup ailelerde kullanılmaktadır.',
             'not-found'             => '":code" koduna sahip öznitelik grubu bulunamadı',
         ],
-
         'categories' => [
             'index' => [
-                'add-btn' => 'Kategori oluştur',
-                'title'   => 'Kategoriler',
-
+                'add-btn'  => 'Kategori oluştur',
+                'title'    => 'Kategoriler',
                 'datagrid' => [
                     'active'         => 'Aktif',
                     'code'           => 'Kod',
                     'delete'         => 'Sil',
-                    'delete-success' => 'Seçilen kaynaklar silindi',
+                    'delete-success' => 'Seçilen kaynaklar silindi :resource',
                     'edit'           => 'Düzenle',
                     'id'             => 'ID',
                     'inactive'       => 'Aktif değil',
                     'name'           => 'Görünen ad',
+                    'category-name'  => 'İsim',
                     'no-of-products' => 'Ürün sayısı',
                     'position'       => 'Pozisyon',
-                    'category-name'  => 'İsim',
                     'status'         => 'Menüde görünür',
                     'update-status'  => 'Durumu güncelle',
                 ],
             ],
-
             'create' => [
                 'back-btn'            => 'Geri dön',
                 'code'                => 'Kod',
@@ -613,7 +693,6 @@ return [
                 'right-section'       => 'Ayarlar bölümü',
                 'left-section'        => 'Genel bölüm',
             ],
-
             'edit' => [
                 'back-btn'               => 'Geri dön',
                 'code'                   => 'Kod',
@@ -632,7 +711,6 @@ return [
                 'right-section'          => 'Ayarlar bölümü',
                 'left-section'           => 'Genel bölüm',
             ],
-
             'category'             => 'Kategori',
             'create-success'       => 'Kategori başarıyla oluşturuldu.',
             'delete-category-root' => 'Bir kanal ile bağlantılı olan kök kategori silinemez.',
@@ -640,6 +718,7 @@ return [
             'delete-success'       => 'Kategori başarıyla silindi.',
             'update-success'       => 'Kategori başarıyla güncellendi.',
             'can-not-update'       => 'Bu kök kategori bir kanal ile ilişkilidir ve bir üst kategoriye sahip olamaz.',
+            'invalid-parent'       => 'Seçilen üst kategori geçersiz. Bir kategori kendi üst kategorisi veya kendi alt öğesi olamaz.',
             'unique-validation'    => 'Bu değer zaten kullanılıyor.',
             'not-found'            => '":code" koduna sahip kategori bulunamadı',
             'unknown-fields'       => '":fields" koduna sahip kategori için bilinmeyen alanlar',
@@ -647,14 +726,12 @@ return [
             'create-failure'       => 'Kategori oluşturulamadı.',
             'update-failure'       => 'Kategori güncellenemedi.',
         ],
-
         'category_fields' => [
             'index' => [
                 'create-btn' => 'Kategori Alanı Oluştur',
                 'add-btn'    => 'Kategori Alanı Ekle',
                 'title'      => 'Kategori Alanları',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'       => 'Kanal Tabanlı',
                     'code'                => 'Kod',
                     'created-at'          => 'Oluşturulma Tarihi',
@@ -679,7 +756,6 @@ return [
                     'mass-delete-failed'  => 'Seçilen kategori alanları silinemiyor.',
                 ],
             ],
-
             'create' => [
                 'add-field-options'   => 'Kategori alanına seçenek ekle',
                 'add-option'          => 'Seçenek ekle',
@@ -734,8 +810,7 @@ return [
                 'set-section-right'   => 'Yapılandırma Bölümü',
                 'settings'            => 'Ayarlar',
                 'same-code-error'     => 'Seçenek kodu benzersiz olmalıdır.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Açılır Liste',
                     'save-btn' => 'Seçeneği Kaydet',
                     'color'    => 'Renk Örneği',
@@ -743,7 +818,6 @@ return [
                     'text'     => 'Metin Örneği',
                 ],
             ],
-
             'edit' => [
                 'add-field-options'   => 'Kategori alanına seçenek ekle',
                 'add-option'          => 'Seçenek ekle',
@@ -799,8 +873,7 @@ return [
                 'set-section-right'   => 'Yapılandırma Bölümü',
                 'settings'            => 'Ayarlar',
                 'same-code-error'     => 'Seçenek kodu benzersiz olmalıdır.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Açılır Liste',
                     'save-btn' => 'Seçeneği Kaydet',
                     'color'    => 'Renk Örneği',
@@ -808,25 +881,24 @@ return [
                     'text'     => 'Metin Örneği',
                 ],
             ],
-
             'create-success'    => 'Kategori Alanı başarıyla oluşturuldu',
             'delete-failed'     => 'Kategori Alanı silinemedi',
             'delete-success'    => 'Kategori Alanı başarıyla silindi',
             'update-success'    => 'Kategori Alanı başarıyla güncellendi',
             'user-define-error' => 'Sistem tanımlı kategori alanı silinemez',
             'not-found'         => 'Kategori Alanı ":code" bulunamadı',
-        ],
 
+            'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
+        ],
         'category-fields-options' => [
-            'create-success' => 'Kategori alanı seçeneği başarıyla oluşturuldu',
-            'update-success' => 'Kategori alanı seçeneği başarıyla güncellendi',
+            'create-success'      => 'Kategori alanı seçeneği başarıyla oluşturuldu',
+            'update-success'      => 'Kategori alanı seçeneği başarıyla güncellendi',
+            'update-unknown-code' => '":code" kodlu kategori alanı seçeneği bulunamadı.',
         ],
-
         'families' => [
             'index' => [
-                'add'   => 'Özellik ailesi oluştur',
-                'title' => 'Aileler',
-
+                'add'      => 'Özellik ailesi oluştur',
+                'title'    => 'Öznitelik Aileleri',
                 'datagrid' => [
                     'code'           => 'Kod',
                     'delete'         => 'Sil',
@@ -841,7 +913,6 @@ return [
                     'update-success' => 'Seçilen :resource başarıyla güncellendi',
                 ],
             ],
-
             'create' => [
                 'assign-group-btn'                 => 'Özellik grubu ata',
                 'assign-group-title'               => 'Özellik grubu ata',
@@ -872,7 +943,6 @@ return [
                 'unassigned-attribute-groups'      => 'Atanmamış özellik grupları',
                 'assign-first-attribute-group'     => 'Aileye grup atayın.',
             ],
-
             'edit' => [
                 'assign-group-btn'                 => 'Özellik grubu ata',
                 'assign-group-title'               => 'Özellik grubu ata',
@@ -906,7 +976,6 @@ return [
                 'variant-options-label'            => 'Konfigürasyon seçenekleri',
                 'select-variant'                   => 'Özellikleri seç',
             ],
-
             'attribute-family'               => 'Özellik Ailesi',
             'attribute-product-error'        => 'Aile ürünlerde kullanılıyor.',
             'create-success'                 => 'Aile başarıyla oluşturuldu.',
@@ -919,8 +988,9 @@ return [
             'not-found'                      => '":code" kodlu özellik ailesi bulunamadı.',
             'can-not-update-variant-options' => 'Bu ailede zaten ürün varyantları olduğu için konfigürasyon seçenekleri güncellenemiyor.',
         ],
-
         'history' => [
+            'view' => 'Sürüm Ayrıntılarını Görüntüle',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versiyon',
@@ -930,7 +1000,6 @@ return [
             ],
         ],
     ],
-
     'settings' => [
         'locales' => [
             'index' => [
@@ -939,41 +1008,36 @@ return [
                 'title'                 => 'Mga Wika',
                 'can-not-delete-error'  => 'Hindi mo maaaring tanggalin ang isang wika na nakakabit sa isang channel o user',
                 'can-not-disable-error' => 'Hindi mo maaaring i-disable ang isang wika na nakakabit sa isang channel o user',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'     => 'Mga Aksyon',
-                    'code'        => 'Code',
+                    'code'        => 'Kod',
                     'delete'      => 'Tanggalin',
                     'direction'   => 'Direksyon',
                     'edit'        => 'I-edit',
                     'id'          => 'ID',
                     'ltr'         => 'LTR',
-                    'name'        => 'Display Name',
+                    'name'        => 'Görüntü Adı',
                     'rtl'         => 'RTL',
                     'mass-update' => 'I-update ang Status',
-
-                    'status' => [
-                        'title'    => 'Status',
+                    'status'      => [
+                        'title'    => 'Durum',
                         'active'   => 'I-enable',
                         'inactive' => 'I-disable',
                     ],
                 ],
-
                 'create' => [
-                    'code'             => 'Code',
+                    'code'             => 'Kod',
                     'direction'        => 'Direksyon',
                     'locale-logo'      => 'Logo ng Wika',
                     'name'             => 'Pangalan',
                     'save-btn'         => 'I-save ang Wika',
                     'select-direction' => 'Pumili ng Direksyon',
                     'title'            => 'Lumikha ng Wika',
-                    'status'           => 'Status',
+                    'status'           => 'Durum',
                 ],
-
                 'edit' => [
                     'title' => 'I-edit ang Wika',
                 ],
-
                 'create-success'    => 'Wika na malikha ng matagumpay.',
                 'delete-failed'     => 'Ang pagtanggal ng wika ay nabigo.',
                 'delete-success'    => 'Wika na tinanggal ng matagumpay.',
@@ -982,7 +1046,6 @@ return [
                 'update-success'    => 'Wika na na-update ng matagumpay.',
             ],
         ],
-
         'currencies' => [
             'index' => [
                 'create-btn'            => 'Lumikha ng Pera',
@@ -990,44 +1053,39 @@ return [
                 'title'                 => 'Mga Pera',
                 'can-not-delete-error'  => 'Hindi mo maaaring tanggalin ang isang pera na nakakabit sa isang channel',
                 'can-not-disable-error' => 'Hindi mo maaaring i-disable ang isang pera na nakakabit sa isang channel',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'        => 'Mga Aksyon',
-                    'code'           => 'Code',
+                    'code'           => 'Kod',
                     'delete'         => 'Tanggalin',
                     'edit'           => 'I-edit',
                     'id'             => 'ID',
                     'method-error'   => 'Error! Mali ang method na nakita, mangyaring suriin ang mass action configuration',
-                    'name'           => 'Display Name',
+                    'name'           => 'Görüntü Adı',
                     'no-resource'    => 'Ang ibinigay na resource ay hindi sapat para sa aksyon',
                     'partial-action' => 'Ang ilang mga aksyon ay hindi naipatupad dahil sa mga limitasyon ng sistema sa :resource',
                     'update-success' => 'Ang mga napiling :resource ay matagumpay na na-update.',
                     'mass-update'    => 'I-update ang Status',
-
-                    'status' => [
-                        'title'    => 'Status',
+                    'status'         => [
+                        'title'    => 'Durum',
                         'active'   => 'I-enable',
                         'inactive' => 'I-disable',
                     ],
                 ],
-
                 'create' => [
-                    'code'           => 'Code',
+                    'code'           => 'Kod',
                     'create-btn'     => 'Lumikha ng Pera',
-                    'decimal'        => 'Decimal',
+                    'decimal'        => 'Ondalık',
                     'delete-warning' => 'Sigurado ka bang nais mong isagawa ang aksyon na ito?',
                     'general'        => 'Pangkalahatan',
                     'name'           => 'Pangalan',
                     'save-btn'       => 'I-save ang Pera',
                     'symbol'         => 'Simbolo',
                     'title'          => 'Lumikha ng Bagong Pera',
-                    'status'         => 'Status',
+                    'status'         => 'Durum',
                 ],
-
                 'edit' => [
                     'title' => 'I-edit ang Pera',
                 ],
-
                 'create-success'    => 'Pera na malikha ng matagumpay.',
                 'delete-failed'     => 'Ang pagtanggal ng pera ay nabigo.',
                 'delete-success'    => 'Pera na tinanggal ng matagumpay.',
@@ -1036,7 +1094,6 @@ return [
                 'cannot-delete'     => 'Ang pera ay hindi maaaring tanggalin.',
             ],
         ],
-
         'data-transfer' => [
             'tracker' => [
                 'index' => [
@@ -1054,28 +1111,30 @@ return [
                         'user'                 => 'Kullanıcı',
                         'created_at'           => 'Oluşturma Zamanı',
                         'updated_at'           => 'Güncellenme Zamanı',
+                        'pending'              => 'Beklemede',
+                        'validating'           => 'Doğrulanıyor',
+                        'validated'            => 'Doğrulandı',
+                        'processing'           => 'İşleniyor',
+                        'processed'            => 'İşlendi',
+                        'linking'              => 'Bağlanıyor',
+                        'linked'               => 'Bağlandı',
+                        'indexing'             => 'İndeksleniyor',
+                        'indexed'              => 'İndekslendi',
+                        'completed'            => 'Tamamlandı',
+                        'paused'               => 'Duraklatıldı',
+                        'cancelled'            => 'İptal Edildi',
+                        'failed'               => 'Başarısız',
 
-                        'pending'    => 'Beklemede',
-                        'validated'  => 'Doğrulandı',
-                        'processing' => 'İşleniyor',
-                        'processed'  => 'İşlendi',
-                        'linking'    => 'Bağlanıyor',
-                        'linked'     => 'Bağlandı',
-
-                        'indexing'  => 'İndeksleniyor',
-                        'indexed'   => 'İndekslendi',
-                        'completed' => 'Tamamlandı',
-                        'failed'    => 'Başarısız',
+                        'view'       => 'Görüntüle',
                     ],
                 ],
-
                 'import' => [
                     'back-btn'                => 'Geri',
                     'completed-batches'       => 'Tamamlanan Toplam Gruplar:',
                     'download-error-report'   => 'Hata Raporunu İndir',
                     'edit-btn'                => 'Düzenle',
                     'imported-info'           => 'Tebrikler! İçe aktarma başarılı oldu.',
-                    'importing-info'          => 'Dışa Aktarma Devam Ediyor',
+                    'exporting-info'          => 'Dışa Aktarım Devam Ediyor',
                     'indexing-info'           => 'Kaynaklar (Fiyat, Elasticsearch) İndeksleniyor',
                     'linking-info'            => 'Kaynaklar Bağlanıyor',
                     'progress'                => 'İlerleme:',
@@ -1093,7 +1152,6 @@ return [
                     'validation-failed-info'  => 'İçe aktarma geçersiz. Lütfen aşağıdaki hataları düzeltip tekrar deneyin.',
                     'validation-success-info' => 'İçe aktarma geçerli. İçe aktarma işlemini başlatmak için "Dışa Aktar"a tıklayın.',
                 ],
-
                 'summary' => [
                     'total-batches' => 'Toplam Gruplar:',
                     'created'       => 'Oluşturulan Toplam Kayıt:',
@@ -1104,148 +1162,192 @@ return [
                     'updated'       => 'Güncellenen Toplam Kayıt:',
                     'skipped'       => 'Atlanan Toplam Kayıt:',
                 ],
-
-                'info'              => 'Tebrikler! Göreviniz başarıyla yürütüldü.',
-                'create-success'    => 'Dışa aktarma başarıyla oluşturuldu.',
-                'delete-failed'     => 'Dışa aktarma silinemedi.',
-                'delete-success'    => 'Dışa aktarma başarıyla silindi.',
-                'not-valid'         => 'Dışa aktarma geçersiz',
-                'nothing-to-import' => 'İçe aktarılacak kaynak yok.',
-                'setup-queue-error' => 'İçe aktarma işlemini başlatmak için kuyruğu "veritabanı" veya "redis" olarak değiştirin.',
-                'update-success'    => 'Dışa aktarma başarıyla güncellendi.',
-                'failed-info'       => 'Görev başarısız oldu. Lütfen aşağıdaki hataları düzeltip tekrar deneyin.',
-                'download-log-file' => 'Log Dosyasını İndir',
+                'info'                  => 'Tebrikler! Göreviniz başarıyla yürütüldü.',
+                'running-time'          => 'Çalışma süresi',
+                'estimated-remaining'   => 'Tah. kalan süre',
+                'total-duration'        => 'Toplam Süre',
+                'status'                => 'Durum',
+                'waiting'               => 'Bekliyor',
+                'total-records'         => 'Toplam kayıt',
+                'job-id'                => 'İş ID',
+                'records-created'       => 'Oluşturulan Kayıtlar',
+                'records-updated'       => 'Güncellenen Kayıtlar',
+                'records-deleted'       => 'Silinen kayıtlar',
+                'run-again'             => 'Tekrar Çalıştır',
+                'completed-success'     => 'iş başarıyla tamamlandı',
+                'completed-info-sub'    => 'Tüm kayıtlar işlendi ve dizinlendi. Katalogunuz güncel.',
+                'create-success'        => 'Dışa aktarma başarıyla oluşturuldu.',
+                'delete-failed'         => 'Dışa aktarma silinemedi.',
+                'delete-success'        => 'Dışa aktarma başarıyla silindi.',
+                'not-valid'             => 'Dışa aktarma geçersiz',
+                'nothing-to-import'     => 'İçe aktarılacak kaynak yok.',
+                'setup-queue-error'     => 'İçe aktarma işlemini başlatmak için kuyruğu "veritabanı" veya "redis" olarak değiştirin.',
+                'update-success'        => 'Dışa aktarma başarıyla güncellendi.',
+                'failed-info'           => 'Görev başarısız oldu. Lütfen aşağıdaki hataları düzeltip tekrar deneyin.',
+                'download-log-file'     => 'Log Dosyasını İndir',
+                'pause'                 => 'Duraklat',
+                'resume'                => 'Devam Et',
+                'cancel'                => 'İptal',
+                'paused'                => 'İçe aktarım duraklatıldı.',
+                'resumed'               => 'İçe aktarım devam ettirildi.',
+                'cancelled'             => 'İçe aktarım iptal edildi.',
+                'paused-info'           => 'İçe aktarım duraklatıldı. Kalan gruplar beklemede.',
+                'paused-info-export'    => 'Dışa aktarım duraklatıldı. Kalan gruplar beklemede.',
+                'cancelled-info'        => 'İçe aktarım iptal edildi. Kısmi sonuçlar aşağıda gösterilmektedir.',
+                'cancelled-info-export' => 'Dışa aktarım iptal edildi. Kısmi sonuçlar aşağıda gösterilmektedir.',
+                'cancel-confirm'        => 'Bu işi iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+                'live'                  => 'Canlı',
+                'import-progress'       => 'İçe aktarım ilerleme durumu',
+                'export-progress'       => 'Dışa aktarım ilerleme durumu',
+                'linking-progress'      => 'Bağlantı ilerleme durumu',
+                'indexing-progress'     => 'Dizinleme ilerleme durumu',
+                'job-label'             => 'İş',
             ],
-
-            'import' => [
-                'create' => [
+            'imports' => [
+                'import-start-fail' => 'İçe aktarma işlemi başlatılamadı. Lütfen tekrar deneyin.',
+                'create'            => [
                     'code'                => 'Kod',
-                    'action'              => 'Aksiyon',
-                    'allowed-errors'      => 'İzin verilen hatalar',
+                    'action'              => 'Eylem',
+                    'allowed-errors'      => 'İzin Verilen Hatalar',
                     'allowed-file-types'  => 'İzin verilen dosya türleri (CSV, XLSX, XLS)',
                     'back-btn'            => 'Geri',
                     'create-update'       => 'Oluştur/Güncelle',
                     'delete'              => 'Sil',
                     'media'               => 'Dosya / Görseller',
                     'images'              => 'Görseller',
-                    'download-sample'     => ':resource CSV örneğini indir',
-                    'field-separator'     => 'Alan ayırıcı',
-                    'separator-info'      => 'Sadece CSV dosyaları için kullanın',
-                    'file-info-example'   => 'Görselleri storage/app/public/ içine koyun. Görseller storage/app/public/import-images içinde ise, import-images/ yolunu ekleyin ve yalnızca dosya adını kullanın import dosyanızda.',
-                    'file-info'           => 'Relative yolu /project-root/storage/app/import için kullanın, örneğin product-images, import-images.',
+                    'download-sample'     => ':resource Örnek CSV\'yi İndir',
+                    'field-separator'     => 'Alan Ayırıcı',
+                    'separator-info'      => 'Yalnızca CSV dosyaları için kullanın',
+                    'file-info-example'   => 'Görselleri storage/app/public/ içine yerleştirin. storage/app/public/import-images içindeki görseller için, yolun içine import-images/ ekleyin ve yalnızca dosya adını kullanın.',
+                    'file-info'           => '/project-root/storage/app/import için göreceli yol kullanın, örn. product-images, import-images.',
                     'file'                => 'Dosya',
                     'general'             => 'Genel',
-                    'upload_images'       => 'Yolu ayarlamak için görselleri yükleyin',
-                    'download-sample-zip' => 'Örnek dosyaları ZIP olarak indir',
+                    'upload_images'       => 'Yükleme Yolu Belirlemek için Görselleri Yükle',
+                    'download-sample-zip' => 'Örnek Görseller ZIP\'ini İndir',
+                    'zip-uploading'       => 'ZIP yükleniyor ve çıkartılıyor...',
+                    'zip-upload-success'  => 'ZIP başarıyla yüklendi ve çıkartıldı.',
+                    'zip-upload-error'    => 'ZIP yüklenemedi. Lütfen tekrar deneyin.',
+                    'invalid-zip'         => 'Yüklenen dosya geçerli bir ZIP arşivi değil.',
+                    'zip-upload-or'       => 'veya bir ZIP dosyası ile görsel yükleyin',
+                    'zip-click-upload'    => 'Görsel ZIP dosyası yüklemek için tıklayın',
+                    'zip-files-extracted' => 'dosya çıkartıldı',
+                    'zip-drop-hint'       => 'Buraya bir ZIP dosyasını tıklayın veya sürükleyip bırakın',
                     'images-directory'    => 'Yol',
-                    'process-in-queue'    => 'Kuyrukta işleniyor',
+                    'process-in-queue'    => 'Kuyrukta İşle',
                     'results'             => 'Sonuçlar',
-                    'save-btn'            => 'İmportu kaydet',
+                    'save-btn'            => 'İçe Aktarmayı Kaydet',
                     'settings'            => 'Ayarlar',
-                    'skip-errors'         => 'Hataları atla',
-                    'stop-on-errors'      => 'Hatalarda dur',
-                    'title'               => 'Import oluştur',
+                    'skip-errors'         => 'Hataları Atla',
+                    'stop-on-errors'      => 'Hatalarda Durdur',
+                    'title'               => 'İçe Aktarma Oluştur',
                     'type'                => 'Tür',
                     'validation-strategy' => 'Doğrulama Stratejisi',
                 ],
-
                 'edit' => [
                     'images'              => 'Görseller',
-                    'action'              => 'Aksiyon',
-                    'allowed-errors'      => 'İzin verilen hatalar',
+                    'action'              => 'Eylem',
+                    'allowed-errors'      => 'İzin Verilen Hatalar',
                     'allowed-file-types'  => 'İzin verilen dosya türleri (CSV, XLSX, XLS)',
                     'back-btn'            => 'Geri',
                     'create-update'       => 'Oluştur/Güncelle',
                     'delete'              => 'Sil',
-                    'download-sample'     => 'Örneği indir',
-                    'field-separator'     => 'Alan ayırıcı',
-                    'separator-info'      => 'Sadece CSV dosyaları için kullanın',
-                    'file-info-example'   => 'Görselleri storage/app/public/ içine koyun. Görseller storage/app/public/import-images içinde ise, import-images/ yolunu ekleyin ve yalnızca dosya adını kullanın import dosyanızda.',
-                    'file-info'           => 'Relative yolu /project-root/storage/app/import için kullanın, örneğin product-images, import-images.',
+                    'download-sample'     => 'Örneği İndir',
+                    'field-separator'     => 'Alan Ayırıcı',
+                    'separator-info'      => 'Yalnızca CSV dosyaları için kullanın',
+                    'file-info-example'   => 'Görselleri storage/app/public/ içine yerleştirin. storage/app/public/import-images içindeki görseller için, yolun içine import-images/ ekleyin ve yalnızca dosya adını kullanın.',
+                    'file-info'           => '/project-root/storage/app/import için göreceli yol kullanın, örn. product-images, import-images.',
                     'file'                => 'Dosya',
                     'general'             => 'Genel',
                     'images-directory'    => 'Yol',
-                    'process-in-queue'    => 'Kuyrukta işleniyor',
+                    'process-in-queue'    => 'Kuyrukta İşle',
                     'results'             => 'Sonuçlar',
-                    'save-btn'            => 'İmportu kaydet',
+                    'save-btn'            => 'İçe Aktarmayı Kaydet',
                     'settings'            => 'Ayarlar',
-                    'skip-errors'         => 'Hataları atla',
-                    'stop-on-errors'      => 'Hatalarda dur',
-                    'title'               => 'Import düzenle',
+                    'skip-errors'         => 'Hataları Atla',
+                    'stop-on-errors'      => 'Hatalarda Durdur',
+                    'title'               => 'İçe Aktarmayı Düzenle',
                     'type'                => 'Tür',
                     'validation-strategy' => 'Doğrulama Stratejisi',
                 ],
-
                 'batch' => [
-                    'title' => 'Import kuyrukta eklenmiş',
+                    'title' => 'Kuyruğa eklenen içe aktarma',
                 ],
-
                 'index' => [
-                    'button-title' => 'Import oluştur',
-                    'title'        => 'Importlar',
-
-                    'datagrid' => [
-                        'actions'               => 'Aksiyonlar',
-                        'completed-at'          => 'Tamamlanan',
+                    'button-title' => 'İçe Aktarma Oluştur',
+                    'title'        => 'İçe Aktarmalar',
+                    'datagrid'     => [
+                        'actions'               => 'İşlemler',
+                        'completed-at'          => 'Tamamlandığı Tarih',
                         'created'               => 'Oluşturuldu',
                         'delete'                => 'Sil',
                         'deleted'               => 'Silindi',
                         'edit'                  => 'Düzenle',
-                        'error-file'            => 'Hata dosyası',
+                        'error-file'            => 'Hata Dosyası',
                         'id'                    => 'ID',
                         'code'                  => 'Kod',
                         'type'                  => 'Tür',
-                        'action'                => 'Aksiyon',
-                        'started-at'            => 'Başlatılan',
+                        'action'                => 'Eylem',
+                        'started-at'            => 'Başlama Tarihi',
                         'state'                 => 'Durum',
                         'summary'               => 'Özet',
-                        'updated'               => 'Güncellenmiş',
-                        'uploaded-file'         => 'Yüklenen dosya',
-                        'images_directory_path' => 'Görsel yol',
-                        'import'                => 'Import',
+                        'updated'               => 'Güncellendi',
+                        'uploaded-file'         => 'Yüklenen Dosya',
+                        'images_directory_path' => 'Görseller Dosyası',
+                        'import'                => 'İçe Aktar',
                     ],
                 ],
-
                 'import' => [
+                    'action'                  => 'Eylem Modu',
                     'back-btn'                => 'Geri',
-                    'completed-batches'       => 'Tamamlanan batchlar:',
-                    'download-error-report'   => 'Hata raporunu indir',
+                    'completed-batches'       => 'Tamamlanan Toplam Partiler:',
+                    'download-error-report'   => 'Tam Raporu İndir',
                     'edit-btn'                => 'Düzenle',
-                    'imported-info'           => 'Tebrikler! Import başarılı bir şekilde tamamlandı.',
-                    'importing-info'          => 'Import işlemi sürüyor.',
-                    'exporting-info'          => 'Export işlemi sürüyor.',
-                    'indexing-info'           => 'Kaynaklar indexleniyor (fiyatlar, Elastic Search).',
-                    'linking-info'            => 'Kaynaklar bağlantılandırılıyor.',
+                    'exporting-info'          => 'Dışa Aktarım Devam Ediyor',
+                    'exporting-info-sub'      => 'Dışa aktarım dosyası oluşturuluyor ve kayıtlar yazılıyor. Lütfen bekleyin.',
+                    'file_path'               => 'Dosya Yolu',
+                    'imported-info'           => 'Tebrikler! İçe aktarmanız başarılı oldu.',
+                    'import-now'              => 'Şimdi İçe Aktar',
+                    'importing-info'          => 'İçe Aktarma İşleminde',
+                    'importing-info-sub'      => 'Gruplar işleniyor ve kayıtlar veritabanına yazılıyor.',
+                    'indexing-info'           => 'Kaynaklar İndeksleniyor (Fiyat, Elastic Search) Devam Ediyor',
+                    'indexing-info-sub'       => 'İçe aktarım sonrası arama dizinleri ve fiyat önbellekleri yeniden oluşturuluyor. Bu adım otomatik olarak çalışır.',
+                    'indexing-type'           => 'Fiyat + ES',
+                    'linking-info'            => 'Kaynaklar Bağlanıyor Devam Ediyor',
+                    'linking-info-sub'        => 'İlgili kaynaklar ve kayıtlar arası ilişkilendirmeler bağlanıyor.',
+                    'pending-info'            => 'İş kuyruğa alındı — işçi başlamayı bekliyor...',
+                    'pending-info-sub'        => 'İşiniz işlem kuyruğuna eklendi. Bir işçi kısa süre içinde alacaktır.',
+                    'pending-step-complete'   => 'Tamamlandı',
+                    'pending-step-export'     => 'Dışa Aktarma',
+                    'pending-step-import'     => 'İçe aktarılıyor',
+                    'pending-step-queue'      => 'Kuyrukta',
+                    'pending-step-validate'   => 'Doğrulanıyor',
+                    'profile'                 => 'İçe Aktarım Profili',
                     'progress'                => 'İlerleme:',
-                    'pending-info'            => 'Kuyrukta işleniyor.',
-                    'title'                   => 'Import',
-                    'total-batches'           => 'Toplam batchlar:',
-                    'total-created'           => 'Toplam oluşturulan kayıtlar:',
-                    'total-deleted'           => 'Toplam silinen kayıtlar:',
-                    'total-errors'            => 'Toplam hata:',
-                    'total-invalid-rows'      => 'Toplam geçersiz satırlar:',
-                    'total-rows-processed'    => 'Toplam işlenen satırlar:',
-                    'total-updated'           => 'Toplam güncellenen kayıtlar:',
-                    'validate-info'           => 'Verileri doğrulamak ve importu kontrol etmek için tıklayın.',
+                    'title'                   => 'İçe Aktar',
+                    'total-batches'           => 'Toplam Grup:',
+                    'total-created'           => 'Toplam Oluşturulan Kayıt:',
+                    'total-deleted'           => 'Toplam Silinen Kayıt:',
+                    'total-errors'            => 'Toplam Hata:',
+                    'total-invalid-rows'      => 'Toplam Geçersiz Satır:',
+                    'total-rows-processed'    => 'Toplam İşlenen Satır:',
+                    'total-updated'           => 'Toplam Güncellenen Kayıt:',
                     'validate'                => 'Doğrula',
-                    'file_path'               => 'Dosya yolu',
-                    'import-now'              => 'Şimdi import et',
-                    'action'                  => 'Aksiyon türü',
-                    'profile'                 => 'Import profili',
-                    'validating-info'         => 'Veriler okunmaya ve doğrulanmaya başlandı.',
-                    'validation-failed-info'  => 'Import geçersiz. Lütfen hataları düzeltip tekrar deneyin.',
-                    'validation-success-info' => 'Import geçerli. Import işlemini başlatmak için “Import”a tıklayın.',
+                    'validate-info'           => 'İçe aktarmanızı kontrol etmek için Verileri Doğrula\'ya tıklayın.',
+                    'validating-info'         => 'Dosya okunuyor ve veriler doğrulanıyor...',
+                    'validating-info-sub'     => 'İçe aktarım başlamadan önce şema bütünlüğü, alan eşlemeleri ve veri türleri kontrol ediliyor.',
+                    'validation-failed-info'  => 'İçe aktarımınız geçersiz. Lütfen aşağıdaki hataları düzeltin ve tekrar deneyin.',
+                    'validation-success-info' => 'İçe aktarmanız geçerli. İçe aktarma otomatik olarak başlatılıyor...',
                 ],
-
-                'create-success'    => 'Import başarılı şekilde oluşturuldu.',
-                'delete-failed'     => 'Import silme başarısız.',
-                'delete-success'    => 'Import başarıyla silindi.',
-                'not-valid'         => 'Geçersiz import',
-                'nothing-to-import' => 'İmport edilecek kaynak yok.',
-                'setup-queue-error' => 'Lütfen kuyruk sürücüsünü “database” veya “redis” olarak değiştirin ve import işlemini başlatın.',
-                'update-success'    => 'Import başarıyla güncellendi.',
+                'create-success'     => 'İçe aktarma başarıyla oluşturuldu.',
+                'delete-failed'      => 'İçe aktarma silme işlemi beklenmedik bir şekilde başarısız oldu.',
+                'delete-success'     => 'İçe aktarma başarıyla silindi.',
+                'invalid-zip'        => 'Yüklenen dosya geçerli bir ZIP arşivi değil.',
+                'not-valid'          => 'İçe aktarma geçersiz',
+                'nothing-to-import'  => 'İçe aktarılacak kaynak yok.',
+                'setup-queue-error'  => 'İçe aktarma sürecini başlatmak için lütfen kuyruk sürücünüzü "database" veya "redis" olarak değiştirin.',
+                'update-success'     => 'İçe aktarma başarıyla güncellendi.',
+                'zip-upload-success' => 'ZIP başarıyla yüklendi ve çıkartıldı.',
             ],
-
             'exports' => [
                 'create' => [
                     'code'                => 'Kod',
@@ -1276,7 +1378,6 @@ return [
                     'type'                => 'Tür',
                     'validation-strategy' => 'Doğrulama Stratejisi',
                 ],
-
                 'edit' => [
                     'action'              => 'Eylem',
                     'allowed-errors'      => 'İzin Verilen Hatalar',
@@ -1300,16 +1401,13 @@ return [
                     'type'                => 'Tür',
                     'validation-strategy' => 'Doğrulama Stratejisi',
                 ],
-
                 'batch' => [
                     'title' => 'Kuyruğa eklenen İhracat',
                 ],
-
                 'index' => [
                     'button-title' => 'İhracat Oluştur',
                     'title'        => 'İhracatlar',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Eylemler',
                         'completed-at'          => 'Tamamlanma Tarihi',
                         'created'               => 'Oluşturuldu',
@@ -1330,7 +1428,6 @@ return [
                         'export'                => 'İhracat',
                     ],
                 ],
-
                 'export' => [
                     'back-btn'                => 'Geri',
                     'completed-batches'       => 'Tamamlanan Toplam Batch:',
@@ -1360,7 +1457,6 @@ return [
                     'file-format'             => 'Dosya Formatı',
                     'with-media'              => 'Medya ile',
                 ],
-
                 'create-success'    => 'İhracat başarıyla oluşturuldu.',
                 'delete-failed'     => 'İhracat silme işlemi başarısız oldu.',
                 'delete-success'    => 'İhracat başarıyla silindi.',
@@ -1370,7 +1466,6 @@ return [
                 'update-success'    => 'İhracat başarıyla güncellendi.',
             ],
         ],
-
         'channels' => [
             'index' => [
                 'create-btn'           => 'Kanal Oluştur',
@@ -1389,7 +1484,6 @@ return [
                     'root-category' => 'Kök Kategori',
                 ],
             ],
-
             'create' => [
                 'allowed-ips'            => 'İzinli IP adresleri',
                 'cancel'                 => 'Geri',
@@ -1424,7 +1518,6 @@ return [
                 'theme'                  => 'Tema',
                 'title'                  => 'Kanal Oluştur',
             ],
-
             'edit' => [
                 'allowed-ips'            => 'İzinli IP adresleri',
                 'back-btn'               => 'Geri',
@@ -1462,13 +1555,11 @@ return [
                 'update-success'         => 'Kanal başarıyla güncellendi',
             ],
         ],
-
         'users' => [
             'index' => [
-                'admin' => 'Yönetici',
-                'title' => 'Kullanıcılar',
-                'user'  => 'Kullanıcı',
-
+                'admin'  => 'Yönetici',
+                'title'  => 'Kullanıcılar',
+                'user'   => 'Kullanıcı',
                 'create' => [
                     'confirm-password'  => 'Şifreyi Onayla',
                     'email'             => 'E-posta',
@@ -1482,7 +1573,6 @@ return [
                     'user-timezone'     => 'Saat Dilimi',
                     'select'            => 'Seç',
                 ],
-
                 'datagrid' => [
                     'actions'  => 'İşlemler',
                     'active'   => 'Aktif',
@@ -1496,12 +1586,10 @@ return [
                     'status'   => 'Durum',
                     'image'    => 'Resim',
                 ],
-
                 'edit' => [
                     'title' => 'Kullanıcıyı Düzenle',
                 ],
             ],
-
             'edit' => [
                 'back-btn'         => 'Geri',
                 'confirm-password' => 'Şifreyi Onayla',
@@ -1514,9 +1602,9 @@ return [
                 'status'           => 'Durum',
                 'title'            => 'Kullanıcıyı Düzenle',
             ],
-
             'activate-warning'          => 'Hesabınız henüz etkinleştirilmedi, lütfen yöneticinizle iletişime geçin.',
             'cannot-change'             => 'Kullanıcı değiştirilemez',
+            'cannot-escalate-role'      => 'Tam erişim rolü atama izniniz bulunmamaktadır.',
             'create-success'            => 'Kullanıcı başarıyla oluşturuldu.',
             'delete-failed'             => 'Kullanıcı silinemedi.',
             'delete-success'            => 'Kullanıcı başarıyla silindi.',
@@ -1527,13 +1615,11 @@ return [
             'update-success'            => 'Kullanıcı başarıyla güncellendi.',
             'current-user-delete-error' => 'Giriş yapmış kullanıcı silinemez.',
         ],
-
         'roles' => [
             'index' => [
                 'create-btn' => 'Rol Oluştur',
                 'title'      => 'Roller',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Sil',
                     'edit'            => 'Düzenle',
                     'id'              => 'ID',
@@ -1541,7 +1627,6 @@ return [
                     'permission-type' => 'İzin Türü',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Erişim Kontrolü',
                 'all'            => 'Tüm',
@@ -1554,7 +1639,6 @@ return [
                 'save-btn'       => 'Rolü Kaydet',
                 'title'          => 'Rol Oluştur',
             ],
-
             'edit' => [
                 'access-control' => 'Erişim Kontrolü',
                 'all'            => 'Tüm',
@@ -1567,7 +1651,6 @@ return [
                 'save-btn'       => 'Rolü Kaydet',
                 'title'          => 'Rolü Düzenle',
             ],
-
             'being-used'        => 'Rol zaten bir yönetici kullanıcı tarafından kullanılıyor',
             'being-used-by'     => 'Rol, :name kullanıcısı tarafından zaten kullanılıyor',
             'create-success'    => 'Rol başarıyla oluşturuldu',
@@ -1577,160 +1660,6 @@ return [
             'update-success'    => 'Rol başarıyla güncellendi',
         ],
     ],
-
-    'acl' => [
-        'addresses'                => 'Adresler',
-        'attribute-families'       => 'Özellik Aileleri',
-        'attribute-groups'         => 'Özellik Grupları',
-        'attributes'               => 'Özellikler',
-        'cancel'                   => 'İptal',
-        'catalog'                  => 'Katalog',
-        'categories'               => 'Kategoriler',
-        'channels'                 => 'Kanallar',
-        'configure'                => 'Yapılandır',
-        'configuration'            => 'Yapılandırma',
-        'copy'                     => 'Kopyala',
-        'create'                   => 'Oluştur',
-        'currencies'               => 'Para Birimleri',
-        'dashboard'                => 'Gösterge Paneli',
-        'data-transfer'            => 'Veri Aktarımı',
-        'delete'                   => 'Sil',
-        'edit'                     => 'Düzenle',
-        'email-templates'          => 'E-posta Şablonları',
-        'events'                   => 'Etkinlikler',
-        'groups'                   => 'Gruplar',
-        'import'                   => 'İçe Aktar',
-        'imports'                  => 'İçe Aktarımlar',
-        'invoices'                 => 'Faturalar',
-        'locales'                  => 'Yerel Ayarlar',
-        'magic-ai'                 => 'Sihirli AI',
-        'marketing'                => 'Pazarlama',
-        'newsletter-subscriptions' => 'Bülten Abonelikleri',
-        'note'                     => 'Not',
-        'orders'                   => 'Siparişler',
-        'products'                 => 'Ürünler',
-        'promotions'               => 'Promosyonlar',
-        'refunds'                  => 'İadeler',
-        'reporting'                => 'Raporlama',
-        'reviews'                  => 'Yorumlar',
-        'roles'                    => 'Roller',
-        'sales'                    => 'Satışlar',
-        'search-seo'               => 'Arama & SEO',
-        'search-synonyms'          => 'Arama Eşanlamlıları',
-        'search-terms'             => 'Arama Terimleri',
-        'settings'                 => 'Ayarlar',
-        'shipments'                => 'Gönderiler',
-        'sitemaps'                 => 'Site Haritaları',
-        'subscribers'              => 'Aboneler',
-        'tax-categories'           => 'Vergi Kategorileri',
-        'tax-rates'                => 'Vergi Oranları',
-        'taxes'                    => 'Vergiler',
-        'themes'                   => 'Temalar',
-        'integration'              => 'Entegrasyon',
-        'url-rewrites'             => 'URL Yeniden Yazım',
-        'users'                    => 'Kullanıcılar',
-        'category_fields'          => 'Kategori Alanları',
-        'view'                     => 'Görünüm',
-        'execute'                  => 'Çalıştır',
-        'history'                  => 'Geçmiş',
-        'restore'                  => 'Geri Yükle',
-        'integrations'             => 'Entegrasyonlar',
-        'api'                      => 'API',
-        'tracker'                  => 'İş Takibi',
-        'imports'                  => 'İçe Aktarımlar',
-        'exports'                  => 'Dışa Aktarımlar',
-        'mass-update'              => 'Toplu güncelleme',
-        'mass-delete'              => 'Toplu silme',
-    ],
-
-    'errors' => [
-        'dashboard' => 'Gösterge Paneli',
-        'go-back'   => 'Geri Dön',
-        'support'   => 'Sorun devam ederse, bizimle iletişime geçin: <a href=":link" class=":class">:email</a> için yardım.',
-
-        '404' => [
-            'description' => 'Oops! Aradığınız sayfa tatilde. Aradığınızı bulamıyoruz gibi görünüyor.',
-            'title'       => '404 Sayfa Bulunamadı',
-        ],
-
-        '401' => [
-            'description' => 'Oops! Bu sayfaya erişim izniniz yok gibi görünüyor. Gerekli yetkilere sahip değil gibi görünüyor.',
-            'title'       => '401 Yetkisiz',
-            'message'     => 'Kimlik doğrulama hatası, geçersiz kimlik bilgilerinden veya süresi dolmuş token\'dan kaynaklanmaktadır.',
-        ],
-
-        '403' => [
-            'description' => 'Oops! Bu sayfa erişilemez durumda. Bu içeriği görüntülemek için gerekli yetkilere sahip değilsiniz.',
-            'title'       => '403 Yasak',
-        ],
-
-        '413' => [
-            'description' => 'Oops! Yüklemek istediğiniz dosya çok büyük gibi görünüyor. Yüklemek istiyorsanız, PHP yapılandırmasını güncelleyin.',
-            'title'       => '413 İçerik Çok Büyük',
-        ],
-
-        '419' => [
-            'description' => 'Oops! Oturum süreniz sona erdi. Lütfen sayfayı yenileyin ve yeniden giriş yaparak devam edin.',
-            'title'       => '419 Oturum Süresi Sona Erdi',
-        ],
-
-        '500' => [
-            'description' => 'Oops! Bir şeyler ters gitti. Görünüşe göre aradığınız sayfayı yüklemede sorun yaşıyoruz.',
-            'title'       => '500 İç Sunucu Hatası',
-        ],
-
-        '503' => [
-            'description' => 'Oops! Bakım için geçici olarak devre dışı görünmekteyiz. Birazdan kontrol edin.',
-            'title'       => '503 Servis Kullanılamaz',
-        ],
-    ],
-
-    'export' => [
-        'csv'                  => 'CSV',
-        'download'             => 'İndir',
-        'export'               => 'Hızlı İhracat',
-        'no-records'           => 'İhracat edilecek veri yok',
-        'xls'                  => 'XLS',
-        'xlsx'                 => 'XLSX',
-        'with-media'           => 'Medya ile',
-        'export-success'       => 'Dışa aktarma başarılı!',
-        'error'                => 'Bir şeyler yanlış gitti!',
-        'product-not-selected' => 'Не вибрано жодного товару для швидкого експорту',
-    ],
-
-    'validations' => [
-        'slug-being-used' => 'Bu slug, kategoriler veya ürünlerde kullanılıyor.',
-        'slug-reserved'   => 'Bu slug rezerve edilmiştir.',
-        'invalid-locale'  => 'Geçersiz dil: :locales',
-    ],
-
-    'footer' => [
-        'copy-right' => 'Unopim tarafından desteklenir, Webkul\'ün bir topluluk projesi',
-    ],
-
-    'emails' => [
-        'dear'   => 'Sevgili :admin_name',
-        'thanks' => 'Herhangi bir yardıma ihtiyacınız varsa lütfen bize ulaşın: <a href=":link" style=":style">:email</a>.<br/>Teşekkürler!',
-
-        'admin' => [
-            'forgot-password' => [
-                'description'    => 'Hesabınız için şifremi sıfırlama isteği aldık.',
-                'greeting'       => 'Şifreyi Unuttum!',
-                'reset-password' => 'Şifreyi Sıfırla',
-                'subject'        => 'Şifre Sıfırlama E-postası',
-            ],
-        ],
-    ],
-
-    'common' => [
-        'yes'     => 'Evet',
-        'no'      => 'Hayır',
-        'true'    => 'Doğru',
-        'false'   => 'Yanlış',
-        'enable'  => 'Aktif',
-        'disable' => 'Pasif',
-    ],
-
     'configuration' => [
         'index' => [
             'delete'          => 'Sil',
@@ -1739,50 +1668,71 @@ return [
             'save-message'    => 'Konfigürasyon başarıyla kaydedildi',
             'search'          => 'Ara',
             'title'           => 'Konfigürasyon',
-
-            'general' => [
-                'info'  => '',
-                'title' => 'Genel',
-
+            'general'         => [
+                'info'    => '',
+                'title'   => 'Genel',
                 'general' => [
                     'info'  => '',
                     'title' => 'Genel',
                 ],
-
                 'magic-ai' => [
-                    'info'  => 'Magic AI seçeneklerini ayarlayın.',
-                    'title' => 'Magic AI',
-
+                    'info'     => 'Magic AI seçeneklerini ayarlayın.',
+                    'title'    => 'Sihirli AI',
                     'settings' => [
-                        'api-key'        => 'API Anahtarı',
-                        'enabled'        => 'Etkin',
-                        'llm-api-domain' => 'LLM API Alanı',
-                        'organization'   => 'Organizasyon ID',
-                        'title'          => 'Genel Ayarlar',
-                        'title-info'     => 'Magic AI deneyiminizi geliştirin, özel API Anahtarınızı girerek ve ilgili Organizasyonu belirleyerek entegrasyonu sorunsuz hale getirin. OpenAI kimlik bilgilerinizi kontrol edin ve ayarları ihtiyaçlarınıza göre özelleştirin.',
+                        'enabled'     => 'Etkin',
+                        'ai-platform' => 'Varsayılan Platform',
+                        'ai-model'    => 'Varsayılan Model',
+                        'title'       => 'Genel Ayarlar',
+                        'title-info'  => 'Magic AI deneyiminizi geliştirin, özel API Anahtarınızı girerek ve ilgili Organizasyonu belirleyerek entegrasyonu sorunsuz hale getirin. OpenAI kimlik bilgilerinizi kontrol edin ve ayarları ihtiyaçlarınıza göre özelleştirin.',
                     ],
-
-                    'translation'   => [
-                        'title'                  => 'Çeviri',
-                        'enabled'                => 'Etkin',
-                        'title-info'             => 'Bu özellik, metinleri çevirmek için Magic AI’ı etkinleştirir ve bir dili diğerine sorunsuz bir şekilde dönüştürmenizi sağlar.',
-                        'global-source-channel'  => 'Kaynak Kanal',
-                        'global-source-locale'   => 'Kaynak Yerel Ayarı',
-                        'translation-model'      => 'Çeviri Modeli',
-                        'replace-existing-value' => 'Mevcut Değeri Değiştir',
-                        'target-channel'         => 'Hedef Kanal',
-                        'target-locales'         => 'Hedef Yerel Ayarlar',
+                    'image-generation' => [
+                        'enabled'     => 'Açık',
+                        'ai-platform' => 'Varsayılan Platform',
+                        'ai-model'    => 'Varsayılan Model',
+                        'title'       => 'Görsel Oluşturma',
+                        'title-info'  => 'Ürün görselleri oluşturmak için varsayılan AI platformunu ve modelini yapılandırın. Yalnızca görsel oluşturmayı destekleyen platformlar (OpenAI, Gemini, xAI) listelenmiştir.',
+                    ],
+                    'translation' => [
+                        'title'                       => 'Çeviri',
+                        'enabled'                     => 'Etkin',
+                        'title-info'                  => 'Bu özellik, metinleri çevirmek için Magic AI’ı etkinleştirir ve bir dili diğerine sorunsuz bir şekilde dönüştürmenizi sağlar.',
+                        'ai-platform'                 => 'Varsayılan Platform',
+                        'global-source-channel'       => 'Kaynak Kanal',
+                        'global-source-locale'        => 'Kaynak Yerel Ayarı',
+                        'translation-model'           => 'Çeviri Modeli',
+                        'replace-existing-value'      => 'Mevcut Değeri Değiştir',
+                        'target-channel'              => 'Hedef Kanal',
+                        'target-locales'              => 'Hedef Yerel Ayarlar',
+                        'replace-existing-value-info' => 'Zaten varsa mevcut değeri değiştir.',
+                    ],
+                    'agentic-pim' => [
+                        'title'                     => 'Ajantik PIM',
+                        'title-info'                => 'AI ajan sohbetini, otonom zenginleştirme iş akışlarını ve kalite izlemeyi yapılandırın. Bu özellikler konuşmaya dayalı ürün yönetimi ve proaktif katalog bakımını mümkün kılar.',
+                        'enabled'                   => 'AI ajan sohbetini etkinleştir',
+                        'enabled-info'              => '27\'den fazla araç eylemiyle konuşmaya dayalı ürün yönetimi için kayan AI sohbet widget\'ını etkinleştirin.',
+                        'open-by-default'           => 'Sayfa yüklenirken sohbet panelini aç',
+                        'open-by-default-info'      => 'Etkinleştirildiğinde, AI Ajanı sohbet paneli bir yönetici bir sayfaya ilk kez ulaştığında otomatik olarak açılır. Kullanıcılar yine de manuel olarak kapatabilir — tercih, tarayıcı oturumunun geri kalanı için hatırlanır.',
+                        'max-steps'                 => 'Tur başına maks. ajan adımı',
+                        'max-steps-info'            => 'AI ajanın kullanıcı mesajı başına gerçekleştirebileceği maksimum araç çağrısı iterasyonu sayısı. Daha yüksek değerler daha karmaşık çok adımlı işlemlere olanak tanır.',
+                        'daily-token-budget'        => 'Günlük token bütçesi',
+                        'daily-token-budget-info'   => 'Tüm kullanıcılar arasında günde tüketilebilecek maksimum AI token (giriş + çıkış). Sınırsız için 0 olarak ayarlayın. API maliyetlerini kontrol etmeye yardımcı olur.',
+                        'auto-enrichment'           => 'Ürün oluşturmada otomatik zenginleştirme',
+                        'auto-enrichment-info'      => 'Yeni ürünler oluşturulduğunda veya içe aktarıldığında eksik açıklamaları, kategorileri ve SEO içeriğini otomatik olarak oluşturun.',
+                        'quality-monitor'           => 'Katalog kalite monitörü',
+                        'quality-monitor-info'      => 'Eksik ürünleri, eksik çevirileri, yinelenen girişleri ve fiyat anomalilerini tespit etmek için zamanlanmış taramalar çalıştırın.',
+                        'confidence-threshold'      => 'Güven eşiği',
+                        'confidence-threshold-info' => 'AI tarafından oluşturulan değişikliklerin otomatik olarak uygulanması için minimum güven puanı (0-1). Bu eşiğin altındaki değişiklikler insan incelemesi için sıraya alınır.',
+                        'approval-mode'             => 'Değişiklik onay modu',
+                        'approval-mode-info'        => 'AI ajanın yazma işlemlerini nasıl ele aldığını kontrol eder. "Onayla ve uygula": ajan sohbette değerler önerir, onay bekler, ardından yürütür. "Sıkı onay": aynı, ancak her değişiklikten sonra da doğrular. "Yalnızca öner": değişiklikleri açıklar ancak hiçbir zaman yürütmez (salt okunur).',
                     ],
                 ],
             ],
         ],
-
         'integrations' => [
             'index' => [
                 'create-btn' => 'Oluştur',
                 'title'      => 'Entegrasyonlar',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Sil',
                     'edit'            => 'Düzenle',
                     'id'              => 'ID',
@@ -1792,7 +1742,6 @@ return [
                     'permission-type' => 'İzin Türü',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Erişim Kontrolü',
                 'all'            => 'Tümü',
@@ -1805,7 +1754,6 @@ return [
                 'save-btn'       => 'Kaydet',
                 'title'          => 'Yeni Entegrasyon',
             ],
-
             'edit' => [
                 'access-control' => 'Erişim Kontrolü',
                 'all'            => 'Tümü',
@@ -1823,7 +1771,6 @@ return [
                 'save-btn'       => 'Kaydet',
                 'title'          => 'Entegrasyonu Düzenle',
             ],
-
             'being-used'                     => 'API Entegrasyonu zaten Admin Kullanıcı tarafından kullanılmaktadır',
             'create-success'                 => 'API Entegrasyonu Başarıyla Oluşturuldu',
             'delete-failed'                  => 'API Entegrasyonu Silinemedi',
@@ -1834,40 +1781,172 @@ return [
             're-generate-secret-key-success' => 'API gizli anahtar başarıyla yeniden oluşturuldu',
             'client-not-found'               => 'Müşteri Bulunamadı',
         ],
-
         'prompt' => [
+            'index' => [
+
+                'title' => 'İstemler',
+
+            ],
+
             'datagrid' => [
-                'id'            => 'ID',
-                'title'         => 'Başlık',
-                'prompt'        => 'İstem',
-                'type'          => 'Tür',
-                'created-at'    => 'Oluşturulma Tarihi',
-                'updated-at'    => 'Güncellenme Tarihi',
-                'actions'       => 'Eylemler',
-                'edit'          => 'Düzenle',
-                'delete'        => 'Sil',
-                'product'       => 'Ürün',
-                'category'      => 'Kategori',
+                'id'               => 'ID',
+                'title'            => 'Başlık',
+                'prompt'           => 'İstem',
+                'type'             => 'Tür',
+                'purpose'          => 'Amaç',
+                'text-generation'  => 'Metin Oluşturma',
+                'image-generation' => 'Görsel Oluşturma',
+                'translation'      => 'Çeviri',
+                'created-at'       => 'Oluşturulma Tarihi',
+                'updated-at'       => 'Güncellenme Tarihi',
+                'actions'          => 'Eylemler',
+                'edit'             => 'Düzenle',
+                'delete'           => 'Sil',
+                'product'          => 'Ürün',
+                'category'         => 'Kategori',
             ],
             'create' => [
-                'title'         => 'İstem',
-                'create-btn'    => 'İstem Oluştur',
-                'edit-title'    => 'İstemi Düzenle',
-                'create-title'  => 'Yeni İstem Oluştur',
-                'label-title'   => 'Başlık',
-                'type'          => 'Tür',
-                'prompt'        => 'İstem',
-                'save-btn'      => 'İstemi Kaydet',
+                'title'               => 'İstem',
+                'create-btn'          => 'İstem Oluştur',
+                'edit-title'          => 'İstemi Düzenle',
+                'create-title'        => 'Yeni İstem Oluştur',
+                'label-title'         => 'Başlık',
+                'purpose'             => 'Amaç',
+                'text-generation'     => 'Metin Oluşturma',
+                'image-generation'    => 'Görsel Oluşturma',
+                'select-purpose'      => 'Amaç seçin',
+                'select-model'        => 'Model seçin',
+                'loading-models'      => 'Modeller yükleniyor...',
+                'no-models-available' => 'Kullanılabilir model yok. Bir platform seçin veya Platformlar sekmesinden yapılandırın.',
+                'type'                => 'Tür',
+                'prompt'              => 'İstem',
+                'save-btn'            => 'İstemi Kaydet',
             ],
             'message' => [
-                'save-success'      => 'İstem başarıyla kaydedildi.',
-                'update-success'    => 'İstem başarıyla güncellendi.',
-                'delete-success'    => 'İstem başarıyla silindi.',
-                'delete-fail'       => 'İstem silinirken hata oluştu.',
+                'save-success'   => 'İstem başarıyla kaydedildi.',
+                'update-success' => 'İstem başarıyla güncellendi.',
+                'delete-success' => 'İstem başarıyla silindi.',
+                'delete-fail'    => 'İstem silinirken hata oluştu.',
+            ],
+        ],
+        'system-prompt' => [
+            'index' => [
+
+                'title' => 'Sistem istemleri',
+
+            ],
+
+            'datagrid' => [
+                'id'          => 'ID',
+                'title'       => 'Başlık',
+                'tone'        => 'Ton',
+                'max-tokens'  => 'Maksimum Token',
+                'temperature' => 'Sıcaklık',
+                'status'      => 'Durum',
+                'created-at'  => 'Oluşturulma Tarihi',
+                'updated-at'  => 'Güncellenme Tarihi',
+                'actions'     => 'İşlemler',
+                'save'        => 'Kaydet',
+                'edit'        => 'Düzenle',
+                'delete'      => 'sil',
+            ],
+            'create' => [
+                'title'        => 'Sistem Komutu',
+                'create-btn'   => 'Sistem Komutu Oluştur',
+                'edit-title'   => 'Sistem Komutunu Düzenle',
+                'create-title' => 'Yeni Sistem Komutu Oluştur',
+                'label-title'  => 'Başlık',
+                'max-tokens'   => 'Maksimum Çıktı Token',
+                'temperature'  => 'Sıcaklık',
+                'type'         => 'Tür',
+                'prompt'       => 'Komut',
+                'save-btn'     => 'Komutu Kaydet',
+                'prompt-tone'  => 'Komut Tonu',
+            ],
+            'message' => [
+                'save-success'   => 'Sistem komutu başarıyla kaydedildi.',
+                'update-success' => 'Sistem komutu başarıyla güncellendi.',
+                'delete-success' => 'Sistem komutu başarıyla silindi.',
+                'delete-fail'    => 'Sistem komutu silinemedi.',
+            ],
+        ],
+        'platform' => [
+            'title'           => 'AI Platformları',
+            'create-btn'      => 'Platform Ekle',
+            'create-title'    => 'AI Platformu Ekle',
+            'edit-title'      => 'AI Platformunu Düzenle',
+            'save-btn'        => 'Kaydet',
+            'saving'          => 'Kaydediliyor',
+            'test-connection' => 'Bağlantıyı Test Et',
+            'setup'           => [
+                'title'              => 'Magic AI ile Başlayın',
+                'description'        => 'İçerik oluşturma, görsel üretme ve AI destekli çeviri özelliklerini açmak için AI sağlayıcınızı bağlayın. Başlamak için ilk platformunuzu ekleyin.',
+                'step-1'             => 'Bir sağlayıcı seçin',
+                'step-2'             => 'API anahtarınızı girin',
+                'step-3'             => 'Modelleri seçin ve kaydedin',
+                'add-first'          => 'İlk Platformunuzu Ekleyin',
+                'no-default-warning' => 'Varsayılan platform ayarlanmamış. Uygulama genelinde AI özelliklerini etkinleştirmek için lütfen bir platformu varsayılan olarak ayarlayın.',
+                'no-platform-hint'   => 'Henüz platform yapılandırılmadı. İlk AI sağlayıcınızı eklemek için Platformlar sekmesine gidin.',
+                'lightning-icon'     => 'Sihirli AI',
+                'warning-icon'       => 'Uyarı',
+            ],
+            'testing'         => 'Test ediliyor',
+            'fetch-models'    => 'Modelleri Getir',
+            'fetching-models' => 'Getiriliyor',
+            'set-default'     => 'Varsayılan Olarak Ayarla',
+            'datagrid'        => [
+                'label'      => 'Etiket',
+                'provider'   => 'Sağlayıcı',
+                'models'     => 'Modeller',
+                'default'    => 'Varsayılan',
+                'status'     => 'Durum',
+                'created-at' => 'Oluşturulma Tarihi',
+                'edit'       => 'Düzenle',
+                'delete'     => 'Sil',
+            ],
+            'fields' => [
+                'label'                    => 'Etiket',
+                'provider'                 => 'Sağlayıcı',
+                'select-provider'          => 'Sağlayıcı Seçin',
+                'api-url'                  => 'API URL',
+                'api-url-hint'             => 'Varsayılan uç nokta ile önceden doldurulmuştur. Yalnızca proxy veya özel dağıtım kullanıyorsanız düzenleyin.',
+                'api-key'                  => 'API Anahtarı',
+                'models'                   => 'Modeller',
+                'custom-model-placeholder' => 'Özel model ID yazın...',
+                'add'                      => 'Ekle',
+                'enter-key-to-fetch'       => 'Kullanılabilir modelleri otomatik olarak almak için yukarıya API anahtarınızı girin.',
+                'search-models'            => 'Model ara...',
+                'no-models-match'          => 'Aramanızla eşleşen model bulunamadı.',
+                'azure-deployment'         => 'Dağıtım Adı',
+                'azure-api-version'        => 'API Sürümü',
+                'is-default'               => 'Varsayılan Olarak Ayarla',
+                'status'                   => 'Durum',
+                'use-default'              => 'Varsayılan Platformu Kullan',
+                'use-default-hint'         => 'Varsayılan olarak işaretlenmiş platformu kullanmak için boş bırakın. * ile işaretlenmiş platformlar varsayılandır.',
+                'no-image-platform'        => 'Görsel destekli platform yapılandırılmamış. Önce bir OpenAI, Gemini veya xAI platformu ekleyin.',
+                'image-platform-hint'      => 'Yalnızca görsel oluşturmayı destekleyen platformlar listelenmektedir (OpenAI, Gemini, xAI).',
+                'remove-model'             => ':model modelini kaldır',
+                'invalid-model-name'       => 'Geçersiz model adı. Yalnızca harf, rakam, tire, nokta, iki nokta üst üste ve eğik çizgi kullanın (ör. gpt-4o, claude-3-sonnet).',
+            ],
+            'message' => [
+                'save-success'             => 'Platform başarıyla kaydedildi.',
+                'update-success'           => 'Platform başarıyla güncellendi.',
+                'delete-success'           => 'Platform başarıyla silindi.',
+                'delete-fail'              => 'Platform silinemedi.',
+                'not-found'                => 'Seçilen platform artık mevcut değil. Lütfen sayfayı yenileyip tekrar deneyin.',
+                'cannot-delete-default'    => 'Tek varsayılan platform silinemez.',
+                'set-default-success'      => 'Platform başarıyla varsayılan olarak ayarlandı.',
+                'test-success'             => 'Bağlantı başarıyla doğrulandı!',
+                'test-fail'                => 'Bağlantı testi başarısız oldu',
+                'no-test-model'            => 'Bağlantı testini çalıştırmak için en az bir metin destekli model seçin.',
+                'custom-api-url-required'  => 'Bağlantı testinin kendi uç noktanıza ulaşabilmesi için özel sağlayıcılarda API URL gereklidir.',
+                'api-key-corrupted'        => 'Kayıtlı API anahtarının şifresi çözülemedi (:error). Uygulamanın şifreleme anahtarı değişmiş olabilir. Lütfen API anahtarınızı yeniden girin ve kaydedin.',
+                'fetch-models-fail'        => 'Modeller alınamadı',
+                'invalid-model-names'      => 'Geçersiz model adları: :names. Model adları bir harf veya rakamla başlamalı ve yalnızca harf, rakam, tire, nokta, iki nokta üst üste ve eğik çizgi içermelidir.',
+                'default-requires-enabled' => 'Devre dışı bir platform varsayılan olarak işaretlenemez. Lütfen platformu önce etkinleştirin.',
             ],
         ],
     ],
-
     'components' => [
         'layouts' => [
             'header' => [
@@ -1878,7 +1957,6 @@ return [
                 'notifications' => 'Bildirimler',
                 'visit-shop'    => 'Mağazayı Ziyaret Et',
             ],
-
             'sidebar' => [
                 'attribute-families' => 'Öznitelik Aileleri',
                 'attribute-groups'   => 'Öznitelik Grupları',
@@ -1912,66 +1990,67 @@ return [
                 'general-tab'        => 'Yapılandırma',
             ],
         ],
-
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Seçili kayıt yok.',
                 'must-select-a-mass-action-option' => 'Bir toplu eylem seçmelisiniz.',
                 'must-select-a-mass-action'        => 'Bir toplu eylem seçmelisiniz.',
+                'link-copied'                      => 'Bağlantı panoya kopyalandı.',
+                'copy-failed'                      => 'Kopyalama başarısız oldu. Lütfen bağlantıyı manuel olarak kopyalayın.',
             ],
-
             'toolbar' => [
-                'length-of' => ':length of',
-                'of'        => 'of',
-                'per-page'  => 'Sayfa Başına',
-                'results'   => ':total Results',
-                'selected'  => ':total Selected',
-
+                'length-of'    => ':length içinden',
+                'of'           => 'of',
+                'per-page'     => 'Sayfa Başına',
+                'results'      => ':total Sonuç',
+                'selected'     => ':total Seçili',
                 'mass-actions' => [
                     'submit'        => 'Gönder',
                     'select-option' => 'Seçenek Seç',
                     'select-action' => 'Eylemi Seç',
                 ],
-
                 'filter' => [
                     'title' => 'Filtre',
                 ],
-
                 'search_by' => [
                     'code'       => 'Kod ile Ara',
                     'code_or_id' => 'Kod veya ID ile Ara',
                 ],
-
                 'search' => [
                     'title' => 'Ara',
                 ],
-
                 'manage-columns' => [
                     'title' => 'Sütunları',
                 ],
+                'pagination' => [
+                    'first-page'    => 'İlk Sayfa',
+                    'previous-page' => 'Önceki Sayfa',
+                    'next-page'     => 'Sonraki Sayfa',
+                    'last-page'     => 'Son Sayfa',
+                    'page-number'   => 'Sayfa Numarası',
+                ],
             ],
-
             'filters' => [
-                'select'   => 'Seç',
-                'title'    => 'Filtre Uygula',
-                'save'     => 'Kaydet',
-                'dropdown' => [
+                'select'        => 'Seç',
+                'title'         => 'Filtre Uygula',
+                'save'          => 'Kaydet',
+                'add-filter'    => 'Filtre Ekle',
+                'remove-filter' => 'Filtreyi Kaldır',
+                'search-filter' => 'Ara...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'En az 2 karakter girin...',
                         'no-results'        => 'Sonuç bulunamadı...',
                     ],
                 ],
-
                 'custom-filters' => [
                     'clear-all' => 'Hepsini Temizle',
                     'title'     => 'Özel Filtreler',
                 ],
-
                 'boolean-options' => [
                     'false' => 'Yanlış',
                     'true'  => 'Doğru',
                 ],
-
                 'date-options' => [
                     'last-month'        => 'Son Ay',
                     'last-six-months'   => 'Son 6 Ay',
@@ -1983,12 +2062,10 @@ return [
                     'yesterday'         => 'Dün',
                 ],
             ],
-
             'table' => [
                 'actions'              => 'Eylemler',
                 'no-records-available' => 'Kayıt Bulunamadı.',
             ],
-
             'manage-columns' => [
                 'title'             => 'Sütunları yönet',
                 'available-columns' => 'Kullanılabilir Sütunlar',
@@ -1996,7 +2073,6 @@ return [
                 'apply-btn'         => 'Uygula',
             ],
         ],
-
         'modal' => [
             'confirm' => [
                 'agree-btn'    => 'Onayla',
@@ -2004,14 +2080,12 @@ return [
                 'message'      => 'Bu eylemi gerçekleştirmek istediğinizden emin misiniz?',
                 'title'        => 'Emin misiniz?',
             ],
-
             'delete' => [
                 'agree-btn'    => 'Sil',
                 'disagree-btn' => 'İptal',
                 'message'      => 'Bu öğeyi silmek istediğinizden emin misiniz?',
                 'title'        => 'Silme Onayı',
             ],
-
             'history' => [
                 'title'           => 'Geçmişi Önizle',
                 'subtitle'        => 'Hızlı bir şekilde güncellemelerinizi ve değişikliklerinizi gözden geçirin.',
@@ -2025,22 +2099,21 @@ return [
                 'no-history'      => 'Geçmiş Bulunamadı',
             ],
         ],
-
         'products' => [
             'search' => [
                 'add-btn'       => 'Seçili Ürünü Ekle',
                 'empty-info'    => 'Arama terimi için ürün bulunmamaktadır.',
                 'empty-title'   => 'Ürün Bulunamadı',
                 'product-image' => 'Ürün Görseli',
-                'qty'           => ':qty Available',
+                'qty'           => ':qty Mevcut',
                 'sku'           => 'SKU - :sku',
                 'title'         => 'Ürünleri Seçin',
             ],
         ],
-
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Görsel Ekle',
+                'add-media-btn'      => 'Medya Ekle',
                 'generate-with-ai'   => 'Yapay Zeka ile Oluştur',
                 'upload-from-device' => 'Cihazdan Yükle',
                 'cancel'             => 'İptal',
@@ -2049,8 +2122,7 @@ return [
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Sadece görsel dosyalar (.jpeg, .jpg, .png, ..) kabul edilmektedir.',
                 'upload-media-btn'   => 'Medya Yükle',
-
-                'ai-generation' => [
+                'ai-generation'      => [
                     '1024x1024'        => '1024x1024',
                     '1024x1792'        => '1024x1792',
                     '1792x1024'        => '1792x1024',
@@ -2070,7 +2142,6 @@ return [
                     'standard'         => 'Standart',
                     'title'            => 'AI Görsel Üretimi',
                 ],
-
                 'placeholders' => [
                     'front'     => 'Ön',
                     'next'      => 'Sonraki',
@@ -2079,23 +2150,22 @@ return [
                     'zoom'      => 'Yakınlaştır',
                 ],
             ],
-
+            'gallery' => [
+                'not-allowed-error' => 'Yalnızca görsel ve video dosyalarına izin verilir. (.mp4, .jpg ..)',
+            ],
             'videos' => [
                 'add-video-btn'     => 'Video Ekle',
                 'allowed-types'     => 'mp4, webm, mkv',
                 'not-allowed-error' => 'Sadece video dosyaları (.mp4, .mov, .ogg ..) kabul edilmektedir.',
             ],
-
             'files' => [
                 'add-file-btn'      => 'Dosya Ekle',
                 'allowed-types'     => 'pdf',
                 'not-allowed-error' => 'Sadece pdf dosyaları kabul edilmektedir',
             ],
         ],
-
         'tinymce' => [
-            'ai-btn-tile' => 'Sihirli AI',
-
+            'ai-btn-tile'   => 'Sihirli AI',
             'ai-generation' => [
                 'apply'                  => 'Uygula',
                 'generate'               => 'Oluştur',
@@ -2104,7 +2174,14 @@ return [
                 'generating'             => 'Oluşturuluyor...',
                 'prompt'                 => 'İpucu',
                 'title'                  => 'AI Yardımı',
+                'platform'               => 'Platform',
                 'model'                  => 'Model',
+                'rich-preview'           => 'Zengin Önizleme',
+                'system-prompt'          => 'Sistem Komutu',
+                'select-system-prompt'   => 'Sistem Komutu Seçin',
+                'tone-instructions'      => 'Ton / Talimatlar',
+                'max-tokens'             => 'Maksimum Token',
+                'temperature'            => 'Sıcaklık',
                 'gpt-3-5-turbo'          => 'OpenAI gpt-3.5-turbo',
                 'llama2'                 => 'Llama 2',
                 'mistral'                => 'Mistral',
@@ -2117,11 +2194,155 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
-                'default-prompt'         => 'Default Prompt',
+                'default-prompt'         => 'Varsayılan Komut',
+                'select-prompt-template' => 'Bir komut şablonu seçin',
             ],
         ],
     ],
-
+    'acl' => [
+        'addresses'                => 'Adresler',
+        'attribute-families'       => 'Özellik Aileleri',
+        'attribute-groups'         => 'Özellik Grupları',
+        'attributes'               => 'Özellikler',
+        'cancel'                   => 'İptal',
+        'catalog'                  => 'Katalog',
+        'categories'               => 'Kategoriler',
+        'channels'                 => 'Kanallar',
+        'configure'                => 'Yapılandır',
+        'configuration'            => 'Yapılandırma',
+        'copy'                     => 'Kopyala',
+        'create'                   => 'Oluştur',
+        'currencies'               => 'Para Birimleri',
+        'dashboard'                => 'Gösterge Paneli',
+        'data-transfer'            => 'Veri Aktarımı',
+        'delete'                   => 'Sil',
+        'edit'                     => 'Düzenle',
+        'email-templates'          => 'E-posta Şablonları',
+        'events'                   => 'Etkinlikler',
+        'groups'                   => 'Gruplar',
+        'import'                   => 'İçe Aktar',
+        'imports'                  => 'İçe Aktarımlar',
+        'invoices'                 => 'Faturalar',
+        'locales'                  => 'Yerel Ayarlar',
+        'magic-ai'                 => 'Sihirli AI',
+        'magic-ai-general'         => 'Genel',
+        'magic-ai-prompt'          => 'İstem',
+        'magic-ai-system-prompt'   => 'Sistem İstemi',
+        'marketing'                => 'Pazarlama',
+        'newsletter-subscriptions' => 'Bülten Abonelikleri',
+        'note'                     => 'Not',
+        'orders'                   => 'Siparişler',
+        'products'                 => 'Ürünler',
+        'promotions'               => 'Promosyonlar',
+        'refunds'                  => 'İadeler',
+        'reporting'                => 'Raporlama',
+        'reviews'                  => 'Yorumlar',
+        'roles'                    => 'Roller',
+        'sales'                    => 'Satışlar',
+        'search-seo'               => 'Arama & SEO',
+        'search-synonyms'          => 'Arama Eşanlamlıları',
+        'search-terms'             => 'Arama Terimleri',
+        'settings'                 => 'Ayarlar',
+        'shipments'                => 'Gönderiler',
+        'sitemaps'                 => 'Site Haritaları',
+        'subscribers'              => 'Aboneler',
+        'tax-categories'           => 'Vergi Kategorileri',
+        'tax-rates'                => 'Vergi Oranları',
+        'taxes'                    => 'Vergiler',
+        'themes'                   => 'Temalar',
+        'integration'              => 'Entegrasyon',
+        'url-rewrites'             => 'URL Yeniden Yazım',
+        'users'                    => 'Kullanıcılar',
+        'category_fields'          => 'Kategori Alanları',
+        'view'                     => 'Görünüm',
+        'execute'                  => 'Çalıştır',
+        'history'                  => 'Geçmiş',
+        'restore'                  => 'Geri Yükle',
+        'integrations'             => 'Entegrasyonlar',
+        'api'                      => 'API',
+        'tracker'                  => 'İş Takibi',
+        'exports'                  => 'Dışa Aktarımlar',
+        'mass-update'              => 'Toplu güncelleme',
+        'mass-delete'              => 'Toplu silme',
+    ],
+    'errors' => [
+        'dashboard' => 'Gösterge Paneli',
+        'go-back'   => 'Geri Dön',
+        'support'   => 'Sorun devam ederse, bizimle iletişime geçin: <a href=":link" class=":class">:email</a> için yardım.',
+        '404'       => [
+            'description' => 'Oops! Aradığınız sayfa tatilde. Aradığınızı bulamıyoruz gibi görünüyor.',
+            'title'       => '404 Sayfa Bulunamadı',
+        ],
+        '401' => [
+            'description' => 'Oops! Bu sayfaya erişim izniniz yok gibi görünüyor. Gerekli yetkilere sahip değil gibi görünüyor.',
+            'title'       => '401 Yetkisiz',
+            'message'     => 'Kimlik doğrulama hatası, geçersiz kimlik bilgilerinden veya süresi dolmuş token\'dan kaynaklanmaktadır.',
+        ],
+        '403' => [
+            'description' => 'Oops! Bu sayfa erişilemez durumda. Bu içeriği görüntülemek için gerekli yetkilere sahip değilsiniz.',
+            'title'       => '403 Yasak',
+            'message'     => 'Bu sayfaya erişim izniniz yok. Bunun bir hata olduğunu düşünüyorsanız lütfen yöneticinizle iletişime geçin.',
+        ],
+        '413' => [
+            'description' => 'Oops! Yüklemek istediğiniz dosya çok büyük gibi görünüyor. Yüklemek istiyorsanız, PHP yapılandırmasını güncelleyin.',
+            'title'       => '413 İçerik Çok Büyük',
+        ],
+        '419' => [
+            'description' => 'Oops! Oturum süreniz sona erdi. Lütfen sayfayı yenileyin ve yeniden giriş yaparak devam edin.',
+            'title'       => '419 Oturum Süresi Sona Erdi',
+        ],
+        '500' => [
+            'description' => 'Oops! Bir şeyler ters gitti. Görünüşe göre aradığınız sayfayı yüklemede sorun yaşıyoruz.',
+            'title'       => '500 İç Sunucu Hatası',
+        ],
+        '503' => [
+            'description' => 'Oops! Bakım için geçici olarak devre dışı görünmekteyiz. Birazdan kontrol edin.',
+            'title'       => '503 Servis Kullanılamaz',
+        ],
+    ],
+    'export' => [
+        'csv'                  => 'CSV',
+        'download'             => 'İndir',
+        'export'               => 'Hızlı İhracat',
+        'no-records'           => 'İhracat edilecek veri yok',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Medya ile',
+        'export-success'       => 'Dışa aktarma başarılı!',
+        'error'                => 'Bir şeyler yanlış gitti!',
+        'product-not-selected' => 'Не вибрано жодного товару для швидкого експорту',
+    ],
+    'validations' => [
+        'slug-being-used' => 'Bu slug, kategoriler veya ürünlerde kullanılıyor.',
+        'slug-reserved'   => 'Bu slug rezerve edilmiştir.',
+        'invalid-locale'  => 'Geçersiz dil: :locales',
+    ],
+    'footer' => [
+        'copy-right' => '<a href="https://unopim.com/" target="_blank">UnoPim</a> tarafından desteklenir, <a href="https://webkul.com/" target="_blank">Webkul</a>\'ün bir topluluk projesi',
+    ],
+    'emails' => [
+        'dear'   => 'Sevgili :admin_name',
+        'thanks' => 'Herhangi bir yardıma ihtiyacınız varsa lütfen bize ulaşın: <a href=":link" style=":style">:email</a>.<br/>Teşekkürler!',
+        'admin'  => [
+            'forgot-password' => [
+                'description'    => 'Hesabınız için şifremi sıfırlama isteği aldık.',
+                'greeting'       => 'Şifreyi Unuttum!',
+                'reset-password' => 'Şifreyi Sıfırla',
+                'subject'        => 'Şifre Sıfırlama E-postası',
+            ],
+        ],
+    ],
+    'common' => [
+        'yes'               => 'Evet',
+        'no'                => 'Hayır',
+        'true'              => 'Doğru',
+        'false'             => 'Yanlış',
+        'enable'            => 'Aktif',
+        'disable'           => 'Pasif',
+        'no-match-found'    => 'Eşleşme bulunamadı!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+    ],
     'default-prompt' => [
         'detailed' => [
             'title'  => 'Detaylı Ürün Açıklaması',

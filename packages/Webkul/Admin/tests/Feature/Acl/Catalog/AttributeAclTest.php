@@ -6,7 +6,7 @@ it('should not display the attribute list if does not have permission', function
     $this->loginWithPermissions();
 
     $this->get(route('admin.catalog.attributes.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the attribute list if have permission', function () {
@@ -21,7 +21,7 @@ it('should not display create form for creating the attribute if does not have p
     $this->loginWithPermissions(permissions: ['catalog', 'catalog.attributes']);
 
     $this->get(route('admin.catalog.attributes.create'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display create form for attribute if have permission', function () {
@@ -37,7 +37,7 @@ it('should not display edit form for attribute if does not have permission', fun
     $attribute = Attribute::factory()->create();
 
     $this->get(route('admin.catalog.attributes.edit', ['id' => $attribute->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display edit form for attribute if have permission', function () {
@@ -54,7 +54,7 @@ it('should not be able to delete attribute if does not have permission', functio
     $attribute = Attribute::factory()->create();
 
     $this->delete(route('admin.catalog.attributes.delete', ['id' => $attribute->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), ['id' => $attribute->id]);
 });
@@ -77,7 +77,7 @@ it('should not be able to mass delete attributes if does not have permission', f
     $ids = $attributes->pluck('id')->toArray();
 
     $this->post(route('admin.catalog.attributes.mass_delete'), ['indices' => $ids])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     foreach ($ids as $id) {
         $this->assertDatabaseHas($this->getFullTableName(Attribute::class), ['id' => $id]);

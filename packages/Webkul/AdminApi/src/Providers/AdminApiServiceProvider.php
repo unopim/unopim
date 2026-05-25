@@ -3,12 +3,19 @@
 namespace Webkul\AdminApi\Providers;
 
 use Carbon\Carbon;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Bridge\UserRepository as PassportUserRepository;
+use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Webkul\AdminApi\Console\ApiClientCommand;
+use Webkul\AdminApi\Http\Middleware\EnsureAcceptsJson;
+use Webkul\AdminApi\Http\Middleware\LocaleMiddleware;
+use Webkul\AdminApi\Http\Middleware\ScopeMiddleware;
+use Webkul\AdminApi\Models\Client;
+use Webkul\AdminApi\Repositories\UserRepository;
 use Webkul\Core\Tree;
+use Webkul\User\Models\Admin;
 
 class AdminApiServiceProvider extends ServiceProvider
 {
@@ -18,17 +25,15 @@ class AdminApiServiceProvider extends ServiceProvider
      * @var array
      */
     protected $middlewareAliases = [
-        'accept.json'    => \Webkul\AdminApi\Http\Middleware\EnsureAcceptsJson::class,
-        'request.locale' => \Webkul\AdminApi\Http\Middleware\LocaleMiddleware::class,
-        'api.scope'      => \Webkul\AdminApi\Http\Middleware\ScopeMiddleware::class,
+        'accept.json'    => EnsureAcceptsJson::class,
+        'request.locale' => LocaleMiddleware::class,
+        'api.scope'      => ScopeMiddleware::class,
     ];
 
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot(Router $router)
+    public function boot(): void
     {
         Route::middleware('web')->group(__DIR__.'/../Routes/integrations-routes.php');
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
@@ -105,15 +110,25 @@ class AdminApiServiceProvider extends ServiceProvider
         Passport::loadKeysFrom(__DIR__.'/../Secrets/Oauth');
 
         Passport::$passwordGrantEnabled = true;
-        Passport::useClientModel(\Webkul\AdminApi\Models\Client::class);
+        Passport::setClientUuids(true);
+        Passport::useClientModel(Client::class);
+
+        // Register a custom UserRepository that uses the Admin model instead of App\Models\User
+        // This ensures that Passport's OAuth2 password grant correctly authenticates admin users
+        $this->app->singleton(PassportUserRepository::class, function ($app) {
+            return new UserRepository($app->make('hash'));
+        });
+
+        $accessTokenTtl = (int) config('api.access_token_ttl', 3600);
+        $refreshTokenTtl = (int) config('api.refresh_token_ttl', 3600);
 
         // Set access token TTL
-        Passport::tokensExpireIn(Carbon::now()->addSeconds(config('api.access_token_ttl')));
+        Passport::tokensExpireIn(Carbon::now()->addSeconds($accessTokenTtl));
 
-        // // Set refresh token TTL
-        Passport::refreshTokensExpireIn(Carbon::now()->addSeconds(config('api.refresh_token_ttl')));
+        // Set refresh token TTL
+        Passport::refreshTokensExpireIn(Carbon::now()->addSeconds($refreshTokenTtl));
 
-        $this->app->bind(\Laravel\Passport\ClientRepository::class, \Webkul\AdminApi\Repositories\ClientRepository::class);
+        $this->app->bind(ClientRepository::class, \Webkul\AdminApi\Repositories\ClientRepository::class);
     }
 
     /**

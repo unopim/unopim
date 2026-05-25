@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Models\Locale;
 
@@ -256,15 +258,16 @@ it('should update attribute options', function () {
     $this->loginAsAdmin();
 
     $attribute = Attribute::factory()->create(['type' => 'select']);
-
+    $swatchType = collect(SwatchTypeEnum::cases())->random()->value;
     $locales = Locale::where('status', 1)->limit(1);
     $locale = $locales->first()->toArray();
     $option = $attribute->options()->first();
 
     $updatedData = [
-        'code'    => $attribute->code,
-        'type'    => $attribute->type,
-        'options' => [
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
+        'swatch_type' => $swatchType,
+        'options'     => [
             $option->id => [
                 'isNew'         => false,
                 'isDelete'      => false,
@@ -283,12 +286,14 @@ it('should delete an attribute option', function () {
     $this->loginAsAdmin();
 
     $attribute = Attribute::factory()->create(['type' => 'select']);
+    $swatchType = collect(SwatchTypeEnum::cases())->random()->value;
     $option = $attribute->options()->first();
 
     $updatedData = [
-        'code'    => $attribute->code,
-        'type'    => $attribute->type,
-        'options' => [
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
+        'swatch_type' => $swatchType,
+        'options'     => [
             $option->id => [
                 'isNew'    => false,
                 'isDelete' => true,
@@ -355,6 +360,7 @@ it('should not set enabled to ai_translate field at attribute creation', functio
         ->assertRedirect(route('admin.catalog.attributes.edit', ['id' => Attribute::where('code', 'testAttribute')->first()->id]));
 
     $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), [
+        'code'         => 'testAttribute',
         'ai_translate' => 1,
     ]);
 });
@@ -377,4 +383,193 @@ it('should update the ai_translate property in Attribute', function () {
         ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
 
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $updatedData);
+});
+
+it('should create attribute option with color swatch_value for select type', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'select']);
+    $locale = Locale::where('status', 1)->first();
+    $color = fake()->hexColor();
+    $label = fake()->word();
+    $optionCode = 'opt_'.Str::random(10);
+    $data = [
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
+        'swatch_type' => 'color',
+        'options'     => [
+            'option_1' => [
+                'isNew'         => true,
+                'isDelete'      => false,
+                'code'          => $optionCode,
+                'swatch_value'  => $color,
+                $locale->code   => ['label' => $label],
+            ],
+        ],
+    ];
+
+    $response = putJson(route('admin.catalog.attributes.update', $attribute->id), $data);
+
+    $response->assertStatus(302)
+        ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
+
+    $this->assertDatabaseHas('attributes', [
+        'id'          => $attribute->id,
+        'type'        => 'select',
+        'swatch_type' => 'color',
+    ]);
+    $this->assertDatabaseHas('attribute_options', [
+        'attribute_id' => $attribute->id,
+        'swatch_value' => $color,
+    ]);
+});
+
+it('should update text type swatch label per locale for select attribute', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create([
+        'type'        => 'select',
+        'swatch_type' => 'text',
+    ]);
+
+    $option = $attribute->options()->first();
+    $locale = Locale::where('status', 1)->first();
+    $label = fake()->word();
+
+    $data = [
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
+        'swatch_type' => 'text',
+        'options'     => [
+            $option->id => [
+                'isNew'       => false,
+                'isDelete'    => false,
+                $locale->code => ['label' => $label],
+            ],
+        ],
+    ];
+
+    $response = putJson(route('admin.catalog.attributes.update', $attribute->id), $data);
+
+    $response->assertStatus(302)
+        ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
+
+    $this->assertDatabaseHas('attributes', [
+        'id'          => $attribute->id,
+        'type'        => 'select',
+        'swatch_type' => 'text',
+    ]);
+
+    $this->assertDatabaseHas('attribute_option_translations', [
+        'attribute_option_id' => $option->id,
+        'locale'              => $locale->code,
+        'label'               => $label,
+    ]);
+
+    $this->assertDatabaseMissing('attribute_options', [
+        'id'           => $option->id,
+        'swatch_value' => $label,
+    ]);
+});
+
+it('should create attribute option with image swatch_value for select type', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create([
+        'type'        => 'select',
+        'swatch_type' => 'image',
+    ]);
+
+    $locale = Locale::where('status', 1)->first();
+
+    $imageUrl = fake()->imageUrl(100, 100);
+    $label = fake()->word();
+    $optionCode = 'opt_'.Str::random(10);
+
+    $data = [
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
+        'swatch_type' => 'image',
+        'options'     => [
+            'option_1' => [
+                'isNew'        => true,
+                'isDelete'     => false,
+                'code'         => $optionCode,
+                'swatch_value' => $imageUrl,
+                $locale->code  => ['label' => $label],
+            ],
+        ],
+    ];
+
+    $response = putJson(route('admin.catalog.attributes.update', $attribute->id), $data);
+
+    $response->assertStatus(302)
+        ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
+
+    $this->assertDatabaseHas('attributes', [
+        'id'          => $attribute->id,
+        'type'        => 'select',
+        'swatch_type' => 'image',
+    ]);
+
+    $this->assertDatabaseHas('attribute_options', [
+        'attribute_id' => $attribute->id,
+        'swatch_value' => $imageUrl,
+    ]);
+});
+
+it('should not allow swatch_value for non-select attributes', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'text']);
+    $locale = Locale::where('status', 1)->first();
+
+    $color = fake()->hexColor();
+    $label = fake()->word();
+    $data = [
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
+        'swatch_type' => 'color',
+        'options'     => [
+            'option_1' => [
+                'isNew'         => true,
+                'isDelete'      => false,
+                'swatch_value'  => $color,
+                $locale->code   => ['label' => $label],
+            ],
+        ],
+    ];
+
+    $response = putJson(route('admin.catalog.attributes.update', $attribute->id), $data);
+
+    $response->assertStatus(422)->assertJsonValidationErrors(['swatch_type']);
+
+    $this->assertDatabaseMissing('attribute_options', [
+        'attribute_id' => $attribute->id,
+        'swatch_value' => $color,
+    ]);
+});
+
+it('should render add-option modal with a unified layout for image swatch attributes', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create([
+        'type'        => 'multiselect',
+        'swatch_type' => 'image',
+    ]);
+
+    $response = get(route('admin.catalog.attributes.edit', $attribute->id));
+
+    $response->assertOk();
+
+    $content = $response->getContent();
+
+    // The modal content should NOT have two separate disconnected grid containers
+    // (a bare `<div class="grid">` for swatch followed by `<div class="grid grid-cols-3`)
+    // They must be merged into a single unified wrapper so the layout is coherent.
+    $this->assertStringNotContainsString(
+        '</div>'.PHP_EOL.PHP_EOL.'                            <div class="grid grid-cols-3',
+        $content,
+        'The add-option modal must not split swatch input and form fields into two disconnected grid divs'
+    );
 });

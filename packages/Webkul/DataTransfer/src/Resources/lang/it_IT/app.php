@@ -10,7 +10,7 @@ return [
                     'invalid-attribute-family'                 => 'Valore non valido per la colonna della famiglia di attributi (la famiglia di attributi non esiste?)',
                     'invalid-type'                             => 'Tipo di prodotto non valido o non supportato',
                     'sku-not-found'                            => 'Prodotto con SKU specificato non trovato',
-                    'super-attribute-not-found'                => 'Attributo configurabile con codice: \'%s\' non trovato o non appartiene alla famiglia di attributi: \'%s\'',
+                    'super-attribute-not-found'                => 'Attributo configurabile con codice: \'%s\' non trovato o non appartiene alla famiglia di attributi: \'%s\' :code :familyCode',
                     'configurable-attributes-not-found'        => 'Gli attributi configurabili sono necessari per creare il modello di prodotto',
                     'configurable-attributes-wrong-type'       => 'Solo gli attributi di tipo che non sono basati su locale o canale possono essere attributi configurabili per un prodotto configurabile',
                     'variant-configurable-attribute-not-found' => 'Attributo configurabile variante: :code è richiesto per la creazione',
@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'L\'intestazione contiene attributi non validi: "%s".',
             'system'               => 'Si è verificato un errore di sistema imprevisto.',
             'wrong-quotes'         => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
+            'file-empty'           => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
         ],
     ],
     'job' => [

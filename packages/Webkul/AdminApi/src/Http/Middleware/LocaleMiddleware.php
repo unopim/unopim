@@ -83,7 +83,6 @@ class LocaleMiddleware
                 if (array_key_exists($key, $element)) {
                     $locales = array_merge($element[$key], $locales);
                 } else {
-                    // Recurse into sub-arrays
                     $this->checkKeyExists($element, $key);
                 }
             }

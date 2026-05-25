@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Webkul\Core\ElasticSearch;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
+use Webkul\Installer\Helpers\DemoDataInstaller;
 
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\password;
@@ -24,7 +25,8 @@ class Installer extends Command
      */
     protected $signature = 'unopim:install
         { --skip-env-check : Skip env check. }
-        { --skip-admin-creation : Skip admin creation. }';
+        { --skip-admin-creation : Skip admin creation. }
+        { --with-demo-data : Seed sample products and demo data. }';
 
     /**
      * The console command description.
@@ -151,6 +153,10 @@ class Installer extends Command
             $this->createAdminCredentials();
         }
 
+        if ($this->option('with-demo-data')) {
+            $this->seedSampleProducts();
+        }
+
         ComposerEvents::postCreateProject();
     }
 
@@ -272,31 +278,42 @@ class Installer extends Command
 
             'DB_HOST'       => text(
                 label: 'Please enter the database host',
-                default: env('DB_HOST', '127.0.0.1'),
+                default: env('DB_HOST') ?? '127.0.0.1',
                 required: true
             ),
 
             'DB_PORT'       => text(
                 label: 'Please enter the database port',
-                default: env('DB_PORT', '3306'),
+                default: env('DB_PORT') ?? '3306',
                 required: true
             ),
 
             'DB_DATABASE' => text(
                 label: 'Please enter the database name',
-                default: env('DB_DATABASE', ''),
+                default: env('DB_DATABASE') ?? '',
                 required: true
             ),
 
             'DB_PREFIX' => text(
                 label: 'Please enter the database prefix',
-                default: env('DB_PREFIX', ''),
-                hint: 'or press enter to continue'
+                default: env('DB_PREFIX') ?? '',
+                validate: function (string $value): ?string {
+                    $trimmed = trim($value);
+
+                    return match (true) {
+                        (bool) preg_match('/\s/', $trimmed)             => 'The database prefix cannot contain spaces.',
+                        strlen($trimmed) > 4                            => 'The database prefix should not exceed 4 characters.',
+                        (bool) preg_match('/[^a-zA-Z0-9_]/', $trimmed)  => 'The database prefix can only contain letters, numbers, and underscores.',
+                        default                                         => null,
+                    };
+                },
+                transform: trim(...),
+                hint: 'or press enter to continue (leave empty to clear)'
             ),
 
             'DB_USERNAME' => text(
                 label: 'Please enter your database username',
-                default: env('DB_USERNAME', ''),
+                default: env('DB_USERNAME') ?? '',
                 required: true
             ),
 
@@ -305,6 +322,8 @@ class Installer extends Command
                 required: true
             ),
         ];
+
+        $databaseDetails['DB_PREFIX'] = trim((string) ($databaseDetails['DB_PREFIX'] ?? ''));
 
         if (
             ! $databaseDetails['DB_DATABASE']
@@ -315,7 +334,7 @@ class Installer extends Command
         }
 
         foreach ($databaseDetails as $key => $value) {
-            if ($value) {
+            if ($value || $key === 'DB_PREFIX') {
                 $this->envUpdate($key, $value);
             }
         }
@@ -329,7 +348,7 @@ class Installer extends Command
         $isElasticEnabled = select(
             label: 'Do you want to enable Elasticsearch?',
             options: ['yes', 'no'],
-            default: env('ELASTICSEARCH_ENABLED', 'false')
+            default: env('ELASTICSEARCH_ENABLED') ?? 'false'
         ) === 'yes';
 
         if (! $isElasticEnabled) {
@@ -343,7 +362,7 @@ class Installer extends Command
         $connectionType = select(
             label: 'Please select the Elasticsearch connection',
             options: ['default', 'api', 'cloud'],
-            default: env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default'
+            default: env('ELASTICSEARCH_CONNECTION') ?? 'default'
         );
 
         $this->envUpdate('ELASTICSEARCH_CONNECTION', $connectionType);
@@ -351,19 +370,19 @@ class Installer extends Command
         if ($connectionType === 'cloud') {
             $cloudId = text(
                 label: 'Please enter your Elasticsearch Cloud ID',
-                default: env('ELASTICSEARCH_CLOUD_ID', '')
+                default: env('ELASTICSEARCH_CLOUD_ID') ?? ''
             );
             $this->envUpdate('ELASTICSEARCH_CLOUD_ID', $cloudId);
         } else {
             $host = text(
                 label: 'Please enter the Elasticsearch host',
-                default: env('ELASTICSEARCH_HOST', '127.0.0.1:9200')
+                default: env('ELASTICSEARCH_HOST') ?? '127.0.0.1:9200'
             );
             $this->envUpdate('ELASTICSEARCH_HOST', $host);
 
             $user = text(
                 label: 'Please enter the Elasticsearch user',
-                default: env('ELASTICSEARCH_USER', '')
+                default: env('ELASTICSEARCH_USER') ?? ''
             );
             $this->envUpdate('ELASTICSEARCH_USER', $user);
 
@@ -375,7 +394,7 @@ class Installer extends Command
             if ($connectionType === 'api') {
                 $apiKey = text(
                     label: 'Please enter the Elasticsearch API key',
-                    default: env('ELASTICSEARCH_API_KEY', '')
+                    default: env('ELASTICSEARCH_API_KEY') ?? ''
                 );
                 $this->envUpdate('ELASTICSEARCH_API_KEY', $apiKey);
             }
@@ -383,7 +402,7 @@ class Installer extends Command
 
         $indexPrefix = text(
             label: 'Please enter your Elasticsearch Index Prefix',
-            default: env('ELASTICSEARCH_INDEX_PREFIX', '')
+            default: env('ELASTICSEARCH_INDEX_PREFIX') ?? ''
         );
 
         $this->envUpdate('ELASTICSEARCH_INDEX_PREFIX', $indexPrefix);
@@ -412,18 +431,18 @@ class Installer extends Command
             }
         );
 
-        $adminPassword = text(
+        $adminPassword = password(
             label: 'Input a Password for Administrator',
-            default: 'admin123',
-            required: true
+            required: true,
+            hint: 'Minimum 6 characters',
         );
 
         while (strlen($adminPassword) < 6) {
             $this->error('Password must be at least 6 characters.');
 
-            $adminPassword = text(
+            $adminPassword = password(
                 label: 'Input a Secure Password for Administrator',
-                required: true
+                required: true,
             );
         }
 
@@ -438,8 +457,17 @@ class Installer extends Command
                     'password' => $password,
                     'role_id'  => 1,
                     'status'   => 1,
+                    'timezone' => config('app.timezone') ?: 'UTC',
                 ]
             );
+
+            if (select(
+                label: 'Do you want sample products?',
+                options: ['yes', 'no'],
+                default: 'no'
+            ) === 'yes') {
+                $this->seedSampleProducts();
+            }
 
             $filePath = storage_path('installed');
 
@@ -456,6 +484,18 @@ class Installer extends Command
             Event::dispatch('unopim.installed');
         } catch (\Exception $e) {
             return $this->error($e->getMessage());
+        }
+    }
+
+    protected function seedSampleProducts(): void
+    {
+        $result = app(DemoDataInstaller::class)
+            ->seed(fn (string $message) => $this->warn('Step: '.$message));
+
+        if ($result['success']) {
+            $this->info('Sample products seeded successfully.');
+        } else {
+            $this->error("Failed to seed sample products: {$result['error']}");
         }
     }
 
@@ -488,7 +528,10 @@ class Installer extends Command
          */
         $databaseConnection = $this->getEnvAtRuntime('DB_CONNECTION');
 
+        $previousDefault = config('database.default');
+
         config([
+            'database.default'                                    => $databaseConnection,
             "database.connections.{$databaseConnection}.host"     => $this->getEnvAtRuntime('DB_HOST'),
             "database.connections.{$databaseConnection}.port"     => $this->getEnvAtRuntime('DB_PORT'),
             "database.connections.{$databaseConnection}.database" => $this->getEnvAtRuntime('DB_DATABASE'),
@@ -496,6 +539,12 @@ class Installer extends Command
             "database.connections.{$databaseConnection}.password" => $this->getEnvAtRuntime('DB_PASSWORD'),
             "database.connections.{$databaseConnection}.prefix"   => $this->getEnvAtRuntime('DB_PREFIX'),
         ]);
+
+        DB::setDefaultConnection($databaseConnection);
+
+        if ($previousDefault && $previousDefault !== $databaseConnection) {
+            DB::purge($previousDefault);
+        }
 
         DB::purge($databaseConnection);
 

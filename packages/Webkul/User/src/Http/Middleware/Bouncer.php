@@ -2,6 +2,7 @@
 
 namespace Webkul\User\Http\Middleware;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 class Bouncer
@@ -9,7 +10,7 @@ class Bouncer
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  string|null  $guard
      * @return mixed
      */
@@ -36,7 +37,7 @@ class Bouncer
         if ($this->isPermissionsEmpty()) {
             auth()->guard('admin')->logout();
 
-            session()->flash('error', __('admin::app.error.403.message'));
+            session()->flash('error', __('admin::app.errors.403.message'));
 
             return redirect()->route('admin.session.create');
         }
@@ -60,7 +61,7 @@ class Bouncer
     public function isPermissionsEmpty()
     {
         if (! $role = auth()->guard('admin')->user()->role) {
-            abort(401, 'This action is unauthorized.');
+            abort(403, 'This action is unauthorized.');
         }
 
         if ($role->permission_type === 'all') {

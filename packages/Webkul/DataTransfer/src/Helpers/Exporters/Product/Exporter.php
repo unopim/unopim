@@ -18,6 +18,13 @@ use Webkul\Product\Repositories\ProductRepository;
 class Exporter extends AbstractExporter
 {
     /**
+     * Static cache for channels/locales/currencies/attributes.
+     * Shared across all ExportBatch jobs within the same worker process,
+     * avoiding redundant DB queries on every batch.
+     */
+    protected static ?array $staticInitCache = null;
+
+    /**
      * @var array
      */
     protected $channelsAndLocales = [];
@@ -49,18 +56,33 @@ class Exporter extends AbstractExporter
 
     /**
      * Initializes the channels and locales for the export process.
+     * Uses a static in-process cache so that the DB queries run only once
+     * per worker process regardless of how many ExportBatch jobs are handled.
      *
      * @return void
      */
     public function initilize()
     {
-        $channels = $this->channelRepository->all();
-        foreach ($channels as $channel) {
-            $this->currencies = array_unique(array_merge($this->currencies, $channel->currencies->pluck('code')->toArray()));
-            $this->channelsAndLocales[$channel->code] = $channel->locales->pluck('code')->toArray();
+        if (self::$staticInitCache === null) {
+            $channels = $this->channelRepository->all();
+            $channelsAndLocales = [];
+            $currencies = [];
+
+            foreach ($channels as $channel) {
+                $currencies = array_unique(array_merge($currencies, $channel->currencies->pluck('code')->toArray()));
+                $channelsAndLocales[$channel->code] = $channel->locales->pluck('code')->toArray();
+            }
+
+            self::$staticInitCache = [
+                'channelsAndLocales' => $channelsAndLocales,
+                'currencies'         => $currencies,
+                'attributes'         => $this->attributeRepository->all(),
+            ];
         }
 
-        $this->attributes = $this->attributeRepository->all();
+        $this->channelsAndLocales = self::$staticInitCache['channelsAndLocales'];
+        $this->currencies = self::$staticInitCache['currencies'];
+        $this->attributes = self::$staticInitCache['attributes'];
     }
 
     /**
@@ -106,7 +128,14 @@ class Exporter extends AbstractExporter
             $this->source = app(ProductRepository::class);
         }
 
-        return $this->source->whereIn('id', $ids)->get();
+        return $this->source
+            ->with([
+                'super_attributes:id,code',
+                'parent:id,sku',
+                'attribute_family:id,code',
+            ])
+            ->whereIn('id', $ids)
+            ->get();
     }
 
     /**
@@ -120,27 +149,36 @@ class Exporter extends AbstractExporter
         $productsByIds = $this->getItemsFromIds($flatIds);
 
         foreach ($productsByIds as $product) {
-            $rowData = $product->toArray();
+            // Build rowData directly from model properties instead of calling toArray().
+            // Calling $product->toArray() triggers attribute_family->toArray() which invokes
+            // Astrotomic Translatable::getTranslation() for every configured locale (~8ms/product).
+            // Direct property access avoids that entirely.
+            $productValues = $product->values ?? [];
 
-            $rowData['super_attributes'] = $rowData['type'] === 'configurable'
-                ? $product->super_attributes->toArray()
-                : [];
+            $rowData = [
+                'type'             => $product->type,
+                'sku'              => $product->sku,
+                'status'           => $product->status,
+                'super_attributes' => $product->type === 'configurable'
+                    ? $product->super_attributes->toArray()
+                    : [],
+                'attribute_family' => ['code' => $product->attribute_family?->code],
+                'values'           => $productValues,
+            ];
 
-            $family = $rowData['attribute_family']['code'] ?? null;
-            $parentSku = $rowData['type'] === 'simple'
+            $family = $product->attribute_family?->code;
+            $parentSku = $product->type === 'simple'
                 ? optional($product->parent)->sku
                 : null;
 
-            $sku = $rowData['sku'];
-            $type = $rowData['type'];
-            $status = $rowData['status'] ? 'true' : 'false';
+            $sku = $product->sku;
+            $type = $product->type;
+            $status = $product->status ? 'true' : 'false';
             $configurableAttributes = $this->getSuperAttributes($rowData);
             $categories = $this->getCategories($rowData);
             $upSells = $this->getAssociations($rowData, 'up_sells');
             $crossSells = $this->getAssociations($rowData, 'cross_sells');
             $relatedProducts = $this->getAssociations($rowData, 'related_products');
-
-            unset($rowData['attribute_family'], $rowData['parent']);
 
             $commonFields = $this->getCommonFields($rowData);
             unset($commonFields['sku']);

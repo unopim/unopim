@@ -29,7 +29,8 @@
         <input
           ref="input"
           type="text"
-          class="w-full h-full px-1 py-2 text-sm bg-transparent text-gray-700 dark:text-gray-300"        :placeholder="selectedOptions.length === 0 ? 'Select Options' : ''"
+          class="w-full h-full px-1 py-2 text-sm bg-transparent text-gray-700 dark:text-gray-300"
+          :placeholder="''"
           @input="onSearchInput"
           @blur="onBlur"
           @focus="openDropdown"

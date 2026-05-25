@@ -12,7 +12,7 @@ return [
                     'invalid-attribute-family'                 => 'Valor no válido para la columna de familia de atributos (¿la familia de atributos no existe?)',
                     'invalid-type'                             => 'El tipo de producto no es válido o no es compatible',
                     'sku-not-found'                            => 'Producto con SKU especificado no encontrado',
-                    'super-attribute-not-found'                => 'Atributo configurable con código :código no encontrado o no pertenece a la familia de atributos :familyCode',
+                    'super-attribute-not-found'                => 'Atributo configurable con código :code no encontrado o no pertenece a la familia de atributos :familyCode',
                     'configurable-attributes-not-found'        => 'Se requieren atributos configurables para crear el modelo de producto',
                     'configurable-attributes-wrong-type'       => 'Sólo los atributos de tipo seleccionado que no están basados ​​en la configuración regional o en el canal pueden ser atributos configurables para un producto configurable.',
                     'variant-configurable-attribute-not-found' => 'Atributo configurable variante se requiere :code para crear',
@@ -65,6 +65,7 @@ return [
             'invalid-attribute'    => 'El encabezado contiene atributos no válidos: "%s".',
             'system'               => 'Se produjo un error inesperado del sistema.',
             'wrong-quotes'         => 'Se utilizan comillas rizadas en lugar de comillas rectas.',
+            'file-empty'           => 'El archivo está vacío o no contiene una fila de encabezado. Por favor, suba un archivo válido con datos.',
         ],
     ],
 

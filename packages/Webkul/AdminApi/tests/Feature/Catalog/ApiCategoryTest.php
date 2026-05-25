@@ -226,11 +226,15 @@ it('should partially update the category and its parent', function () {
         'parent_id' => $parent->id,
     ]);
     $actualAdditionalData = Category::where('code', $category->code)->value('additional_data');
-    $expectedAdditionalData = json_encode($updatedData['additional_data']);
-    if (! is_string($actualAdditionalData)) {
-        $actualAdditionalData = json_encode($actualAdditionalData);
+    if (is_string($actualAdditionalData)) {
+        $actualAdditionalData = json_decode($actualAdditionalData, true);
     }
-    $this->assertEquals($expectedAdditionalData, $actualAdditionalData);
+    // PATCH merges into existing additional_data, so verify the patched
+    // locale is present rather than expecting an exact full-data match.
+    $this->assertEquals(
+        'Updated Category Name',
+        $actualAdditionalData['locale_specific'][$locale->code]['name'] ?? null,
+    );
 });
 
 it('should return 404 if category not found for patch', function () {

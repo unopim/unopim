@@ -13,6 +13,11 @@ class CSV extends AbstractSource
     protected mixed $reader;
 
     /**
+     * Maximum line length for fgetcsv (0 = unlimited)
+     */
+    protected int $maxLineLength = 0;
+
+    /**
      * Create a new helper instance.
      *
      * @return void
@@ -21,17 +26,43 @@ class CSV extends AbstractSource
         string $filePath,
         protected string $delimiter = ','
     ) {
+        $detectedSeparator = self::checkSeparator(Storage::disk('private')->path($filePath));
 
-        if (self::checkSeparator(Storage::disk('private')->path($filePath)) != $delimiter) {
+        if ($detectedSeparator === null) {
+            throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
+        }
+
+        if ($detectedSeparator != $delimiter) {
             throw new \LogicException("Separator '{$delimiter}' is not supported in the provided file.");
         }
 
         try {
             $this->reader = fopen(Storage::disk('private')->path($filePath), 'r');
 
-            $this->columnNames = fgetcsv($this->reader, 4096, $delimiter);
+            /**
+             * Set a larger read buffer for better I/O performance on large files.
+             * This reduces the number of system read calls.
+             */
+            if (is_resource($this->reader)) {
+                stream_set_read_buffer($this->reader, 65536);
+            }
+
+            $headerRow = fgetcsv($this->reader, $this->maxLineLength, $delimiter);
+
+            if (
+                $headerRow === false
+                || $headerRow === null
+                || $headerRow === [null]
+                || count(array_filter($headerRow, fn ($v) => $v !== null && $v !== '')) === 0
+            ) {
+                throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
+            }
+
+            $this->columnNames = $headerRow;
 
             $this->totalColumns = count($this->columnNames);
+        } catch (\LogicException $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }
@@ -83,7 +114,7 @@ class CSV extends AbstractSource
      */
     protected function getNextRow(): array
     {
-        $parsed = fgetcsv($this->reader, 4096, $this->delimiter);
+        $parsed = fgetcsv($this->reader, $this->maxLineLength, $this->delimiter);
 
         if (is_array($parsed) && count($parsed) != $this->totalColumns) {
             foreach ($parsed as $element) {

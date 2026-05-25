@@ -10,7 +10,7 @@ return [
                     'invalid-attribute-family'                 => 'Ugyldig verdi for attributtfamiliekolonnen (attributtfamilien eksisterer ikke?)',
                     'invalid-type'                             => 'Produkttype er ugyldig eller ikke støttet',
                     'sku-not-found'                            => 'Produkt med spesifisert SKU ikke funnet',
-                    'super-attribute-not-found'                => 'Konfigurerbar attributt med kode: \'%s\' ikke funnet eller tilhører ikke attributtfamilie: \'%s\'',
+                    'super-attribute-not-found'                => 'Konfigurerbar attributt med kode: \'%s\' ikke funnet eller tilhører ikke attributtfamilie: \'%s\' :code :familyCode',
                     'configurable-attributes-not-found'        => 'Konfigurerbare attributter kreves for å lage produktmodell',
                     'configurable-attributes-wrong-type'       => 'Bare typeattributter som ikke er basert på lokalt eller kanal kan brukes som konfigurerbare attributter for et konfigurerbart produkt',
                     'variant-configurable-attribute-not-found' => 'Variantkonfigurerbar attributt: :code kreves for å lage',
@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Overskrift inneholder ugyldige attributter: "%s".',
             'system'               => 'En uventet systemfeil oppstod.',
             'wrong-quotes'         => 'Skråstilt anførselstegn brukt i stedet for rette anførselstegn.',
+            'file-empty'           => 'Filen er tom eller inneholder ingen overskriftsrad. Vennligst last opp en gyldig fil med data.',
         ],
     ],
     'job' => [

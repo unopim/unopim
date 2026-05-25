@@ -6,7 +6,6 @@ return [
             'attribute-families' => [
                 'default' => 'تقصير',
             ],
-
             'attribute-groups' => [
                 'description'      => 'وصف',
                 'general'          => 'عام',
@@ -14,7 +13,6 @@ return [
                 'price'            => 'السعر',
                 'media'            => 'وسائط',
             ],
-
             'attributes' => [
                 'brand'                => 'ماركة',
                 'color'                => 'لون',
@@ -45,7 +43,6 @@ return [
                 'weight'               => 'وزن',
                 'width'                => 'عرض',
             ],
-
             'attribute-options' => [
                 'black'  => 'أسود',
                 'green'  => 'أخضر',
@@ -58,19 +55,16 @@ return [
                 'yellow' => 'أصفر',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => 'وصف فئة الجذر',
                 'name'        => 'جذر',
             ],
-
             'category_fields' => [
                 'name'        => 'اسم',
                 'description' => 'وصف',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'متجر تجريبي',
@@ -78,7 +72,6 @@ return [
                 'meta-description' => 'الوصف التعريفي للمتجر التجريبي',
                 'name'             => 'تقصير',
             ],
-
             'currencies' => [
                 'AED' => 'درهم',
                 'AFN' => 'الشيكل الإسرائيلي',
@@ -95,31 +88,30 @@ return [
                 'USD' => 'الدولار الأمريكي',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => 'سيكون لمستخدمي هذا الدور حق الوصول الكامل',
                 'name'        => 'المسؤول',
             ],
-
             'users' => [
                 'name' => 'مثال',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'مسؤل',
-                'unopim'           => 'أونوبيم',
-                'confirm-password' => 'تأكيد كلمة المرور',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'بريد إلكتروني',
-                'password'         => 'كلمة المرور',
-                'title'            => 'إنشاء المسؤول',
+                'admin'                   => 'مسؤل',
+                'unopim'                  => 'أونوبيم',
+                'confirm-password'        => 'تأكيد كلمة المرور',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'بريد إلكتروني',
+                'password'                => 'كلمة المرور',
+                'title'                   => 'إنشاء المسؤول',
+                'seed-sample-data'        => 'تثبيت منتجات وبيانات تجريبية',
+                'seeding-sample-data'     => 'جارٍ إنشاء منتجات العينة وبيانات التجريب، قد يستغرق ذلك بضع دقائق...',
+                'seed-sample-data-failed' => 'تعذر تثبيت البيانات التجريبية. يمكنك تثبيتها لاحقًا عبر `php artisan unopim:install:demo-data`.',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'العملات المسموح بها',
                 'allowed-locales'     => 'اللغات المسموح بها',
@@ -157,13 +149,11 @@ return [
                 'usd'                 => 'الدولار الأمريكي (USD)',
                 'warning-message'     => 'احذر! تعد إعدادات لغات النظام الافتراضية وكذلك العملة الافتراضية دائمة ولا يمكن تغييرها مرة أخرى.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'تثبيت أونوبيم',
                 'unopim-info' => 'إنشاء جداول قاعدة البيانات، قد يستغرق ذلك بضع دقائق',
                 'title'       => 'تثبيت',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'لوحة الإدارة',
                 'unopim-forums'             => 'منتدى أونوبيم',
@@ -171,7 +161,6 @@ return [
                 'title-info'                => 'تم تثبيت UnoPim بنجاح على نظامك.',
                 'title'                     => 'اكتمل التثبيت',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'إنشاء جدول قاعدة البيانات',
                 'install-info-button'     => 'انقر فوق الزر أدناه ل',
@@ -181,7 +170,6 @@ return [
                 'start-installation'      => 'ابدأ التثبيت',
                 'title'                   => 'جاهز للتثبيت',
             ],
-
             'start' => [
                 'locale'        => 'لغة',
                 'main'          => 'يبدأ',
@@ -189,7 +177,6 @@ return [
                 'title'         => 'تثبيت UnoPim الخاص بك',
                 'welcome-title' => 'مرحبا بكم في UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'تقويم',
                 'ctype'       => 'cType',
@@ -212,7 +199,6 @@ return [
                 'tokenizer'   => 'رمز مميز',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'خلف',
             'unopim-info'              => 'مشروع مجتمعي بقلم',
             'unopim-logo'              => 'شعار أونوبيم',

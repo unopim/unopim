@@ -38,8 +38,13 @@ class CategoryPrompt extends AbstractPrompt
      */
     public function updatePrompt(string $prompt, int $categoryId): string
     {
-        $categoryFields = $this->searchStringWithAt($prompt);
         $category = $this->getCategoryById($categoryId);
+
+        if (! $category) {
+            return $prompt;
+        }
+
+        $categoryFields = $this->searchStringWithAt($prompt);
         $categoryData = $category->toArray();
         $locale = core()->getRequestedLocaleCode();
 

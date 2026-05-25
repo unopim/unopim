@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => 'Domyślny',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => 'Domyślny',
+            ],
+            'attribute-groups' => [
                 'description'      => 'Opis',
                 'general'          => 'Ogólne',
                 'meta-description' => 'Meta opis',
@@ -96,19 +98,20 @@ return [
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Administrator',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Potwierdź hasło',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'E-mail',
-                'password'         => 'Hasło',
-                'title'            => 'Utwórz Administratora',
+                'admin'                   => 'Administrator',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Potwierdź hasło',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'E-mail',
+                'password'                => 'Hasło',
+                'title'                   => 'Utwórz Administratora',
+                'seed-sample-data'        => 'Zainstaluj przykładowe produkty i dane demonstracyjne',
+                'seeding-sample-data'     => 'Ładowanie przykładowych produktów i danych demonstracyjnych, może to potrwać kilka minut...',
+                'seed-sample-data-failed' => 'Nie udało się załadować danych przykładowych. Możesz je zainstalować później poleceniem `php artisan unopim:install:demo-data`.',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Dozwolone waluty',
                 'allowed-locales'     => 'Dozwolone lokalizacje',
@@ -146,13 +149,11 @@ return [
                 'usd'                 => 'Dolar Amerykański (USD)',
                 'warning-message'     => 'Uwaga! Domyślna lokalizacja i waluta nie mogą być zmienione później.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Instalacja UnoPim',
                 'unopim-info' => 'Tworzenie tabel w bazie danych, to może chwilę potrwać.',
                 'title'       => 'Trwa Instalacja',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Panel Administratora',
                 'unopim-forums'             => 'Forum UnoPim',
@@ -160,7 +161,6 @@ return [
                 'title-info'                => 'UnoPim został pomyślnie zainstalowany.',
                 'title'                     => 'Instalacja Zakończona',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Tworzenie tabel bazy danych',
                 'install-info-button'     => 'Kliknij przycisk poniżej, aby rozpocząć.',
@@ -170,7 +170,6 @@ return [
                 'start-installation'      => 'Rozpocznij instalację',
                 'title'                   => 'Gotowy do instalacji',
             ],
-
             'start' => [
                 'locale'        => 'Lokalizacja',
                 'main'          => 'Start',
@@ -178,7 +177,6 @@ return [
                 'title'         => 'Instalacja UnoPim',
                 'welcome-title' => 'Witamy w UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Kalendarz',
                 'ctype'       => 'cType',
@@ -201,7 +199,6 @@ return [
                 'tokenizer'   => 'Tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Wstecz',
             'unopim-info'              => 'Projekt Społecznościowy',
             'unopim-logo'              => 'Logo UnoPim',

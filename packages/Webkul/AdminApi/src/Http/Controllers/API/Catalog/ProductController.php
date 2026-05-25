@@ -3,7 +3,9 @@
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
@@ -36,7 +38,7 @@ class ProductController extends ApiController
      *
      * @param  array  $data  The data to be used for updating the product.
      * @param  Product  $id  The unique identifier of the product to be updated.
-     * @return \Webkul\Product\Models\Product The updated product model.
+     * @return Product The updated product model.
      */
     protected function updateProduct(array $data, Product $product): Product
     {
@@ -86,7 +88,9 @@ class ProductController extends ApiController
             $product->status = (int) $data['status'];
         }
 
-        if ($product->isDirty()) {
+        $wasDirty = $product->isDirty();
+
+        if ($wasDirty) {
             $product->update($data);
         }
 
@@ -96,10 +100,14 @@ class ProductController extends ApiController
 
         $product->refresh();
 
+        if ($wasDirty) {
+            Event::dispatch('catalog.product.update.after', $product);
+        }
+
         return $product;
     }
 
-    public function sanitizeData($product, $attributes)
+    public function sanitizeData($product, $attributes): ?array
     {
         foreach ($attributes as $attribute) {
             if ($attribute->value_per_channel && $attribute->value_per_locale) {
@@ -141,7 +149,7 @@ class ProductController extends ApiController
     /**
      * Partial Updates the simple product.
      */
-    public function patchProduct(Product $product, array $data)
+    public function patchProduct(Product $product, array $data): Product
     {
         foreach (['additional', 'status'] as $key) {
             if (isset($data[$key])) {
@@ -162,7 +170,13 @@ class ProductController extends ApiController
             $product->values = $updatedValues;
         }
 
+        $wasDirty = $product->isDirty();
+
         $product->saveOrFail();
+
+        if ($wasDirty) {
+            Event::dispatch('catalog.product.update.after', $product);
+        }
 
         return $product;
     }
@@ -236,7 +250,7 @@ class ProductController extends ApiController
      * Creates or updates a variant product based on the provided data.
      *
      * @param  array  $data  The input data containing variant and super attribute information.
-     * @return \Webkul\Product\Models\Product The updated or created variant product.
+     * @return Product The updated or created variant product.
      */
     protected function createOrUpdateVariant(array $data): mixed
     {
@@ -282,7 +296,7 @@ class ProductController extends ApiController
     /**
      * Prepares variant data for product update.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $product  The parent product model.
+     * @param  Model  $product  The parent product model.
      * @param  array  $data  The input data containing variant and super attribute information.
      * @param  string  $sku  The SKU of the product.
      * @return array The prepared variant data array.
@@ -416,7 +430,7 @@ class ProductController extends ApiController
      * Retrieves an attribute family by its code and throws a ModelNotFoundException if not found.
      *
      * @param  string  $code  The unique code of the attribute family to be retrieved.
-     * @return \Webkul\Attribute\Models\AttributeFamily The found attribute family.
+     * @return AttributeFamily The found attribute family.
      *
      * @throws ModelNotFoundException If the attribute family is not found.
      */

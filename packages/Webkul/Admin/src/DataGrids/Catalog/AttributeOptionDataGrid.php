@@ -2,7 +2,9 @@
 
 namespace Webkul\Admin\DataGrids\Catalog;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\DataGrid\DataGrid;
 
 class AttributeOptionDataGrid extends DataGrid
@@ -30,7 +32,7 @@ class AttributeOptionDataGrid extends DataGrid
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {
@@ -46,6 +48,7 @@ class AttributeOptionDataGrid extends DataGrid
             ->select(
                 'attribute_options.id',
                 'attribute_options.code',
+                'attribute_options.swatch_value',
             )
             ->groupBy('attribute_options.id')
             ->orderBy('attribute_options.sort_order', 'asc');
@@ -62,9 +65,12 @@ class AttributeOptionDataGrid extends DataGrid
             ));
         }
 
+        $grammar = GrammarQueryManager::getGrammar();
+
         $this->addFilter('id', 'attribute_options.id');
 
-        $this->addFilter('code', DB::raw("(SELECT GROUP_CONCAT(CONCAT(code, ' ', label)  SEPARATOR ' ') FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
+        $concatExpr = $grammar->concat("{$tablePrefix}attribute_options.code", "' '", 'label');
+        $this->addFilter('code', DB::raw("(SELECT {$grammar->groupConcat($concatExpr, separator: ' ')} FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
 
         return $queryBuilder;
     }
@@ -78,7 +84,7 @@ class AttributeOptionDataGrid extends DataGrid
     {
         $locales = core()->getAllActiveLocales()->pluck('code');
 
-        $currenctLocaleCode = core()->getCurrentLocale()?->code;
+        $currentLocaleCode = core()->getCurrentLocale()?->code;
 
         $this->addColumn([
             'index'      => 'code',
@@ -92,7 +98,7 @@ class AttributeOptionDataGrid extends DataGrid
         foreach ($locales as $locale) {
             $this->addColumn([
                 'index'      => 'name_'.$locale,
-                'label'      => \Locale::getDisplayName($locale, $currenctLocaleCode),
+                'label'      => \Locale::getDisplayName($locale, $currentLocaleCode),
                 'type'       => 'string',
                 'searchable' => false,
                 'filterable' => false,

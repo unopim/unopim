@@ -440,8 +440,9 @@
             },
             
             data() {
+                const parsed = this.parseValue();
                 return {
-                    selectedValue: this.parseValue() ? this.parseOptions().find(option => option[this.trackBy] === this.parseValue()) : null,
+                    selectedValue: parsed != null ? this.parseOptions().find(option => String(option[this.trackBy]) === String(parsed)) : null,
                 }
             },
 
@@ -603,7 +604,13 @@
             methods: {
                 parseOptions() {
                     try {
-                        return this.options ? JSON.parse(this.options) : [];
+                        if (Array.isArray(this.options)) {
+                            return this.options;
+                        }
+
+                        const parsed = this.options ? JSON.parse(this.options) : [];
+
+                        return Array.isArray(parsed) ? parsed : [];
                     } catch (error) {
                         console.error('Error parsing options JSON:', error);
                         return [];
@@ -728,7 +735,13 @@
             methods: {
                 parseOptions() {
                     try {
-                        return this.options ? JSON.parse(this.options) : [];
+                        if (Array.isArray(this.options)) {
+                            return this.options;
+                        }
+
+                        const parsed = this.options ? JSON.parse(this.options) : [];
+
+                        return Array.isArray(parsed) ? parsed : [];
                     } catch (error) {
                         console.error('Error parsing options JSON:', error);
                         return [];
@@ -773,7 +786,7 @@
     </script>
 
 
-<script type="text/x-template" id="v-taggingselect-handler-template">
+    <script type="text/x-template" id="v-taggingselect-handler-template">
         <div>
             <v-multiselect
                 id="ajax"
@@ -838,7 +851,7 @@
                 isLoading: Boolean,
                 listRoute: {
                     type: String,
-                    default: '{{ route('admin.catalog.options.fetch-all')}}'
+                    default: '{{ route('admin.catalog.options.fetch-all') }}'
                 },
                 queryParams: Array,
             },
@@ -978,7 +991,13 @@
 
                 parseOptions() {
                     try {
-                        return this.options ? JSON.parse(this.options) : [];
+                        if (Array.isArray(this.options)) {
+                            return this.options;
+                        }
+
+                        const parsed = this.options ? JSON.parse(this.options) : [];
+
+                        return Array.isArray(parsed) ? parsed : [];
                     } catch (error) {
                         console.error('Error parsing options JSON:', error);
                         return [];
@@ -1051,6 +1070,23 @@
                 v-model="selectedValue"
                 v-bind="field"
             >
+                @isset($option)
+                    <template v-slot:option="{ option }">
+                        {{ $option }}
+                    </template>
+                @endisset
+
+                @isset($singleLabel)
+                    <template v-slot:singleLabel="{ option }">
+                        {{ $singleLabel }}
+                    </template>
+                @endisset
+
+                @isset($tag)
+                    <template v-slot:tag="{ option, remove }">
+                        {{ $tag }}
+                    </template>
+                @endisset
             </v-multiselect>
             <input
                 v-model="selectedOption"
@@ -1058,6 +1094,19 @@
                 :name="name"
                 type="hidden"
             >
+        </div>
+        
+        <div class="overflow-auto w-full">
+            <x-admin::modal ref="imagePreviewModal">
+                <x-slot:header>
+                    <p class="text-lg text-gray-800 dark:text-white font-bold"></p>
+                </x-slot>
+                <x-slot:content>
+                    <div style="max-width: 100%; height: 260px;">
+                        <img :src="fileUrl" class="w-full h-full object-contain object-top" />
+                    </div>
+                </x-slot>
+            </x-admin::modal>
         </div>
          
     </script>
@@ -1131,6 +1180,12 @@
             },
 
             mounted() {
+                this.$nextTick(() => {
+                    const listRef = this.$refs['multiselect__handler__']?._?.refs?.list;
+                    if (listRef) {
+                        listRef.addEventListener('scroll', this.onScroll);
+                    }
+                });
 
                 if (this.selectedValue && typeof this.selectedValue != 'object') {
                     this.initializeValue();
@@ -1290,12 +1345,24 @@
                         }
                     });
                 },
+
+                previewImage(option) {
+                    this.fileUrl = option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}';
+                    this.$refs.imagePreviewModal.toggle();
+                }
             }
         });
     </script>
     <script type="text/x-template" id="v-file-uploader-template">
         <div :class="[errors.length ? 'flex items-center justify-center w-full border !border-red-600 hover:border-red-600' : 'flex items-center justify-center w-full']">
-            <label :for="$.uid + '_dropzone-file'" class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+            <label
+                :for="$.uid + '_dropzone-file'"
+                class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 transition-colors"
+                @dragover.prevent="isDragging = true"
+                @dragleave.prevent="isDragging = false"
+                @drop.prevent="onDrop($event)"
+                :class="{ '!border-violet-500 !bg-violet-50 dark:!bg-violet-900/20': isDragging }"
+            >
                 <div class="flex flex-col items-center justify-center py-6">
                     <template v-if="fieldData.value && (fieldData.value.name || field.value)">
                         <span class="icon-product text-4xl mb-4 mr-4"></span>
@@ -1348,6 +1415,7 @@
             data() {
                 return {
                     fieldData: this.field,
+                    isDragging: false,
                 }
             },
             watch: {
@@ -1375,9 +1443,40 @@
                     });
                 },
                  
+                onDrop(event) {
+                    this.isDragging = false;
+
+                    const file = event.dataTransfer.files[0];
+
+                    if (! file) {
+                        return;
+                    }
+
+                    this.fieldData.value = file;
+
+                    // Dropping onto the <label> does NOT auto-attach the
+                    // file to the associated <input type="file">, so the
+                    // traditional multipart/form-data submit would ship an
+                    // empty file input. Populate the real input via the
+                    // DataTransfer API so form submission picks it up.
+                    if (this.$refs.fileInput) {
+                        const dt = new DataTransfer();
+                        dt.items.add(file);
+                        this.$refs.fileInput.files = dt.files;
+                    }
+
+                    this.$nextTick(() => {
+                        this.$forceUpdate();
+                    });
+                },
+
                 clearFile(event) {
-                    this.fieldData.value = null;
-                    // this.$refs.fileInput.value = null;
+                    this.fieldData.value = '';
+
+                    if (this.$refs.fileInput) {
+                        this.$refs.fileInput.value = '';
+                    }
+
                     this.$nextTick(() => {
                         // Force update to refresh any related UI without reopening the upload dialog
                         this.$forceUpdate();

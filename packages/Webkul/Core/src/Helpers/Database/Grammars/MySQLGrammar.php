@@ -45,7 +45,20 @@ class MySQLGrammar implements Grammar
     {
         $jsonPath = '$.'.implode('.', $pathSegments);
 
-        return "JSON_UNQUOTE(JSON_EXTRACT({$column}, '{$jsonPath}'))";
+        // Escape column name — handles both 'values' and 'table.values'
+        $parts = explode('.', $column);
+        $escaped = implode('.', array_map(fn ($p) => "`{$p}`", $parts));
+
+        return "JSON_UNQUOTE(JSON_EXTRACT({$escaped}, '{$jsonPath}'))";
+    }
+
+    public function jsonContains(string $column, array $pathSegments, string $value): string
+    {
+        $parts = explode('.', $column);
+        $escaped = implode('.', array_map(fn ($p) => "`{$p}`", $parts));
+        $jsonPath = '$.'.implode('.', $pathSegments);
+
+        return "JSON_CONTAINS(JSON_EXTRACT({$escaped}, '{$jsonPath}'), {$value})";
     }
 
     public function orderByField(string $column, array $ids, string $type = ''): string

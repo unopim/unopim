@@ -13,6 +13,10 @@ class UserNotification extends Model implements UserNotificationContract
         'read',
     ];
 
+    protected $casts = [
+        'read' => 'integer',
+    ];
+
     /**
      * Relationship with Notification.
      */

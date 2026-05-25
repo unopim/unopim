@@ -26,6 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('magic_ai_prompts', function (Blueprint $table) {
+            $table->dropForeign('magic_ai_prompts_tone_foreign');
             $table->dropColumn('tone');
         });
     }

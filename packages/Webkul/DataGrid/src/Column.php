@@ -35,6 +35,7 @@ class Column
         public bool $filterable = false,
         public bool $sortable = false,
         public mixed $closure = null,
+        public bool $visible = true,
     ) {
         $this->init();
     }

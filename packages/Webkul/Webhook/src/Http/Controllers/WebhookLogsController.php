@@ -3,6 +3,7 @@
 namespace Webkul\Webhook\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Webhook\DataGrids\LogsDataGrid;
 use Webkul\Webhook\Repositories\LogsRepository;
@@ -16,10 +17,14 @@ class WebhookLogsController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {
+        if (! bouncer()->hasPermission('configuration.webhook.logs')) {
+            abort(403, 'This action is unauthorized');
+        }
+
         if (request()->ajax()) {
             return app(LogsDataGrid::class)->toJson();
         }
@@ -32,6 +37,10 @@ class WebhookLogsController
      */
     public function destroy(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('configuration.webhook.logs.delete')) {
+            abort(403, 'This action is unauthorized');
+        }
+
         try {
             $this->logsRepository->delete($id);
 
@@ -52,6 +61,10 @@ class WebhookLogsController
      */
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
+        if (! bouncer()->hasPermission('configuration.webhook.logs.mass_delete')) {
+            abort(403, 'This action is unauthorized');
+        }
+
         $logIds = $massDestroyRequest->input('indices');
 
         foreach ($logIds as $logId) {

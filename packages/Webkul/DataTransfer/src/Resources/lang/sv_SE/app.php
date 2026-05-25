@@ -10,7 +10,7 @@ return [
                     'invalid-attribute-family'                 => 'Ogiltigt värde för attributfamiljens kolumn (attributfamiljen finns inte?)',
                     'invalid-type'                             => 'Produktens typ är ogiltig eller inte stöds',
                     'sku-not-found'                            => 'Produkt med angiven SKU hittades inte',
-                    'super-attribute-not-found'                => 'Konfigurerbart attribut med kod: \'%s\' hittades inte eller tillhör inte attributfamiljen: \'%s\'',
+                    'super-attribute-not-found'                => 'Konfigurerbart attribut med kod: \'%s\' hittades inte eller tillhör inte attributfamiljen: \'%s\' :code :familyCode',
                     'configurable-attributes-not-found'        => 'Konfigurerbara attribut krävs för att skapa produktmodell',
                     'configurable-attributes-wrong-type'       => 'Endast attribut av typ som inte är baserade på plats eller kanal får vara konfigurerbara attribut för en konfigurerbar produkt',
                     'variant-configurable-attribute-not-found' => 'Variantkonfigurerbart attribut: :code krävs för att skapa',
@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Rubriken innehåller ogiltiga attribut: "%s".',
             'system'               => 'Ett oväntat systemfel inträffade.',
             'wrong-quotes'         => 'Krokiga citattecken användes i stället för raka citattecken.',
+            'file-empty'           => 'Filen är tom eller innehåller ingen rubrikrad. Vänligen ladda upp en giltig fil med data.',
         ],
     ],
     'job' => [

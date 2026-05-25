@@ -195,8 +195,12 @@ it('should return validation error for unique common attribute value when updati
         ],
     ];
 
+    config(['elasticsearch.enabled' => false]);
+
     $this->put(route('admin.catalog.products.update', $product->id), $data)
         ->assertInvalid('values[common]['.$attributeCode.']');
+
+    config(['elasticsearch.enabled' => true]);
 
     $product->refresh();
 
@@ -243,8 +247,12 @@ it('should return validation error for unique channel and locale wise attribute 
         ],
     ];
 
+    config(['elasticsearch.enabled' => false]);
+
     $this->put(route('admin.catalog.products.update', $product->id), $data)
         ->assertInvalid('values[channel_locale_specific][default]['.$localeCode.']['.$attributeCode.']');
+
+    config(['elasticsearch.enabled' => true]);
 
     $product->refresh();
 
@@ -285,8 +293,12 @@ it('should return validation error for unique channel wise attribute value when 
         ],
     ];
 
+    config(['elasticsearch.enabled' => false]);
+
     $this->put(route('admin.catalog.products.update', $product->id), $data)
         ->assertInvalid('values[channel_specific][default]'.'['.$attributeCode.']');
+
+    config(['elasticsearch.enabled' => true]);
 
     $product->refresh();
 
@@ -329,8 +341,12 @@ it('should return validation error for unique locale wise attribute value when u
         ],
     ];
 
+    config(['elasticsearch.enabled' => false]);
+
     $this->put(route('admin.catalog.products.update', $product->id), $data)
         ->assertInvalid('values[locale_specific]['.$localeCode.']'.'['.$attributeCode.']');
+
+    config(['elasticsearch.enabled' => true]);
 
     $product->refresh();
 
@@ -628,10 +644,11 @@ it('should store the categories value when updating simple product', function ()
     $this->loginAsAdmin();
 
     $category = Category::factory()->create();
+    $category2 = Category::factory()->create();
 
     $product = Product::factory()->simple()->create();
 
-    $value = [$category->code, $category->parent?->code];
+    $value = [$category->code, $category2->code];
 
     $data = [
         'sku'    => $product->sku,
@@ -1045,10 +1062,11 @@ it('should store the categories value when updating configurable product', funct
     $this->loginAsAdmin();
 
     $category = Category::factory()->create();
+    $category2 = Category::factory()->create();
 
     $product = Product::factory()->configurable()->create();
 
-    $value = [$category->code, $category->parent?->code];
+    $value = [$category->code, $category2->code];
 
     $data = [
         'sku'    => $product->sku,
@@ -1095,4 +1113,75 @@ it('should store the associations value when updating configurable product', fun
     foreach (['related_products', 'cross_sells', 'up_sells'] as $type) {
         $this->assertEquals($value, $product->values['associations'][$type] ?? '');
     }
+});
+
+it('should allow empty value for optional attribute with numeric validation', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create([
+        'is_required' => 0,
+        'validation'  => 'number',
+        'type'        => 'text',
+    ]);
+
+    $product = Product::factory()->simple()->create();
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => '', // Empty value
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+    $this->assertEquals('', $product->values['common'][$attributeCode] ?? '');
+});
+
+it('should reject root category when assigning categories to a product', function () {
+    $this->loginAsAdmin();
+
+    $rootCategory = Category::factory()->create(['parent_id' => null]);
+
+    $product = Product::factory()->simple()->create();
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'categories' => [$rootCategory->code],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHasErrors();
+});
+
+it('should allow only non-root categories when assigning categories to a product', function () {
+    $this->loginAsAdmin();
+
+    $rootCategory = Category::factory()->create(['parent_id' => null]);
+    $childCategory = Category::factory()->create(['parent_id' => $rootCategory->id]);
+
+    $product = Product::factory()->simple()->create();
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'categories' => [$childCategory->code],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertContains($childCategory->code, $product->values['categories'] ?? []);
 });

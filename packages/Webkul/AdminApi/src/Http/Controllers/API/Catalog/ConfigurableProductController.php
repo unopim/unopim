@@ -38,10 +38,8 @@ class ConfigurableProductController extends ProductController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
             'status'            => ['nullable', 'boolean'],
@@ -101,10 +99,8 @@ class ConfigurableProductController extends ProductController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(string $sku)
+    public function update(string $sku): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
             'status'            => ['nullable', 'boolean'],
@@ -160,10 +156,8 @@ class ConfigurableProductController extends ProductController
 
     /**
      * Patch the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function partialUpdate(string $sku)
+    public function partialUpdate(string $sku): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
             'status'     => ['nullable', 'boolean'],
@@ -201,6 +195,30 @@ class ConfigurableProductController extends ProductController
             );
         } catch (ValidationException $e) {
             return $this->validateErrorResponse($e->validator->errors()->messages());
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
+     * Remove the specified configurable product.
+     */
+    public function delete(string $code): JsonResponse
+    {
+        try {
+            $product = $this->findProductOr404($code);
+
+            Event::dispatch('catalog.product.delete.before', $code);
+
+            $product->delete();
+
+            Event::dispatch('catalog.product.delete.after', $code);
+
+            return response()->json([
+                'success' => true,
+                'message' => trans('admin::app.catalog.products.delete-success'),
+                'sku'     => $product['sku'],
+            ], JsonResponse::HTTP_OK);
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }

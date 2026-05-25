@@ -2,9 +2,11 @@
 
 namespace Webkul\Admin\DataGrids\Settings;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Webkul\DataGrid\DataGrid;
+use Webkul\User\Models\Admin as AdminUser;
 
 class UserDataGrid extends DataGrid
 {
@@ -18,7 +20,7 @@ class UserDataGrid extends DataGrid
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {
@@ -78,7 +80,7 @@ class UserDataGrid extends DataGrid
                     return Storage::url($row->user_image);
                 }
 
-                return null;
+                return AdminUser::getGravatarUrlFromEmail($row->email);
             },
         ]);
 

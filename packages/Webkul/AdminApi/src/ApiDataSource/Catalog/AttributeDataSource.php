@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\ApiDataSource\Catalog;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Query\Builder;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Attribute\Repositories\AttributeRepository;
 
@@ -18,7 +19,7 @@ class AttributeDataSource extends ApiDataSource
     /**
      * Prepares the query builder for API requests.
      *
-     * @return \Illuminate\Database\Query\Builder The query builder for the attribute repository.
+     * @return Builder The query builder for the attribute repository.
      */
     public function prepareApiQueryBuilder()
     {
@@ -52,6 +53,7 @@ class AttributeDataSource extends ApiDataSource
             return [
                 'code'              => $data['code'],
                 'type'              => $data['type'],
+                'swatch_type'       => $data['swatch_type'],
                 'validation'        => $data['validation'],
                 'regex_pattern'     => $data['regex_pattern'],
                 'position'          => $data['position'],
@@ -99,6 +101,7 @@ class AttributeDataSource extends ApiDataSource
         return [
             'code'              => $attribute['code'],
             'type'              => $attribute['type'],
+            'swatch_type'       => $attribute['swatch_type'],
             'validation'        => $attribute['validation'],
             'regex_pattern'     => $attribute['regex_pattern'],
             'position'          => $attribute['position'],
@@ -122,12 +125,19 @@ class AttributeDataSource extends ApiDataSource
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         $attributeOption = $attribute?->options()?->orderBy('sort_order')->get()->toArray();
 
-        return array_map(function ($data) {
-            return [
+        return array_map(function ($data) use ($attribute) {
+            $result = [
                 'code'       => $data['code'],
                 'sort_order' => $data['sort_order'],
                 'labels'     => $this->getTranslations($data, 'label'),
             ];
+
+            if (in_array($attribute->swatch_type, ['image', 'color'])) {
+                $result['swatch_value'] = $data['swatch_value'];
+                $result['swatch_value_url'] = $data['swatch_value_url'];
+            }
+
+            return $result;
         }, $attributeOption ?? []);
     }
 }

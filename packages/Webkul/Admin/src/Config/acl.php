@@ -214,7 +214,7 @@ return [
         'key'    => 'data_transfer',
         'name'   => 'admin::app.acl.data-transfer',
         'route'  => 'admin.settings.data_transfer.tracker.index',
-        'sort'   => 7,
+        'sort'   => 8,
     ], [
         'key'   => 'data_transfer.job_tracker',
         'name'  => 'admin::app.acl.tracker',
@@ -386,9 +386,19 @@ return [
         'route' => 'admin.settings.users.edit',
         'sort'  => 2,
     ], [
+        'key'   => 'settings.users.users.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.users.update',
+        'sort'  => 2,
+    ], [
         'key'   => 'settings.users.users.delete',
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.settings.users.delete',
+        'sort'  => 3,
+    ], [
+        'key'   => 'settings.users.users.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.settings.users.destroy',
         'sort'  => 3,
     ], [
         'key'   => 'settings.roles',
@@ -401,9 +411,19 @@ return [
         'route' => 'admin.settings.roles.create',
         'sort'  => 1,
     ], [
+        'key'   => 'settings.roles.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.settings.roles.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'settings.roles.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.settings.roles.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'settings.roles.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.roles.update',
         'sort'  => 2,
     ], [
         'key'   => 'settings.roles.delete',
@@ -445,27 +465,5 @@ return [
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.configuration.integrations.delete',
         'sort'  => 3,
-    ], [
-        'key'    => 'configuration.magic-ai',
-        'name'   => 'admin::app.acl.magic-ai',
-        'route'  => 'admin.configuration.edit',
-        'params' => ['general', 'magic_ai'],
-        'sort'   => 2,
-    ], [
-        'key'    => 'configuration.magic-ai.general',
-        'name'   => 'admin::app.acl.magic-ai-general',
-        'route'  => 'admin.configuration.edit',
-        'params' => ['general', 'magic_ai'],
-        'sort'   => 1,
-    ], [
-        'key'    => 'configuration.magic-ai.prompt',
-        'name'   => 'admin::app.acl.magic-ai-prompt',
-        'route'  => 'admin.magic_ai.prompt.index',
-        'sort'   => 2,
-    ], [
-        'key'    => 'configuration.magic-ai.system-prompt',
-        'name'   => 'admin::app.acl.magic-ai-system-prompt',
-        'route'  => 'admin.magic_ai.system_prompt.index',
-        'sort'   => 3,
     ],
 ];

@@ -2,11 +2,14 @@
 
 namespace Webkul\DataGrid;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Admin\Exports\DataGridExport;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\Enums\ColumnTypeEnum;
@@ -149,6 +152,7 @@ abstract class DataGrid
             filterable: $column['filterable'],
             sortable: $column['sortable'],
             closure: $column['closure'] ?? null,
+            visible: $column['visible'] ?? true,
         );
     }
 
@@ -164,6 +168,7 @@ abstract class DataGrid
             method: $action['method'],
             url: $action['url'],
             frontendView: $action['frontend_view'] ?? '',
+            condition: $action['condition'] ?? null,
         );
     }
 
@@ -225,7 +230,7 @@ abstract class DataGrid
     /**
      * Process all requested filters.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function processRequestedFilters(array $requestedFilters)
     {
@@ -311,7 +316,7 @@ abstract class DataGrid
     /**
      * Process requested sorting.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function processRequestedSorting($requestedSort)
     {
@@ -372,7 +377,7 @@ abstract class DataGrid
     /**
      * Set export file.
      *
-     * @param  \Illuminate\Support\Collection  $records
+     * @param  Collection  $records
      * @param  string  $format
      * @return void
      */
@@ -384,7 +389,7 @@ abstract class DataGrid
     /**
      * Download export file.
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      */
     public function downloadExportFile()
     {
@@ -421,6 +426,10 @@ abstract class DataGrid
             $record->actions = [];
 
             foreach ($this->actions as $index => $action) {
+                if (is_callable($action->condition) && ! ($action->condition)($record)) {
+                    continue;
+                }
+
                 $getUrl = $action->url;
 
                 $record->actions[] = [

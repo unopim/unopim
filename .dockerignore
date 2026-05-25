@@ -1,0 +1,34 @@
+# Version control & CI
+.git
+.github
+.claude
+
+# Dependencies (installed during build)
+vendor
+node_modules
+
+# Test artifacts
+.phpunit.cache
+.playwright-mcp
+tests/e2e-pw/.state
+tests/e2e-pw/test-results
+tests/e2e-pw/playwright-report
+
+# Runtime data (mounted as volumes, not baked into image)
+# Exclude all storage contents but keep the directory structure
+storage/app/private/*
+storage/app/public/*
+!storage/app/public/data-transfer/samples
+storage/debugbar/*
+storage/fonts/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+storage/logs/*
+storage/unopim.lock
+
+# Local files
+backups
+.env
+.env.testing

@@ -54,10 +54,8 @@ class CategoryFieldController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $requestData = request()->all();
 
@@ -108,14 +106,19 @@ class CategoryFieldController extends ApiController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(string $code)
+    public function update(string $code): JsonResponse
     {
         $categoryField = $this->categoryFieldRepository->findOneByField('code', $code);
         if (! $categoryField) {
             return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $code]));
+        }
+
+        $immutable = array_intersect(['code', 'type', 'value_per_locale', 'is_unique'], array_keys(request()->all()));
+        if (! empty($immutable)) {
+            return $this->validateErrorResponse([
+                'immutable' => [trans('admin::app.catalog.category_fields.immutable-fields', ['fields' => implode(', ', $immutable)])],
+            ]);
         }
 
         $requestData = request()->except(['code', 'type', 'value_per_locale', 'is_unique']);
@@ -159,10 +162,8 @@ class CategoryFieldController extends ApiController
 
     /**
      * Display a single result of the resource.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function getOptions($code)
+    public function getOptions($code): JsonResponse
     {
         try {
             return response()->json(app(CategoryFieldDataSource::class)->getOptionsByFieldCode($code));
@@ -173,10 +174,8 @@ class CategoryFieldController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function storeOption(string $fieldCode)
+    public function storeOption(string $fieldCode): JsonResponse
     {
         $categoryField = $this->categoryFieldRepository->findOneByField('code', $fieldCode);
         if (! $categoryField) {
@@ -218,10 +217,8 @@ class CategoryFieldController extends ApiController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function updateOption(string $fieldCode)
+    public function updateOption(string $fieldCode): JsonResponse
     {
         $categoryField = $this->categoryFieldRepository->findOneByField('code', $fieldCode);
         if (! $categoryField) {
@@ -235,23 +232,18 @@ class CategoryFieldController extends ApiController
             foreach ($requestData as $optionInputs) {
                 $optionInputs = $this->setLabels($optionInputs, 'label');
 
-                $categoryFieldOption = $this->categoryFieldOptionRepository->findOneByField('code', $optionInputs['code']);
+                $categoryFieldOption = $this->categoryFieldOptionRepository
+                    ->findOneWhere(['code' => $optionInputs['code'], 'category_field_id' => $categoryField->id]);
 
                 if (! $categoryFieldOption) {
-                    $validator = $this->optionValidate($optionInputs, $categoryField->id);
+                    $errors[$optionInputs['code']] = [
+                        trans('admin::app.catalog.category-fields-options.update-unknown-code', ['code' => $optionInputs['code']]),
+                    ];
 
-                    if ($validator->fails()) {
-                        $errors[] = $validator->errors();
-
-                        continue;
-                    }
-
-                    $this->categoryFieldOptionRepository->create(array_merge([
-                        'category_field_id' => $categoryField->id,
-                    ], $optionInputs));
-                } else {
-                    $this->categoryFieldOptionRepository->update($optionInputs, $categoryFieldOption->id);
+                    continue;
                 }
+
+                $this->categoryFieldOptionRepository->update($optionInputs, $categoryFieldOption->id);
             }
 
             if (! empty($errors)) {

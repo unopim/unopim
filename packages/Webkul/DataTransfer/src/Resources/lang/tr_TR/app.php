@@ -10,7 +10,7 @@ return [
                     'invalid-attribute-family'                 => 'Attribut ailesinin kolonundaki değer geçersiz (attribut ailesi mevcut değil mi?)',
                     'invalid-type'                             => 'Ürün türü geçersiz veya desteklenmiyor',
                     'sku-not-found'                            => 'Belirtilen SKU ile ürün bulunamadı',
-                    'super-attribute-not-found'                => 'Konfigürasyonel attribut, kod: \'%s\' bulunamadı veya attribut ailesine ait değil: \'%s\'',
+                    'super-attribute-not-found'                => 'Konfigürasyonel attribut, kod: \'%s\' bulunamadı veya attribut ailesine ait değil: \'%s\' :code :familyCode',
                     'configurable-attributes-not-found'        => 'Konfigürasyonel attributlar, ürün modeli oluşturmak için gereklidir',
                     'configurable-attributes-wrong-type'       => 'Seçenekli attribut türleri, sadece yer veya kanal bazlı olmayanlar, konfigürasyonel attributlar için seçilebilir',
                     'variant-configurable-attribute-not-found' => 'Seçenekli konfigürasyonel attribut: :code gereklidir',
@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Başlık geçersiz attribute(s) içeriyor: "%s".',
             'system'               => 'Beklenmeyen bir sistem hatası oluştu.',
             'wrong-quotes'         => 'Kıvrık tırnaklar, doğru tırnaklar yerine kullanıldı.',
+            'file-empty'           => 'Dosya boş veya başlık satırı içermiyor. Lütfen veri içeren geçerli bir dosya yükleyin.',
         ],
     ],
     'job' => [

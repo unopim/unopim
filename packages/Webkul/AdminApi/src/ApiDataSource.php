@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\Checker\QueryParametersChecker;
@@ -105,7 +106,7 @@ abstract class ApiDataSource
     /**
      * Process all requested filters.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function processRequestedFilters(array $requestedFilters)
     {
@@ -128,7 +129,7 @@ abstract class ApiDataSource
     }
 
     /**
-     * Validates filter criterias and returns the parsed filter parameters.
+     * Validates filter criteria and returns the parsed filter parameters.
      *
      * @param  array  $requestedParams  The request parameters containing the 'filters' key.
      * @return array The parsed filter parameters.
@@ -220,10 +221,10 @@ abstract class ApiDataSource
     /**
      * Applies the specified operator to the query builder based on the given column and value.
      *
-     * @param  \Illuminate\Database\Query\Builder  $scopeQueryBuilder  The query builder instance to apply the operator to.
+     * @param  Builder  $scopeQueryBuilder  The query builder instance to apply the operator to.
      * @param  string  $requestedColumn  The column to apply the operator to.
      * @param  array  $value  The value and operator to apply.
-     * @return \Illuminate\Database\Query\Builder The updated query builder instance.
+     * @return Builder The updated query builder instance.
      */
     public function operatorByFilter($scopeQueryBuilder, $requestedColumn, $value)
     {
@@ -249,7 +250,7 @@ abstract class ApiDataSource
     /**
      * Process requested sorting.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function processRequestedSorting($requestedSort)
     {

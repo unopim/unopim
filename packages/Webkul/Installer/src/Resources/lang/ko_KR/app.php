@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => '기본',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => '기본값',
+            ],
+            'attribute-groups' => [
                 'description'      => '설명',
                 'general'          => '일반',
                 'meta-description' => '메타 설명',
@@ -96,19 +98,20 @@ return [
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => '관리자',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => '비밀번호 확인',
-                'email-address'    => 'admin@example.com',
-                'email'            => '이메일',
-                'password'         => '비밀번호',
-                'title'            => '관리자 생성',
+                'admin'                   => '관리자',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => '비밀번호 확인',
+                'email-address'           => 'admin@example.com',
+                'email'                   => '이메일',
+                'password'                => '비밀번호',
+                'title'                   => '관리자 생성',
+                'seed-sample-data'        => '샘플 제품 및 데모 데이터 설치',
+                'seeding-sample-data'     => '샘플 제품 및 데모 데이터를 생성 중입니다. 몇 분 정도 걸릴 수 있습니다...',
+                'seed-sample-data-failed' => '샘플 데이터를 생성하지 못했습니다. 나중에 `php artisan unopim:install:demo-data` 명령으로 설치할 수 있습니다.',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => '허용된 통화',
                 'allowed-locales'     => '허용된 로케일',
@@ -146,13 +149,11 @@ return [
                 'usd'                 => '미국 달러 (USD)',
                 'warning-message'     => '주의! 기본 로케일 및 통화 설정은 나중에 변경할 수 없습니다.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'UnoPim 설치 중',
                 'unopim-info' => '데이터베이스 테이블을 생성 중입니다. 시간이 걸릴 수 있습니다.',
                 'title'       => '설치 중',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => '관리자 패널',
                 'unopim-forums'             => 'UnoPim 포럼',
@@ -160,7 +161,6 @@ return [
                 'title-info'                => 'UnoPim이 성공적으로 설치되었습니다.',
                 'title'                     => '설치 완료',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => '데이터베이스 테이블 생성',
                 'install-info-button'     => '아래 버튼을 클릭하여 설치를 시작하세요.',
@@ -170,7 +170,6 @@ return [
                 'start-installation'      => '설치 시작',
                 'title'                   => '설치 준비 완료',
             ],
-
             'start' => [
                 'locale'        => '로케일',
                 'main'          => '시작',
@@ -178,7 +177,6 @@ return [
                 'title'         => 'UnoPim 설치',
                 'welcome-title' => 'UnoPim :version에 오신 것을 환영합니다.',
             ],
-
             'server-requirements' => [
                 'calendar'    => '캘린더',
                 'ctype'       => 'cType',
@@ -201,7 +199,6 @@ return [
                 'tokenizer'   => '토크나이저',
                 'xml'         => 'XML',
             ],
-
             'back'                     => '뒤로',
             'unopim-info'              => '커뮤니티 프로젝트',
             'unopim-logo'              => 'UnoPim 로고',

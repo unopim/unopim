@@ -86,7 +86,8 @@
                     default: () => ([])
                 },
                 currentCategory: {
-                    type: Object
+                    type: [Number, String],
+                    default: null
                 }
             },
 
@@ -116,7 +117,9 @@
 
             methods: {
                 parseInput(data) {
-                    return typeof data === 'string' ? JSON.parse(data) : (data || []);
+                    const parsed = typeof data === 'string' ? JSON.parse(data) : (data || []);
+
+                    return Array.isArray(parsed) ? parsed : (parsed ? Object.values(parsed) : []);
                 },
 
                 mergeExpandedBranches() {

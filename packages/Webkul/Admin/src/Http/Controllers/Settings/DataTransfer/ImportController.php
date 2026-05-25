@@ -3,8 +3,10 @@
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
@@ -35,9 +37,9 @@ class ImportController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(ImportDataGrid::class)->toJson();
@@ -48,10 +50,8 @@ class ImportController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $importerConfig = config(self::IMPORTERS);
 
@@ -60,10 +60,8 @@ class ImportController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $importerConfig = config(self::IMPORTERS);
 
@@ -126,10 +124,8 @@ class ImportController extends Controller
 
     /**
      * Show the form for editing a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $importerConfig = config(self::IMPORTERS);
 
@@ -140,10 +136,8 @@ class ImportController extends Controller
 
     /**
      * Update a resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function update(int $id)
+    public function update(int $id): RedirectResponse
     {
         $importerConfig = config(self::IMPORTERS);
 
@@ -212,16 +206,19 @@ class ImportController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         try {
-            Storage::disk('private')->delete($import->file_path);
+            if (! empty($import->file_path)) {
+                Storage::disk('private')->delete($import->file_path);
+            }
 
-            Storage::disk('private')->delete($import->error_file_path ?? '');
+            if (! empty($import->error_file_path)) {
+                Storage::disk('private')->delete($import->error_file_path);
+            }
 
             $this->jobInstancesRepository->delete($id);
 
@@ -229,22 +226,21 @@ class ImportController extends Controller
                 'message' => trans('admin::app.settings.data-transfer.imports.delete-success'),
             ]);
         } catch (\Exception $e) {
+            report($e);
         }
 
         return response()->json([
             'message' => trans('admin::app.settings.data-transfer.imports.delete-failed'),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function importView(int $id)
+    public function importView(int $id): View
     {
         if (! bouncer()->hasPermission('data_transfer.imports')) {
-            abort(401, 'This action is unauthorized');
+            abort(403, 'This action is unauthorized');
         }
 
         $import = $jobInstance = $this->jobInstancesRepository->findOrFail($id);
@@ -257,8 +253,10 @@ class ImportController extends Controller
     /**
      * importNow function dispatch the job asynchronously
      */
-    public function importNow(int $id)
+    public function importNow(int $id): RedirectResponse
     {
+        $jobTrackInstance = null;
+
         try {
             // Retrieve the import instance or fail with a 404
             $import = $this->jobInstancesRepository->findOrFail($id);
@@ -291,12 +289,14 @@ class ImportController extends Controller
 
             // Redirect to the tracker view
             return redirect()->route('admin.settings.data_transfer.tracker.view', $jobTrackInstance->id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Log the error and redirect with an error message
             \Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
 
-            return redirect()->route('admin.settings.data_transfer.tracker.view', ['id' => $id])
-                ->with('error', 'Failed to start the import process. Please try again.');
+            $batchId = $jobTrackInstance?->id ?? $id;
+
+            return redirect()->route('admin.settings.data_transfer.tracker.view', $batchId)
+                ->with('error', trans('admin::app.settings.data-transfer.imports.import-start-fail'));
         }
     }
 
@@ -327,7 +327,7 @@ class ImportController extends Controller
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->importHelper->setImport($import);
@@ -335,7 +335,7 @@ class ImportController extends Controller
         if (! $this->importHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -359,7 +359,7 @@ class ImportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             if ($this->importHelper->isLinkingRequired()) {
@@ -387,7 +387,7 @@ class ImportController extends Controller
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->importHelper->setImport($import);
@@ -395,7 +395,7 @@ class ImportController extends Controller
         if (! $this->importHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -422,7 +422,7 @@ class ImportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             if ($this->importHelper->isIndexingRequired()) {
@@ -448,7 +448,7 @@ class ImportController extends Controller
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->importHelper->setImport($import);
@@ -456,7 +456,7 @@ class ImportController extends Controller
         if (! $this->importHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -483,7 +483,7 @@ class ImportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             /**
@@ -495,6 +495,60 @@ class ImportController extends Controller
         return new JsonResponse([
             'stats'  => $this->importHelper->stats(Import::STATE_INDEXED),
             'import' => $this->importHelper->getImport()->unsetRelations(),
+        ]);
+    }
+
+    /**
+     * Pause a running import job
+     */
+    public function pause(int $id): JsonResponse
+    {
+        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        if ($jobTrack->type === 'export') {
+            $this->exportHelper->setExport($jobTrack)->pause();
+        } else {
+            $this->importHelper->setImport($jobTrack)->pause();
+        }
+
+        return new JsonResponse([
+            'message' => trans('admin::app.settings.data-transfer.tracker.paused'),
+        ]);
+    }
+
+    /**
+     * Resume a paused import/export job
+     */
+    public function resume(int $id): JsonResponse
+    {
+        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        if ($jobTrack->type === 'export') {
+            $this->exportHelper->setExport($jobTrack)->resume();
+        } else {
+            $this->importHelper->setImport($jobTrack)->resume();
+        }
+
+        return new JsonResponse([
+            'message' => trans('admin::app.settings.data-transfer.tracker.resumed'),
+        ]);
+    }
+
+    /**
+     * Cancel a running or paused import/export job
+     */
+    public function cancel(int $id): JsonResponse
+    {
+        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        if ($jobTrack->type === 'export') {
+            $this->exportHelper->setExport($jobTrack)->cancel();
+        } else {
+            $this->importHelper->setImport($jobTrack)->cancel();
+        }
+
+        return new JsonResponse([
+            'message' => trans('admin::app.settings.data-transfer.tracker.cancelled'),
         ]);
     }
 
@@ -517,8 +571,6 @@ class ImportController extends Controller
             $jobTrack = $this->importHelper->getImport()->unsetRelations();
         }
 
-        $stats['summary'] = $this->normalizeSummary($stats['summary']);
-
         return new JsonResponse([
             'isValid'     => $isValid,
             'stats'       => $stats,
@@ -534,16 +586,14 @@ class ImportController extends Controller
      * @param  array|null  $summary  The summary data to be normalized.
      * @return array The normalized summary data.
      */
-    private function normalizeSummary($summery)
+    private function normalizeSummary($summary)
     {
         $summaryData = [];
 
-        // Loop through the summary data, translating keys and handling null values
-        foreach (($summery ?? []) as $key => $value) {
+        foreach (($summary ?? []) as $key => $value) {
             $summaryData[trans(sprintf('admin::app.settings.data-transfer.tracker.summary.%s', $key))] = $value ?? 0;
         }
 
-        // Return the normalized summary data
         return $summaryData;
     }
 
@@ -575,5 +625,47 @@ class ImportController extends Controller
         $import = $this->jobTrackRepository->findOrFail($id);
 
         return Storage::disk('private')->download($import->error_file_path);
+    }
+
+    /**
+     * Upload a zip of images, extract it into storage/app/public, and return the relative path.
+     */
+    public function uploadImagesZip(): JsonResponse
+    {
+        $this->validate(request(), [
+            'images_zip' => 'required|file|mimes:zip|max:102400',
+        ]);
+
+        $file = request()->file('images_zip');
+
+        // Build a human-readable folder name from the zip filename
+        $baseName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeName = preg_replace('/[^a-zA-Z0-9_\-]/', '-', $baseName);
+        $folderName = 'import-images/'.rtrim($safeName, '-').'-'.time();
+
+        $zip = new \ZipArchive;
+
+        if ($zip->open($file->getPathname()) !== true) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.data-transfer.imports.invalid-zip'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $extractPath = Storage::disk('public')->path($folderName);
+
+        if (! is_dir($extractPath)) {
+            mkdir($extractPath, 0755, true);
+        }
+
+        $zip->extractTo($extractPath);
+        $filesCount = $zip->count();
+        $zip->close();
+
+        return new JsonResponse([
+            'path'        => $folderName,
+            'files_count' => $filesCount,
+            'zip_name'    => $file->getClientOriginalName(),
+            'message'     => trans('admin::app.settings.data-transfer.imports.zip-upload-success'),
+        ]);
     }
 }
