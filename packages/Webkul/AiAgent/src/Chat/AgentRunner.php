@@ -177,7 +177,7 @@ class AgentRunner
 
         $messages[] = new UserMessage($context->message, $imageContent);
 
-        $isReasoningModel = (bool) preg_match('/^chat-latest|^o[1-9]|^o[1-9]-|^gpt-5/i', $context->model);
+        $isReasoningModel = (bool) preg_match('/^o[1-9]|^o[1-9]-|^gpt-5/i', $context->model);
 
         $request = Prism::text()
             ->using($prismProvider, $context->model, [
