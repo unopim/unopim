@@ -107,7 +107,7 @@ class LaravelAiAdapter implements LLMModelInterface
      */
     protected function isReasoningModel(string $model): bool
     {
-        return (bool) preg_match('/^chat-latest|^o[1-9]|^o[1-9]-|^gpt-5/i', $model);
+        return (bool) preg_match('/^o[1-9]|^o[1-9]-|^gpt-5/i', $model);
     }
 
     /**

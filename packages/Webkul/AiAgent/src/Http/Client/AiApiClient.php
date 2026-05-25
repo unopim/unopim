@@ -177,7 +177,7 @@ class AiApiClient
         ];
 
         // Reasoning models (o-series, gpt-5*) reject `temperature` — only the default is allowed.
-        if (! preg_match('/^chat-latest|^o[1-9]|^o[1-9]-|^gpt-5/i', $this->model)) {
+        if (! preg_match('/^o[1-9]|^o[1-9]-|^gpt-5/i', $this->model)) {
             $body['temperature'] = $temperature;
         }
 
