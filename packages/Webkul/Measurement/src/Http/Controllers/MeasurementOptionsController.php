@@ -40,6 +40,9 @@ class MeasurementOptionsController extends AbstractOptionsController
         $this->attributeMeasurementRepository = $attributeMeasurementRepository;
     }
 
+    /**
+     * Get measurement unit options for the given attribute.
+     */
     public function getOptions(): JsonResponse
     {
         $attributeId = request('attribute_id');
@@ -102,6 +105,9 @@ class MeasurementOptionsController extends AbstractOptionsController
         return response()->json($options);
     }
 
+    /**
+     * Format measurement units collection for dropdown response.
+     */
     protected function formatCollection(
         Collection $collection,
         int $page,

@@ -22,6 +22,12 @@ class ValidateAttributeMeasurementBeforeUpdate
         $this->attributeRepository = $attributeRepository;
     }
 
+    /**
+     * Validate and save measurement configuration before attribute update.
+     *
+     * @param  int|string  $attributeId
+     * @return void
+     */
     public function handle($attributeId)
     {
         $attribute = $this->attributeRepository->find($attributeId);

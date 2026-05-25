@@ -13,6 +13,14 @@ class MeasurementProductImport
         $this->helper = $helper;
     }
 
+    /**
+     * Handle measurement attribute import for product.
+     *
+     * @param  mixed  $product
+     * @param  array  $row
+     * @param  mixed  $attribute
+     * @return void
+     */
     public function handle($product, $row, $attribute)
     {
         if (! $this->helper->isMeasurementAttribute($attribute)) {

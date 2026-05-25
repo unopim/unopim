@@ -12,6 +12,9 @@ class MeasurementFamily extends Model implements HistoryAuditable
 {
     use HasFactory, HistoryTrait;
 
+    /**
+     * Mass assignable attributes.
+     */
     protected $fillable = [
         'code',
         'name',
@@ -21,6 +24,9 @@ class MeasurementFamily extends Model implements HistoryAuditable
         'symbol',
     ];
 
+    /**
+     * Attribute type casting.
+     */
     protected $casts = [
         'units'  => 'array',
         'labels' => 'array',
@@ -37,11 +43,21 @@ class MeasurementFamily extends Model implements HistoryAuditable
         'symbol',
     ];
 
+    /**
+     * Create new model factory instance.
+     *
+     * @return MeasurementFamilyFactory
+     */
     protected static function newFactory()
     {
         return MeasurementFamilyFactory::new();
     }
 
+    /**
+     * Get units array attribute.
+     *
+     * @return array
+     */
     public function getUnitsArrayAttribute()
     {
         return $this->units ?? [];

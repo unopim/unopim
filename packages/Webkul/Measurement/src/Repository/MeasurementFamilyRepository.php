@@ -7,11 +7,17 @@ use Webkul\Measurement\Models\MeasurementFamily;
 
 class MeasurementFamilyRepository extends Repository
 {
+    /**
+     * Get model class name.
+     */
     public function model(): string
     {
         return MeasurementFamily::class;
     }
 
+    /**
+     * Get measurement units by family code.
+     */
     public function getUnitsByFamilyCode(?string $familyCode): array
     {
         if (! $familyCode) {

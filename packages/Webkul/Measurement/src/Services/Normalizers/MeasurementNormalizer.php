@@ -9,6 +9,8 @@ use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 class MeasurementNormalizer extends AbstractNormalizer
 {
     /**
+     * Attribute measurement repository instance.
+     *
      * @var AttributeMeasurementRepository
      */
     protected $attributeMeasurementRepository;
@@ -19,7 +21,9 @@ class MeasurementNormalizer extends AbstractNormalizer
     }
 
     /**
-     * Normalize the given attribute value.
+     * Normalize attribute value based on format type.
+     *
+     * @return mixed
      */
     public function getData(mixed $data, ?Attribute $attribute = null, array $options = [])
     {
@@ -35,7 +39,10 @@ class MeasurementNormalizer extends AbstractNormalizer
     }
 
     /**
-     * Format the data for datagrid display.
+     * Format measurement data for datagrid display.
+     *
+     * @param  mixed  $attribute
+     * @return mixed
      */
     protected function datagridFormat(mixed $data, $attribute, array $options = [])
     {
@@ -81,7 +88,7 @@ class MeasurementNormalizer extends AbstractNormalizer
         }
 
         $locale = $options['locale'] ?? app()->getLocale();
-        $unitLabel = $unitData['label'] ?? $unitData['name'] ?? $unitCode;
+        $unitLabel = $unitData['labels'] ?? $unitData['name'] ?? $unitCode;
 
         if (is_array($unitLabel)) {
             $unitLabel = $unitLabel[$locale] ?? current($unitLabel) ?? $unitCode;
@@ -91,7 +98,11 @@ class MeasurementNormalizer extends AbstractNormalizer
     }
 
     /**
-     * Format the numeric amount: trim trailing zeros, keep at least one decimal.
+     * Format numeric amount for display.
+     *
+     * Removes trailing zeros while preserving precision.
+     *
+     * @param  mixed  $value
      */
     protected function formatAmount($value): string
     {

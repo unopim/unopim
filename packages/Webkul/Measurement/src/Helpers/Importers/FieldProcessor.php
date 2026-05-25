@@ -7,6 +7,9 @@ use Webkul\Measurement\Helpers\MeasurementHelper;
 
 class FieldProcessor extends CoreFieldProcessor
 {
+    /**
+     * Measurement helper instance.
+     */
     protected $measurementHelper;
 
     public function __construct()
@@ -14,6 +17,12 @@ class FieldProcessor extends CoreFieldProcessor
         $this->measurementHelper = app(MeasurementHelper::class);
     }
 
+    /**
+     * Process import field value.
+     *
+     * @param  mixed  $field
+     * @return mixed
+     */
     public function handleField($field, mixed $value, ?string $path = null)
     {
         $path = $path ?? '';

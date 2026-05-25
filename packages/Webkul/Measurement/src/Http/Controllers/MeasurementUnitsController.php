@@ -2,12 +2,15 @@
 
 namespace Webkul\Measurement\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Measurement\DataGrids\UnitDataGrid;
 use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 use Webkul\Measurement\Repository\MeasurementFamilyRepository;
+use Webkul\Measurement\Validation\MeasurementUnitValidator;
 
 class MeasurementUnitsController extends Controller
 {
@@ -17,6 +20,12 @@ class MeasurementUnitsController extends Controller
         protected AttributeMeasurementRepository $attributeMeasurementRepository
     ) {}
 
+    /**
+     * Display units for a measurement family (DataGrid or view).
+     *
+     * @param  int  $id
+     * @return JsonResponse|View
+     */
     public function units($id)
     {
         if (request()->ajax()) {
@@ -50,6 +59,12 @@ class MeasurementUnitsController extends Controller
         return view('measurement::measurement-families.edit', compact('family', 'locales', 'operationOptions', 'familyUsedInProducts'));
     }
 
+    /**
+     * Store a new unit for the given family.
+     *
+     * @param  int  $id
+     * @return JsonResponse
+     */
     public function storeUnit($id)
     {
         $family = $this->measurementFamilyRepository->find($id);
@@ -60,16 +75,7 @@ class MeasurementUnitsController extends Controller
             ], 404);
         }
 
-        request()->validate([
-            'code'                    => 'required|string',
-            'labels'                  => 'required|array',
-            'labels.*'                => 'nullable|string',
-            'symbol'                  => 'nullable|string',
-            'convert_from_standard'   => 'nullable|array',
-            'convert_from_standard.*' => 'nullable|string',
-            'convert_value'           => 'nullable|array',
-            'convert_value.*'         => 'nullable|numeric',
-        ]);
+        request()->validate(MeasurementUnitValidator::storeRules());
 
         $units = $family->units ?? [];
 
@@ -120,6 +126,9 @@ class MeasurementUnitsController extends Controller
         ]);
     }
 
+    /**
+     * Return JSON data for editing a single unit.
+     */
     public function editUnit(int $familyId, string $code): JsonResponse
     {
         $family = $this->measurementFamilyRepository->findOrFail($familyId);
@@ -162,6 +171,13 @@ class MeasurementUnitsController extends Controller
         ]);
     }
 
+    /**
+     * Update an existing unit on a measurement family.
+     *
+     * @param  int  $familyId
+     * @param  string  $code
+     * @return JsonResponse|RedirectResponse
+     */
     public function updateUnit($familyId, $code)
     {
         $family = $this->measurementFamilyRepository->find($familyId);
@@ -174,15 +190,7 @@ class MeasurementUnitsController extends Controller
 
         }
 
-        request()->validate([
-            'symbol'                  => 'required|string',
-            'labels'                  => 'nullable|array',
-            'labels.*'                => 'nullable|string',
-            'convert_from_standard'   => 'nullable|array',
-            'convert_from_standard.*' => 'nullable|string',
-            'convert_value'           => 'nullable|array',
-            'convert_value.*'         => 'nullable|numeric',
-        ]);
+        request()->validate(MeasurementUnitValidator::updateRules());
 
         $units = $family->units ?? [];
 
@@ -239,6 +247,13 @@ class MeasurementUnitsController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * Delete a unit from a measurement family.
+     *
+     * @param  int  $familyId
+     * @param  string  $code
+     * @return JsonResponse
+     */
     public function deleteUnit($familyId, $code)
     {
         $family = $this->measurementFamilyRepository->findOrFail($familyId);
@@ -272,6 +287,11 @@ class MeasurementUnitsController extends Controller
         ]);
     }
 
+    /**
+     * Mass delete units (deprecated naming kept for compatibility).
+     *
+     * @return RedirectResponse
+     */
     public function unitmassDelete()
     {
         $ids = request()->input('indices');

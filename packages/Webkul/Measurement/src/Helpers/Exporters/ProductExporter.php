@@ -8,6 +8,11 @@ use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 
 class ProductExporter extends CoreExporter
 {
+    /**
+     * Prepare product attribute values for export.
+     *
+     * @return array
+     */
     protected function setAttributesValues(array $values, mixed $filePath)
     {
         $attributeValues = [];

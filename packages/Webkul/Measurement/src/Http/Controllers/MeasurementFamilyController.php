@@ -2,12 +2,16 @@
 
 namespace Webkul\Measurement\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Measurement\DataGrids\MeasurementFamilyDataGrid;
 use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 use Webkul\Measurement\Repository\MeasurementFamilyRepository;
+use Webkul\Measurement\Validation\MeasurementFamilyValidator;
 
 class MeasurementFamilyController extends Controller
 {
@@ -17,6 +21,11 @@ class MeasurementFamilyController extends Controller
         protected AttributeMeasurementRepository $attributeMeasurementRepository
     ) {}
 
+    /**
+     * Display a listing of measurement families.
+     *
+     * @return View|JsonResponse
+     */
     public function index()
     {
         if (request()->ajax()) {
@@ -28,13 +37,14 @@ class MeasurementFamilyController extends Controller
 
     }
 
+    /**
+     * Store a newly created measurement family.
+     *
+     * @return JsonResponse
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'code'               => 'required|string|max:191|unique:measurement_families,code',
-            'standard_unit_code' => 'required|string|max:191',
-            'symbol'             => 'nullable|string|max:50',
-        ]);
+        $request->validate(MeasurementFamilyValidator::storeRules());
 
         try {
             $familyLabels = $request->input('labels', []);
@@ -88,6 +98,12 @@ class MeasurementFamilyController extends Controller
         }
     }
 
+    /**
+     * Show the form for editing the specified measurement family.
+     *
+     * @param  int  $id
+     * @return View
+     */
     public function edit($id)
     {
         $family = $this->measurementFamilyRepository->find($id);
@@ -114,14 +130,17 @@ class MeasurementFamilyController extends Controller
         return view('measurement::measurement-families.edit', compact('family', 'labels', 'locales', 'operationOptions', 'familyUsedInProducts'));
     }
 
+    /**
+     * Update the specified measurement family.
+     *
+     * @param  int  $id
+     * @return RedirectResponse
+     */
     public function update(Request $request, $id)
     {
         $family = $this->measurementFamilyRepository->find($id);
 
-        $request->validate([
-            'labels'   => 'nullable|array',
-            'labels.*' => 'nullable|string',
-        ]);
+        $request->validate(MeasurementFamilyValidator::updateRules());
 
         $oldLabels = $family->labels ?? [];
         $newLabels = $request->input('labels', []);
@@ -141,6 +160,12 @@ class MeasurementFamilyController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * Remove the specified measurement family.
+     *
+     * @param  int  $id
+     * @return JsonResponse
+     */
     public function destroy($id)
     {
         $family = $this->measurementFamilyRepository->findOrFail($id);
@@ -166,6 +191,11 @@ class MeasurementFamilyController extends Controller
         ]);
     }
 
+    /**
+     * Remove multiple measurement families.
+     *
+     * @return JsonResponse|RedirectResponse
+     */
     public function massDelete()
     {
         $ids = request()->input('indices');

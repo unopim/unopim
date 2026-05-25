@@ -2,9 +2,11 @@
 
 namespace Webkul\Measurement\Http\Controllers\Api;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Webkul\Measurement\Repository\MeasurementFamilyRepository;
+use Webkul\Measurement\Validation\MeasurementUnitValidator;
 
 class MeasurementUnitApiController extends Controller
 {
@@ -30,6 +32,12 @@ class MeasurementUnitApiController extends Controller
         ]);
     }
 
+    /**
+     * Store a new unit for the given measurement family (API).
+     *
+     * @param  int  $familyId
+     * @return JsonResponse
+     */
     public function store(Request $request, $familyId)
     {
         $family = $this->repository->find($familyId);
@@ -41,15 +49,7 @@ class MeasurementUnitApiController extends Controller
             ], 404);
         }
 
-        $request->validate([
-            'code'                    => 'required|string',
-            'labels'                  => 'required|array',
-            'symbol'                  => 'nullable|string',
-            'convert_from_standard'   => 'nullable|array',
-            'convert_from_standard.*' => 'nullable|string',
-            'convert_value'           => 'nullable|array',
-            'convert_value.*'         => 'nullable|numeric',
-        ]);
+        $request->validate(MeasurementUnitValidator::storeRules());
 
         $units = $family->units ?? [];
 
@@ -93,6 +93,13 @@ class MeasurementUnitApiController extends Controller
         ]);
     }
 
+    /**
+     * Update a unit for the given measurement family (API).
+     *
+     * @param  int  $familyId
+     * @param  string  $code
+     * @return JsonResponse
+     */
     public function update(Request $request, $familyId, $code)
     {
         $family = $this->repository->find($familyId);
@@ -104,14 +111,7 @@ class MeasurementUnitApiController extends Controller
             ], 404);
         }
 
-        $request->validate([
-            'labels'                  => 'nullable|array',
-            'symbol'                  => 'nullable|string',
-            'convert_from_standard'   => 'nullable|array',
-            'convert_from_standard.*' => 'nullable|string',
-            'convert_value'           => 'nullable|array',
-            'convert_value.*'         => 'nullable|numeric',
-        ]);
+        $request->validate(MeasurementUnitValidator::updateRules());
 
         $units = $family->units ?? [];
         $updated = false;
@@ -163,6 +163,13 @@ class MeasurementUnitApiController extends Controller
         ]);
     }
 
+    /**
+     * Delete a unit for the given measurement family (API).
+     *
+     * @param  int  $familyId
+     * @param  string  $code
+     * @return JsonResponse
+     */
     public function destroy($familyId, $code)
     {
         $family = $this->repository->find($familyId);

@@ -9,8 +9,14 @@ use Webkul\Product\Models\Product;
 
 class ProductObserver
 {
+    /**
+     * Measurement helper instance.
+     */
     protected $helper;
 
+    /**
+     * Attribute measurement repository instance.
+     */
     protected $attributeMeasurementRepository;
 
     public function __construct(
@@ -21,6 +27,11 @@ class ProductObserver
         $this->attributeMeasurementRepository = $attributeMeasurementRepository;
     }
 
+    /**
+     * Handle product saving event.
+     *
+     * @return void
+     */
     public function saving(Product $product)
     {
         if (is_null($product->values)) {
@@ -38,6 +49,11 @@ class ProductObserver
         $product->values = $values;
     }
 
+    /**
+     * Process measurement values for all scopes.
+     *
+     * @return void
+     */
     protected function processMeasurementValues(array &$values)
     {
 
@@ -84,6 +100,11 @@ class ProductObserver
         }
     }
 
+    /**
+     * Process measurement values for a single scope.
+     *
+     * @return void
+     */
     protected function processScope(array &$scopedValues)
     {
         foreach ($scopedValues as $attributeCode => $value) {
@@ -133,6 +154,14 @@ class ProductObserver
         }
     }
 
+    /**
+     * Convert measurement value into base unit value.
+     *
+     * @param  mixed  $value
+     * @param  string|null  $unit
+     * @param  mixed  $family
+     * @return float|int
+     */
     protected function calculateBaseData($value, $unit, $family)
     {
         if (! $unit) {

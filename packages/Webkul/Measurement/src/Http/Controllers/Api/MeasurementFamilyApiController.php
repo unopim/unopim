@@ -2,9 +2,11 @@
 
 namespace Webkul\Measurement\Http\Controllers\Api;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Webkul\Measurement\Repository\MeasurementFamilyRepository;
+use Webkul\Measurement\Validation\MeasurementFamilyValidator;
 
 class MeasurementFamilyApiController extends Controller
 {
@@ -23,20 +25,14 @@ class MeasurementFamilyApiController extends Controller
         ]);
     }
 
+    /**
+     * Store a new measurement family via API.
+     *
+     * @return JsonResponse
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'code'          => 'required|string|max:191',
-            'name'          => 'required|string|max:191',
-            'labels'        => 'required|array',
-            'labels.en_US'  => 'required|string|max:191',
-            'standard_unit' => 'required|string|max:191',
-            'units'         => 'required|array|min:1',
-            'units.*.code'  => 'required|string|max:191',
-            'units.*.labels'=> 'required|array',
-            'units.*.symbol'=> 'nullable|string|max:50',
-            'symbol'        => 'nullable|string|max:50',
-        ]);
+        $request->validate(MeasurementFamilyValidator::apiStoreRules());
 
         $data = $request->all();
 
@@ -59,6 +55,12 @@ class MeasurementFamilyApiController extends Controller
         ]);
     }
 
+    /**
+     * Update a measurement family via API.
+     *
+     * @param  int  $id
+     * @return JsonResponse
+     */
     public function update(Request $request, $id)
     {
         $family = $this->repository->find($id);
@@ -78,6 +80,12 @@ class MeasurementFamilyApiController extends Controller
         ]);
     }
 
+    /**
+     * Delete a measurement family via API.
+     *
+     * @param  int  $id
+     * @return JsonResponse
+     */
     public function destroy($id)
     {
         $this->repository->delete($id);

@@ -2,6 +2,7 @@
 
 namespace Webkul\Measurement\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 use Webkul\Measurement\Repository\MeasurementFamilyRepository;
@@ -20,6 +21,12 @@ class AttributeController extends Controller
         $this->attributeMeasurementRepository = $attributeMeasurementRepository;
     }
 
+    /**
+     * Get measurement configuration for the given attribute.
+     *
+     * @param  int|string  $attributeId
+     * @return JsonResponse
+     */
     public function getAttributeMeasurement($attributeId)
     {
         try {
