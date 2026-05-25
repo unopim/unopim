@@ -7,6 +7,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
@@ -32,6 +33,19 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        /*
+         * Pin Laravel's url() / asset() / Vite root + scheme to APP_URL so
+         * frontend asset URLs cannot be redirected to an attacker origin
+         * by a poisoned Host / X-Forwarded-Host header.
+         */
+        if ($appUrl = config('app.url')) {
+            URL::forceRootUrl($appUrl);
+
+            if ($scheme = parse_url($appUrl, PHP_URL_SCHEME)) {
+                URL::forceScheme($scheme);
+            }
+        }
+
         include __DIR__.'/../Http/helpers.php';
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
