@@ -2289,6 +2289,10 @@ return [
             'description' => 'Oops! Oturum süreniz sona erdi. Lütfen sayfayı yenileyin ve yeniden giriş yaparak devam edin.',
             'title'       => '419 Oturum Süresi Sona Erdi',
         ],
+        '405' => [
+            'description' => 'Hata! Bu URL için istek yöntemine izin verilmiyor. Lütfen doğru yöntemi kullanın veya önceki sayfaya geri dönün.',
+            'title'       => '405 Yöntem İzinli Değil',
+        ],
         '500' => [
             'description' => 'Oops! Bir şeyler ters gitti. Görünüşe göre aradığınız sayfayı yüklemede sorun yaşıyoruz.',
             'title'       => '500 İç Sunucu Hatası',

@@ -2289,6 +2289,10 @@ return [
             'description' => 'Voi ei! Istuntosi on päättynyt. Päivitä sivu ja kirjaudu uudelleen sisään jatkaaksesi.',
             'title'       => '419 Istunto on päättynyt',
         ],
+        '405' => [
+            'description' => 'Hups! Pyyntömenetelmä ei ole sallittu tälle URL-osoitteelle. Käytä oikeaa menetelmää tai palaa edelliselle sivulle.',
+            'title'       => '405 Menetelmä Ei Sallittu',
+        ],
         '500' => [
             'description' => 'Voi ei! Jotain meni pieleen. Meillä on vaikeuksia ladata etsimääsi sivua.',
             'title'       => '500 Sisäinen palvelinvirhe',

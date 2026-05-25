@@ -2289,6 +2289,10 @@ return [
             'description' => 'Ups!Sesi Anda telah berakhir.Harap segarkan halaman dan masuk lagi untuk melanjutkan.',
             'title'       => '419 sesi telah kedaluwarsa',
         ],
+        '405' => [
+            'description' => 'Ups! Metode permintaan tidak diizinkan untuk URL ini. Silakan gunakan metode yang benar atau kembali ke halaman sebelumnya.',
+            'title'       => '405 Metode Tidak Diizinkan',
+        ],
         '500' => [
             'description' => 'Ups!Ada yang salah.Sepertinya kami \'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Kesalahan Server Internal',
