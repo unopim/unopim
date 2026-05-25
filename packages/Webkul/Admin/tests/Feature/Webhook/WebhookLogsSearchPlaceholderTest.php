@@ -21,5 +21,6 @@ it('the sku_or_user translation key resolves to an English string that mentions 
     expect($resolved)
         ->not->toBe('admin::app.components.datagrid.toolbar.search_by.sku_or_user')
         ->and(strtolower($resolved))
-        ->toContain('sku');
+        ->toContain('sku')
+        ->toContain('user');
 });
