@@ -282,7 +282,8 @@ it('should patch the data for all locales for category patch', function () {
     $category = Category::factory()->create();
 
     Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE'])->update(['status' => 1]);
-    $locales = Locale::where('status', 1)->limit(3)->pluck('code')->toArray();
+
+    $locales = Locale::where('status', 1)->orderBy('id')->pluck('code')->toArray();
 
     $data = [];
     foreach ($locales as $locale) {
@@ -467,7 +468,7 @@ it('should give validation message if category trying to add parent to a root ca
 it('should update the data for all locales for category update', function () {
     $category = Category::factory()->create();
     Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE'])->update(['status' => 1]);
-    $locales = Locale::where('status', 1)->limit(3)->pluck('code')->toArray();
+    $locales = Locale::where('status', 1)->orderBy('id')->pluck('code')->toArray();
 
     $data = [];
     foreach ($locales as $locale) {
