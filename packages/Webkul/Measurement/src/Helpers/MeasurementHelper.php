@@ -6,6 +6,9 @@ use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 
 class MeasurementHelper
 {
+    /**
+     * Attribute measurement repository instance.
+     */
     protected $attributeMeasurementRepository;
 
     public function __construct(
@@ -14,12 +17,26 @@ class MeasurementHelper
         $this->attributeMeasurementRepository = $attributeMeasurementRepository;
     }
 
+    /**
+     * Check whether the given attribute is measurement type.
+     *
+     * @param mixed $attribute
+     * @return bool
+     */
     public function isMeasurementAttribute($attribute)
     {
         return $this->attributeMeasurementRepository
             ->getByAttributeId($attribute->id) !== null;
     }
 
+    /**
+     * Calculate base value using unit conversion rules.
+     *
+     * @param mixed $value
+     * @param string|null $unitCode
+     * @param mixed $family
+     * @return float|int
+     */
     public function calculateBaseValue($value, $unitCode, $family)
     {
         if (! $family || ! $unitCode) {
@@ -61,6 +78,14 @@ class MeasurementHelper
         return $baseValue;
     }
 
+    /**
+     * Prepare standardized measurement value structure.
+     *
+     * @param mixed $value
+     * @param string|null $unit
+     * @param mixed $attribute
+     * @return array
+     */
     public function getMeasurementValueStructure($value, $unit, $attribute)
     {
         $attributeMeasurement = $this->attributeMeasurementRepository->getByAttributeId($attribute->id);
