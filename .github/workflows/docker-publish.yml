@@ -136,13 +136,12 @@ jobs:
         with:
           context: .
           file: dockerfiles/q.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            webkul/unopim-queue:${{ steps.version.outputs.version }}
-            webkul/unopim-queue:${{ steps.version.outputs.minor }}
-            webkul/unopim-queue:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          provenance: false
+          tags: ${{ steps.queue_tags.outputs.tags }}
+          cache-from: type=gha,scope=queue
+          cache-to: type=gha,mode=max,scope=queue
 
       - name: Update Docker Hub description
         uses: peter-evans/dockerhub-description@v4
