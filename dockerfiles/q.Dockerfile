@@ -82,7 +82,10 @@ COPY --from=composer /app/vendor ./vendor
 # Bracket trick `[a]rtisan` keeps pgrep from matching its own command line.
 # Matches both queue:work (default) and schedule:work (scheduler service uses
 # this same image with an overridden entrypoint).
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+# start_period=360s covers q-entrypoint.sh's default 300s wait for the
+# install lock file before launching queue:work. Failed probes inside the
+# start window do not count toward retries.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=360s --retries=3 \
     CMD pgrep -f "[a]rtisan (queue|schedule):work" >/dev/null || exit 1
 
 ENTRYPOINT ["/var/www/html/dockerfiles/q-entrypoint.sh"]

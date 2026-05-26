@@ -165,6 +165,11 @@ jobs:
           cache-from: type=gha,scope=queue
           cache-to: type=gha,mode=max,scope=queue
 
+      # Smoke test runs AFTER push. Multi-arch builds cannot be `load: true`
+      # (the local docker daemon can hold only one architecture), so we accept
+      # detection-after-publish here. A failure means the bad image is already
+      # public and must be rolled back manually by retagging the previous
+      # release: `docker buildx imagetools create -t <tag> <previous-digest>`.
       - name: Smoke test multi-arch images
         env:
           VERSION: ${{ steps.version.outputs.version }}
