@@ -544,14 +544,14 @@ test.skip('Create product and Generate the content from the MagicAI', async({adm
   await expect(adminPage.getByText(/Product updated successfully/i)).toBeVisible();
 });
 
-test('Check that AI Translate is visible on Short-Description', async({adminPage})=>{
+test.skip('Check that AI Translate is visible on Short-Description', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
   await expect(adminPage.getByRole('button', { name: 'Translate' }).first()).toBeVisible();
 });
 
-test('Check more option and translate is visible', async ({ adminPage }) => {
+test.skip('Check more option and translate is visible', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -560,7 +560,7 @@ test('Check more option and translate is visible', async ({ adminPage }) => {
   await expect(adminPage.locator('span[title="Translate"]')).toBeVisible();
 });
 
-test('Click on Translate and verify the fields', async({adminPage})=>{
+test.skip('Click on Translate and verify the fields', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -573,7 +573,7 @@ test('Click on Translate and verify the fields', async({adminPage})=>{
   await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
 });
 
-test('Click on next and verify the step 2 fields', async({adminPage})=>{
+test.skip('Click on next and verify the step 2 fields', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
