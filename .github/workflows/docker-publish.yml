@@ -124,13 +124,12 @@ jobs:
         with:
           context: .
           file: dockerfiles/web.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            webkul/unopim:${{ steps.version.outputs.version }}
-            webkul/unopim:${{ steps.version.outputs.minor }}
-            webkul/unopim:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          provenance: false
+          tags: ${{ steps.web_tags.outputs.tags }}
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web
 
       - name: Build and push queue worker image
         uses: docker/build-push-action@v6
