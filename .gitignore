@@ -36,4 +36,5 @@ yarn-error.log
 tests/e2e-pw/.state/
 tests/e2e-pw/playwright-report/
 tests/e2e-pw/test-results/
-tests/e2e-pw/test-results/
+test-results
+

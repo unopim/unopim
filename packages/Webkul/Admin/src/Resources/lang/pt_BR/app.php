@@ -2289,6 +2289,10 @@ return [
             'description' => 'Oops! Sua sessão expirou. Por favor, atualize a página e faça login novamente para continuar.',
             'title'       => '419 Sessão expirou',
         ],
+        '405' => [
+            'description' => 'Ops! O método de solicitação não é permitido para esta URL. Por favor, use o método correto ou retorne à página anterior.',
+            'title'       => '405 Método Não Permitido',
+        ],
         '500' => [
             'description' => 'Oops! Algo deu errado. Parece que estamos tendo dificuldades em carregar a página que você está procurando.',
             'title'       => '500 Erro interno do servidor',

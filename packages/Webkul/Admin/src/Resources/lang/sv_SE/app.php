@@ -2289,6 +2289,10 @@ return [
             'description' => 'Oops! Din session har löpt ut. Vänligen uppdatera sidan och logga in igen för att fortsätta.',
             'title'       => '419 Sessionen har löpt ut',
         ],
+        '405' => [
+            'description' => 'Hoppsan! Begäranmetoden är inte tillåten för denna URL. Använd rätt metod eller återgå till föregående sida.',
+            'title'       => '405 Metod Ej Tillåten',
+        ],
         '500' => [
             'description' => 'Oops! Något gick fel. Det verkar som att vi har problem med att ladda den sida du söker.',
             'title'       => '500 Intern serverfel',
