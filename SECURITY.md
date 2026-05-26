@@ -2,27 +2,28 @@
 
 ## Supported Versions
 
-UnoPim follows the same release cadence as Laravel: each minor receives
-**18 months of bug fixes** and **24 months of security fixes** from its
-release date.
+UnoPim follows Laravel's release cadence. Each minor receives bug
+fixes and security fixes from its release date until the underlying
+Laravel version reaches End of Life.
 
-| Version | PHP (*)   | Release             | Bug Fixes Until         | Security Fixes Until    |
-| ------- | --------- | ------------------- | ----------------------- | ----------------------- |
-| 1.0     | 8.2 - 8.3 | November 21st, 2025 | May 26th, 2026          | May 26th, 2026          |
-| 2.0     | 8.3 - 8.4 | March 27th, 2026    | September 27th, 2027    | March 27th, 2028        |
-| 2.1     | 8.3 - 8.4 | May 13th, 2026      | November 13th, 2027     | May 13th, 2028          |
-| 2.2     | 8.3 - 8.4 | Q3 2026             | Q1 2028                 | Q3 2028                 |
+| Version | PHP (*)   | Laravel | Release             | Bug Fixes Until      | Security Fixes Until |
+| ------- | --------- | ------- | ------------------- | -------------------- | -------------------- |
+| 2.1     | 8.3 - 8.5 | 12.x    | May 13th, 2026      | August 13th, 2026    | February 24th, 2027  |
+| 2.0     | 8.3 - 8.5 | 12.x    | March 27th, 2026    | August 13th, 2026    | February 24th, 2027  |
 
 **Current:** 2.1.x
 
-> (*) The PHP range lists the minimum required PHP version and the
-> highest stable PHP version verified against the branch's CI matrix.
->
-> Versions whose **Security Fixes Until** date has passed receive no
-> further patches. The **1.0** line was retired ahead of the standard
-> 24-month window because it predates the Laravel 11 bootstrap rewrite
-> and the per-branch backport cost exceeded the user base it covered;
-> `v1.0.1` is the final release on `1.0`.
+> (*) PHP range covers the minimum required version and the highest
+> stable version verified against the branch's CI matrix.
+
+## End of Life
+
+These versions no longer receive any patches. Upgrade to a supported
+version.
+
+| Version | PHP       | Laravel | Release             | End of Life          |
+| ------- | --------- | ------- | ------------------- | -------------------- |
+| 1.0     | 8.2 - 8.3 | 10.x    | November 21st, 2025 | May 26th, 2026       |
 
 ---
 
@@ -52,8 +53,8 @@ We acknowledge receipt within **72 hours**.
 
 ## Security Process
 
-For every **supported** line (any row above whose Security Fixes Until
-date is in the future), the flow is:
+For every **supported** line (any row in the Supported Versions table
+whose Security Fixes Until date is in the future), the flow is:
 
 1. **Acknowledgement** within 72 hours
 2. **Triage** — reproduction and CVSS 3.1 severity assessment
