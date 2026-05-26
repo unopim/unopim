@@ -12,9 +12,15 @@ on:
 permissions:
   contents: read
 
+# Prevent two simultaneous publishes from racing on the same registry tag.
+concurrency:
+  group: docker-publish-${{ github.event.release.tag_name || github.event.inputs.tag }}
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -181,8 +187,13 @@ jobs:
 
             for ARCH in amd64 arm64; do
               echo "::group::Boot $IMG:$VERSION on linux/$ARCH"
-              docker run --rm --platform "linux/$ARCH" \
-                "$IMG:$VERSION" php -v \
+              # --entrypoint php bypasses the runtime entrypoint (which needs
+              # a live database) and exercises only the PHP runtime — enough
+              # to catch QEMU-segfault / glibc-mismatch class regressions.
+              # `timeout 90s` caps QEMU stalls so the job fails fast.
+              timeout 90s docker run --rm --platform "linux/$ARCH" \
+                --entrypoint php \
+                "$IMG:$VERSION" -v \
                 || fail "PHP banner failed: $IMG:$VERSION linux/$ARCH"
               echo "::endgroup::"
             done
