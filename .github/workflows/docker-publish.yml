@@ -38,12 +38,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          INPUT_TAG: ${{ github.event.inputs.tag }}
         run: |
-          # Pick raw tag: release event tag, or workflow_dispatch input.
-          if [ "${{ github.event_name }}" = "release" ]; then
-            RAW_TAG="${{ github.event.release.tag_name }}"
+          # Pick raw tag from env (not inline ${{ }}) to avoid shell injection
+          # via a tag name containing shell metacharacters.
+          if [ "$EVENT_NAME" = "release" ]; then
+            RAW_TAG="$RELEASE_TAG"
           else
-            RAW_TAG="${{ github.event.inputs.tag }}"
+            RAW_TAG="$INPUT_TAG"
           fi
 
           # Accept both 'v2.1.0' and '2.1.0' on dispatch; normalize to v-prefixed for validation.
@@ -60,7 +64,11 @@ jobs:
 
           # Docker tag = git tag without leading 'v'
           VERSION="${GIT_TAG#v}"
-          MINOR="${VERSION%.*}"
+
+          # MINOR derives from stable portion only so 'v2.1.0-beta.2' -> 2.1
+          # (not '2.1.0-beta'). Bare ${VERSION%.*} would mis-strip the suffix.
+          STABLE_PART="${VERSION%%-*}"
+          MINOR="${STABLE_PART%.*}"
 
           # Pre-release if any -suffix.
           IS_PRERELEASE="false"
@@ -100,8 +108,14 @@ jobs:
       - name: Compute Web Image Tags
         id: web_tags
         run: |
+          # Always publish the exact version tag.
           TAGS="webkul/unopim:${{ steps.version.outputs.version }}"
-          TAGS="$TAGS,webkul/unopim:${{ steps.version.outputs.minor }}"
+
+          # :minor and :latest only for stable releases on the default-branch line.
+          # Pre-release tags (vX.Y.Z-*) must not clobber the stable floating tags.
+          if [ "${{ steps.version.outputs.is_prerelease }}" = "false" ]; then
+            TAGS="$TAGS,webkul/unopim:${{ steps.version.outputs.minor }}"
+          fi
           if [ "${{ steps.version.outputs.push_latest }}" = "true" ]; then
             TAGS="$TAGS,webkul/unopim:latest"
           fi
@@ -112,7 +126,9 @@ jobs:
         id: queue_tags
         run: |
           TAGS="webkul/unopim-queue:${{ steps.version.outputs.version }}"
-          TAGS="$TAGS,webkul/unopim-queue:${{ steps.version.outputs.minor }}"
+          if [ "${{ steps.version.outputs.is_prerelease }}" = "false" ]; then
+            TAGS="$TAGS,webkul/unopim-queue:${{ steps.version.outputs.minor }}"
+          fi
           if [ "${{ steps.version.outputs.push_latest }}" = "true" ]; then
             TAGS="$TAGS,webkul/unopim-queue:latest"
           fi
