@@ -364,7 +364,6 @@ return [
                     'url'                        => '有効なURLを入力してください。',
                     'regex'                      => '値が必要なパターンと一致しません。',
                     'invalid-pattern'            => '無効なカスタムパターンが指定されました。',
-
                     'numeric'                    => '数値属性「:attribute」の値は有効な数値である必要があります。',
                     'select-attribute-or-family' => '少なくとも1つの属性または属性ファミリーを選択してください。',
                     'failed'                     => '検証に失敗しました。',
@@ -385,47 +384,45 @@ return [
                 'handle-save' => [
                     'edit-success' => '一括編集に成功しました。',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => '保存する変更はありません。',
-
-                'invalid-datetime'            => '有効な日付と時刻を入力してください。',
-
-                'resize-column'               => 'ドラッグして列幅を変更',
-                'success'                     => 'ジョブが正常に実行されました。',
-                'fetch-failed'                => '取得に失敗しました。',
-                'action'                      => '一括編集',
-                'description'                 => '複数の商品を一括編集します。変更はバックグラウンドで処理されます。',
-                'gallery-preview'             => 'ギャラリープレビュー',
-                'img-preview'                 => '画像プレビュー',
-                'no-image'                    => '画像なし',
-                'img-fail'                    => '画像のアップロードに失敗しました',
-                'no-option'                   => 'オプションなし',
-                'keyboard-shortcuts'          => 'キーボードショートカット',
-                'shortcuts-navigation'        => 'ナビゲーション',
-                'shortcuts-editing'           => '編集',
-                'shortcuts-selection'         => '選択',
-                'shortcuts-clipboard'         => 'クリップボードと入力',
-                'shortcuts-move-cell'         => 'セル間の移動',
-                'shortcuts-move-down'         => '下に移動 / 編集を確定',
-                'shortcuts-move-up'           => '上に移動',
-                'shortcuts-move-right-left'   => '右 / 左に移動',
-                'shortcuts-home-end'          => '行の最初 / 最後の列',
-                'shortcuts-ctrl-home-end'     => 'グリッドの最初 / 最後のセル',
-                'shortcuts-extend-selection'  => '選択範囲を拡張',
-                'shortcuts-select-all'        => 'すべてのセルを選択',
-                'shortcuts-enter-edit'        => '編集モードに入る',
-                'shortcuts-confirm-move-down' => '確定 + 下に移動',
-                'shortcuts-confirm-move-right'=> '確定 + 右に移動',
-                'shortcuts-escape-revert'     => '値を元に戻す + 編集を終了',
-                'shortcuts-clear-cell'        => 'セルをクリア',
-                'shortcuts-copy'              => 'コピー',
-                'shortcuts-cut'               => '切り取り',
-                'shortcuts-paste'             => '貼り付け',
-                'shortcuts-fill-down'         => '下にフィル',
-                'shortcuts-fill-right'        => '右にフィル',
-                'shortcuts-undo'              => '元に戻す',
-                'shortcuts-redo'              => 'やり直し',
-                'shortcuts-help'              => 'キーボードショートカットの表示切替',
+                'id'                           => 'ID',
+                'no-changes'                   => '保存する変更はありません。',
+                'invalid-datetime'             => '有効な日付と時刻を入力してください。',
+                'resize-column'                => 'ドラッグして列幅を変更',
+                'success'                      => 'ジョブが正常に実行されました。',
+                'fetch-failed'                 => '取得に失敗しました。',
+                'action'                       => '一括編集',
+                'description'                  => '複数の商品を一括編集します。変更はバックグラウンドで処理されます。',
+                'gallery-preview'              => 'ギャラリープレビュー',
+                'img-preview'                  => '画像プレビュー',
+                'no-image'                     => '画像なし',
+                'img-fail'                     => '画像のアップロードに失敗しました',
+                'no-option'                    => 'オプションなし',
+                'keyboard-shortcuts'           => 'キーボードショートカット',
+                'shortcuts-navigation'         => 'ナビゲーション',
+                'shortcuts-editing'            => '編集',
+                'shortcuts-selection'          => '選択',
+                'shortcuts-clipboard'          => 'クリップボードと入力',
+                'shortcuts-move-cell'          => 'セル間の移動',
+                'shortcuts-move-down'          => '下に移動 / 編集を確定',
+                'shortcuts-move-up'            => '上に移動',
+                'shortcuts-move-right-left'    => '右 / 左に移動',
+                'shortcuts-home-end'           => '行の最初 / 最後の列',
+                'shortcuts-ctrl-home-end'      => 'グリッドの最初 / 最後のセル',
+                'shortcuts-extend-selection'   => '選択範囲を拡張',
+                'shortcuts-select-all'         => 'すべてのセルを選択',
+                'shortcuts-enter-edit'         => '編集モードに入る',
+                'shortcuts-confirm-move-down'  => '確定 + 下に移動',
+                'shortcuts-confirm-move-right' => '確定 + 右に移動',
+                'shortcuts-escape-revert'      => '値を元に戻す + 編集を終了',
+                'shortcuts-clear-cell'         => 'セルをクリア',
+                'shortcuts-copy'               => 'コピー',
+                'shortcuts-cut'                => '切り取り',
+                'shortcuts-paste'              => '貼り付け',
+                'shortcuts-fill-down'          => '下にフィル',
+                'shortcuts-fill-right'         => '右にフィル',
+                'shortcuts-undo'               => '元に戻す',
+                'shortcuts-redo'               => 'やり直し',
+                'shortcuts-help'               => 'キーボードショートカットの表示切替',
             ],
             'create-success'          => '製品が正常に作成されました',
             'delete-failed'           => '製品の削除に失敗しました',
@@ -520,7 +517,6 @@ return [
                 'is-filterable'         => 'フィルタリング可能',
                 'ai-translate'          => 'AI翻訳',
                 'invalid-swatch-type'   => ':attribute は、スウォッチタイプ :swatch_type の属性タイプ :type には許可されていません。',
-
                 'single-object-only'    => '属性の作成リクエストには属性オブジェクトを1つだけ送信してください。',
                 'option'                => [
                     'color'    => 'カラー スウォッチ',
@@ -604,7 +600,6 @@ return [
             'delete-success'    => '属性が正常に削除されました',
             'update-success'    => '属性が正常に更新されました',
             'user-define-error' => 'システム属性を削除できません',
-
             'immutable-fields'  => '次のフィールドは変更できません: :fields。',
             'not-found'         => 'コード ":code" の属性が見つかりませんでした',
         ],
@@ -887,7 +882,6 @@ return [
             'update-success'    => 'カテゴリ フィールドが正常に更新されました',
             'user-define-error' => 'システム カテゴリ フィールドを削除できません',
             'not-found'         => 'コード ":code" のカテゴリ フィールドが見つかりませんでした',
-
             'immutable-fields'  => '次のフィールドは変更できません: :fields。',
         ],
         'category-fields-options' => [
@@ -989,8 +983,7 @@ return [
             'can-not-update-variant-options' => 'このファミリにはすでにバリアント製品があるため、構成可能なオプションを更新できません。',
         ],
         'history' => [
-            'view' => 'バージョンの詳細を表示',
-
+            'view'  => 'バージョンの詳細を表示',
             'index' => [
                 'datagrid' => [
                     'version'   => 'バージョン',
@@ -1124,8 +1117,7 @@ return [
                         'paused'               => '一時停止中',
                         'cancelled'            => 'キャンセル済み',
                         'failed'               => '失敗',
-
-                        'view'       => '表示',
+                        'view'                 => '表示',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1775,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'プロンプト',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'タイトル',
@@ -1815,7 +1804,7 @@ return [
                 'text-generation'     => 'テキスト生成',
                 'image-generation'    => '画像生成',
                 'select-purpose'      => '目的を選択',
-                'select-model'        => '-- モデルを選択 --',
+                'select-model'        => 'モデルを選択',
                 'loading-models'      => 'モデルを読み込み中...',
                 'no-models-available' => '利用可能なモデルがありません。プラットフォームを選択するか、プラットフォームタブで設定してください。',
                 'type'                => 'タイプ',
@@ -1831,11 +1820,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'システムプロンプト',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'タイトル',
@@ -1907,7 +1893,7 @@ return [
             'fields' => [
                 'label'                    => 'ラベル',
                 'provider'                 => 'プロバイダー',
-                'select-provider'          => '-- プロバイダーを選択 --',
+                'select-provider'          => 'プロバイダーを選択',
                 'api-url'                  => 'API URL',
                 'api-url-hint'             => 'デフォルトのエンドポイントが入力済みです。プロキシまたはカスタムデプロイを使用する場合のみ編集してください。',
                 'api-key'                  => 'API キー',
@@ -1921,7 +1907,7 @@ return [
                 'azure-api-version'        => 'API バージョン',
                 'is-default'               => 'デフォルトに設定',
                 'status'                   => 'ステータス',
-                'use-default'              => '-- デフォルトプラットフォームを使用 --',
+                'use-default'              => 'デフォルトプラットフォームを使用',
                 'use-default-hint'         => '空のままにするとデフォルトのプラットフォームが使用されます。* が付いたプラットフォームがデフォルトです。',
                 'no-image-platform'        => '画像対応プラットフォームが設定されていません。まず OpenAI、Gemini、または xAI プラットフォームを追加してください。',
                 'image-platform-hint'      => '画像生成をサポートするプラットフォームのみ表示されます (OpenAI, Gemini, xAI)。',
@@ -1995,6 +1981,8 @@ return [
                 'no-records-selected'              => 'レコードが選択されていません。',
                 'must-select-a-mass-action-option' => '一括アクションのオプションを選択する必要があります。',
                 'must-select-a-mass-action'        => '一括アクションを選択する必要があります。',
+                'link-copied'                      => 'リンクをクリップボードにコピーしました。',
+                'copy-failed'                      => 'コピーに失敗しました。手動でリンクをコピーしてください。',
             ],
             'toolbar' => [
                 'length-of'    => ':length の',
@@ -2011,8 +1999,9 @@ return [
                     'title' => 'フィルター',
                 ],
                 'search_by' => [
-                    'code'       => 'コードで検索',
-                    'code_or_id' => 'コードまたはIDで検索',
+                    'code'        => 'コードで検索',
+                    'code_or_id'  => 'コードまたはIDで検索',
+                    'sku_or_user' => 'SKUまたはユーザーで検索',
                 ],
                 'search' => [
                     'title' => '検索',
@@ -2193,7 +2182,7 @@ return [
                 'vicuna'                 => 'ビクーニャ',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'デフォルトのプロンプト',
-                'select-prompt-template' => '-- プロンプトテンプレートを選択 --',
+                'select-prompt-template' => 'プロンプトテンプレートを選択',
             ],
         ],
     ],
@@ -2288,6 +2277,10 @@ return [
         '419' => [
             'description' => '申し訳ありません。セッションが期限切れです。続行するには、ページを更新して再度ログインしてください。',
             'title'       => '419 セッションが期限切れです',
+        ],
+        '405' => [
+            'description' => '申し訳ありません！このURLではリクエストメソッドが許可されていません。正しいメソッドを使用するか、前のページに戻ってください。',
+            'title'       => '405 メソッドが許可されていません',
         ],
         '500' => [
             'description' => '申し訳ありません。問題が発生しました。探しているページを読み込む際に問題が発生しているようです。',

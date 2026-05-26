@@ -2,56 +2,81 @@
 
 ## Supported Versions
 
-We provide security updates only for supported versions of UnoPim.
+UnoPim follows Laravel's release cadence. Each minor receives bug
+fixes and security fixes from its release date until the underlying
+Laravel version reaches End of Life.
 
-| Version | Status        | Security Fixes |
-| ------- | ------------- | -------------- |
-| 0.2.x   | ❌ Deprecated | ❌             |
-| 0.3.x   | ❌ Deprecated | ❌             |
-| 1.0.x   | ✅ Supported  | ✅             |
-| 2.0.x   | ✅ Supported  | ✅             |
+| Version | PHP (*)   | Laravel | Release             | Bug Fixes Until      | Security Fixes Until |
+| ------- | --------- | ------- | ------------------- | -------------------- | -------------------- |
+| 2.1     | 8.3 - 8.5 | 12.x    | May 13th, 2026      | August 13th, 2026    | February 24th, 2027  |
+| 2.0     | 8.3 - 8.5 | 12.x    | March 27th, 2026    | August 13th, 2026    | February 24th, 2027  |
 
-> ⚠️ Versions 0.2.x and 0.3.x are deprecated and no longer receive security updates.  
-> Please upgrade to a supported version.
+**Current:** 2.1.x
+
+> (*) PHP range covers the minimum required version and the highest
+> stable version verified against the branch's CI matrix.
+
+## End of Life
+
+These versions no longer receive any patches. Upgrade to a supported
+version.
+
+| Version | PHP       | Laravel | Release             | End of Life          |
+| ------- | --------- | ------- | ------------------- | -------------------- |
+| 1.0     | 8.2 - 8.3 | 10.x    | November 21st, 2025 | May 26th, 2026       |
 
 ---
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability, please report it responsibly:
+Report security issues privately. Do **not** open a public GitHub
+issue.
 
-1. **Do not open a public issue.**
-2. **Email:** [support@webkul.com](mailto:support@webkul.com)
+Preferred channels (either works):
 
-Include:
-- Description of the issue
-- Steps to reproduce
-- Impact assessment
+1. **GitHub Security Advisories** — the "Report a vulnerability"
+   button on the [Security tab](https://github.com/unopim/unopim/security)
+   of this repository.
+2. **Email** — [support@webkul.com](mailto:support@webkul.com).
+
+Please include:
+
+- A description of the issue
+- Steps to reproduce (and a PoC, if available)
+- Impact assessment (CVSS 3.1 vector welcome)
 - Affected version(s)
-- Any suggested fixes (optional)
+- A suggested fix, if any
 
-We will acknowledge receipt within **72 hours**.
+We acknowledge receipt within **72 hours**.
 
 ---
 
 ## Security Process
 
-For supported versions (**1.0.x** and **2.0.x**), we follow this process:
+For every **supported** line (any row in the Supported Versions table
+whose Security Fixes Until date is in the future), the flow is:
 
-1. **Acknowledgment** (within 72 hours)
-2. **Investigation & severity assessment**
-3. **Fix development**
-4. **Patch release**
-5. **Disclosure** (with credit, if desired)
+1. **Acknowledgement** within 72 hours
+2. **Triage** — reproduction and CVSS 3.1 severity assessment
+3. **Fix development** on `master`, then backport to every supported
+   line
+4. **Coordinated patched releases** for each supported line, published
+   on the same day
+5. **GitHub Security Advisory** published with the reporter credited
+   (when the reporter consents)
+
+We aim to ship patches within **14 days** of acknowledgement for high
+or critical severity, and **30 days** for medium severity.
 
 ---
 
 ## Preferred Language
 
-Please report vulnerabilities in **English**.
+Reports in **English** are easiest for our team to triage quickly.
 
 ---
 
 ## Thank You
 
-We appreciate responsible disclosure and your help in keeping UnoPim secure.
+Responsible disclosure keeps UnoPim and its users safe. Thank you for
+taking the time to report issues to us privately.

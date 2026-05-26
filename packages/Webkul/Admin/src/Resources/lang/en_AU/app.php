@@ -364,7 +364,6 @@ return [
                     'url'                        => 'Please enter a valid URL.',
                     'regex'                      => 'Value does not match the required pattern.',
                     'invalid-pattern'            => 'Invalid custom pattern provided.',
-
                     'numeric'                    => 'Value for the numeric attribute ":attribute" must be a valid number.',
                     'select-attribute-or-family' => 'Please select at least one attribute or an attribute family.',
                     'failed'                     => 'Validation failed.',
@@ -385,47 +384,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Bulk edit successful.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'No changes to save.',
-
-                'invalid-datetime'            => 'Please enter a valid date and time.',
-
-                'resize-column'               => 'Drag to resize column',
-                'success'                     => 'Job executed successfully.',
-                'fetch-failed'                => 'Failed to fetch.',
-                'action'                      => 'Bulk Edit',
-                'description'                 => 'Edit multiple products at once. Changes are processed in the background.',
-                'gallery-preview'             => 'Gallery Preview',
-                'img-preview'                 => 'Image Preview',
-                'no-image'                    => 'No Image',
-                'img-fail'                    => 'Image upload failed',
-                'no-option'                   => 'No Options',
-                'keyboard-shortcuts'          => 'Keyboard Shortcuts',
-                'shortcuts-navigation'        => 'Navigation',
-                'shortcuts-editing'           => 'Editing',
-                'shortcuts-selection'         => 'Selection',
-                'shortcuts-clipboard'         => 'Clipboard & Fill',
-                'shortcuts-move-cell'         => 'Move between cells',
-                'shortcuts-move-down'         => 'Move down / confirm edit',
-                'shortcuts-move-up'           => 'Move up',
-                'shortcuts-move-right-left'   => 'Move right / left',
-                'shortcuts-home-end'          => 'First / last column in row',
-                'shortcuts-ctrl-home-end'     => 'First / last cell in grid',
-                'shortcuts-extend-selection'  => 'Extend selection',
-                'shortcuts-select-all'        => 'Select all cells',
-                'shortcuts-enter-edit'        => 'Enter edit mode',
-                'shortcuts-confirm-move-down' => 'Confirm + move down',
-                'shortcuts-confirm-move-right'=> 'Confirm + move right',
-                'shortcuts-escape-revert'     => 'Revert value + exit edit',
-                'shortcuts-clear-cell'        => 'Clear cell',
-                'shortcuts-copy'              => 'Copy',
-                'shortcuts-cut'               => 'Cut',
-                'shortcuts-paste'             => 'Paste',
-                'shortcuts-fill-down'         => 'Fill down',
-                'shortcuts-fill-right'        => 'Fill right',
-                'shortcuts-undo'              => 'Undo',
-                'shortcuts-redo'              => 'Redo',
-                'shortcuts-help'              => 'Toggle keyboard shortcuts',
+                'id'                           => 'ID',
+                'no-changes'                   => 'No changes to save.',
+                'invalid-datetime'             => 'Please enter a valid date and time.',
+                'resize-column'                => 'Drag to resize column',
+                'success'                      => 'Job executed successfully.',
+                'fetch-failed'                 => 'Failed to fetch.',
+                'action'                       => 'Bulk Edit',
+                'description'                  => 'Edit multiple products at once. Changes are processed in the background.',
+                'gallery-preview'              => 'Gallery Preview',
+                'img-preview'                  => 'Image Preview',
+                'no-image'                     => 'No Image',
+                'img-fail'                     => 'Image upload failed',
+                'no-option'                    => 'No Options',
+                'keyboard-shortcuts'           => 'Keyboard Shortcuts',
+                'shortcuts-navigation'         => 'Navigation',
+                'shortcuts-editing'            => 'Editing',
+                'shortcuts-selection'          => 'Selection',
+                'shortcuts-clipboard'          => 'Clipboard & Fill',
+                'shortcuts-move-cell'          => 'Move between cells',
+                'shortcuts-move-down'          => 'Move down / confirm edit',
+                'shortcuts-move-up'            => 'Move up',
+                'shortcuts-move-right-left'    => 'Move right / left',
+                'shortcuts-home-end'           => 'First / last column in row',
+                'shortcuts-ctrl-home-end'      => 'First / last cell in grid',
+                'shortcuts-extend-selection'   => 'Extend selection',
+                'shortcuts-select-all'         => 'Select all cells',
+                'shortcuts-enter-edit'         => 'Enter edit mode',
+                'shortcuts-confirm-move-down'  => 'Confirm + move down',
+                'shortcuts-confirm-move-right' => 'Confirm + move right',
+                'shortcuts-escape-revert'      => 'Revert value + exit edit',
+                'shortcuts-clear-cell'         => 'Clear cell',
+                'shortcuts-copy'               => 'Copy',
+                'shortcuts-cut'                => 'Cut',
+                'shortcuts-paste'              => 'Paste',
+                'shortcuts-fill-down'          => 'Fill down',
+                'shortcuts-fill-right'         => 'Fill right',
+                'shortcuts-undo'               => 'Undo',
+                'shortcuts-redo'               => 'Redo',
+                'shortcuts-help'               => 'Toggle keyboard shortcuts',
             ],
             'create-success'          => 'Product created successfully',
             'delete-failed'           => 'Product deletion failed',
@@ -520,7 +517,6 @@ return [
                 'is-filterable'         => 'Is filterable',
                 'ai-translate'          => 'AI Translate',
                 'invalid-swatch-type'   => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
-
                 'single-object-only'    => 'Each create request must send a single attribute object.',
                 'option'                => [
                     'color'    => 'Colour Swatch',
@@ -604,7 +600,6 @@ return [
             'delete-success'    => 'Attribute Deleted Successfully',
             'update-success'    => 'Attribute Updated Successfully',
             'user-define-error' => 'Cannot delete system Attribute',
-
             'immutable-fields'  => 'The following fields cannot be modified: :fields.',
             'not-found'         => 'Attribute with code ":code" could not be found',
         ],
@@ -887,7 +882,6 @@ return [
             'update-success'    => 'Category Field Updated Successfully',
             'user-define-error' => 'Cannot delete system Category Field',
             'not-found'         => 'Category Field with code ":code" not found',
-
             'immutable-fields'  => 'The following fields cannot be modified: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +983,7 @@ return [
             'can-not-update-variant-options' => 'Cannot update configurable options as this family already has variant products.',
         ],
         'history' => [
-            'view' => 'View Version Details',
-
+            'view'  => 'View Version Details',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -1124,8 +1117,7 @@ return [
                         'paused'               => 'Paused',
                         'cancelled'            => 'Cancelled',
                         'failed'               => 'Failed',
-
-                        'view'       => 'View',
+                        'view'                 => 'View',
                     ],
                 ],
                 'import' => [
@@ -1602,18 +1594,18 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Edit User',
             ],
-            'activate-warning'           => 'Your account is yet to be activated, please contact the administrator.',
-            'cannot-change'              => 'User cannot be changed',
-            'cannot-escalate-role'       => 'You do not have permission to assign an all-access role.',
-            'create-success'             => 'User created successfully.',
-            'delete-failed'              => 'User delete failed.',
-            'delete-success'             => 'User deleted successfully.',
-            'delete-warning'             => 'Are you sure you want to perform this action?',
-            'incorrect-password'         => 'Incorrect password',
-            'last-delete-error'          => 'Last User delete failed',
-            'login-error'                => 'Please check your credentials and try again.',
-            'update-success'             => 'User updated successfully.',
-            'current-user-delete-error'  => 'The logged-in user cannot be deleted.',
+            'activate-warning'          => 'Your account is yet to be activated, please contact the administrator.',
+            'cannot-change'             => 'User cannot be changed',
+            'cannot-escalate-role'      => 'You do not have permission to assign an all-access role.',
+            'create-success'            => 'User created successfully.',
+            'delete-failed'             => 'User delete failed.',
+            'delete-success'            => 'User deleted successfully.',
+            'delete-warning'            => 'Are you sure you want to perform this action?',
+            'incorrect-password'        => 'Incorrect password',
+            'last-delete-error'         => 'Last User delete failed',
+            'login-error'               => 'Please check your credentials and try again.',
+            'update-success'            => 'User updated successfully.',
+            'current-user-delete-error' => 'The logged-in user cannot be deleted.',
         ],
         'roles' => [
             'index' => [
@@ -1783,11 +1775,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompts',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Title',
@@ -1815,7 +1804,7 @@ return [
                 'text-generation'     => 'Text Generation',
                 'image-generation'    => 'Image Generation',
                 'select-purpose'      => 'Select purpose',
-                'select-model'        => '-- Select Model --',
+                'select-model'        => 'Select Model',
                 'loading-models'      => 'Loading models...',
                 'no-models-available' => 'No models available. Select a platform or configure one in the Platforms tab.',
                 'type'                => 'Type',
@@ -1831,11 +1820,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'System Prompts',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Title',
@@ -1907,7 +1893,7 @@ return [
             'fields' => [
                 'label'                    => 'Label',
                 'provider'                 => 'Provider',
-                'select-provider'          => '-- Select Provider --',
+                'select-provider'          => 'Select Provider',
                 'api-url'                  => 'API URL',
                 'api-url-hint'             => 'Pre-filled with the default endpoint. Edit only if using a proxy or custom deployment.',
                 'api-key'                  => 'API Key',
@@ -1921,7 +1907,7 @@ return [
                 'azure-api-version'        => 'API Version',
                 'is-default'               => 'Set as Default',
                 'status'                   => 'Status',
-                'use-default'              => '-- Use Default Platform --',
+                'use-default'              => 'Use Default Platform',
                 'use-default-hint'         => 'Leave empty to use the platform marked as default. Platforms marked with * are default.',
                 'no-image-platform'        => 'No image-capable platform configured. Add an OpenAI, Gemini, or xAI platform first.',
                 'image-platform-hint'      => 'Only platforms supporting image generation are listed (OpenAI, Gemini, xAI).',
@@ -1995,6 +1981,8 @@ return [
                 'no-records-selected'              => 'No records have been selected.',
                 'must-select-a-mass-action-option' => 'You must select a mass action\'s option.',
                 'must-select-a-mass-action'        => 'You must select a mass action.',
+                'link-copied'                      => 'Link copied to clipboard.',
+                'copy-failed'                      => 'Copy failed. Please copy the link manually.',
             ],
             'toolbar' => [
                 'length-of'    => ':length of',
@@ -2011,8 +1999,9 @@ return [
                     'title' => 'Filter',
                 ],
                 'search_by' => [
-                    'code'       => 'Search by code',
-                    'code_or_id' => 'Search by code or ID',
+                    'code'        => 'Search by code',
+                    'code_or_id'  => 'Search by code or ID',
+                    'sku_or_user' => 'Search by SKU or user',
                 ],
                 'search' => [
                     'title' => 'Search',
@@ -2193,7 +2182,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Default Prompt',
-                'select-prompt-template' => '-- Select a prompt template --',
+                'select-prompt-template' => 'Select a prompt template',
             ],
         ],
     ],
@@ -2288,6 +2277,10 @@ return [
         '419' => [
             'description' => 'Oops! Your session has expired. Please refresh the page and log in again to continue.',
             'title'       => '419 Session Has Expired',
+        ],
+        '405' => [
+            'description' => 'Oops! The request method is not allowed for this URL. Please use the correct method or return to the previous page.',
+            'title'       => '405 Method Not Allowed',
         ],
         '500' => [
             'description' => 'Oops! Something went wrong. We\'re having trouble loading the page you\'re looking for.',

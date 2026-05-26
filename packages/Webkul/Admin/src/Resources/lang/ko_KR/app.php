@@ -364,7 +364,6 @@ return [
                     'url'                        => '유효한 URL을 입력하세요.',
                     'regex'                      => '값이 요구되는 패턴과 일치하지 않습니다.',
                     'invalid-pattern'            => '잘못된 사용자 지정 패턴입니다.',
-
                     'numeric'                    => '숫자 속성 ":attribute"의 값은 유효한 숫자여야 합니다.',
                     'select-attribute-or-family' => '하나 이상의 속성 또는 속성 패밀리를 선택하세요.',
                     'failed'                     => '유효성 검사 실패.',
@@ -385,47 +384,45 @@ return [
                 'handle-save' => [
                     'edit-success' => '일괄 편집이 성공적으로 완료되었습니다.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => '저장할 변경 사항이 없습니다.',
-
-                'invalid-datetime'            => '유효한 날짜와 시간을 입력하세요.',
-
-                'resize-column'               => '드래그하여 열 너비 조정',
-                'success'                     => '작업이 성공적으로 실행되었습니다.',
-                'fetch-failed'                => '가져오기 실패.',
-                'action'                      => '일괄 편집',
-                'description'                 => '여러 제품을 한 번에 편집합니다. 변경 사항은 백그라운드에서 처리됩니다.',
-                'gallery-preview'             => '갤러리 미리보기',
-                'img-preview'                 => '이미지 미리보기',
-                'no-image'                    => '이미지 없음',
-                'img-fail'                    => '이미지 업로드 실패',
-                'no-option'                   => '옵션 없음',
-                'keyboard-shortcuts'          => '키보드 단축키',
-                'shortcuts-navigation'        => '탐색',
-                'shortcuts-editing'           => '편집',
-                'shortcuts-selection'         => '선택',
-                'shortcuts-clipboard'         => '클립보드 및 채우기',
-                'shortcuts-move-cell'         => '셀 간 이동',
-                'shortcuts-move-down'         => '아래로 이동 / 편집 확인',
-                'shortcuts-move-up'           => '위로 이동',
-                'shortcuts-move-right-left'   => '오른쪽 / 왼쪽으로 이동',
-                'shortcuts-home-end'          => '행의 첫 번째 / 마지막 열',
-                'shortcuts-ctrl-home-end'     => '그리드의 첫 번째 / 마지막 셀',
-                'shortcuts-extend-selection'  => '선택 범위 확장',
-                'shortcuts-select-all'        => '모든 셀 선택',
-                'shortcuts-enter-edit'        => '편집 모드 진입',
-                'shortcuts-confirm-move-down' => '확인 + 아래로 이동',
-                'shortcuts-confirm-move-right'=> '확인 + 오른쪽으로 이동',
-                'shortcuts-escape-revert'     => '값 되돌리기 + 편집 종료',
-                'shortcuts-clear-cell'        => '셀 지우기',
-                'shortcuts-copy'              => '복사',
-                'shortcuts-cut'               => '잘라내기',
-                'shortcuts-paste'             => '붙여넣기',
-                'shortcuts-fill-down'         => '아래로 채우기',
-                'shortcuts-fill-right'        => '오른쪽으로 채우기',
-                'shortcuts-undo'              => '실행 취소',
-                'shortcuts-redo'              => '다시 실행',
-                'shortcuts-help'              => '키보드 단축키 표시/숨기기',
+                'id'                           => 'ID',
+                'no-changes'                   => '저장할 변경 사항이 없습니다.',
+                'invalid-datetime'             => '유효한 날짜와 시간을 입력하세요.',
+                'resize-column'                => '드래그하여 열 너비 조정',
+                'success'                      => '작업이 성공적으로 실행되었습니다.',
+                'fetch-failed'                 => '가져오기 실패.',
+                'action'                       => '일괄 편집',
+                'description'                  => '여러 제품을 한 번에 편집합니다. 변경 사항은 백그라운드에서 처리됩니다.',
+                'gallery-preview'              => '갤러리 미리보기',
+                'img-preview'                  => '이미지 미리보기',
+                'no-image'                     => '이미지 없음',
+                'img-fail'                     => '이미지 업로드 실패',
+                'no-option'                    => '옵션 없음',
+                'keyboard-shortcuts'           => '키보드 단축키',
+                'shortcuts-navigation'         => '탐색',
+                'shortcuts-editing'            => '편집',
+                'shortcuts-selection'          => '선택',
+                'shortcuts-clipboard'          => '클립보드 및 채우기',
+                'shortcuts-move-cell'          => '셀 간 이동',
+                'shortcuts-move-down'          => '아래로 이동 / 편집 확인',
+                'shortcuts-move-up'            => '위로 이동',
+                'shortcuts-move-right-left'    => '오른쪽 / 왼쪽으로 이동',
+                'shortcuts-home-end'           => '행의 첫 번째 / 마지막 열',
+                'shortcuts-ctrl-home-end'      => '그리드의 첫 번째 / 마지막 셀',
+                'shortcuts-extend-selection'   => '선택 범위 확장',
+                'shortcuts-select-all'         => '모든 셀 선택',
+                'shortcuts-enter-edit'         => '편집 모드 진입',
+                'shortcuts-confirm-move-down'  => '확인 + 아래로 이동',
+                'shortcuts-confirm-move-right' => '확인 + 오른쪽으로 이동',
+                'shortcuts-escape-revert'      => '값 되돌리기 + 편집 종료',
+                'shortcuts-clear-cell'         => '셀 지우기',
+                'shortcuts-copy'               => '복사',
+                'shortcuts-cut'                => '잘라내기',
+                'shortcuts-paste'              => '붙여넣기',
+                'shortcuts-fill-down'          => '아래로 채우기',
+                'shortcuts-fill-right'         => '오른쪽으로 채우기',
+                'shortcuts-undo'               => '실행 취소',
+                'shortcuts-redo'               => '다시 실행',
+                'shortcuts-help'               => '키보드 단축키 표시/숨기기',
             ],
             'create-success'          => '제품이 성공적으로 생성되었습니다',
             'delete-failed'           => '제품 삭제 실패',
@@ -520,7 +517,6 @@ return [
                 'is-filterable'         => '필터링 가능',
                 'ai-translate'          => 'AI 번역',
                 'invalid-swatch-type'   => ':attribute는 스와치 유형 :swatch_type의 속성 유형 :type에 대해 허용되지 않습니다.',
-
                 'single-object-only'    => '각 생성 요청은 속성 객체를 하나만 보내야 합니다.',
                 'option'                => [
                     'color'    => '샘플 색상',
@@ -604,7 +600,6 @@ return [
             'delete-success'    => '속성 삭제 성공',
             'update-success'    => '속성 수정 성공',
             'user-define-error' => '시스템 속성은 삭제할 수 없습니다',
-
             'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
             'not-found'         => '코드 ":code"에 해당하는 속성을 찾을 수 없습니다',
         ],
@@ -887,7 +882,6 @@ return [
             'update-success'    => '카테고리 필드 업데이트 성공',
             'user-define-error' => '시스템 카테고리 필드는 삭제할 수 없습니다.',
             'not-found'         => '코드 ":code"의 카테고리 필드를 찾을 수 없습니다.',
-
             'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +983,7 @@ return [
             'can-not-update-variant-options' => '이 가족에는 이미 제품 변형이 있어 구성 옵션을 업데이트할 수 없습니다.',
         ],
         'history' => [
-            'view' => '버전 세부 정보 보기',
-
+            'view'  => '버전 세부 정보 보기',
             'index' => [
                 'datagrid' => [
                     'version'   => '버전',
@@ -1124,8 +1117,7 @@ return [
                         'paused'               => '일시 중지됨',
                         'cancelled'            => '취소됨',
                         'failed'               => '실패',
-
-                        'view'       => '보기',
+                        'view'                 => '보기',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1775,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => '프롬프트',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '제목',
@@ -1815,7 +1804,7 @@ return [
                 'text-generation'     => '텍스트 생성',
                 'image-generation'    => '이미지 생성',
                 'select-purpose'      => '목적 선택',
-                'select-model'        => '-- 모델 선택 --',
+                'select-model'        => '모델 선택',
                 'loading-models'      => '모델 로딩 중...',
                 'no-models-available' => '사용 가능한 모델이 없습니다. 플랫폼을 선택하거나 플랫폼 탭에서 설정하세요.',
                 'type'                => '유형',
@@ -1831,11 +1820,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => '시스템 프롬프트',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '제목',
@@ -1907,7 +1893,7 @@ return [
             'fields' => [
                 'label'                    => '라벨',
                 'provider'                 => '제공업체',
-                'select-provider'          => '-- 제공업체 선택 --',
+                'select-provider'          => '제공업체 선택',
                 'api-url'                  => 'API URL',
                 'api-url-hint'             => '기본 엔드포인트가 미리 입력되어 있습니다. 프록시 또는 사용자 지정 배포를 사용하는 경우에만 편집하세요.',
                 'api-key'                  => 'API 키',
@@ -1921,7 +1907,7 @@ return [
                 'azure-api-version'        => 'API 버전',
                 'is-default'               => '기본값으로 설정',
                 'status'                   => '상태',
-                'use-default'              => '-- 기본 플랫폼 사용 --',
+                'use-default'              => '기본 플랫폼 사용',
                 'use-default-hint'         => '비워두면 기본으로 표시된 플랫폼이 사용됩니다. * 표시된 플랫폼이 기본값입니다.',
                 'no-image-platform'        => '이미지 지원 플랫폼이 구성되지 않았습니다. 먼저 OpenAI, Gemini 또는 xAI 플랫폼을 추가하세요.',
                 'image-platform-hint'      => '이미지 생성을 지원하는 플랫폼만 표시됩니다 (OpenAI, Gemini, xAI).',
@@ -1995,6 +1981,8 @@ return [
                 'no-records-selected'              => '선택된 기록이 없습니다.',
                 'must-select-a-mass-action-option' => '대량 작업 옵션을 선택해야 합니다.',
                 'must-select-a-mass-action'        => '대량 작업을 선택해야 합니다.',
+                'link-copied'                      => '링크가 클립보드에 복사되었습니다.',
+                'copy-failed'                      => '복사 실패. 수동으로 링크를 복사해 주세요.',
             ],
             'toolbar' => [
                 'length-of'    => ':length',
@@ -2011,8 +1999,9 @@ return [
                     'title' => '필터',
                 ],
                 'search_by' => [
-                    'code'       => '코드로 검색',
-                    'code_or_id' => '코드 또는 ID로 검색',
+                    'code'        => '코드로 검색',
+                    'code_or_id'  => '코드 또는 ID로 검색',
+                    'sku_or_user' => 'SKU 또는 사용자로 검색',
                 ],
                 'search' => [
                     'title' => '검색',
@@ -2193,7 +2182,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => '기본 프롬프트',
-                'select-prompt-template' => '-- 프롬프트 템플릿 선택 --',
+                'select-prompt-template' => '프롬프트 템플릿 선택',
             ],
         ],
     ],
@@ -2288,6 +2277,10 @@ return [
         '419' => [
             'description' => '앗! 세션이 만료되었습니다. 페이지를 새로고침하고 다시 로그인하여 계속하십시오.',
             'title'       => '419 세션 만료',
+        ],
+        '405' => [
+            'description' => '죄송합니다! 이 URL에 대해 요청 메서드가 허용되지 않습니다. 올바른 메서드를 사용하거나 이전 페이지로 돌아가십시오.',
+            'title'       => '405 허용되지 않은 메서드',
         ],
         '500' => [
             'description' => '앗! 무언가 잘못되었습니다. 찾고 있는 페이지를 로드하는 데 문제가 발생했습니다.',
