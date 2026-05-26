@@ -35,11 +35,13 @@ LABEL org.opencontainers.image.title="UnoPim Queue Worker"
 LABEL org.opencontainers.image.description="Background job processor for UnoPim PIM"
 LABEL org.opencontainers.image.source="https://github.com/unopim/unopim"
 
-# System dependencies + PHP extensions
+# System dependencies + PHP extensions.
+# procps provides pgrep, used by the HEALTHCHECK below.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     unzip \
     gosu \
+    procps \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
