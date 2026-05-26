@@ -159,6 +159,37 @@ jobs:
           cache-from: type=gha,scope=queue
           cache-to: type=gha,mode=max,scope=queue
 
+      - name: Smoke test multi-arch images
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          fail() { echo "::error::$*"; exit 1; }
+
+          for IMG in webkul/unopim webkul/unopim-queue; do
+            echo "::group::Inspect manifest list — $IMG:$VERSION"
+            docker buildx imagetools inspect "$IMG:$VERSION" \
+              || fail "Manifest inspect failed: $IMG:$VERSION"
+
+            raw=$(docker buildx imagetools inspect --raw "$IMG:$VERSION")
+            echo "$raw" | grep -q '"architecture":[[:space:]]*"amd64"' \
+              || fail "amd64 platform missing from manifest: $IMG:$VERSION"
+            echo "$raw" | grep -q '"architecture":[[:space:]]*"arm64"' \
+              || fail "arm64 platform missing from manifest: $IMG:$VERSION"
+            echo "::endgroup::"
+
+            for ARCH in amd64 arm64; do
+              echo "::group::Boot $IMG:$VERSION on linux/$ARCH"
+              docker run --rm --platform "linux/$ARCH" \
+                "$IMG:$VERSION" php -v \
+                || fail "PHP banner failed: $IMG:$VERSION linux/$ARCH"
+              echo "::endgroup::"
+            done
+          done
+
+          echo "All smoke tests passed."
+
       - name: Update Docker Hub description
         uses: peter-evans/dockerhub-description@v4
         with:
