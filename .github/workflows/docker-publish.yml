@@ -28,19 +28,69 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract version tag
+      - name: Resolve UnoPim Version
         id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
+          # Pick raw tag: release event tag, or workflow_dispatch input.
           if [ "${{ github.event_name }}" = "release" ]; then
-            TAG="${{ github.event.release.tag_name }}"
+            RAW_TAG="${{ github.event.release.tag_name }}"
           else
-            TAG="${{ github.event.inputs.tag }}"
+            RAW_TAG="${{ github.event.inputs.tag }}"
           fi
-          # Strip 'v' prefix if present (v2.1.0 -> 2.1.0)
-          VERSION="${TAG#v}"
+
+          # Accept both 'v2.1.0' and '2.1.0' on dispatch; normalize to v-prefixed for validation.
+          case "$RAW_TAG" in
+            v*) GIT_TAG="$RAW_TAG" ;;
+            *)  GIT_TAG="v$RAW_TAG" ;;
+          esac
+
+          # Validate semver: vX.Y.Z or vX.Y.Z-suffix
+          if ! echo "$GIT_TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.]+)?$'; then
+            echo "::error::Tag '$RAW_TAG' is not valid semver (expected vX.Y.Z or vX.Y.Z-suffix)"
+            exit 1
+          fi
+
+          # Docker tag = git tag without leading 'v'
+          VERSION="${GIT_TAG#v}"
           MINOR="${VERSION%.*}"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "minor=${MINOR}" >> "$GITHUB_OUTPUT"
+
+          # Pre-release if any -suffix.
+          IS_PRERELEASE="false"
+          if echo "$GIT_TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+-'; then
+            IS_PRERELEASE="true"
+          fi
+
+          # Is build commit on default-branch line?
+          BUILD_SHA="${{ github.sha }}"
+          COMPARE_STATUS=$(gh api "repos/${{ github.repository }}/compare/${DEFAULT_BRANCH}...${BUILD_SHA}" --jq '.status' 2>/dev/null || echo "unknown")
+
+          ON_DEFAULT_BRANCH="false"
+          case "$COMPARE_STATUS" in
+            identical|behind) ON_DEFAULT_BRANCH="true" ;;
+          esac
+
+          # :latest only for stable releases on default-branch line.
+          PUSH_LATEST="false"
+          if [ "$IS_PRERELEASE" = "false" ] && [ "$ON_DEFAULT_BRANCH" = "true" ]; then
+            PUSH_LATEST="true"
+          fi
+
+          {
+            echo "version=$VERSION"
+            echo "minor=$MINOR"
+            echo "git_tag=$GIT_TAG"
+            echo "is_prerelease=$IS_PRERELEASE"
+            echo "on_default_branch=$ON_DEFAULT_BRANCH"
+            echo "push_latest=$PUSH_LATEST"
+            echo "default_branch=$DEFAULT_BRANCH"
+            echo "compare_status=$COMPARE_STATUS"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Resolved git tag: $GIT_TAG -> docker version: $VERSION (minor: $MINOR)"
+          echo "Pre-release: $IS_PRERELEASE | On default branch: $ON_DEFAULT_BRANCH ($COMPARE_STATUS) | Push :latest: $PUSH_LATEST"
 
       - name: Build and push web image
         uses: docker/build-push-action@v6
