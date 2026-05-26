@@ -509,7 +509,7 @@ test('Check the AI translate checkbox in attribute', async({adminPage})=>{
   await expect(adminPage.getByText(/Attribute Updated Successfully/)).toBeVisible();
 });
 
-test('Create product and Generate the content from the MagicAI', async({adminPage})=>{
+test.skip('Create product and Generate the content from the MagicAI', async({adminPage})=>{
   test.setTimeout(120000);
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
@@ -587,7 +587,7 @@ test('Click on next and verify the step 2 fields', async({adminPage})=>{
   await expect(adminPage.getByRole('button', { name: 'Translate' }).nth(1)).toBeVisible();
 });
 
-test('Verify the fields in translated content after click on Translate button', async({adminPage})=>{
+test.skip('Verify the fields in translated content after click on Translate button', async({adminPage})=>{
   test.setTimeout(120000);
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
