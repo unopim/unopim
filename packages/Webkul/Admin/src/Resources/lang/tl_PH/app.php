@@ -2278,6 +2278,10 @@ return [
             'description' => 'Oops! Nag-expire ang iyong session. Mangyaring i-refresh ang pahina at mag-login muli para magpatuloy.',
             'title'       => '419 Nag-expire na Sesyon',
         ],
+        '405' => [
+            'description' => 'Naku! Hindi pinapayagan ang paraan ng kahilingan para sa URL na ito. Mangyaring gamitin ang tamang paraan o bumalik sa nakaraang pahina.',
+            'title'       => '405 Hindi Pinapayagan ang Pamamaraan',
+        ],
         '500' => [
             'description' => 'Oops! May nangyaring mali. Mukhang may problema kami sa pag-load ng pahinang hinahanap mo.',
             'title'       => '500 Error ng Server',

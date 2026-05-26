@@ -2459,6 +2459,11 @@ return [
             'title'       => '419 Session Has Expired',
         ],
 
+        '405' => [
+            'description' => 'Oops! The request method is not allowed for this URL. Please use the correct method or return to the previous page.',
+            'title'       => '405 Method Not Allowed',
+        ],
+
         '500' => [
             'description' => 'Oops! Something went wrong. It seems we\'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Internal Server Error',

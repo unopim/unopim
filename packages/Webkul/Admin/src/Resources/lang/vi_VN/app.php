@@ -2278,6 +2278,10 @@ return [
             'description' => 'Oops! Phiên của bạn đã hết hạn. Vui lòng làm mới trang và đăng nhập lại để tiếp tục.',
             'title'       => '419 Phiên đã hết hạn',
         ],
+        '405' => [
+            'description' => 'Rất tiếc! Phương thức yêu cầu không được phép cho URL này. Vui lòng sử dụng phương thức chính xác hoặc quay lại trang trước.',
+            'title'       => '405 Phương Thức Không Được Phép',
+        ],
         '500' => [
             'description' => 'Oops! Có gì đó không đúng. Có vẻ như chúng tôi gặp sự cố khi tải trang bạn đang tìm kiếm.',
             'title'       => '500 Lỗi máy chủ nội bộ',

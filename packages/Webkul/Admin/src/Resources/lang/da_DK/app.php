@@ -2278,6 +2278,10 @@ return [
             'description' => 'Ups! Din session er udløbet. Genindlæs siden og log ind igen for at fortsætte.',
             'title'       => '419 Session er udløbet',
         ],
+        '405' => [
+            'description' => 'Ups! Anmodningsmetoden er ikke tilladt for denne URL. Brug venligst den korrekte metode eller vend tilbage til den forrige side.',
+            'title'       => '405 Metode Ikke Tilladt',
+        ],
         '500' => [
             'description' => 'Ups! Noget gik galt. Vi har problemer med at indlæse den side, du leder efter.',
             'title'       => '500 Intern serverfejl',

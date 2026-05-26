@@ -2278,6 +2278,10 @@ return [
             'description' => 'Oops! La teva sessió ha caducat. Fes una recàrrega de la pàgina i inicia sessió novament per continuar.',
             'title'       => '419 Sessió caducada',
         ],
+        '405' => [
+            'description' => 'Vaja! El mètode de la sol·licitud no està permès per a aquesta URL. Si us plau, utilitzeu el mètode correcte o torneu a la pàgina anterior.',
+            'title'       => '405 Mètode No Permès',
+        ],
         '500' => [
             'description' => 'Oops! Alguna cosa ha sortit malament. Sembla que tenim problemes carregant la pàgina que busques.',
             'title'       => '500 Error de servidor intern',

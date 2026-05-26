@@ -2278,6 +2278,10 @@ return [
             'description' => 'Oops! Your session has expired. Please refresh the page and log in again to continue.',
             'title'       => '419 Session Has Expired',
         ],
+        '405' => [
+            'description' => 'Oops! The request method is not allowed for this URL. Please use the correct method or return to the previous page.',
+            'title'       => '405 Method Not Allowed',
+        ],
         '500' => [
             'description' => 'Oops! Something went wrong. We\'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Internal Server Error',

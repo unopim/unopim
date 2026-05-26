@@ -2278,6 +2278,10 @@ return [
             'description' => 'Oeps! Je sessie is verlopen. Vernieuw de pagina en log opnieuw in om door te gaan.',
             'title'       => '419 sessie is verlopen',
         ],
+        '405' => [
+            'description' => 'Oeps! De aanvraagmethode is niet toegestaan voor deze URL. Gebruik de juiste methode of ga terug naar de vorige pagina.',
+            'title'       => '405 Methode Niet Toegestaan',
+        ],
         '500' => [
             'description' => 'Oeps! Er is iets misgegaan. We hebben problemen met het laden van de pagina die je zoekt.',
             'title'       => '500 Interne serverfout',

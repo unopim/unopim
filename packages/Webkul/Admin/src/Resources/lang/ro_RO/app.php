@@ -2278,6 +2278,10 @@ return [
             'description' => 'Oops! Sesia ta a expirat. Te rugăm să reînnoiești pagina și să te loghezi din nou pentru a continua.',
             'title'       => '419 Sesiunea a expirat',
         ],
+        '405' => [
+            'description' => 'Ups! Metoda solicitării nu este permisă pentru această adresă URL. Vă rugăm să utilizați metoda corectă sau să reveniți la pagina anterioară.',
+            'title'       => '405 Metodă Nepermisă',
+        ],
         '500' => [
             'description' => 'Oops! Ceva nu a mers bine. Se pare că avem probleme în încărcarea paginii pe care o cauți.',
             'title'       => '500 Eroare internă a serverului',

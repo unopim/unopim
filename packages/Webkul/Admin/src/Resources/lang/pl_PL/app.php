@@ -2278,6 +2278,10 @@ return [
             'description' => 'Ups! Twoja sesja wygasła. Odśwież stronę i zaloguj się ponownie, aby kontynuować.',
             'title'       => '419 Sesja wygasła',
         ],
+        '405' => [
+            'description' => 'Ups! Metoda żądania jest niedozwolona dla tego adresu URL. Proszę użyć poprawnej metody lub wrócić do poprzedniej strony.',
+            'title'       => '405 Metoda Niedozwolona',
+        ],
         '500' => [
             'description' => 'Ups! Coś poszło nie tak. Wygląda na to, że mamy problem z ładowaniem strony, której szukasz.',
             'title'       => '500 Wewnętrzny błąd serwera',

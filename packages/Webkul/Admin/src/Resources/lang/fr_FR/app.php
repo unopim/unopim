@@ -2278,6 +2278,10 @@ return [
             'description' => 'Oops ! Votre session a expiré. Veuillez actualiser la page et vous connecter à nouveau pour continuer.',
             'title'       => '419 La session a expiré',
         ],
+        '405' => [
+            'description' => 'Oups ! La méthode de requête n\'est pas autorisée pour cette URL. Veuillez utiliser la méthode correcte ou retourner à la page précédente.',
+            'title'       => '405 Méthode Non Autorisée',
+        ],
         '500' => [
             'description' => 'Oops ! Quelque chose s\'est mal passé. Nous avons des difficultés à générer la ressource.',
             'title'       => '500 Erreur interne',

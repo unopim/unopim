@@ -2278,6 +2278,10 @@ return [
             'description' => 'Ops! La tua sessione è scaduta. Si prega di aggiornare la pagina e accedere nuovamente per continuare.',
             'title'       => '419 Sessione scaduta',
         ],
+        '405' => [
+            'description' => 'Oops! Il metodo di richiesta non è consentito per questo URL. Si prega di utilizzare il metodo corretto o tornare alla pagina precedente.',
+            'title'       => '405 Metodo Non Consentito',
+        ],
         '500' => [
             'description' => 'Ops! Qualcosa è andato storto. Sembrava che avessimo problemi a caricare la pagina che stavi cercando.',
             'title'       => '500 Errore interno del server',

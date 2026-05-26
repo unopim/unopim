@@ -2278,6 +2278,10 @@ return [
             'description' => 'Ups! Vaša sesija je istekla. Molimo osvježite stranicu i prijavite se ponovno kako biste nastavili.',
             'title'       => '419 Sesija je istekla',
         ],
+        '405' => [
+            'description' => 'Ups! Metoda zahtjeva nije dopuštena za ovaj URL. Molimo koristite ispravnu metodu ili se vratite na prethodnu stranicu.',
+            'title'       => '405 Metoda Nije Dopuštena',
+        ],
         '500' => [
             'description' => 'Ups! Nešto nije u redu. Čini se da imamo problema s učitavanjem tražene stranice.',
             'title'       => '500 Unutarnja greška poslužitelja',

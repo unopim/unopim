@@ -2278,6 +2278,10 @@ return [
             'description' => 'Hoppla! Ihre Sitzung ist abgelaufen. Bitte aktualisieren Sie die Seite und melden Sie sich erneut an, um fortzufahren.',
             'title'       => '419 Sitzung ist abgelaufen',
         ],
+        '405' => [
+            'description' => 'Hoppla! Die Anfragemethode ist für diese URL nicht erlaubt. Bitte verwenden Sie die korrekte Methode oder kehren Sie zur vorherigen Seite zurück.',
+            'title'       => '405 Methode nicht erlaubt',
+        ],
         '500' => [
             'description' => 'Hoppla! Da ist etwas schiefgelaufen. Es scheint, als hätten wir Probleme beim Laden der gesuchten Seite.',
             'title'       => '500 Interner Serverfehler',
