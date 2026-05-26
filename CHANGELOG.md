@@ -16,6 +16,7 @@
 ### DevOps
 - Added **multi-architecture Docker images** — the publish workflow now produces both `linux/amd64` and `linux/arm64` images so Apple Silicon and ARM cloud hosts get native binaries ([#426](https://github.com/unopim/unopim/pull/426)).
 
+
 ## v2.1.0 - 2026-05-13
 
 ### Features
