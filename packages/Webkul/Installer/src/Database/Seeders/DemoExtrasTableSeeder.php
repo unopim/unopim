@@ -5,6 +5,7 @@ namespace Webkul\Installer\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use JsonException;
 use Throwable;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
@@ -64,13 +65,23 @@ class DemoExtrasTableSeeder extends Seeder
 
         $driver = DB::getDriverName();
         $isMysql = in_array($driver, ['mysql', 'mariadb'], true);
-
-        $userConfig = $this->snapshotUserConfig();
+        $isPgsql = $driver === 'pgsql';
 
         try {
             if ($isMysql) {
                 DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+            } elseif ($isPgsql) {
+                try {
+                    DB::statement("SET session_replication_role = 'replica'");
+                } catch (Throwable $e) {
+                    throw new \RuntimeException(
+                        'PostgreSQL requires a superuser role to set session_replication_role; unable to bypass FK triggers for demo extras seeding.',
+                        previous: $e
+                    );
+                }
             }
+
+            $userConfig = $this->snapshotUserConfig();
 
             $appliedTables = [];
 
@@ -100,6 +111,8 @@ class DemoExtrasTableSeeder extends Seeder
                     continue;
                 }
 
+                $rows = $this->castBooleanColumns($table, $rows);
+
                 foreach (array_chunk($rows, 200) as $chunk) {
                     DB::table($table)->insert($chunk);
                 }
@@ -109,9 +122,16 @@ class DemoExtrasTableSeeder extends Seeder
 
             if ($isMysql) {
                 DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            } elseif ($isPgsql) {
+                DB::statement("SET session_replication_role = 'origin'");
             }
 
-            DatabaseSequenceHelper::fixSequences($appliedTables);
+            $tablesWithIdSequence = array_values(array_filter(
+                $appliedTables,
+                fn (string $table): bool => $this->hasIntegerIdSequence($table)
+            ));
+
+            DatabaseSequenceHelper::fixSequences($tablesWithIdSequence);
 
             $this->restoreUserConfig($userConfig);
 
@@ -119,9 +139,112 @@ class DemoExtrasTableSeeder extends Seeder
         } catch (Throwable $e) {
             if ($isMysql) {
                 DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            } elseif ($isPgsql) {
+
+                try {
+                    DB::statement("SET session_replication_role = 'origin'");
+                } catch (Throwable) {
+                }
             }
             $this->command?->error('Failed to seed demo extras: '.$e->getMessage());
+
+            throw $e;
         }
+    }
+
+    /**
+     * Convert integer 0/1 values to PHP bools for columns the schema
+     * declares as `boolean`. PostgreSQL rejects integers in boolean columns
+     * (SQLSTATE 42804); MySQL silently coerces them. Casting at the value
+     * level keeps the JSON dump portable across both drivers without
+     * having to ship two parallel demo datasets.
+     *
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    protected function castBooleanColumns(string $table, array $rows): array
+    {
+        try {
+            $columns = Schema::getColumns($table);
+        } catch (Throwable) {
+            return $rows;
+        }
+
+        $boolColumns = [];
+
+        foreach ($columns as $column) {
+            $name = $column['name'] ?? null;
+            $typeName = strtolower((string) ($column['type_name'] ?? ''));
+            $type = strtolower((string) ($column['type'] ?? ''));
+
+            // Postgres returns 'bool'/'boolean'; MySQL stores boolean as
+            // tinyint(1) and reports type_name='tinyint' / type='tinyint(1)'.
+            $isBool = in_array($typeName, ['bool', 'boolean'], true)
+                || $type === 'tinyint(1)';
+
+            if ($name && $isBool) {
+                $boolColumns[] = $name;
+            }
+        }
+
+        if (empty($boolColumns)) {
+            return $rows;
+        }
+
+        foreach ($rows as &$row) {
+            foreach ($boolColumns as $col) {
+                if (array_key_exists($col, $row) && is_int($row[$col])) {
+                    $row[$col] = (bool) $row[$col];
+                }
+            }
+        }
+        unset($row);
+
+        return $rows;
+    }
+
+    /**
+     * True if `$table` has an `id` column whose type is an integer-family
+     * column — i.e. the only shape DatabaseSequenceHelper::fixSequence()
+     * knows how to handle.
+     */
+    protected function hasIntegerIdSequence(string $table): bool
+    {
+        try {
+            $columns = $this->getTableColumns($table);
+        } catch (Throwable) {
+            return false;
+        }
+
+        foreach ($columns as $column) {
+            if (($column['name'] ?? null) !== 'id') {
+                continue;
+            }
+
+            $typeName = strtolower((string) ($column['type_name'] ?? ''));
+            $type = strtolower((string) ($column['type'] ?? ''));
+
+            return in_array($typeName, ['int', 'int2', 'int4', 'int8', 'integer', 'bigint', 'smallint', 'tinyint', 'mediumint'], true)
+                || str_starts_with($type, 'int')
+                || str_starts_with($type, 'bigint')
+                || str_starts_with($type, 'smallint')
+                || str_starts_with($type, 'tinyint')
+                || str_starts_with($type, 'mediumint');
+        }
+
+        return false;
+    }
+
+    /**
+     * Indirection so tests can stub the schema source without mocking the
+     * Schema facade (which needs a real DB connection). Production callers
+     * get the live introspection.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function getTableColumns(string $table): array
+    {
+        return Schema::getColumns($table);
     }
 
     /**
