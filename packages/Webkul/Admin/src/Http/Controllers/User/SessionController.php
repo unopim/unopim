@@ -284,7 +284,7 @@ class SessionController extends Controller
     {
         return [
             'enabled'       => (bool) config('services.microsoft_sso.enabled', false),
-            'tenant'        => (string) config('services.microsoft_sso.tenant', 'common'),
+            'tenant'        => (string) config('services.microsoft_sso.tenant', ''),
             'client_id'     => (string) config('services.microsoft_sso.client_id', ''),
             'client_secret' => (string) config('services.microsoft_sso.client_secret', ''),
         ];
