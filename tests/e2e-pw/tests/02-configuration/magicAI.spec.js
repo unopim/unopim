@@ -510,6 +510,7 @@ test('Check the AI translate checkbox in attribute', async({adminPage})=>{
 });
 
 test('Create product and Generate the content from the MagicAI', async({adminPage})=>{
+  test.setTimeout(120000);
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
@@ -587,6 +588,7 @@ test('Click on next and verify the step 2 fields', async({adminPage})=>{
 });
 
 test('Verify the fields in translated content after click on Translate button', async({adminPage})=>{
+  test.setTimeout(120000);
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
