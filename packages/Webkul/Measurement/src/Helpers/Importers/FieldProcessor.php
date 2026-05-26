@@ -43,6 +43,8 @@ class FieldProcessor extends CoreFieldProcessor
             }
 
             if ($measurementValue !== null && $measurementUnit !== null) {
+                $measurementUnit = $this->measurementHelper->resolveUnitCode($measurementUnit, $field);
+
                 return $this->measurementHelper->getMeasurementValueStructure(
                     (float) $measurementValue,
                     $measurementUnit,

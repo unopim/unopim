@@ -34,7 +34,11 @@ class MeasurementProductImport
             return;
         }
 
-        $json = $this->helper->getMeasurementValueStructure($value, $unit, $attribute);
+        $json = $this->helper->getMeasurementValueStructure(
+            $value,
+            $this->helper->resolveUnitCode($unit, $attribute, $row['locale'] ?? null),
+            $attribute
+        );
 
         $product->attribute_values()->updateOrCreate(
             [

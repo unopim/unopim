@@ -1,11 +1,6 @@
 <?php
 
 use Webkul\Measurement\Models\MeasurementFamily;
-use Webkul\Measurement\Tests\MeasurementTestCase;
-
-uses(
-    MeasurementTestCase::class
-)->group('measurement', 'admin');
 
 beforeEach(function () {
     $this->loginAsAdmin();

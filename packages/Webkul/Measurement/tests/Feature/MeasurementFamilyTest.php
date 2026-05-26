@@ -2,11 +2,6 @@
 
 use Illuminate\Testing\Fluent\AssertableJson;
 use Webkul\Measurement\Models\MeasurementFamily;
-use Webkul\Measurement\Tests\MeasurementTestCase;
-
-uses(
-    MeasurementTestCase::class
-)->group('measurement', 'admin');
 
 it('should return the measurement family index page', function () {
     $this->loginAsAdmin();

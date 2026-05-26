@@ -4,6 +4,7 @@ namespace Webkul\Measurement\Helpers\Importers\Product;
 
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer as CoreImporter;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 
 class Importer extends CoreImporter
 {
@@ -140,6 +141,12 @@ class Importer extends CoreImporter
                 $unit = $rowData[$unitColumnName]
                     ?? $rowData[$unitUnderscoreName]
                     ?? null;
+
+                $unit = app(MeasurementHelper::class)->resolveUnitCode(
+                    $unit,
+                    $attribute,
+                    $rowData['locale'] ?? null
+                );
 
                 // ALWAYS normalize structure
                 if (! is_null($value)) {

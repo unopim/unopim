@@ -5,6 +5,7 @@ namespace Webkul\Measurement\Helpers\Exporters;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter as CoreExporter;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 
 class ProductExporter extends CoreExporter
 {
@@ -45,7 +46,9 @@ class ProductExporter extends CoreExporter
                 }
 
                 $attributeValues[$code] = EscapeFormulaOperators::escapeValue($amount);
-                $attributeValues["{$code}(unit)"] = EscapeFormulaOperators::escapeValue($unit);
+                $attributeValues["{$code}(unit)"] = EscapeFormulaOperators::escapeValue(
+                    app(MeasurementHelper::class)->getUnitLabel($unit, $attribute)
+                );
 
                 continue;
             }

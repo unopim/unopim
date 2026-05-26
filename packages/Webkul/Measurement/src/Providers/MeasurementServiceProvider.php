@@ -13,9 +13,11 @@ use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
 use Webkul\Measurement\Database\Seeders\MeasurementFamilySeeder;
 use Webkul\Measurement\Helpers\Exporters\ProductExporter;
+use Webkul\Measurement\Normalizer\ProductAttributeValuesNormalizer as MeasurementProductAttributeValuesNormalizer;
 use Webkul\Measurement\Observers\ProductObserver;
 use Webkul\Measurement\Services\Normalizers\MeasurementNormalizer;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 
 class MeasurementServiceProvider extends ServiceProvider
 {
@@ -70,6 +72,11 @@ class MeasurementServiceProvider extends ServiceProvider
         $this->app->bind(
             Exporter::class,
             ProductExporter::class
+        );
+
+        $this->app->bind(
+            ProductAttributeValuesNormalizer::class,
+            MeasurementProductAttributeValuesNormalizer::class
         );
 
         $this->app->bind(

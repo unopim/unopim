@@ -9,19 +9,18 @@
 
     <x-admin::form
         method="PUT"
-        action="{{ route('admin.measurement.families.update', $family->id) }}">
-        
+        action="{{ route('admin.measurement.families.update', $family->id) }}"
+    >
         <div class="grid gap-2.5">
-            <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
+            <div class="flex items-center justify-between gap-4 max-sm:flex-wrap">
                 <div class="grid gap-1.5">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold leading-6">
-                        @lang('measurement::app.measurement.edit.measurement_edit') | Name: {{ $family->name }}
+                    <p class="text-xl font-bold leading-6 text-gray-800 dark:text-slate-50">
+                        @lang('measurement::app.measurement.edit.measurement_edit')
+                        | Name: {{ $family->name }}
                     </p>
                 </div>
 
-                <div class="flex gap-x-2.5 items-center">
-
-                    
+                <div class="flex items-center gap-x-2.5">
                     <a
                         href="{{ route('admin.measurement.families.index') }}"
                         class="transparent-button"
@@ -29,7 +28,6 @@
                         @lang('measurement::app.measurement.edit.back')
                     </a>
 
-                    
                     <button class="primary-button">
                         @lang('measurement::app.measurement.edit.save')
                     </button>
@@ -37,20 +35,16 @@
             </div>
         </div>
 
-        <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-
-            <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto">
-
-                <div class="relative p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-
-                    <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+        <div class="mt-3.5 flex gap-2.5 max-xl:flex-wrap">
+            <div class="left-column flex flex-1 flex-col gap-2 max-xl:flex-auto">
+                <div class="relative rounded bg-white p-4 box-shadow dark:bg-cherry-900">
+                    <p class="mb-4 text-base font-semibold text-gray-800 dark:text-white">
                         @lang('measurement::app.measurement.edit.general')
                     </p>
 
-                   
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
-                           @lang('measurement::app.measurement.edit.code')
+                            @lang('measurement::app.measurement.edit.code')
                         </x-admin::form.control-group.label>
 
                         <x-admin::form.control-group.control
@@ -65,48 +59,41 @@
                         <x-admin::form.control-group.error control-name="name" />
                     </x-admin::form.control-group>
 
-                        <div class="">
-                            <div class="flex justify-between items-center p-1.5">
-                                <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
-                                    @lang('measurement::app.measurement.edit.label')
-                                </p>
-                            </div>
- 
-                                @foreach ($locales as $locale)
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label>
-                                            {{ $locale->name }}
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            name="labels[{{ $locale->code }}]"
-                                            value="{{ old('labels.'.$locale->code, $labels[$locale->code] ?? '') }}"
-                                            placeholder="Enter {{ $locale->name }} label"
-                                        />
-                                    </x-admin::form.control-group>
-                                @endforeach
-
+                    <div>
+                        <div class="flex items-center justify-between p-1.5">
+                            <p class="mb-4 text-base font-semibold text-gray-800 dark:text-white">
+                                @lang('measurement::app.measurement.edit.label')
+                            </p>
                         </div>
 
-                </div> 
-            </div>
+                        @foreach ($locales as $locale)
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label>
+                                    {{ $locale->name }}
+                                </x-admin::form.control-group.label>
 
-        </div> 
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="labels[{{ $locale->code }}]"
+                                    value="{{ old('labels.' . $locale->code, $labels[$locale->code] ?? '') }}"
+                                    placeholder="Enter {{ $locale->name }} label"
+                                />
+                            </x-admin::form.control-group>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
     </x-admin::form>
 
-
-
-
-    <div class="mt-4 p-4 bg-white dark:bg-cherry-900 box-shadow rounded">
-
+    <div class="mt-4 rounded bg-white p-4 box-shadow dark:bg-cherry-900">
         <v-locales>
-            <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
+            <div class="flex items-center justify-between gap-4 max-sm:flex-wrap">
+                <p class="text-xl font-bold text-gray-800 dark:text-slate-50">
                     @lang('measurement::app.measurement.edit.units')
                 </p>
 
-                <div class="flex gap-x-2.5 items-center">
+                <div class="flex items-center gap-x-2.5">
                     @if (bouncer()->hasPermission('settings.locales.create'))
                         <button
                             type="button"
@@ -118,28 +105,23 @@
                 </div>
             </div>
 
-        
             <x-admin::shimmer.datagrid />
         </v-locales>
-
-
     </div>
 
     @pushOnce('scripts')
-
         <script type="text/x-template" id="v-locales-template">
-            <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
+            <div class="flex items-center justify-between gap-4 max-sm:flex-wrap">
+                <p class="text-xl font-bold text-gray-800 dark:text-slate-50">
                     @lang('measurement::app.measurement.edit.units')
                 </p>
 
-                <div class="flex gap-x-2.5 items-center">
-                
+                <div class="flex items-center gap-x-2.5">
                     @if (bouncer()->hasPermission('settings.locales.create'))
                         <button
                             type="button"
                             class="primary-button"
-                            @click="selectedLocales=0;resetForm();$refs.localeUpdateOrCreateModal.toggle()"
+                            @click="selectedLocales = 0; resetForm(); $refs.localeUpdateOrCreateModal.toggle()"
                         >
                             @lang('measurement::app.measurement.edit.create_units')
                         </button>
@@ -149,60 +131,51 @@
 
             @php
                 $hasDeletePermission = bouncer()->hasPermission('settings.locales.delete');
-
                 $hasEditPermission = bouncer()->hasPermission('settings.locales.edit');
-
-                $hasMassActionPermission = bouncer()->hasPermission('settings.locales.mass_update') || bouncer()->hasPermission('settings.locales.mass_delete');
+                $hasMassActionPermission = bouncer()->hasPermission('settings.locales.mass_update')
+                    || bouncer()->hasPermission('settings.locales.mass_delete');
             @endphp
-            
-            <x-admin::datagrid :src="route('admin.measurement.families.units', $family->id)" ref="datagrid">
-                
+
+            <x-admin::datagrid
+                :src="route('admin.measurement.families.units', $family->id)"
+                ref="datagrid"
+            >
                 <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                        class="row grid items-center gap-2.5 border-b px-4 py-4 text-gray-600 transition-all hover:bg-violet-50 dark:border-cherry-800 dark:text-gray-300 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                     >
                         <p v-text="record.code"></p>
 
-                        
                         <p v-text="record.label"></p>
 
-                        
                         <p v-html="record.is_standard"></p>
 
-
-
-                        <!-- Actions -->
                         <div class="flex justify-end">
-
                             @if ($hasEditPermission)
                                 <a
-                                v-if="record.actions.find(a => a.index === 'edit' && a.url)"
-                                @click="selectedLocales=1; editModal(record.actions.find(a => a.index === 'edit').url)">
-                                    
+                                    v-if="record.actions.find(a => a.index === 'edit' && a.url)"
+                                    @click="selectedLocales = 1; editModal(record.actions.find(a => a.index === 'edit').url)"
+                                >
                                     <span
                                         class="icon-edit cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"
                                         title="Edit"
                                     ></span>
-
                                 </a>
                             @endif
 
-
                             @if ($hasDeletePermission)
                                 <a
-                                v-if="record.actions.find(a => a.index === 'delete' && a.url)"
-                                @click="performAction(record.actions.find(a => a.index === 'delete'))">
-                                    
+                                    v-if="record.actions.find(a => a.index === 'delete' && a.url)"
+                                    @click="performAction(record.actions.find(a => a.index === 'delete'))"
+                                >
                                     <span
                                         class="icon-delete cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"
                                         title="Delete"
                                     ></span>
-
                                 </a>
                             @endif
-
                         </div>
                     </div>
                 </template>
@@ -214,15 +187,13 @@
                 ref="modalForm"
             >
                 <form
-                    @submit="handleSubmit($event, updateOrCreate)"
                     ref="createLocaleForm"
+                    @submit="handleSubmit($event, updateOrCreate)"
                 >
-
                     <x-admin::modal ref="localeUpdateOrCreateModal">
-                        <!-- Modal Header -->
                         <x-slot:header>
-                            <p class="text-lg text-gray-800 dark:text-white font-bold">
-                                <span v-if="selectedLocales"> 
+                            <p class="text-lg font-bold text-gray-800 dark:text-white">
+                                <span v-if="selectedLocales">
                                     @lang('measurement::app.measurement.unit.edit_unit')
                                 </span>
 
@@ -233,8 +204,6 @@
                         </x-slot>
 
                         <x-slot:content>
-                            
-
                             <x-admin::form.control-group.control
                                 type="hidden"
                                 name="id"
@@ -260,23 +229,22 @@
                                 <x-admin::form.control-group.error control-name="code" />
                             </x-admin::form.control-group>
 
-                            <div class="">
-                                    @foreach ($locales as $locale)
-                                        <x-admin::form.control-group>
-                                            <x-admin::form.control-group.label>
-                                                {{ $locale->name }}
-                                            </x-admin::form.control-group.label>
+                            <div>
+                                @foreach ($locales as $locale)
+                                    <x-admin::form.control-group>
+                                        <x-admin::form.control-group.label>
+                                            {{ $locale->name }}
+                                        </x-admin::form.control-group.label>
 
-                                            <x-admin::form.control-group.control
-                                                type="text"
-                                                id="label"
-                                                ::name="`labels[{{ $locale->code }}]`"
-                                                v-model="locale.labels['{{ $locale->code }}']"
-                                                placeholder="Enter Labels"  
-                                            />
-                                        </x-admin::form.control-group>
-                                    @endforeach
-
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            id="label"
+                                            ::name="`labels[{{ $locale->code }}]`"
+                                            v-model="locale.labels['{{ $locale->code }}']"
+                                            placeholder="Enter Labels"
+                                        />
+                                    </x-admin::form.control-group>
+                                @endforeach
                             </div>
 
                             <x-admin::form.control-group>
@@ -297,13 +265,11 @@
                             </x-admin::form.control-group>
 
                             <div>
-                                <div class="">
-                                    <x-admin::form.control-group class="mb-0">
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('measurement::app.measurement.unit.conversion_operation')
-                                        </x-admin::form.control-group.label>
-                                    </x-admin::form.control-group>
-                                </div>
+                                <x-admin::form.control-group class="mb-0">
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('measurement::app.measurement.unit.conversion_operation')
+                                    </x-admin::form.control-group.label>
+                                </x-admin::form.control-group>
 
                                 <div
                                     v-for="(conversion, index) in locale.conversions"
@@ -322,7 +288,9 @@
                                             :label="trans('measurement::app.measurement.unit.conversion_value')"
                                         />
 
-                                        <x-admin::form.control-group.error ::control-name="'convert_value[' + index + ']'" />
+                                        <x-admin::form.control-group.error
+                                            ::control-name="'convert_value[' + index + ']'"
+                                        />
                                     </x-admin::form.control-group>
 
                                     <x-admin::form.control-group class="flex-1">
@@ -337,12 +305,15 @@
                                             ::disabled="isConversionDisabled"
                                             :label="trans('measurement::app.measurement.unit.conversion_operator')"
                                         />
-                                        <x-admin::form.control-group.error ::control-name="'convert_from_standard[' + index + ']'" />
+
+                                        <x-admin::form.control-group.error
+                                            ::control-name="'convert_from_standard[' + index + ']'"
+                                        />
                                     </x-admin::form.control-group>
 
                                     <button
                                         type="button"
-                                        class="flex items-center mb-4 justify-center rounded"
+                                        class="mb-4 flex items-center justify-center rounded"
                                         @click="removeConversion(index)"
                                         :disabled="locale.conversions.length === 1 || isConversionDisabled"
                                     >
@@ -364,11 +335,10 @@
                                     </button>
                                 </div>
                             </div>
-
                         </x-slot>
-                    
+
                         <x-slot:footer>
-                            <div class="flex gap-x-2.5 items-center">
+                            <div class="flex items-center gap-x-2.5">
                                 <button
                                     type="submit"
                                     class="primary-button"
@@ -378,7 +348,6 @@
                             </div>
                         </x-slot>
                     </x-admin::modal>
-
                 </form>
             </x-admin::form>
         </script>
@@ -402,9 +371,13 @@
                                 },
                             ],
                         },
-                        familyUsedInProducts: Boolean({{ json_encode($familyUsedInProducts ?? false) }}),
+
+                        familyUsedInProducts: Boolean(
+                            {{ json_encode($familyUsedInProducts ?? false) }}
+                        ),
+
                         selectedLocales: 0,
-                    }
+                    };
                 },
 
                 computed: {
@@ -426,10 +399,11 @@
                         if (this.selectedLocales === 0) {
                             return false;
                         }
+
                         return this.familyUsedInProducts
                             || this.locale.is_used_in_products
                             || this.locale.is_standard;
-                    }
+                    },
                 },
 
                 methods: {
@@ -438,7 +412,6 @@
 
                         let url = "{{ route('admin.measurement.families.units.store', $family->id) }}";
 
-                        
                         if (this.selectedLocales && this.locale.code) {
                             url = "{{ route('admin.measurement.families.units.update', ['familyId' => $family->id, 'code' => '__CODE__']) }}"
                                 .replace('__CODE__', this.locale.code);
@@ -448,8 +421,8 @@
 
                         this.$axios.post(url, formData, {
                             headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
+                                'Content-Type': 'multipart/form-data',
+                            },
                         })
                         .then((response) => {
                             this.$refs.localeUpdateOrCreateModal.close();
@@ -460,9 +433,10 @@
                             });
 
                             this.$refs.datagrid.get();
+
                             resetForm();
                         })
-                        .catch(error => {
+                        .catch((error) => {
                             if (error.response?.status === 422) {
                                 setErrors(error.response.data.errors);
                             }
@@ -488,6 +462,7 @@
                                 symbol: response.data.data.symbol ?? null,
                                 is_standard: response.data.data.is_standard ?? 0,
                                 is_used_in_products: response.data.data.is_used_in_products ?? false,
+
                                 conversions: conversions.length
                                     ? conversions.map((conversion) => ({
                                         operator: conversion.operator ?? 'mul',
@@ -502,6 +477,7 @@
                             };
 
                             this.selectedLocales = 1;
+
                             this.$refs.localeUpdateOrCreateModal.toggle();
                         });
                     },
@@ -531,6 +507,7 @@
                             labels: {},
                             symbol: null,
                             is_used_in_products: false,
+
                             conversions: [
                                 {
                                     operator: 'mul',
@@ -540,11 +517,9 @@
                         };
 
                         this.selectedLocales = 0;
-                    }
-                }
-
+                    },
+                },
             });
         </script>
     @endPushOnce
-
 </x-admin::layouts.with-history>
