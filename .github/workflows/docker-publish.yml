@@ -169,7 +169,7 @@ jobs:
           echo "Will push (queue): $TAGS"
 
       - name: Build and push web image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: dockerfiles/web.Dockerfile
@@ -181,7 +181,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=web
 
       - name: Build and push queue worker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: dockerfiles/q.Dockerfile
