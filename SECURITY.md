@@ -31,12 +31,7 @@ version.
 Report security issues privately. Do **not** open a public GitHub
 issue.
 
-Preferred channels (either works):
-
-1. **GitHub Security Advisories** — the "Report a vulnerability"
-   button on the [Security tab](https://github.com/unopim/unopim/security)
-   of this repository.
-2. **Email** — [support@webkul.com](mailto:support@webkul.com).
+**Email** — [support@webkul.com](mailto:support@webkul.com).
 
 Please include:
 
