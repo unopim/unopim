@@ -151,3 +151,20 @@ jobs:
           repository: webkul/unopim
           short-description: "UnoPim — Open Source Product Information Management"
           readme-filepath: ./README.md
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Docker Publish Summary"
+            echo ""
+            echo "- Git tag: \`${{ steps.version.outputs.git_tag }}\`"
+            echo "- Docker version: \`${{ steps.version.outputs.version }}\` (minor: \`${{ steps.version.outputs.minor }}\`)"
+            echo "- Platforms: \`linux/amd64\`, \`linux/arm64\`"
+            echo "- Pre-release: \`${{ steps.version.outputs.is_prerelease }}\`"
+            echo "- On default branch (\`${{ steps.version.outputs.default_branch }}\`): \`${{ steps.version.outputs.on_default_branch }}\` (compare: \`${{ steps.version.outputs.compare_status }}\`)"
+            echo "- Pushed \`:latest\`: \`${{ steps.version.outputs.push_latest }}\`"
+            echo ""
+            echo "**Web tags:** \`${{ steps.web_tags.outputs.tags }}\`"
+            echo "**Queue tags:** \`${{ steps.queue_tags.outputs.tags }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
