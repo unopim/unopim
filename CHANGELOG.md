@@ -1,10 +1,20 @@
 # v2.1.x
 
-## v2.1.1 - 2026-05-25
+## v2.1.1 - 2026-05-26
 
 ### Security
 - Patched an authorization gap on several admin write-verb routes (`*.store` / `*.update`) — they were missing from `packages/Webkul/Admin/src/Config/acl.php`, so the `Bouncer` middleware did not enforce a permission check. Mapped each missing route to the same ACL key as its sibling GET form (`.create` / `.edit`) and added regression coverage.
 - Hardened against `Host` / `X-Forwarded-Host` header poisoning. Asset and URL helpers (`url()`, `asset()`, Vite) previously resolved against the request `Host` header, so a crafted header could cause the admin layout to load JavaScript from an attacker origin. URL generation is now pinned to `APP_URL` via `URL::forceRootUrl()` + `URL::forceScheme()`, the four templates that rendered `url()->to('/')` / `asset('/')` were switched to `config('app.url')`, `trustProxies` is restricted via the new `TRUSTED_PROXIES` env variable (defaults to `127.0.0.1`), and `trustHosts` is enabled seeded from `APP_URL` + the new `TRUSTED_HOSTS` env variable.
+
+### Bug Fixes
+- Fixed **MagicAI chat-latest model temperature** — newer OpenAI chat-latest models reject the `temperature` parameter; the adapter now omits the field when targeting those models ([#416](https://github.com/unopim/unopim/pull/416)).
+- Fixed **styled 405 Method Not Allowed page** — replaced the unstyled framework error with a translated 405 error view consistent with 403/404/500, including translations for all 33 locales ([#417](https://github.com/unopim/unopim/pull/417)).
+- Fixed **PostgreSQL demo-data seeding** — `DemoExtrasSeeder` now casts booleans for pgsql, bypasses FK during seed, and resets sequences afterwards so the demo install completes cleanly on PostgreSQL ([#418](https://github.com/unopim/unopim/pull/418)).
+- Fixed **installer rejects invalid `DB_DATABASE`** — special characters in the database name are now rejected up front instead of causing a partial install that has to be torn down by hand ([#419](https://github.com/unopim/unopim/pull/419)).
+- Fixed **installer prompts ignore leading/trailing whitespace** — applied `transform: trim(...)` across installer prompts so a stray space in DB or Elasticsearch credentials no longer breaks the install ([#420](https://github.com/unopim/unopim/pull/420)).
+
+### DevOps
+- Added **multi-architecture Docker images** — the publish workflow now produces both `linux/amd64` and `linux/arm64` images so Apple Silicon and ARM cloud hosts get native binaries ([#426](https://github.com/unopim/unopim/pull/426)).
 
 ## v2.1.0 - 2026-05-13
 
