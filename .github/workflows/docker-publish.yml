@@ -114,17 +114,35 @@ jobs:
           echo "Resolved git tag: $GIT_TAG -> docker version: $VERSION (minor: $MINOR)"
           echo "Pre-release: $IS_PRERELEASE | On default branch: $ON_DEFAULT_BRANCH ($COMPARE_STATUS) | Push :latest: $PUSH_LATEST"
 
+      # For release events the initial checkout already lands on the tag's
+      # commit (GITHUB_SHA == tag commit). For workflow_dispatch the initial
+      # checkout is the dispatched-from ref, which can differ from the tag
+      # the operator typed in the `tag` input. Realign the working tree to
+      # the requested tag so the build context matches the version label.
+      - name: Re-checkout tag (workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          git fetch --tags --force --depth=1 origin "${{ steps.version.outputs.git_tag }}"
+          git checkout --detach "refs/tags/${{ steps.version.outputs.git_tag }}"
+          echo "Checked out $(git rev-parse HEAD) for tag ${{ steps.version.outputs.git_tag }}"
+
       - name: Compute Web Image Tags
         id: web_tags
         run: |
           # Always publish the exact version tag.
           TAGS="webkul/unopim:${{ steps.version.outputs.version }}"
 
-          # :minor and :latest only for stable releases on the default-branch line.
-          # Pre-release tags (vX.Y.Z-*) must not clobber the stable floating tags.
+          # :minor (e.g. :2.1) tracks the latest stable release on its own
+          # release line. Skipped for pre-releases so an rc1 cannot clobber
+          # the stable floating tag — but DOES update for stable hotfixes on
+          # side branches (v2.0.5 on the 2.0 line still updates :2.0).
           if [ "${{ steps.version.outputs.is_prerelease }}" = "false" ]; then
             TAGS="$TAGS,webkul/unopim:${{ steps.version.outputs.minor }}"
           fi
+
+          # :latest is strictly tied to the default branch line. Stable
+          # release on a side branch updates :minor (above) but NOT :latest.
           if [ "${{ steps.version.outputs.push_latest }}" = "true" ]; then
             TAGS="$TAGS,webkul/unopim:latest"
           fi
@@ -135,9 +153,15 @@ jobs:
         id: queue_tags
         run: |
           TAGS="webkul/unopim-queue:${{ steps.version.outputs.version }}"
+
+          # :minor updates for every stable release on its release line
+          # (skipped only for pre-releases). See web tags step for the
+          # rationale on why :minor is not gated on default-branch.
           if [ "${{ steps.version.outputs.is_prerelease }}" = "false" ]; then
             TAGS="$TAGS,webkul/unopim-queue:${{ steps.version.outputs.minor }}"
           fi
+
+          # :latest only for stable releases on the default-branch line.
           if [ "${{ steps.version.outputs.push_latest }}" = "true" ]; then
             TAGS="$TAGS,webkul/unopim-queue:latest"
           fi

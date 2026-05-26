@@ -79,13 +79,18 @@ WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
 
-# Bracket trick `[a]rtisan` keeps pgrep from matching its own command line.
-# Matches both queue:work (default) and schedule:work (scheduler service uses
-# this same image with an overridden entrypoint).
-# start_period=360s covers q-entrypoint.sh's default 300s wait for the
-# install lock file before launching queue:work. Failed probes inside the
-# start window do not count toward retries.
-HEALTHCHECK --interval=30s --timeout=10s --start-period=360s --retries=3 \
-    CMD pgrep -f "[a]rtisan (queue|schedule):work" >/dev/null || exit 1
+# Healthcheck logic:
+#   1. If the install lock file does not exist yet, the worker is still
+#      waiting for the web/fpm container to finish first-time setup
+#      (q-entrypoint.sh blocks on this for up to SETUP_WAIT_TIMEOUT
+#      seconds, which is operator-overridable). Report healthy so the
+#      orchestrator does not restart-loop while setup runs.
+#   2. Once the lock exists, require an active queue:work or
+#      schedule:work process. The bracket trick `[a]rtisan` prevents
+#      pgrep from matching its own command line.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD [ ! -f /var/www/html/storage/unopim.lock ] \
+        || pgrep -f "[a]rtisan (queue|schedule):work" >/dev/null \
+        || exit 1
 
 ENTRYPOINT ["/var/www/html/dockerfiles/q-entrypoint.sh"]
