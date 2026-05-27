@@ -14,8 +14,8 @@ class MeasurementFamilyDataGrid extends DataGrid
         $driver = DB::connection()->getDriverName();
 
         $unitCountQuery = $driver === 'pgsql'
-            ? DB::raw('json_array_length(units::json) as unit_count')
-            : DB::raw('JSON_LENGTH(units) as unit_count');
+            ? DB::raw('COALESCE(json_array_length(units::json), 0) as unit_count')
+            : DB::raw('COALESCE(JSON_LENGTH(units), 0) as unit_count');
 
         $queryBuilder = DB::table('measurement_families')
             ->addSelect(
@@ -26,7 +26,7 @@ class MeasurementFamilyDataGrid extends DataGrid
                 'measurement_families.units',
                 'measurement_families.created_at',
                 'measurement_families.updated_at',
-                DB::raw('JSON_LENGTH(units) as unit_count')
+                $unitCountQuery
             );
 
         $this->addFilter('id', 'measurement_families.id');
