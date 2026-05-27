@@ -34,8 +34,6 @@ class ApiClientCommand extends Passport
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
     public function handle(ClientRepository $clients): void
     {
