@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Producten',
-
+            'title'      => 'Producten',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -34,13 +32,21 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valuta\'s',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Valutacode \'%s\' is al geïmporteerd in deze batch.',
+                    'code-not-found-to-delete'    => 'Valuta met code \'%s\' niet gevonden in het systeem.',
+                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
+                    'channel-related-locale-root' => 'U kunt de locale met code :code die aan een kanaal is gekoppeld niet verwijderen.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Producten',
-
+            'title'      => 'Producten',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -54,8 +60,10 @@ return [
         'categories' => [
             'title' => 'Categorieën',
         ],
+        'currencies' => [
+            'title' => 'Valuta\'s',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Kolom(men) met nummer "%s" hebben lege kopteksten.',
@@ -68,7 +76,6 @@ return [
             'file-empty'           => 'Het bestand is leeg of bevat geen kopregel. Upload een geldig bestand met gegevens.',
         ],
     ],
-
     'job' => [
         'started'   => 'De taak is gestart.',
         'completed' => 'Taak succesvol voltooid.',

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valutaer',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Valutakode \'%s\' er allerede importert i denne batchen.',
+                    'code-not-found-to-delete'    => 'Valuta med kode \'%s\' ikke funnet i systemet.',
+                    'invalid-status'              => 'Status må være 0 eller 1 (eller tom for standard aktivert).',
+                    'channel-related-locale-root' => 'Du kan ikke slette lokalinnstillingen med kode :code som er tilknyttet en kanal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +59,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorier',
+        ],
+        'currencies' => [
+            'title' => 'Valutaer',
         ],
     ],
     'validation' => [

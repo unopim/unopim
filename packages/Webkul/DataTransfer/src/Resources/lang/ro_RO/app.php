@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Codul valutar \'%s\' a fost deja importat în acest lot.',
+                    'code-not-found-to-delete'    => 'Valuta cu codul \'%s\' nu a fost găsită în sistem.',
+                    'invalid-status'              => 'Starea trebuie să fie 0 sau 1 (sau gol pentru activat implicit).',
+                    'channel-related-locale-root' => 'Nu puteți șterge localitatea cu codul :code care este asociată unui canal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +59,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorii',
+        ],
+        'currencies' => [
+            'title' => 'Valute',
         ],
     ],
     'validation' => [
