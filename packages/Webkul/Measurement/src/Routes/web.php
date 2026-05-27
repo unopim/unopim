@@ -19,13 +19,22 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => 'admin/measurement']
         Route::post('/mass-delete', 'massDelete')->name('admin.measurement.families.mass_delete');
     });
 
-    Route::controller(MeasurementUnitsController::class)->prefix('units')->group(function () {
-        Route::get('measurement-families/{id}/units', 'units')->name('admin.measurement.families.units');
-        Route::post('{id}/units', 'storeUnit')->name('admin.measurement.families.units.store');
-        Route::get('measurement-families/{familyId}/units/{code}/edit', 'editUnit')->name('admin.measurement.families.units.edit');
-        Route::put('measurement-families/{familyId}/units/{code}/update', 'updateUnit')->name('admin.measurement.families.units.update');
-        Route::delete('measurement-families/{familyId}/units/{code}', 'deleteUnit')->name('admin.measurement.families.units.delete');
-        Route::post('/unitmass-delete', 'unitmassDelete')->name('admin.measurement.families.unitmass_delete');
+    Route::controller(MeasurementUnitsController::class)->group(function () {
+
+        Route::get('measurement-families/{id}/units', 'units')
+            ->name('admin.measurement.families.units');
+
+        Route::post('measurement-families/{id}/units', 'storeUnit')
+            ->name('admin.measurement.families.units.store');
+
+        Route::get('measurement-families/{familyId}/units/{code}/edit', 'editUnit')
+            ->name('admin.measurement.families.units.edit');
+
+        Route::put('measurement-families/{familyId}/units/{code}/update', 'updateUnit')
+            ->name('admin.measurement.families.units.update');
+
+        Route::delete('measurement-families/{familyId}/units/{code}', 'deleteUnit')
+            ->name('admin.measurement.families.units.delete');
     });
 
     Route::get('/measurement/attribute/{attributeId}', [AttributeController::class, 'getAttributeMeasurement'])->name('measurement.attribute');

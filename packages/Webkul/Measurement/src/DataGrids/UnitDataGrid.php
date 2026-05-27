@@ -43,17 +43,19 @@ class UnitDataGrid extends DataGrid
         $queryList = [];
 
         foreach ($units as $unit) {
-            $code = $unit['code'] ?? '';
-            $label = $unit['labels']['en_US'] ?? '';
-            $symbol = $unit['symbol'] ?? '';
+
+            $code = addslashes($unit['code'] ?? '');
+            $label = addslashes($unit['labels']['en_US'] ?? '');
+            $symbol = addslashes($unit['symbol'] ?? '');
+
             $isStd = ($code === $standardUnit) ? 1 : 0;
 
             $queryList[] = DB::table(DB::raw(
                 "(SELECT
-                    '$code'   AS code,
-                    '$label'  AS label,
-                    '$symbol' AS symbol,
-                    $isStd    AS is_standard
+                    '{$code}'   AS code,
+                    '{$label}'  AS label,
+                    '{$symbol}' AS symbol,
+                    {$isStd}    AS is_standard
                 ) temp"
             ));
         }

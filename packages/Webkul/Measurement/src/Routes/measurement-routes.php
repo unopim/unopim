@@ -29,7 +29,7 @@ Route::group([
     Route::controller(AttributeMeasurementApiController::class)->prefix('attribute-measurment')->group(function () {
         Route::get('{familyCode}', 'getUnitsByFamily')->name('admin.api.attribute-measurment.getUnitsByFamily');
         Route::post('{attributeId}', 'store')->name('admin.api.attribute-measurment.store');
-        Route::put('{attributeId}', 'update')->name('admin.api.attribute-measurment.store');
+        Route::put('{attributeId}', 'update')->name('admin.api.attribute-measurment.update');
     });
 
 });

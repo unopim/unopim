@@ -8,6 +8,8 @@ return [
         'sort'    => 7,
         'icon'    => '',
     ],
+
+    // Measurement Families
     [
         'key'   => 'catalog.measurements.families',
         'name'  => 'Measurement Families',
@@ -32,28 +34,30 @@ return [
         'route' => 'admin.measurement.families.delete',
         'sort'  => 3,
     ],
+
+    // Measurement Units
     [
         'key'   => 'catalog.measurements.units',
         'name'  => 'Measurement Units',
-        'route' => 'admin.measurement.units.index',
+        'route' => 'admin.measurement.families.units',
         'sort'  => 2,
     ],
     [
         'key'   => 'catalog.measurements.units.create',
         'name'  => 'Create',
-        'route' => 'admin.measurement.units.create',
+        'route' => 'admin.measurement.families.units.store',
         'sort'  => 1,
     ],
     [
         'key'   => 'catalog.measurements.units.edit',
         'name'  => 'Edit',
-        'route' => 'admin.measurement.units.edit',
+        'route' => 'admin.measurement.families.units.edit',
         'sort'  => 2,
     ],
     [
         'key'   => 'catalog.measurements.units.delete',
         'name'  => 'Delete',
-        'route' => 'admin.measurement.units.delete',
+        'route' => 'admin.measurement.families.units.delete',
         'sort'  => 3,
     ],
 ];

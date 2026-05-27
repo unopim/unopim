@@ -105,51 +105,108 @@ class ProductObserver
      *
      * @return void
      */
+    // protected function processScope(array &$scopedValues)
+    // {
+    //     foreach ($scopedValues as $attributeCode => $value) {
+
+    //         $attribute = app(AttributeRepository::class)
+    //             ->findOneByField('code', $attributeCode);
+
+    //         if ($attribute && $attribute->type === 'measurement' && is_array($value)) {
+
+    //             // Skip if already in full format (has amount key from helper)
+    //             if (isset($value['amount'])) {
+    //                 continue;
+    //             }
+
+    //             // Skip if already in locale/channel format (has <all_channels> structure)
+    //             if (isset($value['<all_channels>'])) {
+    //                 continue;
+    //             }
+
+    //             if (! isset($value['value']) || $value['value'] === '' || $value['value'] === null) {
+    //                 unset($scopedValues[$attributeCode]);
+
+    //                 continue;
+    //             }
+
+    //             $measurement = $this->attributeMeasurementRepository->getByAttributeId($attribute->id);
+
+    //             if ($measurement && $measurement->family) {
+    //                 $family = $measurement->family;
+    //                 $baseUnit = $family->standard_unit;
+
+    //                 $baseData = $this->calculateBaseData(
+    //                     $value['value'],
+    //                     $value['unit'] ?? null,
+    //                     $family
+    //                 );
+
+    //                 $scopedValues[$attributeCode] = [
+    //                     'unit'      => $value['unit'] ?? null,
+    //                     'amount'    => number_format((float) $value['value'], 4, '.', ''),
+    //                     'family'    => $family->code,
+    //                     'base_data' => number_format((float) $baseData, 6, '.', ''),
+    //                     'base_unit' => $baseUnit,
+    //                 ];
+    //             }
+    //         }
+    //     }
+    // }
+
     protected function processScope(array &$scopedValues)
     {
+        // 1. Preload all attributes in one go
+        $attributes = app(AttributeRepository::class)
+            ->findWhereIn('code', array_keys($scopedValues))
+            ->keyBy('code');
+
+        // 2. Cache measurement lookups
+        $measurementCache = [];
+
         foreach ($scopedValues as $attributeCode => $value) {
 
-            $attribute = app(AttributeRepository::class)
-                ->findOneByField('code', $attributeCode);
+            $attribute = $attributes[$attributeCode] ?? null;
 
-            if ($attribute && $attribute->type === 'measurement' && is_array($value)) {
+            if (! $attribute || $attribute->type !== 'measurement' || ! is_array($value)) {
+                continue;
+            }
 
-                // Skip if already in full format (has amount key from helper)
-                if (isset($value['amount'])) {
-                    continue;
-                }
+            // Skip already processed formats
+            if (isset($value['amount']) || isset($value['<all_channels>'])) {
+                continue;
+            }
 
-                // Skip if already in locale/channel format (has <all_channels> structure)
-                if (isset($value['<all_channels>'])) {
-                    continue;
-                }
+            if (! isset($value['value']) || $value['value'] === '' || $value['value'] === null) {
+                unset($scopedValues[$attributeCode]);
+                continue;
+            }
 
-                if (! isset($value['value']) || $value['value'] === '' || $value['value'] === null) {
-                    unset($scopedValues[$attributeCode]);
+            // 3. Cache measurement per attribute
+            if (! isset($measurementCache[$attribute->id])) {
+                $measurementCache[$attribute->id] =
+                    $this->attributeMeasurementRepository->getByAttributeId($attribute->id);
+            }
 
-                    continue;
-                }
+            $measurement = $measurementCache[$attribute->id];
 
-                $measurement = $this->attributeMeasurementRepository->getByAttributeId($attribute->id);
+            if ($measurement && $measurement->family) {
 
-                if ($measurement && $measurement->family) {
-                    $family = $measurement->family;
-                    $baseUnit = $family->standard_unit;
+                $family = $measurement->family;
 
-                    $baseData = $this->calculateBaseData(
-                        $value['value'],
-                        $value['unit'] ?? null,
-                        $family
-                    );
+                $baseData = $this->calculateBaseData(
+                    $value['value'],
+                    $value['unit'] ?? null,
+                    $family
+                );
 
-                    $scopedValues[$attributeCode] = [
-                        'unit'      => $value['unit'] ?? null,
-                        'amount'    => number_format((float) $value['value'], 4, '.', ''),
-                        'family'    => $family->code,
-                        'base_data' => number_format((float) $baseData, 6, '.', ''),
-                        'base_unit' => $baseUnit,
-                    ];
-                }
+                $scopedValues[$attributeCode] = [
+                    'unit'      => $value['unit'] ?? null,
+                    'amount'    => number_format((float) $value['value'], 4, '.', ''),
+                    'family'    => $family->code,
+                    'base_data' => number_format((float) $baseData, 6, '.', ''),
+                    'base_unit' => $family->standard_unit,
+                ];
             }
         }
     }

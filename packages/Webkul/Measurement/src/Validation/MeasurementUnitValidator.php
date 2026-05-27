@@ -12,7 +12,7 @@ class MeasurementUnitValidator
             'labels.*'                => 'nullable|string',
             'symbol'                  => 'nullable|string',
             'convert_from_standard'   => 'nullable|array',
-            'convert_from_standard.*' => 'nullable|string',
+            'convert_from_standard.*' => 'nullable|in:mul,div,add,sub',
             'convert_value'           => 'nullable|array',
             'convert_value.*'         => 'nullable|numeric',
         ];
@@ -25,7 +25,7 @@ class MeasurementUnitValidator
             'labels'                  => 'nullable|array',
             'labels.*'                => 'nullable|string',
             'convert_from_standard'   => 'nullable|array',
-            'convert_from_standard.*' => 'nullable|string',
+            'convert_from_standard.*' => 'nullable|in:mul,div,add,sub',
             'convert_value'           => 'nullable|array',
             'convert_value.*'         => 'nullable|numeric',
         ];

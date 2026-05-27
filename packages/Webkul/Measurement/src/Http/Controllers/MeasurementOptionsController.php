@@ -120,10 +120,6 @@ class MeasurementOptionsController extends AbstractOptionsController
 
         if (empty($selectedValue) || $selectedValue === '__auto__') {
             $collection = $collection->sortByDesc('is_default');
-
-            if (empty($selectedValue) && $collection->where('is_default', true)->first()) {
-
-            }
         } else {
             $collection = $collection->sortByDesc(fn ($item) => $item->id === $selectedValue);
         }

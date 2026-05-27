@@ -201,15 +201,17 @@ class MeasurementFamilyController extends Controller
         $ids = request()->input('indices');
 
         if (! $ids || count($ids) == 0) {
-            session()->flash('error', 'No items selected.');
-
-            return redirect()->back();
+            return response()->json([
+                'success' => false,
+                'message' => 'No items selected.',
+            ], 400);
         }
 
         $attributeMeasurementRepository = app(AttributeMeasurementRepository::class);
 
-        foreach ($ids as $id) {
+        $failedFamilies = [];
 
+        foreach ($ids as $id) {
             $family = $this->measurementFamilyRepository->find($id);
 
             if (! $family) {
@@ -221,10 +223,7 @@ class MeasurementFamilyController extends Controller
                 ->count();
 
             if ($exists > 0) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'This measurement family is used in attributes, so it cannot be deleted.',
-                ], 400);
+                $failedFamilies[] = $family->code;
 
                 continue;
             }
@@ -232,11 +231,17 @@ class MeasurementFamilyController extends Controller
             $this->measurementFamilyRepository->delete($id);
         }
 
+        if (! empty($failedFamilies)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Some measurement families could not be deleted because they are used in attributes.',
+                'failed_families' => $failedFamilies,
+            ], 400);
+        }
+
         return response()->json([
             'success' => true,
             'message' => trans('measurement::app.messages.family.deleted'),
         ]);
-
-        return redirect()->back();
     }
 }

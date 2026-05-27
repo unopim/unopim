@@ -32,7 +32,9 @@ class MeasurementServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'measurement');
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'measurement');
         $this->loadRoutesFrom(__DIR__.'/../Routes/web.php');
-        $this->loadRoutesFrom(__DIR__.'/../Routes/api.php');
+        Route::prefix('api')
+        ->middleware('api')
+        ->group(__DIR__.'/../Routes/api.php');
 
         $this->mergeConfigFrom(
             __DIR__.'/../Config/attribute_types.php',
@@ -40,8 +42,14 @@ class MeasurementServiceProvider extends ServiceProvider
         );
 
         if ($this->app->runningInConsole()) {
+
             Event::listen(CommandFinished::class, function ($event) {
-                if ($event->command === 'unopim:install') {
+
+                if (
+                    $event->command === 'unopim:install'
+                    && class_exists(MeasurementFamilySeeder::class)
+                ) {
+
                     Artisan::call('db:seed', [
                         '--class' => MeasurementFamilySeeder::class,
                     ]);
@@ -83,10 +91,6 @@ class MeasurementServiceProvider extends ServiceProvider
             Importer::class,
             \Webkul\Measurement\Helpers\Importers\Product\Importer::class
         );
-
-        Route::prefix('api')
-            ->middleware('api')
-            ->group(__DIR__.'/../Routes/api.php');
 
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/menu.php', 'menu.admin');
         $this->mergeConfigFrom(

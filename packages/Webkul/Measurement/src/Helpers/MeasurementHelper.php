@@ -38,12 +38,13 @@ class MeasurementHelper
      * @return float|int
      */
     public function calculateBaseValue($value, $unitCode, $family)
-    {
+   {
         if (! $family || ! $unitCode) {
             return $value;
         }
 
         $units = $family->units ?? [];
+
         $unit = collect($units)->firstWhere('code', $unitCode);
 
         if (! $unit) {
@@ -51,24 +52,36 @@ class MeasurementHelper
         }
 
         $operations = $unit['convert_from_standard'] ?? [];
+
         $baseValue = (float) $value;
 
-        $reversedOps = array_reverse($operations);
+        foreach (array_reverse($operations) as $op) {
 
-        foreach ($reversedOps as $op) {
-            $val = (float) $op['value'];
-            $operator = $op['operator'];
+            $val = (float) ($op['value'] ?? 0);
+
+            $operator = $op['operator'] ?? null;
+
+            if (
+                in_array($operator, ['mul', 'div'])
+                && $val == 0
+            ) {
+                continue;
+            }
 
             switch ($operator) {
+
                 case 'mul':
                     $baseValue /= $val;
                     break;
+
                 case 'div':
                     $baseValue *= $val;
                     break;
+
                 case 'add':
                     $baseValue -= $val;
                     break;
+
                 case 'sub':
                     $baseValue += $val;
                     break;

@@ -138,7 +138,7 @@ class MeasurementUnitsController extends Controller
         if (! $unit) {
             abort(
                 404,
-                trans('measurement::app.messages.unit.not_foundd')
+                trans('measurement::app.messages.unit.units_not_found')
             );
 
         }
@@ -285,35 +285,5 @@ class MeasurementUnitsController extends Controller
             'status'  => true,
             'message' => trans('measurement::app.messages.unit.deleted'),
         ]);
-    }
-
-    /**
-     * Mass delete units (deprecated naming kept for compatibility).
-     *
-     * @return RedirectResponse
-     */
-    public function unitmassDelete()
-    {
-        $ids = request()->input('indices');
-
-        if (! $ids || count($ids) == 0) {
-            session()->flash(
-                'error',
-                trans('measurement::app.messages.unit.no_items_selected')
-            );
-
-            return redirect()->back();
-        }
-
-        foreach ($ids as $id) {
-            $this->measurementFamilyRepository->delete($id);
-        }
-
-        session()->flash(
-            'success',
-            trans('measurement::app.messages.unit.mass_deleted')
-        );
-
-        return redirect()->back();
     }
 }

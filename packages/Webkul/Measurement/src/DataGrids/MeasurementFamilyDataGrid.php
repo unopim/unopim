@@ -11,6 +11,12 @@ class MeasurementFamilyDataGrid extends DataGrid
 
     public function prepareQueryBuilder()
     {
+        $driver = DB::connection()->getDriverName();
+
+        $unitCountQuery = $driver === 'pgsql'
+            ? DB::raw('json_array_length(units::json) as unit_count')
+            : DB::raw('JSON_LENGTH(units) as unit_count');
+
         $queryBuilder = DB::table('measurement_families')
             ->addSelect(
                 'measurement_families.id',

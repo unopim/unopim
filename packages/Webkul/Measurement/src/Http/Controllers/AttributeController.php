@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 use Webkul\Measurement\Repository\MeasurementFamilyRepository;
+use Illuminate\Support\Facades\Log;
 
 class AttributeController extends Controller
 {
@@ -80,7 +81,7 @@ class AttributeController extends Controller
 
         } catch (\Throwable $e) {
 
-            \Log::error('Attribute Measurement fetch failed', [
+            Log::error('Attribute Measurement fetch failed', [
                 'attribute_id' => $attributeId,
                 'error'        => $e->getMessage(),
             ]);

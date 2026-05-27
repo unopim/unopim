@@ -101,8 +101,7 @@
             "Webkul\\Product\\Tests\\": "packages/Webkul/Product/tests",
             "Webkul\\Attribute\\Tests\\": "packages/Webkul/Attribute/tests",
             "Webkul\\DataTransfer\\Tests\\": "packages/Webkul/DataTransfer/tests",
-            "Webkul\\Measurement\\Tests\\": "packages/Webkul/Measurement/tests/"
-
+            "Webkul\\Measurement\\Tests\\": "packages/Webkul/Measurement/tests"
         }
     },
     "scripts": {
