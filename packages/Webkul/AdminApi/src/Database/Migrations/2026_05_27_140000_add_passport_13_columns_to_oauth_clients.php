@@ -37,6 +37,17 @@ return new class extends Migration
             }
         });
 
+        // Passport 13's createPasswordGrantClient() no longer writes the
+        // legacy `redirect`, `personal_access_client`, or `password_client`
+        // columns. PostgreSQL strictly enforces their NOT NULL constraints
+        // and rejects every INSERT (MySQL silently defaults). Loosen them
+        // to nullable so Passport 13 INSERTs succeed on every supported DB.
+        Schema::table('oauth_clients', function (Blueprint $table) {
+            $table->text('redirect')->nullable()->change();
+            $table->boolean('personal_access_client')->nullable()->change();
+            $table->boolean('password_client')->nullable()->change();
+        });
+
         // Backfill: copy legacy user_id into owner_type/owner_id morph,
         // serialise legacy 'redirect' column into the new redirect_uris JSON,
         // and supply a sensible default grant_types list for existing clients.
