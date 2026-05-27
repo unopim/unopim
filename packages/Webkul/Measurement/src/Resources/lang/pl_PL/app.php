@@ -65,7 +65,7 @@ return [
         'unit' => [
             'not_found'         => 'Nie znaleziono rodziny jednostek.',
             'already_exists'    => 'Kod jednostki już istnieje.',
-            'not_foundd'        => 'Nie znaleziono jednostki.',
+            'units_not_found'        => 'Nie znaleziono jednostki.',
             'deleted'           => 'Jednostka została pomyślnie usunięta.',
             'no_items_selected' => 'Nie wybrano żadnych elementów.',
             'mass_deleted'      => 'Wybrane jednostki zostały pomyślnie usunięte.',

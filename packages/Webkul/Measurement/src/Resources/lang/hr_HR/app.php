@@ -65,7 +65,7 @@ return [
         'unit' => [
             'not_found'         => 'Obitelj mjerenja nije pronađena.',
             'already_exists'    => 'Kod jedinice već postoji.',
-            'not_foundd'        => 'Jedinica nije pronađena.',
+            'units_not_found'        => 'Jedinica nije pronađena.',
             'deleted'           => 'Jedinica je uspješno obrisana.',
             'no_items_selected' => 'Nijedna stavka nije odabrana.',
             'mass_deleted'      => 'Odabrane mjerne jedinice uspješno su obrisane.',

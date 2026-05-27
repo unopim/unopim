@@ -65,7 +65,7 @@ return [
         'unit' => [
             'not_found'         => 'Không tìm thấy nhóm đo lường.',
             'already_exists'    => 'Mã đơn vị đã tồn tại.',
-            'not_foundd'        => 'Không tìm thấy đơn vị.',
+            'units_not_found'        => 'Không tìm thấy đơn vị.',
             'deleted'           => 'Đơn vị đã xóa thành công.',
             'no_items_selected' => 'Không có mục nào được chọn.',
             'mass_deleted'      => 'Các đơn vị đo lường được chọn đã xóa thành công.',

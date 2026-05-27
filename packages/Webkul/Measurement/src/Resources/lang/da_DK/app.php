@@ -65,7 +65,7 @@ return [
         'unit' => [
             'not_found'         => 'Målefamilien blev ikke fundet.',
             'already_exists'    => 'Enhedskoden findes allerede.',
-            'not_foundd'        => 'Enheden blev ikke fundet.',
+            'units_not_found'        => 'Enheden blev ikke fundet.',
             'deleted'           => 'Enheden er blevet slettet.',
             'no_items_selected' => 'Ingen elementer valgt.',
             'mass_deleted'      => 'De valgte måleenheder er blevet slettet.',

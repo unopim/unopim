@@ -65,7 +65,7 @@ return [
         'unit' => [
             'not_found'         => 'Família de medição não encontrada.',
             'already_exists'    => 'Código da unidade já existe.',
-            'not_foundd'        => 'Unidade não encontrada.',
+            'units_not_found'        => 'Unidade não encontrada.',
             'deleted'           => 'Unidade eliminada com sucesso.',
             'no_items_selected' => 'Nenhum item selecionado.',
             'mass_deleted'      => 'Unidades de medição selecionadas eliminadas com sucesso.',

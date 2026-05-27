@@ -65,7 +65,7 @@ return [
         'unit' => [
             'not_found'         => 'Mittausperhettä ei löytynyt.',
             'already_exists'    => 'Yksikkökoodi on jo olemassa.',
-            'not_foundd'        => 'Yksikköä ei löytynyt.',
+            'units_not_found'        => 'Yksikköä ei löytynyt.',
             'deleted'           => 'Yksikkö poistettiin onnistuneesti.',
             'no_items_selected' => 'Kohteita ei ole valittu.',
             'mass_deleted'      => 'Valitut mittayksiköt poistettiin onnistuneesti.',

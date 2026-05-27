@@ -65,7 +65,7 @@ return [
         'unit' => [
             'not_found'         => 'Mätningsfamiljen hittades inte.',
             'already_exists'    => 'Enhetskoden finns redan.',
-            'not_foundd'        => 'Enheten hittades inte.',
+            'units_not_found'        => 'Enheten hittades inte.',
             'deleted'           => 'Enheten raderades framgångsrikt.',
             'no_items_selected' => 'Inga objekt valda.',
             'mass_deleted'      => 'Valda mätenheter raderades framgångsrikt.',

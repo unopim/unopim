@@ -65,7 +65,7 @@ return [
         'unit' => [
             'not_found'         => '未找到计量单位组。',
             'already_exists'    => '单位代码已存在。',
-            'not_foundd'        => '未找到单位。',
+            'units_not_found'        => '未找到单位。',
             'deleted'           => '单位已成功删除。',
             'no_items_selected' => '未选择任何项目。',
             'mass_deleted'      => '所选计量单位已成功删除。',

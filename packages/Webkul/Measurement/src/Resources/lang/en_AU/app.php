@@ -65,7 +65,7 @@ return [
         'unit' => [
             'not_found'         => 'No s’ha trobau a familia de medidas.',
             'already_exists'    => 'O codigo d’a unidat ya existe.',
-            'not_foundd'        => 'No s’ha trobau a unidat.',
+            'units_not_found'        => 'No s’ha trobau a unidat.',
             'deleted'           => 'A unidat s’ha borrau correctament.',
             'no_items_selected' => 'No i hai garra elemento seleccionau.',
             'mass_deleted'      => 'As unidatz de medida seleccionadas s’han borrau correctament.',
