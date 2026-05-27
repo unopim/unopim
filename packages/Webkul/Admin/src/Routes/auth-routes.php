@@ -41,11 +41,11 @@ Route::group(['prefix' => config('app.admin_url')], function () {
          */
         Route::get('microsoft', 'redirectToMicrosoft')
             ->name('admin.session.microsoft.redirect')
-            ->middleware('throttle:admin-login');
+            ->middleware('throttle:admin-sso');
 
         Route::get('microsoft/callback', 'handleMicrosoftCallback')
             ->name('admin.session.microsoft.callback')
-            ->middleware('throttle:admin-login');
+            ->middleware('throttle:admin-sso');
     });
 
     /**

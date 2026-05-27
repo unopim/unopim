@@ -261,7 +261,7 @@ class SessionController extends Controller
         $request->session()->regenerate();
         $request->session()->regenerateToken();
 
-        return redirect()->intended(route('admin.dashboard.index'));
+        return redirect()->intended($this->firstAllowedUrl());
     }
 
     /**

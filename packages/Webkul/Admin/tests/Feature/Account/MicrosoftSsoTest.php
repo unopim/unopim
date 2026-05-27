@@ -8,7 +8,7 @@ use function Pest\Laravel\get;
 
 it('logs in an existing admin via microsoft sso using email match', function () {
     config()->set('services.microsoft_sso.enabled', true);
-    config()->set('services.microsoft_sso.tenant', 'common');
+    config()->set('services.microsoft_sso.tenant', 'tenant-id');
     config()->set('services.microsoft_sso.client_id', 'client-id');
     config()->set('services.microsoft_sso.client_secret', 'client-secret');
 
@@ -40,7 +40,7 @@ it('logs in an existing admin via microsoft sso using email match', function () 
 
 it('does not auto-create user when microsoft sso email is unknown', function () {
     config()->set('services.microsoft_sso.enabled', true);
-    config()->set('services.microsoft_sso.tenant', 'common');
+    config()->set('services.microsoft_sso.tenant', 'tenant-id');
     config()->set('services.microsoft_sso.client_id', 'client-id');
     config()->set('services.microsoft_sso.client_secret', 'client-secret');
 
@@ -83,7 +83,7 @@ it('shows microsoft sign-in button only when sso is enabled', function () {
 
     config()->set('services.microsoft_sso.client_id', 'client-id');
     config()->set('services.microsoft_sso.client_secret', 'client-secret');
-    config()->set('services.microsoft_sso.tenant', 'common');
+    config()->set('services.microsoft_sso.tenant', 'tenant-id');
 
     get(route('admin.session.create'))
         ->assertStatus(200)
@@ -92,7 +92,7 @@ it('shows microsoft sign-in button only when sso is enabled', function () {
 
 it('does not allow inactive matched admin via microsoft sso', function () {
     config()->set('services.microsoft_sso.enabled', true);
-    config()->set('services.microsoft_sso.tenant', 'common');
+    config()->set('services.microsoft_sso.tenant', 'tenant-id');
     config()->set('services.microsoft_sso.client_id', 'client-id');
     config()->set('services.microsoft_sso.client_secret', 'client-secret');
 
@@ -123,4 +123,68 @@ it('does not allow inactive matched admin via microsoft sso', function () {
     $this->assertGuest('admin');
 
     expect($admin->status)->toBe(0);
+});
+
+it('matches microsoft sso email in a case-insensitive way', function () {
+    config()->set('services.microsoft_sso.enabled', true);
+    config()->set('services.microsoft_sso.tenant', 'tenant-id');
+    config()->set('services.microsoft_sso.client_id', 'client-id');
+    config()->set('services.microsoft_sso.client_secret', 'client-secret');
+
+    $admin = Admin::factory()->create([
+        'email'    => 'SSO-USER@EXAMPLE.COM',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+    ]);
+
+    Http::fake([
+        'https://login.microsoftonline.com/*/oauth2/v2.0/token' => Http::response([
+            'access_token' => 'access-token',
+        ], 200),
+        'https://graph.microsoft.com/v1.0/me*' => Http::response([
+            'mail'              => 'sso-user@example.com',
+            'userPrincipalName' => 'sso-user@example.com',
+        ], 200),
+    ]);
+
+    $response = $this->withSession(['microsoft_sso_state' => 'valid-state'])
+        ->get(route('admin.session.microsoft.callback', [
+            'state' => 'valid-state',
+            'code'  => 'auth-code',
+        ]));
+
+    $response->assertRedirect(route('admin.dashboard.index'));
+    $this->assertAuthenticatedAs($admin, 'admin');
+});
+
+it('falls back to userPrincipalName when mail is missing', function () {
+    config()->set('services.microsoft_sso.enabled', true);
+    config()->set('services.microsoft_sso.tenant', 'tenant-id');
+    config()->set('services.microsoft_sso.client_id', 'client-id');
+    config()->set('services.microsoft_sso.client_secret', 'client-secret');
+
+    $admin = Admin::factory()->create([
+        'email'    => 'principal-user@example.com',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+    ]);
+
+    Http::fake([
+        'https://login.microsoftonline.com/*/oauth2/v2.0/token' => Http::response([
+            'access_token' => 'access-token',
+        ], 200),
+        'https://graph.microsoft.com/v1.0/me*' => Http::response([
+            'mail'              => null,
+            'userPrincipalName' => 'principal-user@example.com',
+        ], 200),
+    ]);
+
+    $response = $this->withSession(['microsoft_sso_state' => 'valid-state'])
+        ->get(route('admin.session.microsoft.callback', [
+            'state' => 'valid-state',
+            'code'  => 'auth-code',
+        ]));
+
+    $response->assertRedirect(route('admin.dashboard.index'));
+    $this->assertAuthenticatedAs($admin, 'admin');
 });

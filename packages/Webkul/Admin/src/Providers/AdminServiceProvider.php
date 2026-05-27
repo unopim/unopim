@@ -176,5 +176,12 @@ class AdminServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($key);
         });
+
+        RateLimiter::for('admin-sso', function (Request $request) {
+            $sessionId = optional($request->session())->getId() ?: 'guest';
+            $key = $sessionId.'|'.$request->ip();
+
+            return Limit::perMinute(20)->by($key);
+        });
     }
 }
