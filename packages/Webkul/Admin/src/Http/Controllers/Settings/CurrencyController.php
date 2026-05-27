@@ -3,11 +3,13 @@
 namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\CurrencyDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Core\Repositories\CurrencyRepository;
+use Webkul\Core\Rules\Code;
 
 class CurrencyController extends Controller
 {
@@ -21,7 +23,7 @@ class CurrencyController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {
@@ -76,7 +78,7 @@ class CurrencyController extends Controller
         $id = request('id');
 
         $this->validate(request(), [
-            'code'      => ['required', 'unique:currencies,code,'.$id, new \Webkul\Core\Rules\Code],
+            'code'      => ['required', 'unique:currencies,code,'.$id, new Code],
             'status'    => 'boolean',
         ]);
 

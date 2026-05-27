@@ -3,7 +3,10 @@
 namespace Webkul\AdminApi\Traits;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 trait ApiResponse
@@ -11,7 +14,7 @@ trait ApiResponse
     /**
      * This function is responsible for creating a success response in JSON format.
      *
-     * @return \Illuminate\Http\JsonResponse *
+     * @return JsonResponse *
      */
     protected function successResponse(string $message = 'Operation completed successfully', int $code = 200, array $data = [])
     {
@@ -30,7 +33,7 @@ trait ApiResponse
     /**
      * This function is used to return a JSON response when a requested model is not found.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     protected function modelNotFoundResponse(string $message = 'Data not found.', int $code = 404)
     {
@@ -43,11 +46,11 @@ trait ApiResponse
     /**
      * Handles and returns a validation error response.
      *
-     * @return \Illuminate\Http\JsonResponse .
+     * @return JsonResponse .
      */
     protected function validateErrorResponse(mixed $validator, string $message = 'Validation failed.', int $code = 422)
     {
-        $errors = $validator instanceof \Illuminate\Validation\Validator ? (new \Illuminate\Validation\ValidationException($validator))->errors() : $validator;
+        $errors = $validator instanceof Validator ? (new ValidationException($validator))->errors() : $validator;
 
         return response()->json([
             'success' => false,

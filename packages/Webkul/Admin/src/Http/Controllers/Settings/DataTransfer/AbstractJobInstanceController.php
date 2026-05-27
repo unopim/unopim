@@ -3,8 +3,10 @@
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Helpers\Import;
@@ -27,7 +29,7 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {
@@ -41,7 +43,7 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function create()
     {
@@ -51,7 +53,7 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store()
     {
@@ -104,7 +106,7 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Show the form for editing a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function edit(int $id)
     {
@@ -116,7 +118,7 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Update a resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(int $id)
     {
@@ -186,7 +188,7 @@ abstract class AbstractJobInstanceController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy($id)
     {
@@ -213,7 +215,7 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function import(int $id)
     {

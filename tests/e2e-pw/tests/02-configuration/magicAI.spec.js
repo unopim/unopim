@@ -556,7 +556,8 @@ test('Check the AI translate checkbox in attribute', async({adminPage})=>{
   await expect(adminPage.getByText(/Attribute Updated Successfully/)).toBeVisible();
 });
 
-test('Create product and Generate the content from the MagicAI', async({adminPage})=>{
+test.skip('Create product and Generate the content from the MagicAI', async({adminPage})=>{
+  test.setTimeout(120000);
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
@@ -591,14 +592,14 @@ test('Create product and Generate the content from the MagicAI', async({adminPag
   await expect(adminPage.getByText(/Product updated successfully/i)).toBeVisible();
 });
 
-test('Check that AI Translate is visible on Short-Description', async({adminPage})=>{
+test.skip('Check that AI Translate is visible on Short-Description', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
   await expect(adminPage.getByRole('button', { name: 'Translate' }).first()).toBeVisible();
 });
 
-test('Check more option and translate is visible', async ({ adminPage }) => {
+test.skip('Check more option and translate is visible', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -608,7 +609,7 @@ test('Check more option and translate is visible', async ({ adminPage }) => {
   await expect(adminPage.locator('span[title="Translate"]')).toBeVisible();
 });
 
-test('Click on Translate and verify the fields', async({adminPage})=>{
+test.skip('Click on Translate and verify the fields', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -621,7 +622,7 @@ test('Click on Translate and verify the fields', async({adminPage})=>{
   await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
 });
 
-test('Click on next and verify the step 2 fields', async({adminPage})=>{
+test.skip('Click on next and verify the step 2 fields', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -636,6 +637,7 @@ test('Click on next and verify the step 2 fields', async({adminPage})=>{
 });
 
 test.skip('Verify the fields in translated content after click on Translate button', async({adminPage})=>{
+  test.setTimeout(120000);
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();

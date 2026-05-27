@@ -2,6 +2,7 @@
 
 namespace Webkul\Installer\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +43,7 @@ class InstallerController extends Controller
     /**
      * Installer View Root Page
      *
-     * @return \Illuminate\Contracts\View\View
+     * @return View
      */
     public function index()
     {

@@ -1,10 +1,12 @@
 <?php
 
+use Webkul\Core\Core;
+
 if (! function_exists('core')) {
     /**
      * Core helper.
      *
-     * @return \Webkul\Core\Core
+     * @return Core
      */
     function core()
     {

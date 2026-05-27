@@ -3,6 +3,8 @@
 namespace Webkul\Core\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class SecureHeaders
 {
@@ -19,7 +21,7 @@ class SecureHeaders
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -36,7 +38,7 @@ class SecureHeaders
     /**
      * Set headers.
      *
-     * @param  \Illuminate\Http\Response  $response
+     * @param  Response  $response
      * @return void
      */
     private function setHeaders($response)

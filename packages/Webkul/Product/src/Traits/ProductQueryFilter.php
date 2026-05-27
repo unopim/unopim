@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Traits;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 trait ProductQueryFilter
@@ -9,7 +10,7 @@ trait ProductQueryFilter
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {

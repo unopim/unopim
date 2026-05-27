@@ -109,9 +109,9 @@ class PurgeUnusedImages extends Command
 
         return match ($section) {
             'locale_specific', 'channel_specific' => $this->extractLocaleOrChannelSpecificImages($sectionData, $imageAttributes),
-            'channel_locale_specific' => $this->extractChannelLocaleSpecificImages($sectionData, $imageAttributes),
-            'common'                  => $this->extractImagesFromAttributes($sectionData, $imageAttributes),
-            default                   => [],
+            'channel_locale_specific'             => $this->extractChannelLocaleSpecificImages($sectionData, $imageAttributes),
+            'common'                              => $this->extractImagesFromAttributes($sectionData, $imageAttributes),
+            default                               => [],
         };
     }
 

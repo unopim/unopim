@@ -7,7 +7,12 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Core\Console\Commands\DownCommand;
+use Webkul\Core\Console\Commands\UnoPimPublish;
+use Webkul\Core\Console\Commands\UnoPimVersion;
+use Webkul\Core\Console\Commands\UpCommand;
 use Webkul\Core\Core;
 use Webkul\Core\ElasticSearch;
 use Webkul\Core\Exceptions\Handler;
@@ -24,6 +29,19 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        /*
+         * Pin Laravel's url() / asset() / Vite root + scheme to APP_URL so
+         * frontend asset URLs cannot be redirected to an attacker origin
+         * by a poisoned Host / X-Forwarded-Host header.
+         */
+        if ($appUrl = config('app.url')) {
+            URL::forceRootUrl($appUrl);
+
+            if ($scheme = parse_url($appUrl, PHP_URL_SCHEME)) {
+                URL::forceScheme($scheme);
+            }
+        }
+
         include __DIR__.'/../Http/helpers.php';
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
@@ -54,11 +72,11 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         $this->app->extend('command.down', function () {
-            return new \Webkul\Core\Console\Commands\DownCommand;
+            return new DownCommand;
         });
 
         $this->app->extend('command.up', function () {
-            return new \Webkul\Core\Console\Commands\UpCommand;
+            return new UpCommand;
         });
 
         /**
@@ -125,8 +143,8 @@ class CoreServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \Webkul\Core\Console\Commands\UnoPimPublish::class,
-                \Webkul\Core\Console\Commands\UnoPimVersion::class,
+                UnoPimPublish::class,
+                UnoPimVersion::class,
             ]);
         }
     }

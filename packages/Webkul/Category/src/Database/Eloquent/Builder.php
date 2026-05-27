@@ -2,6 +2,7 @@
 
 namespace Webkul\Category\Database\Eloquent;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Kalnoy\Nestedset\QueryBuilder as BaseBuilder;
 
@@ -17,7 +18,7 @@ class Builder extends BaseBuilder
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return LengthAwarePaginator
      *
      * @throws \InvalidArgumentException
      */

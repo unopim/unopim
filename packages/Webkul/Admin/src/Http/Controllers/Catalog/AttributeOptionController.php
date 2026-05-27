@@ -3,7 +3,9 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AttributeOptionDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AttributeOptionForm;
@@ -26,7 +28,7 @@ class AttributeOptionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index(int $id)
     {
@@ -36,7 +38,7 @@ class AttributeOptionController extends Controller
     /**
      * Store a newly created option.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(int $attributeId, AttributeOptionForm $request): JsonResponse
     {
