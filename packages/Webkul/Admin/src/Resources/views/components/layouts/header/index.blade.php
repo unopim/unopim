@@ -1,5 +1,10 @@
 @php
     $admin = auth()->guard('admin')->user();
+    $themeToggleTitles = [
+        'auto'  => trans('admin::app.components.layouts.header.theme-auto'),
+        'dark'  => trans('admin::app.components.layouts.header.theme-dark'),
+        'light' => trans('admin::app.components.layouts.header.theme-light'),
+    ];
 @endphp
 
 <header class="flex justify-between items-center px-4 py-2.5 bg-white dark:bg-cherry-700  border-b dark:border-cherry-800 sticky top-0 z-[10001]">
@@ -343,11 +348,7 @@
                     darkMode: @json(request()->cookie('dark_mode', 'auto')),
 
                     mediaQuery: null,
-                    titleMap: @json([
-                        'auto'  => trans('admin::app.components.layouts.header.theme-auto'),
-                        'dark'  => trans('admin::app.components.layouts.header.theme-dark'),
-                        'light' => trans('admin::app.components.layouts.header.theme-light'),
-                    ]),
+                    titleMap: @json($themeToggleTitles),
                 };
             },
 
