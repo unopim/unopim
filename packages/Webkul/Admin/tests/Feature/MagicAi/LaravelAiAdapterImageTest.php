@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
 
-beforeEach(fn () => test()->skip('Pending rewrite for laravel/ai 0.7 — request body shapes differ from Prism. See follow-up issue.'));
+beforeEach(fn () => $this->markTestSkipped('Pending rewrite for laravel/ai 0.7 — request body shapes differ from Prism. See follow-up issue.'));
 
 /**
  * Verifies LaravelAiAdapter sends only explicitly-set image options to OpenAI.

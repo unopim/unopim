@@ -4,6 +4,7 @@ namespace Webkul\AiAgent\Chat;
 
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Client\RequestException;
+use Laravel\Ai\Exceptions\InsufficientCreditsException;
 use Laravel\Ai\Exceptions\ProviderOverloadedException;
 use Laravel\Ai\Exceptions\RateLimitedException;
 use Throwable;
@@ -47,6 +48,17 @@ class AiErrorResolver
             return [
                 'message'  => trans('ai-agent::app.common.error-overloaded'),
                 'status'   => 503,
+                'is_known' => true,
+            ];
+        }
+
+        // laravel/ai 0.7 added InsufficientCreditsException — surface its
+        // raw provider-tagged message so the user knows which provider needs
+        // top-up. Maps to HTTP 402 (Payment Required).
+        if ($e instanceof InsufficientCreditsException) {
+            return [
+                'message'  => $e->getMessage(),
+                'status'   => 402,
                 'is_known' => true,
             ];
         }
