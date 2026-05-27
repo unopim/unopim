@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\Traits;
 
 use Webkul\AdminApi\Models\Client;
+use Webkul\User\Models\Admin;
 
 trait OauthClientGenerator
 {
@@ -16,15 +17,21 @@ trait OauthClientGenerator
         $provider = config('auth.guards.api.provider', 'admins');
 
         // Passport 13 dropped the $userId + $redirect args from
-        // createPasswordGrantClient. Create the client, then attach the admin
-        // user manually so UnoPim's per-user client filtering keeps working.
+        // createPasswordGrantClient. Create the client, then attach the
+        // owner morph (owner_type / owner_id) for Passport 13's polymorphic
+        // owner() relation and keep the legacy user_id column populated for
+        // backwards-compat with ApiKeysDataGrid JOINs and Client::admins().
         $client = $this->clients->createPasswordGrantClient(
             $name,
             $provider,
             confidential: true,
         );
 
-        $client->forceFill(['user_id' => $user_id])->save();
+        $client->forceFill([
+            'user_id'    => $user_id,
+            'owner_type' => Admin::class,
+            'owner_id'   => $user_id,
+        ])->save();
 
         return $client;
     }

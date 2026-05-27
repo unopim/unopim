@@ -6,6 +6,7 @@ use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Console\ClientCommand as Passport;
 use RuntimeException;
+use Webkul\User\Models\Admin;
 use Webkul\User\Repositories\AdminRepository;
 
 class ApiClientCommand extends Passport
@@ -64,15 +65,21 @@ class ApiClientCommand extends Passport
         $provider = config('auth.guards.api.provider', 'admins');
 
         // Passport 13 dropped the $userId + $redirect args from
-        // createPasswordGrantClient. Create the client, then attach the admin
-        // user manually so UnoPim's per-user client filtering keeps working.
+        // createPasswordGrantClient. Create the client, then attach the
+        // owner morph (owner_type / owner_id) for Passport 13's polymorphic
+        // owner() relation and keep the legacy user_id column populated for
+        // backwards-compat with ApiKeysDataGrid JOINs and Client::admins().
         $client = $clients->createPasswordGrantClient(
             $name,
             $provider,
             confidential: true,
         );
 
-        $client->forceFill(['user_id' => $user->id])->save();
+        $client->forceFill([
+            'user_id'    => $user->id,
+            'owner_type' => Admin::class,
+            'owner_id'   => $user->id,
+        ])->save();
 
         $this->components->info('Password grant client created successfully.');
 
