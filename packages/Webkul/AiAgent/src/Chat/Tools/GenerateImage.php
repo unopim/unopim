@@ -4,6 +4,7 @@ namespace Webkul\AiAgent\Chat\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Http\File;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Image;
@@ -11,6 +12,7 @@ use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\MagicAI\Enums\AiProvider;
 
@@ -42,9 +44,10 @@ class GenerateImage implements PimTool
             public function schema(JsonSchema $schema): array
             {
                 return [
-                    'prompt' => $schema->string()->description('Detailed description of the image to generate (e.g. "Professional product photo of a red leather handbag on white background")'),
-                    'sku'    => $schema->string()->description('Optional: Product SKU to attach the generated image to'),
-                    'size'   => $schema->string()->enum(['1024x1024', '1024x1792', '1792x1024'])->description('Image size/aspect ratio'),
+                    'prompt'    => $schema->string()->description('Detailed description of the image to generate (e.g. "Professional product photo of a red leather handbag on white background")'),
+                    'sku'       => $schema->string()->description('Optional: Product SKU to attach the generated image to'),
+                    'attribute' => $schema->string()->description('Optional: target attribute code on the product (default "image"). For multiple/gallery images pass the gallery attribute code (e.g. "gallery") — gallery images are APPENDED, single-image attributes are REPLACED.'),
+                    'size'      => $schema->string()->enum(['1024x1024', '1024x1792', '1792x1024'])->description('Image size/aspect ratio'),
                 ];
             }
 
@@ -56,6 +59,7 @@ class GenerateImage implements PimTool
 
                 $prompt = $request->string('prompt')->toString();
                 $sku = $request->string('sku')->toString() ?: null;
+                $attributeCode = $request->string('attribute')->toString() ?: 'image';
                 $size = $request->string('size')->toString() ?: '1024x1024';
 
                 $aiProvider = AiProvider::from($this->context->platform->provider);
@@ -131,26 +135,66 @@ class GenerateImage implements PimTool
                         $repo = app('Webkul\Product\Repositories\ProductRepository');
                         $product = $repo->findOneByField('sku', $sku);
 
-                        if ($product) {
-                            $fileStorer = app(FileStorer::class);
-                            $targetPath = 'product'.DIRECTORY_SEPARATOR.$product->id.DIRECTORY_SEPARATOR.'image';
-
-                            $storedImage = $fileStorer->store(
-                                $targetPath,
-                                new File($fullPath),
-                                [FileStorer::HASHED_FOLDER_NAME_KEY => true],
-                            );
-
-                            if ($storedImage) {
-                                $values = $product->values ?? [];
-                                $values['common']['image'] = $storedImage;
-                                $repo->updateWithValues(['values' => $values], $product->id);
-
-                                $result['attached_to'] = $sku;
-                                $result['product_url'] = route('admin.catalog.products.edit', $product->id);
-                            }
-                        } else {
+                        if (! $product) {
                             $result['warning'] = "Product SKU '{$sku}' not found. Image generated but not attached.";
+                        } else {
+                            $attribute = Attribute::where('code', $attributeCode)->first();
+
+                            if (! $attribute) {
+                                $result['warning'] = "Attribute '{$attributeCode}' not found. Image generated but not attached.";
+                            } elseif (! in_array($attribute->type, ['image', 'gallery'])) {
+                                $result['warning'] = "Attribute '{$attributeCode}' is type '{$attribute->type}', not image/gallery. Image generated but not attached.";
+                            } else {
+                                $familyHasAttribute = DB::table('attribute_family_groups_mappings as afgm')
+                                    ->join('attribute_group_mappings as agm', 'agm.attribute_group_id', '=', 'afgm.attribute_group_id')
+                                    ->where('afgm.attribute_family_id', $product->attribute_family_id)
+                                    ->where('agm.attribute_id', $attribute->id)
+                                    ->exists();
+
+                                if (! $familyHasAttribute) {
+                                    $result['warning'] = "Attribute '{$attributeCode}' is not assigned to this product's family. Image generated but not attached.";
+                                } else {
+                                    $fileStorer = app(FileStorer::class);
+                                    $targetPath = 'product'.DIRECTORY_SEPARATOR.$product->id.DIRECTORY_SEPARATOR.$attribute->code;
+
+                                    $storedImage = $fileStorer->store(
+                                        $targetPath,
+                                        new File($fullPath),
+                                        [FileStorer::HASHED_FOLDER_NAME_KEY => true],
+                                    );
+
+                                    if ($storedImage) {
+                                        $scope = $this->outer->resolveScope($attribute);
+                                        $values = $product->values ?? [];
+                                        $channelCode = core()->getRequestedChannelCode();
+                                        $localeCode = core()->getRequestedLocaleCode();
+
+                                        if ($attribute->type === 'gallery') {
+                                            $currentValue = $attribute->getValueFromProductValues($values, $channelCode, $localeCode);
+                                            $images = is_array($currentValue) ? $currentValue : ($currentValue ? explode(',', $currentValue) : []);
+                                            $images = array_values(array_filter($images));
+                                            $images[] = $storedImage;
+                                            $newValue = $images;
+                                        } else {
+                                            $newValue = $storedImage;
+                                        }
+
+                                        match ($scope) {
+                                            'channel_locale_specific' => $values['channel_locale_specific'][$channelCode][$localeCode][$attribute->code] = $newValue,
+                                            'channel_specific'        => $values['channel_specific'][$channelCode][$attribute->code] = $newValue,
+                                            'locale_specific'         => $values['locale_specific'][$localeCode][$attribute->code] = $newValue,
+                                            default                   => $values['common'][$attribute->code] = $newValue,
+                                        };
+
+                                        $repo->updateWithValues(['values' => $values], $product->id);
+
+                                        $result['attached_to'] = $sku;
+                                        $result['attribute'] = $attribute->code;
+                                        $result['attribute_type'] = $attribute->type;
+                                        $result['product_url'] = route('admin.catalog.products.edit', $product->id);
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -164,6 +208,27 @@ class GenerateImage implements PimTool
                 }
             }
         };
+    }
+
+    /**
+     * Resolve which scope key to write a value under, based on whether the
+     * attribute is per-channel and/or per-locale.
+     */
+    public function resolveScope(Attribute $attribute): string
+    {
+        if ($attribute->isLocaleAndChannelBasedAttribute()) {
+            return 'channel_locale_specific';
+        }
+
+        if ($attribute->isChannelBasedAttribute()) {
+            return 'channel_specific';
+        }
+
+        if ($attribute->isLocaleBasedAttribute()) {
+            return 'locale_specific';
+        }
+
+        return 'common';
     }
 
     /**
