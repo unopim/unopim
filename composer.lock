@@ -8,22 +8,22 @@
     "packages": [
         {
             "name": "astrotomic/laravel-translatable",
-            "version": "v11.16.1",
+            "version": "v11.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Astrotomic/laravel-translatable.git",
-                "reference": "3edd5a3083b45948942af83903845954c3352652"
+                "reference": "e29bb7d66017033337e0271a103a940d2d745681"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Astrotomic/laravel-translatable/zipball/3edd5a3083b45948942af83903845954c3352652",
-                "reference": "3edd5a3083b45948942af83903845954c3352652",
+                "url": "https://api.github.com/repos/Astrotomic/laravel-translatable/zipball/e29bb7d66017033337e0271a103a940d2d745681",
+                "reference": "e29bb7d66017033337e0271a103a940d2d745681",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^9.0 || ^10.0 || ^11.0 || ^12.0",
-                "illuminate/database": "^9.0 || ^10.0 || ^11.0 || ^12.0",
-                "illuminate/support": "^9.0 || ^10.0 || ^11.0 || ^12.0",
+                "illuminate/contracts": "^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "illuminate/database": "^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "illuminate/support": "^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
                 "php": "^8.0"
             },
             "require-dev": {
@@ -31,8 +31,8 @@
                 "laravel/legacy-factories": "^1.0.4",
                 "laravel/pint": "^1.0",
                 "mockery/mockery": "^1.3.3",
-                "orchestra/testbench": "^7.0 || ^8.0 || ^9.0 || ^10.0",
-                "phpunit/phpunit": "^10.0 || ^11.0"
+                "orchestra/testbench": "^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0",
+                "phpunit/phpunit": "^10.0 || ^11.0 || ^12.0"
             },
             "type": "library",
             "extra": {
@@ -89,7 +89,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-09T14:05:02+00:00"
+            "time": "2026-03-27T14:41:10+00:00"
         },
         {
             "name": "barryvdh/laravel-dompdf",
