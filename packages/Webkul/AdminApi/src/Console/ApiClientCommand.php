@@ -35,7 +35,7 @@ class ApiClientCommand extends Passport
      *
      * @return void
      */
-    public function handle(ClientRepository $clients)
+    public function handle(ClientRepository $clients): void
     {
         $this->createPasswordClient($clients);
     }
