@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => 'Aking Account',
                 'notifications' => 'Mga Abiso',
                 'visit-shop'    => 'Bumisita sa Tindahan',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Pamilya ng Katangian',

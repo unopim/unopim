@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => 'मेरा खाता',
                 'notifications' => 'अधिसूचना',
                 'visit-shop'    => 'यात्रा दुकान',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'विशेषण परिवार',

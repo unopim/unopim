@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => 'Mitt Konto',
                 'notifications' => 'Meddelanden',
                 'visit-shop'    => 'Besök Butik',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Attributfamiljer',

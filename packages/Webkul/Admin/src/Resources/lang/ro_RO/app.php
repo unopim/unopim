@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => 'Contul Meu',
                 'notifications' => 'Notificări',
                 'visit-shop'    => 'Vizitează Magazinul',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Familii de Atribute',

@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => 'Moj račun',
                 'notifications' => 'Obavijesti',
                 'visit-shop'    => 'Posjetite trgovinu',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Grupe atributa',

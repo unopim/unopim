@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => 'Minha Conta',
                 'notifications' => 'Notificações',
                 'visit-shop'    => 'Visitar Loja',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Famílias de Atributos',

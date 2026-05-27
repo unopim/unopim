@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => 'حسابي',
                 'notifications' => 'إشعارات',
                 'visit-shop'    => 'زيارة متجر',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'عائلات السمات',

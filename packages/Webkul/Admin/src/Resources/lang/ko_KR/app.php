@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => '내 계정',
                 'notifications' => '알림',
                 'visit-shop'    => '매장 방문',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => '속성 그룹',

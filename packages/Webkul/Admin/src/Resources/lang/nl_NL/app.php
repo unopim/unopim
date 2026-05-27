@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => 'Mijn rekening',
                 'notifications' => 'Meldingen',
                 'visit-shop'    => 'Bezoek de winkel',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Teken families toe',

@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => 'Tài khoản của tôi',
                 'notifications' => 'Thông báo',
                 'visit-shop'    => 'Thăm cửa hàng',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Nhóm thuộc tính',

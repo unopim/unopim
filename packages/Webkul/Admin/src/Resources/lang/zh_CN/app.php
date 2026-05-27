@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => '我的账户',
                 'notifications' => '通知',
                 'visit-shop'    => '访问商店',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => '属性家庭',

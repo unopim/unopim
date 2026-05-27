@@ -21,8 +21,14 @@
                 />
             @else
                 <img
-                    src="{{ in_array(request()->cookie('dark_mode'), ['1', 'dark'], true) ? unopim_asset('images/dark_logo.svg') : unopim_asset('images/logo.svg') }}"
-                    id="logo-image"
+                    src="{{ unopim_asset('images/logo.svg') }}"
+                    class="theme-logo-light block dark:hidden"
+                    alt="{{ config('app.name') }}"
+                />
+
+                <img
+                    src="{{ unopim_asset('images/dark_logo.svg') }}"
+                    class="theme-logo-dark hidden dark:block"
                     alt="{{ config('app.name') }}"
                 />
             @endif
@@ -132,8 +138,14 @@
                 />
             @else
                 <img
-                    src="{{ in_array(request()->cookie('dark_mode'), ['1', 'dark'], true) ? unopim_asset('images/dark_logo.svg') : unopim_asset('images/logo.svg') }}"
-                    id="logo-image"
+                    src="{{ unopim_asset('images/logo.svg') }}"
+                    class="theme-logo-light block dark:hidden"
+                    alt="{{ config('app.name') }}"
+                />
+
+                <img
+                    src="{{ unopim_asset('images/dark_logo.svg') }}"
+                    class="theme-logo-dark hidden dark:block"
                     alt="{{ config('app.name') }}"
                 />
             @endif
@@ -328,13 +340,14 @@
 
             data() {
                 return {
-                    darkMode: "{{ request()->cookie('dark_mode', 'auto') }}",
-
-                    logo: "{{ unopim_asset('images/logo.svg') }}",
-
-                    dark_logo: "{{ unopim_asset('images/dark_logo.svg') }}",
+                    darkMode: @json(request()->cookie('dark_mode', 'auto')),
 
                     mediaQuery: null,
+                    titleMap: @json([
+                        'auto'  => trans('admin::app.components.layouts.header.theme-auto'),
+                        'dark'  => trans('admin::app.components.layouts.header.theme-dark'),
+                        'light' => trans('admin::app.components.layouts.header.theme-light'),
+                    ]),
                 };
             },
 
@@ -348,11 +361,7 @@
                 },
 
                 toggleTitle() {
-                    if (this.darkMode === 'auto') {
-                        return 'Theme: Auto';
-                    }
-
-                    return this.darkMode === 'dark' ? 'Theme: Dark' : 'Theme: Light';
+                    return this.titleMap[this.darkMode] ?? this.titleMap.auto;
                 },
             },
 
@@ -373,12 +382,6 @@
                     document.documentElement.classList.toggle('dark', shouldUseDark);
 
                     this.$emitter.emit('change-theme', shouldUseDark ? 'dark' : 'light');
-
-                    const logoImage = document.getElementById('logo-image');
-
-                    if (logoImage) {
-                        logoImage.src = shouldUseDark ? this.dark_logo : this.logo;
-                    }
 
                     if (persist) {
                         const expiryDate = new Date();

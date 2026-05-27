@@ -1956,6 +1956,9 @@ return [
                 'my-account'    => 'Oma Tili',
                 'notifications' => 'Ilmoitukset',
                 'visit-shop'    => 'Vierailu Kaupassa',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Attribuuttiperheet',
