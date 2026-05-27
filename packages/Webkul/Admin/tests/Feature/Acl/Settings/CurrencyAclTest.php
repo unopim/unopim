@@ -6,7 +6,7 @@ it('should not display the currency list if does not have permission', function 
     $this->loginWithPermissions('custom', ['dashboard']);
 
     $this->get(route('admin.settings.currencies.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the currency list if have permission', function () {
@@ -23,7 +23,7 @@ it('should not return the currency json for edit if does not have permission', f
     $currency = Currency::first();
 
     $this->get(route('admin.settings.currencies.edit', ['id' => $currency->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should return the currency json for edit if have permission', function () {
@@ -40,7 +40,7 @@ it('should not be able to delete currency if does not have permission', function
     $currency = Currency::first();
 
     $this->delete(route('admin.settings.currencies.delete', ['id' => $currency->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(Currency::class), ['id' => $currency->id]);
 });
@@ -67,7 +67,7 @@ it('should not be able to mass update currencies if does not have permission', f
         'indices' => $currencyIds,
         'value'   => 1,
     ])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     foreach ($currencyIds as $id) {
         $this->assertDatabaseHas($this->getFullTableName(Currency::class), ['id' => $id, 'status' => 0]);
@@ -99,7 +99,7 @@ it('should not be able to mass delete currencies if does not have permission', f
     $this->post(route('admin.settings.currencies.mass_delete'), [
         'indices' => $currencyIds,
     ])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     foreach ($currencyIds as $id) {
         $this->assertDatabaseHas($this->getFullTableName(Currency::class), ['id' => $id]);

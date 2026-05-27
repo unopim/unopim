@@ -33,10 +33,17 @@ async function selectMultiselect(page, fieldName, optionLabel) {
   const wrapper = page.locator(`input[name="${fieldName}"]`).locator('..');
   // Click tags area (works whether placeholder or tag is showing)
   await wrapper.locator('.multiselect__tags').click();
-  // Wait for dropdown list to appear
-  await page.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
-  // Pick the option
-  await page.getByRole('option', { name: optionLabel }).first().click();
+  // Wait for dropdown list to appear (scoped to this field)
+  await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
+  if (optionLabel) {
+    await page.getByRole('option', { name: optionLabel }).first().click();
+  } else {
+    // Pick first enabled option when label not provided
+    await wrapper
+      .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
+      .first()
+      .click();
+  }
   // Close dropdown by pressing Escape
   await page.keyboard.press('Escape');
 }
@@ -50,7 +57,7 @@ async function createSimpleProduct(adminPage, sku) {
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await adminPage.waitForLoadState('networkidle');
   await selectMultiselect(adminPage, 'type', 'Simple');
-  await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+  await selectMultiselect(adminPage, 'attribute_family_id');
   await adminPage.locator('input[name="sku"]').fill(sku);
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
   // After creation, the app redirects to the product edit page
@@ -82,7 +89,7 @@ test.describe('Product Creation - Validation', () => {
   test('1 - with empty product type field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(`val1_${generateUid()}`);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
@@ -101,7 +108,7 @@ test.describe('Product Creation - Validation', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
   });
@@ -118,7 +125,7 @@ test.describe('Product Creation - Validation', () => {
   test('5 - with empty product type and sku field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
@@ -186,7 +193,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `-PROD001-${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
@@ -199,7 +206,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `_INVALID-${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
@@ -210,7 +217,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `PROD--${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
@@ -221,7 +228,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `PROD@${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
@@ -232,7 +239,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `PROD ${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
@@ -258,7 +265,7 @@ test.describe('Simple Product CRUD', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The sku has already been taken.');
@@ -283,7 +290,13 @@ test.describe('Simple Product CRUD', () => {
     await adminPage.locator('#product_number').fill(`PN-${uid}`);
     await adminPage.locator('#name').fill(`Test Product ${uid}`);
     await adminPage.locator('#url_key').fill(`url-${uid}`);
-    await adminPage.locator('#price').fill('40000');
+    // Default channel has multiple currencies in demo seed; fill every
+    // #price input so required-per-currency validation passes.
+    const priceInputs = adminPage.locator('#price');
+    const priceCount = await priceInputs.count();
+    for (let i = 0; i < priceCount; i++) {
+      await priceInputs.nth(i).fill('40000');
+    }
 
     // Fill required TinyMCE fields (triggers VeeValidate via keyup handler)
     await fillTinyMCE(adminPage, 'short_description', 'Short description text');
@@ -317,12 +330,13 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.waitForLoadState('networkidle');
     await selectMultiselect(adminPage, 'type', 'Configurable');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
 
-    // Select a configurable attribute (e.g., Brand) when prompted
-    await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
+    // Remove one of the default-selected configurable attributes so the
+    // family has at least one remaining. Default family uses Color/Size.
+    await adminPage.locator('p').filter({ hasText: /^Color/ }).locator('span').first().click();
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     // After creation, the app redirects to the product edit page
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -340,10 +354,10 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.waitForLoadState('networkidle');
     await selectMultiselect(adminPage, 'type', 'Configurable');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
+    await adminPage.locator('p').filter({ hasText: /^Color/ }).locator('span').first().click();
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await adminPage.waitForLoadState('networkidle').catch(() => {});
@@ -360,7 +374,14 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.locator('#product_number').fill(`PN-${uid}`);
     await adminPage.locator('#name').fill(`Config Product ${uid}`);
     await adminPage.locator('#url_key').fill(`url-${uid}`);
-    await adminPage.locator('#price').fill('25000');
+    // Multi-currency default channel; fill every #price input.
+    {
+      const prices = adminPage.locator('#price');
+      const pc = await prices.count();
+      for (let i = 0; i < pc; i++) {
+        await prices.nth(i).fill('25000');
+      }
+    }
 
     // Fill required TinyMCE fields (triggers VeeValidate via keyup handler)
     await fillTinyMCE(adminPage, 'short_description', 'Short description text');
@@ -380,10 +401,10 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.waitForLoadState('networkidle');
     await selectMultiselect(adminPage, 'type', 'Configurable');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
+    await adminPage.locator('p').filter({ hasText: /^Color/ }).locator('span').first().click();
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await adminPage.waitForLoadState('networkidle').catch(() => {});
@@ -477,6 +498,47 @@ test.describe('Product Listing Features', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Quick Export' }).click();
     await expect(adminPage.locator('#app').getByText('Download')).toBeVisible();
+  });
+
+  test('32a - should download XLS file via quick export without errors', async ({ adminPage }) => {
+    test.setTimeout(60000);
+    const sku = `qexp-${generateUid()}`;
+    await createSimpleProduct(adminPage, sku);
+
+    await navigateTo(adminPage, 'products');
+    await adminPage.waitForLoadState('networkidle');
+
+    // Select the product using its row mass-action checkbox.
+    // The datagrid has TWO types of `.peer hidden` checkboxes:
+    //   - #mass_action_select_all_records (header, select-all)
+    //   - mass_action_select_record_${id} (per row)
+    // Use the row checkbox selector to target a single product row.
+    // The checkbox is `display: none` by design; click the label instead.
+    const rowCheckboxLabel = adminPage.locator('label[for^="mass_action_select_record_"]').first();
+    await rowCheckboxLabel.waitFor({ state: 'visible', timeout: 10000 });
+    await rowCheckboxLabel.click();
+
+    // Open Quick Export modal
+    await adminPage.getByRole('button', { name: 'Quick Export' }).click();
+    await expect(adminPage.locator('#app').getByText('Download')).toBeVisible();
+
+    // XLS is the default format, so just click the Export button and wait for download
+    const [download] = await Promise.all([
+      adminPage.waitForEvent('download', { timeout: 30000 }).catch(() => null),
+      adminPage.locator('.primary-button').filter({ hasText: 'Quick Export' }).click(),
+    ]);
+
+    // If download event fires, the export succeeded as a file download
+    if (download) {
+      const fileName = download.suggestedFilename();
+      expect(fileName).toMatch(/\.(xls|xlsx)$/);
+    } else {
+      // If no download event, verify no error was shown (AJAX blob approach)
+      await expect(adminPage.locator('#app').getByText(/Return value must be of type/i)).not.toBeVisible({ timeout: 5000 });
+    }
+
+    // Cleanup
+    await deleteProductBySku(adminPage, sku);
   });
 
   test('33 - should allow selecting all products with mass action checkbox', async ({ adminPage }) => {

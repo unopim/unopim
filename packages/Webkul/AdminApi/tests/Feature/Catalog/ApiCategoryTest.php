@@ -226,11 +226,15 @@ it('should partially update the category and its parent', function () {
         'parent_id' => $parent->id,
     ]);
     $actualAdditionalData = Category::where('code', $category->code)->value('additional_data');
-    $expectedAdditionalData = json_encode($updatedData['additional_data']);
-    if (! is_string($actualAdditionalData)) {
-        $actualAdditionalData = json_encode($actualAdditionalData);
+    if (is_string($actualAdditionalData)) {
+        $actualAdditionalData = json_decode($actualAdditionalData, true);
     }
-    $this->assertEquals($expectedAdditionalData, $actualAdditionalData);
+    // PATCH merges into existing additional_data, so verify the patched
+    // locale is present rather than expecting an exact full-data match.
+    $this->assertEquals(
+        'Updated Category Name',
+        $actualAdditionalData['locale_specific'][$locale->code]['name'] ?? null,
+    );
 });
 
 it('should return 404 if category not found for patch', function () {
@@ -278,7 +282,8 @@ it('should patch the data for all locales for category patch', function () {
     $category = Category::factory()->create();
 
     Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE'])->update(['status' => 1]);
-    $locales = Locale::where('status', 1)->limit(3)->pluck('code')->toArray();
+
+    $locales = Locale::where('status', 1)->orderBy('id')->pluck('code')->toArray();
 
     $data = [];
     foreach ($locales as $locale) {
@@ -463,7 +468,7 @@ it('should give validation message if category trying to add parent to a root ca
 it('should update the data for all locales for category update', function () {
     $category = Category::factory()->create();
     Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE'])->update(['status' => 1]);
-    $locales = Locale::where('status', 1)->limit(3)->pluck('code')->toArray();
+    $locales = Locale::where('status', 1)->orderBy('id')->pluck('code')->toArray();
 
     $data = [];
     foreach ($locales as $locale) {

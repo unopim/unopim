@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => '魔法 AI',
         'general'               => '常规',
         'prompt'                => '提示词',
         'system-prompt'         => '系统提示词',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => '魔法 AI',
         'platform'       => '平台',
         'settings'       => '设置',
         'prompt'         => '提示词',
@@ -35,6 +35,11 @@ return [
         'back'                      => '返回',
         'unauthorized'              => '此操作未经授权。',
         'error-generic'             => '发生意外错误，请重试。',
+        'error-rate-limit'          => '已达到AI提供商的请求速率限制。请稍等片刻后重试。',
+        'error-rate-limit-retry'    => '已达到AI提供商的请求速率限制。请在 :seconds 秒后重试。',
+        'error-overloaded'          => 'AI提供商目前负载过高。请稍后重试。',
+        'error-request-too-large'   => '您的请求对AI提供商来说太大。请缩短消息或删除一些附件后重试。',
+        'error-api-key-corrupted'   => '无法解密此平台的API密钥（:error）。应用加密密钥可能已更改。请编辑平台并重新输入您的API密钥。',
         'invalid-file-path'         => '文件路径无效。',
         'invalid-locale-code'       => '语言代码无效。',
         'invalid-channel-code'      => '渠道代码无效。',
@@ -213,6 +218,7 @@ return [
         'attach'                   => '附加',
         'attach-csv-xlsx'          => '附加 CSV 或 XLSX',
         'attach-image'             => '附加图片',
+        'remove-attachment'        => '移除附件',
         'send'                     => '发送',
         'sending'                  => '正在发送…',
         'processing'               => '正在处理…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'  => '例如 "为 SHIRT-001 生成 S/M/L × 红/蓝"',
             'edit-image'              => '编辑产品图片',
             'edit-image-desc'         => '去除背景、增强及修饰',
-            'edit-image-hint'         => '上传图片，然后说明要更改的内容——例如 "去除背景"',
+            'edit-image-hint'         => '输入产品SKU并描述要更改的内容 — 例如"删除SKU-123的背景"',
 
             'search-products'         => '搜索产品',
             'search-products-desc'    => '按 SKU、名称或状态查找产品',
@@ -319,7 +325,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => '按照指示编辑上传的产品图片。',
+            'edit-image-prompt'        => '通过给定的SKU获取产品图片，应用请求的更改并保存回去。',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

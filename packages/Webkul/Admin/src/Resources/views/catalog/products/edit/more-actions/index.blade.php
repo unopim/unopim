@@ -1,9 +1,16 @@
+@php
+    $hasTranslateAction = core()->getConfigData('general.magic_ai.translation.enabled') && bouncer()->hasPermission('ai-agent');
+@endphp
+
 {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.before', ['product' => $product]) !!}
 
-<v-custom-dropdown></v-custom-dropdown>
+@if ($hasTranslateAction)
+    <v-custom-dropdown></v-custom-dropdown>
+@endif
 
 {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.after', ['product' => $product]) !!}
 
+@if ($hasTranslateAction)
 @pushOnce('scripts')
     <script type="text/x-template" id="v-custom-dropdown-template">
         <div class="relative inline-block text-left">
@@ -12,7 +19,7 @@
                 @click="toggleDropdown"
                 title="@lang('admin::app.catalog.products.edit.more-actions')"
             >
-                More 
+                @lang('admin::app.catalog.products.edit.more')
                 <i class="text-2xl icon-chevron-down"></i>
             </span>
 
@@ -23,9 +30,7 @@
                 <ul class="text-gray-700 rounded">
                     {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.list.before', ['product' => $product]) !!}
 
-                    @if (core()->getConfigData('general.magic_ai.translation.enabled'))
-                        @include('admin::catalog.products.edit.more-actions.translate-action')
-                    @endif
+                    @include('admin::catalog.products.edit.more-actions.translate-action')
 
                     {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.list.after', ['product' => $product]) !!}
                 </ul>
@@ -64,3 +69,4 @@
         });
     </script>
 @endPushOnce
+@endif

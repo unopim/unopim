@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'IA Màgica',
         'general'               => 'General',
         'prompt'                => 'Indicació',
         'system-prompt'         => 'Indicació del sistema',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'IA Màgica',
         'platform'       => 'Plataformes',
         'settings'       => 'Configuració',
         'prompt'         => 'Indicacions',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Enrere',
         'unauthorized'              => 'Aquesta acció no està autoritzada.',
         'error-generic'             => 'S\'ha produït un error inesperat. Si us plau, torneu-ho a provar.',
+        'error-rate-limit'          => 'S\'ha assolit el límit de peticions del proveïdor d\'IA. Espereu un moment i torneu-ho a provar.',
+        'error-rate-limit-retry'    => 'S\'ha assolit el límit de peticions del proveïdor d\'IA. Torneu-ho a provar d\'aquí a :seconds segons.',
+        'error-overloaded'          => 'El proveïdor d\'IA està actualment sobrecarregat. Torneu-ho a provar d\'aquí a uns moments.',
+        'error-request-too-large'   => 'La vostra petició és massa gran per al proveïdor d\'IA. Escurceu el missatge o elimineu alguns adjunts i torneu-ho a provar.',
+        'error-api-key-corrupted'   => 'No s\'ha pogut desxifrar la clau API d\'aquesta plataforma (:error). La clau de xifrat de l\'aplicació pot haver canviat. Editeu la plataforma i torneu a introduir la vostra clau API.',
         'invalid-file-path'         => 'Ruta del fitxer no vàlida.',
         'invalid-locale-code'       => 'Codi d\'idioma no vàlid.',
         'invalid-channel-code'      => 'Codi de canal no vàlid.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'Adjuntar',
         'attach-csv-xlsx'          => 'Adjuntar CSV o XLSX',
         'attach-image'             => 'Adjuntar imatge',
+        'remove-attachment'        => 'Elimina l\'adjunt',
         'send'                     => 'Enviar',
         'sending'                  => 'Enviant…',
         'processing'               => 'Processant…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'   => 'p. ex. "Generar S/M/L × Vermell/Blau per a SHIRT-001"',
             'edit-image'               => 'Editar imatge del producte',
             'edit-image-desc'          => 'Eliminació de fons, millora i retoc',
-            'edit-image-hint'          => 'Pugeu una imatge i digueu què voleu canviar — p. ex. "Eliminar fons"',
+            'edit-image-hint'          => 'Proporcioneu un SKU de producte i descriviu què voleu canviar — p. ex. "Elimina el fons de SKU-123"',
             'search-products'          => 'Cercar productes',
             'search-products-desc'     => 'Trobar productes per SKU, nom o estat',
             'search-products-hint'     => 'p. ex. "Trobar tots els productes actius" o "Cercar portàtil"',
@@ -302,7 +308,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Editar la imatge del producte pujada segons les instruccions.',
+            'edit-image-prompt'        => 'Editeu la imatge del producte obtenint-la del SKU indicat, apliqueu els canvis sol·licitats i deseu-la.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

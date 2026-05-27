@@ -81,6 +81,8 @@ class MediaFileController extends ApiController
 
             $filePath = implode(',', $filePath);
 
+            $this->assignMediaToProductAttribute($product, $attribute, $filePath);
+
             return $this->successResponse(
                 trans('admin::app.catalog.products.upload-success'),
                 Response::HTTP_OK,
@@ -222,6 +224,42 @@ class MediaFileController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+    }
+
+    /**
+     * Persist the uploaded file path into the product's values JSON under the
+     * correct scope (common / locale / channel / channel-locale), using the
+     * attribute's scope flags and the request's channel/locale (falling back
+     * to defaults).
+     */
+    protected function assignMediaToProductAttribute($product, string $attributeCode, string $filePath): void
+    {
+        if ($filePath === '') {
+            return;
+        }
+
+        $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
+
+        if (! $attribute) {
+            return;
+        }
+
+        $values = $product->values ?? [];
+        $channel = request()->input('channel') ?: core()->getDefaultChannelCode();
+        $locale = request()->input('locale') ?: core()->getDefaultLocaleCodeFromDefaultChannel();
+
+        if ($attribute->value_per_channel && $attribute->value_per_locale) {
+            $values['channel_locale_specific'][$channel][$locale][$attributeCode] = $filePath;
+        } elseif ($attribute->value_per_channel) {
+            $values['channel_specific'][$channel][$attributeCode] = $filePath;
+        } elseif ($attribute->value_per_locale) {
+            $values['locale_specific'][$locale][$attributeCode] = $filePath;
+        } else {
+            $values['common'][$attributeCode] = $filePath;
+        }
+
+        $product->values = $values;
+        $product->save();
     }
 
     /**

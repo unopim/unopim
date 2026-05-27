@@ -91,12 +91,17 @@ Route::group([
 
     });
 
-    /** Configurable Products API Routes */
-    Route::controller(ConfigurableProductController::class)->prefix('configrable-products')->group(function () {
-        Route::get('', 'index')->name('admin.api.configrable_products.index');
-        Route::get('{code}', 'get')->name('admin.api.configrable_products.get');
-        Route::post('', 'store')->name('admin.api.configrable_products.store');
-        Route::put('{code}', 'update')->name('admin.api.configrable_products.update');
-        Route::patch('{code}', 'partialUpdate')->name('admin.api.configrable_products.patch');
-    });
+    /** Configurable Products API Routes (supports both "configurable" and the legacy "configrable" typo) */
+    foreach (['configurable-products', 'configrable-products'] as $configurablePrefix) {
+        $nameSuffix = $configurablePrefix === 'configrable-products' ? 'configrable_products' : 'configurable_products';
+
+        Route::controller(ConfigurableProductController::class)->prefix($configurablePrefix)->group(function () use ($nameSuffix) {
+            Route::get('', 'index')->name('admin.api.'.$nameSuffix.'.index');
+            Route::get('{code}', 'get')->name('admin.api.'.$nameSuffix.'.get');
+            Route::post('', 'store')->name('admin.api.'.$nameSuffix.'.store');
+            Route::put('{code}', 'update')->name('admin.api.'.$nameSuffix.'.update');
+            Route::delete('{code}', 'delete')->name('admin.api.'.$nameSuffix.'.delete');
+            Route::patch('{code}', 'partialUpdate')->name('admin.api.'.$nameSuffix.'.patch');
+        });
+    }
 });

@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Webkul\Core\ElasticSearch;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
-use Webkul\Installer\Database\Seeders\ProductTableSeeder;
 use Webkul\Installer\Events\ComposerEvents;
+use Webkul\Installer\Helpers\DemoDataInstaller;
 
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\password;
@@ -279,31 +279,64 @@ class Installer extends Command
             'DB_HOST'       => text(
                 label: 'Please enter the database host',
                 default: env('DB_HOST') ?? '127.0.0.1',
-                required: true
+                required: true,
+                validate: fn (string $value) => preg_match('/\s/', trim($value))
+                    ? 'The database host cannot contain whitespace.'
+                    : null,
+                transform: trim(...),
             ),
 
             'DB_PORT'       => text(
                 label: 'Please enter the database port',
                 default: env('DB_PORT') ?? '3306',
-                required: true
+                required: true,
+                validate: fn (string $value) => ctype_digit(trim($value))
+                    ? null
+                    : 'The database port must be numeric.',
+                transform: trim(...),
             ),
 
             'DB_DATABASE' => text(
                 label: 'Please enter the database name',
                 default: env('DB_DATABASE') ?? '',
-                required: true
+                required: true,
+                validate: function (string $value): ?string {
+                    $trimmed = trim($value);
+
+                    return match (true) {
+                        $trimmed === ''                                 => 'The database name is required.',
+                        (bool) preg_match('/[^A-Za-z0-9_]/', $trimmed)  => 'The database name can only contain letters, numbers, and underscores. Characters like dots, dashes, and spaces are not allowed because they break SQL identifier quoting.',
+                        default                                         => null,
+                    };
+                },
+                transform: trim(...),
             ),
 
             'DB_PREFIX' => text(
                 label: 'Please enter the database prefix',
                 default: env('DB_PREFIX') ?? '',
-                hint: 'or press enter to continue'
+                validate: function (string $value): ?string {
+                    $trimmed = trim($value);
+
+                    return match (true) {
+                        (bool) preg_match('/\s/', $trimmed)             => 'The database prefix cannot contain spaces.',
+                        strlen($trimmed) > 4                            => 'The database prefix should not exceed 4 characters.',
+                        (bool) preg_match('/[^a-zA-Z0-9_]/', $trimmed)  => 'The database prefix can only contain letters, numbers, and underscores.',
+                        default                                         => null,
+                    };
+                },
+                transform: trim(...),
+                hint: 'or press enter to continue (leave empty to clear)'
             ),
 
             'DB_USERNAME' => text(
                 label: 'Please enter your database username',
                 default: env('DB_USERNAME') ?? '',
-                required: true
+                required: true,
+                validate: fn (string $value) => preg_match('/\s/', trim($value))
+                    ? 'The database username cannot contain whitespace.'
+                    : null,
+                transform: trim(...),
             ),
 
             'DB_PASSWORD' => password(
@@ -312,16 +345,20 @@ class Installer extends Command
             ),
         ];
 
+        foreach (['DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_PREFIX', 'DB_USERNAME'] as $trimKey) {
+            $databaseDetails[$trimKey] = trim((string) ($databaseDetails[$trimKey] ?? ''));
+        }
+
         if (
-            ! $databaseDetails['DB_DATABASE']
-            || ! $databaseDetails['DB_USERNAME']
-            || ! $databaseDetails['DB_PASSWORD']
+            $databaseDetails['DB_DATABASE'] === ''
+            || $databaseDetails['DB_USERNAME'] === ''
+            || $databaseDetails['DB_PASSWORD'] === ''
         ) {
             return $this->error('Please enter the database credentials.');
         }
 
         foreach ($databaseDetails as $key => $value) {
-            if ($value) {
+            if ($value || $key === 'DB_PREFIX') {
                 $this->envUpdate($key, $value);
             }
         }
@@ -357,19 +394,22 @@ class Installer extends Command
         if ($connectionType === 'cloud') {
             $cloudId = text(
                 label: 'Please enter your Elasticsearch Cloud ID',
-                default: env('ELASTICSEARCH_CLOUD_ID') ?? ''
+                default: env('ELASTICSEARCH_CLOUD_ID') ?? '',
+                transform: trim(...),
             );
             $this->envUpdate('ELASTICSEARCH_CLOUD_ID', $cloudId);
         } else {
             $host = text(
                 label: 'Please enter the Elasticsearch host',
-                default: env('ELASTICSEARCH_HOST') ?? '127.0.0.1:9200'
+                default: env('ELASTICSEARCH_HOST') ?? '127.0.0.1:9200',
+                transform: trim(...),
             );
             $this->envUpdate('ELASTICSEARCH_HOST', $host);
 
             $user = text(
                 label: 'Please enter the Elasticsearch user',
-                default: env('ELASTICSEARCH_USER') ?? ''
+                default: env('ELASTICSEARCH_USER') ?? '',
+                transform: trim(...),
             );
             $this->envUpdate('ELASTICSEARCH_USER', $user);
 
@@ -381,7 +421,8 @@ class Installer extends Command
             if ($connectionType === 'api') {
                 $apiKey = text(
                     label: 'Please enter the Elasticsearch API key',
-                    default: env('ELASTICSEARCH_API_KEY') ?? ''
+                    default: env('ELASTICSEARCH_API_KEY') ?? '',
+                    transform: trim(...),
                 );
                 $this->envUpdate('ELASTICSEARCH_API_KEY', $apiKey);
             }
@@ -389,7 +430,8 @@ class Installer extends Command
 
         $indexPrefix = text(
             label: 'Please enter your Elasticsearch Index Prefix',
-            default: env('ELASTICSEARCH_INDEX_PREFIX') ?? ''
+            default: env('ELASTICSEARCH_INDEX_PREFIX') ?? '',
+            transform: trim(...),
         );
 
         $this->envUpdate('ELASTICSEARCH_INDEX_PREFIX', $indexPrefix);
@@ -405,31 +447,32 @@ class Installer extends Command
         $adminName = text(
             label: 'Set the Name for Administrator',
             default  : 'Example',
-            required: true
+            required: true,
+            transform: trim(...),
         );
 
         $adminEmail = text(
             label: 'Provide Email of Administrator',
             default  : 'admin@example.com',
             validate: fn (string $value) => match (true) {
-                ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'The email address you entered is not valid please try again.',
-                ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'The provided email is invalid, kindly enter a valid email address.',
-                default                                     => null
-            }
+                ! filter_var(trim($value), FILTER_VALIDATE_EMAIL) => 'The email address you entered is not valid please try again.',
+                default                                           => null
+            },
+            transform: trim(...),
         );
 
-        $adminPassword = text(
+        $adminPassword = password(
             label: 'Input a Password for Administrator',
-            default: 'admin123',
-            required: true
+            required: true,
+            hint: 'Minimum 6 characters',
         );
 
         while (strlen($adminPassword) < 6) {
             $this->error('Password must be at least 6 characters.');
 
-            $adminPassword = text(
+            $adminPassword = password(
                 label: 'Input a Secure Password for Administrator',
-                required: true
+                required: true,
             );
         }
 
@@ -444,6 +487,7 @@ class Installer extends Command
                     'password' => $password,
                     'role_id'  => 1,
                     'status'   => 1,
+                    'timezone' => config('app.timezone') ?: 'UTC',
                 ]
             );
 
@@ -475,22 +519,13 @@ class Installer extends Command
 
     protected function seedSampleProducts(): void
     {
-        try {
-            $this->warn('Step: Seeding sample products...');
+        $result = app(DemoDataInstaller::class)
+            ->seed(fn (string $message) => $this->warn('Step: '.$message));
 
-            app(ProductTableSeeder::class)->run([
-                'default_locale'     => core()->getDefaultLocaleCodeFromDefaultChannel(),
-                'allowed_locales'    => [core()->getDefaultLocaleCodeFromDefaultChannel()],
-            ]);
-
+        if ($result['success']) {
             $this->info('Sample products seeded successfully.');
-
-            if (config('elasticsearch.enabled') == 'true') {
-                $this->warn('Step: Re-indexing products to Elasticsearch...');
-                $this->call('unopim:product:index');
-            }
-        } catch (\Exception $e) {
-            $this->error("Failed to seed sample products: {$e->getMessage()}");
+        } else {
+            $this->error("Failed to seed sample products: {$result['error']}");
         }
     }
 
@@ -523,7 +558,10 @@ class Installer extends Command
          */
         $databaseConnection = $this->getEnvAtRuntime('DB_CONNECTION');
 
+        $previousDefault = config('database.default');
+
         config([
+            'database.default'                                    => $databaseConnection,
             "database.connections.{$databaseConnection}.host"     => $this->getEnvAtRuntime('DB_HOST'),
             "database.connections.{$databaseConnection}.port"     => $this->getEnvAtRuntime('DB_PORT'),
             "database.connections.{$databaseConnection}.database" => $this->getEnvAtRuntime('DB_DATABASE'),
@@ -531,6 +569,12 @@ class Installer extends Command
             "database.connections.{$databaseConnection}.password" => $this->getEnvAtRuntime('DB_PASSWORD'),
             "database.connections.{$databaseConnection}.prefix"   => $this->getEnvAtRuntime('DB_PREFIX'),
         ]);
+
+        DB::setDefaultConnection($databaseConnection);
+
+        if ($previousDefault && $previousDefault !== $databaseConnection) {
+            DB::purge($previousDefault);
+        }
 
         DB::purge($databaseConnection);
 
@@ -565,10 +609,11 @@ class Installer extends Command
         $input = text(
             label: $question,
             default: $defaultValue,
-            required: true
+            required: true,
+            transform: trim(...),
         );
 
-        $this->envUpdate($key, $input ?: $defaultValue);
+        $this->envUpdate($key, $input === '' ? $defaultValue : $input);
     }
 
     /**

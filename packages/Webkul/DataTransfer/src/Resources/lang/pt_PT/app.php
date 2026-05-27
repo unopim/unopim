@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Moedas',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'O código de moeda \'%s\' já foi importado neste lote.',
+                    'code-not-found-to-delete'    => 'Moeda com código \'%s\' não encontrada no sistema.',
+                    'invalid-status'              => 'O estado deve ser 0 ou 1 (ou vazio para ativado por padrão).',
+                    'channel-related-locale-root' => 'Não pode eliminar o idioma com código :code que está associado a um canal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -49,6 +60,9 @@ return [
         'categories' => [
             'title' => 'Categorias',
         ],
+        'currencies' => [
+            'title' => 'Moedas',
+        ],
     ],
     'validation' => [
         'errors' => [
@@ -59,6 +73,7 @@ return [
             'invalid-attribute'    => 'O cabeçalho contém atributos inválidos: "%s".',
             'system'               => 'Ocorreu um erro do sistema inesperado.',
             'wrong-quotes'         => 'Aspas inclinadas usadas em vez de aspas diretas.',
+            'file-empty'           => 'O ficheiro está vazio ou não contém uma linha de cabeçalho. Por favor, carregue um ficheiro válido com dados.',
         ],
     ],
     'job' => [

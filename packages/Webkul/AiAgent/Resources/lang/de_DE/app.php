@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Magische KI',
         'general'               => 'Allgemein',
         'prompt'                => 'Prompt',
         'system-prompt'         => 'Systemprompt',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Magische KI',
         'platform'       => 'Plattformen',
         'settings'       => 'Einstellungen',
         'prompt'         => 'Prompts',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Zurück',
         'unauthorized'              => 'Diese Aktion ist nicht autorisiert.',
         'error-generic'             => 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
+        'error-rate-limit'          => 'Das Anfrage-Limit des KI-Anbieters wurde erreicht. Bitte warten Sie einen Moment und versuchen Sie es erneut.',
+        'error-rate-limit-retry'    => 'Das Anfrage-Limit des KI-Anbieters wurde erreicht. Bitte versuchen Sie es in :seconds Sekunden erneut.',
+        'error-overloaded'          => 'Der KI-Anbieter ist derzeit überlastet. Bitte versuchen Sie es in Kürze erneut.',
+        'error-request-too-large'   => 'Ihre Anfrage ist zu groß für den KI-Anbieter. Bitte kürzen Sie Ihre Nachricht oder entfernen Sie einige Anhänge und versuchen Sie es erneut.',
+        'error-api-key-corrupted'   => 'Der API-Schlüssel für diese Plattform konnte nicht entschlüsselt werden (:error). Der Verschlüsselungsschlüssel der Anwendung wurde möglicherweise geändert. Bitte bearbeiten Sie die Plattform und geben Sie Ihren API-Schlüssel erneut ein.',
         'invalid-file-path'         => 'Ungültiger Dateipfad.',
         'invalid-locale-code'       => 'Ungültiger Sprachcode.',
         'invalid-channel-code'      => 'Ungültiger Kanalcode.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'Anhängen',
         'attach-csv-xlsx'          => 'CSV oder XLSX anhängen',
         'attach-image'             => 'Bild anhängen',
+        'remove-attachment'        => 'Anhang entfernen',
         'send'                     => 'Senden',
         'sending'                  => 'Wird gesendet…',
         'processing'               => 'Wird verarbeitet…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'   => 'z. B. "S/M/L × Rot/Blau für SHIRT-001 generieren"',
             'edit-image'               => 'Produktbild bearbeiten',
             'edit-image-desc'          => 'Hintergrund entfernen, verbessern und retuschieren',
-            'edit-image-hint'          => 'Laden Sie ein Bild hoch und sagen Sie, was geändert werden soll — z. B. "Hintergrund entfernen"',
+            'edit-image-hint'          => 'Geben Sie eine Produkt-SKU an und beschreiben Sie, was geändert werden soll — z. B. "Hintergrund von SKU-123 entfernen"',
             'search-products'          => 'Produkte suchen',
             'search-products-desc'     => 'Produkte nach SKU, Name oder Status finden',
             'search-products-hint'     => 'z. B. "Alle aktiven Produkte finden" oder "Nach Laptop suchen"',
@@ -302,7 +308,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Das hochgeladene Produktbild wie angegeben bearbeiten.',
+            'edit-image-prompt'        => 'Bearbeiten Sie das Produktbild, indem Sie es anhand der SKU abrufen, die gewünschten Änderungen anwenden und es zurückspeichern.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

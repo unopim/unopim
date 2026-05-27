@@ -37,6 +37,6 @@ class UnoPimVersion extends Command
      */
     public function handle()
     {
-        $this->comment('v'.core()->version());
+        $this->comment(core()->version());
     }
 }

@@ -19,10 +19,12 @@ class CanInstall
     {
         if (Str::contains($request->getPathInfo(), '/install')) {
             if ($this->isAlreadyInstalled() && ! $request->ajax()) {
-                if (file_exists(realpath(__DIR__.'/../../../../../../public/install.php'))) {
-                    unlink(realpath(__DIR__.'/../../../../../../public/install.php'));
-                }
-
+                // Previously this branch unlinked `public/install.php` (the
+                // pre-Laravel composer bootstrap) on every "installed app
+                // visited /install" hit. That broke re-install workflows
+                // (DB driver switch, demo-data reseed, CI feature tests)
+                // and added no real security — the bootstrap is idempotent
+                // once `vendor/` exists. Redirect-only is enough.
                 return redirect()->route('admin.dashboard.index');
             }
         } else {

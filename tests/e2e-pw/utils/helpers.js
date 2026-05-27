@@ -22,6 +22,7 @@ const ROUTES = {
   exports:           '/admin/settings/data-transfer/exports',
   imports:           '/admin/settings/data-transfer/imports',
   configuration:     '/admin/configuration',
+  notifications:     '/admin/notifications',
 };
 
 /**
@@ -108,16 +109,18 @@ async function clickSaveAndExpect(page, buttonName, toastPattern, urlPattern) {
   const currentUrl = page.url();
   const regex = toastPattern instanceof RegExp ? toastPattern : new RegExp(toastPattern, 'i');
 
+  // Register the URL watcher BEFORE clicking to avoid missing fast redirects.
+  const navPromise = urlPattern
+    ? page.waitForURL(urlPattern, { timeout: 20000 })
+    : page.waitForURL((url) => url.toString() !== currentUrl, { timeout: 20000 });
+
   await page.getByRole('button', { name: buttonName }).click();
+
+  const toastPromise = page.locator('#app').getByText(regex).first().waitFor({ state: 'visible', timeout: 20000 });
 
   // Either toast appears OR URL changes (redirect after save).
   // Uses Promise.any — fails only if BOTH timeout (real failure).
-  await Promise.any([
-    page.locator('#app').getByText(regex).first().waitFor({ state: 'visible', timeout: 20000 }),
-    urlPattern
-      ? page.waitForURL(urlPattern, { timeout: 20000 })
-      : page.waitForURL((url) => url.toString() !== currentUrl, { timeout: 20000 }),
-  ]);
+  await Promise.any([toastPromise, navPromise]);
 }
 
 /**

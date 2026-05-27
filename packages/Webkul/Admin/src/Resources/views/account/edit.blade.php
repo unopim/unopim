@@ -46,6 +46,7 @@
                     <x-admin::form.control-group>
                         <x-admin::media.images
                             name="image"
+                            :show-suggestions="false"
                             :uploaded-images="$user->image ? [['id' => 'image', 'url' => $user->image_url, 'value' => $user->image]] : []"
                         />
                     </x-admin::form.control-group>
@@ -103,7 +104,7 @@
                             :value="old('ui_locale_id') ?: $user->ui_locale_id"
                             :label="trans('admin::app.account.edit.ui-locale')"
                             :placeholder="trans('admin::app.account.edit.ui-locale')"
-                            :options="core()->getAllActiveLocales()"
+                            :options="core()->getTranslatableLocales()"
                             track-by="id"
                             label-by="name"
                         >

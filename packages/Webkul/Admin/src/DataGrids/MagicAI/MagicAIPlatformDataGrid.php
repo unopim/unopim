@@ -110,18 +110,22 @@ class MagicAIPlatformDataGrid extends DataGrid
 
     public function prepareActions(): void
     {
-        $this->addAction([
-            'icon'   => 'icon-edit',
-            'title'  => trans('admin::app.configuration.platform.datagrid.edit'),
-            'method' => 'GET',
-            'url'    => fn ($row) => route('admin.magic_ai.platform.edit', $row->id),
-        ]);
+        if (bouncer()->hasPermission('ai-agent.platform.edit')) {
+            $this->addAction([
+                'icon'   => 'icon-edit',
+                'title'  => trans('admin::app.configuration.platform.datagrid.edit'),
+                'method' => 'GET',
+                'url'    => fn ($row) => route('admin.magic_ai.platform.edit', $row->id),
+            ]);
+        }
 
-        $this->addAction([
-            'icon'   => 'icon-delete',
-            'title'  => trans('admin::app.configuration.platform.datagrid.delete'),
-            'method' => 'DELETE',
-            'url'    => fn ($row) => route('admin.magic_ai.platform.delete', $row->id),
-        ]);
+        if (bouncer()->hasPermission('ai-agent.platform.delete')) {
+            $this->addAction([
+                'icon'   => 'icon-delete',
+                'title'  => trans('admin::app.configuration.platform.datagrid.delete'),
+                'method' => 'DELETE',
+                'url'    => fn ($row) => route('admin.magic_ai.platform.delete', $row->id),
+            ]);
+        }
     }
 }

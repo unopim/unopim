@@ -5,7 +5,7 @@ return [
         'key'    => 'ai-agent',
         'name'   => 'ai-agent::app.menu.ai-agent',
         'route'  => 'admin.magic_ai.platform.index',
-        'sort'   => 8,
+        'sort'   => 7,
         'icon'   => 'icon-magic-ai',
     ],
     [

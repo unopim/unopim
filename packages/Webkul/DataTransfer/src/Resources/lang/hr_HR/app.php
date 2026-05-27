@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kod valute \'%s\' je već uvezen u ovoj seriji.',
+                    'code-not-found-to-delete'    => 'Valuta s kodom \'%s\' nije pronađena u sustavu.',
+                    'invalid-status'              => 'Status mora biti 0 ili 1 (ili prazno za zadano omogućeno).',
+                    'channel-related-locale-root' => 'Ne možete izbrisati regionalne postavke s kodom :code koje su povezane s kanalom.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -49,6 +60,9 @@ return [
         'categories' => [
             'title' => 'Kategorije',
         ],
+        'currencies' => [
+            'title' => 'Valute',
+        ],
     ],
     'validation' => [
         'errors' => [
@@ -59,6 +73,7 @@ return [
             'invalid-attribute'    => 'Zaglavlje sadrži neispravne atribut(e): "%s".',
             'system'               => 'Došlo je do neočekivane sistemske greške.',
             'wrong-quotes'         => 'Kovrčave navodnike koristite umjesto ravnih navodnika.',
+            'file-empty'           => 'Datoteka je prazna ili ne sadrži redak zaglavlja. Molimo učitajte valjanu datoteku s podacima.',
         ],
     ],
     'job' => [

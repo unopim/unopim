@@ -405,32 +405,24 @@ it('should update an attribute successfully', function () {
     $localeCode = Locale::where('status', 1)->first()->code;
 
     $data = [
-        'code'              => $attribute->code,
-        'type'              => 'textarea',
-        'validation'        => $attribute->validation,
-        'regex_pattern'     => $attribute->regex_pattern,
-        'is_required'       => $attribute->is_required,
-        'is_unique'         => $attribute->is_unique,
-        'value_per_locale'  => $attribute->value_per_locale,
-        'value_per_channel' => $attribute->value_per_channel,
-        'enable_wysiwyg'    => 1,
-        'labels'            => [
+        'validation'     => $attribute->validation,
+        'regex_pattern'  => $attribute->regex_pattern,
+        'is_required'    => $attribute->is_required,
+        'enable_wysiwyg' => 1,
+        'labels'         => [
             $localeCode => 'Test Label',
         ],
     ];
 
-    $this->withHeaders($this->headers)->json('PUT', route('admin.api.attributes.update', $data['code']), $data)
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.attributes.update', $attribute->code), $data)
         ->assertOk()
         ->assertJsonFragment(['message' => trans('admin::app.catalog.attributes.update-success')]);
 
-    unset($data['labels']);
-
-    // Empty string validation is stored as null in DB
-    if ($data['validation'] === '') {
-        $data['validation'] = null;
-    }
-
-    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $data);
+    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), [
+        'code'           => $attribute->code,
+        'type'           => 'textarea',
+        'enable_wysiwyg' => 1,
+    ]);
 
     $this->assertDatabaseHas($this->getFullTableName(AttributeTranslation::class), [
         'attribute_id' => $attribute->id,
@@ -458,12 +450,11 @@ it('should not update code,type,value_per_locale,value_per_channel and is_unique
         'value_per_channel' => 0,
     ];
 
+    // Since Issue #730 / #734, sending any of the immutable fields in a PUT body returns 422.
     $this->withHeaders($this->headers)->json('PUT', route('admin.api.attributes.update', $attribute->code), $data)
-        ->assertOk()
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.attributes.update-success')]);
+        ->assertStatus(422);
 
-    $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), $data);
-
+    // The stored attribute is untouched.
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), [
         'code'              => $attribute->code,
         'type'              => 'textarea',

@@ -184,7 +184,7 @@ class JobTrackerGrid extends DataGrid
             $this->addAction([
                 'index'  => 'edit',
                 'icon'   => 'icon-view',
-                'title'  => trans('admin::app.settings.data-transfer.imports.index.datagrid.view'),
+                'title'  => trans('admin::app.settings.data-transfer.tracker.index.datagrid.view'),
                 'method' => 'GET',
                 'url'    => function ($row) {
                     return route('admin.settings.data_transfer.tracker.view', $row->id);

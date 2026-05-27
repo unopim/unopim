@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Para Birimleri',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Para birimi kodu \'%s\' bu toplu işlemde zaten içe aktarılmış.',
+                    'code-not-found-to-delete'    => '\'%s\' kodlu para birimi sistemde bulunamadı.',
+                    'invalid-status'              => 'Durum 0 veya 1 olmalıdır (veya varsayılan olarak etkin için boş).',
+                    'channel-related-locale-root' => 'Bir kanalla ilişkili olan :code kodlu yerel ayarı silemezsiniz.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -49,6 +60,9 @@ return [
         'categories' => [
             'title' => 'Kategoriler',
         ],
+        'currencies' => [
+            'title' => 'Para Birimleri',
+        ],
     ],
     'validation' => [
         'errors' => [
@@ -59,6 +73,7 @@ return [
             'invalid-attribute'    => 'Başlık geçersiz attribute(s) içeriyor: "%s".',
             'system'               => 'Beklenmeyen bir sistem hatası oluştu.',
             'wrong-quotes'         => 'Kıvrık tırnaklar, doğru tırnaklar yerine kullanıldı.',
+            'file-empty'           => 'Dosya boş veya başlık satırı içermiyor. Lütfen veri içeren geçerli bir dosya yükleyin.',
         ],
     ],
     'job' => [

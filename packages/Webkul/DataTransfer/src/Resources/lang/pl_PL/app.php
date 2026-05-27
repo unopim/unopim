@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Waluty',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kod waluty \'%s\' został już zaimportowany w tej partii.',
+                    'code-not-found-to-delete'    => 'Nie znaleziono w systemie waluty o kodzie \'%s\'.',
+                    'invalid-status'              => 'Status musi być 0 lub 1 (lub pusty dla domyślnie włączonego).',
+                    'channel-related-locale-root' => 'Nie możesz usunąć ustawień regionalnych z kodem :code, które są powiązane z kanałem.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -49,6 +60,9 @@ return [
         'categories' => [
             'title' => 'Kategorie',
         ],
+        'currencies' => [
+            'title' => 'Waluty',
+        ],
     ],
     'validation' => [
         'errors' => [
@@ -59,6 +73,7 @@ return [
             'invalid-attribute'    => 'Nagłówek zawiera nieprawidłowe atrybuty: "%s".',
             'system'               => 'Wystąpił nieoczekiwany błąd systemowy.',
             'wrong-quotes'         => 'Zastosowano krzywe cudzysłowy zamiast prostych cudzysłowów.',
+            'file-empty'           => 'Plik jest pusty lub nie zawiera wiersza nagłówkowego. Proszę przesłać prawidłowy plik z danymi.',
         ],
     ],
     'job' => [

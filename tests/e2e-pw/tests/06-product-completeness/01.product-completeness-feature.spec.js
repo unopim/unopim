@@ -113,7 +113,10 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit\/\d+\?completeness/);
-    await expect(adminPage.locator('p').filter({ hasText: 'Completeness' })).toBeVisible();
+    // Verify we're on the completeness page via the grid header columns
+    // (the page title "Completeness" appears in toast notifications too, making
+    // a plain `p` selector unreliable)
+    await expect(adminPage.locator('#app').getByText('Required in Channels').first()).toBeVisible();
     await expect(adminPage.locator('div').filter({ hasText: /^Code$/ }).first()).toBeVisible();
     await expect(adminPage.locator('div').filter({ hasText: /^Name$/ }).first()).toBeVisible();
     await expect(adminPage.locator('div').filter({ hasText: /^Required in Channels$/ }).first()).toBeVisible();
@@ -137,13 +140,16 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.goto('/admin/catalog/products', { waitUntil: 'load' });
     await adminPage.waitForLoadState('networkidle');
 
-    // Look for "Complete" column header — if visible, check N/A exists
+    // Look for "Complete" column header — if visible, completeness is tracked
     const completeHeader = adminPage.locator('p').filter({ hasText: /^Complete$/ });
     const hasCompleteColumn = await completeHeader.isVisible({ timeout: 5000 }).catch(() => false);
     if (hasCompleteColumn) {
-      await expect(adminPage.locator('p').filter({ hasText: 'N/A' }).first()).toBeVisible();
+      // The Complete column shows either N/A (no required channel) or a percentage (configured)
+      const hasNA = await adminPage.locator('p').filter({ hasText: 'N/A' }).first().isVisible({ timeout: 3000 }).catch(() => false);
+      const hasPercentage = await adminPage.locator('#app').getByText(/\d+%/).first().isVisible({ timeout: 3000 }).catch(() => false);
+      expect(hasNA || hasPercentage).toBeTruthy();
     } else {
-      // No Complete column — products may not have completeness enabled, verify at least products exist
+      // No Complete column — verify at least products exist
       const hasProducts = await adminPage.locator('span[title="Edit"]').first().isVisible({ timeout: 5000 }).catch(() => false);
       expect(hasProducts || !hasCompleteColumn).toBeTruthy();
     }
@@ -336,11 +342,5 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     const assignedCount = await adminPage
       .locator('#assigned-attribute-groups .ltr\\:ml-11 [data-draggable="true"]').count();
     expect(assignedCount).toBeGreaterThan(0);
-  });
-
-  // ── Skipped: Configure Completeness modal test ──
-
-  test.skip('Verify all available channels are displayed in Configure Completeness modal', async ({ adminPage }) => {
-    // This test requires the mass action modal which is unreliable in automated tests
   });
 });

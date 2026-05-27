@@ -65,7 +65,8 @@ Consult the `unopim-backend-dev` skill for detailed standards. Flag these violat
 - Missing `<x-admin::` component usage (using raw HTML instead)
 - Vue components not following project patterns
 - Missing translations (`@lang()` / `trans()`)
-- Hardcoded strings in UI
+- Hardcoded strings in UI — including dropdown placeholder `<option>` text, `title=""` tooltips, JS alert/error messages, and "Loading…" / "No results" status text. Every user-visible string must be a translation key (see unopim-backend-dev/coding-conventions.md → "Translations" section)
+- Translation key added to `en_US/app.php` only — must propagate to all 32 other locales with **natural** translations (not English copies); verify with `php artisan unopim:translations:check` showing 100% per locale
 
 ---
 

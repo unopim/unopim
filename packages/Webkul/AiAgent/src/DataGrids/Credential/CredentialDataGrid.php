@@ -80,6 +80,7 @@ class CredentialDataGrid extends DataGrid
     {
         $this->addAction([
             'icon'   => 'icon-edit',
+            'index'  => 'edit',
             'title'  => trans('ai-agent::app.credentials.datagrid.edit'),
             'method' => 'GET',
             'url'    => function ($row) {

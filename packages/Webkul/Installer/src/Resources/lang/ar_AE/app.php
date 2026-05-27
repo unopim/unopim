@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'مسؤل',
-                'unopim'           => 'أونوبيم',
-                'confirm-password' => 'تأكيد كلمة المرور',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'بريد إلكتروني',
-                'password'         => 'كلمة المرور',
-                'title'            => 'إنشاء المسؤول',
+                'admin'                   => 'مسؤل',
+                'unopim'                  => 'أونوبيم',
+                'confirm-password'        => 'تأكيد كلمة المرور',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'بريد إلكتروني',
+                'password'                => 'كلمة المرور',
+                'title'                   => 'إنشاء المسؤول',
+                'seed-sample-data'        => 'تثبيت منتجات وبيانات تجريبية',
+                'seeding-sample-data'     => 'جارٍ إنشاء منتجات العينة وبيانات التجريب، قد يستغرق ذلك بضع دقائق...',
+                'seed-sample-data-failed' => 'تعذر تثبيت البيانات التجريبية. يمكنك تثبيتها لاحقًا عبر `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'العملات المسموح بها',

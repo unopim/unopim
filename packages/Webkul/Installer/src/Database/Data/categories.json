@@ -1,0 +1,198 @@
+{
+    "categories": [
+        {
+            "code": "root",
+            "parent_code": null,
+            "_lft": 1,
+            "_rgt": 40,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Master Category"
+                    }
+                }
+            }
+        },
+        {
+            "code": "clothes",
+            "parent_code": "root",
+            "_lft": 14,
+            "_rgt": 19,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Clothes",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "mens",
+            "parent_code": "clothes",
+            "_lft": 15,
+            "_rgt": 16,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Mens",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "womens",
+            "parent_code": "clothes",
+            "_lft": 17,
+            "_rgt": 18,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Womens",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "electronics",
+            "parent_code": "root",
+            "_lft": 20,
+            "_rgt": 21,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Electronics",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "accessories",
+            "parent_code": "root",
+            "_lft": 22,
+            "_rgt": 23,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Accessories",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "footwear",
+            "parent_code": "root",
+            "_lft": 24,
+            "_rgt": 25,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Footwear",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "bath",
+            "parent_code": "root",
+            "_lft": 26,
+            "_rgt": 27,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Bath",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "garden",
+            "parent_code": "root",
+            "_lft": 28,
+            "_rgt": 29,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Garden",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "publications",
+            "parent_code": "root",
+            "_lft": 30,
+            "_rgt": 31,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Publications",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "kitchen",
+            "parent_code": "root",
+            "_lft": 32,
+            "_rgt": 33,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Kitchen",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "utility",
+            "parent_code": "root",
+            "_lft": 34,
+            "_rgt": 35,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Utility",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "shop_all",
+            "parent_code": "root",
+            "_lft": 36,
+            "_rgt": 37,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Shop All",
+                        "description": ""
+                    }
+                }
+            }
+        },
+        {
+            "code": "acer",
+            "parent_code": "root",
+            "_lft": 38,
+            "_rgt": 39,
+            "additional_data": {
+                "locale_specific": {
+                    "en_US": {
+                        "name": "Acer"
+                    }
+                }
+            }
+        }
+    ]
+}

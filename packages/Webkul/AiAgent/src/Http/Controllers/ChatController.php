@@ -7,11 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\ChatContext;
+use Webkul\AiAgent\Chat\PrismErrorResolver;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Support\ModelRecommender;
 
 /**
  * Handles AI chat messages from the global floating widget.
@@ -52,12 +55,21 @@ class ChatController extends Controller
 
             return new JsonResponse($result);
         } catch (\Throwable $e) {
-            Log::error('AI Agent chat error', ['exception' => $e]);
+            $resolved = PrismErrorResolver::resolve($e);
+
+            if ($resolved['is_known']) {
+                Log::warning('AI Agent chat provider error', [
+                    'type'    => get_class($e),
+                    'message' => $e->getMessage(),
+                ]);
+            } else {
+                Log::error('AI Agent chat error', ['exception' => $e]);
+            }
 
             return new JsonResponse([
-                'reply'  => trans('ai-agent::app.common.error-generic'),
+                'reply'  => $resolved['message'],
                 'action' => 'error',
-            ], 422);
+            ], $resolved['is_known'] ? $resolved['status'] : 422);
         }
     }
 
@@ -92,7 +104,7 @@ class ChatController extends Controller
             'images'      => 'nullable|array|max:5',
             'images.*'    => 'image|mimes:jpeg,png,webp,gif|max:10240',
             'files'       => 'nullable|array|max:3',
-            'files.*'     => ['file', 'max:20480', function (string $attribute, $value, $fail) {
+            'files.*'     => ['file', 'max:102400', function (string $attribute, $value, $fail) {
                 $allowed = ['csv', 'xlsx', 'xls'];
                 $ext = strtolower($value->getClientOriginalExtension());
                 if (! in_array($ext, $allowed, true)) {
@@ -134,8 +146,25 @@ class ChatController extends Controller
             ], 422);
         }
 
+        // Verify the platform's API key is decryptable before proceeding.
+        // If the APP_KEY changed after the platform was saved, every access
+        // to api_key throws DecryptException — catch it early with a clear message.
+        $apiKeyError = $platform->apiKeyError();
+
+        if ($apiKeyError) {
+            return new JsonResponse([
+                'reply'  => trans('ai-agent::app.common.error-api-key-corrupted', ['error' => $apiKeyError]),
+                'action' => 'error',
+            ], 422);
+        }
+
+        // When the widget doesn't pass an explicit model, pick a text-capable
+        // one from the platform's list. The previous `model_list[0]` fallback
+        // would select whichever model sorted first, so providers like OpenAI
+        // that expose image-only entries (e.g. chatgpt-image-latest, dall-e-*)
+        // could land on a model Prism::text() cannot call.
         $model = (string) $request->input('model', '')
-            ?: ($platform->model_list[0] ?? 'gpt-4o');
+            ?: (ModelRecommender::pickTextModel($platform->model_list ?? []) ?? 'gpt-4o');
 
         // Store uploaded images — persist across conversation turns via session.
         // The image is uploaded in the first message, but the user may confirm
@@ -161,10 +190,20 @@ class ChatController extends Controller
             }
         }
 
-        // Store uploaded files — same session persistence pattern
+        // Store uploaded files — same session persistence pattern.
+        //
+        // We deliberately use storeAs() with the original filename's
+        // extension instead of Laravel's default store() / hashName(), which
+        // guesses the extension from the MIME type. PHP often reports CSV
+        // uploads as "text/plain", so hashName() would save "products.csv"
+        // as "<hash>.txt" — and the ImportProducts tool would then reject
+        // it as an unsupported format because the extension check uses
+        // pathinfo() on the stored path.
         $filePaths = [];
         foreach ($request->file('files', []) as $file) {
-            $stored = $file->store('ai-agent/files', 'public');
+            $ext = strtolower($file->getClientOriginalExtension());
+            $filename = Str::random(40).($ext !== '' ? '.'.$ext : '');
+            $stored = $file->storeAs('ai-agent/files', $filename, 'public');
             $filePaths[] = storage_path('app/public/'.$stored);
         }
 
@@ -297,6 +336,60 @@ class ChatController extends Controller
     }
 
     /**
+     * Store user feedback (like/dislike) for a chat message.
+     */
+    public function rate(Request $request): JsonResponse
+    {
+        $request->validate([
+            'rating'  => 'required|in:helpful,not_helpful',
+            'message' => 'nullable|string|max:5000',
+        ]);
+
+        $user = auth()->guard('admin')->user();
+        $rating = $request->input('rating');
+        $messageText = $request->input('message', '');
+        $ratingLabel = $rating === 'helpful' ? 'positive' : 'negative';
+
+        DB::table('ai_agent_memories')->insert([
+            'scope'      => 'catalog',
+            'key'        => "message_feedback:{$ratingLabel}",
+            'user_id'    => $user?->id,
+            'value'      => mb_substr($messageText, 0, 500),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        if ($rating === 'helpful' && ! empty($messageText)) {
+            $existing = DB::table('ai_agent_memories')
+                ->where('scope', 'catalog')
+                ->where('key', 'content_style_preference')
+                ->where('user_id', $user?->id)
+                ->first();
+
+            $hint = 'User found this response helpful: '.mb_substr($messageText, 0, 200);
+
+            if ($existing) {
+                $styleHints = mb_substr($existing->value.'; '.$hint, -500);
+                DB::table('ai_agent_memories')->where('id', $existing->id)->update([
+                    'value'      => $styleHints,
+                    'updated_at' => now(),
+                ]);
+            } else {
+                DB::table('ai_agent_memories')->insert([
+                    'scope'      => 'catalog',
+                    'key'        => 'content_style_preference',
+                    'user_id'    => $user?->id,
+                    'value'      => $hint,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    /**
      * Return the Magic AI configuration info for the chat widget header.
      */
     public function magicAiConfig(): JsonResponse
@@ -305,7 +398,9 @@ class ChatController extends Controller
         $models = (string) (core()->getConfigData('general.magic_ai.settings.api_model') ?? '');
         $enabled = (bool) core()->getConfigData('general.magic_ai.settings.enabled');
         $agenticEnabled = (bool) core()->getConfigData('general.magic_ai.agentic_pim.enabled');
-        $model = trim(explode(',', $models)[0]);
+
+        $modelList = array_values(array_filter(array_map('trim', explode(',', $models))));
+        $model = (string) (ModelRecommender::pickTextModel($modelList) ?? '');
 
         return new JsonResponse([
             'enabled'         => $enabled,

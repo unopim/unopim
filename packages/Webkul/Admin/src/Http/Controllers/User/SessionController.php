@@ -3,8 +3,13 @@
 namespace Webkul\Admin\Http\Controllers\User;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\User\Models\Admin;
 
 class SessionController extends Controller
 {
@@ -16,18 +21,26 @@ class SessionController extends Controller
     public function create(): View|RedirectResponse
     {
         if (auth()->guard('admin')->check()) {
-            return redirect()->route('admin.dashboard.index');
+            return redirect()->to($this->firstAllowedUrl());
         }
 
-        if (strpos(url()->previous(), 'admin') !== false) {
-            $intendedUrl = url()->previous();
+        $previous = url()->previous();
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $previousHost = parse_url($previous, PHP_URL_HOST);
+
+        if ($previousHost === $appHost && str_contains($previous, 'admin')) {
+            $intendedUrl = $previous;
         } else {
-            $intendedUrl = route('admin.dashboard.index');
+            $intendedUrl = null;
         }
 
-        session()->put('url.intended', $intendedUrl);
+        if ($intendedUrl) {
+            session()->put('url.intended', $intendedUrl);
+        }
 
-        return view('admin::users.sessions.create');
+        return view('admin::users.sessions.create', [
+            'isMicrosoftSsoConfigured' => $this->isMicrosoftSsoEnabled(),
+        ]);
     }
 
     /**
@@ -45,7 +58,7 @@ class SessionController extends Controller
         if (! auth()->guard('admin')->attempt(request(['email', 'password']), $remember)) {
             session()->flash('error', trans('admin::app.settings.users.login-error'));
 
-            return redirect()->back();
+            return redirect()->route('admin.session.create')->withInput(request()->only('email'));
         }
 
         if (! auth()->guard('admin')->user()->status) {
@@ -53,10 +66,72 @@ class SessionController extends Controller
 
             auth()->guard('admin')->logout();
 
-            return redirect()->route('admin.session.create');
+            return redirect()->route('admin.session.create')->withInput(request()->only('email'));
         }
 
-        return redirect()->intended(route('admin.dashboard.index'));
+        return redirect()->intended($this->firstAllowedUrl());
+    }
+
+    /**
+     * Resolve the landing URL for the authenticated admin by walking the sorted
+     * menu config and returning the first item whose ACL key the user owns.
+     * Falls back to logging the user out when no menu entry is accessible.
+     */
+    protected function firstAllowedUrl(): string
+    {
+        $items = array_filter(
+            config('menu.admin') ?? [],
+            fn ($item) => ! empty($item['key']) && ! str_contains($item['key'], '.'),
+        );
+
+        usort($items, fn ($a, $b) => ($a['sort'] ?? 0) <=> ($b['sort'] ?? 0));
+
+        // app('acl')->roles maps every admin route name to the ACL key that the
+        // Bouncer middleware will actually enforce on it. We need to land users
+        // on a route whose ACL key they hold — checking just the menu item's
+        // key isn't enough (e.g. menu key "settings" routes to
+        // admin.settings.locales.index which is gated by "settings.locales").
+        $aclRoutes = optional(app('acl'))->roles ?? [];
+
+        foreach ($items as $item) {
+            if (empty($item['route']) || ! Route::has($item['route'])) {
+                continue;
+            }
+
+            // Must hold the top-level menu permission (so the sidebar entry is
+            // actually visible to them).
+            if (! bouncer()->hasPermission($item['key'])) {
+                continue;
+            }
+
+            // AND must hold the specific permission that gates the destination
+            // route — otherwise the Bouncer middleware will 403 the redirect
+            // and we'll just bounce the user back to the login screen.
+            $routeAclKey = $aclRoutes[$item['route']] ?? $item['key'];
+            if (! bouncer()->hasPermission($routeAclKey)) {
+                continue;
+            }
+
+            return route($item['route']);
+        }
+
+        // Fallback: scan every ACL entry sorted by sort and land on the first
+        // route whose key the user holds — covers roles that don't grant any
+        // top-level menu key but do grant a child-level one.
+        foreach (config('acl') ?? [] as $aclItem) {
+            if (empty($aclItem['route']) || ! Route::has($aclItem['route'])) {
+                continue;
+            }
+            if (bouncer()->hasPermission($aclItem['key'])) {
+                return route($aclItem['route']);
+            }
+        }
+
+        auth()->guard('admin')->logout();
+
+        session()->flash('error', trans('admin::app.errors.403.message'));
+
+        return route('admin.session.create');
     }
 
     /**
@@ -69,5 +144,149 @@ class SessionController extends Controller
         auth()->guard('admin')->logout();
 
         return redirect()->route('admin.session.create');
+    }
+
+    /**
+     * Redirect to Microsoft authorization endpoint.
+     */
+    public function redirectToMicrosoft(Request $request): RedirectResponse
+    {
+        if (! $this->isMicrosoftSsoEnabled()) {
+            return redirect()->route('admin.session.create');
+        }
+
+        $state = Str::random(40);
+
+        $request->session()->put('microsoft_sso_state', $state);
+
+        $config = $this->microsoftSsoConfig();
+
+        $query = http_build_query([
+            'client_id'     => $config['client_id'],
+            'response_type' => 'code',
+            'redirect_uri'  => route('admin.session.microsoft.callback'),
+            'response_mode' => 'query',
+            'scope'         => 'openid profile email User.Read',
+            'state'         => $state,
+        ]);
+
+        return redirect("https://login.microsoftonline.com/{$config['tenant']}/oauth2/v2.0/authorize?{$query}");
+    }
+
+    /**
+     * Handle Microsoft OAuth callback.
+     */
+    public function handleMicrosoftCallback(Request $request): RedirectResponse
+    {
+        if (! $this->isMicrosoftSsoEnabled()) {
+            return redirect()->route('admin.session.create');
+        }
+
+        $expectedState = $request->session()->pull('microsoft_sso_state');
+        $actualState = $request->query('state');
+        $authorizationCode = $request->query('code');
+
+        if (
+            ! $expectedState
+            || ! $actualState
+            || ! hash_equals($expectedState, $actualState)
+            || ! $authorizationCode
+        ) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create');
+        }
+
+        $config = $this->microsoftSsoConfig();
+        $tokenEndpoint = "https://login.microsoftonline.com/{$config['tenant']}/oauth2/v2.0/token";
+
+        $tokenResponse = Http::asForm()->timeout(10)->post($tokenEndpoint, [
+            'client_id'     => $config['client_id'],
+            'client_secret' => $config['client_secret'],
+            'code'          => $authorizationCode,
+            'grant_type'    => 'authorization_code',
+            'redirect_uri'  => route('admin.session.microsoft.callback'),
+        ]);
+
+        if (! $tokenResponse->successful()) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create');
+        }
+
+        $accessToken = $tokenResponse->json('access_token');
+
+        if (! $accessToken) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create');
+        }
+
+        $profileResponse = Http::withToken($accessToken)
+            ->timeout(10)
+            ->get('https://graph.microsoft.com/v1.0/me?$select=mail,userPrincipalName');
+
+        if (! $profileResponse->successful()) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create');
+        }
+
+        $email = $profileResponse->json('mail') ?: $profileResponse->json('userPrincipalName');
+
+        if (! $email || ! is_string($email)) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create');
+        }
+
+        $admin = Admin::query()
+            ->whereRaw('LOWER(email) = ?', [mb_strtolower(trim($email))])
+            ->first();
+
+        // Explicitly do not auto-create users for SSO.
+        if (! $admin) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create')->withInput(['email' => $email]);
+        }
+
+        if (! $admin->status) {
+            session()->flash('warning', trans('admin::app.settings.users.activate-warning'));
+
+            return redirect()->route('admin.session.create')->withInput(['email' => $email]);
+        }
+
+        auth()->guard('admin')->login($admin);
+        $request->session()->regenerate();
+        $request->session()->regenerateToken();
+
+        return redirect()->intended($this->firstAllowedUrl());
+    }
+
+    /**
+     * Check if Microsoft SSO is enabled and configured.
+     */
+    private function isMicrosoftSsoEnabled(): bool
+    {
+        $config = $this->microsoftSsoConfig();
+
+        return $config['enabled']
+            && $config['client_id'] !== ''
+            && $config['client_secret'] !== ''
+            && $config['tenant'] !== '';
+    }
+
+    /**
+     * Resolve Microsoft SSO config.
+     */
+    private function microsoftSsoConfig(): array
+    {
+        return [
+            'enabled'       => (bool) config('services.microsoft_sso.enabled', false),
+            'tenant'        => (string) config('services.microsoft_sso.tenant', ''),
+            'client_id'     => (string) config('services.microsoft_sso.client_id', ''),
+            'client_secret' => (string) config('services.microsoft_sso.client_secret', ''),
+        ];
     }
 }

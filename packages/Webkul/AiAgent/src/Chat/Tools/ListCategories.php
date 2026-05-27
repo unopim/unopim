@@ -7,6 +7,7 @@ use Prism\Prism\Tool;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 
 class ListCategories implements PimTool
 {
@@ -26,14 +27,16 @@ class ListCategories implements PimTool
 
                 $limit = min(max($limit, 1), 100);
 
+                $grammar = GrammarQueryManager::getGrammar();
+
                 $qb = DB::table('categories')
                     ->select('id', 'code', 'parent_id', 'additional_data');
 
                 if ($search) {
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $search);
-                    $qb->where(function ($q) use ($escaped, $context) {
+                    $qb->where(function ($q) use ($escaped, $context, $grammar) {
                         $q->where('code', 'like', "%{$escaped}%")
-                            ->orWhereRaw("JSON_EXTRACT(additional_data, '$.locale_specific.{$context->locale}.name') LIKE ?", ["%{$escaped}%"]);
+                            ->orWhereRaw($grammar->jsonExtract('additional_data', 'locale_specific', $context->locale, 'name').' LIKE ?', ["%{$escaped}%"]);
                     });
                 }
 

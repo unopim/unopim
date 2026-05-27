@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'IA Magique',
         'general'               => 'Général',
         'prompt'                => 'Invite',
         'system-prompt'         => 'Invite système',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'IA Magique',
         'platform'       => 'Plateformes',
         'settings'       => 'Paramètres',
         'prompt'         => 'Invites',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Retour',
         'unauthorized'              => 'Cette action n\'est pas autorisée.',
         'error-generic'             => 'Une erreur inattendue s\'est produite. Veuillez réessayer.',
+        'error-rate-limit'          => 'La limite de requêtes du fournisseur d\'IA a été atteinte. Veuillez patienter un instant et réessayer.',
+        'error-rate-limit-retry'    => 'La limite de requêtes du fournisseur d\'IA a été atteinte. Veuillez réessayer dans :seconds secondes.',
+        'error-overloaded'          => 'Le fournisseur d\'IA est actuellement surchargé. Veuillez réessayer dans quelques instants.',
+        'error-request-too-large'   => 'Votre requête est trop volumineuse pour le fournisseur d\'IA. Veuillez raccourcir votre message ou supprimer des pièces jointes et réessayer.',
+        'error-api-key-corrupted'   => 'La clé API de cette plateforme n\'a pas pu être déchiffrée (:error). La clé de chiffrement de l\'application a peut-être changé. Veuillez modifier la plateforme et ressaisir votre clé API.',
         'invalid-file-path'         => 'Chemin de fichier invalide.',
         'invalid-locale-code'       => 'Code de langue invalide.',
         'invalid-channel-code'      => 'Code de canal invalide.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'Joindre',
         'attach-csv-xlsx'          => 'Joindre un CSV ou XLSX',
         'attach-image'             => 'Joindre une image',
+        'remove-attachment'        => 'Supprimer la pièce jointe',
         'send'                     => 'Envoyer',
         'sending'                  => 'Envoi en cours…',
         'processing'               => 'Traitement en cours…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'   => 'ex. "Générer S/M/L × Rouge/Bleu pour SHIRT-001"',
             'edit-image'               => 'Modifier l\'image du produit',
             'edit-image-desc'          => 'Suppression d\'arrière-plan, amélioration et retouche',
-            'edit-image-hint'          => 'Téléchargez une image, puis dites ce qu\'il faut modifier — ex. "Supprimer l\'arrière-plan"',
+            'edit-image-hint'          => 'Indiquez un SKU produit et décrivez ce que vous voulez changer — ex. "Supprimer l\'arrière-plan de SKU-123"',
             'search-products'          => 'Rechercher des produits',
             'search-products-desc'     => 'Trouver des produits par SKU, nom ou statut',
             'search-products-hint'     => 'ex. "Trouver tous les produits actifs" ou "Rechercher ordinateur portable"',
@@ -302,7 +308,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Modifier l\'image du produit téléchargée selon les instructions.',
+            'edit-image-prompt'        => 'Modifiez l\'image du produit en la récupérant à partir du SKU donné, appliquez les modifications demandées et enregistrez-la.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

@@ -8,6 +8,7 @@ use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\ProductWriterService;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 
 class BulkEdit implements PimTool
 {
@@ -47,13 +48,15 @@ class BulkEdit implements PimTool
 
                 $limit = min(max($limit, 1), 100);
 
+                $grammar = GrammarQueryManager::getGrammar();
+
                 $qb = DB::table('products')->select('id', 'sku', 'attribute_family_id', 'values', 'status');
 
                 if ($filter_by === 'status' && $filter_value !== null) {
                     $isActive = \in_array(strtolower($filter_value), ['active', 'enabled', '1', 'yes', 'on'], true);
                     $qb->where('status', $isActive ? 1 : 0);
                 } elseif ($filter_by === 'category' && $filter_value) {
-                    $qb->whereRaw("JSON_CONTAINS(JSON_EXTRACT(`values`, '$.categories'), ?)", ['"'.$filter_value.'"']);
+                    $qb->whereRaw($grammar->jsonContains('values', ['categories'], '?'), ['"'.$filter_value.'"']);
                 } elseif ($filter_by === 'family' && $filter_value) {
                     $familyId = DB::table('attribute_families')->where('code', $filter_value)->value('id');
                     if (! $familyId) {

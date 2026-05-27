@@ -84,6 +84,8 @@ class AttributeFamilyRepository extends Repository
         $newValue = [];
         $oldValue = [];
 
+        $familyGroupMapping = null;
+
         $addedAndRemovedAttributes = [
             'added'   => [],
             'removed' => [],
@@ -187,7 +189,9 @@ class AttributeFamilyRepository extends Repository
             ]);
         }
 
-        Event::dispatch('core.model.proxy.sync.AttributeFamilyGroupMapping', ['old_values' => $oldValue, 'new_values' => $newValue, 'model' => $familyGroupMapping]);
+        if ($familyGroupMapping) {
+            Event::dispatch('core.model.proxy.sync.AttributeFamilyGroupMapping', ['old_values' => $oldValue, 'new_values' => $newValue, 'model' => $familyGroupMapping]);
+        }
 
         return $family;
     }
