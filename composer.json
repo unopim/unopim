@@ -38,7 +38,7 @@
         "maatwebsite/excel": "^3.1.46",
         "openspout/openspout": "^4.28",
         "owen-it/laravel-auditing": "^14.0",
-        "predis/predis": "^2.0",
+        "predis/predis": "^3.4",
         "prettus/l5-repository": "^3.0",
         "pusher/pusher-php-server": "^7.0",
         "shetabit/visitor": "^4.1",
