@@ -1,19 +1,27 @@
 <?php
 
 use Illuminate\Support\Facades\Http;
-use Prism\Prism\Enums\Provider as PrismProvider;
+use Laravel\Ai\Enums\Lab;
 use Webkul\MagicAI\Enums\AiProvider;
-use Webkul\MagicAI\Services\LaravelAiAdapter;
 
-it('exposes a Custom case routed through the Groq Prism provider', function () {
+it('exposes a Custom case routed through the Groq config namespace', function () {
     expect(AiProvider::Custom->value)->toBe('custom');
     expect(AiProvider::Custom->label())->toBe('Custom (OpenAI-compatible)');
     expect(AiProvider::Custom->defaultUrl())->toBe('');
     // Custom shares the groq config namespace so api_url overrides land
-    // where Prism's Groq provider (which posts to /chat/completions) reads.
+    // where laravel/ai's OpenAI-compatible gateway (which posts to
+    // /chat/completions) reads.
     expect(AiProvider::Custom->configKey())->toBe('groq');
     expect(AiProvider::Custom->supportsImages())->toBeFalse();
-    expect(AiProvider::Custom->toPrismProvider())->toBe(PrismProvider::Groq);
+});
+
+it('maps Custom to Lab::Groq for laravel/ai routing', function () {
+    // Custom platforms use the OpenAI-compatible chat-completions endpoint;
+    // laravel/ai's Groq gateway is the one that posts to /chat/completions
+    // (OpenAI's own gateway posts to /responses instead). Mapping Custom to
+    // Groq + supplying a runtime api_url override lets Cerebras / Together /
+    // Fireworks / Perplexity / DeepInfra etc. work out of the box.
+    expect(AiProvider::Custom->toLab())->toBe(Lab::Groq);
 });
 
 it('lists the Custom provider in the dropdown options payload', function () {
@@ -28,20 +36,6 @@ it('lists the Custom provider in the dropdown options payload', function () {
 it('returns an empty model list for Custom when no api_url is supplied', function () {
     expect(AiProvider::Custom->fetchModels('sk-test-key', null))->toBe([]);
     expect(AiProvider::Custom->fetchModels('sk-test-key', ''))->toBe([]);
-});
-
-it('maps Custom to PrismProvider::Groq inside LaravelAiAdapter', function () {
-    $reflection = new ReflectionClass(LaravelAiAdapter::class);
-    $method = $reflection->getMethod('toPrismProvider');
-    $method->setAccessible(true);
-
-    $instance = $reflection->newInstanceWithoutConstructor();
-
-    $aiProviderProp = $reflection->getProperty('aiProvider');
-    $aiProviderProp->setAccessible(true);
-    $aiProviderProp->setValue($instance, AiProvider::Custom);
-
-    expect($method->invoke($instance))->toBe(PrismProvider::Groq);
 });
 
 it('surfaces the upstream Cerebras-style 402 body when Test Connection fails on a Custom platform', function () {

@@ -1,7 +1,5 @@
 <?php
 
-// ACL — flat array, no nested children
-
 return [
     [
         'key'   => 'ai-agent',

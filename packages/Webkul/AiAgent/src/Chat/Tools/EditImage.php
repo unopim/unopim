@@ -2,12 +2,14 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Files\Image as AiImage;
 use Laravel\Ai\Image;
-use Prism\Prism\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
@@ -19,22 +21,51 @@ use Webkul\Product\Models\Product;
 
 class EditImage implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('edit_image')
-            ->for('Edit an existing product image using AI. Fetches the image from the product by SKU, edits it with AI, and saves the edited image back to the product. Supports: remove/change background, enhance quality, add/remove objects, adjust lighting, change colors. For gallery attributes with multiple images, specify which image to edit by index. If the user uploaded an image in this chat, that uploaded image is used instead.')
-            ->withStringParameter('sku', 'The product SKU whose image to edit')
-            ->withStringParameter('instruction', 'What to do with the image (e.g. "Remove background and make it white", "Enhance lighting and contrast")')
-            ->withStringParameter('attribute', 'Optional: attribute code of the image to edit (e.g. "image", "gallery"). If omitted, auto-detects the first image/gallery attribute.')
-            ->withStringParameter('image_index', 'Optional: for gallery attributes with multiple images, the 0-based index of the image to edit (default: 0)')
-            ->withEnumParameter('size', 'Output image size/aspect ratio', ['1024x1024', '1024x1792', '1792x1024'])
-            ->using(function (string $sku, string $instruction, ?string $attribute = null, ?string $image_index = null, string $size = '1024x1024') use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products.edit')) {
+        $outer = $this;
+
+        return new class($context, $outer) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function __construct(ChatContext $context, protected EditImage $outer)
+            {
+                parent::__construct($context);
+            }
+
+            public function name(): string
+            {
+                return 'edit_image';
+            }
+
+            public function description(): string
+            {
+                return 'Edit an existing product image using AI. Fetches the image from the product by SKU, edits it with AI, and saves the edited image back to the product. Supports: remove/change background, enhance quality, add/remove objects, adjust lighting, change colors. For gallery attributes with multiple images, specify which image to edit by index. If the user uploaded an image in this chat, that uploaded image is used instead.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'sku'         => $schema->string()->description('The product SKU whose image to edit'),
+                    'instruction' => $schema->string()->description('What to do with the image (e.g. "Remove background and make it white", "Enhance lighting and contrast")'),
+                    'attribute'   => $schema->string()->description('Optional: attribute code of the image to edit (e.g. "image", "gallery"). If omitted, auto-detects the first image/gallery attribute.'),
+                    'image_index' => $schema->string()->description('Optional: for gallery attributes with multiple images, the 0-based index of the image to edit (default: 0)'),
+                    'size'        => $schema->string()->enum(['1024x1024', '1024x1792', '1792x1024'])->description('Output image size/aspect ratio'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.edit')) {
                     return $denied;
                 }
+
+                $sku = $request->string('sku')->toString();
+                $instruction = $request->string('instruction')->toString();
+                $attribute = $request->string('attribute')->toString() ?: null;
+                $image_index = $request->string('image_index')->toString() ?: null;
+                $size = $request->string('size')->toString() ?: '1024x1024';
 
                 $repo = app('Webkul\Product\Repositories\ProductRepository');
                 $product = $repo->findOneByField('sku', $sku);
@@ -44,7 +75,7 @@ class EditImage implements PimTool
                 }
 
                 // Resolve the source image path
-                $sourceResult = $this->resolveSourceImage($context, $product, $attribute, (int) ($image_index ?? 0));
+                $sourceResult = $this->outer->resolveSourceImage($this->context, $product, $attribute, (int) ($image_index ?? 0));
 
                 if (isset($sourceResult['error'])) {
                     return json_encode($sourceResult);
@@ -55,7 +86,7 @@ class EditImage implements PimTool
                 $resolvedIndex = $sourceResult['index'];
                 $scope = $sourceResult['scope'];
 
-                $aiProvider = AiProvider::from($context->platform->provider);
+                $aiProvider = AiProvider::from($this->context->platform->provider);
 
                 if (! $aiProvider->supportsImages()) {
                     return json_encode([
@@ -66,14 +97,14 @@ class EditImage implements PimTool
                 try {
                     $configKey = $aiProvider->configKey();
                     config([
-                        "ai.providers.{$configKey}.key" => $context->platform->api_key,
+                        "ai.providers.{$configKey}.key" => $this->context->platform->api_key,
                     ]);
 
-                    if ($context->platform->api_url) {
-                        config(["ai.providers.{$configKey}.url" => $context->platform->api_url]);
+                    if ($this->context->platform->api_url) {
+                        config(["ai.providers.{$configKey}.url" => $this->context->platform->api_url]);
                     }
 
-                    $imageModel = $this->resolveImageModel($context);
+                    $imageModel = $this->outer->resolveImageModel($this->context);
 
                     $sizeMap = [
                         '1024x1024' => '1:1',
@@ -111,7 +142,7 @@ class EditImage implements PimTool
                     file_put_contents($tempPath, base64_decode($imageData->image));
 
                     // Save edited image back to the product
-                    $saveResult = $this->saveToProduct($product, $resolvedAttribute, $resolvedIndex, $scope, $tempPath, $repo);
+                    $saveResult = $this->outer->saveToProduct($product, $resolvedAttribute, $resolvedIndex, $scope, $tempPath, $repo);
 
                     $result = [
                         'edited'       => true,
@@ -137,13 +168,14 @@ class EditImage implements PimTool
                 } catch (\Throwable $e) {
                     return json_encode(['error' => 'Image editing failed: '.$e->getMessage()]);
                 }
-            });
+            }
+        };
     }
 
     /**
      * Resolve the source image to edit — from uploaded image or product attribute.
      */
-    protected function resolveSourceImage(ChatContext $context, Product $product, ?string $attributeCode, int $imageIndex): array
+    public function resolveSourceImage(ChatContext $context, Product $product, ?string $attributeCode, int $imageIndex): array
     {
         // If user uploaded an image in chat, use that
         if ($context->hasImages()) {
@@ -216,7 +248,7 @@ class EditImage implements PimTool
     /**
      * Resolve which image attribute to use.
      */
-    protected function resolveImageAttribute(Product $product, ?string $attributeCode): ?Attribute
+    public function resolveImageAttribute(Product $product, ?string $attributeCode): ?Attribute
     {
         if ($attributeCode) {
             return Attribute::where('code', $attributeCode)
@@ -240,7 +272,7 @@ class EditImage implements PimTool
     /**
      * Get the scope key for the attribute value in product values.
      */
-    protected function getAttributeScope(Attribute $attribute): string
+    public function getAttributeScope(Attribute $attribute): string
     {
         if ($attribute->isLocaleAndChannelBasedAttribute()) {
             return 'channel_locale_specific';
@@ -260,7 +292,7 @@ class EditImage implements PimTool
     /**
      * Save the edited image back to the product.
      */
-    protected function saveToProduct(Product $product, ?Attribute $attribute, int $imageIndex, string $scope, string $tempPath, $repo): array
+    public function saveToProduct(Product $product, ?Attribute $attribute, int $imageIndex, string $scope, string $tempPath, $repo): array
     {
         if (! $attribute) {
             return ['error' => 'Cannot save — no attribute resolved.'];
@@ -315,7 +347,7 @@ class EditImage implements PimTool
     /**
      * Resolve an image-editing capable model for the provider.
      */
-    protected function resolveImageModel(ChatContext $context): string
+    public function resolveImageModel(ChatContext $context): string
     {
         $provider = $context->platform->provider;
 

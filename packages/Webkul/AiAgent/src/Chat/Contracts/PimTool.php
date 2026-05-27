@@ -2,7 +2,7 @@
 
 namespace Webkul\AiAgent\Chat\Contracts;
 
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
 use Webkul\AiAgent\Chat\ChatContext;
 
 /**
@@ -16,7 +16,7 @@ use Webkul\AiAgent\Chat\ChatContext;
 interface PimTool
 {
     /**
-     * Return a configured Prism Tool instance.
+     * Return a configured laravel/ai Tool instance.
      *
      * The ChatContext provides access to product context, locale, channel,
      * uploaded files, and other request-scoped data that tools may need.

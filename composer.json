@@ -27,7 +27,7 @@
         "kalnoy/nestedset": "^6.0",
         "khaled.alshamaa/ar-php": "^6.0.0",
         "konekt/concord": "^1.16",
-        "laravel/ai": "^0.7.1",
+        "laravel/ai": "^0.7",
         "laravel/framework": "^12.0",
         "laravel/octane": "^2.3",
         "laravel/passport": "^13.7",
