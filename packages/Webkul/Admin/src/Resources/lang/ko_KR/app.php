@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => '이메일 주소',
-            'forget-password-link'   => '비밀번호를 잊으셨나요?',
-            'password'               => '비밀번호',
-            'submit-btn'             => '로그인',
-            'title'                  => '로그인',
-            'powered-by'             => ':unopim 제공,',
-            'open-source-project-by' => ':webkul의 오픈 소스 프로젝트입니다.',
+            'email'                      => '이메일 주소',
+            'forget-password-link'       => '비밀번호를 잊으셨나요?',
+            'password'                   => '비밀번호',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => '로그인',
+            'title'                      => '로그인',
+            'powered-by'                 => ':unopim 제공,',
+            'open-source-project-by'     => ':webkul의 오픈 소스 프로젝트입니다.',
         ],
         'forget-password' => [
             'create' => [

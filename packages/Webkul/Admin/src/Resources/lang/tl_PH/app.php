@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Email Address',
-            'forget-password-link'   => 'Nakalimutan ang password?',
-            'password'               => 'Password',
-            'submit-btn'             => 'Mag-sign In',
-            'title'                  => 'Mag-sign In',
-            'powered-by'             => 'Pinapatakbo ng :unopim,',
-            'open-source-project-by' => 'Isang open-source na proyekto ng :webkul.',
+            'email'                      => 'Email Address',
+            'forget-password-link'       => 'Nakalimutan ang password?',
+            'password'                   => 'Password',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Mag-sign In',
+            'title'                      => 'Mag-sign In',
+            'powered-by'                 => 'Pinapatakbo ng :unopim,',
+            'open-source-project-by'     => 'Isang open-source na proyekto ng :webkul.',
         ],
         'forget-password' => [
             'create' => [

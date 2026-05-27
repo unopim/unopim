@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'मेल पता',
-            'forget-password-link'   => 'पासवर्ड भूल गए ?',
-            'password'               => 'पासवर्ड',
-            'submit-btn'             => 'दाखिल करना',
-            'title'                  => 'दाखिल करना',
-            'powered-by'             => ':unopim द्वारा संचालित,',
-            'open-source-project-by' => ':webkul द्वारा एक ओपन-सोर्स प्रोजेक्ट.',
+            'email'                      => 'मेल पता',
+            'forget-password-link'       => 'पासवर्ड भूल गए ?',
+            'password'                   => 'पासवर्ड',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'दाखिल करना',
+            'title'                      => 'दाखिल करना',
+            'powered-by'                 => ':unopim द्वारा संचालित,',
+            'open-source-project-by'     => ':webkul द्वारा एक ओपन-सोर्स प्रोजेक्ट.',
         ],
         'forget-password' => [
             'create' => [

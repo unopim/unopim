@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Dirección de correo electrónico',
-            'forget-password-link'   => 'Contraseña olvidada ?',
-            'password'               => 'Contraseña',
-            'submit-btn'             => 'Iniciar sesión',
-            'title'                  => 'Iniciar sesión',
-            'powered-by'             => 'Desarrollado por :unopim,',
-            'open-source-project-by' => 'Un proyecto de código abierto de :webkul.',
+            'email'                      => 'Dirección de correo electrónico',
+            'forget-password-link'       => 'Contraseña olvidada ?',
+            'password'                   => 'Contraseña',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Iniciar sesión',
+            'title'                      => 'Iniciar sesión',
+            'powered-by'                 => 'Desarrollado por :unopim,',
+            'open-source-project-by'     => 'Un proyecto de código abierto de :webkul.',
         ],
         'forget-password' => [
             'create' => [

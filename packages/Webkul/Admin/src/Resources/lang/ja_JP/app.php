@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'メールアドレス',
-            'forget-password-link'   => 'パスワードを忘れましたか?',
-            'password'               => 'パスワード',
-            'submit-btn'             => 'サインイン',
-            'title'                  => 'サインイン',
-            'powered-by'             => ':unopim によって提供,',
-            'open-source-project-by' => ':webkul によるオープンソースプロジェクトです。',
+            'email'                      => 'メールアドレス',
+            'forget-password-link'       => 'パスワードを忘れましたか?',
+            'password'                   => 'パスワード',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'サインイン',
+            'title'                      => 'サインイン',
+            'powered-by'                 => ':unopim によって提供,',
+            'open-source-project-by'     => ':webkul によるオープンソースプロジェクトです。',
         ],
         'forget-password' => [
             'create' => [

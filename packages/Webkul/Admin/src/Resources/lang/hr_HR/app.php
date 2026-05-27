@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Adresa e-pošte',
-            'forget-password-link'   => 'Zaboravili ste lozinku?',
-            'password'               => 'Lozinka',
-            'submit-btn'             => 'Prijavite se',
-            'title'                  => 'Prijavite se',
-            'powered-by'             => 'Pokreće :unopim,',
-            'open-source-project-by' => 'Projekt otvorenog koda od :webkul.',
+            'email'                      => 'Adresa e-pošte',
+            'forget-password-link'       => 'Zaboravili ste lozinku?',
+            'password'                   => 'Lozinka',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Prijavite se',
+            'title'                      => 'Prijavite se',
+            'powered-by'                 => 'Pokreće :unopim,',
+            'open-source-project-by'     => 'Projekt otvorenog koda od :webkul.',
         ],
         'forget-password' => [
             'create' => [

@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Adreça electrònica',
-            'forget-password-link'   => 'Oblidar contrasenya?',
-            'password'               => 'Contrasenya',
-            'submit-btn'             => 'Iniciar sessió',
-            'title'                  => 'Iniciar sessió',
-            'powered-by'             => 'Funciona amb :unopim,',
-            'open-source-project-by' => 'Un projecte de codi obert per :webkul.',
+            'email'                      => 'Adreça electrònica',
+            'forget-password-link'       => 'Oblidar contrasenya?',
+            'password'                   => 'Contrasenya',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Iniciar sessió',
+            'title'                      => 'Iniciar sessió',
+            'powered-by'                 => 'Funciona amb :unopim,',
+            'open-source-project-by'     => 'Un projecte de codi obert per :webkul.',
         ],
         'forget-password' => [
             'create' => [

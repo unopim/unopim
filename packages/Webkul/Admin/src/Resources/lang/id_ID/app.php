@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Alamat email',
-            'forget-password-link'   => 'Lupa Password ?',
-            'password'               => 'Kata sandi',
-            'submit-btn'             => 'Masuk',
-            'title'                  => 'Masuk',
-            'powered-by'             => 'Didukung oleh :unopim,',
-            'open-source-project-by' => 'Proyek open-source oleh :webkul.',
+            'email'                      => 'Alamat email',
+            'forget-password-link'       => 'Lupa Password ?',
+            'password'                   => 'Kata sandi',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Masuk',
+            'title'                      => 'Masuk',
+            'powered-by'                 => 'Didukung oleh :unopim,',
+            'open-source-project-by'     => 'Proyek open-source oleh :webkul.',
         ],
         'forget-password' => [
             'create' => [

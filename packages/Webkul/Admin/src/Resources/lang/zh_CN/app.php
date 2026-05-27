@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => '电子邮件地址',
-            'forget-password-link'   => '忘记密码 ？',
-            'password'               => '密码',
-            'submit-btn'             => '登入',
-            'title'                  => '登入',
-            'powered-by'             => '由 :unopim 提供支持,',
-            'open-source-project-by' => '由 :webkul 开源项目提供。',
+            'email'                      => '电子邮件地址',
+            'forget-password-link'       => '忘记密码 ？',
+            'password'                   => '密码',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => '登入',
+            'title'                      => '登入',
+            'powered-by'                 => '由 :unopim 提供支持,',
+            'open-source-project-by'     => '由 :webkul 开源项目提供。',
         ],
         'forget-password' => [
             'create' => [

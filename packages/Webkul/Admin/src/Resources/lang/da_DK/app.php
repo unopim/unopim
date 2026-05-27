@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'E-mailadresse',
-            'forget-password-link'   => 'Glemt adgangskode?',
-            'password'               => 'Adgangskode',
-            'submit-btn'             => 'Log ind',
-            'title'                  => 'Log ind',
-            'powered-by'             => 'Drevet af :unopim,',
-            'open-source-project-by' => 'Et open source-projekt af :webkul.',
+            'email'                      => 'E-mailadresse',
+            'forget-password-link'       => 'Glemt adgangskode?',
+            'password'                   => 'Adgangskode',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Log ind',
+            'title'                      => 'Log ind',
+            'powered-by'                 => 'Drevet af :unopim,',
+            'open-source-project-by'     => 'Et open source-projekt af :webkul.',
         ],
         'forget-password' => [
             'create' => [

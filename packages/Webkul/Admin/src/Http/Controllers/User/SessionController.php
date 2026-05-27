@@ -3,9 +3,13 @@
 namespace Webkul\Admin\Http\Controllers\User;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\User\Models\Admin;
 
 class SessionController extends Controller
 {
@@ -34,7 +38,9 @@ class SessionController extends Controller
             session()->put('url.intended', $intendedUrl);
         }
 
-        return view('admin::users.sessions.create');
+        return view('admin::users.sessions.create', [
+            'isMicrosoftSsoConfigured' => $this->isMicrosoftSsoEnabled(),
+        ]);
     }
 
     /**
@@ -138,5 +144,149 @@ class SessionController extends Controller
         auth()->guard('admin')->logout();
 
         return redirect()->route('admin.session.create');
+    }
+
+    /**
+     * Redirect to Microsoft authorization endpoint.
+     */
+    public function redirectToMicrosoft(Request $request): RedirectResponse
+    {
+        if (! $this->isMicrosoftSsoEnabled()) {
+            return redirect()->route('admin.session.create');
+        }
+
+        $state = Str::random(40);
+
+        $request->session()->put('microsoft_sso_state', $state);
+
+        $config = $this->microsoftSsoConfig();
+
+        $query = http_build_query([
+            'client_id'     => $config['client_id'],
+            'response_type' => 'code',
+            'redirect_uri'  => route('admin.session.microsoft.callback'),
+            'response_mode' => 'query',
+            'scope'         => 'openid profile email User.Read',
+            'state'         => $state,
+        ]);
+
+        return redirect("https://login.microsoftonline.com/{$config['tenant']}/oauth2/v2.0/authorize?{$query}");
+    }
+
+    /**
+     * Handle Microsoft OAuth callback.
+     */
+    public function handleMicrosoftCallback(Request $request): RedirectResponse
+    {
+        if (! $this->isMicrosoftSsoEnabled()) {
+            return redirect()->route('admin.session.create');
+        }
+
+        $expectedState = $request->session()->pull('microsoft_sso_state');
+        $actualState = $request->query('state');
+        $authorizationCode = $request->query('code');
+
+        if (
+            ! $expectedState
+            || ! $actualState
+            || ! hash_equals($expectedState, $actualState)
+            || ! $authorizationCode
+        ) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create');
+        }
+
+        $config = $this->microsoftSsoConfig();
+        $tokenEndpoint = "https://login.microsoftonline.com/{$config['tenant']}/oauth2/v2.0/token";
+
+        $tokenResponse = Http::asForm()->timeout(10)->post($tokenEndpoint, [
+            'client_id'     => $config['client_id'],
+            'client_secret' => $config['client_secret'],
+            'code'          => $authorizationCode,
+            'grant_type'    => 'authorization_code',
+            'redirect_uri'  => route('admin.session.microsoft.callback'),
+        ]);
+
+        if (! $tokenResponse->successful()) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create');
+        }
+
+        $accessToken = $tokenResponse->json('access_token');
+
+        if (! $accessToken) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create');
+        }
+
+        $profileResponse = Http::withToken($accessToken)
+            ->timeout(10)
+            ->get('https://graph.microsoft.com/v1.0/me?$select=mail,userPrincipalName');
+
+        if (! $profileResponse->successful()) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create');
+        }
+
+        $email = $profileResponse->json('mail') ?: $profileResponse->json('userPrincipalName');
+
+        if (! $email || ! is_string($email)) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create');
+        }
+
+        $admin = Admin::query()
+            ->whereRaw('LOWER(email) = ?', [mb_strtolower(trim($email))])
+            ->first();
+
+        // Explicitly do not auto-create users for SSO.
+        if (! $admin) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create')->withInput(['email' => $email]);
+        }
+
+        if (! $admin->status) {
+            session()->flash('warning', trans('admin::app.settings.users.activate-warning'));
+
+            return redirect()->route('admin.session.create')->withInput(['email' => $email]);
+        }
+
+        auth()->guard('admin')->login($admin);
+        $request->session()->regenerate();
+        $request->session()->regenerateToken();
+
+        return redirect()->intended($this->firstAllowedUrl());
+    }
+
+    /**
+     * Check if Microsoft SSO is enabled and configured.
+     */
+    private function isMicrosoftSsoEnabled(): bool
+    {
+        $config = $this->microsoftSsoConfig();
+
+        return $config['enabled']
+            && $config['client_id'] !== ''
+            && $config['client_secret'] !== ''
+            && $config['tenant'] !== '';
+    }
+
+    /**
+     * Resolve Microsoft SSO config.
+     */
+    private function microsoftSsoConfig(): array
+    {
+        return [
+            'enabled'       => (bool) config('services.microsoft_sso.enabled', false),
+            'tenant'        => (string) config('services.microsoft_sso.tenant', ''),
+            'client_id'     => (string) config('services.microsoft_sso.client_id', ''),
+            'client_secret' => (string) config('services.microsoft_sso.client_secret', ''),
+        ];
     }
 }

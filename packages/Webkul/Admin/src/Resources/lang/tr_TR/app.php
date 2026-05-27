@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'E-posta Adresi',
-            'forget-password-link'   => 'Şifreyi Unuttunuz mu?',
-            'password'               => 'Şifre',
-            'submit-btn'             => 'Giriş Yap',
-            'title'                  => 'Giriş Yap',
-            'powered-by'             => ':unopim tarafından desteklenmektedir,',
-            'open-source-project-by' => ':webkul tarafından sunulan açık kaynak projesi.',
+            'email'                      => 'E-posta Adresi',
+            'forget-password-link'       => 'Şifreyi Unuttunuz mu?',
+            'password'                   => 'Şifre',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Giriş Yap',
+            'title'                      => 'Giriş Yap',
+            'powered-by'                 => ':unopim tarafından desteklenmektedir,',
+            'open-source-project-by'     => ':webkul tarafından sunulan açık kaynak projesi.',
         ],
         'forget-password' => [
             'create' => [

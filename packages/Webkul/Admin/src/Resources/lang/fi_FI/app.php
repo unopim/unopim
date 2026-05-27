@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Sähköpostiosoite',
-            'forget-password-link'   => 'Unohtuiko salasana?',
-            'password'               => 'Salasana',
-            'submit-btn'             => 'Kirjaudu sisään',
-            'title'                  => 'Kirjaudu sisään',
-            'powered-by'             => 'Toimii :unopim:lla,',
-            'open-source-project-by' => 'Avoimen lähdekoodin projekti :webkul:lta.',
+            'email'                      => 'Sähköpostiosoite',
+            'forget-password-link'       => 'Unohtuiko salasana?',
+            'password'                   => 'Salasana',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Kirjaudu sisään',
+            'title'                      => 'Kirjaudu sisään',
+            'powered-by'                 => 'Toimii :unopim:lla,',
+            'open-source-project-by'     => 'Avoimen lähdekoodin projekti :webkul:lta.',
         ],
         'forget-password' => [
             'create' => [

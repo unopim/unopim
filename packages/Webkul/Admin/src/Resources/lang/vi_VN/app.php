@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Địa chỉ Email',
-            'forget-password-link'   => 'Quên mật khẩu?',
-            'password'               => 'Mật khẩu',
-            'submit-btn'             => 'Đăng nhập',
-            'title'                  => 'Đăng nhập',
-            'powered-by'             => 'Được cung cấp bởi :unopim,',
-            'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
+            'email'                      => 'Địa chỉ Email',
+            'forget-password-link'       => 'Quên mật khẩu?',
+            'password'                   => 'Mật khẩu',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Đăng nhập',
+            'title'                      => 'Đăng nhập',
+            'powered-by'                 => 'Được cung cấp bởi :unopim,',
+            'open-source-project-by'     => 'Dự án mã nguồn mở của :webkul.',
         ],
         'forget-password' => [
             'create' => [

@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'عنوان البريد الإلكتروني',
-            'forget-password-link'   => 'نسيان كلمة المرور؟',
-            'password'               => 'كلمة المرور',
-            'submit-btn'             => 'تسجيل الدخول',
-            'title'                  => 'تسجيل الدخول',
-            'powered-by'             => 'مدعوم من :unopim,',
-            'open-source-project-by' => 'مشروع مفتوح المصدر بواسطة :webkul.',
+            'email'                      => 'عنوان البريد الإلكتروني',
+            'forget-password-link'       => 'نسيان كلمة المرور؟',
+            'password'                   => 'كلمة المرور',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'تسجيل الدخول',
+            'title'                      => 'تسجيل الدخول',
+            'powered-by'                 => 'مدعوم من :unopim,',
+            'open-source-project-by'     => 'مشروع مفتوح المصدر بواسطة :webkul.',
         ],
         'forget-password' => [
             'create' => [

@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Имэйл хаяг',
-            'forget-password-link'   => 'Нууц үгээ мартах уу?',
-            'password'               => 'Нууц үг',
-            'submit-btn'             => 'Нэвтрэх',
-            'title'                  => 'Нэвтрэх',
-            'powered-by'             => ':unopim-аас дэмжигдсэн,',
-            'open-source-project-by' => ':webkul-ийн нээлттэй эхийн төсөл.',
+            'email'                      => 'Имэйл хаяг',
+            'forget-password-link'       => 'Нууц үгээ мартах уу?',
+            'password'                   => 'Нууц үг',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Нэвтрэх',
+            'title'                      => 'Нэвтрэх',
+            'powered-by'                 => ':unopim-аас дэмжигдсэн,',
+            'open-source-project-by'     => ':webkul-ийн нээлттэй эхийн төсөл.',
         ],
         'forget-password' => [
             'create' => [

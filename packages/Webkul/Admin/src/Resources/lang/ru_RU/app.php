@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Адрес электронной почты',
-            'forget-password-link'   => 'Забыть пароль ?',
-            'password'               => 'Пароль',
-            'submit-btn'             => 'Войти',
-            'title'                  => 'Войти',
-            'powered-by'             => 'Под управлением :unopim,',
-            'open-source-project-by' => 'Проект с открытым исходным кодом от :webkul.',
+            'email'                      => 'Адрес электронной почты',
+            'forget-password-link'       => 'Забыть пароль ?',
+            'password'                   => 'Пароль',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Войти',
+            'title'                      => 'Войти',
+            'powered-by'                 => 'Под управлением :unopim,',
+            'open-source-project-by'     => 'Проект с открытым исходным кодом от :webkul.',
         ],
         'forget-password' => [
             'create' => [

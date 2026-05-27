@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Adresă de e-mail',
-            'forget-password-link'   => 'Ai uitat parola?',
-            'password'               => 'Parolă',
-            'submit-btn'             => 'Conectare',
-            'title'                  => 'Conectare',
-            'powered-by'             => 'Alimentat de :unopim,',
-            'open-source-project-by' => 'Un proiect open-source realizat de :webkul.',
+            'email'                      => 'Adresă de e-mail',
+            'forget-password-link'       => 'Ai uitat parola?',
+            'password'                   => 'Parolă',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Conectare',
+            'title'                      => 'Conectare',
+            'powered-by'                 => 'Alimentat de :unopim,',
+            'open-source-project-by'     => 'Un proiect open-source realizat de :webkul.',
         ],
         'forget-password' => [
             'create' => [

@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Adresse e-mail',
-            'forget-password-link'   => 'Mot de passe oublié ?',
-            'password'               => 'Mot de passe',
-            'submit-btn'             => 'Se connecter',
-            'title'                  => 'Se connecter',
-            'powered-by'             => 'Propulsé par :unopim,',
-            'open-source-project-by' => 'Un projet open-source de :webkul.',
+            'email'                      => 'Adresse e-mail',
+            'forget-password-link'       => 'Mot de passe oublié ?',
+            'password'                   => 'Mot de passe',
+            'sso-divider'                => 'ou',
+            'sso-sign-in-with-microsoft' => 'Se connecter avec Microsoft',
+            'submit-btn'                 => 'Se connecter',
+            'title'                      => 'Se connecter',
+            'powered-by'                 => 'Propulsé par :unopim,',
+            'open-source-project-by'     => 'Un projet open-source de :webkul.',
         ],
         'forget-password' => [
             'create' => [
