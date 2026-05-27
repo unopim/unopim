@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Productos',
-
+            'title'      => 'Productos',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'La clave URL: \'%s\' ya se generó para un artículo con el SKU: \'%s\'.',
@@ -34,13 +32,21 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Idiomas',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'El código de idioma \'%s\' ya ha sido importado en este lote.',
+                    'code-not-found-to-delete'    => 'No se encontró un idioma con el código \'%s\' en el sistema.',
+                    'invalid-status'              => 'El estado debe ser 0 o 1 (o vacío para habilitado por defecto).',
+                    'channel-related-locale-root' => 'No puedes eliminar el idioma con código :code porque está asociado a un canal.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Productos',
-
+            'title'      => 'Productos',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'La clave URL: \'%s\' ya se generó para un artículo con el SKU: \'%s\'.',
@@ -54,8 +60,11 @@ return [
         'categories' => [
             'title' => 'Categorías',
         ],
-    ],
 
+        'locales' => [
+            'title' => 'Idiomas',
+        ],
+    ],
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Las columnas número "%s" tienen encabezados vacíos.',
@@ -68,7 +77,6 @@ return [
             'file-empty'           => 'El archivo está vacío o no contiene una fila de encabezado. Por favor, suba un archivo válido con datos.',
         ],
     ],
-
     'job' => [
         'started'   => 'La ejecución del trabajo ha comenzado.',
         'completed' => 'Ejecución del trabajo completada',

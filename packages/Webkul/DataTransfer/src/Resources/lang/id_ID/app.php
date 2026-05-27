@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Produk',
-
+            'title'      => 'Produk',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'Kunci URL: \'%s\' telah dibuat untuk item dengan SKU: \'%s\'.',
@@ -34,13 +32,21 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Bahasa',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kode bahasa \'%s\' sudah diimpor dalam batch ini.',
+                    'code-not-found-to-delete'    => 'Bahasa dengan kode \'%s\' tidak ditemukan di sistem.',
+                    'invalid-status'              => 'Status harus 0 atau 1 (atau kosong untuk default aktif).',
+                    'channel-related-locale-root' => 'Anda tidak dapat menghapus bahasa dengan kode :code karena terkait dengan channel.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Produk',
-
+            'title'      => 'Produk',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Kunci URL: \'%s\' telah dibuat untuk item dengan SKU: \'%s\'.',
@@ -54,8 +60,10 @@ return [
         'categories' => [
             'title' => 'Kategori',
         ],
+        'locales' => [
+            'title' => 'Bahasa',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Kolom nomor "%s" memiliki header kosong.',
@@ -68,7 +76,6 @@ return [
             'file-empty'           => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',
         ],
     ],
-
     'job' => [
         'started'   => 'Eksekusi pekerjaan dimulai',
         'completed' => 'Eksekusi pekerjaan selesai',

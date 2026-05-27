@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Produkte',
-
+            'title'      => 'Produkte',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL-Schlüssel: \'%s\' wurde bereits für einen Artikel mit der SKU: \'%s\' generiert.',
@@ -34,13 +32,21 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Gebietsschemata',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Der Sprachcode \'%s\' wurde bereits in diesem Batch importiert.',
+                    'code-not-found-to-delete'    => 'Sprache mit dem Code \'%s\' wurde im System nicht gefunden.',
+                    'invalid-status'              => 'Der Status muss 0 oder 1 sein (oder leer für standardmäßig aktiviert).',
+                    'channel-related-locale-root' => 'Sie können die Sprache mit dem Code :code nicht löschen, da sie mit einem Kanal verknüpft ist.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Produkte',
-
+            'title'      => 'Produkte',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-Schlüssel: \'%s\' wurde bereits für einen Artikel mit der SKU: \'%s\' generiert.',
@@ -54,8 +60,11 @@ return [
         'categories' => [
             'title' => 'Kategorien',
         ],
-    ],
 
+        'locales' => [
+            'title' => 'Gebietsschemata',
+        ],
+    ],
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Die Spalten mit der Nummer „%s“ haben leere Kopfzeilen.',
@@ -68,7 +77,6 @@ return [
             'file-empty'           => 'Die Datei ist leer oder enthält keine Kopfzeile. Bitte laden Sie eine gültige Datei mit Daten hoch.',
         ],
     ],
-
     'job' => [
         'started'   => 'Jobausführung gestartet',
         'completed' => 'Jobausführung abgeschlossen',

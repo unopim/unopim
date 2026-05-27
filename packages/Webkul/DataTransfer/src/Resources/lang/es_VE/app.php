@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Idiomas',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'El código de idioma \'%s\' ya fue importado en este lote.',
+                    'code-not-found-to-delete'    => 'No se encontró un idioma con el código \'%s\' en el sistema.',
+                    'invalid-status'              => 'El estado debe ser 0 o 1 (o vacío para habilitado por defecto).',
+                    'channel-related-locale-root' => 'No puedes eliminar el idioma con código :code porque está asociado a un canal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +59,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorías',
+        ],
+        'locales' => [
+            'title' => 'Idiomas',
         ],
     ],
     'validation' => [

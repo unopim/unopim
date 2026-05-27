@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Мови',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Код мови \'%s\' вже імпортовано в цьому пакеті.',
+                    'code-not-found-to-delete'    => 'Мову з кодом \'%s\' не знайдено в системі.',
+                    'invalid-status'              => 'Статус має бути 0 або 1 (або порожній для увімкнення за замовчуванням).',
+                    'channel-related-locale-root' => 'Ви не можете видалити мову з кодом :code, оскільки вона пов’язана з каналом.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +59,9 @@ return [
         ],
         'categories' => [
             'title' => 'Категорії',
+        ],
+        'locales' => [
+            'title' => 'Мови',
         ],
     ],
     'validation' => [

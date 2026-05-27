@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Jezici',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kod jezika \'%s\' već je uvezen u ovom paketu.',
+                    'code-not-found-to-delete'    => 'Jezik s kodom \'%s\' nije pronađen u sustavu.',
+                    'invalid-status'              => 'Status mora biti 0 ili 1 (ili prazno za zadano omogućeno).',
+                    'channel-related-locale-root' => 'Ne možete izbrisati jezik s kodom :code jer je povezan s kanalom.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +59,10 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorije',
+        ],
+
+        'locales' => [
+            'title' => 'Jezici',
         ],
     ],
     'validation' => [

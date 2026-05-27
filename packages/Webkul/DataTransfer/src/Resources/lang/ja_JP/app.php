@@ -32,8 +32,18 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'ロケール',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'ロケールコード \'%s\' はこのバッチですでにインポートされています。',
+                    'code-not-found-to-delete'    => 'コード \'%s\' のロケールがシステムに見つかりません。',
+                    'invalid-status'              => 'ステータスは0または1である必要があります（またはデフォルト有効の場合は空）。',
+                    'channel-related-locale-root' => 'コード :code のロケールはチャネルに関連付けられているため削除できません。',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
         'products' => [
             'title'      => '製品',
@@ -50,8 +60,10 @@ return [
         'categories' => [
             'title' => 'カテゴリー',
         ],
+        'locales' => [
+            'title' => 'ロケール',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => '列番号「%s」のヘッダーが空です。',
@@ -64,7 +76,6 @@ return [
             'file-empty'           => 'ファイルが空であるか、ヘッダー行が含まれていません。データを含む有効なファイルをアップロードしてください。',
         ],
     ],
-
     'job' => [
         'started'   => 'ジョブの実行が開始されました',
         'completed' => 'ジョブの実行が完了しました',

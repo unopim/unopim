@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Продукты',
-
+            'title'      => 'Продукты',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'Ключ URL: \'%s\' уже был создан для элемента с SKU: \'%s\'.',
@@ -34,13 +32,21 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Языки',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Код языка \'%s\' уже импортирован в этой партии.',
+                    'code-not-found-to-delete'    => 'Язык с кодом \'%s\' не найден в системе.',
+                    'invalid-status'              => 'Статус должен быть 0 или 1 (или пустым для включения по умолчанию).',
+                    'channel-related-locale-root' => 'Вы не можете удалить язык с кодом :code, так как он связан с каналом.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Продукты',
-
+            'title'      => 'Продукты',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Ключ URL: \'%s\' уже был создан для элемента с SKU: \'%s\'.',
@@ -54,8 +60,10 @@ return [
         'categories' => [
             'title' => 'Категории',
         ],
+        'locales' => [
+            'title' => 'Языки',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Столбцы с номером «%s» имеют пустые заголовки.',
@@ -68,7 +76,6 @@ return [
             'file-empty'           => 'Файл пуст или не содержит строку заголовка. Пожалуйста, загрузите корректный файл с данными.',
         ],
     ],
-
     'job' => [
         'started'   => 'Выполнение задания началось',
         'completed' => 'Выполнение задания завершено',

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Limbi',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Codul limbii \'%s\' a fost deja importat în acest lot.',
+                    'code-not-found-to-delete'    => 'Limba cu codul \'%s\' nu a fost găsită în sistem.',
+                    'invalid-status'              => 'Statusul trebuie să fie 0 sau 1 (sau gol pentru activat implicit).',
+                    'channel-related-locale-root' => 'Nu puteți șterge limba cu codul :code deoarece este asociată unui canal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +59,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorii',
+        ],
+        'locales' => [
+            'title' => 'Limbi',
         ],
     ],
     'validation' => [

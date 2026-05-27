@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Ngôn ngữ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Mã ngôn ngữ \'%s\' đã được nhập trong đợt này.',
+                    'code-not-found-to-delete'    => 'Không tìm thấy ngôn ngữ với mã \'%s\' trong hệ thống.',
+                    'invalid-status'              => 'Trạng thái phải là 0 hoặc 1 (hoặc để trống cho mặc định bật).',
+                    'channel-related-locale-root' => 'Bạn không thể xóa ngôn ngữ với mã :code vì nó liên kết với một kênh.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +59,10 @@ return [
         ],
         'categories' => [
             'title' => 'Các danh mục',
+        ],
+
+        'locales' => [
+            'title' => 'Ngôn ngữ',
         ],
     ],
     'validation' => [
