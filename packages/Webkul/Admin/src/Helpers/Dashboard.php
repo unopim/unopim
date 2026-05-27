@@ -22,6 +22,16 @@ class Dashboard
     protected const CACHE_TTL = 300;
 
     /**
+     * Cache keys that depend on product data.
+     */
+    public const PRODUCT_CACHE_KEYS = [
+        'dashboard.total_catalogs',
+        'dashboard.product_stats',
+        'dashboard.needs_attention',
+        'dashboard.channel_readiness',
+    ];
+
+    /**
      * Create a controller instance.
      *
      * @return void
@@ -36,6 +46,16 @@ class Dashboard
         protected Channel $channel,
         protected Currency $currency
     ) {}
+
+    /**
+     * Invalidate all product-related dashboard cache keys.
+     */
+    public static function invalidateProductCache(): void
+    {
+        foreach (self::PRODUCT_CACHE_KEYS as $key) {
+            Cache::forget($key);
+        }
+    }
 
     /**
      * This method calculates and returns the total number of various catalog entities.
@@ -77,13 +97,16 @@ class Dashboard
     public function getProductStats()
     {
         return Cache::remember('dashboard.product_stats', self::CACHE_TTL, function () {
-            // Single query for type + status using conditional aggregation
+            // Single query for type + status using conditional aggregation.
+            // Note: `status` may be stored as tinyint (MySQL) or boolean (PostgreSQL).
+            // Use CAST to SIGNED/INTEGER for cross-database compatibility.
+            $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
             $stats = DB::table('products')
                 ->select(
                     'type',
                     DB::raw('COUNT(*) as total'),
-                    DB::raw('SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_count'),
-                    DB::raw('SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as inactive_count')
+                    DB::raw("SUM(CASE WHEN CAST(status AS {$castType}) = 1 THEN 1 ELSE 0 END) as active_count"),
+                    DB::raw("SUM(CASE WHEN CAST(status AS {$castType}) = 0 THEN 1 ELSE 0 END) as inactive_count")
                 )
                 ->groupBy('type')
                 ->get();
@@ -133,12 +156,16 @@ class Dashboard
                 ->where('created_at', '>=', $startDate)
                 ->count();
 
-            $withVariants = DB::table('products')
-                ->where('type', 'configurable')
+            // Variants live on `products.parent_id` (a child product row
+            // pointing at its configurable parent), NOT in `product_relations`
+            // — that table is reserved for related/up-sell links. Counting
+            // via product_relations always returned 0 (Internal-679).
+            $withVariants = DB::table('products as parents')
+                ->where('parents.type', 'configurable')
                 ->whereExists(function ($query) {
                     $query->select(DB::raw(1))
-                        ->from('product_relations')
-                        ->whereColumn('product_relations.parent_id', 'products.id');
+                        ->from('products as variants')
+                        ->whereColumn('variants.parent_id', 'parents.id');
                 })
                 ->count();
 
@@ -290,24 +317,33 @@ class Dashboard
     public function getDataTransferStatus()
     {
         $recentJobs = DB::table('job_track')
+            ->leftJoin('job_instances', 'job_instances.id', '=', 'job_track.job_instances_id')
             ->leftJoin('admins', 'admins.id', '=', 'job_track.user_id')
             ->select(
                 'job_track.id',
                 'job_track.state',
-                'job_track.type',
+                'job_instances.code as job_code',
+                'job_instances.type',
+                'job_instances.entity_type',
                 'job_track.processed_rows_count',
                 'job_track.invalid_rows_count',
                 'job_track.errors_count',
+                'job_track.summary',
                 'job_track.started_at',
                 'job_track.completed_at',
                 'job_track.created_at',
                 'admins.name as user_name',
             )
             ->orderByDesc('job_track.created_at')
-            ->limit(5)
+            ->limit(10)
             ->get()
             ->map(function ($job) {
+                $summary = ! empty($job->summary) ? json_decode($job->summary, true) : [];
+
+                $job->processed_rows_count = $summary['processed'] ?? $job->processed_rows_count;
                 $job->time_ago = $this->calculateTimeAgo($job->created_at);
+
+                unset($job->summary);
 
                 return $job;
             });

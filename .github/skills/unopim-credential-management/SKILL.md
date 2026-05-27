@@ -5,7 +5,7 @@ description: >
   history tracking, and full CRUD for Unopim third-party connector modules.
   Covers Credential model with HistoryTrait and extras JSON, Contract interface,
   CredentialRepository, CredentialController with JsonResponse, FormRequest
-  validation, DataGrid, and migration with wk_ prefix. Use this skill when
+  validation, DataGrid, and migration with DB_PREFIX. Use this skill when
   building the credentials section of any Unopim connector (WooCommerce,
   Shopify, Shopware, module, etc.).
 version: "2.0.0"
@@ -20,7 +20,7 @@ Credentials store API connection details for a third-party integration.
 All patterns are derived from the WooCommerce connector reference implementation.
 
 **Key rules:**
-- Table prefix: `wk_` (e.g. `wk_woocommerce_credentials`)
+- Table prefix: DB_PREFIX from .env (default wk_) — never hardcode in code
 - Migration folder: `Database/Migration/` (NOT `Migrations`)
 - Every model uses `HistoryTrait` + implements `PresentableHistoryInterface`
 - Sensitive fields (API secrets, passwords) go in `$auditExclude` — NOT `Crypt::encryptString()`
@@ -41,7 +41,7 @@ All patterns are derived from the WooCommerce connector reference implementation
 
 ```php
 <?php
-// Database/Migration/2025_01_01_000000_wk_{module}_credentials.php
+// Database/Migration/2025_01_01_000000_{module}_credentials.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -51,7 +51,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('wk_{module}_credentials', function (Blueprint $table) {
+        Schema::create('{module}_credentials', function (Blueprint $table) {
             $table->id();
             $table->string('label');
             $table->string('apiUrl');
@@ -66,7 +66,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('wk_{module}_credentials');
+        Schema::dropIfExists('{module}_credentials');
     }
 };
 ```
@@ -108,11 +108,11 @@ class Credential extends Model implements CredentialContract, PresentableHistory
     use HasFactory, HistoryTrait;
 
     /**
-     * Table — always wk_ prefix.
+     * Table — always DB_PREFIX.
      *
      * @var string
      */
-    protected $table = 'wk_{module}_credentials';
+    protected $table = '{module}_credentials';
 
     /**
      * @var array
@@ -220,7 +220,7 @@ class CredentialForm extends FormRequest
         $credentialId = $this->route('id');
 
         return [
-            'label'          => 'required|string|max:255|unique:wk_{module}_credentials,label' . ($credentialId ? ",{$credentialId}" : ''),
+            'label'          => 'required|string|max:255|unique:{module}_credentials,label' . ($credentialId ? ",{$credentialId}" : ''),
             'apiUrl'         => 'required|url',
             'consumerKey'    => 'required|string',
             'consumerSecret' => $credentialId ? 'nullable|string' : 'required|string',
@@ -461,7 +461,7 @@ class CredentialPresenter extends BasePresenter
 
 ## 9. Checklist
 
-- [ ] Table name uses `wk_` prefix
+- [ ] Table name uses DB_PREFIX (auto-added)
 - [ ] Migration in `Database/Migration/` folder
 - [ ] Model uses `HistoryTrait` + `PresentableHistoryInterface`
 - [ ] Model has `$auditExclude` for secret fields (no `Crypt::encryptString`)

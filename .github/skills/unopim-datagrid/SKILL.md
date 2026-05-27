@@ -4,7 +4,7 @@ description: >
   Implement Unopim DataGrid classes for listing records in admin panels with
   search, filter, sort, actions (edit/delete), and mass actions. Covers
   DataGrid subdirectory structure (DataGrids/Section/), prepareQueryBuilder
-  with DB::table and wk_ prefix, addColumn with correct closure patterns,
+  with DB::table (prefix added by Laravel), addColumn with correct closure patterns,
   addAction with function callbacks for url, addMassAction, bouncer()
   permission checks, and Blade integration. Use this skill when creating a
   DataGrid for credentials, mappings, export history, or any Unopim module
@@ -25,7 +25,7 @@ All DataGrid patterns are derived from the WooCommerce connector reference:
 - Methods use **PHPDoc `@return`** only — no PHP return type hints on methods
 - `closure` callbacks in columns use PHP arrow functions `fn ($row) =>`
 - `url` callbacks in actions use **regular function**: `function ($row) { return ...; }`
-- Table names use `wk_` prefix in `DB::table()`
+- Table names without prefix in DB::table() — Laravel adds DB_PREFIX
 - Use `bouncer()->hasPermission()` for action permission checks
 - Status badges: `class="label-active"` (true) and `class="label-info text-gray-600 dark:text-gray-300"` (false)
 
@@ -57,8 +57,8 @@ class CredentialDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        // Use DB::table() with wk_ prefix — never Eloquent model here
-        $queryBuilder = DB::table('wk_{module}_credentials')
+        // Use DB::table() without prefix — never Eloquent model here
+        $queryBuilder = DB::table('{module}_credentials')
             ->select(
                 'id',
                 'label',
@@ -288,8 +288,8 @@ class MappingDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        return DB::table('wk_{module}_mappings as m')
-            ->leftJoin('wk_{module}_credentials as c', 'm.credential_id', '=', 'c.id')
+        return DB::table('{module}_mappings as m')
+            ->leftJoin('{module}_credentials as c', 'm.credential_id', '=', 'c.id')
             ->select(
                 'm.id',
                 'm.sku',
@@ -358,7 +358,7 @@ class MappingDataGrid extends DataGrid
 - [ ] DataGrid file location: `src/DataGrids/{Section}/{Name}DataGrid.php` (subdirectory)
 - [ ] Extends `Webkul\DataGrid\DataGrid`
 - [ ] Methods have PHPDoc `@return` only — no PHP return type hints on methods
-- [ ] `DB::table('wk_{module}_...')` — `wk_` prefix in query builder
+- [ ] `DB::table('{module}_...')` — table names without hardcoded prefix
 - [ ] Column `closure` uses arrow function `fn ($row) =>`
 - [ ] Action `url` uses regular `function ($row) { return route(...); }`
 - [ ] Mass action `url` is plain `route(...)` string (no function)

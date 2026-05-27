@@ -101,6 +101,7 @@ class Controller extends BaseController
             'http' => [
                 'method'           => 'GET',
                 'protocol_version' => 1.1,
+                'timeout'          => 5,
                 'header'           => "Accept-language: en\r\n"
                     ."Domain: $domain\r\n"
                     ."User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36\r\n",

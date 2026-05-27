@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Admin',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Konfirmasi Kata Sandi',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'Email',
-                'password'         => 'Kata Sandi',
-                'title'            => 'Buat Administrator',
+                'admin'                   => 'Admin',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Konfirmasi Kata Sandi',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'Email',
+                'password'                => 'Kata Sandi',
+                'title'                   => 'Buat Administrator',
+                'seed-sample-data'        => 'Instal produk contoh dan data demo',
+                'seeding-sample-data'     => 'Menanamkan produk contoh dan data demo, ini mungkin memakan waktu beberapa menit...',
+                'seed-sample-data-failed' => 'Data contoh tidak dapat ditanam. Anda dapat menginstalnya nanti melalui `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Mata Uang yang Diizinkan',

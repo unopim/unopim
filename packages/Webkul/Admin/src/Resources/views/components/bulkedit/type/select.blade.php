@@ -1,13 +1,12 @@
 @pushOnce('scripts')
   <script type="text/x-template" id="v-spreadsheet-select-template">
-    <div ref="trigger" class="w-full h-full relative">
+    <div ref="trigger" class="w-full h-full relative flex items-center">
       <input
         ref="nativeUndoInput"
         type="text"
         :name="`${entityId}_${column.code}`"
         @input="update"
-        style="opacity: 0; height: 0; width: 0;"
-        class="bg-cherry-900 bg-violet-300"
+        style="opacity: 0; height: 0; width: 0; position: absolute;"
       />
       <input
         ref="input"
@@ -17,9 +16,18 @@
         @input="onSearchInput"
         @blur="onBlur"
         type="text"
-        class="w-full h-full px-1 py-2 text-sm bg-transparent text-gray-700 dark:text-gray-300"
-        :placeholder="'Select Option'"
+        class="flex-1 min-w-0 h-full px-1 py-1 text-sm bg-transparent text-gray-700 dark:text-gray-300 focus:outline-none"
+        :placeholder="''"
       />
+
+      <!-- Dropdown arrow (like Excel) -->
+      <span
+        v-if="isActive"
+        class="flex-shrink-0 px-0.5 cursor-pointer text-gray-400 hover:text-violet-600"
+        @mousedown.prevent="openDropdown"
+      >
+        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+      </span>
 
       <!-- Dropdown -->
         <div

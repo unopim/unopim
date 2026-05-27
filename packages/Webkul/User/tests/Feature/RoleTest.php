@@ -151,6 +151,30 @@ it('should delete a Role', function () {
     ]);
 });
 
+it('should have acl top-level sort values matching menu sort values for common items', function () {
+    $aclConfig = config('acl');
+    $menuConfig = config('menu.admin');
+
+    $aclTopLevel = collect($aclConfig)
+        ->filter(fn ($item) => ! str_contains($item['key'], '.'))
+        ->keyBy('key')
+        ->map(fn ($item) => $item['sort']);
+
+    $menuTopLevel = collect($menuConfig)
+        ->filter(fn ($item) => ! str_contains($item['key'], '.'))
+        ->keyBy('key')
+        ->map(fn ($item) => $item['sort']);
+
+    // For each key that exists in both ACL and menu, sort values must match
+    foreach ($menuTopLevel as $key => $menuSort) {
+        if ($aclTopLevel->has($key)) {
+            expect($aclTopLevel[$key])->toBe($menuSort,
+                "ACL sort for '{$key}' is {$aclTopLevel[$key]} but menu sort is {$menuSort}"
+            );
+        }
+    }
+});
+
 it('should not delete a Role if it is assigned to user', function () {
     $this->loginAsAdmin();
 

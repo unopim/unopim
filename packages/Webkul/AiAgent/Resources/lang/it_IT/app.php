@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'IA Magica',
         'general'               => 'Generale',
         'prompt'                => 'Prompt',
         'system-prompt'         => 'Prompt di Sistema',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'IA Magica',
         'platform'       => 'Piattaforme',
         'settings'       => 'Impostazioni',
         'prompt'         => 'Prompt',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Indietro',
         'unauthorized'              => 'Questa azione non è autorizzata.',
         'error-generic'             => 'Si è verificato un errore imprevisto. Riprova.',
+        'error-rate-limit'          => 'È stato raggiunto il limite di richieste del provider AI. Attendi un momento e riprova.',
+        'error-rate-limit-retry'    => 'È stato raggiunto il limite di richieste del provider AI. Riprova tra :seconds secondi.',
+        'error-overloaded'          => 'Il provider AI è attualmente sovraccarico. Riprova tra qualche istante.',
+        'error-request-too-large'   => 'La tua richiesta è troppo grande per il provider AI. Accorcia il messaggio o rimuovi alcuni allegati e riprova.',
+        'error-api-key-corrupted'   => 'La chiave API per questa piattaforma non è stata decifrata (:error). La chiave di crittografia dell\'applicazione potrebbe essere cambiata. Modifica la piattaforma e reinserisci la tua chiave API.',
         'invalid-file-path'         => 'Percorso file non valido.',
         'invalid-locale-code'       => 'Codice locale non valido.',
         'invalid-channel-code'      => 'Codice canale non valido.',
@@ -208,6 +213,7 @@ return [
         'attach'                   => 'Allega',
         'attach-csv-xlsx'          => 'Allega CSV o XLSX',
         'attach-image'             => 'Allega immagine',
+        'remove-attachment'        => 'Rimuovi allegato',
         'send'                     => 'Invia',
         'sending'                  => 'Invio in corso…',
         'processing'               => 'Elaborazione…',
@@ -241,7 +247,7 @@ return [
             'generate-variants-hint'   => 'es. "Genera S/M/L × Rosso/Blu per SHIRT-001"',
             'edit-image'               => 'Modifica Immagine Prodotto',
             'edit-image-desc'          => 'Rimozione sfondo, migliora e ritocca',
-            'edit-image-hint'          => 'Carica un\'immagine, poi indica cosa cambiare — es. "Rimuovi lo sfondo"',
+            'edit-image-hint'          => 'Fornisci uno SKU prodotto e descrivi cosa modificare — es. "Rimuovi lo sfondo da SKU-123"',
             'search-products'          => 'Cerca Prodotti',
             'search-products-desc'     => 'Trova prodotti per SKU, nome o stato',
             'search-products-hint'     => 'es. "Trova tutti i prodotti attivi" o "Cerca laptop"',
@@ -297,7 +303,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Modifica l\'immagine del prodotto caricata come indicato.',
+            'edit-image-prompt'        => 'Modifica l\'immagine del prodotto recuperandola dallo SKU fornito, applica le modifiche richieste e salvala.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

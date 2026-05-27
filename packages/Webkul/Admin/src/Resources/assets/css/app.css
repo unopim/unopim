@@ -99,7 +99,7 @@
     }
 
     .secondary-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 bg-white border-2 border-violet-600 text-violet-600 rounded-md font-semibold whitespace-nowrap cursor-pointer transition-all hover:text-violet-500 hover:border-violet-500 hover:bg-violet-100  ;
+        @apply flex gap-x-1 items-center px-3 py-1.5 bg-white border-2 border-violet-600 text-violet-600 rounded-md font-semibold whitespace-nowrap cursor-pointer transition-all hover:text-violet-500 hover:border-violet-500 hover:bg-violet-100 dark:bg-cherry-900 dark:border-violet-400 dark:text-violet-200 dark:hover:bg-cherry-800 dark:hover:border-violet-300 dark:hover:text-violet-100;
     }
 
     .transparent-button {

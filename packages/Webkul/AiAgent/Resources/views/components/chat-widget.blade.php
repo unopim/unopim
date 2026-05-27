@@ -10,9 +10,36 @@
     $aiPlatforms     = $platformRepo->getActivePlatformOptions();
     $defaultPlatform = collect($aiPlatforms)->firstWhere('is_default', true);
     $defaultPlatformId = $defaultPlatform['id'] ?? ($aiPlatforms[0]['id'] ?? null);
+
+    // Default panel state for fresh sessions. Stored user preference in
+    // sessionStorage still wins — see restoreState() below.
+    $openByDefault = (bool) (core()->getConfigData('general.magic_ai.agentic_pim.open_by_default') ?? false);
 @endphp
 
 <v-agenting-pim></v-agenting-pim>
+
+<script>
+// Apply #app margin before Vue paints to avoid content-jump flash on refresh.
+(function () {
+    var openByDefault = @json($openByDefault);
+    var open = openByDefault;
+    try {
+        var raw = sessionStorage.getItem('agenting_pim_state');
+        if (raw) {
+            var s = JSON.parse(raw);
+            if (typeof s.isOpen === 'boolean') open = s.isOpen;
+        }
+    } catch (e) {}
+    if (!open) return;
+    var apply = function () {
+        var app = document.getElementById('app');
+        if (app) app.style.marginRight = '420px';
+        if (document.body) document.body.style.overflowX = 'hidden';
+    };
+    if (document.getElementById('app')) apply();
+    else document.addEventListener('DOMContentLoaded', apply);
+})();
+</script>
 
 @pushOnce('scripts')
 <script type="text/x-template" id="v-agenting-pim-template">
@@ -327,13 +354,31 @@
 
                     {{-- Pending files --}}
                     <div v-if="pendingFiles.length > 0" class="ap-pending-files">
-                        <div v-for="(f, idx) in pendingFiles" :key="idx" class="relative group">
-                            <img v-if="f.type === 'image'" :src="f.preview" class="w-10 h-10 object-cover rounded-md border border-gray-200 dark:border-cherry-700"/>
-                            <div v-else class="flex items-center gap-1 px-2 py-1.5 rounded-md border text-xs bg-violet-50 dark:bg-violet-900/20 border-violet-200 dark:border-violet-800 text-violet-600 dark:text-violet-400">
-                                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                <span class="max-w-[80px] truncate font-medium" v-text="f.name"></span>
-                            </div>
-                            <button @click="removeFile(idx)" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs flex items-center justify-center shadow-sm transition-colors" title="Remove">&times;</button>
+                        <div v-for="(f, idx) in pendingFiles" :key="idx" class="ap-pending-chip" :title="f.name">
+                            <button
+                                @click="removeFile(idx)"
+                                class="ap-pending-chip-remove"
+                                :title="trans.removeAttachment"
+                                :aria-label="trans.removeAttachment + ': ' + f.name"
+                                type="button"
+                            >
+                                <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                            <img
+                                v-if="f.type === 'image'"
+                                :src="f.preview"
+                                class="ap-pending-chip-thumb"
+                                alt=""
+                            />
+                            <svg
+                                v-else
+                                class="ap-pending-chip-icon"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            ><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <span class="ap-pending-chip-name" v-text="f.name"></span>
                         </div>
                     </div>
 
@@ -585,10 +630,53 @@
 .dark .ap-clear-chat-btn:hover { background:#4a2733; }
 
 .ap-pending-files {
-    display:flex; flex-wrap:wrap; gap:8px; padding:8px 16px;
+    display:flex; flex-wrap:wrap; gap:6px; padding:8px 16px;
     border-top:1px solid #e5e7eb; background:#f9fafb; flex-shrink:0;
 }
 .dark .ap-pending-files { background:#241f35; border-top-color:#453c5f; }
+
+/* Copilot-style attachment chip: [x] [icon/thumb] filename */
+.ap-pending-chip {
+    display:inline-flex; align-items:center; gap:6px;
+    max-width:220px; height:26px; padding:0 10px 0 4px;
+    border:1px solid #d1d5db; border-radius:6px;
+    background:#fff; color:#374151; font-size:12px;
+    transition:border-color 0.15s, background 0.15s;
+}
+.ap-pending-chip:hover { border-color:#9ca3af; background:#f3f4f6; }
+.dark .ap-pending-chip {
+    border-color:#5b4a80; background:#1f1b2d; color:#e5e7eb;
+}
+.dark .ap-pending-chip:hover { border-color:#7c6ba3; background:#2a2440; }
+
+.ap-pending-chip-remove {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px; padding:0; flex-shrink:0;
+    background:transparent; border:none; border-radius:3px;
+    color:#6b7280; cursor:pointer; transition:background 0.15s, color 0.15s;
+}
+.ap-pending-chip-remove:hover { background:#e5e7eb; color:#111827; }
+.dark .ap-pending-chip-remove { color:#9ca3af; }
+.dark .ap-pending-chip-remove:hover { background:#3b3252; color:#f3f4f6; }
+
+.ap-pending-chip-thumb {
+    width:16px; height:16px; flex-shrink:0;
+    object-fit:cover; border-radius:3px;
+    border:1px solid #e5e7eb;
+}
+.dark .ap-pending-chip-thumb { border-color:#453c5f; }
+
+.ap-pending-chip-icon {
+    width:14px; height:14px; flex-shrink:0;
+    color:#7c3aed;
+}
+.dark .ap-pending-chip-icon { color:#a78bfa; }
+
+.ap-pending-chip-name {
+    min-width:0; max-width:160px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    font-weight:500;
+}
 
 .ap-input-wrap {
     border-top:1px solid #e5e7eb; padding:12px; flex-shrink:0; background:#fff;
@@ -635,6 +723,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.0/purify.min.js" integrity="sha384-/knAMB4gMqm3mPGf8xMfFjCF0Fw3GMdmF6Bj25kjGp9TzFKGefvtsYzn/7BNEUU" crossorigin="anonymous"></script>
 
 <script type="module">
+// Mirrors Webkul\MagicAI\Support\ModelRecommender::pickTextModel().
+// The chat widget must never auto-select an image-only model
+// (chatgpt-image-latest, dall-e-*, sora-*, imagen-*, veo-*, …) because
+// Prism::text() can't call them and the request fails with "model not
+// found". Keep this list in sync with ModelRecommender::IMAGE_ONLY_PATTERNS.
+const AGENTIC_PIM_IMAGE_ONLY_PATTERNS = [
+    // OpenAI / Azure
+    /dall-?e/i, /(^|[-_])gpt-image/i, /chatgpt-image/i, /(^|[-_])sora([-_]|$)/i,
+    // Google (Gemini / Vertex)
+    /imagen/i, /(^|[-_])veo([-_]|$)/i,
+    // Stability / Black Forest Labs / Midjourney / Playground
+    /stable-?diffusion/i, /(^|[-_])flux([-_]|$)/i, /midjourney/i, /playground-v/i,
+    // Ideogram / Recraft / Kling / Luma / Pika / Runway / Hunyuan / CogVideo
+    /(^|[-_])ideogram([-_]|$)/i, /(^|[-_])recraft([-_]|$)/i,
+    /(^|[-_])kling([-_]|$)/i, /(^|[-_])luma([-_]|$)/i,
+    /(^|[-_])pika([-_]|$)/i, /(^|[-_])runway([-_]|$)/i,
+    /hunyuan-?video/i, /(^|[-_])cogvideo/i, /(^|[-_])wan-?\d/i, /animate-?diff/i,
+    // Generic "image" / "video" families (catch-all)
+    /(^|[-_])image-?\d/i, /(^|[-_])video-?\d/i,
+];
+const pickTextModel = (models) => {
+    if (!Array.isArray(models) || models.length === 0) return '';
+    for (const m of models) {
+        if (!AGENTIC_PIM_IMAGE_ONLY_PATTERNS.some(rx => rx.test(m))) return m;
+    }
+    return models[0];
+};
+
 app.component('v-agenting-pim', {
     template: '#v-agenting-pim-template',
 
@@ -673,6 +789,7 @@ app.component('v-agenting-pim', {
             selectModel: `@lang('ai-agent::app.widget.select-model')`,
             attachCsvXlsx: `@lang('ai-agent::app.widget.attach-csv-xlsx')`,
             attachImage: `@lang('ai-agent::app.widget.attach-image')`,
+            removeAttachment: `@lang('ai-agent::app.widget.remove-attachment')`,
             processing: `@lang('ai-agent::app.widget.processing')`,
             noResponse: `@lang('ai-agent::app.widget.no-response')`,
             errorGeneric: `@lang('ai-agent::app.widget.error-generic')`,
@@ -683,7 +800,13 @@ app.component('v-agenting-pim', {
         };
 
         return {
-            isOpen: false,
+            isOpen: (() => {
+                try {
+                    const s = JSON.parse(sessionStorage.getItem('agenting_pim_state') || 'null');
+                    if (s && typeof s.isOpen === 'boolean') return s.isOpen;
+                } catch (e) {}
+                return @json($openByDefault);
+            })(),
             activeTab: 'capabilities',
             activeCapability: null,
             messages: [],
@@ -699,8 +822,9 @@ app.component('v-agenting-pim', {
             activeSessionId: null,
             showSessions: false,
             platforms: platforms,
+            defaultPlatformId: defaultPlatformId,
             selectedPlatformId: initialPlatform ? initialPlatform.id : null,
-            selectedModel: initialModels[0] || '',
+            selectedModel: pickTextModel(initialModels),
             trans: trans,
             capabilities: [
                 // Row 1: Product creation & updates
@@ -742,8 +866,8 @@ app.component('v-agenting-pim', {
                 // Row 5: Image editing & export
                 { key: 'edit_image', label: `@lang('ai-agent::app.widget.capabilities-list.edit-image')`, description: `@lang('ai-agent::app.widget.capabilities-list.edit-image-desc')`,
                   iconSvg: svg('<circle cx="12" cy="12" r="3"/><path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12z" stroke-dasharray="4 2"/>'),
-                  color: '#D946EF', hint: `@lang('ai-agent::app.widget.capabilities-list.edit-image-hint')`, acceptsImages: true, acceptsSpreadsheet: false,
-                  autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.edit-image-prompt')`, autoFileUpload: true },
+                  color: '#D946EF', hint: `@lang('ai-agent::app.widget.capabilities-list.edit-image-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
+                  autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.edit-image-prompt')`, autoFileUpload: false },
                 { key: 'export_products', label: `@lang('ai-agent::app.widget.capabilities-list.export-products')`, description: `@lang('ai-agent::app.widget.capabilities-list.export-products-desc')`,
                   iconSvg: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),
                   color: '#0891B2', hint: `@lang('ai-agent::app.widget.capabilities-list.export-products-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -843,6 +967,21 @@ app.component('v-agenting-pim', {
         this.restoreState();
         if (!this.activeSessionId) {
             this.activeSessionId = this.generateSessionId();
+        }
+
+        // The isOpen watcher only fires on change, so the initial-open state
+        // (either from sessionStorage or from the config-driven default) needs
+        // to run its side effects explicitly: shift #app margin, scroll to
+        // the latest message, and focus the input. Skip the slide transition
+        // so the panel doesn't flash in on every page load.
+        if (this.isOpen) {
+            this.noTransition = true;
+            this.$nextTick(() => {
+                this.adjustLayout(true, true);
+                this.scrollBottom();
+                this.$refs.textInput?.focus();
+                requestAnimationFrame(() => requestAnimationFrame(() => { this.noTransition = false; }));
+            });
         }
 
         // Delegate clicks on internal admin links to navigate in the same tab
@@ -1052,8 +1191,7 @@ app.component('v-agenting-pim', {
             } catch (e) { this.sessions = []; }
         },
         onPlatformChange() {
-            const models = this.availableModels;
-            this.selectedModel = models[0] || '';
+            this.selectedModel = pickTextModel(this.availableModels);
             this.saveState();
         },
         activateCapability(cap) {
@@ -1343,6 +1481,15 @@ app.component('v-agenting-pim', {
             const newRating = current === rating ? null : rating;
             // Trigger Vue reactivity by replacing the object
             this.messages[idx] = { ...this.messages[idx], _rating: newRating };
+
+            // Persist feedback to backend
+            if (newRating) {
+                const messageText = this.messages[idx]?.content || '';
+                this.$axios.post("{{ route('ai-agent.chat.rate') }}", {
+                    rating: newRating,
+                    message: messageText.substring(0, 5000),
+                }).catch(() => {});
+            }
         },
 
         needsConfirmation(msg, idx) {
@@ -1536,31 +1683,18 @@ app.component('v-agenting-pim', {
                 const s = JSON.parse(raw);
                 if (s.activeTab) this.activeTab = s.activeTab;
                 if (s.activeCapability) this.activeCapability = this.capabilities.find(c => c.key === s.activeCapability) || null;
-                if (s.selectedPlatformId && this.platforms.find(p => p.id === s.selectedPlatformId)) {
+                // Restore platform only when it still matches the current server default; otherwise respect the newly-set default.
+                if (s.selectedPlatformId && s.selectedPlatformId === this.defaultPlatformId && this.platforms.find(p => p.id === s.selectedPlatformId)) {
                     this.selectedPlatformId = s.selectedPlatformId;
                     if (s.selectedModel && this.availableModels.includes(s.selectedModel)) {
                         this.selectedModel = s.selectedModel;
                     } else {
-                        this.selectedModel = this.availableModels[0] || '';
+                        this.selectedModel = pickTextModel(this.availableModels);
                     }
                 }
                 if (s.activeSessionId) this.activeSessionId = s.activeSessionId;
                 if (Array.isArray(s.messages) && s.messages.length > 0) this.messages = s.messages.filter(m => !m.isRedirect);
-                if (s.isOpen) {
-                    // Disable the Vue panel slide-in transition and #app margin animation on page load.
-                    // Both noTransition and isOpen must change in the SAME synchronous tick so
-                    // Vue's <transition> sees name="" when it processes the enter.
-                    this.noTransition = true;
-                    this.isOpen = true;
-                    this.$nextTick(() => {
-                        // instant=true prevents #app transition CSS from being set
-                        this.adjustLayout(true, true);
-                        this.scrollBottom();
-                        this.$refs.textInput?.focus();
-                        // Re-enable transitions only after two paint frames (more reliable than setTimeout)
-                        requestAnimationFrame(() => requestAnimationFrame(() => { this.noTransition = false; }));
-                    });
-                }
+                // isOpen restored synchronously in data() to avoid first-paint flicker.
             } catch (e) {}
         },
     },

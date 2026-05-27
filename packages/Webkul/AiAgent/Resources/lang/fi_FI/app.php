@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Taianomainen tekoäly',
         'general'               => 'Yleinen',
         'prompt'                => 'Kehote',
         'system-prompt'         => 'Järjestelmäkehote',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Taianomainen tekoäly',
         'platform'       => 'Alustat',
         'settings'       => 'Asetukset',
         'prompt'         => 'Kehotteet',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Takaisin',
         'unauthorized'              => 'Tämä toiminto ei ole sallittu.',
         'error-generic'             => 'Odottamaton virhe tapahtui. Yritä uudelleen.',
+        'error-rate-limit'          => 'Tekoälypalveluntarjoajan pyyntöraja on saavutettu. Odota hetki ja yritä uudelleen.',
+        'error-rate-limit-retry'    => 'Tekoälypalveluntarjoajan pyyntöraja on saavutettu. Yritä uudelleen :seconds sekunnin kuluttua.',
+        'error-overloaded'          => 'Tekoälypalveluntarjoaja on parhaillaan ylikuormitettu. Yritä uudelleen hetken kuluttua.',
+        'error-request-too-large'   => 'Pyyntösi on liian suuri tekoälypalveluntarjoajalle. Lyhennä viestiäsi tai poista liitteitä ja yritä uudelleen.',
+        'error-api-key-corrupted'   => 'Tämän alustan API-avainta ei voitu purkaa (:error). Sovelluksen salausavain on saattanut muuttua. Muokkaa alustaa ja syötä API-avaimesi uudelleen.',
         'invalid-file-path'         => 'Virheellinen tiedostopolku.',
         'invalid-locale-code'       => 'Virheellinen kielikoodi.',
         'invalid-channel-code'      => 'Virheellinen kanavakoodi.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'Liitä',
         'attach-csv-xlsx'          => 'Liitä CSV tai XLSX',
         'attach-image'             => 'Liitä kuva',
+        'remove-attachment'        => 'Poista liite',
         'send'                     => 'Lähetä',
         'sending'                  => 'Lähetetään…',
         'processing'               => 'Käsitellään…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'   => 'esim. "Luo S/M/L × Punainen/Sininen SHIRT-001:lle"',
             'edit-image'               => 'Muokkaa tuotekuvaa',
             'edit-image-desc'          => 'Taustan poisto, parannus ja retusointi',
-            'edit-image-hint'          => 'Lataa kuva ja kerro mitä muuttaa — esim. "Poista tausta"',
+            'edit-image-hint'          => 'Anna tuotteen SKU ja kuvaile mitä haluat muuttaa — esim. "Poista tausta tuotteesta SKU-123"',
             'search-products'          => 'Etsi tuotteita',
             'search-products-desc'     => 'Etsi tuotteita SKU:n, nimen tai tilan mukaan',
             'search-products-hint'     => 'esim. "Etsi kaikki aktiiviset tuotteet" tai "Etsi kannettava"',
@@ -302,7 +308,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Muokkaa ladattua tuotekuvaa ohjeiden mukaisesti.',
+            'edit-image-prompt'        => 'Muokkaa tuotekuvaa hakemalla se annetun SKU:n perusteella, tee pyydetyt muutokset ja tallenna se takaisin.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

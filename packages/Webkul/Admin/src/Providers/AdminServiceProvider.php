@@ -2,11 +2,16 @@
 
 namespace Webkul\Admin\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Admin\Console\Commands\RefreshDashboardCacheCommand;
+use Webkul\Admin\Observers\ProductObserver;
 use Webkul\Core\Tree;
+use Webkul\Product\Models\ProductProxy;
 
 class AdminServiceProvider extends ServiceProvider
 {
@@ -15,6 +20,8 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->configureRateLimiting();
+
         Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'admin');
@@ -28,6 +35,8 @@ class AdminServiceProvider extends ServiceProvider
         $this->registerACL();
 
         $this->app->register(EventServiceProvider::class);
+
+        ProductProxy::observe(ProductObserver::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -94,7 +103,17 @@ class AdminServiceProvider extends ServiceProvider
             $tree->items = core()->sortItems($tree->items);
             $tree->items = $tree->removeUnauthorizedUrls();
 
+            $landingUrl = null;
+
+            foreach ($tree->items as $item) {
+                if (! empty($item['url'])) {
+                    $landingUrl = $item['url'];
+                    break;
+                }
+            }
+
             $view->with('menu', $tree);
+            $view->with('adminLandingUrl', $landingUrl ?? route('admin.session.create'));
         });
 
         view()->composer([
@@ -139,5 +158,30 @@ class AdminServiceProvider extends ServiceProvider
         $tree->items = core()->sortItems($tree->items);
 
         return $tree;
+    }
+
+    /**
+     * Configure rate limiters for admin authentication routes.
+     */
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('admin-login', function (Request $request) {
+            $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
+
+            return Limit::perMinute(5)->by($key);
+        });
+
+        RateLimiter::for('admin-forgot-password', function (Request $request) {
+            $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
+
+            return Limit::perMinute(5)->by($key);
+        });
+
+        RateLimiter::for('admin-sso', function (Request $request) {
+            $sessionId = optional($request->session())->getId() ?: 'guest';
+            $key = $sessionId.'|'.$request->ip();
+
+            return Limit::perMinute(20)->by($key);
+        });
     }
 }

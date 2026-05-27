@@ -15,39 +15,6 @@
             <x-admin::history.toolbar />
             <div class="flex mt-4">
                 <x-admin::history.table :isMultiRow="$isMultiRow">
-                    <template #header>
-                        <slot
-                            name="header"
-                            :columns="available.columns"
-                            :actions="available.actions"
-                            :mass-actions="available.massActions"
-                            :records="available.records"
-                            :meta="available.meta"
-                            :sort-page="sortPage"
-                            :selectAllRecords="selectAllRecords"
-                            :available="available"
-                            :applied="applied"
-                            :is-loading="isLoading"
-                        >
-                        </slot>
-                    </template>
-
-                    <template #body>
-                        <slot
-                            name="body"
-                            :columns="available.columns"
-                            :actions="available.actions"
-                            :mass-actions="available.massActions"
-                            :records="available.records"
-                            :meta="available.meta"
-                            :setCurrentSelectionMode="setCurrentSelectionMode"
-                            :performAction="performAction"
-                            :available="available"
-                            :applied="applied"
-                            :is-loading="isLoading"
-                        >
-                        </slot>
-                    </template>
                 </x-admin::history.table>
             </div>
         </div>
@@ -122,6 +89,16 @@
 
             mounted() {
                 this.boot();
+            },
+
+            watch: {
+                'applied.massActions.indices': {
+                    handler() {
+                        this.setCurrentSelectionMode();
+                    },
+
+                    deep: true,
+                },
             },
 
             methods: {

@@ -173,12 +173,61 @@
                 <!-- Drawer Content -->
                 <x-slot:content class="!p-5">
                     <x-admin::datagrid.filters />
-                    <div
-                            class="primary-button block text-center"
-                            @click="runFilters()"
+
+                    <!-- Add Filter -->
+                    <div class="mb-4" v-if="getInactiveFilterColumns().length">
+                        <button
+                            type="button"
+                            class="flex items-center gap-1.5 w-full justify-center rounded-md border border-dashed border-gray-300 dark:border-cherry-800 px-3 py-2 text-sm font-medium text-violet-700 dark:text-violet-400 transition-all hover:border-violet-400 hover:bg-violet-50 dark:hover:border-violet-400 dark:hover:bg-cherry-800"
+                            @click="showFilterPicker = !showFilterPicker; filterPickerSearch = ''"
                         >
-                            @lang('admin::app.components.datagrid.filters.save')
+                            <span class="icon-add text-lg"></span>
+
+                            @lang('admin::app.components.datagrid.filters.add-filter')
+                        </button>
+
+                        <div
+                            v-if="showFilterPicker"
+                            class="mt-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 overflow-hidden"
+                        >
+                            <div class="sticky top-0 p-2 bg-white dark:bg-cherry-800 border-b dark:border-cherry-900">
+                                <div class="relative">
+                                    <input
+                                        type="text"
+                                        class="w-full rounded-md border dark:border-cherry-900 bg-white dark:bg-cherry-900 ltr:pl-3 rtl:pr-3 ltr:pr-8 rtl:pl-8 py-1.5 text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400"
+                                        placeholder="@lang('admin::app.components.datagrid.filters.search-filter')"
+                                        v-model="filterPickerSearch"
+                                        ref="filterPickerSearchInput"
+                                    />
+
+                                    <span class="icon-search text-xl absolute ltr:right-2 rtl:left-2 top-1.5 text-gray-400 pointer-events-none"></span>
+                                </div>
+                            </div>
+
+                            <div class="max-h-48 overflow-auto">
+                                <p
+                                    v-for="column in getInactiveFilterColumns().filter(c => !filterPickerSearch || c.label.toLowerCase().includes(filterPickerSearch.toLowerCase()))"
+                                    class="cursor-pointer px-3 py-2 text-sm text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-900"
+                                    v-text="column.label"
+                                    @click="addActiveFilter(column.index); showFilterPicker = false"
+                                ></p>
+
+                                <p
+                                    v-if="getInactiveFilterColumns().filter(c => !filterPickerSearch || c.label.toLowerCase().includes(filterPickerSearch.toLowerCase())).length === 0"
+                                    class="px-3 py-2 text-sm text-gray-400 dark:text-gray-500 text-center"
+                                >
+                                    @lang('admin::app.components.datagrid.filters.dropdown.searchable.no-results')
+                                </p>
+                            </div>
                         </div>
+                    </div>
+
+                    <div
+                        class="primary-button block text-center"
+                        @click="runFilters()"
+                    >
+                        @lang('admin::app.components.datagrid.filters.save')
+                    </div>
                 </x-slot>
             </x-admin::drawer>
 

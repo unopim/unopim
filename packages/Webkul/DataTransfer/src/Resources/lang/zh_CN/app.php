@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => '产品',
-
+            'title'      => '产品',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL 密钥：已为 SKU 为“%s”的商品生成了“%s”。',
@@ -34,13 +32,21 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => '货币',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '货币代码“%s”已在此批次中导入。',
+                    'code-not-found-to-delete'    => '系统中未找到代码为“%s”的货币。',
+                    'invalid-status'              => '状态必须为0或1（或留空以默认启用）。',
+                    'channel-related-locale-root' => '无法删除与渠道关联的代码为:code的区域设置。',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => '产品',
-
+            'title'      => '产品',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL 密钥：已为 SKU 为“%s”的商品生成了“%s”。',
@@ -54,8 +60,10 @@ return [
         'categories' => [
             'title' => '类别',
         ],
+        'currencies' => [
+            'title' => '货币',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => '列号“%s”的标题为空。',
@@ -65,9 +73,9 @@ return [
             'invalid-attribute'    => '标头包含无效属性：“%s”。',
             'system'               => '发生意外的系统错误。',
             'wrong-quotes'         => '使用弯引号代替直引号。',
+            'file-empty'           => '文件为空或不包含标题行。请上传包含数据的有效文件。',
         ],
     ],
-
     'job' => [
         'started'   => '作业执行开始',
         'completed' => '作业执行完成',

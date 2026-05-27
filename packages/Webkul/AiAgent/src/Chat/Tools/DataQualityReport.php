@@ -7,6 +7,7 @@ use Prism\Prism\Tool;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 
 class DataQualityReport implements PimTool
 {
@@ -28,12 +29,14 @@ class DataQualityReport implements PimTool
                 $channel = $context->channel;
                 $locale = $context->locale;
 
+                $grammar = GrammarQueryManager::getGrammar();
+
                 $qb = DB::table('products')
                     ->select('id', 'sku', 'status', 'values')
                     ->limit($limit);
 
                 if ($category) {
-                    $qb->whereRaw("JSON_CONTAINS(JSON_EXTRACT(`values`, '$.categories'), ?)", ['"'.$category.'"']);
+                    $qb->whereRaw($grammar->jsonContains('values', ['categories'], '?'), ['"'.$category.'"']);
                 }
 
                 $products = $qb->get();

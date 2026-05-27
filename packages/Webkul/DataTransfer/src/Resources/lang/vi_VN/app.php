@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Tiền tệ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Mã tiền tệ \'%s\' đã được nhập trong đợt này.',
+                    'code-not-found-to-delete'    => 'Không tìm thấy tiền tệ có mã \'%s\' trong hệ thống.',
+                    'invalid-status'              => 'Trạng thái phải là 0 hoặc 1 (hoặc để trống để kích hoạt mặc định).',
+                    'channel-related-locale-root' => 'Bạn không thể xóa locale với mã :code được liên kết với một kênh.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -49,6 +60,9 @@ return [
         'categories' => [
             'title' => 'Các danh mục',
         ],
+        'currencies' => [
+            'title' => 'Tiền tệ',
+        ],
     ],
     'validation' => [
         'errors' => [
@@ -59,6 +73,7 @@ return [
             'invalid-attribute'    => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
             'system'               => 'Lỗi hệ thống không mong muốn xảy ra.',
             'wrong-quotes'         => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
+            'file-empty'           => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',
         ],
     ],
     'job' => [

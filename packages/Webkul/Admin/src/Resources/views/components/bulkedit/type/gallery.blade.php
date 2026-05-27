@@ -1,17 +1,39 @@
 @pushOnce('scripts')
   <script type="text/x-template" id="v-spreadsheet-gallery-template">
-    <div class="w-full h-full flex items-center gap-2">
+    <div class="w-full h-full flex items-center gap-1.5 px-1">
+      <!-- Thumbnail count -->
+      <div v-if="imageList.length" class="flex-shrink-0 flex items-center gap-0.5">
+        <div class="w-6 h-6 rounded overflow-hidden border border-gray-200 dark:border-cherry-700">
+          <img
+            :src="baseUrl + imageList[0]"
+            class="w-full h-full object-cover"
+            v-on:error="$event.target.style.display='none'"
+          />
+        </div>
+        <span v-if="imageList.length > 1" class="text-xs text-gray-400">+@{{ imageList.length - 1 }}</span>
+      </div>
+
       <input
         ref="input"
         type="text"
         :name="`${entityId}_${column.code}`"
         v-bind="field"
-        class="w-full text-sm text-gray-600 dark:text-gray-300 transition-all focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-800 dark:border-gray-600"
-        @blur="update"
+        class="flex-1 min-w-0 text-xs text-gray-600 dark:text-gray-300 bg-transparent truncate focus:outline-none"
+        readonly
       />
 
-      <span @click="preview" class="flex justify-end cursor-pointer icon-view"></span>
-      <span @click="triggerUpload" class="flex justify-end cursor-pointer icon-edit"></span>
+      <div class="flex items-center gap-0.5 flex-shrink-0">
+        <span
+          v-if="imageList.length"
+          @click="preview"
+          class="cursor-pointer text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 text-base icon-view"
+        ></span>
+
+        <span
+          @click="triggerUpload"
+          class="cursor-pointer text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 text-base icon-edit"
+        ></span>
+      </div>
 
       <input
         type="file"
@@ -21,45 +43,9 @@
         multiple
         @change="onFileChange"
       />
+
+      <!-- Preview handled by editor-level overlay via emitter -->
     </div>
-
-    <x-admin::modal ref="imagePreviewModal">
-      <x-slot:header>
-        <p class="text-lg text-gray-800 dark:text-white font-bold">@lang('admin::app.catalog.products.bulk-edit.gallery-preview')</p>
-      </x-slot>
-
-      <x-slot:content>
-        <div v-if="imageList.length" class="grid grid-cols-3 gap-4 max-h-[260px] overflow-auto">
-          <div v-for="(img, index) in imageList" :key="index" class="relative group">
-            <video
-              v-if="isVideo(img)"
-              :src="baseUrl + img"
-              class="w-full h-24 object-cover rounded border"
-            />
-            <img
-              v-else
-              :src="baseUrl + img"
-              class="w-full h-24 object-cover rounded border"
-            />
-            <div class="flex flex-col justify-between invisible w-full p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
-              <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all"></p>
-                <div
-                  class="absolute inset-0 bg-white dark:bg-cherry-800 bg-opacity-80 rounded flex justify-end p-2 opacity-80 transition-all group-hover:visible"
-                >
-                  <span
-                    class="icon-delete text-xl p-1 max-h-min rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                    @click="removeImage"
-                  ></span>
-                </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-else class="h-32 flex items-center justify-center text-gray-500 dark:text-gray-300 text-sm">
-          @lang('admin::app.catalog.products.bulk-edit.no-image')
-        </div>
-      </x-slot>
-    </x-admin::modal>
   </script>
 
   <script type="module">
@@ -84,32 +70,37 @@
 
       mounted() {
         if (this.$refs.input) {
-          this.$refs.input.value = this.modelValue || "@lang('admin::app.catalog.products.bulk-edit.no-image')";
+          this.$refs.input.value = this.modelValue
+            ? (Array.isArray(this.modelValue) ? this.modelValue.length + ' image(s)' : '')
+            : '';
         }
+
         if (this.modelValue) {
-          this.imageList = this.modelValue;
+          this.imageList = Array.isArray(this.modelValue) ? this.modelValue : [];
         }
       },
 
       watch: {
         modelValue(newVal) {
-            if (newVal === this.$refs.input.value) {
-                return;
-            }
+          if (Array.isArray(newVal)) {
+            this.imageList = newVal;
+          } else if (typeof newVal === 'string' && newVal) {
+            this.imageList = newVal.split(',').map(i => i.trim()).filter(Boolean);
+          } else {
+            this.imageList = [];
+          }
 
-            this.$refs.input.focus();
-            this.$refs.input.select();
+          if (this.$refs.input) {
+            this.$refs.input.value = this.imageList.length ? this.imageList.length + ' image(s)' : '';
+          }
 
-            document.execCommand('insertText', false, newVal);
-            this.imageList = newVal.split(',');
-
-            if (! this.isUpdated) {
-              this.$emitter.emit('update-spreadsheet-data', {
-                value: this.imageList,
-                entityId: this.entityId,
-                column: this.column,
-              });
-            }
+          if (! this.isUpdated) {
+            this.$emitter.emit('update-spreadsheet-data', {
+              value: this.imageList,
+              entityId: this.entityId,
+              column: this.column,
+            });
+          }
         },
       },
 
@@ -120,7 +111,7 @@
 
         onFileChange(event) {
           const files = Array.from(event.target.files);
-          if (!files.length) return;
+          if (! files.length) return;
 
           const formData = new FormData();
           files.forEach(file => {
@@ -148,15 +139,15 @@
         removeImage(index) {
           this.imageList.splice(index, 1);
           this.commitChanges();
+
+          if (this.imageList.length === 0) {
+          }
         },
 
         preview() {
-          this.$refs.imagePreviewModal.toggle();
-        },
-
-        update() {
-          this.imageList = (this.$refs.input.value || '').split(',').map(i => i.trim()).filter(Boolean);
-          this.commitChanges();
+          if (this.imageList.length) {
+            this.$emitter.emit('preview-image', this.baseUrl + this.imageList[0]);
+          }
         },
 
         commitChanges() {
@@ -172,7 +163,12 @@
 
         isVideo(filePath) {
           return /\.(mp4|webm|mkv)(\?.*)?$/i.test(filePath || '');
-        }
+        },
+
+        updateValue(val) {
+          this.imageList = val ? String(val).split(',').map(i => i.trim()).filter(Boolean) : [];
+          this.commitChanges();
+        },
       },
     });
   </script>

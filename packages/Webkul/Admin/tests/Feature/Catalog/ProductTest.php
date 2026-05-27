@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Facades\ElasticSearch;
@@ -251,6 +252,21 @@ it('should mass update the status of products to disabled', function () {
         $this->assertEquals(0, $product->status);
     }
 });
+
+it('fires catalog.product.update.after for every product in a mass status update', function () {
+    $this->loginAsAdmin();
+
+    $products = Product::factory()->simple()->createMany(2);
+
+    Event::fake(['catalog.product.update.after']);
+
+    $this->post(route('admin.catalog.products.mass_update'), [
+        'indices' => $products->pluck('id')->toArray(),
+        'value'   => true,
+    ])->assertOk();
+
+    Event::assertDispatched('catalog.product.update.after', count($products));
+});
 /** Need to add more assertions */
 it('should search the products with sku successfully', function () {
     $this->loginAsAdmin();
@@ -260,6 +276,17 @@ it('should search the products with sku successfully', function () {
     $sku = $products->first()->sku;
 
     $this->get(route('admin.catalog.products.search'), ['query' => $sku])
+        ->assertOk();
+});
+
+it('should search the products with uppercase sku successfully (case-insensitive)', function () {
+    $this->loginAsAdmin();
+
+    $products = Product::factory()->simple()->withInitialValues()->createMany(2);
+
+    $sku = strtoupper($products->first()->sku);
+
+    $this->get(route('admin.catalog.products.search', ['query' => $sku]))
         ->assertOk();
 });
 
@@ -408,4 +435,45 @@ it('should remove already existing variant product through a configurable produc
         ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
 
     $this->assertDatabaseMissing($this->getFullTableName(Product::class), $variantData);
+});
+
+it('should return a downloadable file response for quick export in xls format', function () {
+    $this->loginAsAdmin();
+
+    $product = Product::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), [
+        'export'     => 1,
+        'format'     => 'xls',
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+    ]);
+
+    $response->assertOk();
+    $response->assertHeader('content-type', 'application/vnd.ms-excel');
+    $response->assertHeader('content-disposition');
+});
+
+it('should render product edit page header with sticky top offset so save button stays visible while scrolling', function () {
+    $this->loginAsAdmin();
+
+    $product = Product::factory()->simple()->create();
+
+    $response = $this->get(route('admin.catalog.products.edit', $product->id));
+
+    $response->assertOk();
+
+    $content = $response->getContent();
+
+    // The product page header should use sticky top-[Xpx] (offset below main header)
+    // The main header only uses top-0, so top-[...px] is specific to the product header fix
+    $this->assertStringContainsString(
+        'sticky top-[',
+        $content,
+        'Product edit page header should have sticky positioning with a top offset so the save button is visible while scrolling'
+    );
 });

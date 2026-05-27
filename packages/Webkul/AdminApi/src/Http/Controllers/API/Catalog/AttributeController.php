@@ -60,6 +60,13 @@ class AttributeController extends ApiController
     public function store(): JsonResponse
     {
         $requestData = request()->all();
+
+        if (array_is_list($requestData) && count($requestData) > 0) {
+            return $this->validateErrorResponse([
+                'payload' => [trans('admin::app.catalog.attributes.create.single-object-only')],
+            ]);
+        }
+
         $rules = [
             'type' => [
                 'required',
@@ -114,6 +121,13 @@ class AttributeController extends ApiController
         $attribute = $this->attributeRepository->findOneByField('code', $code);
         if (! $attribute) {
             return $this->modelNotFoundResponse(trans('admin::app.catalog.attributes.not-found', ['code' => $code]));
+        }
+
+        $immutable = array_intersect(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique'], array_keys(request()->all()));
+        if (! empty($immutable)) {
+            return $this->validateErrorResponse([
+                'immutable' => [trans('admin::app.catalog.attributes.immutable-fields', ['fields' => implode(', ', $immutable)])],
+            ]);
         }
 
         $requestData = request()->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);

@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'الذكاء السحري',
         'general'               => 'عام',
         'prompt'                => 'أمر',
         'system-prompt'         => 'أمر النظام',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'الذكاء السحري',
         'platform'       => 'المنصات',
         'settings'       => 'الإعدادات',
         'prompt'         => 'الأوامر',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'رجوع',
         'unauthorized'              => 'هذا الإجراء غير مصرح به.',
         'error-generic'             => 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.',
+        'error-rate-limit'          => 'تم الوصول إلى حد معدل الطلبات لمزود الذكاء الاصطناعي. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.',
+        'error-rate-limit-retry'    => 'تم الوصول إلى حد معدل الطلبات لمزود الذكاء الاصطناعي. يرجى المحاولة مرة أخرى بعد :seconds ثانية.',
+        'error-overloaded'          => 'مزود الذكاء الاصطناعي مشغول حاليًا. يرجى المحاولة مرة أخرى بعد لحظات قليلة.',
+        'error-request-too-large'   => 'طلبك كبير جدًا بالنسبة لمزود الذكاء الاصطناعي. يرجى اختصار رسالتك أو إزالة بعض المرفقات والمحاولة مرة أخرى.',
+        'error-api-key-corrupted'   => 'تعذر فك تشفير مفتاح API لهذه المنصة (:error). ربما تم تغيير مفتاح تشفير التطبيق. يرجى تعديل المنصة وإعادة إدخال مفتاح API.',
         'invalid-file-path'         => 'مسار الملف غير صالح.',
         'invalid-locale-code'       => 'رمز اللغة غير صالح.',
         'invalid-channel-code'      => 'رمز القناة غير صالح.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'إرفاق',
         'attach-csv-xlsx'          => 'إرفاق ملف CSV أو XLSX',
         'attach-image'             => 'إرفاق صورة',
+        'remove-attachment'        => 'إزالة المرفق',
         'send'                     => 'إرسال',
         'sending'                  => 'جارٍ الإرسال…',
         'processing'               => 'جارٍ المعالجة…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'   => 'مثال: "توليد S/M/L × أحمر/أزرق لـ SHIRT-001"',
             'edit-image'               => 'تعديل صورة المنتج',
             'edit-image-desc'          => 'إزالة الخلفية وتحسين وتنقيح',
-            'edit-image-hint'          => 'ارفع صورة، ثم قل ما تريد تغييره — مثال: "إزالة الخلفية"',
+            'edit-image-hint'          => 'أدخل رمز SKU للمنتج وصف ما تريد تغييره — مثلاً "أزل الخلفية من SKU-123"',
             'search-products'          => 'البحث عن المنتجات',
             'search-products-desc'     => 'البحث عن المنتجات حسب SKU أو الاسم أو الحالة',
             'search-products-hint'     => 'مثال: "البحث عن جميع المنتجات النشطة" أو "البحث عن كمبيوتر محمول"',
@@ -302,7 +308,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'تعديل صورة المنتج المرفوعة وفقاً للتعليمات.',
+            'edit-image-prompt'        => 'قم بتعديل صورة المنتج عن طريق جلبها من رمز SKU المحدد، وطبّق التغييرات المطلوبة، واحفظها مرة أخرى.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

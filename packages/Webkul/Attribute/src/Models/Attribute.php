@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
 use Webkul\Attribute\Database\Factories\AttributeFactory;
+use Webkul\Attribute\Presenters\AttributeHistoryPresenter;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\Core\Rules\BooleanString;
@@ -14,11 +15,12 @@ use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\Core\Rules\Sku;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
+use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Validator\Rule\AttributeOptionRule;
 use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
 
-class Attribute extends TranslatableModel implements AttributeContract, HistoryContract
+class Attribute extends TranslatableModel implements AttributeContract, HistoryContract, PresentableHistoryInterface
 {
     use HasFactory;
     use HistoryTrait;
@@ -331,6 +333,26 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         }
 
         return 'common->'.$this->code;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getPresenters(): array
+    {
+        return [
+            'type'              => AttributeHistoryPresenter::class,
+            'validation'        => AttributeHistoryPresenter::class,
+            'regex_pattern'     => AttributeHistoryPresenter::class,
+            'swatch_type'       => AttributeHistoryPresenter::class,
+            'is_required'       => AttributeHistoryPresenter::class,
+            'is_unique'         => AttributeHistoryPresenter::class,
+            'enable_wysiwyg'    => AttributeHistoryPresenter::class,
+            'value_per_locale'  => AttributeHistoryPresenter::class,
+            'value_per_channel' => AttributeHistoryPresenter::class,
+            'is_filterable'     => AttributeHistoryPresenter::class,
+            'ai_translate'      => AttributeHistoryPresenter::class,
+        ];
     }
 
     /**

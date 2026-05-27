@@ -2,6 +2,7 @@
 
 namespace Webkul\MagicAI\Models;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\MagicAI\Contracts\MagicAIPlatform as MagicAIPlatformContract;
 
@@ -48,6 +49,34 @@ class MagicAIPlatform extends Model implements MagicAIPlatformContract
     public function scopeDefault($query)
     {
         return $query->where('is_default', true);
+    }
+
+    /**
+     * Safely retrieve the API key, returning null when decryption fails
+     * (e.g. APP_KEY changed after the platform was saved).
+     */
+    public function safeApiKey(): ?string
+    {
+        try {
+            return $this->api_key;
+        } catch (DecryptException) {
+            return null;
+        }
+    }
+
+    /**
+     * Check whether the stored API key can be decrypted with the current APP_KEY.
+     * Returns the error message string when corrupted, or null when valid.
+     */
+    public function apiKeyError(): ?string
+    {
+        try {
+            $this->api_key;
+
+            return null;
+        } catch (DecryptException $e) {
+            return $e->getMessage();
+        }
     }
 
     /**

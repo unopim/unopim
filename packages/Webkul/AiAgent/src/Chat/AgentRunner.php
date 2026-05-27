@@ -133,8 +133,18 @@ class AgentRunner
                 unset($result['reply']); // Already streamed as text_delta
                 $this->sendSSE('complete', $result);
             } catch (\Throwable $e) {
-                Log::error('AI Agent stream error', ['exception' => $e]);
-                $this->sendSSE('error', ['message' => trans('ai-agent::app.common.error-generic')]);
+                $resolved = PrismErrorResolver::resolve($e);
+
+                if ($resolved['is_known']) {
+                    Log::warning('AI Agent stream provider error', [
+                        'type'    => get_class($e),
+                        'message' => $e->getMessage(),
+                    ]);
+                } else {
+                    Log::error('AI Agent stream error', ['exception' => $e]);
+                }
+
+                $this->sendSSE('error', ['message' => $resolved['message']]);
             }
         }, 200, [
             'Content-Type'      => 'text/event-stream',
@@ -167,7 +177,9 @@ class AgentRunner
 
         $messages[] = new UserMessage($context->message, $imageContent);
 
-        return Prism::text()
+        $isReasoningModel = (bool) preg_match('/^chat-latest|^o[1-9]|^o[1-9]-|^gpt-5/i', $context->model);
+
+        $request = Prism::text()
             ->using($prismProvider, $context->model, [
                 'api_key' => $context->platform->api_key,
             ])
@@ -175,9 +187,15 @@ class AgentRunner
             ->withMessages($messages)
             ->withTools($tools)
             ->withMaxSteps($this->resolveMaxSteps())
-            ->withMaxTokens(4096)
-            ->usingTemperature(0.7)
+            ->withMaxTokens($isReasoningModel ? 16000 : 4096)
             ->withClientOptions(['timeout' => 120]);
+
+        // Reasoning models (o-series, gpt-5*) reject `temperature` — only the default is allowed.
+        if (! $isReasoningModel) {
+            $request->usingTemperature(0.7);
+        }
+
+        return $request;
     }
 
     /**
@@ -277,7 +295,7 @@ Core Rules:
 - For configurable products (variants): set product_type="configurable", super_attributes="color,size", and provide variants_json with each variant's SKU and super attribute values.
 - ALWAYS include price in attributes_json — if unknown, estimate based on the product type. Never skip price.
 - ALWAYS set attach_image=true when creating from an uploaded image.
-- For image editing: use edit_image. For generating new images from text: use generate_image.
+- For image editing: use edit_image with the product SKU — it fetches the image from the product, edits it with AI, and saves it back. For gallery attributes, specify image_index. For generating new images from text: use generate_image.
 - If a tool returns a permission error, explain to the user what permission they need.
 - When displaying product search results, ALWAYS include the edit_url as a clickable markdown link using the product name as the link text, e.g. [Nike Air Max 270](edit_url). This lets users click the product name to open the edit page directly.
 - IMPORTANT: Follow the APPROVAL MODE instructions below for when to ask confirmation vs. execute directly.

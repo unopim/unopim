@@ -1252,8 +1252,7 @@ class Importer extends AbstractImporter
          * for 2-3x faster INSERT/UPSERT. Safe because data is pre-validated.
          */
         if ($useBulkMode) {
-            DB::statement('SET SESSION unique_checks=0');
-            DB::statement('SET SESSION foreign_key_checks=0');
+            $this->toggleMysqlBulkMode(false);
         }
 
         try {
@@ -1297,12 +1296,28 @@ class Importer extends AbstractImporter
             $this->saveProducts($products);
         } finally {
             if ($useBulkMode) {
-                DB::statement('SET SESSION unique_checks=1');
-                DB::statement('SET SESSION foreign_key_checks=1');
+                $this->toggleMysqlBulkMode(true);
             }
         }
 
         return true;
+    }
+
+    /**
+     * Toggle MySQL-only bulk-mode session vars. No-ops on non-MySQL drivers
+     * (e.g. pgsql, sqlite) since `unique_checks` and `foreign_key_checks`
+     * are MySQL-specific.
+     */
+    protected function toggleMysqlBulkMode(bool $enable): void
+    {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
+        $value = $enable ? 1 : 0;
+
+        DB::statement("SET SESSION unique_checks={$value}");
+        DB::statement("SET SESSION foreign_key_checks={$value}");
     }
 
     /**\n     * Prepare products from current batch.\n     *\n     * Optimized: Uses indexed attribute family lookup (O(1)) instead of\n     * Collection->where()->first() (O(n)) per row.\n     */
@@ -2276,6 +2291,7 @@ class Importer extends AbstractImporter
              */
             $productDB['created_at'] = $this->formatDateForIndex($productDB['created_at']);
             $productDB['updated_at'] = $this->formatDateForIndex($productDB['updated_at']);
+            $productDB['status'] = (bool) ($productDB['status'] ?? true);
 
             $productsToUpdate['body'][] = [
                 'index' => [

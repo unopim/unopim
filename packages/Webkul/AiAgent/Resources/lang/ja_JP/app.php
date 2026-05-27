@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'マジック AI',
         'general'               => '一般',
         'prompt'                => 'プロンプト',
         'system-prompt'         => 'システムプロンプト',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'マジック AI',
         'platform'       => 'プラットフォーム',
         'settings'       => '設定',
         'prompt'         => 'プロンプト',
@@ -35,6 +35,11 @@ return [
         'back'                      => '戻る',
         'unauthorized'              => 'このアクションは許可されていません。',
         'error-generic'             => '予期しないエラーが発生しました。もう一度お試しください。',
+        'error-rate-limit'          => 'AIプロバイダーのレート制限に達しました。少し待ってからもう一度お試しください。',
+        'error-rate-limit-retry'    => 'AIプロバイダーのレート制限に達しました。:seconds秒後にもう一度お試しください。',
+        'error-overloaded'          => 'AIプロバイダーは現在過負荷状態です。しばらくしてからもう一度お試しください。',
+        'error-request-too-large'   => 'リクエストがAIプロバイダーにとって大きすぎます。メッセージを短くするか、添付ファイルを減らしてもう一度お試しください。',
+        'error-api-key-corrupted'   => 'このプラットフォームのAPIキーを復号できませんでした（:error）。アプリケーションの暗号化キーが変更された可能性があります。プラットフォームを編集してAPIキーを再入力してください。',
         'invalid-file-path'         => '無効なファイルパスです。',
         'invalid-locale-code'       => '無効なロケールコードです。',
         'invalid-channel-code'      => '無効なチャネルコードです。',
@@ -208,6 +213,7 @@ return [
         'attach'                   => '添付',
         'attach-csv-xlsx'          => 'CSV または XLSX を添付',
         'attach-image'             => '画像を添付',
+        'remove-attachment'        => '添付ファイルを削除',
         'send'                     => '送信',
         'sending'                  => '送信中…',
         'processing'               => '処理中…',
@@ -241,7 +247,7 @@ return [
             'generate-variants-hint'   => '例: 「SHIRT-001 に S/M/L × 赤/青を生成」',
             'edit-image'               => '製品画像を編集',
             'edit-image-desc'          => '背景除去、補正＆レタッチ',
-            'edit-image-hint'          => '画像をアップロードし、変更内容を伝えてください — 例: 「背景を除去」',
+            'edit-image-hint'          => '製品SKUを入力し、変更内容を説明してください — 例：「SKU-123の背景を削除」',
             'search-products'          => '製品を検索',
             'search-products-desc'     => 'SKU、名前、またはステータスで製品を検索',
             'search-products-hint'     => '例: 「すべてのアクティブな製品を検索」または「ノートパソコンを検索」',
@@ -297,7 +303,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => '指示に従ってアップロードされた製品画像を編集してください。',
+            'edit-image-prompt'        => '指定されたSKUから製品画像を取得し、指示された変更を適用して保存してください。',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

@@ -44,7 +44,7 @@ it('should return the list of all configurable products', function () {
         ->assertJsonFragment(['total' => Product::where('type', 'configurable')->count()])
         ->json('data');
 
-    $product = Product::where('type', 'configurable')->first();
+    $product->refresh();
 
     $data = [
         'sku'              => $product->sku,

@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'मैजिक AI',
         'general'               => 'सामान्य',
         'prompt'                => 'प्रॉम्प्ट',
         'system-prompt'         => 'सिस्टम प्रॉम्प्ट',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'मैजिक AI',
         'platform'       => 'प्लेटफ़ॉर्म',
         'settings'       => 'सेटिंग्स',
         'prompt'         => 'प्रॉम्प्ट',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'वापस',
         'unauthorized'              => 'यह कार्रवाई अनधिकृत है।',
         'error-generic'             => 'एक अप्रत्याशित त्रुटि हुई। कृपया पुनः प्रयास करें।',
+        'error-rate-limit'          => 'एआई प्रदाता की दर सीमा पार हो गई है। कृपया एक क्षण प्रतीक्षा करें और पुनः प्रयास करें।',
+        'error-rate-limit-retry'    => 'एआई प्रदाता की दर सीमा पार हो गई है। कृपया :seconds सेकंड बाद पुनः प्रयास करें।',
+        'error-overloaded'          => 'एआई प्रदाता वर्तमान में अत्यधिक भार में है। कृपया कुछ क्षणों में पुनः प्रयास करें।',
+        'error-request-too-large'   => 'आपका अनुरोध एआई प्रदाता के लिए बहुत बड़ा है। कृपया अपना संदेश छोटा करें या कुछ अनुलग्नक हटाएं और पुनः प्रयास करें।',
+        'error-api-key-corrupted'   => 'इस प्लेटफ़ॉर्म की API कुंजी को डिक्रिप्ट नहीं किया जा सका (:error)। एप्लिकेशन की एन्क्रिप्शन कुंजी बदल गई हो सकती है। कृपया प्लेटफ़ॉर्म संपादित करें और अपनी API कुंजी पुनः दर्ज करें।',
         'invalid-file-path'         => 'अमान्य फ़ाइल पथ।',
         'invalid-locale-code'       => 'अमान्य भाषा कोड।',
         'invalid-channel-code'      => 'अमान्य चैनल कोड।',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'संलग्न करें',
         'attach-csv-xlsx'          => 'CSV या XLSX संलग्न करें',
         'attach-image'             => 'छवि संलग्न करें',
+        'remove-attachment'        => 'संलग्नक हटाएं',
         'send'                     => 'भेजें',
         'sending'                  => 'भेज रहा है…',
         'processing'               => 'प्रोसेस हो रहा है…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'   => 'उदा. "SHIRT-001 के लिए S/M/L × लाल/नीला उत्पन्न करें"',
             'edit-image'               => 'उत्पाद छवि संपादित करें',
             'edit-image-desc'          => 'पृष्ठभूमि हटाना, सुधार और रीटच',
-            'edit-image-hint'          => 'एक छवि अपलोड करें, फिर बताएँ क्या बदलना है — उदा. "पृष्ठभूमि हटाएँ"',
+            'edit-image-hint'          => 'उत्पाद SKU दें और बताएँ क्या बदलना है — उदा. "SKU-123 की पृष्ठभूमि हटाएँ"',
             'search-products'          => 'उत्पाद खोजें',
             'search-products-desc'     => 'SKU, नाम या स्थिति द्वारा उत्पाद खोजें',
             'search-products-hint'     => 'उदा. "सभी सक्रिय उत्पाद खोजें" या "लैपटॉप खोजें"',
@@ -302,7 +308,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'निर्देशानुसार अपलोड की गई उत्पाद छवि को संपादित करें।',
+            'edit-image-prompt'        => 'दिए गए SKU से उत्पाद की छवि प्राप्त करें, अनुरोधित परिवर्तन लागू करें और इसे वापस सहेजें।',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

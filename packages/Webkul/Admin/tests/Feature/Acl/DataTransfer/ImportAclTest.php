@@ -14,7 +14,7 @@ it('should not display the import index page if user does not have permission', 
     $this->loginWithPermissions();
 
     $this->get(route('admin.settings.data_transfer.imports.index'))
-        ->assertSeeText('Unauthorized')
+        ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.settings.data-transfer.imports.index.title'));
 });
 
@@ -30,7 +30,7 @@ it('should not display the import create page if user does not have create permi
     $this->loginWithPermissions();
 
     $this->get(route('admin.settings.data_transfer.imports.create'))
-        ->assertSeeText('Unauthorized')
+        ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.settings.data-transfer.imports.create.title'));
 });
 
@@ -48,7 +48,7 @@ it('should not display the import edit page if user does not have edit permissio
     $this->loginWithPermissions();
 
     $this->get(route('admin.settings.data_transfer.imports.edit', 1))
-        ->assertSeeText('Unauthorized')
+        ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.settings.data-transfer.imports.edit.title'));
 });
 
@@ -69,7 +69,7 @@ it('should not allow the import delete action if user does not have delete permi
     $jobId = JobInstances::factory()->importJob()->entityProduct()->create()->id;
 
     $this->delete(route('admin.settings.data_transfer.imports.delete', $jobId))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(JobInstances::class), ['id' => $jobId]);
 });
@@ -88,5 +88,5 @@ it('should not allow the import now action if user does not have the execute per
     $this->loginWithPermissions();
 
     $this->put(route('admin.settings.data_transfer.imports.import_now', 1))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });

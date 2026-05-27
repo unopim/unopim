@@ -4,7 +4,7 @@ return [
     'components' => [
         'layouts' => [
             'sidebar' => [
-                'completeness' => 'Volledigheid',
+                'completeness' => 'Datavolledigheid',
             ],
         ],
     ],
@@ -12,19 +12,19 @@ return [
         'families' => [
             'edit' => [
                 'completeness' => [
-                    'update-success'      => 'Volledigheid succesvol bijgewerkt',
-                    'title'               => 'Volledigheid',
-                    'configure'           => 'Volledigheid configureren',
+                    'update-success'      => 'Datavolledigheid succesvol bijgewerkt.',
+                    'title'               => 'Datavolledigheid',
+                    'configure'           => 'Datavolledigheid configureren',
                     'channel-required'    => 'Vereist in kanalen',
                     'save-btn'            => 'Opslaan',
                     'back-btn'            => 'Terug',
-                    'mass-update-success' => 'Volledigheid succesvol bijgewerkt',
+                    'mass-update-success' => 'Datavolledigheid succesvol bijgewerkt.',
                     'datagrid'            => [
                         'code'             => 'Code',
                         'name'             => 'Naam',
                         'channel-required' => 'Vereist in kanalen',
                         'actions'          => [
-                            'change-requirement' => 'Volledigheidsvereiste wijzigen',
+                            'change-requirement' => 'Datavolledigheidsvereiste wijzigen',
                         ],
                     ],
                 ],
@@ -34,37 +34,37 @@ return [
             'index' => [
                 'datagrid' => [
                     'missing-completeness-setting' => 'N/B',
-                    'completeness'                 => 'Volledig',
+                    'completeness'                 => 'Datavolledigheid',
                 ],
             ],
             'edit' => [
                 'completeness' => [
-                    'title'    => 'Volledigheid',
-                    'subtitle' => 'Gemiddelde volledigheid',
+                    'title'    => 'Datavolledigheid',
+                    'subtitle' => 'Gemiddelde datavolledigheid',
                 ],
                 'required-attributes' => 'ontbrekende verplichte attributen',
             ],
         ],
     ],
     'notifications' => [
-        'completeness-title'             => 'Volledigheidsberekening voltooid',
-        'completeness-calculated'        => 'Volledigheid berekend voor :count producten.',
-        'completeness-calculated-family' => 'Volledigheid berekend voor :count producten in familie ":family".',
-        'email-subject'                  => 'Volledigheidsberekening voltooid',
+        'completeness-title'             => 'Datavolledigheidsberekening voltooid',
+        'completeness-calculated'        => 'Datavolledigheid berekend voor :count producten.',
+        'completeness-calculated-family' => 'Datavolledigheid berekend voor :count producten in attribuutset ":family".',
+        'email-subject'                  => 'Datavolledigheidsberekening voltooid',
         'email-greeting'                 => 'Hallo,',
-        'email-body'                     => 'De volledigheidsberekening is voltooid voor :count producten.',
-        'email-body-family'              => 'De volledigheidsberekening is voltooid voor :count producten in attribuutfamilie ":family".',
-        'email-footer'                   => 'U kunt de volledigheidsdetails bekijken op uw dashboard.',
+        'email-body'                     => 'De datavolledigheidsberekening is voltooid voor :count producten.',
+        'email-body-family'              => 'De datavolledigheidsberekening is voltooid voor :count producten in attribuutset ":family".',
+        'email-footer'                   => 'Je kunt de datavolledigheidsdetails bekijken op je dashboard.',
     ],
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Berekende producten',
                 'suggestion'          => [
-                    'low'     => 'Lage volledigheid, voeg details toe om te verbeteren.',
-                    'medium'  => 'Ga door, blijf informatie toevoegen.',
-                    'high'    => 'Bijna volledig, nog maar een paar details over.',
-                    'perfect' => 'Productinformatie is volledig compleet.',
+                    'low'     => 'Lage datavolledigheid — voeg details toe om te verbeteren.',
+                    'medium'  => 'Goed bezig, voeg meer informatie toe.',
+                    'high'    => 'Bijna volledig, nog maar een paar details te gaan.',
+                    'perfect' => 'Productinformatie is volledig ingevuld.',
                 ],
             ],
         ],

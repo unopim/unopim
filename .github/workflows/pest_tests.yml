@@ -68,12 +68,13 @@ jobs:
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
 
       - name: Running UnoPim Installer
-        run: php artisan unopim:install --skip-env-check --skip-admin-creation
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
 
       - name: Running Pest Tests
-        run: vendor/bin/pest --colors=always --parallel --processes=4
+        run: vendor/bin/pest --colors=always
 
   pest-elasticsearch:
     runs-on: ubuntu-24.04
@@ -149,7 +150,7 @@ jobs:
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
 
       - name: Running UnoPim Installer
-        run: php artisan unopim:install --skip-env-check --skip-admin-creation
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
 
       - name: Enable Elasticsearch and build indexes
         run: |
@@ -162,4 +163,4 @@ jobs:
           php artisan unopim:category:index
 
       - name: Running Pest Tests
-        run: vendor/bin/pest --colors=always --parallel --processes=4
+        run: vendor/bin/pest --colors=always

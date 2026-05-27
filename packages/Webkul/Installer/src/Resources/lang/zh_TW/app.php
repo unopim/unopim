@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => '管理員',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => '確認密碼',
-                'email-address'    => 'admin@example.com',
-                'email'            => '電子郵件',
-                'password'         => '密碼',
-                'title'            => '建立管理員',
+                'admin'                   => '管理員',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => '確認密碼',
+                'email-address'           => 'admin@example.com',
+                'email'                   => '電子郵件',
+                'password'                => '密碼',
+                'title'                   => '建立管理員',
+                'seed-sample-data'        => '安裝範例產品與示範資料',
+                'seeding-sample-data'     => '正在建立範例產品與示範資料，這可能需要幾分鐘...',
+                'seed-sample-data-failed' => '無法建立範例資料。您可以稍後透過 `php artisan unopim:install:demo-data` 安裝。',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => '允許的貨幣',

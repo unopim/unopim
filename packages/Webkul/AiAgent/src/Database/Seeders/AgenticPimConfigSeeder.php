@@ -15,6 +15,7 @@ class AgenticPimConfigSeeder extends Seeder
     {
         $defaults = [
             'general.magic_ai.agentic_pim.enabled'              => '1',
+            'general.magic_ai.agentic_pim.open_by_default'      => '1',
             'general.magic_ai.agentic_pim.max_steps'            => '5',
             'general.magic_ai.agentic_pim.daily_token_budget'   => '500000',
             'general.magic_ai.agentic_pim.auto_enrichment'      => '0',

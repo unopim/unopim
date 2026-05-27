@@ -1,8 +1,8 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-spreadsheet-row-template">
-        <tr v-if="row" class="border-b dark:border-cherry-700"  :style="{ height: rowHeight + 'px' }">
-            <td class="sticky left-0 z-10 bg-white dark:bg-cherry-800 border-r dark:border-cherry-700 p-2 text-sm text-gray-600 dark:text-gray-300"
-            >   @{{ row.id }} 
+        <tr v-if="row" class="border-b border-gray-200 dark:border-cherry-700" :class="{ 'bg-gray-50 dark:bg-cherry-900': rowId % 2 === 1 }" :style="{ height: rowHeight + 'px' }">
+            <td class="sticky left-0 z-10 bg-gray-100 dark:bg-cherry-800 border-r border-gray-200 dark:border-cherry-700 px-1 py-0 text-xs text-center text-gray-500 dark:text-gray-400 font-normal"
+            >   @{{ row.id }}
                 <div
                     class="absolute bottom-0 left-0 w-full h-1 cursor-row-resize z-20"
                     @mousedown="startRowResize"
@@ -52,7 +52,7 @@
             data() {
                 return {
                     isDragging: false,
-                    rowHeight: 36,
+                    rowHeight: 30,
                 };
             },
 
