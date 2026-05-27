@@ -12,11 +12,41 @@ use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class ManageUsers implements PimTool
 {
+    /**
+     * Mask email addresses to prevent data exposure via AI responses.
+     * Shows first 2 and last 2 characters of the local part with a
+     * visible block of asterisks so users can tell the email is masked.
+     */
+    public function maskUserData(object $user): object
+    {
+        if (! empty($user->email)) {
+            $atPos = strpos($user->email, '@');
+            $local = substr($user->email, 0, $atPos);
+            $domain = substr($user->email, $atPos);
+            $len = strlen($local);
+
+            $user->email = match (true) {
+                $len <= 2 => str_repeat('*', 6).$domain,
+                $len <= 4 => substr($local, 0, 2).str_repeat('*', 6).$domain,
+                default   => substr($local, 0, 2).str_repeat('*', 6).substr($local, -2).$domain,
+            };
+        }
+
+        return $user;
+    }
+
     public function register(ChatContext $context): Tool
     {
-        return new class($context) extends ContextualTool
+        $outer = $this;
+
+        return new class($context, $outer) extends ContextualTool
         {
             use ChecksPermission;
+
+            public function __construct(ChatContext $context, protected ManageUsers $outer)
+            {
+                parent::__construct($context);
+            }
 
             public function name(): string
             {
@@ -52,7 +82,7 @@ class ManageUsers implements PimTool
                         ->orderBy('a.id')
                         ->limit(50)
                         ->get()
-                        ->map(fn ($u) => $this->maskUserData($u));
+                        ->map(fn ($u) => $this->outer->maskUserData($u));
 
                     return json_encode(['users' => $users->toArray()]);
                 }
@@ -68,33 +98,10 @@ class ManageUsers implements PimTool
                         return json_encode(['error' => "User '{$email}' not found"]);
                     }
 
-                    return json_encode(['user' => (array) $this->maskUserData($user)]);
+                    return json_encode(['user' => (array) $this->outer->maskUserData($user)]);
                 }
 
                 return json_encode(['error' => 'Invalid action']);
-            }
-
-            /**
-             * Mask email addresses to prevent data exposure via AI responses.
-             * Shows first 2 and last 2 characters of the local part with a
-             * visible block of asterisks so users can tell the email is masked.
-             */
-            private function maskUserData(object $user): object
-            {
-                if (! empty($user->email)) {
-                    $atPos = strpos($user->email, '@');
-                    $local = substr($user->email, 0, $atPos);
-                    $domain = substr($user->email, $atPos);
-                    $len = strlen($local);
-
-                    $user->email = match (true) {
-                        $len <= 2 => str_repeat('*', 6).$domain,
-                        $len <= 4 => substr($local, 0, 2).str_repeat('*', 6).$domain,
-                        default   => substr($local, 0, 2).str_repeat('*', 6).substr($local, -2).$domain,
-                    };
-                }
-
-                return $user;
             }
         };
     }

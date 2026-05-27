@@ -63,9 +63,16 @@ class ApiClientCommand extends Passport
 
         $provider = config('auth.guards.api.provider', 'admins');
 
+        // Passport 13 dropped the $userId + $redirect args from
+        // createPasswordGrantClient. Create the client, then attach the admin
+        // user manually so UnoPim's per-user client filtering keeps working.
         $client = $clients->createPasswordGrantClient(
-            $user->id, $name, 'http://localhost', $provider
+            $name,
+            $provider,
+            confidential: true,
         );
+
+        $client->forceFill(['user_id' => $user->id])->save();
 
         $this->components->info('Password grant client created successfully.');
 

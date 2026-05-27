@@ -15,12 +15,16 @@ trait OauthClientGenerator
     {
         $provider = config('auth.guards.api.provider', 'admins');
 
+        // Passport 13 dropped the $userId + $redirect args from
+        // createPasswordGrantClient. Create the client, then attach the admin
+        // user manually so UnoPim's per-user client filtering keeps working.
         $client = $this->clients->createPasswordGrantClient(
-            $user_id,
             $name,
-            'http://localhost',
-            $provider
+            $provider,
+            confidential: true,
         );
+
+        $client->forceFill(['user_id' => $user_id])->save();
 
         return $client;
     }
@@ -32,7 +36,9 @@ trait OauthClientGenerator
      */
     public function regenerateSecret(Client $client)
     {
-        $client = $this->clients->regenerateSecret($client);
+        // Passport 13 regenerateSecret() returns bool (save() result), not the
+        // mutated Client. The $client passed in is mutated in place — return it.
+        $this->clients->regenerateSecret($client);
 
         return $client;
     }
