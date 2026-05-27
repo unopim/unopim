@@ -46,7 +46,7 @@
         "symfony/intl": "^7.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.8",
+        "barryvdh/laravel-debugbar": "^4.2",
         "fakerphp/faker": "^1.23",
         "laravel/boost": "^2.1",
         "laravel/pint": "^1.29.1",
