@@ -63,12 +63,12 @@ return [
         ],
 
         'unit' => [
-            'not_found'         => 'Ölçüm ailesi bulunamadı.',
-            'already_exists'    => 'Birim kodu zaten mevcut.',
+            'not_found'              => 'Ölçüm ailesi bulunamadı.',
+            'already_exists'         => 'Birim kodu zaten mevcut.',
             'units_not_found'        => 'Birim bulunamadı.',
-            'deleted'           => 'Birim başarıyla silindi.',
-            'no_items_selected' => 'Hiçbir öğe seçilmedi.',
-            'mass_deleted'      => 'Seçilen ölçüm birimleri başarıyla silindi.',
+            'deleted'                => 'Birim başarıyla silindi.',
+            'no_items_selected'      => 'Hiçbir öğe seçilmedi.',
+            'mass_deleted'           => 'Seçilen ölçüm birimleri başarıyla silindi.',
         ],
     ],
 

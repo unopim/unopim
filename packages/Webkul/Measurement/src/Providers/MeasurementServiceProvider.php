@@ -33,8 +33,8 @@ class MeasurementServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'measurement');
         $this->loadRoutesFrom(__DIR__.'/../Routes/web.php');
         Route::prefix('api')
-        ->middleware('api')
-        ->group(__DIR__.'/../Routes/api.php');
+            ->middleware('api')
+            ->group(__DIR__.'/../Routes/api.php');
 
         $this->mergeConfigFrom(
             __DIR__.'/../Config/attribute_types.php',

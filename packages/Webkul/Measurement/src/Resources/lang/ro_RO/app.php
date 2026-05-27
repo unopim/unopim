@@ -63,12 +63,12 @@ return [
         ],
 
         'unit' => [
-            'not_found'         => 'Familia de măsurare nu a fost găsită.',
-            'already_exists'    => 'Codul unității există deja.',
+            'not_found'              => 'Familia de măsurare nu a fost găsită.',
+            'already_exists'         => 'Codul unității există deja.',
             'units_not_found'        => 'Unitatea nu a fost găsită.',
-            'deleted'           => 'Unitatea a fost ștearsă cu succes.',
-            'no_items_selected' => 'Nu a fost selectat niciun element.',
-            'mass_deleted'      => 'Unitățile de măsurare selectate au fost șterse cu succes.',
+            'deleted'                => 'Unitatea a fost ștearsă cu succes.',
+            'no_items_selected'      => 'Nu a fost selectat niciun element.',
+            'mass_deleted'           => 'Unitățile de măsurare selectate au fost șterse cu succes.',
         ],
     ],
 

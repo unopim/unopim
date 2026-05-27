@@ -63,12 +63,12 @@ return [
         ],
 
         'unit' => [
-            'not_found'         => 'No s’ha trobat la família de mesures.',
-            'already_exists'    => 'El codi de la unitat ja existeix.',
+            'not_found'              => 'No s’ha trobat la família de mesures.',
+            'already_exists'         => 'El codi de la unitat ja existeix.',
             'units_not_found'        => 'No s’ha trobat la unitat.',
-            'deleted'           => 'La unitat s’ha eliminat correctament.',
-            'no_items_selected' => 'No s’han seleccionat elements.',
-            'mass_deleted'      => 'Les unitats de mesura seleccionades s’han eliminat correctament.',
+            'deleted'                => 'La unitat s’ha eliminat correctament.',
+            'no_items_selected'      => 'No s’han seleccionat elements.',
+            'mass_deleted'           => 'Les unitats de mesura seleccionades s’han eliminat correctament.',
         ],
     ],
 

@@ -179,6 +179,7 @@ class ProductObserver
 
             if (! isset($value['value']) || $value['value'] === '' || $value['value'] === null) {
                 unset($scopedValues[$attributeCode]);
+
                 continue;
             }
 

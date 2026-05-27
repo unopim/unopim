@@ -52,10 +52,9 @@ it('should create a measurement family successfully', function () {
 
     $this->postJson(route('admin.measurement.families.store'), $data)
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
-            $json->whereType('data.redirect_url', 'string')
+        ->assertJson(fn (AssertableJson $json) => $json->whereType('data.redirect_url', 'string')
         );
-        
+
     $this->assertDatabaseHas('measurement_families', [
         'code' => 'length',
     ]);

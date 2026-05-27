@@ -38,7 +38,7 @@ class MeasurementHelper
      * @return float|int
      */
     public function calculateBaseValue($value, $unitCode, $family)
-   {
+    {
         if (! $family || ! $unitCode) {
             return $value;
         }

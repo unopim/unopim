@@ -63,12 +63,12 @@ return [
         ],
 
         'unit' => [
-            'not_found'         => 'Measurement Family not found.',
-            'already_exists'    => 'Unit code already exists.',
+            'not_found'              => 'Measurement Family not found.',
+            'already_exists'         => 'Unit code already exists.',
             'units_not_found'        => 'Unit not found.',
-            'deleted'           => 'Unit deleted successfully.',
-            'no_items_selected' => 'No items selected.',
-            'mass_deleted'      => 'Selected measurement Units deleted successfully.',
+            'deleted'                => 'Unit deleted successfully.',
+            'no_items_selected'      => 'No items selected.',
+            'mass_deleted'           => 'Selected measurement Units deleted successfully.',
         ],
     ],
 ];

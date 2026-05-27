@@ -63,12 +63,12 @@ return [
         ],
 
         'unit' => [
-            'not_found'         => 'No se encontró la familia de medición.',
-            'already_exists'    => 'El código de la unidad ya existe.',
+            'not_found'              => 'No se encontró la familia de medición.',
+            'already_exists'         => 'El código de la unidad ya existe.',
             'units_not_found'        => 'No se encontró la unidad.',
-            'deleted'           => 'La unidad se eliminó correctamente.',
-            'no_items_selected' => 'No se seleccionaron elementos.',
-            'mass_deleted'      => 'Las unidades de medición seleccionadas se eliminaron correctamente.',
+            'deleted'                => 'La unidad se eliminó correctamente.',
+            'no_items_selected'      => 'No se seleccionaron elementos.',
+            'mass_deleted'           => 'Las unidades de medición seleccionadas se eliminaron correctamente.',
         ],
     ],
 

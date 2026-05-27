@@ -63,12 +63,12 @@ return [
         ],
 
         'unit' => [
-            'not_found'         => 'Meetfamilie niet gevonden.',
-            'already_exists'    => 'Eenheidscode bestaat al.',
+            'not_found'              => 'Meetfamilie niet gevonden.',
+            'already_exists'         => 'Eenheidscode bestaat al.',
             'units_not_found'        => 'Eenheid niet gevonden.',
-            'deleted'           => 'Eenheid is succesvol verwijderd.',
-            'no_items_selected' => 'Geen items geselecteerd.',
-            'mass_deleted'      => 'Geselecteerde meeteenheden zijn succesvol verwijderd.',
+            'deleted'                => 'Eenheid is succesvol verwijderd.',
+            'no_items_selected'      => 'Geen items geselecteerd.',
+            'mass_deleted'           => 'Geselecteerde meeteenheden zijn succesvol verwijderd.',
         ],
     ],
 

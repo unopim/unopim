@@ -63,12 +63,12 @@ return [
         ],
 
         'unit' => [
-            'not_found'         => 'Keluarga pengukuran tidak ditemukan.',
-            'already_exists'    => 'Kode unit sudah ada.',
+            'not_found'              => 'Keluarga pengukuran tidak ditemukan.',
+            'already_exists'         => 'Kode unit sudah ada.',
             'units_not_found'        => 'Unit tidak ditemukan.',
-            'deleted'           => 'Unit berhasil dihapus.',
-            'no_items_selected' => 'Tidak ada item yang dipilih.',
-            'mass_deleted'      => 'Unit pengukuran yang dipilih berhasil dihapus.',
+            'deleted'                => 'Unit berhasil dihapus.',
+            'no_items_selected'      => 'Tidak ada item yang dipilih.',
+            'mass_deleted'           => 'Unit pengukuran yang dipilih berhasil dihapus.',
         ],
     ],
 

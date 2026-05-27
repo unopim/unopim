@@ -63,12 +63,12 @@ return [
         ],
 
         'unit' => [
-            'not_found'         => '測定ファミリーが見つかりません。',
-            'already_exists'    => '単位コードは既に存在します。',
+            'not_found'              => '測定ファミリーが見つかりません。',
+            'already_exists'         => '単位コードは既に存在します。',
             'units_not_found'        => '単位が見つかりません。',
-            'deleted'           => '単位が正常に削除されました。',
-            'no_items_selected' => 'アイテムが選択されていません。',
-            'mass_deleted'      => '選択された測定単位が正常に削除されました。',
+            'deleted'                => '単位が正常に削除されました。',
+            'no_items_selected'      => 'アイテムが選択されていません。',
+            'mass_deleted'           => '選択された測定単位が正常に削除されました。',
         ],
     ],
 

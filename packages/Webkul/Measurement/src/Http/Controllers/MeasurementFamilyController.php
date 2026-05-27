@@ -233,8 +233,8 @@ class MeasurementFamilyController extends Controller
 
         if (! empty($failedFamilies)) {
             return response()->json([
-                'success' => false,
-                'message' => 'Some measurement families could not be deleted because they are used in attributes.',
+                'success'         => false,
+                'message'         => 'Some measurement families could not be deleted because they are used in attributes.',
                 'failed_families' => $failedFamilies,
             ], 400);
         }

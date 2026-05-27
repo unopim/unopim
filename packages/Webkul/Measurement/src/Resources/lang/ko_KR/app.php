@@ -63,12 +63,12 @@ return [
         ],
 
         'unit' => [
-            'not_found'         => '측정 패밀리를 찾을 수 없습니다.',
-            'already_exists'    => '단위 코드는 이미 존재합니다.',
+            'not_found'              => '측정 패밀리를 찾을 수 없습니다.',
+            'already_exists'         => '단위 코드는 이미 존재합니다.',
             'units_not_found'        => '단위를 찾을 수 없습니다.',
-            'deleted'           => '단위가 성공적으로 삭제되었습니다.',
-            'no_items_selected' => '선택된 항목이 없습니다.',
-            'mass_deleted'      => '선택한 측정 단위가 성공적으로 삭제되었습니다.',
+            'deleted'                => '단위가 성공적으로 삭제되었습니다.',
+            'no_items_selected'      => '선택된 항목이 없습니다.',
+            'mass_deleted'           => '선택한 측정 단위가 성공적으로 삭제되었습니다.',
         ],
     ],
 
