@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => '통화',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '통화 코드 \'%s\'이(가) 이미 이 배치에서 가져왔습니다.',
+                    'code-not-found-to-delete'    => '코드 \'%s\'에 해당하는 통화를 시스템에서 찾을 수 없습니다.',
+                    'invalid-status'              => '상태는 0 또는 1이어야 합니다(또는 기본 활성화의 경우 비어 있음).',
+                    'channel-related-locale-root' => '채널에 연결된 :code 코드의 로케일은 삭제할 수 없습니다.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -48,6 +59,9 @@ return [
         ],
         'categories' => [
             'title' => '카테고리',
+        ],
+        'currencies' => [
+            'title' => '통화',
         ],
     ],
     'validation' => [

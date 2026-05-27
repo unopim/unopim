@@ -26,7 +26,7 @@
   "description": "",
   "devDependencies": {
     "@playwright/test": "1.60.0",
-    "@types/node": "^22.15.2",
+    "@types/node": "^25.9.1",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"
   }

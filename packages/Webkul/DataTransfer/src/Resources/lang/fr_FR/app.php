@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'Produits',
-
+            'title'      => 'Produits',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL-Schlüssel: \'%s\' wurde bereits für einen Artikel mit der SKU: \'%s\' generiert.',
@@ -34,13 +32,21 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Devises',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Le code de devise \'%s\' a déjà été importé dans ce lot.',
+                    'code-not-found-to-delete'    => 'Devise avec le code \'%s\' non trouvée dans le système.',
+                    'invalid-status'              => 'Le statut doit être 0 ou 1 (ou vide pour activé par défaut).',
+                    'channel-related-locale-root' => 'Vous ne pouvez pas supprimer la locale avec le code :code qui est associée à un canal.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
         'products' => [
-            'title' => 'Produits',
-
+            'title'      => 'Produits',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-Schlüssel: \'%s\' wurde bereits für einen Artikel mit der SKU: \'%s\' generiert.',
@@ -54,8 +60,10 @@ return [
         'categories' => [
             'title' => 'Catégories',
         ],
+        'currencies' => [
+            'title' => 'Devises',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Die Spalten mit der Nummer „%s“ haben leere Kopfzeilen.',
@@ -68,7 +76,6 @@ return [
             'file-empty'           => 'Le fichier est vide ou ne contient pas de ligne d\'en-tête. Veuillez télécharger un fichier valide contenant des données.',
         ],
     ],
-
     'job' => [
         'started'   => 'L\'exécution du travail a commencé',
         'completed' => 'Exécution du travail terminée',
