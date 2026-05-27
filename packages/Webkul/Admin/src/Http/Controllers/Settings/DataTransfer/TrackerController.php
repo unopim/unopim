@@ -116,6 +116,11 @@ class TrackerController extends Controller
         }
 
         $import = $this->jobTrackRepository->findOrFail($id);
+
+        if (empty($import->file_path)) {
+            abort(404);
+        }
+
         $disk = null;
 
         if (Storage::disk('private')->exists($import->file_path)) {
