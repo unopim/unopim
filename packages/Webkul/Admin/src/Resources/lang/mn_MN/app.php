@@ -1944,6 +1944,9 @@ return [
                 'my-account'    => 'Миний данс',
                 'notifications' => 'Мэдэгдэл',
                 'visit-shop'    => 'Дэлгүүр',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Аттригийн гэр бүлүүд',

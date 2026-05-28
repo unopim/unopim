@@ -1944,6 +1944,9 @@ return [
                 'my-account'    => 'Hesabım',
                 'notifications' => 'Bildirimler',
                 'visit-shop'    => 'Mağazayı Ziyaret Et',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Öznitelik Aileleri',

@@ -2089,6 +2089,9 @@ return [
                 'my-account'    => 'My Account',
                 'notifications' => 'Notifications',
                 'visit-shop'    => 'Visit Shop',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
 
             'sidebar' => [
