@@ -32,37 +32,48 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Monedas',
+        'channels' => [
+            'title'      => 'Canals',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'El código de moneda \'%s\' ya ha sido importado en este lote.',
-                    'code-not-found-to-delete'    => 'No se encontró ninguna moneda con el código \'%s\' en el sistema.',
-                    'invalid-status'              => 'El estado debe ser 0 o 1 (o vacío para habilitado por defecto).',
-                    'channel-related-locale-root' => 'No puedes eliminar el locale con código :code porque está asociado a un canal.',
+                    'code-not-found-to-delete' => 'El canal amb el codi :code no s\'ha trobat per eliminar.',
+                    'locale-not-found'         => 'Un o més idiomes no existeixen.',
+                    'root-category-not-found'  => 'La categoria arrel no existeix.',
+                    'currency-not-found'       => 'Una o més monedes no existeixen.',
+                    'invalid-locale'           => 'L\'idioma no existeix.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Rols',
+            'title'      => 'Roles',
             'validation' => [
                 'errors' => [
-                    'duplicate-name'           => 'S\'ha trobat un nom de rol duplicat.',
-                    'name-not-found-to-delete' => 'No s\'ha trobat cap rol amb el nom especificat per eliminar.',
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
                 ],
             ],
         ],
         'users' => [
-            'title'      => 'Usuaris',
+            'title'      => 'Users',
             'validation' => [
                 'errors' => [
-                    'email-not-found-to-delete' => 'No s\'ha trobat cap usuari amb el correu electrònic especificat per eliminar.',
-                    'invalid-role'              => 'S\'ha trobat un nom de rol no vàlid.',
-                    'invalid-locale'            => 'S\'ha trobat un codi de configuració regional de la interfície no vàlid.',
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
-
     ],
     'exporters' => [
         'products' => [
@@ -80,18 +91,21 @@ return [
         'categories' => [
             'title' => 'Categories',
         ],
+        'channels' => [
+            'title' => 'Canals',
+        ],
         'currencies' => [
-            'title' => 'Monedes',
+            'title' => 'Currencies',
         ],
         'roles' => [
-            'title' => 'Rols',
+            'title' => 'Roles',
         ],
         'users' => [
-            'title'   => 'Usuaris',
+            'title'   => 'Users',
             'filters' => [
-                'status' => 'Estat',
-                'active' => 'Actiu',
-                'all'    => 'Tots',
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
             ],
         ],
     ],

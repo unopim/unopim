@@ -32,33 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Devises',
+        'channels' => [
+            'title'      => 'Canaux',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Le code de devise \'%s\' a déjà été importé dans ce lot.',
-                    'code-not-found-to-delete'    => 'Devise avec le code \'%s\' non trouvée dans le système.',
-                    'invalid-status'              => 'Le statut doit être 0 ou 1 (ou vide pour activé par défaut).',
-                    'channel-related-locale-root' => 'Vous ne pouvez pas supprimer la locale avec le code :code qui est associée à un canal.',
+                    'code-not-found-to-delete' => 'Le canal avec le code :code est introuvable pour suppression.',
+                    'locale-not-found'         => 'Une ou plusieurs langues n\'existent pas.',
+                    'root-category-not-found'  => 'La catégorie racine n\'existe pas.',
+                    'currency-not-found'       => 'Une ou plusieurs devises n\'existent pas.',
+                    'invalid-locale'           => 'La langue n\'existe pas.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Rôles',
+            'title'      => 'Roles',
             'validation' => [
                 'errors' => [
-                    'duplicate-name'           => 'Nom de rôle en double trouvé.',
-                    'name-not-found-to-delete' => 'Aucun rôle avec le nom spécifié n\'a été trouvé pour suppression.',
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
                 ],
             ],
         ],
         'users' => [
-            'title'      => 'Utilisateurs',
+            'title'      => 'Users',
             'validation' => [
                 'errors' => [
-                    'email-not-found-to-delete' => 'Aucun utilisateur avec l\'email spécifié n\'a été trouvé pour suppression.',
-                    'invalid-role'              => 'Nom de rôle invalide trouvé.',
-                    'invalid-locale'            => 'Code de langue de l\'interface invalide trouvé.',
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -79,19 +91,21 @@ return [
         'categories' => [
             'title' => 'Catégories',
         ],
+        'channels' => [
+            'title' => 'Canaux',
+        ],
         'currencies' => [
-            'title' => 'Devises',
+            'title' => 'Currencies',
         ],
         'roles' => [
-            'title' => 'Rôles',
+            'title' => 'Roles',
         ],
-
         'users' => [
-            'title'   => 'Utilisateurs',
+            'title'   => 'Users',
             'filters' => [
-                'status' => 'Statut',
-                'active' => 'Actif',
-                'all'    => 'Tous',
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
             ],
         ],
     ],

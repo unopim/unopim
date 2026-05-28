@@ -32,33 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Para Birimleri',
+        'channels' => [
+            'title'      => 'Kanallar',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Para birimi kodu \'%s\' bu toplu işlemde zaten içe aktarılmış.',
-                    'code-not-found-to-delete'    => '\'%s\' kodlu para birimi sistemde bulunamadı.',
-                    'invalid-status'              => 'Durum 0 veya 1 olmalıdır (veya varsayılan olarak etkin için boş).',
-                    'channel-related-locale-root' => 'Bir kanalla ilişkili olan :code kodlu yerel ayarı silemezsiniz.',
+                    'code-not-found-to-delete' => ':code kodlu kanal silinmek için bulunamadı.',
+                    'locale-not-found'         => 'Bir veya daha fazla dil mevcut değil.',
+                    'root-category-not-found'  => 'Kök kategori mevcut değil.',
+                    'currency-not-found'       => 'Bir veya daha fazla para birimi mevcut değil.',
+                    'invalid-locale'           => 'Dil mevcut değil.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roller',
+            'title'      => 'Roles',
             'validation' => [
                 'errors' => [
-                    'duplicate-name'           => 'Yinelenen rol adı bulundu.',
-                    'name-not-found-to-delete' => 'Belirtilen ada sahip rol silinmek için bulunamadı.',
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
                 ],
             ],
         ],
         'users' => [
-            'title'      => 'Kullanıcılar',
+            'title'      => 'Users',
             'validation' => [
                 'errors' => [
-                    'email-not-found-to-delete' => 'Belirtilen e-posta adresine sahip kullanıcı silinmek için bulunamadı.',
-                    'invalid-role'              => 'Geçersiz rol adı bulundu.',
-                    'invalid-locale'            => 'Geçersiz UI yerel kodu bulundu.',
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -79,18 +91,21 @@ return [
         'categories' => [
             'title' => 'Kategoriler',
         ],
+        'channels' => [
+            'title' => 'Kanallar',
+        ],
         'currencies' => [
-            'title' => 'Para Birimleri',
+            'title' => 'Currencies',
         ],
         'roles' => [
-            'title' => 'Roller',
+            'title' => 'Roles',
         ],
         'users' => [
-            'title'   => 'Kullanıcılar',
+            'title'   => 'Users',
             'filters' => [
-                'status' => 'Durum',
-                'active' => 'Aktif',
-                'all'    => 'Tümü',
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
             ],
         ],
     ],

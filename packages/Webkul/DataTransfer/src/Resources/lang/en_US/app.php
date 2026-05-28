@@ -2,7 +2,6 @@
 
 return [
     'importers' => [
-
         'products' => [
             'title' => 'Products',
 
@@ -34,14 +33,26 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Channels',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Channel with code :code not found to delete.',
+                    'locale-not-found'         => 'One or more locales do not exist.',
+                    'root-category-not-found'  => 'Root category does not exist.',
+                    'currency-not-found'       => 'One or more currencies do not exist.',
+                    'invalid-locale'           => 'The locale does not exist.',
+                ],
+            ],
+        ],
         'currencies' => [
             'title'      => 'Currencies',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Currency code \'%s\' has already been imported in this batch.',
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
                     'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
-                    'channel-related-locale-root' => 'You cannot delete locale with code :code that is associated with a channel.',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
@@ -49,8 +60,8 @@ return [
             'title'      => 'Roles',
             'validation' => [
                 'errors' => [
-                    'duplicate-name'            => 'Duplicate Role name found.',
-                    'name-not-found-to-delete'  => 'Role with specified name not found to delete.',
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
                 ],
             ],
         ],
@@ -59,15 +70,14 @@ return [
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
-                    'invalid-role'              => 'Invalid Role name found.',
-                    'invalid-locale'            => 'Invalid UI Locale code found.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
     ],
 
     'exporters' => [
-
         'products' => [
             'title' => 'Products',
 
@@ -84,6 +94,9 @@ return [
         'categories' => [
             'title' => 'Categories',
         ],
+        'channels' => [
+            'title' => 'Channels',
+        ],
         'currencies' => [
             'title' => 'Currencies',
         ],
@@ -91,7 +104,7 @@ return [
             'title' => 'Roles',
         ],
         'users' => [
-            'title' => 'Users',
+            'title'   => 'Users',
 
             'filters' => [
                 'status' => 'Status',

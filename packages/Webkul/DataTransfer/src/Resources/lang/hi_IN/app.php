@@ -32,33 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'मुद्राएँ',
+        'channels' => [
+            'title'      => 'चैनल',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'मुद्रा कोड \'%s\' पहले से ही इस बैच में आयात किया जा चुका है।',
-                    'code-not-found-to-delete'    => 'सिस्टम में \'%s\' कोड वाली मुद्रा नहीं मिली।',
-                    'invalid-status'              => 'स्थिति 0 या 1 होनी चाहिए (या डिफ़ॉल्ट रूप से सक्षम के लिए खाली)।',
-                    'channel-related-locale-root' => 'आप :code कोड वाले लोकेल को नहीं हटा सकते क्योंकि यह एक चैनल से जुड़ा है।',
+                    'code-not-found-to-delete' => 'कोड :code वाला चैनल हटाने के लिए नहीं मिला।',
+                    'locale-not-found'         => 'एक या अधिक भाषाएँ मौजूद नहीं हैं।',
+                    'root-category-not-found'  => 'मूल श्रेणी मौजूद नहीं है।',
+                    'currency-not-found'       => 'एक या अधिक मुद्राएँ मौजूद नहीं हैं।',
+                    'invalid-locale'           => 'यह भाषा मौजूद नहीं है।',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'भूमिकाएँ',
+            'title'      => 'Roles',
             'validation' => [
                 'errors' => [
-                    'duplicate-name'           => 'डुप्लिकेट भूमिका नाम मिला।',
-                    'name-not-found-to-delete' => 'निर्दिष्ट नाम वाली भूमिका हटाने के लिए नहीं मिली।',
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
                 ],
             ],
         ],
         'users' => [
-            'title'      => 'उपयोगकर्ता',
+            'title'      => 'Users',
             'validation' => [
                 'errors' => [
-                    'email-not-found-to-delete' => 'निर्दिष्ट ईमेल वाला उपयोगकर्ता हटाने के लिए नहीं मिला।',
-                    'invalid-role'              => 'अमान्य भूमिका नाम पाया गया।',
-                    'invalid-locale'            => 'अमान्य UI लोकल कोड पाया गया।',
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -79,18 +91,21 @@ return [
         'categories' => [
             'title' => 'श्रेणियाँ',
         ],
+        'channels' => [
+            'title' => 'चैनल',
+        ],
         'currencies' => [
-            'title' => 'मुद्राएँ',
+            'title' => 'Currencies',
         ],
         'roles' => [
-            'title' => 'भूमिकाएँ',
+            'title' => 'Roles',
         ],
         'users' => [
-            'title'   => 'उपयोगकर्ता',
+            'title'   => 'Users',
             'filters' => [
-                'status' => 'स्थिति',
-                'active' => 'सक्रिय',
-                'all'    => 'सभी',
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
             ],
         ],
     ],

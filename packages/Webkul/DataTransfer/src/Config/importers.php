@@ -17,6 +17,14 @@ return [
         'has_file_options' => true,
     ],
 
+    'channels' => [
+        'title'            => 'data_transfer::app.importers.channels.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Channel\Importer',
+        'sample_path'      => 'data-transfer/samples/channels.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\ChannelJobValidator',
+        'has_file_options' => true,
+    ],
+
     'currencies' => [
         'title'            => 'data_transfer::app.importers.currencies.title',
         'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Currency\Importer',

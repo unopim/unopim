@@ -32,37 +32,48 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Валюти',
+        'channels' => [
+            'title'      => 'Канали',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Код валюти \'%s\' вже імпортовано в цьому пакеті.',
-                    'code-not-found-to-delete'    => 'Валюту з кодом \'%s\' не знайдено в системі.',
-                    'invalid-status'              => 'Статус має бути 0 або 1 (або порожнім для увімкненого за замовчуванням).',
-                    'channel-related-locale-root' => 'Ви не можете видалити локаль із кодом :code, яка пов\'язана з каналом.',
+                    'code-not-found-to-delete' => 'Канал з кодом :code не знайдено для видалення.',
+                    'locale-not-found'         => 'Одна або кілька мов не існують.',
+                    'root-category-not-found'  => 'Коренева категорія не існує.',
+                    'currency-not-found'       => 'Одна або кілька валют не існують.',
+                    'invalid-locale'           => 'Мова не існує.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Ролі',
+            'title'      => 'Roles',
             'validation' => [
                 'errors' => [
-                    'duplicate-name'           => 'Знайдено дубльовану назву ролі.',
-                    'name-not-found-to-delete' => 'Роль із зазначеним ім’ям не знайдено для видалення.',
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
                 ],
             ],
         ],
         'users' => [
-            'title'      => 'Користувачі',
+            'title'      => 'Users',
             'validation' => [
                 'errors' => [
-                    'email-not-found-to-delete' => 'Користувача з вказаною електронною поштою не знайдено для видалення.',
-                    'invalid-role'              => 'Знайдено недійсну назву ролі.',
-                    'invalid-locale'            => 'Знайдено недійсний код локалі UI.',
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
-
     ],
     'exporters' => [
         'products' => [
@@ -80,18 +91,21 @@ return [
         'categories' => [
             'title' => 'Категорії',
         ],
+        'channels' => [
+            'title' => 'Канали',
+        ],
         'currencies' => [
-            'title' => 'Валюти',
+            'title' => 'Currencies',
         ],
         'roles' => [
-            'title' => 'Ролі',
+            'title' => 'Roles',
         ],
         'users' => [
-            'title'   => 'Користувачі',
+            'title'   => 'Users',
             'filters' => [
-                'status' => 'Статус',
-                'active' => 'Активний',
-                'all'    => 'Усі',
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
             ],
         ],
     ],

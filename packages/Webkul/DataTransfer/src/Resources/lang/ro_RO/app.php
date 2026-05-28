@@ -32,33 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Valute',
+        'channels' => [
+            'title'      => 'Canale',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Codul valutar \'%s\' a fost deja importat în acest lot.',
-                    'code-not-found-to-delete'    => 'Valuta cu codul \'%s\' nu a fost găsită în sistem.',
-                    'invalid-status'              => 'Starea trebuie să fie 0 sau 1 (sau gol pentru activat implicit).',
-                    'channel-related-locale-root' => 'Nu puteți șterge localitatea cu codul :code care este asociată unui canal.',
+                    'code-not-found-to-delete' => 'Canalul cu codul :code nu a fost găsit pentru ștergere.',
+                    'locale-not-found'         => 'Una sau mai multe limbi nu există.',
+                    'root-category-not-found'  => 'Categoria rădăcină nu există.',
+                    'currency-not-found'       => 'Una sau mai multe valute nu există.',
+                    'invalid-locale'           => 'Limba nu există.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roluri',
+            'title'      => 'Roles',
             'validation' => [
                 'errors' => [
-                    'duplicate-name'           => 'Nume de rol duplicat găsit.',
-                    'name-not-found-to-delete' => 'Rolul cu numele specificat nu a fost găsit pentru ștergere.',
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
                 ],
             ],
         ],
         'users' => [
-            'title'      => 'Utilizatori',
+            'title'      => 'Users',
             'validation' => [
                 'errors' => [
-                    'email-not-found-to-delete' => 'Utilizatorul cu emailul specificat nu a fost găsit pentru ștergere.',
-                    'invalid-role'              => 'Nume de rol invalid găsit.',
-                    'invalid-locale'            => 'Cod de localizare UI invalid găsit.',
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -79,18 +91,21 @@ return [
         'categories' => [
             'title' => 'Categorii',
         ],
+        'channels' => [
+            'title' => 'Canale',
+        ],
         'currencies' => [
-            'title' => 'Valute',
+            'title' => 'Currencies',
         ],
         'roles' => [
-            'title' => 'Roluri',
+            'title' => 'Roles',
         ],
         'users' => [
-            'title'   => 'Utilizatori',
+            'title'   => 'Users',
             'filters' => [
-                'status' => 'Stare',
-                'active' => 'Activ',
-                'all'    => 'Toți',
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
             ],
         ],
     ],

@@ -32,33 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Valutaer',
+        'channels' => [
+            'title'      => 'Kanaler',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Valutakode \'%s\' er allerede importert i denne batchen.',
-                    'code-not-found-to-delete'    => 'Valuta med kode \'%s\' ikke funnet i systemet.',
-                    'invalid-status'              => 'Status må være 0 eller 1 (eller tom for standard aktivert).',
-                    'channel-related-locale-root' => 'Du kan ikke slette lokalinnstillingen med kode :code som er tilknyttet en kanal.',
+                    'code-not-found-to-delete' => 'Kanal med kode :code ble ikke funnet for sletting.',
+                    'locale-not-found'         => 'Ett eller flere språk finnes ikke.',
+                    'root-category-not-found'  => 'Rotkategori finnes ikke.',
+                    'currency-not-found'       => 'En eller flere valutaer finnes ikke.',
+                    'invalid-locale'           => 'Språket finnes ikke.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roller',
+            'title'      => 'Roles',
             'validation' => [
                 'errors' => [
-                    'duplicate-name'           => 'Duplisert rollenavn funnet.',
-                    'name-not-found-to-delete' => 'Rolle med det angitte navnet ble ikke funnet for sletting.',
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
                 ],
             ],
         ],
         'users' => [
-            'title'      => 'Brukere',
+            'title'      => 'Users',
             'validation' => [
                 'errors' => [
-                    'email-not-found-to-delete' => 'Bruker med angitt e-post ble ikke funnet for sletting.',
-                    'invalid-role'              => 'Ugyldig rollenavn funnet.',
-                    'invalid-locale'            => 'Ugyldig UI-lokalkode funnet.',
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -79,19 +91,21 @@ return [
         'categories' => [
             'title' => 'Kategorier',
         ],
+        'channels' => [
+            'title' => 'Kanaler',
+        ],
         'currencies' => [
-            'title' => 'Valutaer',
+            'title' => 'Currencies',
         ],
         'roles' => [
-            'title' => 'Roller',
+            'title' => 'Roles',
         ],
-
         'users' => [
-            'title'   => 'Brukere',
+            'title'   => 'Users',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Aktiv',
-                'all'    => 'Alle',
+                'active' => 'Active',
+                'all'    => 'All',
             ],
         ],
     ],
