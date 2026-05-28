@@ -113,6 +113,20 @@ return [
                             'label' => 'XLSX',
                         ],
                     ],
+                ], [
+                    'name'     => 'status',
+                    'title'    => 'Status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
+                        [
+                            'label' => 'Enable',
+                            'value' => 'enable',
+                        ], [
+                            'label' => 'All',
+                            'value' => 'all',
+                        ],
+                    ],
                 ],
             ],
         ],
