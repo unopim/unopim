@@ -2,6 +2,7 @@
 
 namespace Webkul\Core\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Contracts\Currency;
 use Webkul\Core\Eloquent\Repository;
@@ -98,7 +99,7 @@ class CurrencyRepository extends Repository
     /**
      * This function returns a query builder instance for further manipulation of the currency model.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function queryBuilder()
     {

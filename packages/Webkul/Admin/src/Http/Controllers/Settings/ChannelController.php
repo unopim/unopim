@@ -3,10 +3,14 @@
 namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\ChannelDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Core\Rules\Code;
+use Webkul\Core\Rules\ConvertToArrayIfNeeded;
 
 class ChannelController extends Controller
 {
@@ -20,7 +24,7 @@ class ChannelController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {
@@ -34,7 +38,7 @@ class ChannelController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function create()
     {
@@ -44,17 +48,17 @@ class ChannelController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store()
     {
         $locales = core()->getAllActiveLocales();
 
         $rules = [
-            'code'              => ['required', 'unique:channels,code', new \Webkul\Core\Rules\Code],
+            'code'              => ['required', 'unique:channels,code', new Code],
             'root_category_id'  => 'required',
-            'locales'           => ['required', new \Webkul\Core\Rules\ConvertToArrayIfNeeded],
-            'currencies'        => ['required', new \Webkul\Core\Rules\ConvertToArrayIfNeeded],
+            'locales'           => ['required', new ConvertToArrayIfNeeded],
+            'currencies'        => ['required', new ConvertToArrayIfNeeded],
         ];
 
         foreach ($locales as $locale) {
@@ -79,7 +83,7 @@ class ChannelController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function edit(int $id)
     {
@@ -91,7 +95,7 @@ class ChannelController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(int $id)
     {
@@ -99,8 +103,8 @@ class ChannelController extends Controller
 
         $rules = [
             'root_category_id'  => 'required',
-            'locales'           => ['required', new \Webkul\Core\Rules\ConvertToArrayIfNeeded],
-            'currencies'        => ['required', new \Webkul\Core\Rules\ConvertToArrayIfNeeded],
+            'locales'           => ['required', new ConvertToArrayIfNeeded],
+            'currencies'        => ['required', new ConvertToArrayIfNeeded],
         ];
 
         foreach ($locales as $locale) {

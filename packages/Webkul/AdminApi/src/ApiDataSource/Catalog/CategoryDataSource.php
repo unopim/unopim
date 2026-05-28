@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\ApiDataSource\Catalog;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Query\Builder;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Category\Repositories\CategoryRepository;
 
@@ -27,7 +28,7 @@ class CategoryDataSource extends ApiDataSource
     /**
      * Prepares the query builder for API requests.
      *
-     * @return \Illuminate\Database\Query\Builder The query builder for the category repository.
+     * @return Builder The query builder for the category repository.
      */
     public function prepareApiQueryBuilder()
     {
@@ -105,10 +106,10 @@ class CategoryDataSource extends ApiDataSource
     /**
      * Applies the specified operator to the query builder based on the given column and value.
      *
-     * @param  \Illuminate\Database\Query\Builder  $scopeQueryBuilder  The query builder instance to apply the operator to.
+     * @param  Builder  $scopeQueryBuilder  The query builder instance to apply the operator to.
      * @param  string  $requestedColumn  The column to apply the operator to.
      * @param  array  $value  The value and operator to apply.
-     * @return \Illuminate\Database\Query\Builder The updated query builder instance.
+     * @return Builder The updated query builder instance.
      */
     public function operatorByFilter($scopeQueryBuilder, $requestedColumn, $value)
     {
@@ -140,7 +141,7 @@ class CategoryDataSource extends ApiDataSource
     /**
      * Retrieves the ID of a product based on its code.
      *
-     * @param \Illuminate\Database\Query\Builder
+     * @param Builder
      * @return int|null The ID of the product if found, otherwise null.
      */
     private function getParentIdByCode($queryBuilder, string $code)

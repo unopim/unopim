@@ -64,9 +64,9 @@ it('should create the integration with permission custom sucessfully', function 
 
     $response->assertSessionHas('success', trans('admin::app.configuration.integrations.create-success'));
 
-    $apiKey = ApiKey::where('name', 'Test Custom Integration')->where('admin_id', $userId)->where('permission_type', 'custom')->first();
+    $apiKey = Apikey::where('name', 'Test Custom Integration')->where('admin_id', $userId)->where('permission_type', 'custom')->first();
 
-    $this->assertTrue($apiKey instanceof ApiKey, 'Api Key not Found');
+    $this->assertTrue($apiKey instanceof Apikey, 'Api Key not Found');
 
     $this->assertEquals($permissions, $apiKey->permissions);
 });
@@ -74,7 +74,7 @@ it('should create the integration with permission custom sucessfully', function 
 it('should return validation error when integration already exists for a user', function () {
     $userId = $this->loginAsAdmin()->id;
 
-    $apiKey = ApiKey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
+    $apiKey = Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
 
     $this->post(route('admin.configuration.integrations.store'), [
         'name'            => 'Test Integration',
@@ -86,7 +86,7 @@ it('should return validation error when integration already exists for a user', 
 it('should return the integration edit page', function () {
     $userId = $this->loginAsAdmin()->id;
 
-    $apiKey = ApiKey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
+    $apiKey = Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
 
     $this->get(route('admin.configuration.integrations.edit', $apiKey->id))
         ->assertOk()
@@ -97,7 +97,7 @@ it('should return the integration edit page', function () {
 it('should return validation messages for name and premission_type on update integration', function () {
     $userId = $this->loginAsAdmin()->id;
 
-    $apiKey = ApiKey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
+    $apiKey = Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
 
     $this->put(route('admin.configuration.integrations.update', $apiKey->id), [
         'name'            => '',
@@ -109,7 +109,7 @@ it('should return validation messages for name and premission_type on update int
 it('should update the integration with permission type all sucessfully', function () {
     $userId = $this->loginAsAdmin()->id;
 
-    $apiKey = ApiKey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
+    $apiKey = Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
 
     $apiKeyId = $apiKey->id;
 
@@ -122,7 +122,7 @@ it('should update the integration with permission type all sucessfully', functio
     $response->assertSessionHas('success', trans('admin::app.configuration.integrations.update-success'))
         ->assertRedirect(route('admin.configuration.integrations.edit', $apiKeyId));
 
-    $this->assertDatabaseHas($this->getFullTableName(ApiKey::class), [
+    $this->assertDatabaseHas($this->getFullTableName(Apikey::class), [
         'name'            => 'Test Integration',
         'admin_id'        => $userId,
         'permission_type' => 'custom',
@@ -134,7 +134,7 @@ it('should update the integration with permission type custom sucessfully', func
 
     $permissions = ['api.catalog', 'api.catalog.products', 'api.catalog.products.create'];
 
-    $apiKey = ApiKey::factory()->create(['permission_type' => 'custom', 'permissions' => $permissions, 'admin_id' => $userId]);
+    $apiKey = Apikey::factory()->create(['permission_type' => 'custom', 'permissions' => $permissions, 'admin_id' => $userId]);
 
     $permissions[] = 'api.catalog.products.edit';
 
@@ -147,9 +147,9 @@ it('should update the integration with permission type custom sucessfully', func
 
     $response->assertSessionHas('success', trans('admin::app.configuration.integrations.update-success'));
 
-    $apiKey = ApiKey::where('name', 'Test Custom Integration')->where('admin_id', $userId)->where('permission_type', 'custom')->first();
+    $apiKey = Apikey::where('name', 'Test Custom Integration')->where('admin_id', $userId)->where('permission_type', 'custom')->first();
 
-    $this->assertTrue($apiKey instanceof ApiKey, 'Api Key not Found');
+    $this->assertTrue($apiKey instanceof Apikey, 'Api Key not Found');
 
     $this->assertEquals($permissions, $apiKey->permissions);
 });
@@ -157,7 +157,7 @@ it('should update the integration with permission type custom sucessfully', func
 it('should generate secret key and client id for a integration', function () {
     $userId = $this->loginAsAdmin()->id;
 
-    $apiKey = ApiKey::factory()->create(['name' => 'Test', 'permission_type' => 'all', 'admin_id' => $userId]);
+    $apiKey = Apikey::factory()->create(['name' => 'Test', 'permission_type' => 'all', 'admin_id' => $userId]);
 
     $response = $this->post(route('admin.configuration.integrations.generate_key'), [
         'name'     => $apiKey->name,
@@ -180,7 +180,7 @@ it('should generate secret key and client id for a integration', function () {
 it('should regenerate secret key for a integration', function () {
     $userId = $this->loginAsAdmin()->id;
 
-    $apiKey = ApiKey::factory()->create(['name' => 'Test', 'permission_type' => 'all', 'admin_id' => $userId]);
+    $apiKey = Apikey::factory()->create(['name' => 'Test', 'permission_type' => 'all', 'admin_id' => $userId]);
 
     $response = $this->post(route('admin.configuration.integrations.generate_key'), [
         'name'     => $apiKey->name,
@@ -205,13 +205,13 @@ it('should regenerate secret key for a integration', function () {
 it('should revoke the integration succesfully on delete', function () {
     $userId = $this->loginAsAdmin()->id;
 
-    $apiKey = ApiKey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
+    $apiKey = Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
 
     $this->delete(route('admin.configuration.integrations.delete', $apiKey->id))
         ->assertOk()
         ->assertJsonFragment(['message' => trans('admin::app.configuration.integrations.delete-success')]);
 
-    $this->assertDatabaseHas($this->getFullTableName(ApiKey::class), [
+    $this->assertDatabaseHas($this->getFullTableName(Apikey::class), [
         'id'      => $apiKey->id,
         'revoked' => 1,
     ]);

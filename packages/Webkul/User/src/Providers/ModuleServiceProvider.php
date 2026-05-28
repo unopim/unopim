@@ -3,11 +3,13 @@
 namespace Webkul\User\Providers;
 
 use Webkul\Core\Providers\CoreModuleServiceProvider;
+use Webkul\User\Models\Admin;
+use Webkul\User\Models\Role;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\User\Models\Admin::class,
-        \Webkul\User\Models\Role::class,
+        Admin::class,
+        Role::class,
     ];
 }

@@ -9,34 +9,50 @@ For versions of UnoPim, we support and provide patches for any security vulnerab
 | 0.2.x   | :white_check_mark: |
 | 0.3.x   | :white_check_mark: |
 | 1.0.x   | :white_check_mark: |
+The `1.0` line reached End of Life on **May 26th, 2026**. Upgrade to
+the latest supported version of UnoPim (currently `2.1.x`) for
+ongoing bug fixes and security patches.
+
+## End of Life
+
+These versions no longer receive any patches.
+
+| Version | PHP       | Laravel | Release             | End of Life          |
+| ------- | --------- | ------- | ------------------- | -------------------- |
+| 1.0     | 8.2 - 8.3 | 10.x    | November 21st, 2025 | May 26th, 2026       |
+
+> `v1.0.1` is the final release on this line. The 1.0 branch predates
+> Laravel 11's `Application::configure()` bootstrap and the per-branch
+> backport cost grew large enough that we retired the line ahead of
+> Laravel 10's own EOL window.
+
+---
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in any supported version of UnoPim, please do the following:
+Report security issues against **supported** versions privately. Do
+**not** open a public GitHub issue.
 
-1. **Do not open a public issue.** Security vulnerabilities should be reported privately to prevent malicious actors from exploiting the issue before it is fixed.
-2. **Send an email to** [support@webkul.com](mailto:support@webkul.com) **with the following information:**
-   - A detailed description of the vulnerability.
-   - Steps to reproduce the vulnerability, if possible.
-   - Any potential impacts or exploits you foresee.
-   - Any other relevant information (e.g., your operating system, UnoPim version, etc.).
+Preferred channels (either works):
 
-We will respond to your report within 72 hours with an acknowledgment of receipt. Further correspondence will be done through email.
+1. **GitHub Security Advisories** — the "Report a vulnerability"
+   button on the [Security tab](https://github.com/unopim/unopim/security)
+   of this repository.
+2. **Email** — [support@webkul.com](mailto:support@webkul.com).
 
-## Security Vulnerability Process
+Vulnerabilities specific to `1.0.x` will not be patched. Please verify
+the issue still reproduces on a supported version before reporting.
 
-Upon receiving a security vulnerability report for version 0.3.x of UnoPim, we will follow these steps:
+We acknowledge receipt within **72 hours**.
 
-1. **Acknowledgment**: We will acknowledge receipt of the vulnerability report within 72 hours.
-2. **Investigation**: We will investigate the reported vulnerability and determine its impact and severity.
-3. **Mitigation Plan**: We will develop a plan to mitigate the vulnerability, which may involve code changes, configuration adjustments, or other measures.
-4. **Patch Development**: We will develop and test a patch to fix the vulnerability.
-5. **Release**: We will release the patch as part of a new version of UnoPim. Release notes will include information about the vulnerability, credit to the reporter (if they wish to be credited), and any necessary steps for users to update.
+---
 
-## Preferred Languages
+## Preferred Language
 
-We prefer vulnerability reports to be written in English.
+Reports in **English** are easiest for our team to triage quickly.
+
+---
 
 ## Thank You
 
-We appreciate your efforts to help improve the security of UnoPim. Thank you for working with us to keep our users safe.
+Responsible disclosure keeps UnoPim and its users safe.

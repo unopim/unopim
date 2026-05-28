@@ -3,6 +3,8 @@
 namespace Webkul\Attribute\Repositories;
 
 use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -35,7 +37,7 @@ class AttributeRepository extends Repository
     /**
      * Create attribute.
      *
-     * @return \Webkul\Attribute\Contracts\Attribute
+     * @return Attribute
      */
     public function create(array $data)
     {
@@ -63,7 +65,7 @@ class AttributeRepository extends Repository
      *
      * @param  int  $id
      * @param  string  $attribute
-     * @return \Webkul\Attribute\Contracts\Attribute
+     * @return Attribute
      */
     public function update(array $data, $id, $attribute = 'id')
     {
@@ -115,7 +117,7 @@ class AttributeRepository extends Repository
      * Get product default attributes.
      *
      * @param  array  $codes
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getProductDefaultAttributes($codes = null)
     {
@@ -155,7 +157,7 @@ class AttributeRepository extends Repository
      * Get family attributes.
      *
      * @param  \Webkul\Attribute\Contracts\AttributeFamily  $attributeFamily
-     * @return \Webkul\Attribute\Contracts\Attribute
+     * @return Attribute
      */
     public function getFamilyAttributes($attributeFamily)
     {
@@ -214,7 +216,7 @@ class AttributeRepository extends Repository
      * This function returns a query builder instance for the Attribute model.
      * It eager loads the 'translations' relationship for the Attribute.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function queryBuilder()
     {

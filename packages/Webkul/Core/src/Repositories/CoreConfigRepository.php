@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Webkul\Core\Contracts\CoreConfig;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Core\Traits\CoreConfigField;
 
@@ -24,7 +25,7 @@ class CoreConfigRepository extends Repository
     /**
      * Create.
      *
-     * @return \Webkul\Core\Contracts\CoreConfig
+     * @return CoreConfig
      */
     public function create(array $data)
     {

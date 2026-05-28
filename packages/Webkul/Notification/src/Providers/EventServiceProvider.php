@@ -3,12 +3,14 @@
 namespace Webkul\Notification\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Webkul\Notification\Events\NotificationEvent;
+use Webkul\Notification\Listeners\NotificationListener;
 
 class EventServiceProvider extends ServiceProvider
 {
     protected $listen = [
-        \Webkul\Notification\Events\NotificationEvent::class => [
-            \Webkul\Notification\Listeners\NotificationListener::class,
+        NotificationEvent::class => [
+            NotificationListener::class,
         ],
 
         'data_transfer.export.completed' => [

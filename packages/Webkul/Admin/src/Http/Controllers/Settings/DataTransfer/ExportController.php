@@ -3,9 +3,11 @@
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
@@ -33,7 +35,7 @@ class ExportController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {
@@ -47,7 +49,7 @@ class ExportController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function create()
     {
@@ -59,7 +61,7 @@ class ExportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store()
     {
@@ -114,7 +116,7 @@ class ExportController extends Controller
     /**
      * Show the form for editing a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function edit(int $id)
     {
@@ -128,7 +130,7 @@ class ExportController extends Controller
     /**
      * Update a resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(int $id)
     {
@@ -196,7 +198,7 @@ class ExportController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy($id)
     {
@@ -232,7 +234,7 @@ class ExportController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function exportView(int $id)
     {

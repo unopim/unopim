@@ -151,7 +151,7 @@ class AjaxOptionsController extends Controller
     {
         return match ($entityName) {
             self::ENTITY_ATTRIBUTE_FAMILY, self::ENTITY_ATTRIBUTE_GROUP, self::ENTITY_ATTRIBUTE => 'name',
-            default => 'label'
+            default                                                                             => 'label'
         };
     }
 
