@@ -24,7 +24,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         ParallelTesting::setUpTestDatabase(function (string $database, int $token) {
-            Artisan::call('db:seed');
+            try {
+                Artisan::call('db:seed');
+            } catch (\Throwable $e) {
+                logger()->error("Parallel DB seed failed for {$database}: ".$e->getMessage());
+            }
         });
     }
 

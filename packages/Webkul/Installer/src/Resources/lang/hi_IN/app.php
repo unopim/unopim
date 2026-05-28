@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'व्यवस्थापक',
-                'unopim'           => 'यूनोपिम',
-                'confirm-password' => 'पासवर्ड की पुष्टि कीजिये',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'ईमेल',
-                'password'         => 'पासवर्ड',
-                'title'            => 'व्यवस्थापक बनाएँ',
+                'admin'                   => 'व्यवस्थापक',
+                'unopim'                  => 'यूनोपिम',
+                'confirm-password'        => 'पासवर्ड की पुष्टि कीजिये',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'ईमेल',
+                'password'                => 'पासवर्ड',
+                'title'                   => 'व्यवस्थापक बनाएँ',
+                'seed-sample-data'        => 'नमूना उत्पाद और डेमो डेटा स्थापित करें',
+                'seeding-sample-data'     => 'नमूना उत्पाद और डेमो डेटा बनाया जा रहा है, इसमें कुछ मिनट लग सकते हैं...',
+                'seed-sample-data-failed' => 'नमूना डेटा सीड नहीं हो सका। आप इसे बाद में `php artisan unopim:install:demo-data` के माध्यम से स्थापित कर सकते हैं।',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'अनुमत मुद्राएँ',

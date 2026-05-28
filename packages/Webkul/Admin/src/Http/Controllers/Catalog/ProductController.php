@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
@@ -47,7 +48,7 @@ class ProductController extends Controller
      *
      * @return View
      */
-    public function index(): View|JsonResponse
+    public function index(): View|JsonResponse|BinaryFileResponse
     {
         if (request()->ajax()) {
             return app(ProductDataGrid::class)->toJson();
@@ -165,7 +166,7 @@ class ProductController extends Controller
         foreach (($product?->parent?->super_attributes ?? []) as $attr) {
             $attrCode = $attr->code;
 
-            $configurableValues[$attrCode] = $data['values']['common'][$attrCode];
+            $configurableValues[$attrCode] = $data['values']['common'][$attrCode] ?? null;
         }
 
         if (! empty($configurableValues) && $product->parent_id) {
@@ -204,7 +205,16 @@ class ProductController extends Controller
             throw $e;
         }
 
-        $product = $this->productRepository->update($data, $id);
+        try {
+            $product = $this->productRepository->update($data, $id);
+        } catch (ValidationException $e) {
+            $errors = $e->errors();
+            $firstMessage = ! empty($errors) ? (array_values($errors)[0][0] ?? $e->getMessage()) : $e->getMessage();
+
+            session()->flash('error', $firstMessage);
+
+            return back()->withInput();
+        }
 
         Event::dispatch('catalog.product.update.after', $product);
 

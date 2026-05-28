@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Sihirli Yapay Zekâ',
         'general'               => 'Genel',
         'prompt'                => 'Prompt',
         'system-prompt'         => 'Sistem Promptu',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Sihirli Yapay Zekâ',
         'platform'       => 'Platformlar',
         'settings'       => 'Ayarlar',
         'prompt'         => 'Promptlar',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Geri',
         'unauthorized'              => 'Bu işlem yetkisizdir.',
         'error-generic'             => 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.',
+        'error-rate-limit'          => 'AI sağlayıcısının istek sınırına ulaşıldı. Lütfen biraz bekleyin ve tekrar deneyin.',
+        'error-rate-limit-retry'    => 'AI sağlayıcısının istek sınırına ulaşıldı. Lütfen :seconds saniye sonra tekrar deneyin.',
+        'error-overloaded'          => 'AI sağlayıcısı şu anda aşırı yüklü. Lütfen birkaç dakika sonra tekrar deneyin.',
+        'error-request-too-large'   => 'İsteğiniz AI sağlayıcısı için çok büyük. Lütfen mesajınızı kısaltın veya bazı ekleri kaldırın ve tekrar deneyin.',
+        'error-api-key-corrupted'   => 'Bu platformun API anahtarının şifresi çözülemedi (:error). Uygulamanın şifreleme anahtarı değişmiş olabilir. Lütfen platformu düzenleyin ve API anahtarınızı yeniden girin.',
         'invalid-file-path'         => 'Geçersiz dosya yolu.',
         'invalid-locale-code'       => 'Geçersiz dil kodu.',
         'invalid-channel-code'      => 'Geçersiz kanal kodu.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'Ekle',
         'attach-csv-xlsx'          => 'CSV veya XLSX ekle',
         'attach-image'             => 'Görüntü ekle',
+        'remove-attachment'        => 'Eki kaldır',
         'send'                     => 'Gönder',
         'sending'                  => 'Gönderiliyor…',
         'processing'               => 'İşleniyor…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'  => 'ör. "SHIRT-001 için S/M/L × Kırmızı/Mavi oluştur"',
             'edit-image'              => 'Ürün Görüntüsünü Düzenle',
             'edit-image-desc'         => 'Arka plan kaldırma, iyileştirme ve rötuş',
-            'edit-image-hint'         => 'Bir görüntü yükleyin, ardından ne değiştirileceğini söyleyin — ör. "Arka planı kaldır"',
+            'edit-image-hint'         => 'Bir ürün SKU\'su girin ve ne değiştirmek istediğinizi açıklayın — ör. "SKU-123\'ün arka planını kaldır"',
 
             'search-products'         => 'Ürün Ara',
             'search-products-desc'    => 'SKU, ad veya duruma göre ürün bul',
@@ -319,7 +325,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Yüklenen ürün görüntüsünü talimatlara göre düzenle.',
+            'edit-image-prompt'        => 'Verilen SKU\'dan ürün görüntüsünü alarak düzenleyin, istenen değişiklikleri uygulayın ve geri kaydedin.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

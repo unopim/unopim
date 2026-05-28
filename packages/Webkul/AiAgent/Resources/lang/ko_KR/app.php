@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => '매직 AI',
         'general'               => '일반',
         'prompt'                => '프롬프트',
         'system-prompt'         => '시스템 프롬프트',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => '매직 AI',
         'platform'       => '플랫폼',
         'settings'       => '설정',
         'prompt'         => '프롬프트',
@@ -35,6 +35,11 @@ return [
         'back'                      => '뒤로',
         'unauthorized'              => '이 작업은 권한이 없습니다.',
         'error-generic'             => '예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.',
+        'error-rate-limit'          => 'AI 제공자의 요청 한도에 도달했습니다. 잠시 후 다시 시도해 주세요.',
+        'error-rate-limit-retry'    => 'AI 제공자의 요청 한도에 도달했습니다. :seconds초 후에 다시 시도해 주세요.',
+        'error-overloaded'          => 'AI 제공자가 현재 과부하 상태입니다. 잠시 후 다시 시도해 주세요.',
+        'error-request-too-large'   => '요청이 AI 제공자에게 너무 큽니다. 메시지를 줄이거나 첨부 파일을 제거한 후 다시 시도해 주세요.',
+        'error-api-key-corrupted'   => '이 플랫폼의 API 키를 복호화할 수 없습니다 (:error). 애플리케이션 암호화 키가 변경되었을 수 있습니다. 플랫폼을 편집하고 API 키를 다시 입력해 주세요.',
         'invalid-file-path'         => '잘못된 파일 경로입니다.',
         'invalid-locale-code'       => '잘못된 로케일 코드입니다.',
         'invalid-channel-code'      => '잘못된 채널 코드입니다.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => '첨부',
         'attach-csv-xlsx'          => 'CSV 또는 XLSX 첨부',
         'attach-image'             => '이미지 첨부',
+        'remove-attachment'        => '첨부 파일 제거',
         'send'                     => '보내기',
         'sending'                  => '보내는 중…',
         'processing'               => '처리 중…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'  => '예: "SHIRT-001에 S/M/L × 빨강/파랑 생성"',
             'edit-image'              => '제품 이미지 편집',
             'edit-image-desc'         => '배경 제거, 보정 및 리터칭',
-            'edit-image-hint'         => '이미지를 업로드한 후 변경 사항을 말하세요 — 예: "배경 제거"',
+            'edit-image-hint'         => '제품 SKU를 입력하고 변경 사항을 설명하세요 — 예: "SKU-123의 배경 제거"',
 
             'search-products'         => '제품 검색',
             'search-products-desc'    => 'SKU, 이름 또는 상태로 제품 찾기',
@@ -319,7 +325,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => '지시에 따라 업로드된 제품 이미지를 편집합니다.',
+            'edit-image-prompt'        => '주어진 SKU에서 제품 이미지를 가져와 요청된 변경 사항을 적용하고 저장합니다.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

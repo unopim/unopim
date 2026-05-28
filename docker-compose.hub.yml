@@ -1,0 +1,224 @@
+# =============================================================================
+# UnoPim Docker Compose — Quick Start (Pre-built Images)
+# =============================================================================
+#
+# No source code needed. Just pull and run.
+#
+# Quick start:
+#   curl -O https://raw.githubusercontent.com/unopim/unopim/master/docker-compose.hub.yml
+#   curl -O https://raw.githubusercontent.com/unopim/unopim/master/.env.docker
+#   cp .env.docker .env
+#   docker compose -f docker-compose.hub.yml up -d
+#   # Wait ~90s, then open http://localhost:8000/admin
+#
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Nginx Reverse Proxy
+  # ---------------------------------------------------------------------------
+  unopim-nginx:
+    image: nginx:1.27-alpine
+    volumes:
+      - unopim-app:/var/www/html:ro
+      - ./dockerfiles/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "${APP_PORT:-8000}:80"
+    restart: unless-stopped
+    depends_on:
+      unopim-fpm:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # PHP-FPM Application Server
+  # ---------------------------------------------------------------------------
+  unopim-fpm:
+    image: webkul/unopim:${UNOPIM_TAG:-latest}
+    volumes:
+      - unopim-app:/var/www/html
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      REDIS_HOST: unopim-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: unopim-elasticsearch:9200
+      MAIL_HOST: unopim-mailpit
+      MAIL_PORT: 1025
+    depends_on:
+      unopim-mysql:
+        condition: service_healthy
+      unopim-redis:
+        condition: service_healthy
+    healthcheck:
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 3
+      test: ["CMD", "php-fpm", "-t"]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # Queue Worker
+  # ---------------------------------------------------------------------------
+  unopim-q:
+    image: webkul/unopim-queue:${UNOPIM_TAG:-latest}
+    volumes:
+      - unopim-app:/var/www/html
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      REDIS_HOST: unopim-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: unopim-elasticsearch:9200
+      QUEUE_NAMES: "webhooks,system,completeness,default"
+    depends_on:
+      unopim-mysql:
+        condition: service_healthy
+      unopim-redis:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # Scheduler
+  # ---------------------------------------------------------------------------
+  unopim-scheduler:
+    image: webkul/unopim-queue:${UNOPIM_TAG:-latest}
+    entrypoint: ["php", "artisan", "schedule:work", "--no-interaction"]
+    volumes:
+      - unopim-app:/var/www/html
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      REDIS_HOST: unopim-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: unopim-elasticsearch:9200
+    depends_on:
+      unopim-mysql:
+        condition: service_healthy
+      unopim-redis:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ---------------------------------------------------------------------------
+  # MySQL 8.0
+  # ---------------------------------------------------------------------------
+  unopim-mysql:
+    image: mysql:8.0.36-debian
+    volumes:
+      - unopim-mysql-data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:${FORWARD_DB_PORT:-3306}:3306"
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-password}
+      MYSQL_DATABASE: ${DB_DATABASE:-unopim}
+      MYSQL_USER: ${DB_USERNAME:-unopim}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --log-bin-trust-function-creators=1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # Redis 7.2
+  # ---------------------------------------------------------------------------
+  unopim-redis:
+    image: redis:7.2-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${FORWARD_REDIS_PORT:-6379}:6379"
+    volumes:
+      - unopim-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ---------------------------------------------------------------------------
+  # Elasticsearch 8.17
+  # ---------------------------------------------------------------------------
+  unopim-elasticsearch:
+    image: elasticsearch:8.17.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - unopim-elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "127.0.0.1:${FORWARD_ES_PORT:-9200}:9200"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # Mailpit (local email testing)
+  # ---------------------------------------------------------------------------
+  unopim-mailpit:
+    image: axllent/mailpit:v1.21
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${FORWARD_MAILPIT_PORT:-8025}:8025"
+      - "127.0.0.1:${FORWARD_MAILPIT_SMTP_PORT:-1025}:1025"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+volumes:
+  unopim-app:
+  unopim-mysql-data:
+  unopim-redis-data:
+  unopim-elasticsearch-data:

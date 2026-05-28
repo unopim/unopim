@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Models\Locale;
@@ -391,14 +392,16 @@ it('should create attribute option with color swatch_value for select type', fun
     $locale = Locale::where('status', 1)->first();
     $color = fake()->hexColor();
     $label = fake()->word();
+    $optionCode = 'opt_'.Str::random(10);
     $data = [
         'code'        => $attribute->code,
         'type'        => $attribute->type,
         'swatch_type' => 'color',
         'options'     => [
-            fake()->word() => [
+            'option_1' => [
                 'isNew'         => true,
                 'isDelete'      => false,
+                'code'          => $optionCode,
                 'swatch_value'  => $color,
                 $locale->code   => ['label' => $label],
             ],
@@ -481,6 +484,7 @@ it('should create attribute option with image swatch_value for select type', fun
 
     $imageUrl = fake()->imageUrl(100, 100);
     $label = fake()->word();
+    $optionCode = 'opt_'.Str::random(10);
 
     $data = [
         'code'        => $attribute->code,
@@ -490,6 +494,7 @@ it('should create attribute option with image swatch_value for select type', fun
             'option_1' => [
                 'isNew'        => true,
                 'isDelete'     => false,
+                'code'         => $optionCode,
                 'swatch_value' => $imageUrl,
                 $locale->code  => ['label' => $label],
             ],
@@ -543,4 +548,28 @@ it('should not allow swatch_value for non-select attributes', function () {
         'attribute_id' => $attribute->id,
         'swatch_value' => $color,
     ]);
+});
+
+it('should render add-option modal with a unified layout for image swatch attributes', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create([
+        'type'        => 'multiselect',
+        'swatch_type' => 'image',
+    ]);
+
+    $response = get(route('admin.catalog.attributes.edit', $attribute->id));
+
+    $response->assertOk();
+
+    $content = $response->getContent();
+
+    // The modal content should NOT have two separate disconnected grid containers
+    // (a bare `<div class="grid">` for swatch followed by `<div class="grid grid-cols-3`)
+    // They must be merged into a single unified wrapper so the layout is coherent.
+    $this->assertStringNotContainsString(
+        '</div>'.PHP_EOL.PHP_EOL.'                            <div class="grid grid-cols-3',
+        $content,
+        'The add-option modal must not split swatch input and form fields into two disconnected grid divs'
+    );
 });

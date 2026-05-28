@@ -677,7 +677,7 @@
 
                         <!-- Modal Content !-->
                         <x-slot:content>
-                            <div class="grid">
+                            <div class="grid gap-4">
                                 <!-- Image Input -->
                                 <x-admin::form.control-group
                                     class="w-full"
@@ -705,7 +705,7 @@
 
                                 <!-- Color Input -->
                                 <x-admin::form.control-group
-                                    class="w-2/6"
+                                    class="w-full max-w-[160px]"
                                     v-if="selectedSwatchType == 'color'"
                                 >
                                     <x-admin::form.control-group.label>
@@ -721,10 +721,7 @@
                                     <x-admin::form.control-group.error control-name="swatch_value[]" />
                                 </x-admin::form.control-group>
 
-                                 
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-4">
+                                <div class="grid grid-cols-3 gap-4">
                                 <!-- Hidden Id Input -->
                                 <x-admin::form.control-group.control
                                     type="hidden"
@@ -773,6 +770,7 @@
                                         <x-admin::form.control-group.error control-name="locales.{{ $locale->code }}" />
                                     </x-admin::form.control-group>
                                 @endforeach
+                                </div>
                             </div>
                         </x-slot>
 

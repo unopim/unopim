@@ -6,7 +6,7 @@ it('should not display the channel list if does not have permission', function (
     $this->loginWithPermissions('custom', ['dashboard']);
 
     $this->get(route('admin.settings.channels.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the channel list if have permission', function () {
@@ -21,7 +21,7 @@ it('should not display the create channel form if does not have permission', fun
     $this->loginWithPermissions('custom', ['dashboard']);
 
     $this->get(route('admin.settings.channels.create'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the create channel form if have permission', function () {
@@ -37,7 +37,7 @@ it('should not display the channel edit if does not have permission', function (
     $channel = Channel::first();
 
     $this->get(route('admin.settings.channels.edit', ['id' => $channel->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the channel edit if have permission', function () {
@@ -56,7 +56,7 @@ it('should not be able to delete channel if does not have permission', function 
     $channel = Channel::first();
 
     $this->delete(route('admin.settings.channels.delete', ['id' => $channel->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(Channel::class), ['id' => $channel->id]);
 });

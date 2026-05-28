@@ -1,4 +1,104 @@
-# v2.0.x
+# v2.1.x
+
+## v2.1.0 - 2026-05-13
+
+### Features
+- Added **ManageAssociations AI Agent Tool** — manage product associations (related, cross-sell, up-sell) via natural language in the AI Agent Chat, with clickable product links in search results for internal navigation.
+- Added **Demo Data Seeding** — `php artisan unopim:install --with-demo-data` CLI flag, installer wizard toggle, Docker setup option, and standalone `php artisan unopim:install:demo-data` command to seed sample products during/after installation ([#392](https://github.com/unopim/unopim/pull/392)).
+- Added **Production-Ready Docker Setup** — multi-container stack (Nginx + PHP-FPM default, Apache fallback) with Docker Hub images, healthchecks, Redis, Elasticsearch, Mailpit services, OPcache-tuned `php.ini`, and auto-publish workflow ([#334](https://github.com/unopim/unopim/pull/334)).
+- Added **`clean_content()` XSS sanitization helper** — uses HTMLPurifier to strip Blade directives, PHP tags, and dangerous HTML from user-generated content.
+- Added **IP-based debug filtering** — `APP_DEBUG_ALLOWED_IPS` environment variable restricts debugbar access to specific IP addresses in production.
+- Added **MagicAI Custom Provider** — OpenAI-compatible custom provider option in MagicAI platform configuration, with hardened `LaravelAiAdapter` and `MagicAIPlatform` model for custom base URLs ([#344](https://github.com/unopim/unopim/pull/344), [#356](https://github.com/unopim/unopim/pull/356)).
+- Added **MagicAI ModelRecommender** — Test Connection now uses a dedicated recommender that skips image-only models, preventing false negatives during platform credential validation ([#344](https://github.com/unopim/unopim/pull/344)).
+- Added **PrismErrorResolver** — translates provider/Prism errors into user-friendly messages in the AI Agent Chat ([#344](https://github.com/unopim/unopim/pull/344)).
+- Added **Clickable Dashboard Product Stats** — product-stats cards on the dashboard now act as filter chips, deep-linking into the product grid ([#344](https://github.com/unopim/unopim/pull/344)).
+- Added **Async Product Webhook Dispatch** — new `SendProductWebhook` queued job triggers webhooks on product creation/update without blocking the request ([#381](https://github.com/unopim/unopim/pull/381), [#387](https://github.com/unopim/unopim/pull/387)).
+- Added **PIM-specific test assertions** — `CoreAssertions` trait with `assertProductExists()`, `assertCategoryExists()`, `assertAttributeExists()`, `assertChannelExists()`, `assertLocaleExists()`, and `assertSuccessJsonResponse()` helpers for Pest tests.
+
+### Improvements
+- Replaced **deprecated `Request::get()`** with `->input()` across remaining controllers (the underlying `symfony/http-foundation` 7.x dependency deprecates `Request::get()` — Laravel inherits the deprecation).
+- Added **return type hints** and adopted **HTTP status constants** (`JsonResponse::HTTP_OK`, etc.) in additional controllers across Admin and AdminApi packages in place of magic numbers.
+- Removed **auto-discovered providers** from `bootstrap/providers.php` — third-party packages (DomPDF, Translatable, Concord, Excel) are auto-discovered by Laravel and no longer need explicit registration.
+- Standardized **exception handling** — use `wantsJson()` instead of `ajax()` for API detection, added `report($e)` to silent catch blocks.
+- Extracted **ImportProducts** into a queued `ImportProductsJob`, enabling reliable imports of 10k+ products via the AI Agent ([#372](https://github.com/unopim/unopim/pull/372)).
+- Refactored **dynamic attribute field rendering** on the product edit page to remove dummy extra spaces between fields ([#271](https://github.com/unopim/unopim/pull/271)).
+- Improved **`nl_NL` translation quality** across Admin, AiAgent, Completeness, Core, DataTransfer, Installer, Product, and Webhook packages — informal tone, removed stray `kenmerk` prefix, zero-width-space cleanup (thanks to [@TheMazeIsAmazing](https://github.com/TheMazeIsAmazing), [#382](https://github.com/unopim/unopim/pull/382)).
+- Rewrote **Playwright E2E tests** for full independence — every test creates its own data, acts, asserts, and cleans up. Shared helpers (`navigateTo()`, `searchInDataGrid()`, `clickSaveAndExpect()`) reduce duplication. Tests support parallel execution with unique identifiers.
+- Added **PostgreSQL CI workflow** — separate Pest test workflow against PostgreSQL 16 with and without Elasticsearch.
+
+### Bug Fixes
+- Fixed **format validation** applied to empty optional attributes and category fields — validation is now skipped when the value is empty ([#319](https://github.com/unopim/unopim/issues/319)).
+- Fixed **dark mode visibility** in job tracker progress bars and AI platform configuration button styling ([#320](https://github.com/unopim/unopim/issues/320)).
+- Fixed **double table prefix** in migration — hardcoded `wk_` prefix on table names caused `wk_wk_channels` when `DB_PREFIX` was set. Migrations now use unprefixed names with `Schema::hasTable` guards.
+- Fixed **`AdminFactory` FK violations** in parallel test databases — replaced hardcoded `role_id` and `ui_locale_id` with dynamic database lookups.
+- Fixed **undefined `$channel` variable** in `CheckForMaintenanceMode` — now reads from `env()` config instead of undefined variable.
+- Fixed **missing null check** on `sanitizeData()` return value in `ProductController` — method can return `null` when product data has no attributes to sanitize.
+- Fixed **clipboard copy** fallback for non-HTTPS environments in AI Agent Chat.
+- Fixed **DB table prefix** issue in `ExportProducts` values column query.
+- Fixed **migration rollback** for `add_tone_to_magic_ai_prompts_table` — added the missing `down()` column drop ([#394](https://github.com/unopim/unopim/pull/394)).
+- Fixed **product indexing in Docker import jobs** — `Importer` now casts boolean status before bulk Elasticsearch indexing inside the Docker queue worker ([#393](https://github.com/unopim/unopim/pull/393)).
+- Fixed **column-label fallback mismatch** between the Manage Columns popup and the product grid on pgsql/Docker — unified via a shared `TranslatableModel` helper and `AttributeColumnTrait` ([#390](https://github.com/unopim/unopim/pull/390)).
+- Fixed **empty Docker `APP_KEY`** — fpm/queue/scheduler entrypoints now export the generated `APP_KEY` so Apache/FPM inherit it on first start ([#391](https://github.com/unopim/unopim/pull/391)).
+- Fixed **`BulkProductCompletenessJob`** querying the wrong table (`roles` → `admin_roles`) ([#389](https://github.com/unopim/unopim/pull/389)).
+- Fixed **webhook trigger on product creation** — `SendProductWebhook` job and `Product` listener wired up; `webhook_logs.user_id` made nullable via new migration ([#387](https://github.com/unopim/unopim/pull/387)).
+- Fixed **`DB_PREFIX` validation** — installer command and `InstallerController` now trim, reject internal whitespace, and clear stale prefix values ([#386](https://github.com/unopim/unopim/pull/386), [#335](https://github.com/unopim/unopim/pull/335)).
+- Fixed **MagicAI HTML translation paragraph loss** — translate-to-locale endpoints now preserve every `<p>` paragraph by iterating all matches instead of `end()` (thanks to [@bentierny](https://github.com/bentierny), [#378](https://github.com/unopim/unopim/pull/378)).
+- Fixed **admin login denied after install with seeded data** — installer writes a proper `APP_KEY` and `AdminsTableSeeder` sets a default timezone for the admin user ([#385](https://github.com/unopim/unopim/pull/385)).
+- Fixed **MySQL bulk-mode session vars** crashing PostgreSQL — `unique_checks` and `foreign_key_checks` are now gated by driver in the product Importer ([#368](https://github.com/unopim/unopim/pull/368)).
+- Fixed **installer re-run after switching `DB_CONNECTION`** — `database.default` is updated and the previous connection purged at runtime so the new driver is targeted ([#367](https://github.com/unopim/unopim/pull/367)).
+- Fixed **PostgreSQL incompatibilities** in AiAgent tools (`BulkEdit`, `SearchProducts`, `ListCategories`, etc.) and Channel/AttributeOption DataGrids — added `PostgresGrammar::jsonContains()`; also fixed profile-image placeholder and TinyMCE copy-paste ([#376](https://github.com/unopim/unopim/pull/376)).
+- Fixed **multiple critical issues** — MagicAI ACL for content/image generation, PDF uploads >2 MB via `.user.ini`, translated-locale attribute label consistency, file-upload guards ([#372](https://github.com/unopim/unopim/pull/372)).
+- Fixed **PostgreSQL DataGrid filter** (`SkuOrUniversalFilter`), product-edit status toggle save, and empty-label fallback in Vue selectors ([#374](https://github.com/unopim/unopim/pull/374)).
+- Fixed **Docker product/category DataGrid 503s** (relaxed ES heap and indexer config) and **AiAgent locale/channel-aware content generation** in `EnrichmentService`/`AutoEnrichProductJob` ([#375](https://github.com/unopim/unopim/pull/375)).
+- Fixed **MagicAI custom provider** path, AI Agent chat hardening, media UI, and installer seed ([#356](https://github.com/unopim/unopim/pull/356)).
+- Fixed multi-issue batch ([#355](https://github.com/unopim/unopim/pull/355)): prevent self/descendant categories as parent, attribute history tab columns, root category rejection on products, sticky product-edit header, ACL gating in MagicAI grids, 403 (not 401) for authenticated permission denials, AI platform default validation, datetime/numeric bulk-edit validation, configurable products REST `DELETE` endpoint.
+- Fixed webhook product comparer, `ProductBulkEditTest`/`ApiProductTest` regressions, and `BulkProductUpdate` job failures ([#348](https://github.com/unopim/unopim/pull/348)).
+- Fixed empty-file import validation, broken profile-logo fallback, HTMLPurifier cache path (moved to `storage/`), webhook-logs ACL/tab gating, AI Agent `EditImage` SKU lookup, XLSX export for `ExportProducts` tool, and bulk-import SKU sanitisation ([#353](https://github.com/unopim/unopim/pull/353)).
+- Fixed webhook variants, attribute family update with empty groups, `ChatRateFeedback` endpoints, Bouncer 403 message, attribute history translation, Excel rich-text importer ([#347](https://github.com/unopim/unopim/pull/347)).
+- Fixed AiAgent chat-widget translations across 33 locales, `SearchProducts`/`ManageUsers` tools, and dashboard product-stats blade ([#346](https://github.com/unopim/unopim/pull/346)).
+- Fixed **drag-and-drop file upload** on Category/Product imports — dropped files now populate the native `<input type="file">` via the DataTransfer API so they survive multipart form submit ([#349](https://github.com/unopim/unopim/pull/349)).
+- Fixed DataGrid/Dashboard/MagicAI/Notification issues ([#342](https://github.com/unopim/unopim/pull/342)): case-insensitive SKU search, Select-All checkbox sync, redundant `v` version prefix removed, broken MagicAI DataGrid edit modal (`index` → `edit`), PostgreSQL status integer cast in stats, plus 33-locale translation updates.
+- Fixed **Elasticsearch 8 boolean status** — `ElasticProductCursor`, `ProductIndexer`, and Product observer now cast status to boolean (ES8 rejects integer 1/0) ([#337](https://github.com/unopim/unopim/pull/337)).
+- Fixed **Docker Elasticsearch readiness** — added wait, relaxed disk-watermark thresholds, auto-sync `APP_URL` with `APP_PORT`, and DB-wipe recovery in entrypoints ([#339](https://github.com/unopim/unopim/pull/339)).
+- Fixed **Docker web-entrypoint.sh** permissions/script handling ([#236](https://github.com/unopim/unopim/pull/236)).
+- Fixed **import file deletion** — `ImportController` now checks file existence before deleting paths, preventing job profile deletion errors ([#276](https://github.com/unopim/unopim/pull/276)).
+
+### Security Fixes
+- Patched **5 audit-report vulnerabilities** ([#332](https://github.com/unopim/unopim/pull/332)):
+  - **Open Redirect via Referer Header** (Medium) — Login and forgot-password pages accepted spoofed `Referer` headers containing 'admin' in external URLs (e.g., `https://attacker.com/admin`), allowing phishing redirects. Added host validation using `parse_url()` to ensure the intended redirect URL belongs to the same application host.
+  - **No Rate Limiting on Admin Login** (Medium) — Added named rate limiters (`admin-login`, `admin-forgot-password`) in `AdminServiceProvider` using `RateLimiter::for()` with per-email+IP segmentation (5 attempts/minute).
+  - **No Server-Side Password Validation** (Medium) — `UserForm` accepted passwords with no minimum length. Added `min:6` validation rule to align with `AccountController` and `ResetPasswordController`.
+  - **User Enumeration via Forgot Password** (Medium) — Forgot-password endpoint returned different responses for existing vs non-existing emails. Changed to return a single generic message regardless of email existence.
+  - **Privilege Escalation via User Edit Endpoint** (High) — `admin.settings.users.update` and `admin.settings.users.destroy` routes were missing from the ACL config (Bouncer skipped auth — replayable via Burp Suite). Also, no guard prevented non-superadmins from assigning `permission_type: all` roles. Added missing ACL entries and controller-level privilege escalation guards in both `store()` and `prepareUserData()`.
+- Added **NoCacheMiddleware** — prevents browsers and proxies from caching admin pages (`Cache-Control: no-store`, `Pragma: no-cache`).
+- Enhanced **SecureHeaders** middleware with `Permissions-Policy` and `X-Permitted-Cross-Domain-Policies` headers.
+- Added **`maintenance_allowed_ips`** and **`debug_allowed_ips`** configuration in `config/app.php` for environment-level access control.
+
+### Performance
+- Added **database indexes** on `channels.code`, `locales.status`, `currencies.status`, and a composite index on `core_config(code, channel_code, locale_code)` for faster config lookups and queries.
+
+### Tests
+- Added **Pest security tests** in `packages/Webkul/User/tests/Feature/SecurityTest.php` (13 tests) covering all 5 audit vulnerabilities including the Burp replay privilege escalation scenario.
+- Added **4 Playwright E2E security tests** in `tests/e2e-pw/tests/08-security/security.spec.js` for login redirect, rate limiting, password validation, and forgot-password enumeration.
+- Updated `UserAclTest` to use a custom role instead of all-access `role_id=1` for user creation ACL test (aligned with new privilege escalation guard).
+- Added webhook variant, attribute-family empty-groups, Bouncer 403, chat rate feedback, attribute history tooltip, and Excel rich-text test coverage; `ManageUsers` email masking ([#352](https://github.com/unopim/unopim/pull/352)).
+- Added `ProductIndexBatchBooleanStatusTest` covering ES8 boolean status casting in bulk indexing ([#393](https://github.com/unopim/unopim/pull/393)).
+- Stabilised flaky Playwright AI Assistance modal test (7.3) and fixed duplicate option code collisions in `AttributeTest` via `Str::random` ([#338](https://github.com/unopim/unopim/pull/338)).
+- Added missing `code` field to swatch attribute option tests in `AttributeTest` (thanks to [@prismaticoder](https://github.com/prismaticoder), [#252](https://github.com/unopim/unopim/pull/252)).
+- Refactored Playwright `magicAI-acl.spec.js` to inline full ACL coverage and tuned CI timeout settings ([#383](https://github.com/unopim/unopim/pull/383)).
+
+### Dependency Updates
+- Bumped `phpseclib/phpseclib` from `3.0.50` to `3.0.52` ([#345](https://github.com/unopim/unopim/pull/345), [#384](https://github.com/unopim/unopim/pull/384)).
+- Bumped `phpoffice/phpspreadsheet` from `1.30.2` to `1.30.4` ([#364](https://github.com/unopim/unopim/pull/364)).
+
+### Contributors
+
+Thanks to the following community contributors for this release:
+- [@bentierny](https://github.com/bentierny) — MagicAI HTML translation paragraph preservation ([#378](https://github.com/unopim/unopim/pull/378))
+- [@TheMazeIsAmazing](https://github.com/TheMazeIsAmazing) — `nl_NL` translation quality improvements ([#382](https://github.com/unopim/unopim/pull/382))
+- [@prismaticoder](https://github.com/prismaticoder) — swatch attribute option test fixes ([#252](https://github.com/unopim/unopim/pull/252))
+
+---
 
 ## v2.0.0
 

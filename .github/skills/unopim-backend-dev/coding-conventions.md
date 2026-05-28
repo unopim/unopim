@@ -122,6 +122,54 @@ class Product extends Model implements ProductContract
 
 ---
 
+## Admin UI — Component-First Rule
+
+**ALWAYS use `x-admin::` Blade components before writing raw HTML.** This applies to ALL UI elements, not just form controls.
+
+### Available Components
+
+Check `packages/Webkul/Admin/src/Resources/views/components/` for the full list:
+
+| Component | Usage |
+|---|---|
+| `x-admin::form.control-group` | Form fields (inputs, selects, textareas) |
+| `x-admin::tabs` / `x-admin::tabs.item` | Tabbed interfaces |
+| `x-admin::modal` | Modal dialogs |
+| `x-admin::accordion` | Collapsible sections |
+| `x-admin::drawer` | Side drawers |
+| `x-admin::dropdown` | Dropdown menus |
+| `x-admin::table` | Data tables |
+| `x-admin::flat-picker` | Date pickers |
+| `x-admin::media.images` | Image upload |
+| `x-admin::tinymce` | Rich text editor |
+| `x-admin::tree` | Tree structures |
+| `x-admin::shimmer.*` | Loading skeletons |
+
+### Rules
+
+1. **Never generate raw `<select>`, `<input>`, `<textarea>`, `<table>`, `<div class="tabs">` etc.** when an `x-admin::` component exists
+2. **Check for components first**: Before writing any UI markup, verify if a component covers it
+3. **Reuse component styling**: When a component can't be used directly (see limitation below), replicate its exact CSS classes and patterns — do not invent new styles
+4. **If no component fits, ASK before writing raw HTML**: When the UI requires a pattern that no existing `x-admin::` component covers, ask the user whether to (a) create a new reusable `x-admin::` component, (b) extend an existing component, or (c) proceed with raw markup. Prefer creating a new component for patterns that will be reused across pages
+
+### Technical Limitation
+
+`x-admin::` Blade components that register Vue components (like `x-admin::tabs` → `v-tabs`) **CANNOT be nested inside another Vue component's `<script type="text/x-template">`**. Blade renders the Blade component into the template string, but the child Vue components won't mount properly.
+
+**Workaround**: In Vue templates, use the same CSS classes and `v-for` pattern as the component, driven by Vue `data`. The `x-admin::tabs` component uses these classes:
+
+```html
+<!-- Tab bar container -->
+<div class="flex gap-4 pt-2 border-b dark:border-gray-800">
+    <!-- Active tab -->
+    <div class="pb-3.5 px-2.5 text-base font-medium cursor-pointer border-b-2 border-violet-700 text-violet-700">
+    <!-- Inactive tab -->
+    <div class="pb-3.5 px-2.5 text-base font-medium cursor-pointer border-b-2 border-transparent text-gray-600 dark:text-gray-300 hover:text-violet-700">
+</div>
+```
+
+---
+
 ## Error Handling
 
 - Use Laravel exceptions (`abort()`, `ValidationException`)
@@ -140,3 +188,31 @@ class Product extends Model implements ProductContract
 - Use middleware for authentication and authorization
 - ACL checks via `bouncer()->hasPermission()` for admin actions
 - CSRF protection on all POST/PUT/DELETE routes
+
+---
+
+## Translations — No Hardcoded UI Strings (MANDATORY)
+
+UnoPim ships in 33 locales. **Every** user-facing string must be a translation key — labels, placeholders, dropdown options, toast messages, validation copy, button text, error messages, ARIA labels, even the `-- Select … --` style placeholders inside `<option>` tags.
+
+### Rule
+
+- Blade: `@lang('package::file.key')` or `{{ trans('package::file.key') }}`
+- PHP: `trans('package::file.key')` or `__('package::file.key')`
+- Vue templates: server-render the string via `@lang(...)` in the surrounding Blade and bind it through a prop or data field — never hardcode English in the `<template>` tag.
+
+### When You Add or Change a Key
+
+1. **Add to `en_US/app.php` first** — this is the source locale.
+2. **Propagate to ALL 32 other locales** in the same `Resources/lang/{locale}/app.php` location with **natural translations** (not English copies). Locale list: `ar_AE ca_ES da_DK de_DE en_AU en_GB en_NZ es_ES es_VE fi_FI fr_FR hi_IN hr_HR id_ID it_IT ja_JP ko_KR mn_MN nl_NL no_NO pl_PL pt_BR pt_PT ro_RO ru_RU sv_SE tl_PH tr_TR uk_UA vi_VN zh_CN zh_TW`. The three other English locales (`en_AU`, `en_GB`, `en_NZ`) keep the English wording.
+3. **Preserve placeholders** — `:attribute`, `:count`, `:name`, etc. stay literal in every locale.
+4. **Verify** — run `php artisan unopim:translations:check`. Must report `100%` for every locale before the change is done.
+
+### Common Misses to Avoid
+
+- Dropdown placeholder options like `<option value="">-- Select X --</option>` — these are user-facing.
+- Strings inside `console.error`, alert(), or thrown JS errors that surface to the user.
+- Tooltip / `title=""` attributes on form controls.
+- "Loading…", "No results", and similar status text.
+
+If you copy markup from another Blade file, audit it for hardcoded strings before saving — old views may pre-date this rule.

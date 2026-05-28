@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => '貨幣',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '貨幣代碼「%s」已在此批次中匯入。',
+                    'code-not-found-to-delete'    => '系統中找不到代碼為「%s」的貨幣。',
+                    'invalid-status'              => '狀態必須為 0 或 1（或留空以預設啟用）。',
+                    'channel-related-locale-root' => '無法刪除與頻道關聯的代碼為 :code 的地區設定。',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -49,6 +60,9 @@ return [
         'categories' => [
             'title' => '分類',
         ],
+        'currencies' => [
+            'title' => '貨幣',
+        ],
     ],
     'validation' => [
         'errors' => [
@@ -59,6 +73,7 @@ return [
             'invalid-attribute'    => '標題包含無效屬性: "%s".',
             'system'               => '發生了一個意外的系統錯誤。',
             'wrong-quotes'         => '使用了弓形引號而不是直引號。',
+            'file-empty'           => '檔案為空或不包含標題列。請上傳包含資料的有效檔案。',
         ],
     ],
     'job' => [

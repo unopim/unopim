@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\MagicAI;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -93,8 +94,31 @@ class MagicAIController extends Controller
      */
     public function platforms(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
+        $purpose = request()->input('purpose');
+        $platforms = $this->platformRepository->getActivePlatformOptions();
+
+        if ($purpose === 'image_generation') {
+            $platforms = array_values(array_filter(
+                array_map(function ($platform) {
+                    $filtered = AIModel::filterImageModels($platform['models'] ?? [], $platform['id']);
+
+                    if (empty($filtered)) {
+                        return null;
+                    }
+
+                    $platform['models'] = $filtered;
+
+                    return $platform;
+                }, $platforms)
+            ));
+        }
+
         return new JsonResponse([
-            'platforms' => $this->platformRepository->getActivePlatformOptions(),
+            'platforms' => $platforms,
         ]);
     }
 
@@ -103,7 +127,11 @@ class MagicAIController extends Controller
      */
     public function suggestionValues(): JsonResponse
     {
-        $query = request()->input('query');
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
+        $query = (string) request()->input('query', '');
         $entityName = request()->input('entity_name', 'attribute');
 
         if ($entityName === 'category_field') {
@@ -127,6 +155,10 @@ class MagicAIController extends Controller
      */
     public function content(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $this->validate(request(), [
             'model'  => 'required',
             'prompt' => 'required',
@@ -235,6 +267,10 @@ class MagicAIController extends Controller
 
     public function defaultPrompt(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $type = request()->input('entity_type', 'product');
         $purpose = request()->input('purpose', 'text_generation');
 
@@ -337,6 +373,10 @@ class MagicAIController extends Controller
 
     public function isTranslatable(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $productId = request()->resource_id;
         $product = $this->productRepository->find($productId);
         $productData = $product->toArray();
@@ -352,6 +392,10 @@ class MagicAIController extends Controller
 
     public function translateToManyLocale(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $field = request()->input('field');
         $targetLocales = explode(',', request()->input('targetLocale'));
         $translatedData = [];
@@ -359,7 +403,7 @@ class MagicAIController extends Controller
         $magicAi = $this->resolveTranslationPlatform();
 
         foreach ($targetLocales as $locale) {
-            $p = "Translate @$field into $locale. Return only the translated value wrapped in a single <p> tag. Do not include any additional text, descriptions, or explanations.";
+            $p = "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text.";
             $prompt = $this->promptService->getPrompt(
                 $p,
                 request()->input('resource_id'),
@@ -370,9 +414,9 @@ class MagicAIController extends Controller
                 ->setModel(request()->input('model'))
                 ->setPrompt($prompt)
                 ->ask();
-            preg_match_all('/<p>(.*?)<\/p>/', $response, $matches);
+            preg_match_all('/<p\b[^>]*>.*?<\/p>/s', $response, $matches);
 
-            $value = end($matches[1]);
+            $value = empty($matches[0]) ? trim($response) : implode('', $matches[0]);
             $translatedData[] = [
                 'locale'  => $locale,
                 'content' => $value,
@@ -386,6 +430,10 @@ class MagicAIController extends Controller
 
     public function saveTranslatedData(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $id = request()->resource_id;
         $translatedData = json_decode(request()->translatedData, true);
         $channel = request()->input('targetChannel');
@@ -396,8 +444,12 @@ class MagicAIController extends Controller
         return response()->json(['message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed')]);
     }
 
-    public function isAllAttributeTranslatable(): array
+    public function isAllAttributeTranslatable(): array|JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $productId = request()->resource_id;
         $product = $this->productRepository->find($productId);
         $productData = $product->toArray();
@@ -427,6 +479,10 @@ class MagicAIController extends Controller
 
     public function translateAllAttribute(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $attributes = $this->isAllAttributeTranslatable();
 
         if (empty($attributes)) {
@@ -448,7 +504,7 @@ class MagicAIController extends Controller
             foreach ($attributes as $key => $attribute) {
                 $field = $attribute['fieldName'];
 
-                $p = "Translate @$field into $locale. Return only the translated value wrapped in a single <p> tag. Do not include any additional text, descriptions, or explanations.";
+                $p = "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text.";
 
                 $prompt = $this->promptService->getPrompt(
                     $p,
@@ -461,8 +517,8 @@ class MagicAIController extends Controller
                     ->setPrompt($prompt)
                     ->ask();
 
-                preg_match_all('/<p>(.*?)<\/p>/', $response, $matches);
-                $value = end($matches[1]);
+                preg_match_all('/<p\b[^>]*>.*?<\/p>/s', $response, $matches);
+                $value = empty($matches[0]) ? trim($response) : implode('', $matches[0]);
 
                 $translatedDataForLocale[$field] = [
                     'field'   => $field,
@@ -478,6 +534,10 @@ class MagicAIController extends Controller
 
     public function saveAllTranslatedAttributes(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
+        }
+
         $productId = request()->resource_id;
         $translatedValues = json_decode(request()->translatedData, true);
         $channel = request()->input('targetChannel');
@@ -495,14 +555,13 @@ class MagicAIController extends Controller
         $platformId = request()->input('platform_id');
 
         if ($platformId && $platformId !== '0') {
-            return MagicAI::setPlatformId((int) $platformId);
+            return $this->setPlatformOrDefault((int) $platformId);
         }
 
-        // Check if a specific platform is configured for text generation
         $configPlatformId = core()->getConfigData('general.magic_ai.settings.ai_platform');
 
         if ($configPlatformId && $configPlatformId !== '0') {
-            return MagicAI::setPlatformId((int) $configPlatformId);
+            return $this->setPlatformOrDefault((int) $configPlatformId);
         }
 
         return MagicAI::useDefault();
@@ -513,20 +572,32 @@ class MagicAIController extends Controller
      */
     protected function resolveTranslationPlatform(): \Webkul\MagicAI\MagicAI
     {
-        // Check if user overrode platform from product edit page
         $requestPlatformId = request()->input('platform_id');
 
         if ($requestPlatformId && $requestPlatformId !== '0') {
-            return MagicAI::setPlatformId((int) $requestPlatformId);
+            return $this->setPlatformOrDefault((int) $requestPlatformId);
         }
 
-        // Otherwise use translation config setting
         $translationPlatformId = core()->getConfigData('general.magic_ai.translation.ai_platform');
 
         if ($translationPlatformId && $translationPlatformId !== '0') {
-            return MagicAI::setPlatformId((int) $translationPlatformId);
+            return $this->setPlatformOrDefault((int) $translationPlatformId);
         }
 
         return MagicAI::useDefault();
+    }
+
+    /**
+     * Try to set the requested platform; if it has been deleted (orphan
+     * config or stale request id) fall back to the default platform so
+     * the user is never blocked by a dangling reference.
+     */
+    protected function setPlatformOrDefault(int $platformId): \Webkul\MagicAI\MagicAI
+    {
+        try {
+            return MagicAI::setPlatformId($platformId);
+        } catch (ModelNotFoundException $e) {
+            return MagicAI::useDefault();
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\DataGrid\DataGrid;
 
 class AttributeOptionDataGrid extends DataGrid
@@ -63,8 +64,13 @@ class AttributeOptionDataGrid extends DataGrid
             $queryBuilder->addSelect($alias . '.label as name_' . $locale);
         }
 
+        $grammar = GrammarQueryManager::getGrammar();
+
         $this->addFilter('id', 'attribute_options.id');
         $this->addFilter('code', 'attribute_options.code');
+
+        $concatExpr = $grammar->concat("{$tablePrefix}attribute_options.code", "' '", 'label');
+        $this->addFilter('code', DB::raw("(SELECT {$grammar->groupConcat($concatExpr, separator: ' ')} FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
 
         return $queryBuilder;
     }

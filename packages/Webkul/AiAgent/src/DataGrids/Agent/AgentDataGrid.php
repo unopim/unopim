@@ -78,6 +78,7 @@ class AgentDataGrid extends DataGrid
     {
         $this->addAction([
             'icon'   => 'icon-edit',
+            'index'  => 'edit',
             'title'  => trans('ai-agent::app.agents.datagrid.edit'),
             'method' => 'GET',
             'url'    => function ($row) {

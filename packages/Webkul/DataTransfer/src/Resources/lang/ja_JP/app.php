@@ -32,8 +32,18 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => '通貨',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '通貨コード「%s」はこのバッチですでにインポートされています。',
+                    'code-not-found-to-delete'    => 'コード「%s」の通貨がシステムに見つかりません。',
+                    'invalid-status'              => 'ステータスは0または1である必要があります（デフォルトで有効の場合は空でも可）。',
+                    'channel-related-locale-root' => 'チャネルに関連付けられているコード :code のロケールは削除できません。',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
         'products' => [
             'title'      => '製品',
@@ -50,8 +60,10 @@ return [
         'categories' => [
             'title' => 'カテゴリー',
         ],
+        'currencies' => [
+            'title' => '通貨',
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => '列番号「%s」のヘッダーが空です。',
@@ -61,9 +73,9 @@ return [
             'invalid-attribute'    => 'ヘッダーに無効な属性が含まれています: 「%s」。',
             'system'               => '予期しないシステムエラーが発生しました。',
             'wrong-quotes'         => 'ストレート引用符の代わりに波型引用符が使用されています。',
+            'file-empty'           => 'ファイルが空であるか、ヘッダー行が含まれていません。データを含む有効なファイルをアップロードしてください。',
         ],
     ],
-
     'job' => [
         'started'   => 'ジョブの実行が開始されました',
         'completed' => 'ジョブの実行が完了しました',

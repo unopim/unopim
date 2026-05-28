@@ -48,13 +48,12 @@ class TrackerController extends Controller
     public function view($batchId = null): View
     {
         if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
-            abort(401, 'This action is unauthorized');
+            abort(403, 'This action is unauthorized');
         }
 
         $import = $this->jobTrackRepository->findOrFail($batchId);
         $jobInstance = json_decode($import->meta, true);
         $summary = $this->normalizeSummary($import->summary);
-        $import['data'] = json_decode($import->data, true);
 
         $batchState = $this->mapJobStateToBatchState($import->state);
 
@@ -81,8 +80,8 @@ class TrackerController extends Controller
     private function mapJobStateToBatchState(string $jobState): string
     {
         return match ($jobState) {
-            'processing', 'processed' => 'processed',
-            'linking', 'linked'       => 'linked',
+            'processing', 'processed'  => 'processed',
+            'linking', 'linked'        => 'linked',
             'indexing', 'indexed'      => 'indexed',
             'completed'                => 'processed',
             default                    => $jobState,
@@ -95,12 +94,11 @@ class TrackerController extends Controller
      * @param  array|null  $summary  The summary data to be normalized.
      * @return array The normalized summary data.
      */
-    private function normalizeSummary($summery)
+    private function normalizeSummary($summary)
     {
         $summaryData = [];
 
-        // Loop through the summary data, translating keys and handling null values
-        foreach (($summery ?? []) as $key => $value) {
+        foreach (($summary ?? []) as $key => $value) {
             $summaryData[trans(sprintf('admin::app.settings.data-transfer.tracker.summary.%s', $key))] = $value ?? 0;
         }
 

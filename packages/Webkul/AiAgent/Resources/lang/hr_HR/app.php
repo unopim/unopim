@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Čarobna AI',
         'general'               => 'Općenito',
         'prompt'                => 'Upit',
         'system-prompt'         => 'Sistemski upit',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Čarobna AI',
         'platform'       => 'Platforme',
         'settings'       => 'Postavke',
         'prompt'         => 'Upiti',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Natrag',
         'unauthorized'              => 'Ova radnja nije autorizirana.',
         'error-generic'             => 'Došlo je do neočekivane pogreške. Molimo pokušajte ponovo.',
+        'error-rate-limit'          => 'Dosegnuto je ograničenje zahtjeva AI pružatelja usluge. Pričekajte trenutak i pokušajte ponovno.',
+        'error-rate-limit-retry'    => 'Dosegnuto je ograničenje zahtjeva AI pružatelja usluge. Pokušajte ponovno za :seconds sekundi.',
+        'error-overloaded'          => 'AI pružatelj usluge trenutno je preopterećen. Pokušajte ponovno za nekoliko trenutaka.',
+        'error-request-too-large'   => 'Vaš je zahtjev prevelik za AI pružatelja usluge. Skratite poruku ili uklonite neke privitke i pokušajte ponovno.',
+        'error-api-key-corrupted'   => 'API ključ za ovu platformu nije mogao biti dekriptiran (:error). Ključ za šifriranje aplikacije je možda promijenjen. Uredite platformu i ponovo unesite svoj API ključ.',
         'invalid-file-path'         => 'Nevažeća putanja datoteke.',
         'invalid-locale-code'       => 'Nevažeći kod jezika.',
         'invalid-channel-code'      => 'Nevažeći kod kanala.',
@@ -208,6 +213,7 @@ return [
         'attach'                   => 'Priloži',
         'attach-csv-xlsx'          => 'Priloži CSV ili XLSX',
         'attach-image'             => 'Priloži sliku',
+        'remove-attachment'        => 'Ukloni privitak',
         'send'                     => 'Pošalji',
         'sending'                  => 'Slanje…',
         'processing'               => 'Obrada…',
@@ -241,7 +247,7 @@ return [
             'generate-variants-hint'   => 'npr. "Generiraj S/M/L × Crvena/Plava za SHIRT-001"',
             'edit-image'               => 'Uredi sliku proizvoda',
             'edit-image-desc'          => 'Uklanjanje pozadine, poboljšanje i retuširanje',
-            'edit-image-hint'          => 'Učitajte sliku, zatim recite što želite promijeniti — npr. "Ukloni pozadinu"',
+            'edit-image-hint'          => 'Navedite SKU proizvoda i opišite što želite promijeniti — npr. "Ukloni pozadinu s SKU-123"',
             'search-products'          => 'Pretraži proizvode',
             'search-products-desc'     => 'Pronađite proizvode prema SKU, nazivu ili statusu',
             'search-products-hint'     => 'npr. "Pronađi sve aktivne proizvode" ili "Traži prijenosno računalo"',
@@ -297,7 +303,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Uredi učitanu sliku proizvoda prema uputama.',
+            'edit-image-prompt'        => 'Uredite sliku proizvoda dohvaćanjem iz navedenog SKU-a, primijenite tražene promjene i spremite je natrag.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

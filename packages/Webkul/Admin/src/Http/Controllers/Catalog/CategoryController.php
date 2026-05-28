@@ -147,6 +147,18 @@ class CategoryController extends Controller
             return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
         }
 
+        if (! empty($categoryRequest->input('parent_id'))) {
+            $parentId = (int) $categoryRequest->input('parent_id');
+            $category = $this->categoryRepository->find($id);
+            $parentCategory = $this->categoryRepository->find($parentId);
+
+            if ($parentId === $id || ($category && $parentCategory && $parentCategory->isDescendantOf($category))) {
+                session()->flash('error', trans('admin::app.catalog.categories.invalid-parent'));
+
+                return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+            }
+        }
+
         try {
             $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']), $id);
         } catch (ValidationException $e) {

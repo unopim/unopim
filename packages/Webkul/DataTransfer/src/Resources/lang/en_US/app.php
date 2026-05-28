@@ -34,6 +34,18 @@ return [
                 ],
             ],
         ],
+
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' has already been imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete locale with code :code that is associated with a channel.',
+                ],
+            ],
+        ],
     ],
 
     'exporters' => [
@@ -54,6 +66,9 @@ return [
         'categories' => [
             'title' => 'Categories',
         ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
     ],
 
     'validation' => [
@@ -65,6 +80,7 @@ return [
             'invalid-attribute'    => 'Header contains invalid attribute(s): "%s".',
             'system'               => 'An unexpected system error occurred.',
             'wrong-quotes'         => 'Curly quotes used instead of straight quotes.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
 

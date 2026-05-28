@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Il codice valuta \'%s\' è già stato importato in questo lotto.',
+                    'code-not-found-to-delete'    => 'Valuta con codice \'%s\' non trovata nel sistema.',
+                    'invalid-status'              => 'Lo stato deve essere 0 o 1 (o vuoto per abilitato di default).',
+                    'channel-related-locale-root' => 'Non puoi eliminare la locale con codice :code che è associata a un canale.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -49,6 +60,9 @@ return [
         'categories' => [
             'title' => 'Categorie',
         ],
+        'currencies' => [
+            'title' => 'Valute',
+        ],
     ],
     'validation' => [
         'errors' => [
@@ -59,6 +73,7 @@ return [
             'invalid-attribute'    => 'L\'intestazione contiene attributi non validi: "%s".',
             'system'               => 'Si è verificato un errore di sistema imprevisto.',
             'wrong-quotes'         => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
+            'file-empty'           => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
         ],
     ],
     'job' => [

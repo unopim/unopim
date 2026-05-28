@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Ylläpitäjä',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Vahvista salasana',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'Sähköposti',
-                'password'         => 'Salasana',
-                'title'            => 'Luo Ylläpitäjä',
+                'admin'                   => 'Ylläpitäjä',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Vahvista salasana',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'Sähköposti',
+                'password'                => 'Salasana',
+                'title'                   => 'Luo Ylläpitäjä',
+                'seed-sample-data'        => 'Asenna esimerkkituotteet ja demodata',
+                'seeding-sample-data'     => 'Esimerkkituotteita ja demodataa luodaan, tämä voi kestää muutaman minuutin...',
+                'seed-sample-data-failed' => 'Demodataa ei voitu luoda. Voit asentaa sen myöhemmin komennolla `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Sallitut valuutat',

@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Адміністратор',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Підтвердити пароль',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'Електронна пошта',
-                'password'         => 'Пароль',
-                'title'            => 'Створити адміністратора',
+                'admin'                   => 'Адміністратор',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Підтвердити пароль',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'Електронна пошта',
+                'password'                => 'Пароль',
+                'title'                   => 'Створити адміністратора',
+                'seed-sample-data'        => 'Встановити демонстраційні товари та дані',
+                'seeding-sample-data'     => 'Створення демонстраційних товарів і даних, це може зайняти кілька хвилин...',
+                'seed-sample-data-failed' => 'Не вдалося створити демонстраційні дані. Ви можете встановити їх пізніше за допомогою `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Дозволені валюти',

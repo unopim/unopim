@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\DataTransfer\Helpers\AbstractJob;
@@ -90,12 +91,16 @@ class BulkProductUpdate implements ShouldQueue
             ?? $this->createDemoJobInstance();
 
         $this->jobTrackInstance = $this->jobTrackRepository->create([
-            'state'            => AbstractJob::STATE_PENDING,
-            'meta'             => $jobInstance->toJson(),
-            'job_instances_id' => $jobInstance->id,
-            'user_id'          => $this->userId,
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'state'               => AbstractJob::STATE_PENDING,
+            'type'                => $jobInstance->type,
+            'action'              => $jobInstance->action,
+            'validation_strategy' => $jobInstance->validation_strategy,
+            'allowed_errors'      => $jobInstance->allowed_errors,
+            'field_separator'     => $jobInstance->field_separator,
+            'file_path'           => $jobInstance->file_path,
+            'meta'                => $jobInstance->toJson(),
+            'job_instances_id'    => $jobInstance->id,
+            'user_id'             => $this->userId,
         ]);
 
         $this->jobLogger = JobLogger::make($this->jobTrackInstance->id);
@@ -206,11 +211,22 @@ class BulkProductUpdate implements ShouldQueue
 
             $product->values = $values;
             $product->save();
+
+            Event::dispatch('catalog.product.update.after', $product);
+
             $processed++;
 
             if ($processed % 10 === 0) {
                 $this->updateProgress($processed);
             }
+        }
+
+        // Dispatch a single bulk-edit event so listeners (e.g. webhook) can
+        // handle all processed products in one shot without per-product overhead.
+        // Payload is wrapped in a named key so call_user_func_array passes the
+        // full ID array as the first argument, not spread as individual ints.
+        if (! empty($productIds)) {
+            Event::dispatch('catalog.product.bulk.edit.after', ['ids' => $productIds]);
         }
 
         $this->updateProgress($processed);

@@ -110,11 +110,6 @@ class CreateProductDraftStep implements PipelineStageContract
     /**
      * Persist the draft to the database.
      *
-     * Uses the Unopim product draft repository when available in the
-     * container, otherwise persists via the generic wk_ai_agent_executions
-     * extras column as a lightweight fallback. Integration with a real
-     * ProductDraftRepository should override this method.
-     *
      * @param  array<string, mixed>  $draft
      */
     protected function persist(array $draft): int|string
@@ -128,8 +123,6 @@ class CreateProductDraftStep implements PipelineStageContract
             return $model->id;
         }
 
-        // Fallback: persist inside wk_ai_agent_executions.extras
-        // (recorded by LogExecutionStage) — return a deterministic pseudo-ID
         return 'draft_'.md5($draft['sku'].($draft['aiMeta']['createdAt'] ?? ''));
     }
 

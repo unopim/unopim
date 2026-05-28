@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Mahiwagang AI',
         'general'               => 'Pangkalahatan',
         'prompt'                => 'Prompt',
         'system-prompt'         => 'System Prompt',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Mahiwagang AI',
         'platform'       => 'Mga Plataporma',
         'settings'       => 'Mga Setting',
         'prompt'         => 'Mga Prompt',
@@ -35,6 +35,11 @@ return [
         'back'                      => 'Bumalik',
         'unauthorized'              => 'Ang aksyong ito ay hindi awtorisado.',
         'error-generic'             => 'May hindi inaasahang error na naganap. Pakisubukang muli.',
+        'error-rate-limit'          => 'Naabot na ang limit ng mga kahilingan ng AI provider. Mangyaring maghintay sandali at subukang muli.',
+        'error-rate-limit-retry'    => 'Naabot na ang limit ng mga kahilingan ng AI provider. Subukang muli pagkatapos ng :seconds segundo.',
+        'error-overloaded'          => 'Ang AI provider ay kasalukuyang sobra sa karga. Subukang muli pagkatapos ng ilang sandali.',
+        'error-request-too-large'   => 'Ang iyong kahilingan ay masyadong malaki para sa AI provider. Paikliin ang iyong mensahe o alisin ang ilang kalakip at subukang muli.',
+        'error-api-key-corrupted'   => 'Hindi ma-decrypt ang API key para sa platform na ito (:error). Maaaring nagbago ang encryption key ng application. Pakiedit ang platform at muling ilagay ang iyong API key.',
         'invalid-file-path'         => 'Hindi wastong path ng file.',
         'invalid-locale-code'       => 'Hindi wastong code ng wika.',
         'invalid-channel-code'      => 'Hindi wastong code ng channel.',
@@ -213,6 +218,7 @@ return [
         'attach'                   => 'Ikabit',
         'attach-csv-xlsx'          => 'Ikabit ang CSV o XLSX',
         'attach-image'             => 'Ikabit ang larawan',
+        'remove-attachment'        => 'Alisin ang kalakip',
         'send'                     => 'Ipadala',
         'sending'                  => 'Ipinapadala…',
         'processing'               => 'Pinoproseso…',
@@ -246,7 +252,7 @@ return [
             'generate-variants-hint'  => 'hal. "Bumuo ng S/M/L × Pula/Asul para sa SHIRT-001"',
             'edit-image'              => 'I-edit ang Larawan ng Produkto',
             'edit-image-desc'         => 'Pag-alis ng background, pagpapaganda at retoke',
-            'edit-image-hint'         => 'Mag-upload ng larawan, pagkatapos sabihin kung ano ang babaguhin — hal. "Alisin ang background"',
+            'edit-image-hint'         => 'Magbigay ng product SKU at ilarawan ang gustong baguhin — hal. "Alisin ang background mula sa SKU-123"',
 
             'search-products'         => 'Maghanap ng mga Produkto',
             'search-products-desc'    => 'Maghanap ng mga produkto ayon sa SKU, pangalan, o status',
@@ -319,7 +325,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'I-edit ang na-upload na larawan ng produkto ayon sa mga instruksyon.',
+            'edit-image-prompt'        => 'I-edit ang larawan ng produkto sa pamamagitan ng pagkuha nito mula sa ibinigay na SKU, ilapat ang mga hiniling na pagbabago, at i-save ito pabalik.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

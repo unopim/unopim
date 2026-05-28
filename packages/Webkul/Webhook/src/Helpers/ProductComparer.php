@@ -19,13 +19,27 @@ class ProductComparer
 
     public static function compare(mixed $oldValues, mixed $newValues): array
     {
-        $diff = ! empty($oldValues['values']) || ! empty($newValues['values']) ? static::compareValues($oldValues['values'] ?? [], $newValues['values'] ?? []) : [];
+        $diff = ! empty($oldValues['values']) || ! empty($newValues['values'])
+            ? static::compareValues($oldValues['values'] ?? [], $newValues['values'] ?? [])
+            : ['added' => [], 'removed' => [], 'changed' => []];
 
-        if (! empty($oldValues['status'])) {
-            $diff['changed']['status'] = [
-                'old' => $oldValues['status'],
-                'new' => $newValues['status'] ?? null,
-            ];
+        // Status must be detected with array_key_exists, not empty():
+        // `empty(0)` is true, so a genuine enable (0 → 1) or disable
+        // (1 → 0) would otherwise be silently dropped and the webhook
+        // listener would see "no changes" on mass-status actions.
+        $hasOldStatus = is_array($oldValues) && array_key_exists('status', $oldValues);
+        $hasNewStatus = is_array($newValues) && array_key_exists('status', $newValues);
+
+        if ($hasOldStatus || $hasNewStatus) {
+            $old = $hasOldStatus ? $oldValues['status'] : null;
+            $new = $hasNewStatus ? $newValues['status'] : null;
+
+            if ($old !== $new) {
+                $diff['changed']['status'] = [
+                    'old' => $old,
+                    'new' => $new,
+                ];
+            }
         }
 
         return $diff;

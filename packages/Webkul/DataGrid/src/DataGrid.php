@@ -152,6 +152,7 @@ abstract class DataGrid
             filterable: $column['filterable'],
             sortable: $column['sortable'],
             closure: $column['closure'] ?? null,
+            visible: $column['visible'] ?? true,
         );
     }
 
@@ -167,6 +168,7 @@ abstract class DataGrid
             method: $action['method'],
             url: $action['url'],
             frontendView: $action['frontend_view'] ?? '',
+            condition: $action['condition'] ?? null,
         );
     }
 
@@ -424,6 +426,10 @@ abstract class DataGrid
             $record->actions = [];
 
             foreach ($this->actions as $index => $action) {
+                if (is_callable($action->condition) && ! ($action->condition)($record)) {
+                    continue;
+                }
+
                 $getUrl = $action->url;
 
                 $record->actions[] = [

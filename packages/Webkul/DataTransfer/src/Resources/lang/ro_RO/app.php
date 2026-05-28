@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Codul valutar \'%s\' a fost deja importat în acest lot.',
+                    'code-not-found-to-delete'    => 'Valuta cu codul \'%s\' nu a fost găsită în sistem.',
+                    'invalid-status'              => 'Starea trebuie să fie 0 sau 1 (sau gol pentru activat implicit).',
+                    'channel-related-locale-root' => 'Nu puteți șterge localitatea cu codul :code care este asociată unui canal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -49,6 +60,9 @@ return [
         'categories' => [
             'title' => 'Categorii',
         ],
+        'currencies' => [
+            'title' => 'Valute',
+        ],
     ],
     'validation' => [
         'errors' => [
@@ -59,6 +73,7 @@ return [
             'invalid-attribute'    => 'Antetul conține atribute invalide: "%s".',
             'system'               => 'A apărut o eroare sistemică neașteptată.',
             'wrong-quotes'         => 'A fost utilizată virgulă în loc de virgulă directă.',
+            'file-empty'           => 'Fișierul este gol sau nu conține un rând de antet. Vă rugăm să încărcați un fișier valid cu date.',
         ],
     ],
     'job' => [

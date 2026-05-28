@@ -26,15 +26,14 @@ class NotificationRepository extends Repository
 
         $query = $user->notifications()
             ->with('notification');
-        if (isset($params['read']) && isset($params['limit'])) {
-            $query->where('read', $params['read'])->limit($params['limit']);
-        } elseif (isset($params['limit'])) {
-            $query->limit($params['limit']);
+
+        if (isset($params['read'])) {
+            $query->where('read', $params['read']);
         }
 
         $notifications = $query->latest()->paginate($params['limit'] ?? 10);
 
-        $totalUnread = $query->where('read', '0')->count();
+        $totalUnread = $user->notifications()->where('read', 0)->count();
 
         return ['notifications' => $notifications, 'total_unread' => $totalUnread];
     }
@@ -51,9 +50,9 @@ class NotificationRepository extends Repository
         $query = $user->notifications()
             ->with('notification');
 
-        $notifications = $query->latest()->paginate($params['limit'] ?? 10);
+        $notifications = $query->latest()->paginate(10);
 
-        $totalUnread = $query->count();
+        $totalUnread = $user->notifications()->where('read', 0)->count();
 
         return ['notifications' => $notifications, 'total_unread' => $totalUnread];
     }

@@ -1,5 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Webkul\Product\Models\Product;
+
 it('should return the magic ai configuration page', function () {
     $this->loginAsAdmin();
 
@@ -385,4 +389,35 @@ it('should save agentic pim with suggest only approval mode', function () {
     foreach ($records as $record) {
         $this->assertDatabaseHas('core_config', $record);
     }
+});
+
+it('should show AI image generation option when image generation is enabled but text generation is disabled', function () {
+    $this->loginAsAdmin();
+
+    // Disable text generation
+    DB::table('core_config')->updateOrInsert(
+        ['code' => 'general.magic_ai.settings.enabled'],
+        ['value' => '0']
+    );
+
+    // Enable image generation
+    DB::table('core_config')->updateOrInsert(
+        ['code' => 'general.magic_ai.image_generation.enabled'],
+        ['value' => '1']
+    );
+
+    // Clear config cache so getConfigData reads fresh values
+    app('config')->set('core_config', null);
+    Artisan::call('config:clear');
+
+    $product = Product::factory()->create();
+
+    $response = $this->get(route('admin.catalog.products.edit', $product->id));
+
+    $response->assertOk();
+
+    // The image component should evaluate to enabled (truthy)
+    // Before fix: Boolean("") = false because settings.enabled was checked
+    // After fix: Boolean("1") = true because only image_generation.enabled is checked
+    $response->assertDontSee('enabled: Boolean("")', false);
 });

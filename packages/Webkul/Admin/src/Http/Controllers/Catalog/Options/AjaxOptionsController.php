@@ -58,12 +58,16 @@ class AjaxOptionsController extends Controller
      */
     public function getOptions(): JsonResponse
     {
-        $attributeId = request()->input('attributeId');
-        $entityName = request()->input('entityName');
+        $attributeId = request()->input('attributeId') ?? request()->input('attribute_id');
+        $entityName = request()->input('entityName') ?? request()->input('entity_name');
         $page = request()->input('page');
-        $query = request()->input('query') ?? '';
+        $query = request()->input('query') ?? request()->input('search') ?? '';
 
-        $queryParams = request()->except(['page', 'query', 'entityName', 'attributeId']);
+        $queryParams = request()->except(['page', 'query', 'search', 'entityName', 'entity_name', 'attributeId', 'attribute_id']);
+
+        if (! $entityName) {
+            return new JsonResponse(['options' => [], 'page' => 1, 'lastPage' => 1]);
+        }
 
         $options = $this->getOptionsByParams($attributeId, $entityName, $page, $query, $queryParams);
 
@@ -151,18 +155,20 @@ class AjaxOptionsController extends Controller
     {
         return match ($entityName) {
             self::ENTITY_ATTRIBUTE_FAMILY, self::ENTITY_ATTRIBUTE_GROUP, self::ENTITY_ATTRIBUTE => 'name',
-            default => 'label'
+            default                                                                             => 'label'
         };
     }
 
     /**
-     * Get translated label for the entity
+     * Get translated label for the entity, falling back to any available locale when
+     * the requested locale translation is missing.
      */
     protected function getTranslatedLabel(string $currentLocaleCode, TranslatableModel $option, string $entityName): ?string
     {
-        $translation = $option->translate($currentLocaleCode);
-
-        return $translation?->{$this->getTranslationColumnName($entityName)};
+        return $option->getTranslatedValueWithFallback(
+            $this->getTranslationColumnName($entityName),
+            $currentLocaleCode
+        );
     }
 
     /**

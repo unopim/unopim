@@ -65,8 +65,9 @@ class SkuFilter extends AbstractPropertyFilter
                     $clauses[] = [
                         'wildcard' => [
                             $property => [
-                                'value'   => '*'.$escapedValue.'*',
-                                'rewrite' => 'top_terms_1024',
+                                'value'            => '*'.strtolower($escapedValue).'*',
+                                'case_insensitive' => true,
+                                'rewrite'          => 'top_terms_1024',
                             ],
                         ],
                     ];

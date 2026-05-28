@@ -6,7 +6,7 @@ it('should not display the category list if does not have permission', function 
     $this->loginWithPermissions();
 
     $this->get(route('admin.catalog.categories.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the category list if have permission', function () {
@@ -21,7 +21,7 @@ it('should not display create form for creating the category if does not have pe
     $this->loginWithPermissions(permissions: ['catalog', 'catalog.categories']);
 
     $this->get(route('admin.catalog.categories.create'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display create form for category if have permission', function () {
@@ -37,7 +37,7 @@ it('should not display edit form for category if does not have permission', func
     $category = Category::factory()->create();
 
     $this->get(route('admin.catalog.categories.edit', ['id' => $category->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display edit form for category if have permission', function () {
@@ -54,7 +54,7 @@ it('should not be able to delete category if does not have permission', function
     $category = Category::factory()->create();
 
     $this->delete(route('admin.catalog.categories.delete', ['id' => $category->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(Category::class), ['id' => $category->id]);
 });
@@ -77,7 +77,7 @@ it('should not be able to mass delete categories if does not have permission', f
     $ids = $categories->pluck('id')->toArray();
 
     $this->post(route('admin.catalog.categories.mass_delete'), ['indices' => $ids])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     foreach ($ids as $id) {
         $this->assertDatabaseHas($this->getFullTableName(Category::class), ['id' => $id]);

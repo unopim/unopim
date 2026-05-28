@@ -3,6 +3,7 @@
 namespace Webkul\Webhook\Listeners;
 
 use Webkul\Webhook\Jobs\SendBulkProductWebhook;
+use Webkul\Webhook\Jobs\SendProductWebhook;
 use Webkul\Webhook\Repositories\LogsRepository;
 use Webkul\Webhook\Repositories\SettingsRepository;
 use Webkul\Webhook\Services\WebhookService;
@@ -28,16 +29,31 @@ class Product
      */
     public function afterUpdate($product)
     {
-        if ($this->settingsRepository->isWebhookActive() && $productChanges = $this->webhookService->getProductChangesForWebhook($product)) {
-            $this->webhookService->sendDataToWebhook($product, $productChanges);
+        if (! $this->settingsRepository->isWebhookActive()) {
+            return;
         }
+
+        $changes = $this->webhookService->getProductChangesForWebhook($product);
+
+        if (! $changes) {
+            return;
+        }
+
+        SendProductWebhook::dispatch($product->id, $changes, 'updated', auth('admin')?->user()?->id)->onQueue('webhooks');
     }
 
     public function afterCreate($product)
     {
-        if ($this->settingsRepository->isWebhookActive() && $productChanges = $this->webhookService->getProductChangesForWebhook($product)) {
-            $this->webhookService->sendCreatedToWebhook($product, $productChanges);
+        if (! $this->settingsRepository->isWebhookActive()) {
+            return;
         }
+
+        $changes = $this->webhookService->getProductChangesForWebhook($product);
+        if (! $changes) {
+            return;
+        }
+
+        SendProductWebhook::dispatch($product->id, $changes, 'created', auth('admin')?->user()?->id)->onQueue('webhooks');
     }
 
     public function afterBulkUpdate(array $ids)
@@ -47,5 +63,20 @@ class Product
         }
 
         SendBulkProductWebhook::dispatch($ids, auth('admin')?->user()?->id);
+    }
+
+    /**
+     * Fire webhook for all products processed by a bulk-edit save.
+     * Unlike afterUpdate, no change-detection audit is required.
+     *
+     * @param  array<int>  $ids
+     */
+    public function afterBulkEdit(array $ids)
+    {
+        if (! $this->settingsRepository->isWebhookActive()) {
+            return;
+        }
+
+        $this->webhookService->sendBatchForBulkEdit($ids);
     }
 }
