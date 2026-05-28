@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'Webhook-URL:n on alettava http:// tai https://.',
                         'connection_failed' => 'Webhook-URL-osoitteeseen ei saatu yhteyttä. Tarkista URL-osoite.',
                         'unreachable'       => 'Webhook-URL ei kelpaa (HTTP :code).',
+                        'unsafe'            => 'Webhook-URL osoittaa yksityiseen, loopback- tai sisäiseen osoitteeseen, eikä sitä sallita.',
                     ],
                     'success'    => 'Webhook-asetukset tallennettu onnistuneesti',
                     'logs-title' => 'Lokit',
