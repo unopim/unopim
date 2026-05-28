@@ -192,7 +192,7 @@ class LogsDataGrid extends DataGrid
     public function processRequestedFilters(array $requestedFilters)
     {
         if (isset($requestedFilters['status'])) {
-            $statusValues = $requestedFilters['status'];
+            $statusValues = (array) $requestedFilters['status'];
             unset($requestedFilters['status']);
 
             $this->queryBuilder->where(function ($outer) use ($statusValues) {
