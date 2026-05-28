@@ -121,9 +121,7 @@ class WebhookSettingsController
         } catch (\Throwable $e) {
             return [
                 'success' => false,
-                'message' => trans('webhook::app.configuration.webhook.settings.index.webhook_url.connection_failed', [
-                    'error' => $e->getMessage(),
-                ]),
+                'message' => trans('webhook::app.configuration.webhook.settings.index.webhook_url.connection_failed'),
             ];
         }
 
