@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Prism\Prism\Facades\Prism;
+use Laravel\Ai\AnonymousAgent;
 use Webkul\Admin\DataGrids\MagicAI\MagicAIPlatformDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\AiAgent\Chat\PrismErrorResolver;
+use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Support\ModelRecommender;
@@ -231,34 +231,38 @@ class MagicAIPlatformController extends Controller
                 ], JsonResponse::HTTP_BAD_REQUEST);
             }
 
-            $response = Prism::text()
-                ->using($provider->toPrismProvider(), $model, [
-                    'api_key' => $this->resolveApiKey(),
-                ])
-                ->withMaxTokens(20)
-                ->withClientOptions(['timeout' => 15])
-                ->withPrompt('Say OK')
-                ->asText();
+            $agent = new AnonymousAgent(
+                instructions: 'You are a connectivity test bot. Reply with the single word OK.',
+                messages: [],
+                tools: [],
+            );
+
+            $response = $agent->prompt(
+                'Say OK',
+                provider: $provider->toLab(),
+                model: $model,
+                timeout: 15,
+            );
 
             return new JsonResponse([
                 'success' => true,
                 'message' => trans('admin::app.configuration.platform.message.test-success'),
             ]);
         } catch (\Throwable $e) {
-            $resolved = PrismErrorResolver::resolve($e);
+            $resolved = AiErrorResolver::resolve($e);
 
             // Always use the resolver's message: known errors get the localized
             // user-friendly text (rate limit / overloaded / too large), and
-            // unknown errors now go through sanitizeRawMessage which extracts
-            // the underlying upstream HTTP response body when Prism's own
+            // unknown errors go through sanitizeRawMessage which extracts the
+            // underlying upstream HTTP response body when the gateway's own
             // message is just an "Unknown error" placeholder.
             $detail = $resolved['message'];
 
-            // Custom platforms route through Prism's Groq class for the
-            // /chat/completions endpoint. The Groq class hardcodes "Groq Error"
-            // in the exception text, which is misleading when the actual HTTP
-            // call went to (e.g.) Cerebras. Rewrite the prefix so the message
-            // accurately reflects the user's selected provider.
+            // Custom platforms route through laravel/ai's OpenAI-compatible
+            // gateway for the /chat/completions endpoint. Some gateway error
+            // messages hardcode the wrapped provider's name (e.g. "Groq Error"
+            // when the actual HTTP call went to Cerebras). Rewrite the prefix
+            // so the message accurately reflects the user's selected provider.
             if (request()->input('provider') === AiProvider::Custom->value) {
                 $detail = preg_replace('/^Groq Error\b/', 'Custom Provider Error', $detail);
             }
@@ -358,11 +362,8 @@ class MagicAIPlatformController extends Controller
     }
 
     /**
-     * Configure the Laravel AI SDK provider from request data.
-     *
-     * Writes to both the laravel/ai (`ai.providers.*`) and Prism
-     * (`prism.providers.*`) config namespaces so Test Connection honours
-     * a custom `api_url` regardless of which SDK ends up making the call.
+     * Configure the laravel/ai provider from request data so Test Connection
+     * honours custom api_url / api_key / extras for the chosen platform.
      */
     protected function configureProviderFromRequest(AiProvider $provider): void
     {
@@ -370,14 +371,12 @@ class MagicAIPlatformController extends Controller
         $apiKey = $this->resolveApiKey();
 
         config([
-            "ai.providers.{$configKey}.key"        => $apiKey,
-            "prism.providers.{$configKey}.api_key" => $apiKey,
+            "ai.providers.{$configKey}.key" => $apiKey,
         ]);
 
         if (request()->input('api_url')) {
             config([
-                "ai.providers.{$configKey}.url"    => request()->input('api_url'),
-                "prism.providers.{$configKey}.url" => request()->input('api_url'),
+                "ai.providers.{$configKey}.url" => request()->input('api_url'),
             ]);
         }
 
@@ -387,8 +386,7 @@ class MagicAIPlatformController extends Controller
             if (is_array($decoded)) {
                 foreach ($decoded as $key => $value) {
                     config([
-                        "ai.providers.{$configKey}.{$key}"    => $value,
-                        "prism.providers.{$configKey}.{$key}" => $value,
+                        "ai.providers.{$configKey}.{$key}" => $value,
                     ]);
                 }
             }

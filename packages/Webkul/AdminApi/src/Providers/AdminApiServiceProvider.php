@@ -110,7 +110,6 @@ class AdminApiServiceProvider extends ServiceProvider
         Passport::loadKeysFrom(__DIR__.'/../Secrets/Oauth');
 
         Passport::$passwordGrantEnabled = true;
-        Passport::setClientUuids(true);
         Passport::useClientModel(Client::class);
 
         // Register a custom UserRepository that uses the Admin model instead of App\Models\User

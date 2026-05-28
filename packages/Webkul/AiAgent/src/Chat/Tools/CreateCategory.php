@@ -2,29 +2,51 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class CreateCategory implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('create_category')
-            ->for('Create a new category in the catalog.')
-            ->withStringParameter('code', 'Unique category code (auto-generated from name if not provided)')
-            ->withStringParameter('name', 'Category name (required)')
-            ->withStringParameter('parent_code', 'Parent category code for nesting (leave empty for root)')
-            ->using(function (?string $code = null, ?string $name = null, ?string $parent_code = null) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.categories.create')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'create_category';
+            }
+
+            public function description(): string
+            {
+                return 'Create a new category in the catalog.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'code'        => $schema->string()->description('Unique category code (auto-generated from name if not provided)'),
+                    'name'        => $schema->string()->description('Category name (required)'),
+                    'parent_code' => $schema->string()->description('Parent category code for nesting (leave empty for root)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.categories.create')) {
                     return $denied;
                 }
+
+                $code = $request->string('code')->toString() ?: null;
+                $name = $request->string('name')->toString() ?: null;
+                $parent_code = $request->string('parent_code')->toString() ?: null;
 
                 if (! $name) {
                     return json_encode(['error' => 'Category name is required']);
@@ -51,7 +73,7 @@ class CreateCategory implements PimTool
                     'parent_id'       => $parentId,
                     'additional_data' => [
                         'locale_specific' => [
-                            $context->locale => ['name' => $name],
+                            $this->context->locale => ['name' => $name],
                         ],
                     ],
                 ]);
@@ -59,6 +81,7 @@ class CreateCategory implements PimTool
                 return json_encode([
                     'result' => ['created' => true, 'id' => $category->id, 'code' => $code, 'name' => $name],
                 ]);
-            });
+            }
+        };
     }
 }

@@ -2,8 +2,10 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
@@ -11,23 +13,42 @@ use Webkul\Core\Helpers\Database\GrammarQueryManager;
 
 class DataQualityReport implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('data_quality_report')
-            ->for('Generate a catalog data quality report. Scans for incomplete products, missing descriptions, missing images, products without categories, and missing translations.')
-            ->withStringParameter('category', 'Optional: limit scan to a specific category code')
-            ->withNumberParameter('limit', 'Maximum products to scan (default 200, max 1000)')
-            ->using(function (?string $category = null, int $limit = 200) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'data_quality_report';
+            }
+
+            public function description(): string
+            {
+                return 'Generate a catalog data quality report. Scans for incomplete products, missing descriptions, missing images, products without categories, and missing translations.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'category' => $schema->string()->description('Optional: limit scan to a specific category code'),
+                    'limit'    => $schema->integer()->description('Maximum products to scan (default 200, max 1000)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products')) {
                     return $denied;
                 }
 
+                $category = $request->string('category')->toString() ?: null;
+                $limit = $request->has('limit') ? (int) $request->get('limit') : 200;
+
                 $limit = min(max($limit, 1), 1000);
-                $channel = $context->channel;
-                $locale = $context->locale;
+                $channel = $this->context->channel;
+                $locale = $this->context->locale;
 
                 $grammar = GrammarQueryManager::getGrammar();
 
@@ -100,6 +121,7 @@ class DataQualityReport implements PimTool
                         'channel'              => $channel,
                     ],
                 ]);
-            });
+            }
+        };
     }
 }
