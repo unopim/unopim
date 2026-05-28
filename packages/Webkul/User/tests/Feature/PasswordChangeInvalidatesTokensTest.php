@@ -11,7 +11,13 @@ it('should revoke all Passport tokens when an admin changes their password (Issu
     $admin = Admin::factory()->create(['password' => bcrypt('old-password')]);
 
     $clientRepo = new ClientRepository;
-    $client = $clientRepo->createPasswordGrantClient($admin->id, 'Test client', env('APP_URL'), 'admins');
+    // Passport 13: createPasswordGrantClient(name, provider, confidential)
+    $client = $clientRepo->createPasswordGrantClient('Test client', 'admins', confidential: true);
+    $client->forceFill([
+        'user_id'    => $admin->id,
+        'owner_type' => Admin::class,
+        'owner_id'   => $admin->id,
+    ])->save();
 
     $token = new Token;
     $token->id = 'tok-'.uniqid();

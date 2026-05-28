@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Email Address',
-            'forget-password-link'   => 'Forget Password ?',
-            'password'               => 'Password',
-            'submit-btn'             => 'Sign In',
-            'title'                  => 'Sign In',
-            'powered-by'             => 'Powered by :unopim,',
-            'open-source-project-by' => 'An open-source project by :webkul.',
+            'email'                      => 'Email Address',
+            'forget-password-link'       => 'Forget Password ?',
+            'password'                   => 'Password',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Sign In',
+            'title'                      => 'Sign In',
+            'powered-by'                 => 'Powered by :unopim,',
+            'open-source-project-by'     => 'An open-source project by :webkul.',
         ],
 
         'forget-password' => [
@@ -2087,6 +2089,9 @@ return [
                 'my-account'    => 'My Account',
                 'notifications' => 'Notifications',
                 'visit-shop'    => 'Visit Shop',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
 
             'sidebar' => [
@@ -2128,6 +2133,8 @@ return [
                 'no-records-selected'              => 'No records have been selected.',
                 'must-select-a-mass-action-option' => 'You must select a mass action\'s option.',
                 'must-select-a-mass-action'        => 'You must select a mass action.',
+                'link-copied'                      => 'Link copied to clipboard.',
+                'copy-failed'                      => 'Copy failed. Please copy the link manually.',
             ],
 
             'toolbar' => [
@@ -2148,8 +2155,9 @@ return [
                 ],
 
                 'search_by' => [
-                    'code'       => 'Search by code',
-                    'code_or_id' => 'Search by code or id',
+                    'code'        => 'Search by code',
+                    'code_or_id'  => 'Search by code or id',
+                    'sku_or_user' => 'Search by SKU or user',
                 ],
 
                 'search' => [
@@ -2454,6 +2462,11 @@ return [
         '419' => [
             'description' => 'Oops! Your session has expired. Please refresh the page and log in again to continue.',
             'title'       => '419 Session Has Expired',
+        ],
+
+        '405' => [
+            'description' => 'Oops! The request method is not allowed for this URL. Please use the correct method or return to the previous page.',
+            'title'       => '405 Method Not Allowed',
         ],
 
         '500' => [

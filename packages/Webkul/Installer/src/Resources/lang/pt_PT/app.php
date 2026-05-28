@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Administrador',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Confirmar Palavra-passe',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'E-mail',
-                'password'         => 'Palavra-passe',
-                'title'            => 'Criar Administrador',
+                'admin'                   => 'Administrador',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Confirmar Palavra-passe',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'E-mail',
+                'password'                => 'Palavra-passe',
+                'title'                   => 'Criar Administrador',
+                'seed-sample-data'        => 'Instalar produtos de amostra e dados de demonstração',
+                'seeding-sample-data'     => 'A semear produtos de amostra e dados de demonstração, isto pode demorar alguns minutos...',
+                'seed-sample-data-failed' => 'Não foi possível semear os dados de amostra. Pode instalá-los mais tarde através de `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Moedas Permitidas',

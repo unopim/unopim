@@ -18,6 +18,9 @@ while [ ! -f "$LOCK_FILE" ]; do
 done
 echo "Application ready."
 
+# Pick up APP_KEY from .env (fpm container wrote it after we started).
+export APP_KEY=$(grep '^APP_KEY=' /var/www/html/.env | cut -d= -f2-)
+
 echo "Starting Laravel scheduler (runs every minute)..."
 
 # Drop to www-data and start scheduler

@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Tagapangasiwa',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Kumpirmahin ang Password',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'Email',
-                'password'         => 'Password',
-                'title'            => 'Lumikha ng Tagapangasiwa',
+                'admin'                   => 'Tagapangasiwa',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Kumpirmahin ang Password',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'Email',
+                'password'                => 'Password',
+                'title'                   => 'Lumikha ng Tagapangasiwa',
+                'seed-sample-data'        => 'I-install ang sample na produkto at demo data',
+                'seeding-sample-data'     => 'Naglalagay ng sample na produkto at demo data, maaaring tumagal ito ng ilang minuto...',
+                'seed-sample-data-failed' => 'Hindi na-seed ang sample data. Maaari mo itong i-install mamaya sa pamamagitan ng `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Mga Pinahihintulutang Pera',

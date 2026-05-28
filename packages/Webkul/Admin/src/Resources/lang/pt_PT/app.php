@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Endereço de e-mail',
-            'forget-password-link'   => 'Esqueceu a palavra-passe?',
-            'password'               => 'Palavra-passe',
-            'submit-btn'             => 'Entrar',
-            'title'                  => 'Entrar',
-            'powered-by'             => 'Desenvolvido por :unopim,',
-            'open-source-project-by' => 'Um projeto de código aberto de :webkul.',
+            'email'                      => 'Endereço de e-mail',
+            'forget-password-link'       => 'Esqueceu a palavra-passe?',
+            'password'                   => 'Palavra-passe',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Entrar',
+            'title'                      => 'Entrar',
+            'powered-by'                 => 'Desenvolvido por :unopim,',
+            'open-source-project-by'     => 'Um projeto de código aberto de :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Por favor, insira um URL válido.',
                     'regex'                      => 'O valor não corresponde ao padrão requerido.',
                     'invalid-pattern'            => 'Padrão personalizado inválido fornecido.',
-
                     'numeric'                    => 'O valor do atributo numérico ":attribute" deve ser um número válido.',
                     'select-attribute-or-family' => 'Por favor, selecione pelo menos um atributo ou uma família de atributos.',
                     'failed'                     => 'A validação falhou.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Edição em massa concluída com sucesso.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Sem alterações para guardar.',
-
-                'invalid-datetime'            => 'Introduza uma data e hora válidas.',
-
-                'resize-column'               => 'Arraste para redimensionar a coluna',
-                'success'                     => 'Tarefa executada com sucesso.',
-                'fetch-failed'                => 'Falha ao obter dados.',
-                'action'                      => 'Edição em massa',
-                'description'                 => 'Edite vários produtos de uma vez. As alterações são processadas em segundo plano.',
-                'gallery-preview'             => 'Pré-visualização da Galeria',
-                'img-preview'                 => 'Pré-visualização da Imagem',
-                'no-image'                    => 'Sem imagem',
-                'img-fail'                    => 'Falha ao carregar a imagem',
-                'no-option'                   => 'Sem opções',
-                'keyboard-shortcuts'          => 'Atalhos de teclado',
-                'shortcuts-navigation'        => 'Navegação',
-                'shortcuts-editing'           => 'Edição',
-                'shortcuts-selection'         => 'Seleção',
-                'shortcuts-clipboard'         => 'Área de transferência e preenchimento',
-                'shortcuts-move-cell'         => 'Mover entre células',
-                'shortcuts-move-down'         => 'Mover para baixo / confirmar edição',
-                'shortcuts-move-up'           => 'Mover para cima',
-                'shortcuts-move-right-left'   => 'Mover para a direita / esquerda',
-                'shortcuts-home-end'          => 'Primeira / última coluna na linha',
-                'shortcuts-ctrl-home-end'     => 'Primeira / última célula na grelha',
-                'shortcuts-extend-selection'  => 'Expandir seleção',
-                'shortcuts-select-all'        => 'Selecionar todas as células',
-                'shortcuts-enter-edit'        => 'Entrar no modo de edição',
-                'shortcuts-confirm-move-down' => 'Confirmar + mover para baixo',
-                'shortcuts-confirm-move-right'=> 'Confirmar + mover para a direita',
-                'shortcuts-escape-revert'     => 'Reverter valor + sair da edição',
-                'shortcuts-clear-cell'        => 'Limpar célula',
-                'shortcuts-copy'              => 'Copiar',
-                'shortcuts-cut'               => 'Cortar',
-                'shortcuts-paste'             => 'Colar',
-                'shortcuts-fill-down'         => 'Preencher para baixo',
-                'shortcuts-fill-right'        => 'Preencher para a direita',
-                'shortcuts-undo'              => 'Desfazer',
-                'shortcuts-redo'              => 'Refazer',
-                'shortcuts-help'              => 'Mostrar/ocultar atalhos de teclado',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Sem alterações para guardar.',
+                'invalid-datetime'             => 'Introduza uma data e hora válidas.',
+                'resize-column'                => 'Arraste para redimensionar a coluna',
+                'success'                      => 'Tarefa executada com sucesso.',
+                'fetch-failed'                 => 'Falha ao obter dados.',
+                'action'                       => 'Edição em massa',
+                'description'                  => 'Edite vários produtos de uma vez. As alterações são processadas em segundo plano.',
+                'gallery-preview'              => 'Pré-visualização da Galeria',
+                'img-preview'                  => 'Pré-visualização da Imagem',
+                'no-image'                     => 'Sem imagem',
+                'img-fail'                     => 'Falha ao carregar a imagem',
+                'no-option'                    => 'Sem opções',
+                'keyboard-shortcuts'           => 'Atalhos de teclado',
+                'shortcuts-navigation'         => 'Navegação',
+                'shortcuts-editing'            => 'Edição',
+                'shortcuts-selection'          => 'Seleção',
+                'shortcuts-clipboard'          => 'Área de transferência e preenchimento',
+                'shortcuts-move-cell'          => 'Mover entre células',
+                'shortcuts-move-down'          => 'Mover para baixo / confirmar edição',
+                'shortcuts-move-up'            => 'Mover para cima',
+                'shortcuts-move-right-left'    => 'Mover para a direita / esquerda',
+                'shortcuts-home-end'           => 'Primeira / última coluna na linha',
+                'shortcuts-ctrl-home-end'      => 'Primeira / última célula na grelha',
+                'shortcuts-extend-selection'   => 'Expandir seleção',
+                'shortcuts-select-all'         => 'Selecionar todas as células',
+                'shortcuts-enter-edit'         => 'Entrar no modo de edição',
+                'shortcuts-confirm-move-down'  => 'Confirmar + mover para baixo',
+                'shortcuts-confirm-move-right' => 'Confirmar + mover para a direita',
+                'shortcuts-escape-revert'      => 'Reverter valor + sair da edição',
+                'shortcuts-clear-cell'         => 'Limpar célula',
+                'shortcuts-copy'               => 'Copiar',
+                'shortcuts-cut'                => 'Cortar',
+                'shortcuts-paste'              => 'Colar',
+                'shortcuts-fill-down'          => 'Preencher para baixo',
+                'shortcuts-fill-right'         => 'Preencher para a direita',
+                'shortcuts-undo'               => 'Desfazer',
+                'shortcuts-redo'               => 'Refazer',
+                'shortcuts-help'               => 'Mostrar/ocultar atalhos de teclado',
             ],
             'create-success'          => 'Produto criado com sucesso',
             'delete-failed'           => 'Falha ao excluir o produto',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'É filtrável',
                 'ai-translate'          => 'Tradução IA',
                 'invalid-swatch-type'   => 'O :attribute não é permitido para o tipo de atributo :type com o tipo de amostra :swatch_type.',
-
                 'single-object-only'    => 'Cada pedido de criação deve enviar um único objeto de atributo.',
                 'option'                => [
                     'color'    => 'Amostra de cor',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Atributo excluído',
             'update-success'    => 'Atributo atualizado',
             'user-define-error' => 'Não é possível excluir atributo do sistema',
-
             'immutable-fields'  => 'Os seguintes campos não podem ser modificados: :fields.',
             'not-found'         => 'Atributo com o código ":code" não encontrado',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Campo de Categoria Atualizado com Sucesso',
             'user-define-error' => 'Não é possível excluir um Campo de Categoria do sistema',
             'not-found'         => 'Campo de Categoria com código ":code" não encontrado',
-
             'immutable-fields'  => 'Os seguintes campos não podem ser modificados: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Não é possível atualizar as opções de configuração, pois esta família já possui variantes de produtos.',
         ],
         'history' => [
-            'view' => 'Ver detalhes da versão',
-
+            'view'  => 'Ver detalhes da versão',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versão',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Em pausa',
                         'cancelled'            => 'Cancelado',
                         'failed'               => 'Falhou',
-
-                        'view'       => 'Ver',
+                        'view'                 => 'Ver',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompts',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Título',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Geração de texto',
                 'image-generation'    => 'Geração de imagens',
                 'select-purpose'      => 'Selecionar finalidade',
-                'select-model'        => '-- Selecionar modelo --',
+                'select-model'        => 'Selecionar modelo',
                 'loading-models'      => 'A carregar modelos...',
                 'no-models-available' => 'Nenhum modelo disponível. Selecione uma plataforma ou configure uma no separador Plataformas.',
                 'type'                => 'Tipo',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Prompts do sistema',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Título',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Rótulo',
                 'provider'                 => 'Fornecedor',
-                'select-provider'          => '-- Selecionar fornecedor --',
+                'select-provider'          => 'Selecionar fornecedor',
                 'api-url'                  => 'URL da API',
                 'api-url-hint'             => 'Preenchido com o endpoint predefinido. Edite apenas se utilizar um proxy ou implementação personalizada.',
                 'api-key'                  => 'Chave API',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'Versão da API',
                 'is-default'               => 'Definir como predefinido',
                 'status'                   => 'Estado',
-                'use-default'              => '-- Usar plataforma predefinida --',
+                'use-default'              => 'Usar plataforma predefinida',
                 'use-default-hint'         => 'Deixe vazio para utilizar a plataforma marcada como predefinida. As plataformas marcadas com * são as predefinidas.',
                 'no-image-platform'        => 'Nenhuma plataforma com capacidade de imagem configurada. Adicione primeiro uma plataforma OpenAI, Gemini ou xAI.',
                 'image-platform-hint'      => 'Apenas as plataformas com suporte a geração de imagens são listadas (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Minha Conta',
                 'notifications' => 'Notificações',
                 'visit-shop'    => 'Visitar Loja',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Famílias de Atributos',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Nenhum registro selecionado.',
                 'must-select-a-mass-action-option' => 'Você deve selecionar uma opção de ação em massa.',
                 'must-select-a-mass-action'        => 'Você deve selecionar uma ação em massa.',
+                'link-copied'                      => 'Link copiado para a área de transferência.',
+                'copy-failed'                      => 'Falha na cópia. Por favor, copie o link manualmente.',
             ],
             'toolbar' => [
                 'length-of'    => ':length de',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Filtro',
                 ],
                 'search_by' => [
-                    'code'       => 'Buscar por código',
-                    'code_or_id' => 'Buscar por código ou id',
+                    'code'        => 'Buscar por código',
+                    'code_or_id'  => 'Buscar por código ou id',
+                    'sku_or_user' => 'Buscar por SKU ou utilizador',
                 ],
                 'search' => [
                     'title' => 'Buscar',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Prompt padrão',
-                'select-prompt-template' => '-- Selecione um modelo de prompt --',
+                'select-prompt-template' => 'Selecione um modelo de prompt',
             ],
         ],
     ],
@@ -2288,6 +2282,10 @@ return [
         '419' => [
             'description' => 'Ops! Sua sessão expirou. Por favor, atualize a página e faça login novamente para continuar.',
             'title'       => '419 Sessão expirou',
+        ],
+        '405' => [
+            'description' => 'Ups! O método de pedido não é permitido para este URL. Por favor, utilize o método correto ou regresse à página anterior.',
+            'title'       => '405 Método Não Permitido',
         ],
         '500' => [
             'description' => 'Ops! Algo deu errado. Parece que estamos tendo dificuldades em carregar a página que você está procurando.',

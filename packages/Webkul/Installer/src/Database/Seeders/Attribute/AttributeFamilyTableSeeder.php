@@ -20,11 +20,15 @@ class AttributeFamilyTableSeeder extends Seeder
 
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 
+        // status=1 so the default family is active out of the box.
+        // Otherwise docker/CI installs land with a disabled family that
+        // looks empty in the catalog grid even though the group + attribute
+        // mappings below are correctly populated.
         DB::table('attribute_families')->insert([
             [
-                'id'              => 1,
-                'code'            => 'default',
-                'status'          => 0,
+                'id'     => 1,
+                'code'   => 'default',
+                'status' => 1,
             ],
         ]);
 

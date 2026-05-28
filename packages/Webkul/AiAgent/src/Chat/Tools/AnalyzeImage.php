@@ -2,7 +2,9 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
-use Prism\Prism\Tool;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
@@ -13,28 +15,51 @@ use Webkul\MagicAI\Enums\AiProvider;
 
 class AnalyzeImage implements PimTool
 {
-    use ChecksPermission;
-
     public function __construct(
         protected VisionService $visionService,
     ) {}
 
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('analyze_image')
-            ->for('Analyze an uploaded image to detect product attributes.')
-            ->withStringParameter('instruction', 'Optional instructions for the analysis (e.g. "This is a laptop", "Focus on the fabric material")')
-            ->using(function (?string $instruction = null) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products')) {
+        $visionService = $this->visionService;
+
+        return new class($context, $visionService) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function __construct(ChatContext $context, protected VisionService $visionService)
+            {
+                parent::__construct($context);
+            }
+
+            public function name(): string
+            {
+                return 'analyze_image';
+            }
+
+            public function description(): string
+            {
+                return 'Analyze an uploaded image to detect product attributes.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'instruction' => $schema->string()->description('Optional instructions for the analysis (e.g. "This is a laptop", "Focus on the fabric material")'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products')) {
                     return $denied;
                 }
 
-                if (! $context->hasImages()) {
+                if (! $this->context->hasImages()) {
                     return json_encode(['error' => 'No image was uploaded. Ask the user to upload an image first.']);
                 }
 
-                $imagePath = $context->firstImagePath();
+                $imagePath = $this->context->firstImagePath();
 
                 if (! $imagePath || ! file_exists($imagePath)) {
                     return json_encode(['error' => 'Image file not found on disk.']);
@@ -48,12 +73,12 @@ class AnalyzeImage implements PimTool
                     // Configure the AiApiClient with the platform from this chat session
                     $apiClient = app(AiApiClient::class);
                     $apiClient->configure(new CredentialConfig(
-                        id: $context->platform->id,
-                        label: $context->platform->label,
-                        provider: $context->platform->provider,
-                        apiUrl: $context->platform->api_url ?: AiProvider::from($context->platform->provider)->defaultUrl(),
-                        apiKey: $context->platform->api_key,
-                        model: $context->model,
+                        id: $this->context->platform->id,
+                        label: $this->context->platform->label,
+                        provider: $this->context->platform->provider,
+                        apiUrl: $this->context->platform->api_url ?: AiProvider::from($this->context->platform->provider)->defaultUrl(),
+                        apiKey: $this->context->platform->api_key,
+                        model: $this->context->model,
                     ));
 
                     $ctx = $this->visionService->analyze(
@@ -61,7 +86,7 @@ class AnalyzeImage implements PimTool
                         credentialId: 0,
                         apiClient: $apiClient,
                         options: [
-                            'locale'      => $context->locale,
+                            'locale'      => $this->context->locale,
                             'maxAttempts' => 3,
                             'temperature' => 0.2,
                         ],
@@ -76,6 +101,7 @@ class AnalyzeImage implements PimTool
                 } catch (\Throwable $e) {
                     return json_encode(['error' => 'Vision analysis failed: '.$e->getMessage()]);
                 }
-            });
+            }
+        };
     }
 }

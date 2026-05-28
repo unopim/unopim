@@ -12,7 +12,7 @@ describe('EditImage tool parameter and source resolution (Issue #683)', function
         );
 
         // SKU should be a required parameter
-        expect($source)->toContain("->withStringParameter('sku'");
+        expect($source)->toMatch('/\'sku\'\s+=>\s+\$schema->string\(\)/');
 
         // Tool description should mention fetching from product
         expect($source)->toContain('Fetches the image from the product by SKU');
@@ -26,7 +26,7 @@ describe('EditImage tool parameter and source resolution (Issue #683)', function
             base_path('packages/Webkul/AiAgent/src/Chat/Tools/EditImage.php')
         );
 
-        expect($source)->toContain("->withStringParameter('attribute'");
+        expect($source)->toMatch('/\'attribute\'\s+=>\s+\$schema->string\(\)/');
     });
 
     it('tool supports image_index parameter for gallery attributes', function () {
@@ -34,7 +34,7 @@ describe('EditImage tool parameter and source resolution (Issue #683)', function
             base_path('packages/Webkul/AiAgent/src/Chat/Tools/EditImage.php')
         );
 
-        expect($source)->toContain("->withStringParameter('image_index'");
+        expect($source)->toMatch('/\'image_index\'\s+=>\s+\$schema->string\(\)/');
     });
 
     it('resolveImageAttribute auto-detects first image attribute from product family', function () {

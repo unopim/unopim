@@ -181,9 +181,16 @@ services:
   # ---------------------------------------------------------------------------
   unopim-elasticsearch:
     image: elasticsearch:8.17.0
+    # Stable hostname so InetAddress.getLocalHost() resolves before
+    # Log4j is initialized. Without it, the random container ID is
+    # picked as hostname and an absent /etc/hosts entry crashes ES
+    # at boot with "UnknownHostException: <id>".
+    hostname: unopim-elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - node.name=unopim-elasticsearch
+      - cluster.name=unopim
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - cluster.routing.allocation.disk.watermark.low=${ELASTICSEARCH_DISK_WATERMARK_LOW:-90%}
       - cluster.routing.allocation.disk.watermark.high=${ELASTICSEARCH_DISK_WATERMARK_HIGH:-95%}

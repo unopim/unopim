@@ -2,27 +2,48 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class ManageRoles implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('manage_roles')
-            ->for('List roles and their permissions.')
-            ->withEnumParameter('action', 'Action', ['list', 'details'])
-            ->withStringParameter('name', 'Role name (for details)')
-            ->using(function (string $action = 'list', ?string $name = null) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'settings.roles')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'manage_roles';
+            }
+
+            public function description(): string
+            {
+                return 'List roles and their permissions.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'action' => $schema->string()->enum(['list', 'details'])->description('Action'),
+                    'name'   => $schema->string()->description('Role name (for details)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'settings.roles')) {
                     return $denied;
                 }
+
+                $action = $request->string('action')->toString() ?: 'list';
+                $name = $request->string('name')->toString() ?: null;
 
                 if ($action === 'list') {
                     $roles = DB::table('roles')
@@ -64,6 +85,7 @@ class ManageRoles implements PimTool
                 }
 
                 return json_encode(['error' => 'Invalid action']);
-            });
+            }
+        };
     }
 }

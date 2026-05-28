@@ -2,10 +2,12 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Concerns\QueuesForApproval;
@@ -16,49 +18,72 @@ use Webkul\Core\Filesystem\FileStorer;
 
 class CreateProduct implements PimTool
 {
-    use ChecksPermission;
-    use QueuesForApproval;
-
     public function __construct(
         protected ProductWriterService $writerService,
     ) {}
 
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('create_product')
-            ->for('Create a product with attributes, categories, and image. Supports simple and configurable (with variants) product types. Pass all attributes in attributes_json. For configurable products, provide super_attributes and variants_json.')
-            ->withStringParameter('sku', 'Product SKU (must be unique). Auto-generated if not provided.')
-            ->withStringParameter('name', 'Product name (required)')
-            ->withStringParameter('description', 'Product description')
-            ->withStringParameter('short_description', 'Short product description')
-            ->withStringParameter('meta_title', 'SEO meta title')
-            ->withStringParameter('meta_description', 'SEO meta description')
-            ->withStringParameter('meta_keywords', 'SEO meta keywords')
-            ->withStringParameter('categories', 'Comma-separated category codes or paths to assign')
-            ->withBooleanParameter('attach_image', 'Set to true to attach the uploaded image (default: true)')
-            ->withStringParameter('attributes_json', 'JSON string of ALL additional attribute values including color, size, brand, price, cost, product_number, etc.')
-            ->withStringParameter('product_type', 'Product type: "simple" (default) or "configurable". Use configurable when the product has variants like different colors/sizes.')
-            ->withStringParameter('super_attributes', 'For configurable products only: comma-separated attribute codes that define variants (e.g. "color,size")')
-            ->withStringParameter('variants_json', 'For configurable products only: JSON array of variant objects. Each variant needs a unique combo of super attribute values. Example: [{"sku":"PROD-RED-S","color":"Red","size":"S","price":49.99},{"sku":"PROD-RED-M","color":"Red","size":"M","price":49.99}]')
-            ->using(function (
-                ?string $sku = null,
-                ?string $name = null,
-                ?string $description = null,
-                ?string $short_description = null,
-                ?string $meta_title = null,
-                ?string $meta_description = null,
-                ?string $meta_keywords = null,
-                ?string $categories = null,
-                bool $attach_image = true,
-                ?string $attributes_json = null,
-                ?string $product_type = 'simple',
-                ?string $super_attributes = null,
-                ?string $variants_json = null,
-            ) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products.create')) {
+        $writerService = $this->writerService;
+
+        return new class($context, $writerService) extends ContextualTool
+        {
+            use ChecksPermission;
+            use QueuesForApproval;
+
+            public function __construct(ChatContext $context, protected ProductWriterService $writerService)
+            {
+                parent::__construct($context);
+            }
+
+            public function name(): string
+            {
+                return 'create_product';
+            }
+
+            public function description(): string
+            {
+                return 'Create a product with attributes, categories, and image. Supports simple and configurable (with variants) product types. Pass all attributes in attributes_json. For configurable products, provide super_attributes and variants_json.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'sku'               => $schema->string()->description('Product SKU (must be unique). Auto-generated if not provided.'),
+                    'name'              => $schema->string()->description('Product name (required)'),
+                    'description'       => $schema->string()->description('Product description'),
+                    'short_description' => $schema->string()->description('Short product description'),
+                    'meta_title'        => $schema->string()->description('SEO meta title'),
+                    'meta_description'  => $schema->string()->description('SEO meta description'),
+                    'meta_keywords'     => $schema->string()->description('SEO meta keywords'),
+                    'categories'        => $schema->string()->description('Comma-separated category codes or paths to assign'),
+                    'attach_image'      => $schema->boolean()->description('Set to true to attach the uploaded image (default: true)'),
+                    'attributes_json'   => $schema->string()->description('JSON string of ALL additional attribute values including color, size, brand, price, cost, product_number, etc.'),
+                    'product_type'      => $schema->string()->description('Product type: "simple" (default) or "configurable". Use configurable when the product has variants like different colors/sizes.'),
+                    'super_attributes'  => $schema->string()->description('For configurable products only: comma-separated attribute codes that define variants (e.g. "color,size")'),
+                    'variants_json'     => $schema->string()->description('For configurable products only: JSON array of variant objects. Each variant needs a unique combo of super attribute values. Example: [{"sku":"PROD-RED-S","color":"Red","size":"S","price":49.99},{"sku":"PROD-RED-M","color":"Red","size":"M","price":49.99}]'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.create')) {
                     return $denied;
                 }
+
+                $sku = $request->string('sku')->toString() ?: null;
+                $name = $request->string('name')->toString() ?: null;
+                $description = $request->string('description')->toString() ?: null;
+                $short_description = $request->string('short_description')->toString() ?: null;
+                $meta_title = $request->string('meta_title')->toString() ?: null;
+                $meta_description = $request->string('meta_description')->toString() ?: null;
+                $meta_keywords = $request->string('meta_keywords')->toString() ?: null;
+                $categories = $request->string('categories')->toString() ?: null;
+                $attach_image = $request->has('attach_image') ? $request->boolean('attach_image') : true;
+                $attributes_json = $request->string('attributes_json')->toString() ?: null;
+                $product_type = $request->string('product_type')->toString() ?: 'simple';
+                $super_attributes = $request->string('super_attributes')->toString() ?: null;
+                $variants_json = $request->string('variants_json')->toString() ?: null;
 
                 $extraAttrs = $attributes_json ? (json_decode($attributes_json, true) ?? []) : [];
 
@@ -94,10 +119,10 @@ class CreateProduct implements PimTool
                 }
 
                 if ($this->shouldQueueForApproval()) {
-                    return $this->queueChange($context, "Create {$type} product: {$name}", [
-                        'type'             => 'create_product',
-                        'data'             => ['sku' => $sku, 'name' => $name, 'product_type' => $type, 'attributes' => $allAttrs],
-                        'affected_count'   => 1,
+                    return $this->queueChange($this->context, "Create {$type} product: {$name}", [
+                        'type'           => 'create_product',
+                        'data'           => ['sku' => $sku, 'name' => $name, 'product_type' => $type, 'attributes' => $allAttrs],
+                        'affected_count' => 1,
                     ]);
                 }
 
@@ -205,7 +230,7 @@ class CreateProduct implements PimTool
                     if ($meta['value_per_channel'] && $meta['value_per_locale']) {
                         // Text fields: source locale only, other locales via translation job
                         foreach ($allChannels as $channel) {
-                            $values['channel_locale_specific'][$channel->code][$context->locale][$code] = $value;
+                            $values['channel_locale_specific'][$channel->code][$this->context->locale][$code] = $value;
                         }
 
                         // Track translatable text fields for auto-translation
@@ -219,7 +244,7 @@ class CreateProduct implements PimTool
                         }
                     } elseif ($meta['value_per_locale']) {
                         // Locale-specific: source locale only, translate the rest
-                        $values['locale_specific'][$context->locale][$code] = $value;
+                        $values['locale_specific'][$this->context->locale][$code] = $value;
 
                         if (\in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
                             $translatableFields[$code] = $value;
@@ -269,8 +294,8 @@ class CreateProduct implements PimTool
                 // Attach uploaded image
                 $imageAttachError = null;
 
-                if ($attach_image && $context->hasImages()) {
-                    $imagePath = $context->firstImagePath();
+                if ($attach_image && $this->context->hasImages()) {
+                    $imagePath = $this->context->firstImagePath();
 
                     if ($imagePath && file_exists($imagePath)) {
                         try {
@@ -301,7 +326,7 @@ class CreateProduct implements PimTool
                             ? "Image file not found at: {$imagePath}"
                             : 'No image path available in context';
                     }
-                } elseif ($attach_image && ! $context->hasImages()) {
+                } elseif ($attach_image && ! $this->context->hasImages()) {
                     $imageAttachError = 'No images were uploaded with this request';
                 }
 
@@ -404,9 +429,9 @@ class CreateProduct implements PimTool
                 if (! empty($translatableFields)) {
                     TranslateProductValuesJob::dispatch(
                         productId: $product->id,
-                        sourceLocale: $context->locale,
+                        sourceLocale: $this->context->locale,
                         fieldsToTranslate: $translatableFields,
-                        channel: $context->channel,
+                        channel: $this->context->channel,
                     )->delay(now()->addSeconds(3));
                 }
 
@@ -444,6 +469,7 @@ class CreateProduct implements PimTool
                 }
 
                 return json_encode($result);
-            });
+            }
+        };
     }
 }

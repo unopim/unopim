@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Indirizzo email',
-            'forget-password-link'   => 'Hai dimenticato la password?',
-            'password'               => 'Password',
-            'submit-btn'             => 'Accedi',
-            'title'                  => 'Accedi',
-            'powered-by'             => 'Alimentato da :unopim,',
-            'open-source-project-by' => 'Un progetto open-source di :webkul.',
+            'email'                      => 'Indirizzo email',
+            'forget-password-link'       => 'Hai dimenticato la password?',
+            'password'                   => 'Password',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Accedi',
+            'title'                      => 'Accedi',
+            'powered-by'                 => 'Alimentato da :unopim,',
+            'open-source-project-by'     => 'Un progetto open-source di :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Inserisci un URL valido.',
                     'regex'                      => 'Il valore non corrisponde al formato richiesto.',
                     'invalid-pattern'            => 'Formato personalizzato non valido.',
-
                     'numeric'                    => 'Il valore per l\'attributo numerico ":attribute" deve essere un numero valido.',
                     'select-attribute-or-family' => 'Seleziona almeno un attributo o una famiglia di attributi.',
                     'failed'                     => 'Validazione non riuscita.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Modifica massiva completata con successo.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Nessuna modifica da salvare.',
-
-                'invalid-datetime'            => 'Inserisci una data e un\'ora valide.',
-
-                'resize-column'               => 'Trascina per ridimensionare la colonna',
-                'success'                     => 'Operazione completata con successo.',
-                'fetch-failed'                => 'Impossibile recuperare i dati.',
-                'action'                      => 'Modifica di massa',
-                'description'                 => 'Modifica più prodotti contemporaneamente. Le modifiche vengono elaborate in background.',
-                'gallery-preview'             => 'Anteprima Galleria',
-                'img-preview'                 => 'Anteprima Immagine',
-                'no-image'                    => 'Nessuna Immagine',
-                'img-fail'                    => 'Caricamento immagine fallito',
-                'no-option'                   => 'Nessuna opzione',
-                'keyboard-shortcuts'          => 'Scorciatoie da tastiera',
-                'shortcuts-navigation'        => 'Navigazione',
-                'shortcuts-editing'           => 'Modifica',
-                'shortcuts-selection'         => 'Selezione',
-                'shortcuts-clipboard'         => 'Appunti e riempimento',
-                'shortcuts-move-cell'         => 'Spostarsi tra le celle',
-                'shortcuts-move-down'         => 'Scendi / conferma modifica',
-                'shortcuts-move-up'           => 'Sali',
-                'shortcuts-move-right-left'   => 'Sposta a destra / sinistra',
-                'shortcuts-home-end'          => 'Prima / ultima colonna nella riga',
-                'shortcuts-ctrl-home-end'     => 'Prima / ultima cella nella griglia',
-                'shortcuts-extend-selection'  => 'Estendi selezione',
-                'shortcuts-select-all'        => 'Seleziona tutte le celle',
-                'shortcuts-enter-edit'        => 'Entra in modalità modifica',
-                'shortcuts-confirm-move-down' => 'Conferma + scendi',
-                'shortcuts-confirm-move-right'=> 'Conferma + sposta a destra',
-                'shortcuts-escape-revert'     => 'Ripristina valore + esci dalla modifica',
-                'shortcuts-clear-cell'        => 'Svuota cella',
-                'shortcuts-copy'              => 'Copia',
-                'shortcuts-cut'               => 'Taglia',
-                'shortcuts-paste'             => 'Incolla',
-                'shortcuts-fill-down'         => 'Riempi verso il basso',
-                'shortcuts-fill-right'        => 'Riempi verso destra',
-                'shortcuts-undo'              => 'Annulla',
-                'shortcuts-redo'              => 'Ripristina',
-                'shortcuts-help'              => 'Mostra/nascondi scorciatoie da tastiera',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Nessuna modifica da salvare.',
+                'invalid-datetime'             => 'Inserisci una data e un\'ora valide.',
+                'resize-column'                => 'Trascina per ridimensionare la colonna',
+                'success'                      => 'Operazione completata con successo.',
+                'fetch-failed'                 => 'Impossibile recuperare i dati.',
+                'action'                       => 'Modifica di massa',
+                'description'                  => 'Modifica più prodotti contemporaneamente. Le modifiche vengono elaborate in background.',
+                'gallery-preview'              => 'Anteprima Galleria',
+                'img-preview'                  => 'Anteprima Immagine',
+                'no-image'                     => 'Nessuna Immagine',
+                'img-fail'                     => 'Caricamento immagine fallito',
+                'no-option'                    => 'Nessuna opzione',
+                'keyboard-shortcuts'           => 'Scorciatoie da tastiera',
+                'shortcuts-navigation'         => 'Navigazione',
+                'shortcuts-editing'            => 'Modifica',
+                'shortcuts-selection'          => 'Selezione',
+                'shortcuts-clipboard'          => 'Appunti e riempimento',
+                'shortcuts-move-cell'          => 'Spostarsi tra le celle',
+                'shortcuts-move-down'          => 'Scendi / conferma modifica',
+                'shortcuts-move-up'            => 'Sali',
+                'shortcuts-move-right-left'    => 'Sposta a destra / sinistra',
+                'shortcuts-home-end'           => 'Prima / ultima colonna nella riga',
+                'shortcuts-ctrl-home-end'      => 'Prima / ultima cella nella griglia',
+                'shortcuts-extend-selection'   => 'Estendi selezione',
+                'shortcuts-select-all'         => 'Seleziona tutte le celle',
+                'shortcuts-enter-edit'         => 'Entra in modalità modifica',
+                'shortcuts-confirm-move-down'  => 'Conferma + scendi',
+                'shortcuts-confirm-move-right' => 'Conferma + sposta a destra',
+                'shortcuts-escape-revert'      => 'Ripristina valore + esci dalla modifica',
+                'shortcuts-clear-cell'         => 'Svuota cella',
+                'shortcuts-copy'               => 'Copia',
+                'shortcuts-cut'                => 'Taglia',
+                'shortcuts-paste'              => 'Incolla',
+                'shortcuts-fill-down'          => 'Riempi verso il basso',
+                'shortcuts-fill-right'         => 'Riempi verso destra',
+                'shortcuts-undo'               => 'Annulla',
+                'shortcuts-redo'               => 'Ripristina',
+                'shortcuts-help'               => 'Mostra/nascondi scorciatoie da tastiera',
             ],
             'create-success'          => 'Prodotto creato con successo',
             'delete-failed'           => 'Eliminazione del prodotto non riuscita',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'È filtrabile',
                 'ai-translate'          => 'Traduzione IA',
                 'invalid-swatch-type'   => 'L\'attributo :attribute non è consentito per il tipo di attributo :type con il tipo di campione :swatch_type.',
-
                 'single-object-only'    => 'Ogni richiesta di creazione deve inviare un solo oggetto attributo.',
                 'option'                => [
                     'color'    => 'Colore campione',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Attributo eliminato con successo',
             'update-success'    => 'Attributo aggiornato con successo',
             'user-define-error' => 'Non è possibile eliminare un attributo di sistema',
-
             'immutable-fields'  => 'I seguenti campi non possono essere modificati: :fields.',
             'not-found'         => 'Attributo con codice ":code" non trovato',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Campo Categoria Aggiornato con Successo',
             'user-define-error' => 'Non puoi eliminare il campo categoria di sistema',
             'not-found'         => 'Campo Categoria con codice ":code" non trovato',
-
             'immutable-fields'  => 'I seguenti campi non possono essere modificati: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Impossibile aggiornare le opzioni di configurazione poiché questa famiglia ha già varianti di prodotto.',
         ],
         'history' => [
-            'view' => 'Visualizza dettagli versione',
-
+            'view'  => 'Visualizza dettagli versione',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versione',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'In pausa',
                         'cancelled'            => 'Annullato',
                         'failed'               => 'Fallito',
-
-                        'view'       => 'Visualizza',
+                        'view'                 => 'Visualizza',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompt',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titolo',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Generazione di testo',
                 'image-generation'    => 'Generazione di immagini',
                 'select-purpose'      => 'Seleziona lo scopo',
-                'select-model'        => '-- Seleziona modello --',
+                'select-model'        => 'Seleziona modello',
                 'loading-models'      => 'Caricamento modelli...',
                 'no-models-available' => 'Nessun modello disponibile. Seleziona una piattaforma o configurane una nella scheda Piattaforme.',
                 'type'                => 'Tipo',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Prompt di sistema',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titolo',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Etichetta',
                 'provider'                 => 'Fornitore',
-                'select-provider'          => '-- Seleziona provider --',
+                'select-provider'          => 'Seleziona provider',
                 'api-url'                  => 'URL API',
                 'api-url-hint'             => 'Precompilato con l\'endpoint predefinito. Modifica solo se utilizzi un proxy o un deployment personalizzato.',
                 'api-key'                  => 'Chiave API',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'Versione API',
                 'is-default'               => 'Imposta come predefinito',
                 'status'                   => 'Stato',
-                'use-default'              => '-- Usa piattaforma predefinita --',
+                'use-default'              => 'Usa piattaforma predefinita',
                 'use-default-hint'         => 'Lascia vuoto per utilizzare la piattaforma contrassegnata come predefinita. Le piattaforme contrassegnate con * sono predefinite.',
                 'no-image-platform'        => 'Nessuna piattaforma con supporto immagini configurata. Aggiungi prima una piattaforma OpenAI, Gemini o xAI.',
                 'image-platform-hint'      => 'Sono elencate solo le piattaforme che supportano la generazione di immagini (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Il mio account',
                 'notifications' => 'Notifiche',
                 'visit-shop'    => 'Visita il negozio',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Famiglie di attributi',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Nessuna voce selezionata.',
                 'must-select-a-mass-action-option' => 'È necessario selezionare un\'opzione per l\'azione in massa.',
                 'must-select-a-mass-action'        => 'È necessario selezionare un\'azione in massa.',
+                'link-copied'                      => 'Link copiato negli appunti.',
+                'copy-failed'                      => 'Copia non riuscita. Si prega di copiare il link manualmente.',
             ],
             'toolbar' => [
                 'length-of'    => ':length di',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Filtra',
                 ],
                 'search_by' => [
-                    'code'       => 'Cerca per codice',
-                    'code_or_id' => 'Cerca per codice o id',
+                    'code'        => 'Cerca per codice',
+                    'code_or_id'  => 'Cerca per codice o id',
+                    'sku_or_user' => 'Cerca per SKU o utente',
                 ],
                 'search' => [
                     'title' => 'Cerca',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Prompt predefinito',
-                'select-prompt-template' => '-- Seleziona un modello di prompt --',
+                'select-prompt-template' => 'Seleziona un modello di prompt',
             ],
         ],
     ],
@@ -2288,6 +2282,10 @@ return [
         '419' => [
             'description' => 'Ops! La tua sessione è scaduta. Si prega di aggiornare la pagina e accedere nuovamente per continuare.',
             'title'       => '419 Sessione scaduta',
+        ],
+        '405' => [
+            'description' => 'Oops! Il metodo di richiesta non è consentito per questo URL. Si prega di utilizzare il metodo corretto o tornare alla pagina precedente.',
+            'title'       => '405 Metodo Non Consentito',
         ],
         '500' => [
             'description' => 'Ops! Qualcosa è andato storto. Sembrava che avessimo problemi a caricare la pagina che stavi cercando.',

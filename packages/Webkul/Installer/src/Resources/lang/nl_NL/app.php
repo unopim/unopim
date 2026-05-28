@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Beheerder',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Bevestig wachtwoord',
-                'email-address'    => 'beheerder@voorbeeld.com',
-                'email'            => 'E-mail',
-                'password'         => 'Wachtwoord',
-                'title'            => 'Beheerder aanmaken',
+                'admin'                   => 'Beheerder',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Bevestig wachtwoord',
+                'email-address'           => 'beheerder@voorbeeld.com',
+                'email'                   => 'E-mail',
+                'password'                => 'Wachtwoord',
+                'title'                   => 'Beheerder aanmaken',
+                'seed-sample-data'        => 'Voorbeeldproducten en demogegevens installeren',
+                'seeding-sample-data'     => 'Voorbeeldproducten en demogegevens worden geladen, dit kan enkele minuten duren...',
+                'seed-sample-data-failed' => 'Demogegevens konden niet worden geladen. U kunt ze later installeren via `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Toegestane valuta\'s',

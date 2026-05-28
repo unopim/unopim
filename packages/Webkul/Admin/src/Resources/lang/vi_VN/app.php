@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Địa chỉ Email',
-            'forget-password-link'   => 'Quên mật khẩu?',
-            'password'               => 'Mật khẩu',
-            'submit-btn'             => 'Đăng nhập',
-            'title'                  => 'Đăng nhập',
-            'powered-by'             => 'Được cung cấp bởi :unopim,',
-            'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
+            'email'                      => 'Địa chỉ Email',
+            'forget-password-link'       => 'Quên mật khẩu?',
+            'password'                   => 'Mật khẩu',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Đăng nhập',
+            'title'                      => 'Đăng nhập',
+            'powered-by'                 => 'Được cung cấp bởi :unopim,',
+            'open-source-project-by'     => 'Dự án mã nguồn mở của :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Vui lòng nhập một URL hợp lệ.',
                     'regex'                      => 'Giá trị không khớp với mẫu yêu cầu.',
                     'invalid-pattern'            => 'Mẫu tùy chỉnh không hợp lệ.',
-
                     'numeric'                    => 'Giá trị cho thuộc tính số ":attribute" phải là một số hợp lệ.',
                     'select-attribute-or-family' => 'Vui lòng chọn ít nhất một thuộc tính hoặc một nhóm thuộc tính.',
                     'failed'                     => 'Xác thực không thành công.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Chỉnh sửa hàng loạt thành công.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Không có thay đổi nào để lưu.',
-
-                'invalid-datetime'            => 'Vui lòng nhập ngày và giờ hợp lệ.',
-
-                'resize-column'               => 'Kéo để thay đổi kích thước cột',
-                'success'                     => 'Thực thi công việc thành công.',
-                'fetch-failed'                => 'Lấy dữ liệu thất bại.',
-                'action'                      => 'Chỉnh sửa hàng loạt',
-                'description'                 => 'Chỉnh sửa nhiều sản phẩm cùng lúc. Các thay đổi được xử lý trong nền.',
-                'gallery-preview'             => 'Xem trước thư viện',
-                'img-preview'                 => 'Xem trước hình ảnh',
-                'no-image'                    => 'Không có hình ảnh',
-                'img-fail'                    => 'Tải hình ảnh thất bại',
-                'no-option'                   => 'Không có tùy chọn',
-                'keyboard-shortcuts'          => 'Phím tắt bàn phím',
-                'shortcuts-navigation'        => 'Điều hướng',
-                'shortcuts-editing'           => 'Chỉnh sửa',
-                'shortcuts-selection'         => 'Chọn',
-                'shortcuts-clipboard'         => 'Bộ nhớ tạm & Điền',
-                'shortcuts-move-cell'         => 'Di chuyển giữa các ô',
-                'shortcuts-move-down'         => 'Di chuyển xuống / xác nhận chỉnh sửa',
-                'shortcuts-move-up'           => 'Di chuyển lên',
-                'shortcuts-move-right-left'   => 'Di chuyển phải / trái',
-                'shortcuts-home-end'          => 'Cột đầu / cuối trong hàng',
-                'shortcuts-ctrl-home-end'     => 'Ô đầu / cuối trong lưới',
-                'shortcuts-extend-selection'  => 'Mở rộng vùng chọn',
-                'shortcuts-select-all'        => 'Chọn tất cả các ô',
-                'shortcuts-enter-edit'        => 'Vào chế độ chỉnh sửa',
-                'shortcuts-confirm-move-down' => 'Xác nhận + di chuyển xuống',
-                'shortcuts-confirm-move-right'=> 'Xác nhận + di chuyển phải',
-                'shortcuts-escape-revert'     => 'Hoàn tác giá trị + thoát chỉnh sửa',
-                'shortcuts-clear-cell'        => 'Xóa ô',
-                'shortcuts-copy'              => 'Sao chép',
-                'shortcuts-cut'               => 'Cắt',
-                'shortcuts-paste'             => 'Dán',
-                'shortcuts-fill-down'         => 'Điền xuống',
-                'shortcuts-fill-right'        => 'Điền phải',
-                'shortcuts-undo'              => 'Hoàn tác',
-                'shortcuts-redo'              => 'Làm lại',
-                'shortcuts-help'              => 'Hiện/ẩn phím tắt bàn phím',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Không có thay đổi nào để lưu.',
+                'invalid-datetime'             => 'Vui lòng nhập ngày và giờ hợp lệ.',
+                'resize-column'                => 'Kéo để thay đổi kích thước cột',
+                'success'                      => 'Thực thi công việc thành công.',
+                'fetch-failed'                 => 'Lấy dữ liệu thất bại.',
+                'action'                       => 'Chỉnh sửa hàng loạt',
+                'description'                  => 'Chỉnh sửa nhiều sản phẩm cùng lúc. Các thay đổi được xử lý trong nền.',
+                'gallery-preview'              => 'Xem trước thư viện',
+                'img-preview'                  => 'Xem trước hình ảnh',
+                'no-image'                     => 'Không có hình ảnh',
+                'img-fail'                     => 'Tải hình ảnh thất bại',
+                'no-option'                    => 'Không có tùy chọn',
+                'keyboard-shortcuts'           => 'Phím tắt bàn phím',
+                'shortcuts-navigation'         => 'Điều hướng',
+                'shortcuts-editing'            => 'Chỉnh sửa',
+                'shortcuts-selection'          => 'Chọn',
+                'shortcuts-clipboard'          => 'Bộ nhớ tạm & Điền',
+                'shortcuts-move-cell'          => 'Di chuyển giữa các ô',
+                'shortcuts-move-down'          => 'Di chuyển xuống / xác nhận chỉnh sửa',
+                'shortcuts-move-up'            => 'Di chuyển lên',
+                'shortcuts-move-right-left'    => 'Di chuyển phải / trái',
+                'shortcuts-home-end'           => 'Cột đầu / cuối trong hàng',
+                'shortcuts-ctrl-home-end'      => 'Ô đầu / cuối trong lưới',
+                'shortcuts-extend-selection'   => 'Mở rộng vùng chọn',
+                'shortcuts-select-all'         => 'Chọn tất cả các ô',
+                'shortcuts-enter-edit'         => 'Vào chế độ chỉnh sửa',
+                'shortcuts-confirm-move-down'  => 'Xác nhận + di chuyển xuống',
+                'shortcuts-confirm-move-right' => 'Xác nhận + di chuyển phải',
+                'shortcuts-escape-revert'      => 'Hoàn tác giá trị + thoát chỉnh sửa',
+                'shortcuts-clear-cell'         => 'Xóa ô',
+                'shortcuts-copy'               => 'Sao chép',
+                'shortcuts-cut'                => 'Cắt',
+                'shortcuts-paste'              => 'Dán',
+                'shortcuts-fill-down'          => 'Điền xuống',
+                'shortcuts-fill-right'         => 'Điền phải',
+                'shortcuts-undo'               => 'Hoàn tác',
+                'shortcuts-redo'               => 'Làm lại',
+                'shortcuts-help'               => 'Hiện/ẩn phím tắt bàn phím',
             ],
             'create-success'          => 'Sản phẩm đã được tạo thành công',
             'delete-failed'           => 'Đã có lỗi khi xóa sản phẩm',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Có thể lọc',
                 'ai-translate'          => 'Dịch thuật AI',
                 'invalid-swatch-type'   => ':attribute không được phép cho loại thuộc tính :type với loại mẫu :swatch_type.',
-
                 'single-object-only'    => 'Mỗi yêu cầu tạo chỉ được gửi một đối tượng thuộc tính.',
                 'option'                => [
                     'color'    => 'Mẫu màu sắc',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Thuộc tính đã bị xoá',
             'update-success'    => 'Thuộc tính đã được cập nhật',
             'user-define-error' => 'Không thể xoá thuộc tính hệ thống',
-
             'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
             'not-found'         => 'Không tìm thấy thuộc tính với mã ":code"',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Cập Nhật Trường Danh Mục Thành Công',
             'user-define-error' => 'Không thể xóa Trường Danh Mục hệ thống',
             'not-found'         => 'Không tìm thấy Trường Danh Mục với mã ":code"',
-
             'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Không thể cập nhật tùy chọn cấu hình vì gia đình này đã có sản phẩm biến thể.',
         ],
         'history' => [
-            'view' => 'Xem chi tiết phiên bản',
-
+            'view'  => 'Xem chi tiết phiên bản',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Phiên bản',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Đã tạm dừng',
                         'cancelled'            => 'Đã hủy',
                         'failed'               => 'Thất bại',
-
-                        'view'       => 'Xem',
+                        'view'                 => 'Xem',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Lời nhắc',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Tiêu đề',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Tạo văn bản',
                 'image-generation'    => 'Tạo hình ảnh',
                 'select-purpose'      => 'Chọn mục đích',
-                'select-model'        => '-- Chọn mô hình --',
+                'select-model'        => 'Chọn mô hình',
                 'loading-models'      => 'Đang tải mô hình...',
                 'no-models-available' => 'Không có mô hình nào khả dụng. Chọn một nền tảng hoặc cấu hình trong tab Nền tảng.',
                 'type'                => 'Loại',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Lời nhắc hệ thống',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Tiêu đề',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Nhãn',
                 'provider'                 => 'Nhà cung cấp',
-                'select-provider'          => '-- Chọn nhà cung cấp --',
+                'select-provider'          => 'Chọn nhà cung cấp',
                 'api-url'                  => 'URL API',
                 'api-url-hint'             => 'Đã điền sẵn với endpoint mặc định. Chỉ chỉnh sửa nếu sử dụng proxy hoặc triển khai tùy chỉnh.',
                 'api-key'                  => 'Khóa API',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'Phiên bản API',
                 'is-default'               => 'Đặt làm mặc định',
                 'status'                   => 'Trạng thái',
-                'use-default'              => '-- Sử dụng nền tảng mặc định --',
+                'use-default'              => 'Sử dụng nền tảng mặc định',
                 'use-default-hint'         => 'Để trống để sử dụng nền tảng được đánh dấu là mặc định. Các nền tảng có dấu * là mặc định.',
                 'no-image-platform'        => 'Chưa cấu hình nền tảng hỗ trợ hình ảnh. Vui lòng thêm nền tảng OpenAI, Gemini hoặc xAI trước.',
                 'image-platform-hint'      => 'Chỉ hiển thị các nền tảng hỗ trợ tạo hình ảnh (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Tài khoản của tôi',
                 'notifications' => 'Thông báo',
                 'visit-shop'    => 'Thăm cửa hàng',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Nhóm thuộc tính',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Không có bản ghi nào được chọn.',
                 'must-select-a-mass-action-option' => 'Bạn phải chọn một tùy chọn cho hành động hàng loạt.',
                 'must-select-a-mass-action'        => 'Bạn phải chọn một hành động hàng loạt.',
+                'link-copied'                      => 'Đã sao chép liên kết vào bộ nhớ tạm.',
+                'copy-failed'                      => 'Sao chép thất bại. Vui lòng sao chép liên kết theo cách thủ công.',
             ],
             'toolbar' => [
                 'length-of'    => ':length của',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Lọc',
                 ],
                 'search_by' => [
-                    'code'       => 'Tìm kiếm theo mã',
-                    'code_or_id' => 'Tìm kiếm theo mã hoặc ID',
+                    'code'        => 'Tìm kiếm theo mã',
+                    'code_or_id'  => 'Tìm kiếm theo mã hoặc ID',
+                    'sku_or_user' => 'Tìm kiếm theo SKU hoặc người dùng',
                 ],
                 'search' => [
                     'title' => 'Tìm kiếm',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Lời nhắc mặc định',
-                'select-prompt-template' => '-- Chọn một mẫu lời nhắc --',
+                'select-prompt-template' => 'Chọn một mẫu lời nhắc',
             ],
         ],
     ],
@@ -2288,6 +2282,10 @@ return [
         '419' => [
             'description' => 'Oops! Phiên của bạn đã hết hạn. Vui lòng làm mới trang và đăng nhập lại để tiếp tục.',
             'title'       => '419 Phiên đã hết hạn',
+        ],
+        '405' => [
+            'description' => 'Rất tiếc! Phương thức yêu cầu không được phép cho URL này. Vui lòng sử dụng phương thức chính xác hoặc quay lại trang trước.',
+            'title'       => '405 Phương Thức Không Được Phép',
         ],
         '500' => [
             'description' => 'Oops! Có gì đó không đúng. Có vẻ như chúng tôi gặp sự cố khi tải trang bạn đang tìm kiếm.',

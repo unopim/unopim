@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\AiAgent\Chat\AgentRunner;
+use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
-use Webkul\AiAgent\Chat\PrismErrorResolver;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Support\ModelRecommender;
@@ -19,7 +19,7 @@ use Webkul\MagicAI\Support\ModelRecommender;
 /**
  * Handles AI chat messages from the global floating widget.
  *
- * Uses the AgentRunner (Prism-based tool calling) to let the AI
+ * Uses the AgentRunner (laravel/ai-based tool calling) to let the AI
  * autonomously decide which PIM operations to perform. The controller
  * is intentionally thin — all intelligence is in the tools.
  */
@@ -55,7 +55,7 @@ class ChatController extends Controller
 
             return new JsonResponse($result);
         } catch (\Throwable $e) {
-            $resolved = PrismErrorResolver::resolve($e);
+            $resolved = AiErrorResolver::resolve($e);
 
             if ($resolved['is_known']) {
                 Log::warning('AI Agent chat provider error', [
@@ -162,7 +162,7 @@ class ChatController extends Controller
         // one from the platform's list. The previous `model_list[0]` fallback
         // would select whichever model sorted first, so providers like OpenAI
         // that expose image-only entries (e.g. chatgpt-image-latest, dall-e-*)
-        // could land on a model Prism::text() cannot call.
+        // could land on a model the text agent cannot call.
         $model = (string) $request->input('model', '')
             ?: (ModelRecommender::pickTextModel($platform->model_list ?? []) ?? 'gpt-4o');
 

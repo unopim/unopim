@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'E-postadresse',
-            'forget-password-link'   => 'Glemt passord?',
-            'password'               => 'Passord',
-            'submit-btn'             => 'Logg inn',
-            'title'                  => 'Logg inn',
-            'powered-by'             => 'Drevet av :unopim,',
-            'open-source-project-by' => 'Et åpen kilde-prosjekt av :webkul.',
+            'email'                      => 'E-postadresse',
+            'forget-password-link'       => 'Glemt passord?',
+            'password'                   => 'Passord',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Logg inn',
+            'title'                      => 'Logg inn',
+            'powered-by'                 => 'Drevet av :unopim,',
+            'open-source-project-by'     => 'Et åpen kilde-prosjekt av :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Vennligst oppgi en gyldig URL.',
                     'regex'                      => 'Verdien samsvarer ikke med det nødvendige mønsteret.',
                     'invalid-pattern'            => 'Ugyldig egendefinert mønster angitt.',
-
                     'numeric'                    => 'Verdien for det numeriske attributtet «:attribute» må være et gyldig tall.',
                     'select-attribute-or-family' => 'Vennligst velg minst ett attributt eller en attributtfamilie.',
                     'failed'                     => 'Validering mislyktes.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Masseendring vellykket.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Ingen endringer å lagre.',
-
-                'invalid-datetime'            => 'Angi en gyldig dato og et gyldig klokkeslett.',
-
-                'resize-column'               => 'Dra for å endre kolonnebredde',
-                'success'                     => 'Jobb fullført.',
-                'fetch-failed'                => 'Henting mislyktes.',
-                'action'                      => 'Masseendring',
-                'description'                 => 'Rediger flere produkter samtidig. Endringene behandles i bakgrunnen.',
-                'gallery-preview'             => 'Galleri forhåndsvisning',
-                'img-preview'                 => 'Bilde forhåndsvisning',
-                'no-image'                    => 'Ingen bilde',
-                'img-fail'                    => 'Opplasting av bilde mislyktes',
-                'no-option'                   => 'Ingen alternativer',
-                'keyboard-shortcuts'          => 'Tastatursnarveier',
-                'shortcuts-navigation'        => 'Navigasjon',
-                'shortcuts-editing'           => 'Redigering',
-                'shortcuts-selection'         => 'Utvalg',
-                'shortcuts-clipboard'         => 'Utklippstavle og fyll',
-                'shortcuts-move-cell'         => 'Flytt mellom celler',
-                'shortcuts-move-down'         => 'Flytt ned / bekreft redigering',
-                'shortcuts-move-up'           => 'Flytt opp',
-                'shortcuts-move-right-left'   => 'Flytt til høyre / venstre',
-                'shortcuts-home-end'          => 'Første / siste kolonne i raden',
-                'shortcuts-ctrl-home-end'     => 'Første / siste celle i rutenettet',
-                'shortcuts-extend-selection'  => 'Utvid utvalget',
-                'shortcuts-select-all'        => 'Velg alle celler',
-                'shortcuts-enter-edit'        => 'Gå til redigeringsmodus',
-                'shortcuts-confirm-move-down' => 'Bekreft + flytt ned',
-                'shortcuts-confirm-move-right'=> 'Bekreft + flytt til høyre',
-                'shortcuts-escape-revert'     => 'Gjenopprett verdi + avslutt redigering',
-                'shortcuts-clear-cell'        => 'Tøm celle',
-                'shortcuts-copy'              => 'Kopier',
-                'shortcuts-cut'               => 'Klipp ut',
-                'shortcuts-paste'             => 'Lim inn',
-                'shortcuts-fill-down'         => 'Fyll nedover',
-                'shortcuts-fill-right'        => 'Fyll til høyre',
-                'shortcuts-undo'              => 'Angre',
-                'shortcuts-redo'              => 'Gjør om',
-                'shortcuts-help'              => 'Vis/skjul tastatursnarveier',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Ingen endringer å lagre.',
+                'invalid-datetime'             => 'Angi en gyldig dato og et gyldig klokkeslett.',
+                'resize-column'                => 'Dra for å endre kolonnebredde',
+                'success'                      => 'Jobb fullført.',
+                'fetch-failed'                 => 'Henting mislyktes.',
+                'action'                       => 'Masseendring',
+                'description'                  => 'Rediger flere produkter samtidig. Endringene behandles i bakgrunnen.',
+                'gallery-preview'              => 'Galleri forhåndsvisning',
+                'img-preview'                  => 'Bilde forhåndsvisning',
+                'no-image'                     => 'Ingen bilde',
+                'img-fail'                     => 'Opplasting av bilde mislyktes',
+                'no-option'                    => 'Ingen alternativer',
+                'keyboard-shortcuts'           => 'Tastatursnarveier',
+                'shortcuts-navigation'         => 'Navigasjon',
+                'shortcuts-editing'            => 'Redigering',
+                'shortcuts-selection'          => 'Utvalg',
+                'shortcuts-clipboard'          => 'Utklippstavle og fyll',
+                'shortcuts-move-cell'          => 'Flytt mellom celler',
+                'shortcuts-move-down'          => 'Flytt ned / bekreft redigering',
+                'shortcuts-move-up'            => 'Flytt opp',
+                'shortcuts-move-right-left'    => 'Flytt til høyre / venstre',
+                'shortcuts-home-end'           => 'Første / siste kolonne i raden',
+                'shortcuts-ctrl-home-end'      => 'Første / siste celle i rutenettet',
+                'shortcuts-extend-selection'   => 'Utvid utvalget',
+                'shortcuts-select-all'         => 'Velg alle celler',
+                'shortcuts-enter-edit'         => 'Gå til redigeringsmodus',
+                'shortcuts-confirm-move-down'  => 'Bekreft + flytt ned',
+                'shortcuts-confirm-move-right' => 'Bekreft + flytt til høyre',
+                'shortcuts-escape-revert'      => 'Gjenopprett verdi + avslutt redigering',
+                'shortcuts-clear-cell'         => 'Tøm celle',
+                'shortcuts-copy'               => 'Kopier',
+                'shortcuts-cut'                => 'Klipp ut',
+                'shortcuts-paste'              => 'Lim inn',
+                'shortcuts-fill-down'          => 'Fyll nedover',
+                'shortcuts-fill-right'         => 'Fyll til høyre',
+                'shortcuts-undo'               => 'Angre',
+                'shortcuts-redo'               => 'Gjør om',
+                'shortcuts-help'               => 'Vis/skjul tastatursnarveier',
             ],
             'create-success'          => 'Produkt opprettet vellykket',
             'delete-failed'           => 'Sletting av produkt mislyktes',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Er filtrerbar',
                 'ai-translate'          => 'AI Oversettelse',
                 'invalid-swatch-type'   => ':attribute er ikke tillatt for attributttype :type med fargeprøvetype :swatch_type.',
-
                 'single-object-only'    => 'Hver opprettelsesforespørsel må inneholde kun ett attributtobjekt.',
                 'option'                => [
                     'color'    => 'Fargeprøve',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Attributt slettet',
             'update-success'    => 'Attributt oppdatert',
             'user-define-error' => 'Kan ikke slette systemattributt',
-
             'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
             'not-found'         => 'Fant ikke attributt med kode ":code"',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Kategorifelt Oppdatert',
             'user-define-error' => 'Kan ikke slette system Kategorifelt',
             'not-found'         => 'Kategorifelt med kode ":code" ble ikke funnet',
-
             'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Kan ikke oppdatere konfigurasjonsalternativer, fordi denne familien allerede har produktvarianter.',
         ],
         'history' => [
-            'view' => 'Vis versjonsdetaljer',
-
+            'view'  => 'Vis versjonsdetaljer',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versjon',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Satt på pause',
                         'cancelled'            => 'Avbrutt',
                         'failed'               => 'Mislyktes',
-
-                        'view'       => 'Vis',
+                        'view'                 => 'Vis',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompts',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Tittel',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Tekstgenerering',
                 'image-generation'    => 'Bildegenerering',
                 'select-purpose'      => 'Velg formål',
-                'select-model'        => '-- Velg modell --',
+                'select-model'        => 'Velg modell',
                 'loading-models'      => 'Laster modeller...',
                 'no-models-available' => 'Ingen modeller tilgjengelige. Velg en plattform eller konfigurer en under fanen Plattformer.',
                 'type'                => 'Type',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Systemprompts',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Tittel',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Etikett',
                 'provider'                 => 'Leverandør',
-                'select-provider'          => '-- Velg leverandør --',
+                'select-provider'          => 'Velg leverandør',
                 'api-url'                  => 'API URL',
                 'api-url-hint'             => 'Forhåndsutfylt med standard endepunkt. Rediger kun ved bruk av en proxy eller tilpasset distribusjon.',
                 'api-key'                  => 'API-nøkkel',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'API-versjon',
                 'is-default'               => 'Angi som standard',
                 'status'                   => 'Status',
-                'use-default'              => '-- Bruk standardplattform --',
+                'use-default'              => 'Bruk standardplattform',
                 'use-default-hint'         => 'La stå tomt for å bruke plattformen merket som standard. Plattformer merket med * er standard.',
                 'no-image-platform'        => 'Ingen bildekompatibel plattform konfigurert. Legg til en OpenAI-, Gemini- eller xAI-plattform først.',
                 'image-platform-hint'      => 'Kun plattformer som støtter bildegenerering er listet (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Min konto',
                 'notifications' => 'Varsler',
                 'visit-shop'    => 'Besøk butikk',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Egenskapsfamilier',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Ingen oppføringer valgt.',
                 'must-select-a-mass-action-option' => 'Du må velge et mass action-alternativ.',
                 'must-select-a-mass-action'        => 'Du må velge en mass action.',
+                'link-copied'                      => 'Lenken er kopiert til utklippstavlen.',
+                'copy-failed'                      => 'Kopiering mislyktes. Vennligst kopier lenken manuelt.',
             ],
             'toolbar' => [
                 'length-of'    => ':length av',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Filter',
                 ],
                 'search_by' => [
-                    'code'       => 'Søk etter kode',
-                    'code_or_id' => 'Søk etter kode eller id',
+                    'code'        => 'Søk etter kode',
+                    'code_or_id'  => 'Søk etter kode eller id',
+                    'sku_or_user' => 'Søk etter SKU eller bruker',
                 ],
                 'search' => [
                     'title' => 'Søk',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Standard prompt',
-                'select-prompt-template' => '-- Velg en promptmal --',
+                'select-prompt-template' => 'Velg en promptmal',
             ],
         ],
     ],
@@ -2288,6 +2282,10 @@ return [
         '419' => [
             'description' => 'Ups! Økten din har utløpt. Vennligst oppdater siden og logg inn igjen for å fortsette.',
             'title'       => '419 Økten har utløpt',
+        ],
+        '405' => [
+            'description' => 'Oi! Forespørselsmetoden er ikke tillatt for denne URL-en. Vennligst bruk riktig metode eller gå tilbake til forrige side.',
+            'title'       => '405 Metode Ikke Tillatt',
         ],
         '500' => [
             'description' => 'Ups! Noe gikk galt. Det ser ut som vi har problemer med å laste den siden du leter etter.',

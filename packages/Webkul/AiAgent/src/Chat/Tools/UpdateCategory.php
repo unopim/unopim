@@ -2,28 +2,50 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class UpdateCategory implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('update_category')
-            ->for('Update a category name or parent.')
-            ->withStringParameter('code', 'Category code to update')
-            ->withStringParameter('name', 'New category name')
-            ->withStringParameter('parent_code', 'New parent category code')
-            ->using(function (string $code, ?string $name = null, ?string $parent_code = null) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.categories.edit')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'update_category';
+            }
+
+            public function description(): string
+            {
+                return 'Update a category name or parent.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'code'        => $schema->string()->description('Category code to update'),
+                    'name'        => $schema->string()->description('New category name'),
+                    'parent_code' => $schema->string()->description('New parent category code'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.categories.edit')) {
                     return $denied;
                 }
+
+                $code = $request->string('code')->toString();
+                $name = $request->string('name')->toString() ?: null;
+                $parent_code = $request->has('parent_code') ? ($request->string('parent_code')->toString() ?: null) : null;
 
                 $category = DB::table('categories')->where('code', $code)->first();
                 if (! $category) {
@@ -33,7 +55,7 @@ class UpdateCategory implements PimTool
                 $data = [];
                 if ($name) {
                     $existing = json_decode($category->additional_data, true) ?? [];
-                    $existing['locale_specific'][$context->locale]['name'] = $name;
+                    $existing['locale_specific'][$this->context->locale]['name'] = $name;
                     $data['additional_data'] = json_encode($existing);
                 }
 
@@ -47,6 +69,7 @@ class UpdateCategory implements PimTool
                 }
 
                 return json_encode(['result' => ['updated' => true, 'code' => $code]]);
-            });
+            }
+        };
     }
 }

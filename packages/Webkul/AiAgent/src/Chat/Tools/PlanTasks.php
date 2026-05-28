@@ -2,8 +2,10 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
@@ -11,12 +13,31 @@ class PlanTasks implements PimTool
 {
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('plan_tasks')
-            ->for('Create a multi-step task plan for complex operations. Use this when the user asks for something that requires multiple steps (e.g. "make all products market-ready"). Present the plan to the user for approval before executing.')
-            ->withStringParameter('goal', 'The high-level goal to achieve')
-            ->withStringParameter('steps_json', 'JSON array of step objects: [{"title":"Step title","description":"What to do","tool":"tool_to_use"}]')
-            ->using(function (string $goal, string $steps_json) use ($context): string {
+        return new class($context) extends ContextualTool
+        {
+            public function name(): string
+            {
+                return 'plan_tasks';
+            }
+
+            public function description(): string
+            {
+                return 'Create a multi-step task plan for complex operations. Use this when the user asks for something that requires multiple steps (e.g. "make all products market-ready"). Present the plan to the user for approval before executing.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'goal'       => $schema->string()->description('The high-level goal to achieve'),
+                    'steps_json' => $schema->string()->description('JSON array of step objects: [{"title":"Step title","description":"What to do","tool":"tool_to_use"}]'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                $goal = $request->string('goal')->toString();
+                $steps_json = $request->string('steps_json')->toString();
+
                 $steps = json_decode($steps_json, true);
 
                 if (empty($steps) || ! is_array($steps)) {
@@ -29,7 +50,7 @@ class PlanTasks implements PimTool
                     'status'     => 'pending',
                     'priority'   => 'normal',
                     'config'     => json_encode(['goal' => $goal, 'total_steps' => count($steps)]),
-                    'created_by' => $context->user?->id,
+                    'created_by' => $this->context->user?->id,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -47,7 +68,7 @@ class PlanTasks implements PimTool
                             'tool'        => $step['tool'] ?? null,
                         ]),
                         'parent_task_id' => $parentId,
-                        'created_by'     => $context->user?->id,
+                        'created_by'     => $this->context->user?->id,
                         'created_at'     => now(),
                         'updated_at'     => now(),
                     ]);
@@ -66,6 +87,7 @@ class PlanTasks implements PimTool
                         'status'      => 'Plan created. Present this to the user and ask for approval before executing each step.',
                     ],
                 ]);
-            });
+            }
+        };
     }
 }

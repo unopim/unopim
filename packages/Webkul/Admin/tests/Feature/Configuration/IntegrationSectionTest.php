@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Hash;
 use Webkul\AdminApi\Models\Apikey;
 
 it('should return the intergration datagrid page', function () {
@@ -171,10 +172,16 @@ it('should generate secret key and client id for a integration', function () {
 
     $data = $response->json();
 
+    // Passport 13 hashes the `secret` column at write-time via
+    // castAttributeAsHashedString. The plain-text secret is only exposed via
+    // $client->plainSecret for the duration of the request, so DB assertion
+    // matches by ID and verifies the hash separately.
     $this->assertDatabaseHas('oauth_clients', [
-        'id'     => $data['oauth_client_id'],
-        'secret' => $data['secret_key'],
+        'id' => $data['oauth_client_id'],
     ]);
+
+    $row = DB::table('oauth_clients')->where('id', $data['oauth_client_id'])->first();
+    expect(Hash::check($data['secret_key'], $row->secret))->toBeTrue();
 });
 
 it('should regenerate secret key for a integration', function () {
@@ -196,10 +203,14 @@ it('should regenerate secret key for a integration', function () {
 
     $data = $response->json();
 
+    // Passport 13 hashes `secret` — verify the hash matches the plaintext
+    // returned by the regenerate-secret endpoint rather than DB-comparing it.
     $this->assertDatabaseHas('oauth_clients', [
-        'id'     => $oauthClientId,
-        'secret' => $data['secret_key'],
+        'id' => $oauthClientId,
     ]);
+
+    $row = DB::table('oauth_clients')->where('id', $oauthClientId)->first();
+    expect(Hash::check($data['secret_key'], $row->secret))->toBeTrue();
 });
 
 it('should revoke the integration succesfully on delete', function () {

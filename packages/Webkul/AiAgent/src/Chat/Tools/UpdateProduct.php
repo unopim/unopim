@@ -2,8 +2,10 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
@@ -12,23 +14,51 @@ use Webkul\AiAgent\Services\ProductWriterService;
 
 class UpdateProduct implements PimTool
 {
-    use ChecksPermission;
-
     public function __construct(
         protected ProductWriterService $writerService,
     ) {}
 
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('update_product')
-            ->for('Update product attributes by SKU. Pass changes as JSON in changes_json.')
-            ->withStringParameter('sku', 'Product SKU to update (can be comma-separated for bulk)')
-            ->withStringParameter('changes_json', 'JSON string of attribute_code => new_value pairs to update (e.g. {"name": "New Name", "price": 29.99, "color": "Red"})')
-            ->using(function (string $sku, string $changes_json) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products.edit')) {
+        $writerService = $this->writerService;
+
+        return new class($context, $writerService) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function __construct(
+                ChatContext $context,
+                protected ProductWriterService $writerService,
+            ) {
+                parent::__construct($context);
+            }
+
+            public function name(): string
+            {
+                return 'update_product';
+            }
+
+            public function description(): string
+            {
+                return 'Update product attributes by SKU. Pass changes as JSON in changes_json.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'sku'          => $schema->string()->description('Product SKU to update (can be comma-separated for bulk)'),
+                    'changes_json' => $schema->string()->description('JSON string of attribute_code => new_value pairs to update (e.g. {"name": "New Name", "price": 29.99, "color": "Red"})'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.edit')) {
                     return $denied;
                 }
+
+                $sku = $request->string('sku')->toString();
+                $changes_json = $request->string('changes_json')->toString();
 
                 $changes = json_decode($changes_json, true) ?? [];
 
@@ -138,7 +168,7 @@ class UpdateProduct implements PimTool
                         // Route to correct bucket — source locale + translate others
                         if ($meta['value_per_channel'] && $meta['value_per_locale']) {
                             foreach ($allChannels as $ch) {
-                                $values['channel_locale_specific'][$ch->code][$context->locale][$code] = $value;
+                                $values['channel_locale_specific'][$ch->code][$this->context->locale][$code] = $value;
                             }
                             if (\in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
                                 $translatableFields[$code] = $value;
@@ -148,7 +178,7 @@ class UpdateProduct implements PimTool
                                 $values['channel_specific'][$ch->code][$code] = $value;
                             }
                         } elseif ($meta['value_per_locale']) {
-                            $values['locale_specific'][$context->locale][$code] = $value;
+                            $values['locale_specific'][$this->context->locale][$code] = $value;
                             if (\in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
                                 $translatableFields[$code] = $value;
                             }
@@ -164,9 +194,9 @@ class UpdateProduct implements PimTool
                     if (! empty($translatableFields)) {
                         TranslateProductValuesJob::dispatch(
                             productId: $productId,
-                            sourceLocale: $context->locale,
+                            sourceLocale: $this->context->locale,
                             fieldsToTranslate: $translatableFields,
-                            channel: $context->channel,
+                            channel: $this->context->channel,
                         )->delay(now()->addSeconds(3));
                     }
                 }
@@ -178,6 +208,7 @@ class UpdateProduct implements PimTool
                         'errors'  => empty($errors) ? null : $errors,
                     ],
                 ]);
-            });
+            }
+        };
     }
 }
