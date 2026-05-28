@@ -17,6 +17,34 @@ return [
         'has_file_options' => true,
     ],
 
+    'currencies' => [
+        'title'            => 'data_transfer::app.importers.currencies.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Currency\Importer',
+        'sample_path'      => 'data-transfer/samples/currencies.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\CurrencyJobValidator',
+        'has_file_options' => true,
+        'filters'          => [
+            'fields' => [
+                [
+                    'name'       => 'status',
+                    'title'      => 'Status',
+                    'required'   => false,
+                    'type'       => 'select',
+                    'options'    => [
+                        [
+                            'value' => 'enable',
+                            'label' => 'Enable',
+                        ],
+                        [
+                            'value' => 'all',
+                            'label' => 'All',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'roles' => [
         'title'            => 'data_transfer::app.importers.roles.title',
         'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Role\Importer',
@@ -35,15 +63,16 @@ return [
             'fields' => [
                 [
                     'name'       => 'status',
-                    'title'      => 'data_transfer::app.exporters.users.filters.status',
+                    'title'      => 'Status',
                     'required'   => false,
                     'type'       => 'select',
                     'options'    => [
                         [
-                            'label' => 'data_transfer::app.exporters.users.filters.active',
+                            'label' => 'Active',
                             'value' => 'active',
-                        ], [
-                            'label' => 'data_transfer::app.exporters.users.filters.all',
+                        ],
+                        [
+                            'label' => 'All',
                             'value' => 'all',
                         ],
                     ],

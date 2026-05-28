@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kod valute \'%s\' je već uvezen u ovoj seriji.',
+                    'code-not-found-to-delete'    => 'Valuta s kodom \'%s\' nije pronađena u sustavu.',
+                    'invalid-status'              => 'Status mora biti 0 ili 1 (ili prazno za zadano omogućeno).',
+                    'channel-related-locale-root' => 'Ne možete izbrisati regionalne postavke s kodom :code koje su povezane s kanalom.',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => 'Uloge',
             'validation' => [
@@ -67,6 +78,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorije',
+        ],
+        'currencies' => [
+            'title' => 'Valute',
         ],
         'roles' => [
             'title' => 'Uloge',

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => '通貨',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '通貨コード「%s」はこのバッチですでにインポートされています。',
+                    'code-not-found-to-delete'    => 'コード「%s」の通貨がシステムに見つかりません。',
+                    'invalid-status'              => 'ステータスは0または1である必要があります（デフォルトで有効の場合は空でも可）。',
+                    'channel-related-locale-root' => 'チャネルに関連付けられているコード :code のロケールは削除できません。',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => 'ロール',
             'validation' => [
@@ -67,6 +78,9 @@ return [
         ],
         'categories' => [
             'title' => 'カテゴリー',
+        ],
+        'currencies' => [
+            'title' => '通貨',
         ],
         'roles' => [
             'title' => 'ロール',

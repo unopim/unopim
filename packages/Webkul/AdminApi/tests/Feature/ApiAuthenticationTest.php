@@ -11,9 +11,16 @@ it('should return access token with valid credentials', function () {
     $admin = Admin::factory()->create(['password' => bcrypt('password')]);
 
     $clientRepo = new ClientRepository;
+    // Passport 13 dropped userId + redirect args from createPasswordGrantClient.
     $client = $clientRepo->createPasswordGrantClient(
-        $admin->id, 'Auth Test Client', env('APP_URL'), 'admins'
+        'Auth Test Client', 'admins', confidential: true
     );
+
+    $client->forceFill([
+        'user_id'    => $admin->id,
+        'owner_type' => Admin::class,
+        'owner_id'   => $admin->id,
+    ])->save();
 
     Apikey::factory()->create([
         'permission_type' => 'all',
@@ -44,9 +51,16 @@ it('should return error with invalid credentials', function () {
     $admin = Admin::factory()->create(['password' => bcrypt('password')]);
 
     $clientRepo = new ClientRepository;
+    // Passport 13 dropped userId + redirect args from createPasswordGrantClient.
     $client = $clientRepo->createPasswordGrantClient(
-        $admin->id, 'Auth Test Client', env('APP_URL'), 'admins'
+        'Auth Test Client', 'admins', confidential: true
     );
+
+    $client->forceFill([
+        'user_id'    => $admin->id,
+        'owner_type' => Admin::class,
+        'owner_id'   => $admin->id,
+    ])->save();
 
     Apikey::factory()->create([
         'permission_type' => 'all',
@@ -112,9 +126,16 @@ it('should return access token with refresh token', function () {
     $admin = Admin::factory()->create(['password' => bcrypt('password')]);
 
     $clientRepo = new ClientRepository;
+    // Passport 13 dropped userId + redirect args from createPasswordGrantClient.
     $client = $clientRepo->createPasswordGrantClient(
-        $admin->id, 'Auth Test Client', env('APP_URL'), 'admins'
+        'Auth Test Client', 'admins', confidential: true
     );
+
+    $client->forceFill([
+        'user_id'    => $admin->id,
+        'owner_type' => Admin::class,
+        'owner_id'   => $admin->id,
+    ])->save();
 
     Apikey::factory()->create([
         'permission_type' => 'all',

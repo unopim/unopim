@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valuta\'s',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Valutacode \'%s\' is al geïmporteerd in deze batch.',
+                    'code-not-found-to-delete'    => 'Valuta met code \'%s\' niet gevonden in het systeem.',
+                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
+                    'channel-related-locale-root' => 'U kunt de locale met code :code die aan een kanaal is gekoppeld niet verwijderen.',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => 'Rollen',
             'validation' => [
@@ -67,6 +78,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorieën',
+        ],
+        'currencies' => [
+            'title' => 'Valuta\'s',
         ],
         'roles' => [
             'title' => 'Rollen',

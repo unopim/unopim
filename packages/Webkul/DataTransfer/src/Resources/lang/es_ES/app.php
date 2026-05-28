@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Monedas',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'El código de moneda \'%s\' ya ha sido importado en este lote.',
+                    'code-not-found-to-delete'    => 'No se encontró la moneda con el código \'%s\' en el sistema.',
+                    'invalid-status'              => 'El estado debe ser 0 o 1 (o vacío para habilitado por defecto).',
+                    'channel-related-locale-root' => 'No se puede eliminar la configuración regional con el código :code porque está asociada a un canal.',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => 'Roles',
             'validation' => [
@@ -67,6 +78,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorías',
+        ],
+        'currencies' => [
+            'title' => 'Monedas',
         ],
         'roles' => [
             'title' => 'Roles',

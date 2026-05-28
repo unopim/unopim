@@ -87,6 +87,37 @@ return [
         ],
     ],
 
+    'currencies' => [
+        'title'       => 'data_transfer::app.exporters.currencies.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Currency\Exporter',
+        'source'      => 'Webkul\Core\Repositories\CurrencyRepository',
+        'sample_path' => 'data-transfer/samples/currencies.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\CurrencyJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'File Format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'roles' => [
         'title'       => 'data_transfer::app.exporters.roles.title',
         'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Role\Exporter',

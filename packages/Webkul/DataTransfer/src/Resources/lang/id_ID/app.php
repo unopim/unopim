@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Mata Uang',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kode mata uang \'%s\' sudah diimpor dalam batch ini.',
+                    'code-not-found-to-delete'    => 'Mata uang dengan kode \'%s\' tidak ditemukan di sistem.',
+                    'invalid-status'              => 'Status harus 0 atau 1 (atau kosong untuk aktif secara default).',
+                    'channel-related-locale-root' => 'Anda tidak dapat menghapus lokal dengan kode :code yang terkait dengan saluran.',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => 'Peran',
             'validation' => [
@@ -67,6 +78,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategori',
+        ],
+        'currencies' => [
+            'title' => 'Mata Uang',
         ],
         'roles' => [
             'title' => 'Peran',

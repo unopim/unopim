@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'العملات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'رمز العملة \'%s\' تم استيراده بالفعل في هذه الدفعة.',
+                    'code-not-found-to-delete'    => 'لم يتم العثور على عملة بالرمز \'%s\' في النظام.',
+                    'invalid-status'              => 'يجب أن تكون الحالة 0 أو 1 (أو فارغة للتمكين الافتراضي).',
+                    'channel-related-locale-root' => 'لا يمكنك حذف اللغة بالرمز :code لأنها مرتبطة بقناة.',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => 'الأدوار',
             'validation' => [
@@ -67,6 +78,9 @@ return [
         ],
         'categories' => [
             'title' => 'فئات',
+        ],
+        'currencies' => [
+            'title' => 'العملات',
         ],
         'roles' => [
             'title' => 'الأدوار',

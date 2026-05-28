@@ -156,7 +156,7 @@
                                     <p
                                         v-else
                                         class="truncate"
-                                        :title="record[column.index]"
+                                        :title="stripHtml(record[column.index])"
                                         v-html="record[column.index]"
                                     >
                                     </p>
@@ -178,7 +178,7 @@
                                             v-text="!action.icon ? action.title : ''"
                                             v-for="action in record.actions"
                                             :title="action.title ?? ''"
-                                            @click="$parent.performAction(action)"
+                                            @click="$parent.performAction(action, record)"
                                         >
                                         </span>
                                     </p>
@@ -226,7 +226,15 @@
             methods: {
                 handleRowClick(event, record) {
                     this.$parent.handleRowClick(event, record);
-                }
+                },
+
+                stripHtml(value) {
+                    if (value === null || value === undefined) {
+                        return '';
+                    }
+
+                    return String(value).replace(/<[^>]*>/g, '').trim();
+                },
             }
         });
     </script>

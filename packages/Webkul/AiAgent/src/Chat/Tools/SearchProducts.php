@@ -2,33 +2,65 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\SemanticRankingService;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 
 class SearchProducts implements PimTool
 {
-    use ChecksPermission;
-
     public function __construct(
         protected SemanticRankingService $semanticRankingService,
     ) {}
 
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('search_products')
-            ->for('Search products by SKU, name, or status.')
-            ->withStringParameter('query', 'Search term: SKU pattern, product name keyword, or leave empty for all')
-            ->withEnumParameter('status', 'Filter by product status', ['active', 'inactive', 'all'])
-            ->withNumberParameter('limit', 'Maximum results to return (default 10, max 50)')
-            ->using(function (?string $query = null, string $status = 'all', int $limit = 10) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products')) {
+        $semanticRankingService = $this->semanticRankingService;
+
+        return new class($context, $semanticRankingService) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function __construct(
+                ChatContext $context,
+                protected SemanticRankingService $semanticRankingService,
+            ) {
+                parent::__construct($context);
+            }
+
+            public function name(): string
+            {
+                return 'search_products';
+            }
+
+            public function description(): string
+            {
+                return 'Search products by SKU, name, or status.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'query'  => $schema->string()->description('Search term: SKU pattern, product name keyword, or leave empty for all'),
+                    'status' => $schema->string()->enum(['active', 'inactive', 'all'])->description('Filter by product status'),
+                    'limit'  => $schema->integer()->description('Maximum results to return (default 10, max 50)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products')) {
                     return $denied;
                 }
+
+                $query = $request->string('query')->toString() ?: null;
+                $status = $request->string('status')->toString() ?: 'all';
+                $limit = $request->has('limit') ? (int) $request->get('limit') : 10;
 
                 $limit = min(max($limit, 1), 50);
                 $candidateLimit = min(max($limit * 5, $limit), 200);
@@ -38,21 +70,23 @@ class SearchProducts implements PimTool
                 // alias explicitly so JSON selects resolve to the same alias
                 // Laravel generates for the FROM clause.
                 $prefix = DB::getTablePrefix();
+                $grammar = GrammarQueryManager::getGrammar();
 
                 $qb = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
                     ->select(
                         'p.id', 'p.sku', 'p.type', 'p.status', 'af.code as family_code',
-                        DB::raw("JSON_UNQUOTE(JSON_EXTRACT(`{$prefix}p`.`values`, '$.channel_locale_specific.{$context->channel}.{$context->locale}.name')) as product_name"),
-                        DB::raw("JSON_UNQUOTE(JSON_EXTRACT(`{$prefix}p`.`values`, '$.common.url_key')) as url_key"),
+                        DB::raw($grammar->jsonExtract("{$prefix}p.values", 'channel_locale_specific', $this->context->channel, $this->context->locale, 'name').' as product_name'),
+                        DB::raw($grammar->jsonExtract("{$prefix}p.values", 'common', 'url_key').' as url_key'),
                     );
 
                 if ($query) {
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $query);
-                    $qb->where(function ($q) use ($escaped, $context, $prefix) {
+                    $context = $this->context;
+                    $qb->where(function ($q) use ($escaped, $context, $prefix, $grammar) {
                         $q->where('p.sku', 'like', "%{$escaped}%")
                             ->orWhere('p.values->common->url_key', 'like', "%{$escaped}%")
-                            ->orWhereRaw("JSON_EXTRACT(`{$prefix}p`.`values`, '$.channel_locale_specific.{$context->channel}.{$context->locale}.name') LIKE ?", ["%{$escaped}%"]);
+                            ->orWhereRaw($grammar->jsonExtract("{$prefix}p.values", 'channel_locale_specific', $context->channel, $context->locale, 'name').' LIKE ?', ["%{$escaped}%"]);
                     });
                 }
 
@@ -120,6 +154,7 @@ class SearchProducts implements PimTool
                     'total'    => $results->count(),
                     'products' => $results->toArray(),
                 ]);
-            });
+            }
+        };
     }
 }

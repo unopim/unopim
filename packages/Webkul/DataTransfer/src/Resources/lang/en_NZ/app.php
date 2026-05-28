@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' has already been imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete locale with code :code that is associated with a channel.',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => 'Roles',
             'validation' => [
@@ -67,6 +78,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categories',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
         ],
         'roles' => [
             'title' => 'Roles',

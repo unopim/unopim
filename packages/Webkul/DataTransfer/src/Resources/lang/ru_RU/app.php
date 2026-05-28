@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Валюты',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Код валюты \'%s\' уже был импортирован в этом пакете.',
+                    'code-not-found-to-delete'    => 'Валюта с кодом \'%s\' не найдена в системе.',
+                    'invalid-status'              => 'Статус должен быть 0 или 1 (или пустым для включенного по умолчанию).',
+                    'channel-related-locale-root' => 'Вы не можете удалить локаль с кодом :code, которая связана с каналом.',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => 'Роли',
             'validation' => [
@@ -67,6 +78,9 @@ return [
         ],
         'categories' => [
             'title' => 'Категории',
+        ],
+        'currencies' => [
+            'title' => 'Валюты',
         ],
         'roles' => [
             'title' => 'Роли',

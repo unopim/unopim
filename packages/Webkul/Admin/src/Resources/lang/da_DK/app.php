@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'E-mailadresse',
-            'forget-password-link'   => 'Glemt adgangskode?',
-            'password'               => 'Adgangskode',
-            'submit-btn'             => 'Log ind',
-            'title'                  => 'Log ind',
-            'powered-by'             => 'Drevet af :unopim,',
-            'open-source-project-by' => 'Et open source-projekt af :webkul.',
+            'email'                      => 'E-mailadresse',
+            'forget-password-link'       => 'Glemt adgangskode?',
+            'password'                   => 'Adgangskode',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Log ind',
+            'title'                      => 'Log ind',
+            'powered-by'                 => 'Drevet af :unopim,',
+            'open-source-project-by'     => 'Et open source-projekt af :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Indtast venligst en gyldig URL.',
                     'regex'                      => 'Værdien matcher ikke det krævede mønster.',
                     'invalid-pattern'            => 'Ugyldigt brugerdefineret mønster angivet.',
-
                     'numeric'                    => 'Værdien for den numeriske attribut ":attribute" skal være et gyldigt tal.',
                     'select-attribute-or-family' => 'Vælg mindst ét attribut eller en attributfamilie.',
                     'failed'                     => 'Validering mislykkedes.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Masse-redigering lykkedes.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Ingen ændringer at gemme.',
-
-                'invalid-datetime'            => 'Indtast en gyldig dato og klokkeslæt.',
-
-                'resize-column'               => 'Træk for at ændre kolonnebredden',
-                'success'                     => 'Handling gennemført med succes.',
-                'fetch-failed'                => 'Hentning mislykkedes.',
-                'action'                      => 'Masseændring',
-                'description'                 => 'Rediger flere produkter på én gang. Ændringerne behandles i baggrunden.',
-                'gallery-preview'             => 'Galleri forhåndsvisning',
-                'img-preview'                 => 'Billedforhåndsvisning',
-                'no-image'                    => 'Intet billede',
-                'img-fail'                    => 'Billedupload mislykkedes.',
-                'no-option'                   => 'Ingen muligheder',
-                'keyboard-shortcuts'          => 'Tastaturgenveje',
-                'shortcuts-navigation'        => 'Navigation',
-                'shortcuts-editing'           => 'Redigering',
-                'shortcuts-selection'         => 'Valg',
-                'shortcuts-clipboard'         => 'Udklipsholder og udfyldning',
-                'shortcuts-move-cell'         => 'Flyt mellem celler',
-                'shortcuts-move-down'         => 'Flyt ned / bekræft redigering',
-                'shortcuts-move-up'           => 'Flyt op',
-                'shortcuts-move-right-left'   => 'Flyt til højre / venstre',
-                'shortcuts-home-end'          => 'Første / sidste kolonne i rækken',
-                'shortcuts-ctrl-home-end'     => 'Første / sidste celle i gitteret',
-                'shortcuts-extend-selection'  => 'Udvid valg',
-                'shortcuts-select-all'        => 'Vælg alle celler',
-                'shortcuts-enter-edit'        => 'Gå til redigeringstilstand',
-                'shortcuts-confirm-move-down' => 'Bekræft + flyt ned',
-                'shortcuts-confirm-move-right'=> 'Bekræft + flyt til højre',
-                'shortcuts-escape-revert'     => 'Gendan værdi + forlad redigering',
-                'shortcuts-clear-cell'        => 'Ryd celle',
-                'shortcuts-copy'              => 'Kopier',
-                'shortcuts-cut'               => 'Klip',
-                'shortcuts-paste'             => 'Indsæt',
-                'shortcuts-fill-down'         => 'Udfyld nedad',
-                'shortcuts-fill-right'        => 'Udfyld til højre',
-                'shortcuts-undo'              => 'Fortryd',
-                'shortcuts-redo'              => 'Gentag',
-                'shortcuts-help'              => 'Vis/skjul tastaturgenveje',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Ingen ændringer at gemme.',
+                'invalid-datetime'             => 'Indtast en gyldig dato og klokkeslæt.',
+                'resize-column'                => 'Træk for at ændre kolonnebredden',
+                'success'                      => 'Handling gennemført med succes.',
+                'fetch-failed'                 => 'Hentning mislykkedes.',
+                'action'                       => 'Masseændring',
+                'description'                  => 'Rediger flere produkter på én gang. Ændringerne behandles i baggrunden.',
+                'gallery-preview'              => 'Galleri forhåndsvisning',
+                'img-preview'                  => 'Billedforhåndsvisning',
+                'no-image'                     => 'Intet billede',
+                'img-fail'                     => 'Billedupload mislykkedes.',
+                'no-option'                    => 'Ingen muligheder',
+                'keyboard-shortcuts'           => 'Tastaturgenveje',
+                'shortcuts-navigation'         => 'Navigation',
+                'shortcuts-editing'            => 'Redigering',
+                'shortcuts-selection'          => 'Valg',
+                'shortcuts-clipboard'          => 'Udklipsholder og udfyldning',
+                'shortcuts-move-cell'          => 'Flyt mellem celler',
+                'shortcuts-move-down'          => 'Flyt ned / bekræft redigering',
+                'shortcuts-move-up'            => 'Flyt op',
+                'shortcuts-move-right-left'    => 'Flyt til højre / venstre',
+                'shortcuts-home-end'           => 'Første / sidste kolonne i rækken',
+                'shortcuts-ctrl-home-end'      => 'Første / sidste celle i gitteret',
+                'shortcuts-extend-selection'   => 'Udvid valg',
+                'shortcuts-select-all'         => 'Vælg alle celler',
+                'shortcuts-enter-edit'         => 'Gå til redigeringstilstand',
+                'shortcuts-confirm-move-down'  => 'Bekræft + flyt ned',
+                'shortcuts-confirm-move-right' => 'Bekræft + flyt til højre',
+                'shortcuts-escape-revert'      => 'Gendan værdi + forlad redigering',
+                'shortcuts-clear-cell'         => 'Ryd celle',
+                'shortcuts-copy'               => 'Kopier',
+                'shortcuts-cut'                => 'Klip',
+                'shortcuts-paste'              => 'Indsæt',
+                'shortcuts-fill-down'          => 'Udfyld nedad',
+                'shortcuts-fill-right'         => 'Udfyld til højre',
+                'shortcuts-undo'               => 'Fortryd',
+                'shortcuts-redo'               => 'Gentag',
+                'shortcuts-help'               => 'Vis/skjul tastaturgenveje',
             ],
             'create-success'          => 'Produkt oprettet med succes',
             'delete-failed'           => 'Produkt sletning mislykkedes',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Er filtrerbar',
                 'ai-translate'          => 'AI Oversæt',
                 'invalid-swatch-type'   => 'Attributten :attribute er ikke tilladt for attributtype :type med swatchtype :swatch_type.',
-
                 'single-object-only'    => 'Hver oprettelsesanmodning må kun indeholde ét attributobjekt.',
                 'option'                => [
                     'color'    => 'Farveprøve',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Attribut slettet succesfuldt',
             'update-success'    => 'Attribut opdateret succesfuldt',
             'user-define-error' => 'Kan ikke slette systemattribut',
-
             'immutable-fields'  => 'Følgende felter kan ikke ændres: :fields.',
             'not-found'         => 'Attribut med kode ":code" blev ikke fundet',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Kategori Felt Opdateret Med Succes',
             'user-define-error' => 'Kan ikke slette system Kategori Felt',
             'not-found'         => 'Kategori Felt med kode ":code" blev ikke fundet',
-
             'immutable-fields'  => 'Følgende felter kan ikke ændres: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Kan ikke opdatere konfigurerbare muligheder, da denne familie allerede har variantprodukter.',
         ],
         'history' => [
-            'view' => 'Vis versionsdetaljer',
-
+            'view'  => 'Vis versionsdetaljer',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Sat på pause',
                         'cancelled'            => 'Annulleret',
                         'failed'               => 'Mislykket',
-
-                        'view'       => 'Vis',
+                        'view'                 => 'Vis',
                     ],
                 ],
                 'import' => [
@@ -1602,18 +1596,18 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Rediger Bruger',
             ],
-            'activate-warning'           => 'Din konto er endnu ikke aktiveret, kontakt administrator.',
-            'cannot-change'              => 'Bruger kan ikke ændres',
-            'cannot-escalate-role'       => 'Du har ikke tilladelse til at tildele en rolle med fuld adgang.',
-            'create-success'             => 'Bruger oprettet succesfuldt.',
-            'delete-failed'              => 'Bruger sletning mislykkedes.',
-            'delete-success'             => 'Bruger slettet succesfuldt.',
-            'delete-warning'             => 'Er du sikker på, at du vil udføre denne handling?',
-            'incorrect-password'         => 'Forkert adgangskode',
-            'last-delete-error'          => 'Sidste sletning af bruger mislykkedes',
-            'login-error'                => 'Tjek dine legitimationsoplysninger og prøv igen.',
-            'update-success'             => 'Bruger opdateret succesfuldt.',
-            'current-user-delete-error'  => 'Den loggede bruger kan ikke slettes.',
+            'activate-warning'          => 'Din konto er endnu ikke aktiveret, kontakt administrator.',
+            'cannot-change'             => 'Bruger kan ikke ændres',
+            'cannot-escalate-role'      => 'Du har ikke tilladelse til at tildele en rolle med fuld adgang.',
+            'create-success'            => 'Bruger oprettet succesfuldt.',
+            'delete-failed'             => 'Bruger sletning mislykkedes.',
+            'delete-success'            => 'Bruger slettet succesfuldt.',
+            'delete-warning'            => 'Er du sikker på, at du vil udføre denne handling?',
+            'incorrect-password'        => 'Forkert adgangskode',
+            'last-delete-error'         => 'Sidste sletning af bruger mislykkedes',
+            'login-error'               => 'Tjek dine legitimationsoplysninger og prøv igen.',
+            'update-success'            => 'Bruger opdateret succesfuldt.',
+            'current-user-delete-error' => 'Den loggede bruger kan ikke slettes.',
         ],
         'roles' => [
             'index' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompts',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titel',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Tekstgenerering',
                 'image-generation'    => 'Billedgenerering',
                 'select-purpose'      => 'Vælg formål',
-                'select-model'        => '-- Vælg model --',
+                'select-model'        => 'Vælg model',
                 'loading-models'      => 'Indlæser modeller...',
                 'no-models-available' => 'Ingen modeller tilgængelige. Vælg en platform eller konfigurer en under fanen Platforme.',
                 'type'                => 'Type',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Systemprompts',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titel',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Etiket',
                 'provider'                 => 'Udbyder',
-                'select-provider'          => '-- Vælg udbyder --',
+                'select-provider'          => 'Vælg udbyder',
                 'api-url'                  => 'API URL',
                 'api-url-hint'             => 'Udfyldt med standardendepunktet. Rediger kun ved brug af en proxy eller tilpasset installation.',
                 'api-key'                  => 'API-nøgle',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'API-version',
                 'is-default'               => 'Angiv som standard',
                 'status'                   => 'Status',
-                'use-default'              => '-- Brug standardplatform --',
+                'use-default'              => 'Brug standardplatform',
                 'use-default-hint'         => 'Lad stå tomt for at bruge platformen markeret som standard. Platforme markeret med * er standard.',
                 'no-image-platform'        => 'Ingen billedkompatibel platform konfigureret. Tilføj først en OpenAI-, Gemini- eller xAI-platform.',
                 'image-platform-hint'      => 'Kun platforme der understøtter billedgenerering er vist (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Min konto',
                 'notifications' => 'Notifikationer',
                 'visit-shop'    => 'Besøg butik',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Attributfamilier',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Ingen poster er valgt.',
                 'must-select-a-mass-action-option' => 'Du skal vælge en massehandling.',
                 'must-select-a-mass-action'        => 'Du skal vælge en massehandling.',
+                'link-copied'                      => 'Linket er kopieret til udklipsholderen.',
+                'copy-failed'                      => 'Kopiering mislykkedes. Kopier venligst linket manuelt.',
             ],
             'toolbar' => [
                 'length-of'    => ':length af',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Filtrer',
                 ],
                 'search_by' => [
-                    'code'       => 'Søg efter kode',
-                    'code_or_id' => 'Søg efter kode eller id',
+                    'code'        => 'Søg efter kode',
+                    'code_or_id'  => 'Søg efter kode eller id',
+                    'sku_or_user' => 'Søg efter SKU eller bruger',
                 ],
                 'search' => [
                     'title' => 'Søg',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Standard prompt',
-                'select-prompt-template' => '-- Vælg en promptskabelon --',
+                'select-prompt-template' => 'Vælg en promptskabelon',
             ],
         ],
     ],
@@ -2289,6 +2283,10 @@ return [
             'description' => 'Ups! Din session er udløbet. Genindlæs siden og log ind igen for at fortsætte.',
             'title'       => '419 Session er udløbet',
         ],
+        '405' => [
+            'description' => 'Ups! Anmodningsmetoden er ikke tilladt for denne URL. Brug venligst den korrekte metode eller vend tilbage til den forrige side.',
+            'title'       => '405 Metode Ikke Tilladt',
+        ],
         '500' => [
             'description' => 'Ups! Noget gik galt. Vi har problemer med at indlæse den side, du leder efter.',
             'title'       => '500 Intern serverfejl',
@@ -2331,13 +2329,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Ja',
-        'no'             => 'Nej',
-        'true'           => 'Sand',
-        'false'          => 'Falsk',
-        'enable'         => 'Aktiveret',
-        'disable'        => 'Deaktiveret',
-        'no-match-found' => 'Ingen match fundet!',
+        'yes'               => 'Ja',
+        'no'                => 'Nej',
+        'true'              => 'Sand',
+        'false'             => 'Falsk',
+        'enable'            => 'Aktiveret',
+        'disable'           => 'Deaktiveret',
+        'no-match-found'    => 'Ingen match fundet!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

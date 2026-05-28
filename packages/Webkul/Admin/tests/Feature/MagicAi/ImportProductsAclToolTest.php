@@ -1,5 +1,6 @@
 <?php
 
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Tools\ImportProducts;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -27,7 +28,7 @@ it('denies AI import when the user lacks import execute permission', function ()
     $admin = $this->loginWithPermissions('custom', ['catalog', 'catalog.products', 'catalog.products.create']);
     $context = buildAiImportChatContext($admin);
 
-    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle('create_only'));
+    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request(['mode' => 'create_only'])));
 
     expect($result['error'])->toContain('data_transfer.imports.execute');
 });
@@ -36,7 +37,7 @@ it('denies AI import when the user has import execute permission but no product 
     $admin = $this->loginWithPermissions('custom', ['data_transfer', 'data_transfer.imports.execute']);
     $context = buildAiImportChatContext($admin);
 
-    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle('create_or_update'));
+    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request(['mode' => 'create_or_update'])));
 
     expect($result['error'])->toContain('catalog.products.create or catalog.products.edit');
 });
@@ -56,7 +57,7 @@ it('creates new products during AI import when the user has execute and create p
     ]);
 
     $context = buildAiImportChatContext($admin, $filePath);
-    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle('create_only'));
+    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request(['mode' => 'create_only'])));
 
     expect(data_get($result, 'result.created'))->toBe(1)
         ->and(data_get($result, 'result.updated'))->toBe(0)
@@ -84,7 +85,7 @@ it('skips existing products during mixed AI import when the user lacks edit perm
     ]);
 
     $context = buildAiImportChatContext($admin, $filePath);
-    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle('create_or_update'));
+    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request(['mode' => 'create_or_update'])));
 
     expect(data_get($result, 'result.created'))->toBe(1)
         ->and(data_get($result, 'result.updated'))->toBe(0)

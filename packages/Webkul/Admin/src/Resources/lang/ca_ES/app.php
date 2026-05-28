@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Adreça electrònica',
-            'forget-password-link'   => 'Oblidar contrasenya?',
-            'password'               => 'Contrasenya',
-            'submit-btn'             => 'Iniciar sessió',
-            'title'                  => 'Iniciar sessió',
-            'powered-by'             => 'Funciona amb :unopim,',
-            'open-source-project-by' => 'Un projecte de codi obert per :webkul.',
+            'email'                      => 'Adreça electrònica',
+            'forget-password-link'       => 'Oblidar contrasenya?',
+            'password'                   => 'Contrasenya',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Iniciar sessió',
+            'title'                      => 'Iniciar sessió',
+            'powered-by'                 => 'Funciona amb :unopim,',
+            'open-source-project-by'     => 'Un projecte de codi obert per :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Si us plau, introdueix una URL vàlida.',
                     'regex'                      => 'El valor no coincideix amb el patró requerit.',
                     'invalid-pattern'            => 'S\'ha proporcionat un patró personalitzat no vàlid.',
-
                     'numeric'                    => 'El valor de l\'atribut numèric ":attribute" ha de ser un número vàlid.',
                     'select-attribute-or-family' => 'Si us plau, seleccioneu almenys un atribut o una família d’atributs.',
                     'failed'                     => 'La validació ha fallat.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Edició massiva realitzada amb èxit.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'No hi ha canvis per desar.',
-
-                'invalid-datetime'            => 'Introdueix una data i hora vàlides.',
-
-                'resize-column'               => 'Arrossega per redimensionar la columna',
-                'success'                     => 'Operació completada amb èxit.',
-                'fetch-failed'                => 'Error en obtenir les dades.',
-                'action'                      => 'Edició en massa',
-                'description'                 => 'Editeu diversos productes alhora. Els canvis es processen en segon pla.',
-                'gallery-preview'             => 'Previsualització de la galeria',
-                'img-preview'                 => 'Previsualització de la imatge',
-                'no-image'                    => 'Sense imatge',
-                'img-fail'                    => 'Error en la pujada de la imatge.',
-                'no-option'                   => 'Sense opcions',
-                'keyboard-shortcuts'          => 'Dreceres de teclat',
-                'shortcuts-navigation'        => 'Navegació',
-                'shortcuts-editing'           => 'Edició',
-                'shortcuts-selection'         => 'Selecció',
-                'shortcuts-clipboard'         => 'Porta-retalls i omplir',
-                'shortcuts-move-cell'         => 'Moure entre cel·les',
-                'shortcuts-move-down'         => 'Baixar / confirmar edició',
-                'shortcuts-move-up'           => 'Pujar',
-                'shortcuts-move-right-left'   => 'Moure a la dreta / esquerra',
-                'shortcuts-home-end'          => 'Primera / última columna de la fila',
-                'shortcuts-ctrl-home-end'     => 'Primera / última cel·la de la graella',
-                'shortcuts-extend-selection'  => 'Ampliar la selecció',
-                'shortcuts-select-all'        => 'Seleccionar totes les cel·les',
-                'shortcuts-enter-edit'        => 'Entrar en mode edició',
-                'shortcuts-confirm-move-down' => 'Confirmar + baixar',
-                'shortcuts-confirm-move-right'=> 'Confirmar + moure a la dreta',
-                'shortcuts-escape-revert'     => 'Revertir valor + sortir de l\'edició',
-                'shortcuts-clear-cell'        => 'Buidar cel·la',
-                'shortcuts-copy'              => 'Copiar',
-                'shortcuts-cut'               => 'Retallar',
-                'shortcuts-paste'             => 'Enganxar',
-                'shortcuts-fill-down'         => 'Omplir cap avall',
-                'shortcuts-fill-right'        => 'Omplir cap a la dreta',
-                'shortcuts-undo'              => 'Desfer',
-                'shortcuts-redo'              => 'Refer',
-                'shortcuts-help'              => 'Mostrar/amagar dreceres de teclat',
+                'id'                           => 'ID',
+                'no-changes'                   => 'No hi ha canvis per desar.',
+                'invalid-datetime'             => 'Introdueix una data i hora vàlides.',
+                'resize-column'                => 'Arrossega per redimensionar la columna',
+                'success'                      => 'Operació completada amb èxit.',
+                'fetch-failed'                 => 'Error en obtenir les dades.',
+                'action'                       => 'Edició en massa',
+                'description'                  => 'Editeu diversos productes alhora. Els canvis es processen en segon pla.',
+                'gallery-preview'              => 'Previsualització de la galeria',
+                'img-preview'                  => 'Previsualització de la imatge',
+                'no-image'                     => 'Sense imatge',
+                'img-fail'                     => 'Error en la pujada de la imatge.',
+                'no-option'                    => 'Sense opcions',
+                'keyboard-shortcuts'           => 'Dreceres de teclat',
+                'shortcuts-navigation'         => 'Navegació',
+                'shortcuts-editing'            => 'Edició',
+                'shortcuts-selection'          => 'Selecció',
+                'shortcuts-clipboard'          => 'Porta-retalls i omplir',
+                'shortcuts-move-cell'          => 'Moure entre cel·les',
+                'shortcuts-move-down'          => 'Baixar / confirmar edició',
+                'shortcuts-move-up'            => 'Pujar',
+                'shortcuts-move-right-left'    => 'Moure a la dreta / esquerra',
+                'shortcuts-home-end'           => 'Primera / última columna de la fila',
+                'shortcuts-ctrl-home-end'      => 'Primera / última cel·la de la graella',
+                'shortcuts-extend-selection'   => 'Ampliar la selecció',
+                'shortcuts-select-all'         => 'Seleccionar totes les cel·les',
+                'shortcuts-enter-edit'         => 'Entrar en mode edició',
+                'shortcuts-confirm-move-down'  => 'Confirmar + baixar',
+                'shortcuts-confirm-move-right' => 'Confirmar + moure a la dreta',
+                'shortcuts-escape-revert'      => 'Revertir valor + sortir de l\'edició',
+                'shortcuts-clear-cell'         => 'Buidar cel·la',
+                'shortcuts-copy'               => 'Copiar',
+                'shortcuts-cut'                => 'Retallar',
+                'shortcuts-paste'              => 'Enganxar',
+                'shortcuts-fill-down'          => 'Omplir cap avall',
+                'shortcuts-fill-right'         => 'Omplir cap a la dreta',
+                'shortcuts-undo'               => 'Desfer',
+                'shortcuts-redo'               => 'Refer',
+                'shortcuts-help'               => 'Mostrar/amagar dreceres de teclat',
             ],
             'create-success'          => 'Producte creat amb èxit',
             'delete-failed'           => 'Eliminació del producte fallida',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'És filtrable',
                 'ai-translate'          => 'Traducció IA',
                 'invalid-swatch-type'   => 'L\':attribute no està permès per al tipus d\'atribut :type amb el tipus de mostra :swatch_type.',
-
                 'single-object-only'    => 'Cada sol·licitud de creació ha d\'enviar només un objecte d\'atribut.',
                 'option'                => [
                     'color'    => 'Muestra de color',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Atribut eliminat amb èxit',
             'update-success'    => 'Atribut actualitzat amb èxit',
             'user-define-error' => 'No es pot eliminar un atribut del sistema',
-
             'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
             'not-found'         => 'No s\'ha trobat l\'atribut amb codi ":code"',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Camp de Categoria Actualitzat Correctament',
             'user-define-error' => 'No es pot eliminar un Camp de Categoria del sistema',
             'not-found'         => 'No s\'ha trobat el Camp de Categoria amb el codi ":code"',
-
             'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'No es poden actualitzar les opcions configurables ja que aquesta família ja té productes variants.',
         ],
         'history' => [
-            'view' => 'Veure els detalls de la versió',
-
+            'view'  => 'Veure els detalls de la versió',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versió',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'En pausa',
                         'cancelled'            => 'Cancel·lat',
                         'failed'               => 'Fallat',
-
-                        'view'       => 'Veure',
+                        'view'                 => 'Veure',
                     ],
                 ],
                 'import' => [
@@ -1602,18 +1596,18 @@ return [
                 'status'           => 'Estat',
                 'title'            => 'Editar Usuari',
             ],
-            'activate-warning'           => 'El teu compte encara no està activat, contacta amb l\'administrador.',
-            'cannot-change'              => 'L\'usuari no pot ser modificat',
-            'cannot-escalate-role'       => 'No teniu permís per assignar un rol amb accés complet.',
-            'create-success'             => 'Usuari creat correctament.',
-            'delete-failed'              => 'Error en eliminar l\'usuari.',
-            'delete-success'             => 'Usuari eliminat correctament.',
-            'delete-warning'             => 'Estàs segur de voler realitzar aquesta acció?',
-            'incorrect-password'         => 'Contrasenya incorrecta',
-            'last-delete-error'          => 'Última eliminació d\'usuari fallida',
-            'login-error'                => 'Comprova les teves credencials i torna a provar.',
-            'update-success'             => 'Usuari actualitzat correctament.',
-            'current-user-delete-error'  => 'L\'usuari connectat no es pot eliminar.',
+            'activate-warning'          => 'El teu compte encara no està activat, contacta amb l\'administrador.',
+            'cannot-change'             => 'L\'usuari no pot ser modificat',
+            'cannot-escalate-role'      => 'No teniu permís per assignar un rol amb accés complet.',
+            'create-success'            => 'Usuari creat correctament.',
+            'delete-failed'             => 'Error en eliminar l\'usuari.',
+            'delete-success'            => 'Usuari eliminat correctament.',
+            'delete-warning'            => 'Estàs segur de voler realitzar aquesta acció?',
+            'incorrect-password'        => 'Contrasenya incorrecta',
+            'last-delete-error'         => 'Última eliminació d\'usuari fallida',
+            'login-error'               => 'Comprova les teves credencials i torna a provar.',
+            'update-success'            => 'Usuari actualitzat correctament.',
+            'current-user-delete-error' => 'L\'usuari connectat no es pot eliminar.',
         ],
         'roles' => [
             'index' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompts',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Títol',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Generació de text',
                 'image-generation'    => 'Generació d\'imatges',
                 'select-purpose'      => 'Seleccioneu el propòsit',
-                'select-model'        => '-- Seleccioneu el model --',
+                'select-model'        => 'Seleccioneu el model',
                 'loading-models'      => 'Carregant models...',
                 'no-models-available' => 'No hi ha models disponibles. Seleccioneu una plataforma o configureu-ne una a la pestanya Plataformes.',
                 'type'                => 'Tipus',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Prompts del sistema',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Títol',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Etiqueta',
                 'provider'                 => 'Proveïdor',
-                'select-provider'          => '-- Seleccioneu un proveïdor --',
+                'select-provider'          => 'Seleccioneu un proveïdor',
                 'api-url'                  => 'URL de l\'API',
                 'api-url-hint'             => 'Preomplert amb el punt final per defecte. Editeu només si utilitzeu un servidor intermediari o una implementació personalitzada.',
                 'api-key'                  => 'Clau API',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'Versió de l\'API',
                 'is-default'               => 'Estableix com a predeterminat',
                 'status'                   => 'Estat',
-                'use-default'              => '-- Utilitza la plataforma per defecte --',
+                'use-default'              => 'Utilitza la plataforma per defecte',
                 'use-default-hint'         => 'Deixeu buit per utilitzar la plataforma marcada com a predeterminada. Les plataformes marcades amb * són predeterminades.',
                 'no-image-platform'        => 'No s\'ha configurat cap plataforma amb capacitat d\'imatge. Afegiu primer una plataforma OpenAI, Gemini o xAI.',
                 'image-platform-hint'      => 'Només es mostren les plataformes que admeten la generació d\'imatges (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Mi cuenta',
                 'notifications' => 'Notificaciones',
                 'visit-shop'    => 'Visitar tienda',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Familias de atributos',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'No se han seleccionado registros.',
                 'must-select-a-mass-action-option' => 'Debes seleccionar una opción de acción masiva.',
                 'must-select-a-mass-action'        => 'Debes seleccionar una acción masiva.',
+                'link-copied'                      => 'Enllaç copiat al porta-retalls.',
+                'copy-failed'                      => 'La còpia ha fallat. Si us plau, copia l\'enllaç manualment.',
             ],
             'toolbar' => [
                 'length-of'    => ':length de',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Filtrar',
                 ],
                 'search_by' => [
-                    'code'       => 'Buscar por código',
-                    'code_or_id' => 'Buscar por código o id',
+                    'code'        => 'Buscar por código',
+                    'code_or_id'  => 'Buscar por código o id',
+                    'sku_or_user' => 'Buscar por SKU o usuario',
                 ],
                 'search' => [
                     'title' => 'Buscar',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Sol·licitud per defecte',
-                'select-prompt-template' => '-- Seleccioneu una plantilla d\'indicació --',
+                'select-prompt-template' => 'Seleccioneu una plantilla d\'indicació',
             ],
         ],
     ],
@@ -2289,6 +2283,10 @@ return [
             'description' => 'Oops! La teva sessió ha caducat. Fes una recàrrega de la pàgina i inicia sessió novament per continuar.',
             'title'       => '419 Sessió caducada',
         ],
+        '405' => [
+            'description' => 'Vaja! El mètode de la sol·licitud no està permès per a aquesta URL. Si us plau, utilitzeu el mètode correcte o torneu a la pàgina anterior.',
+            'title'       => '405 Mètode No Permès',
+        ],
         '500' => [
             'description' => 'Oops! Alguna cosa ha sortit malament. Sembla que tenim problemes carregant la pàgina que busques.',
             'title'       => '500 Error de servidor intern',
@@ -2331,13 +2329,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Sí',
-        'no'             => 'No',
-        'true'           => 'Veritable',
-        'false'          => 'Fals',
-        'enable'         => 'Activat',
-        'disable'        => 'Desactivat',
-        'no-match-found' => 'No s\'ha trobat cap coincidència!',
+        'yes'               => 'Sí',
+        'no'                => 'No',
+        'true'              => 'Veritable',
+        'false'             => 'Fals',
+        'enable'            => 'Activat',
+        'disable'           => 'Desactivat',
+        'no-match-found'    => 'No s\'ha trobat cap coincidència!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

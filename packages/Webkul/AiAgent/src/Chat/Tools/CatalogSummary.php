@@ -3,22 +3,33 @@
 namespace Webkul\AiAgent\Chat\Tools;
 
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class CatalogSummary implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('catalog_summary')
-            ->for('Get catalog statistics: product counts, categories, attributes, imports/exports, users.')
-            ->using(function () use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'dashboard')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'catalog_summary';
+            }
+
+            public function description(): string
+            {
+                return 'Get catalog statistics: product counts, categories, attributes, imports/exports, users.';
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'dashboard')) {
                     return $denied;
                 }
 
@@ -77,6 +88,7 @@ class CatalogSummary implements PimTool
                     ],
                     'recent_jobs' => $recentJobs,
                 ]);
-            });
+            }
+        };
     }
 }

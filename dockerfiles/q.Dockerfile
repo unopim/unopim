@@ -2,7 +2,7 @@
 # UnoPim Queue Worker (PHP 8.3 CLI)
 # =============================================================================
 # Lightweight CLI image for processing background jobs.
-# Processes system, completeness, and default queues.
+# Processes webhooks, system, completeness, and default queues.
 #
 # Multi-stage build:
 #   Stage 1 (composer) — install PHP dependencies
@@ -35,11 +35,13 @@ LABEL org.opencontainers.image.title="UnoPim Queue Worker"
 LABEL org.opencontainers.image.description="Background job processor for UnoPim PIM"
 LABEL org.opencontainers.image.source="https://github.com/unopim/unopim"
 
-# System dependencies + PHP extensions
+# System dependencies + PHP extensions.
+# procps provides pgrep, used by the HEALTHCHECK below.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     unzip \
     gosu \
+    procps \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
@@ -76,5 +78,19 @@ COPY dockerfiles/php.ini "$PHP_INI_DIR/conf.d/unopim.ini"
 WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
+
+# Healthcheck logic:
+#   1. If the install lock file does not exist yet, the worker is still
+#      waiting for the web/fpm container to finish first-time setup
+#      (q-entrypoint.sh blocks on this for up to SETUP_WAIT_TIMEOUT
+#      seconds, which is operator-overridable). Report healthy so the
+#      orchestrator does not restart-loop while setup runs.
+#   2. Once the lock exists, require an active queue:work or
+#      schedule:work process. The bracket trick `[a]rtisan` prevents
+#      pgrep from matching its own command line.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD [ ! -f /var/www/html/storage/unopim.lock ] \
+        || pgrep -f "[a]rtisan (queue|schedule):work" >/dev/null \
+        || exit 1
 
 ENTRYPOINT ["/var/www/html/dockerfiles/q-entrypoint.sh"]

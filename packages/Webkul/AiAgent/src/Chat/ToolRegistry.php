@@ -2,11 +2,11 @@
 
 namespace Webkul\AiAgent\Chat;
 
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 /**
- * Collects PIM tool classes and builds the Prism Tool[] array for each request.
+ * Collects PIM tool classes and builds the laravel/ai Tool[] array for each request.
  *
  * Registered as a singleton in the service provider. Third-party packages
  * can resolve this class and call register() to add their own tools —
@@ -28,7 +28,7 @@ class ToolRegistry
     }
 
     /**
-     * Build the Prism Tool[] array for a given chat context.
+     * Build the laravel/ai Tool[] array for a given chat context.
      *
      * @return Tool[]
      */

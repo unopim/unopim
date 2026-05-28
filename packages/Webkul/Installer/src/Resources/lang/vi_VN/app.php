@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Quản trị viên',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Xác nhận mật khẩu',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'Email',
-                'password'         => 'Mật khẩu',
-                'title'            => 'Tạo quản trị viên',
+                'admin'                   => 'Quản trị viên',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Xác nhận mật khẩu',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'Email',
+                'password'                => 'Mật khẩu',
+                'title'                   => 'Tạo quản trị viên',
+                'seed-sample-data'        => 'Cài đặt sản phẩm mẫu và dữ liệu demo',
+                'seeding-sample-data'     => 'Đang tạo sản phẩm mẫu và dữ liệu demo, quá trình này có thể mất vài phút...',
+                'seed-sample-data-failed' => 'Không thể tạo dữ liệu mẫu. Bạn có thể cài đặt sau qua lệnh `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Đồng tiền được phép',

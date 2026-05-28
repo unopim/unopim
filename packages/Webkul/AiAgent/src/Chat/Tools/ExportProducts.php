@@ -2,13 +2,15 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Prism\Prism\Tool;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
@@ -20,8 +22,6 @@ use Webkul\DataTransfer\Services\JobLogger;
 
 class ExportProducts implements PimTool
 {
-    use ChecksPermission;
-
     /**
      * Create a new tool instance.
      */
@@ -36,36 +36,66 @@ class ExportProducts implements PimTool
      */
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('export_products')
-            ->for('Export products to CSV or XLSX. Returns a download URL. Default format is CSV; use XLSX when the user explicitly asks for Excel or XLSX.')
-            ->withStringParameter('skus', 'Comma-separated SKUs to export (leave empty for all)')
-            ->withEnumParameter('status', 'Filter by status', ['active', 'inactive', 'all'])
-            ->withStringParameter('category', 'Filter by category code')
-            ->withEnumParameter('format', 'Export file format', ['csv', 'xlsx'])
-            ->using(function (?string $skus = null, string $status = 'all', ?string $category = null, string $format = 'csv') use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'data_transfer.export')) {
+        $outer = $this;
+
+        return new class($context, $outer) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function __construct(ChatContext $context, protected ExportProducts $outer)
+            {
+                parent::__construct($context);
+            }
+
+            public function name(): string
+            {
+                return 'export_products';
+            }
+
+            public function description(): string
+            {
+                return 'Export products to CSV or XLSX. Returns a download URL. Default format is CSV; use XLSX when the user explicitly asks for Excel or XLSX.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'skus'     => $schema->string()->description('Comma-separated SKUs to export (leave empty for all)'),
+                    'status'   => $schema->string()->enum(['active', 'inactive', 'all'])->description('Filter by status'),
+                    'category' => $schema->string()->description('Filter by category code'),
+                    'format'   => $schema->string()->enum(['csv', 'xlsx'])->description('Export file format'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'data_transfer.export')) {
                     return $denied;
                 }
 
+                $skus = $request->string('skus')->toString() ?: null;
+                $status = $request->string('status')->toString() ?: 'all';
+                $category = $request->string('category')->toString() ?: null;
+                $format = $request->string('format')->toString() ?: 'csv';
+
                 $format = strtolower($format);
 
-                $filters = $this->buildFilters($context, $skus, $status, $category, $format);
-                $jobInstance = $this->createJobInstance($filters);
-                $jobTrack = $this->createJobTrack($jobInstance);
+                $filters = $this->outer->buildFilters($this->context, $skus, $status, $category, $format);
+                $jobInstance = $this->outer->createJobInstance($filters);
+                $jobTrack = $this->outer->createJobTrack($jobInstance);
                 $logger = JobLogger::make($jobTrack->id);
 
                 $logger->info('AI export request received.');
 
                 try {
-                    $products = $this->collectProducts($filters);
+                    $products = $this->outer->collectProducts($filters);
 
                     if ($products->isEmpty()) {
                         $message = $category
                             ? "No products found in category: {$category}"
                             : 'No products match the criteria.';
 
-                        $this->markTrackAsFailed($jobTrack->id, $message, $logger);
+                        $this->outer->markTrackAsFailed($jobTrack->id, $message, $logger);
 
                         return json_encode(['error' => $message]);
                     }
@@ -74,17 +104,17 @@ class ExportProducts implements PimTool
                     $filename = sprintf('export-%s.%s', now()->format('Y-m-d-His'), $extension);
                     $relativePath = 'ai-agent/exports/'.$filename;
 
-                    $this->markTrackAsProcessing($jobTrack->id);
+                    $this->outer->markTrackAsProcessing($jobTrack->id);
 
-                    $rows = $this->buildCsvRows($products, $context);
+                    $rows = $this->outer->buildCsvRows($products, $this->context);
 
                     if ($format === 'xlsx') {
-                        $this->writeXlsx($relativePath, $rows);
+                        $this->outer->writeXlsx($relativePath, $rows);
                     } else {
-                        $this->writeCsv($relativePath, $rows);
+                        $this->outer->writeCsv($relativePath, $rows);
                     }
 
-                    $this->markTrackAsCompleted($jobTrack->id, $products, $relativePath, $logger);
+                    $this->outer->markTrackAsCompleted($jobTrack->id, $products, $relativePath, $logger);
 
                     return json_encode([
                         'result' => [
@@ -96,7 +126,7 @@ class ExportProducts implements PimTool
                         'download_url' => asset('storage/'.$relativePath),
                     ]);
                 } catch (\Throwable $exception) {
-                    $this->markTrackAsFailed($jobTrack->id, $exception->getMessage(), $logger);
+                    $this->outer->markTrackAsFailed($jobTrack->id, $exception->getMessage(), $logger);
 
                     report($exception);
 
@@ -104,13 +134,14 @@ class ExportProducts implements PimTool
                         'error' => 'Failed to export products. Please try again.',
                     ]);
                 }
-            });
+            }
+        };
     }
 
     /**
      * Build the export filters stored against the job instance.
      */
-    protected function buildFilters(ChatContext $context, ?string $skus, string $status, ?string $category, string $format): array
+    public function buildFilters(ChatContext $context, ?string $skus, string $status, ?string $category, string $format): array
     {
         $skuList = array_values(array_filter(array_map('trim', explode(',', (string) $skus))));
 
@@ -128,7 +159,7 @@ class ExportProducts implements PimTool
     /**
      * Create a job instance so the export appears in export history.
      */
-    protected function createJobInstance(array $filters): mixed
+    public function createJobInstance(array $filters): mixed
     {
         return $this->jobInstancesRepository->create([
             'code'                => 'ai-agent-export-'.Str::lower(Str::random(10)),
@@ -146,7 +177,7 @@ class ExportProducts implements PimTool
     /**
      * Create the tracker row for the AI-driven export.
      */
-    protected function createJobTrack(mixed $jobInstance): mixed
+    public function createJobTrack(mixed $jobInstance): mixed
     {
         return $this->jobTrackRepository->create([
             'action'              => 'export',
@@ -167,7 +198,7 @@ class ExportProducts implements PimTool
     /**
      * Collect products matching the requested filters.
      */
-    protected function collectProducts(array $filters): Collection
+    public function collectProducts(array $filters): Collection
     {
         $query = DB::table('products as p')
             ->select('p.id', 'p.sku', 'p.type', 'p.status', 'p.values');
@@ -199,7 +230,7 @@ class ExportProducts implements PimTool
     /**
      * Convert the selected products into export rows.
      */
-    protected function buildCsvRows(Collection $products, ChatContext $context): array
+    public function buildCsvRows(Collection $products, ChatContext $context): array
     {
         $rows = [
             ['sku', 'name', 'type', 'status', 'description', 'price', 'categories'],
@@ -237,7 +268,7 @@ class ExportProducts implements PimTool
     /**
      * Write the generated CSV to the public storage disk.
      */
-    protected function writeCsv(string $relativePath, array $rows): void
+    public function writeCsv(string $relativePath, array $rows): void
     {
         $stream = fopen('php://temp', 'w+');
 
@@ -255,7 +286,7 @@ class ExportProducts implements PimTool
     /**
      * Write the generated XLSX to the public storage disk.
      */
-    protected function writeXlsx(string $relativePath, array $rows): void
+    public function writeXlsx(string $relativePath, array $rows): void
     {
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
@@ -280,7 +311,7 @@ class ExportProducts implements PimTool
     /**
      * Mark the tracker row as actively processing.
      */
-    protected function markTrackAsProcessing(int $jobTrackId): void
+    public function markTrackAsProcessing(int $jobTrackId): void
     {
         $this->jobTrackRepository->update([
             'state'      => ExportHelper::STATE_PROCESSING,
@@ -292,7 +323,7 @@ class ExportProducts implements PimTool
     /**
      * Mark the tracker and its single batch as completed.
      */
-    protected function markTrackAsCompleted(int $jobTrackId, Collection $products, string $relativePath, $logger): void
+    public function markTrackAsCompleted(int $jobTrackId, Collection $products, string $relativePath, $logger): void
     {
         $summary = [
             'processed' => $products->count(),
@@ -321,7 +352,7 @@ class ExportProducts implements PimTool
     /**
      * Mark the tracker row as failed so the issue is visible in job history.
      */
-    protected function markTrackAsFailed(int $jobTrackId, string $message, $logger): void
+    public function markTrackAsFailed(int $jobTrackId, string $message, $logger): void
     {
         $this->jobTrackRepository->update([
             'state'        => ExportHelper::STATE_FAILED,

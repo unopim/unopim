@@ -34,6 +34,15 @@ describe('ImportProducts SKU validation (Issue #689)', function () {
         expect($method->invoke($tool, '_starts-with-underscore'))->toBeFalse();
     });
 
+    it('has no MAX_ROWS constant — all rows are dispatched to a background job', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/AiAgent/src/Chat/Tools/ImportProducts.php')
+        );
+
+        expect($source)->not->toContain('MAX_ROWS');
+        expect($source)->toContain('ImportProductsJob::dispatch');
+    });
+
     it('validateSku uses the same regex pattern as Core Sku rule', function () {
         $toolSource = file_get_contents(
             base_path('packages/Webkul/AiAgent/src/Chat/Tools/ImportProducts.php')
@@ -51,14 +60,20 @@ describe('ImportProducts SKU validation (Issue #689)', function () {
         expect($toolSource)->toContain($skuPattern);
     });
 
-    it('invalid SKUs are counted as skipped with error messages', function () {
-        $source = file_get_contents(
+    it('invalid SKUs are counted as skipped before the job is dispatched', function () {
+        $toolSource = file_get_contents(
             base_path('packages/Webkul/AiAgent/src/Chat/Tools/ImportProducts.php')
         );
 
-        // The validation should skip invalid rows and log an error
-        expect($source)->toContain('validateSku');
-        expect($source)->toContain('skipped');
-        expect($source)->toContain('Invalid SKU format');
+        $jobSource = file_get_contents(
+            base_path('packages/Webkul/AiAgent/src/Jobs/ImportProductsJob.php')
+        );
+
+        // Tool pre-filters invalid SKUs before dispatching
+        expect($toolSource)->toContain('validateSku');
+        expect($toolSource)->toContain('skippedInvalidSku');
+
+        // Job handles per-row errors during processing
+        expect($jobSource)->toContain('errors[]');
     });
 });

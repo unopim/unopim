@@ -144,8 +144,8 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
 
         if (empty($userIds)) {
             $admins = DB::table('admins')
-                ->join('admin_roles', 'admins.role_id', '=', 'admin_roles.id')
-                ->where('admin_roles.permission_type', 'all')
+                ->join('roles', 'admins.role_id', '=', 'roles.id')
+                ->where('roles.permission_type', 'all')
                 ->select('admins.id', 'admins.email')
                 ->get();
 

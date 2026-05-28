@@ -169,11 +169,13 @@ php artisan unopim:install
 php artisan serve
 ```
 
-Open `http://localhost:8000` in your browser. To execute imports/exports, AI agent tasks, and completeness jobs, start the queue worker:
+Open `http://localhost:8000` in your browser. To execute imports/exports, AI agent tasks, completeness jobs, and webhook deliveries, start the queue worker:
 
 ```bash
-php artisan queue:work --queue=system,default,completeness
+php artisan queue:work --queue=webhooks,system,default,completeness
 ```
+
+> **Note:** The `webhooks` queue is required for outgoing webhook delivery. The `Webkul\Webhook\Listeners\Product` listener is dispatched asynchronously to this queue so product save/update requests are not blocked by HTTP calls to subscribers. If you omit `webhooks` from the `--queue` list, webhook events will queue up but never be processed.
 
 ### Docker
 

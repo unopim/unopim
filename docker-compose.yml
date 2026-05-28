@@ -99,7 +99,7 @@ services:
     env_file: .env
     environment:
       <<: *app-environment
-      QUEUE_NAMES: "system,completeness,default"
+      QUEUE_NAMES: "webhooks,system,completeness,default"
     depends_on:
       <<: *app-depends
     logging: *default-logging
@@ -181,13 +181,20 @@ services:
   # ---------------------------------------------------------------------------
   unopim-elasticsearch:
     image: elasticsearch:8.17.0
+    # Stable hostname so InetAddress.getLocalHost() resolves before
+    # Log4j is initialized. Without it, the random container ID is
+    # picked as hostname and an absent /etc/hosts entry crashes ES
+    # at boot with "UnknownHostException: <id>".
+    hostname: unopim-elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - node.name=unopim-elasticsearch
+      - cluster.name=unopim
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - cluster.routing.allocation.disk.watermark.low=${ELASTICSEARCH_DISK_WATERMARK_LOW:-85%}
-      - cluster.routing.allocation.disk.watermark.high=${ELASTICSEARCH_DISK_WATERMARK_HIGH:-90%}
-      - cluster.routing.allocation.disk.watermark.flood_stage=${ELASTICSEARCH_DISK_WATERMARK_FLOOD_STAGE:-95%}
+      - cluster.routing.allocation.disk.watermark.low=${ELASTICSEARCH_DISK_WATERMARK_LOW:-90%}
+      - cluster.routing.allocation.disk.watermark.high=${ELASTICSEARCH_DISK_WATERMARK_HIGH:-95%}
+      - cluster.routing.allocation.disk.watermark.flood_stage=${ELASTICSEARCH_DISK_WATERMARK_FLOOD_STAGE:-97%}
     volumes:
       - unopim-elasticsearch-data:/usr/share/elasticsearch/data
     ports:

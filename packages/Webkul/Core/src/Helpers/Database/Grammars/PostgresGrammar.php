@@ -59,6 +59,16 @@ class PostgresGrammar implements Grammar
         return $jsonString;
     }
 
+    public function jsonContains(string $column, array $pathSegments, string $value): string
+    {
+        $parts = explode('.', $column);
+        $quotedColumn = implode('.', array_map(fn ($p) => '"'.$p.'"', $parts));
+        $operators = array_map(fn ($p) => "'{$p}'", $pathSegments);
+        $jsonExpr = $quotedColumn.'->'.implode('->', $operators);
+
+        return "({$jsonExpr})::jsonb @> {$value}::jsonb";
+    }
+
     public function orderByField(string $column, array $values, string $type = 'int'): string
     {
         $idList = implode(',', $values);

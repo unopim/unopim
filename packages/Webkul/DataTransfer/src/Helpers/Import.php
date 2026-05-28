@@ -695,7 +695,16 @@ class Import
         $jobInstance = $this->import->jobInstance;
 
         if (! $this->typeImporter) {
-            $importerConfig = config('importers.'.$jobInstance->entity_type);
+            $entityType = $this->resolveEntityType($jobInstance->entity_type);
+            $importerConfig = config('importers.'.$entityType);
+
+            if (! is_array($importerConfig) || ! isset($importerConfig['importer'])) {
+                throw new \UnexpectedValueException(sprintf(
+                    'Importer configuration not found for entity type [%s].',
+                    $jobInstance->entity_type
+                ));
+            }
+
             $this->typeImporter = app()->make($importerConfig['importer'])
                 ->setImport($this->import)
                 ->setLogger($this->jobLogger)
@@ -727,5 +736,20 @@ class Import
     public function isIndexingRequired(): bool
     {
         return $this->getTypeImporter()->isIndexingRequired();
+    }
+
+    /**
+     * Resolve legacy entity types to the current config keys.
+     */
+    protected function resolveEntityType(string $entityType): string
+    {
+        return match ($entityType) {
+            'product'  => 'products',
+            'category' => 'categories',
+            'currency' => 'currencies',
+            'role'     => 'roles',
+            'user'     => 'users',
+            default    => $entityType,
+        };
     }
 }

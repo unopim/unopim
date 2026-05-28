@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => '貨幣',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '貨幣代碼「%s」已在此批次中匯入。',
+                    'code-not-found-to-delete'    => '系統中找不到代碼為「%s」的貨幣。',
+                    'invalid-status'              => '狀態必須為 0 或 1（或留空以預設啟用）。',
+                    'channel-related-locale-root' => '無法刪除與頻道關聯的代碼為 :code 的地區設定。',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => '角色',
             'validation' => [
@@ -68,6 +79,9 @@ return [
         ],
         'categories' => [
             'title' => '分類',
+        ],
+        'currencies' => [
+            'title' => '貨幣',
         ],
         'roles' => [
             'title' => '角色',

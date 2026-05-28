@@ -6,21 +6,32 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Image tag to publish (e.g., 2.0.1)"
+        description: "Image tag to publish (e.g., 2.1.0)"
         required: true
 
 permissions:
   contents: read
 
+# Prevent two simultaneous publishes from racing on the same registry tag.
+concurrency:
+  group: docker-publish-${{ github.event.release.tag_name || github.event.inputs.tag }}
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+        with:
+          platforms: linux/amd64,linux/arm64
+
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -28,51 +39,222 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract version tag
+      - name: Resolve UnoPim Version
         id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          INPUT_TAG: ${{ github.event.inputs.tag }}
         run: |
-          if [ "${{ github.event_name }}" = "release" ]; then
-            TAG="${{ github.event.release.tag_name }}"
+          # Pick raw tag from env (not inline GitHub expressions) to avoid shell injection
+          # via a tag name containing shell metacharacters.
+          if [ "$EVENT_NAME" = "release" ]; then
+            RAW_TAG="$RELEASE_TAG"
           else
-            TAG="${{ github.event.inputs.tag }}"
+            RAW_TAG="$INPUT_TAG"
           fi
-          # Strip 'v' prefix if present (v2.0.1 -> 2.0.1)
-          VERSION="${TAG#v}"
-          MINOR="${VERSION%.*}"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "minor=${MINOR}" >> "$GITHUB_OUTPUT"
+
+          # Accept both 'v2.1.0' and '2.1.0' on dispatch; normalize to v-prefixed for validation.
+          case "$RAW_TAG" in
+            v*) GIT_TAG="$RAW_TAG" ;;
+            *)  GIT_TAG="v$RAW_TAG" ;;
+          esac
+
+          # Validate semver: vX.Y.Z or vX.Y.Z-suffix.
+          # SemVer 2.0.0 §9 allows hyphens inside pre-release identifiers
+          # (e.g. v2.1.0-rc-1, v2.1.0-alpha-build.5), so the suffix class
+          # must include '-' in addition to alphanumerics and dots.
+          if ! echo "$GIT_TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::Tag '$RAW_TAG' is not valid semver (expected vX.Y.Z or vX.Y.Z-suffix)"
+            exit 1
+          fi
+
+          # Docker tag = git tag without leading 'v'
+          VERSION="${GIT_TAG#v}"
+
+          # MINOR derives from stable portion only so 'v2.1.0-beta.2' -> 2.1
+          # (not '2.1.0-beta'). Bare ${VERSION%.*} would mis-strip the suffix.
+          STABLE_PART="${VERSION%%-*}"
+          MINOR="${STABLE_PART%.*}"
+
+          # Pre-release if any -suffix.
+          IS_PRERELEASE="false"
+          if echo "$GIT_TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+-'; then
+            IS_PRERELEASE="true"
+          fi
+
+          # Is build commit on default-branch line?
+          BUILD_SHA="${{ github.sha }}"
+          COMPARE_STATUS=$(gh api "repos/${{ github.repository }}/compare/${DEFAULT_BRANCH}...${BUILD_SHA}" --jq '.status' 2>/dev/null || echo "unknown")
+
+          ON_DEFAULT_BRANCH="false"
+          case "$COMPARE_STATUS" in
+            identical|behind) ON_DEFAULT_BRANCH="true" ;;
+          esac
+
+          # :latest only for stable releases on default-branch line.
+          PUSH_LATEST="false"
+          if [ "$IS_PRERELEASE" = "false" ] && [ "$ON_DEFAULT_BRANCH" = "true" ]; then
+            PUSH_LATEST="true"
+          fi
+
+          {
+            echo "version=$VERSION"
+            echo "minor=$MINOR"
+            echo "git_tag=$GIT_TAG"
+            echo "is_prerelease=$IS_PRERELEASE"
+            echo "on_default_branch=$ON_DEFAULT_BRANCH"
+            echo "push_latest=$PUSH_LATEST"
+            echo "default_branch=$DEFAULT_BRANCH"
+            echo "compare_status=$COMPARE_STATUS"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Resolved git tag: $GIT_TAG -> docker version: $VERSION (minor: $MINOR)"
+          echo "Pre-release: $IS_PRERELEASE | On default branch: $ON_DEFAULT_BRANCH ($COMPARE_STATUS) | Push :latest: $PUSH_LATEST"
+
+      # For release events the initial checkout already lands on the tag's
+      # commit (GITHUB_SHA == tag commit). For workflow_dispatch the initial
+      # checkout is the dispatched-from ref, which can differ from the tag
+      # the operator typed in the `tag` input. Realign the working tree to
+      # the requested tag so the build context matches the version label.
+      - name: Re-checkout tag (workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          git fetch --tags --force --depth=1 origin "${{ steps.version.outputs.git_tag }}"
+          git checkout --detach "refs/tags/${{ steps.version.outputs.git_tag }}"
+          echo "Checked out $(git rev-parse HEAD) for tag ${{ steps.version.outputs.git_tag }}"
+
+      - name: Compute Web Image Tags
+        id: web_tags
+        run: |
+          # Always publish the exact version tag.
+          TAGS="webkul/unopim:${{ steps.version.outputs.version }}"
+
+          # :minor (e.g. :2.1) tracks the latest stable release on its own
+          # release line. Skipped for pre-releases so an rc1 cannot clobber
+          # the stable floating tag — but DOES update for stable hotfixes on
+          # side branches (v2.0.5 on the 2.0 line still updates :2.0).
+          if [ "${{ steps.version.outputs.is_prerelease }}" = "false" ]; then
+            TAGS="$TAGS,webkul/unopim:${{ steps.version.outputs.minor }}"
+          fi
+
+          # :latest is strictly tied to the default branch line. Stable
+          # release on a side branch updates :minor (above) but NOT :latest.
+          if [ "${{ steps.version.outputs.push_latest }}" = "true" ]; then
+            TAGS="$TAGS,webkul/unopim:latest"
+          fi
+          echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
+          echo "Will push (web): $TAGS"
+
+      - name: Compute Queue Image Tags
+        id: queue_tags
+        run: |
+          TAGS="webkul/unopim-queue:${{ steps.version.outputs.version }}"
+
+          # :minor updates for every stable release on its release line
+          # (skipped only for pre-releases). See web tags step for the
+          # rationale on why :minor is not gated on default-branch.
+          if [ "${{ steps.version.outputs.is_prerelease }}" = "false" ]; then
+            TAGS="$TAGS,webkul/unopim-queue:${{ steps.version.outputs.minor }}"
+          fi
+
+          # :latest only for stable releases on the default-branch line.
+          if [ "${{ steps.version.outputs.push_latest }}" = "true" ]; then
+            TAGS="$TAGS,webkul/unopim-queue:latest"
+          fi
+          echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
+          echo "Will push (queue): $TAGS"
 
       - name: Build and push web image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: dockerfiles/web.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            webkul/unopim:${{ steps.version.outputs.version }}
-            webkul/unopim:${{ steps.version.outputs.minor }}
-            webkul/unopim:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          provenance: false
+          tags: ${{ steps.web_tags.outputs.tags }}
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web
 
       - name: Build and push queue worker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: dockerfiles/q.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            webkul/unopim-queue:${{ steps.version.outputs.version }}
-            webkul/unopim-queue:${{ steps.version.outputs.minor }}
-            webkul/unopim-queue:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          provenance: false
+          tags: ${{ steps.queue_tags.outputs.tags }}
+          cache-from: type=gha,scope=queue
+          cache-to: type=gha,mode=max,scope=queue
+
+      # Smoke test runs AFTER push. Multi-arch builds cannot be `load: true`
+      # (the local docker daemon can hold only one architecture), so we accept
+      # detection-after-publish here. A failure means the bad image is already
+      # public and must be rolled back manually by retagging the previous
+      # release: `docker buildx imagetools create -t <tag> <previous-digest>`.
+      - name: Smoke test multi-arch images
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          fail() { echo "::error::$*"; exit 1; }
+
+          for IMG in webkul/unopim webkul/unopim-queue; do
+            echo "::group::Inspect manifest list — $IMG:$VERSION"
+            docker buildx imagetools inspect "$IMG:$VERSION" \
+              || fail "Manifest inspect failed: $IMG:$VERSION"
+
+            raw=$(docker buildx imagetools inspect --raw "$IMG:$VERSION")
+            echo "$raw" | grep -q '"architecture":[[:space:]]*"amd64"' \
+              || fail "amd64 platform missing from manifest: $IMG:$VERSION"
+            echo "$raw" | grep -q '"architecture":[[:space:]]*"arm64"' \
+              || fail "arm64 platform missing from manifest: $IMG:$VERSION"
+            echo "::endgroup::"
+
+            for ARCH in amd64 arm64; do
+              echo "::group::Boot $IMG:$VERSION on linux/$ARCH"
+              # --entrypoint php bypasses the runtime entrypoint (which needs
+              # a live database) and exercises only the PHP runtime — enough
+              # to catch QEMU-segfault / glibc-mismatch class regressions.
+              # `timeout 90s` caps QEMU stalls so the job fails fast.
+              timeout 90s docker run --rm --platform "linux/$ARCH" \
+                --entrypoint php \
+                "$IMG:$VERSION" -v \
+                || fail "PHP banner failed: $IMG:$VERSION linux/$ARCH"
+              echo "::endgroup::"
+            done
+          done
+
+          echo "All smoke tests passed."
 
       - name: Update Docker Hub description
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: webkul/unopim
           short-description: "UnoPim — Open Source Product Information Management"
           readme-filepath: ./README.md
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Docker Publish Summary"
+            echo ""
+            echo "- Git tag: \`${{ steps.version.outputs.git_tag }}\`"
+            echo "- Docker version: \`${{ steps.version.outputs.version }}\` (minor: \`${{ steps.version.outputs.minor }}\`)"
+            echo "- Platforms: \`linux/amd64\`, \`linux/arm64\`"
+            echo "- Pre-release: \`${{ steps.version.outputs.is_prerelease }}\`"
+            echo "- On default branch (\`${{ steps.version.outputs.default_branch }}\`): \`${{ steps.version.outputs.on_default_branch }}\` (compare: \`${{ steps.version.outputs.compare_status }}\`)"
+            echo "- Pushed \`:latest\`: \`${{ steps.version.outputs.push_latest }}\`"
+            echo ""
+            echo "**Web tags:** \`${{ steps.web_tags.outputs.tags }}\`"
+            echo "**Queue tags:** \`${{ steps.queue_tags.outputs.tags }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

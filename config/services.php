@@ -42,4 +42,11 @@ return [
         'scheme'   => 'https',
     ],
 
+    'microsoft_sso' => [
+        'enabled'       => env('MICROSOFT_SSO_ENABLED', false),
+        'tenant'        => env('MICROSOFT_SSO_TENANT', ''),
+        'client_id'     => env('MICROSOFT_SSO_CLIENT_ID'),
+        'client_secret' => env('MICROSOFT_SSO_CLIENT_SECRET'),
+    ],
+
 ];

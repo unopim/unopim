@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Waluty',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kod waluty \'%s\' został już zaimportowany w tej partii.',
+                    'code-not-found-to-delete'    => 'Nie znaleziono w systemie waluty o kodzie \'%s\'.',
+                    'invalid-status'              => 'Status musi być 0 lub 1 (lub pusty dla domyślnie włączonego).',
+                    'channel-related-locale-root' => 'Nie możesz usunąć ustawień regionalnych z kodem :code, które są powiązane z kanałem.',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => 'Role',
             'validation' => [
@@ -67,6 +78,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorie',
+        ],
+        'currencies' => [
+            'title' => 'Waluty',
         ],
         'roles' => [
             'title' => 'Role',

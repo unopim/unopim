@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => '货币',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '货币代码“%s”已在此批次中导入。',
+                    'code-not-found-to-delete'    => '系统中未找到代码为“%s”的货币。',
+                    'invalid-status'              => '状态必须为0或1（或留空以默认启用）。',
+                    'channel-related-locale-root' => '无法删除与渠道关联的代码为:code的区域设置。',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => '角色',
             'validation' => [
@@ -68,6 +79,9 @@ return [
         ],
         'categories' => [
             'title' => '类别',
+        ],
+        'currencies' => [
+            'title' => '货币',
         ],
         'roles' => [
             'title' => '角色',

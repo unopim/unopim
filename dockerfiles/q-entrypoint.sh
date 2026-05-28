@@ -4,7 +4,7 @@ set -e
 LOCK_FILE="/var/www/html/storage/unopim.lock"
 
 # Queue configuration (override via docker-compose environment)
-QUEUE_NAMES="${QUEUE_NAMES:-system,completeness,default}"
+QUEUE_NAMES="${QUEUE_NAMES:-webhooks,system,completeness,default}"
 QUEUE_TIMEOUT="${QUEUE_TIMEOUT:-90}"
 QUEUE_TRIES="${QUEUE_TRIES:-3}"
 QUEUE_MAX_JOBS="${QUEUE_MAX_JOBS:-1000}"
@@ -24,6 +24,9 @@ while [ ! -f "$LOCK_FILE" ]; do
     elapsed=$((elapsed + 5))
 done
 echo "Application ready."
+
+# Pick up APP_KEY from .env (fpm container wrote it after we started).
+export APP_KEY=$(grep '^APP_KEY=' /var/www/html/.env | cut -d= -f2-)
 
 echo "Starting queue worker: queues=${QUEUE_NAMES}"
 

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'currencies' => [
+            'title'      => 'Valuutat',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Valuuttakoodi \'%s\' on jo tuotu tässä erässä.',
+                    'code-not-found-to-delete'    => 'Valuuttakoodia \'%s\' ei löytynyt järjestelmästä.',
+                    'invalid-status'              => 'Tilan on oltava 0 tai 1 (tai tyhjä oletuksena käytössä).',
+                    'channel-related-locale-root' => 'Et voi poistaa koodilla :code olevaa kielialuetta, joka on liitetty kanavaan.',
+                ],
+            ],
+        ],
         'roles' => [
             'title'      => 'Roolit',
             'validation' => [
@@ -67,6 +78,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriat',
+        ],
+        'currencies' => [
+            'title' => 'Valuutat',
         ],
         'roles' => [
             'title' => 'Roolit',
