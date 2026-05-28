@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roolit',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Päällekkäinen roolin nimi löytyi.',
+                    'name-not-found-to-delete' => 'Annetulla nimellä olevaa roolia ei löytynyt poistettavaksi.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Käyttäjät',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Annetulla sähköpostiosoitteella olevaa käyttäjää ei löytynyt poistettavaksi.',
+                    'invalid-role'              => 'Virheellinen roolin nimi löydetty.',
+                    'invalid-locale'            => 'Virheellinen käyttöliittymän kielikoodi löydetty.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,18 @@ return [
         ],
         'currencies' => [
             'title' => 'Valuutat',
+        ],
+        'roles' => [
+            'title' => 'Roolit',
+        ],
+
+        'users' => [
+            'title'   => 'Käyttäjät',
+            'filters' => [
+                'status' => 'Tila',
+                'active' => 'Aktiivinen',
+                'all'    => 'Kaikki',
+            ],
         ],
     ],
     'validation' => [

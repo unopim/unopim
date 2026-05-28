@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Role',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Znaleziono zduplikowaną nazwę roli.',
+                    'name-not-found-to-delete' => 'Nie znaleziono roli o podanej nazwie do usunięcia.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Użytkownicy',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Nie znaleziono użytkownika z podanym adresem e-mail do usunięcia.',
+                    'invalid-role'              => 'Znaleziono nieprawidłową nazwę roli.',
+                    'invalid-locale'            => 'Znaleziono nieprawidłowy kod lokalizacji UI.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Waluty',
+        ],
+        'roles' => [
+            'title' => 'Role',
+        ],
+        'users' => [
+            'title'   => 'Użytkownicy',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktywny',
+                'all'    => 'Wszyscy',
+            ],
         ],
     ],
     'validation' => [

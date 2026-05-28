@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Se encontró un nombre de rol duplicado.',
+                    'name-not-found-to-delete' => 'No se encontró un rol con el nombre especificado para eliminar.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Usuarios',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'No se encontró un usuario con el correo electrónico especificado para eliminar.',
+                    'invalid-role'              => 'Se encontró un nombre de rol inválido.',
+                    'invalid-locale'            => 'Se encontró un código de configuración regional de interfaz inválido.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Usuarios',
+            'filters' => [
+                'status' => 'Estado',
+                'active' => 'Activo',
+                'all'    => 'Todos',
+            ],
         ],
     ],
     'validation' => [

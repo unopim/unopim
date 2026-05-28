@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Peran',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Nama peran duplikat ditemukan.',
+                    'name-not-found-to-delete' => 'Peran dengan nama yang ditentukan tidak ditemukan untuk dihapus.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Pengguna',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Pengguna dengan email yang ditentukan tidak ditemukan untuk dihapus.',
+                    'invalid-role'              => 'Nama peran tidak valid ditemukan.',
+                    'invalid-locale'            => 'Kode lokal UI tidak valid ditemukan.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Mata Uang',
+        ],
+        'roles' => [
+            'title' => 'Peran',
+        ],
+        'users' => [
+            'title'   => 'Pengguna',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktif',
+                'all'    => 'Semua',
+            ],
         ],
     ],
     'validation' => [

@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate Role name found.',
+                    'name-not-found-to-delete' => 'Role with specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid Role name found.',
+                    'invalid-locale'            => 'Invalid UI Locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
     'validation' => [

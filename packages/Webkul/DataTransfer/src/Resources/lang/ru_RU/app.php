@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Роли',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Обнаружено дублирующееся имя роли.',
+                    'name-not-found-to-delete' => 'Роль с указанным именем не найдена для удаления.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Пользователи',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Пользователь с указанным email не найден для удаления.',
+                    'invalid-role'              => 'Обнаружено недопустимое имя роли.',
+                    'invalid-locale'            => 'Обнаружен недопустимый код локали UI.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Валюты',
+        ],
+        'roles' => [
+            'title' => 'Роли',
+        ],
+        'users' => [
+            'title'   => 'Пользователи',
+            'filters' => [
+                'status' => 'Статус',
+                'active' => 'Активный',
+                'all'    => 'Все',
+            ],
         ],
     ],
     'validation' => [

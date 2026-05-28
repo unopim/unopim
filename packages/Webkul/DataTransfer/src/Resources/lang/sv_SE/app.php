@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roller',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicerat rollnamn hittades.',
+                    'name-not-found-to-delete' => 'Roll med det angivna namnet hittades inte för borttagning.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Användare',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Användare med angiven e-post hittades inte för borttagning.',
+                    'invalid-role'              => 'Ogiltigt rollnamn hittades.',
+                    'invalid-locale'            => 'Ogiltig UI-lokalkod hittades.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,18 @@ return [
         ],
         'currencies' => [
             'title' => 'Valutor',
+        ],
+        'roles' => [
+            'title' => 'Roller',
+        ],
+
+        'users' => [
+            'title'   => 'Användare',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alla',
+            ],
         ],
     ],
     'validation' => [

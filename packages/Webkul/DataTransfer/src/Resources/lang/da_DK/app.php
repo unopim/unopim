@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roller',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplikeret rollenavn fundet.',
+                    'name-not-found-to-delete' => 'Rolle med det angivne navn blev ikke fundet til sletning.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Brugere',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Bruger med den angivne e-mail blev ikke fundet til sletning.',
+                    'invalid-role'              => 'Ugyldigt rollenavn fundet.',
+                    'invalid-locale'            => 'Ugyldig UI-lokalekode fundet.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Valutaer',
+        ],
+        'roles' => [
+            'title' => 'Roller',
+        ],
+        'users' => [
+            'title'   => 'Brugere',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alle',
+            ],
         ],
     ],
     'validation' => [

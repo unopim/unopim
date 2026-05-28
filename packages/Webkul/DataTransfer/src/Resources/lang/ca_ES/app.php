@@ -43,6 +43,26 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Rols',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'S\'ha trobat un nom de rol duplicat.',
+                    'name-not-found-to-delete' => 'No s\'ha trobat cap rol amb el nom especificat per eliminar.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Usuaris',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'No s\'ha trobat cap usuari amb el correu electrònic especificat per eliminar.',
+                    'invalid-role'              => 'S\'ha trobat un nom de rol no vàlid.',
+                    'invalid-locale'            => 'S\'ha trobat un codi de configuració regional de la interfície no vàlid.',
+                ],
+            ],
+        ],
+
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +82,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Monedes',
+        ],
+        'roles' => [
+            'title' => 'Rols',
+        ],
+        'users' => [
+            'title'   => 'Usuaris',
+            'filters' => [
+                'status' => 'Estat',
+                'active' => 'Actiu',
+                'all'    => 'Tots',
+            ],
         ],
     ],
     'validation' => [

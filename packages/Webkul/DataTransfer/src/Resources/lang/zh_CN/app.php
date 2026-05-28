@@ -43,6 +43,26 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => '角色',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => '发现重复的角色名称。',
+                    'name-not-found-to-delete' => '未找到指定名称的角色以进行删除。',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => '用户',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => '未找到指定邮箱的用户以进行删除。',
+                    'invalid-role'              => '发现无效的角色名称。',
+                    'invalid-locale'            => '发现无效的界面语言代码。',
+                ],
+            ],
+        ],
+
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +82,17 @@ return [
         ],
         'currencies' => [
             'title' => '货币',
+        ],
+        'roles' => [
+            'title' => '角色',
+        ],
+        'users' => [
+            'title'   => '用户',
+            'filters' => [
+                'status' => '状态',
+                'active' => '激活',
+                'all'    => '全部',
+            ],
         ],
     ],
     'validation' => [

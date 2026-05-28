@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Funções',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Nome de função duplicado encontrado.',
+                    'name-not-found-to-delete' => 'Função com o nome especificado não encontrada para eliminar.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Utilizadores',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Utilizador com o e-mail especificado não encontrado para eliminação.',
+                    'invalid-role'              => 'Nome de função inválido encontrado.',
+                    'invalid-locale'            => 'Código de localidade de UI inválido encontrado.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,18 @@ return [
         ],
         'currencies' => [
             'title' => 'Moedas',
+        ],
+        'roles' => [
+            'title' => 'Funções',
+        ],
+
+        'users' => [
+            'title'   => 'Utilizadores',
+            'filters' => [
+                'status' => 'Estado',
+                'active' => 'Ativo',
+                'all'    => 'Todos',
+            ],
         ],
     ],
     'validation' => [

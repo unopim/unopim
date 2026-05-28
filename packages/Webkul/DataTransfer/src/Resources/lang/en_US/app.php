@@ -34,7 +34,6 @@ return [
                 ],
             ],
         ],
-
         'currencies' => [
             'title'      => 'Currencies',
             'validation' => [
@@ -43,6 +42,25 @@ return [
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
                     'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
                     'channel-related-locale-root' => 'You cannot delete locale with code :code that is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'            => 'Duplicate Role name found.',
+                    'name-not-found-to-delete'  => 'Role with specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid Role name found.',
+                    'invalid-locale'            => 'Invalid UI Locale code found.',
                 ],
             ],
         ],
@@ -68,6 +86,18 @@ return [
         ],
         'currencies' => [
             'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title' => 'Users',
+
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
 

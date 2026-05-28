@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Rollen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Doppelter Rollenname gefunden.',
+                    'name-not-found-to-delete' => 'Rolle mit dem angegebenen Namen wurde zum Löschen nicht gefunden.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Benutzer',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Benutzer mit der angegebenen E-Mail-Adresse wurde zum Löschen nicht gefunden.',
+                    'invalid-role'              => 'Ungültiger Rollenname gefunden.',
+                    'invalid-locale'            => 'Ungültiger UI-Sprachcode gefunden.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Währungen',
+        ],
+        'roles' => [
+            'title' => 'Rollen',
+        ],
+        'users' => [
+            'title'   => 'Benutzer',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alle',
+            ],
         ],
     ],
     'validation' => [

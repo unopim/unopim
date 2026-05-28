@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Дүрүүд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Давхардсан дүрийн нэр олдлоо.',
+                    'name-not-found-to-delete' => 'Устгах нэртэй дүр олдсонгүй.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Хэрэглэгчид',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Заасан имэйлтэй хэрэглэгч устгахаар олдсонгүй.',
+                    'invalid-role'              => 'Буруу дүрийн нэр олдлоо.',
+                    'invalid-locale'            => 'Буруу UI локал код олдлоо.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Валютууд',
+        ],
+        'roles' => [
+            'title' => 'Дүрүүд',
+        ],
+        'users' => [
+            'title'   => 'Хэрэглэгчид',
+            'filters' => [
+                'status' => 'Төлөв',
+                'active' => 'Идэвхтэй',
+                'all'    => 'Бүгд',
+            ],
         ],
     ],
     'validation' => [

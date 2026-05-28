@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'भूमिकाएँ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'डुप्लिकेट भूमिका नाम मिला।',
+                    'name-not-found-to-delete' => 'निर्दिष्ट नाम वाली भूमिका हटाने के लिए नहीं मिली।',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'उपयोगकर्ता',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'निर्दिष्ट ईमेल वाला उपयोगकर्ता हटाने के लिए नहीं मिला।',
+                    'invalid-role'              => 'अमान्य भूमिका नाम पाया गया।',
+                    'invalid-locale'            => 'अमान्य UI लोकल कोड पाया गया।',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'मुद्राएँ',
+        ],
+        'roles' => [
+            'title' => 'भूमिकाएँ',
+        ],
+        'users' => [
+            'title'   => 'उपयोगकर्ता',
+            'filters' => [
+                'status' => 'स्थिति',
+                'active' => 'सक्रिय',
+                'all'    => 'सभी',
+            ],
         ],
     ],
     'validation' => [

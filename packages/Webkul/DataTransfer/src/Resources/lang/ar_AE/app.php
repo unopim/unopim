@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'الأدوار',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'تم العثور على اسم دور مكرر.',
+                    'name-not-found-to-delete' => 'لم يتم العثور على دور بالاسم المحدد للحذف.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'المستخدمون',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'لم يتم العثور على مستخدم بالبريد الإلكتروني المحدد للحذف.',
+                    'invalid-role'              => 'تم العثور على اسم دور غير صالح.',
+                    'invalid-locale'            => 'تم العثور على رمز لغة واجهة مستخدم غير صالح.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'العملات',
+        ],
+        'roles' => [
+            'title' => 'الأدوار',
+        ],
+        'users' => [
+            'title'   => 'المستخدمون',
+            'filters' => [
+                'status' => 'الحالة',
+                'active' => 'نشط',
+                'all'    => 'الكل',
+            ],
         ],
     ],
     'validation' => [

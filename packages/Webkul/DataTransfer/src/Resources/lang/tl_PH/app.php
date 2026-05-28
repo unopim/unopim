@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Mga Tungkulin',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Natagpuan ang duplicate na pangalan ng tungkulin.',
+                    'name-not-found-to-delete' => 'Walang natagpuang tungkulin na may tinukoy na pangalan para burahin.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Mga Gumagamit',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Walang natagpuang gumagamit na may tinukoy na email para burahin.',
+                    'invalid-role'              => 'May nakitang hindi wastong pangalan ng tungkulin.',
+                    'invalid-locale'            => 'May nakitang hindi wastong UI locale code.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Mga Pera',
+        ],
+        'roles' => [
+            'title' => 'Mga Tungkulin',
+        ],
+        'users' => [
+            'title'   => 'Mga Gumagamit',
+            'filters' => [
+                'status' => 'Katayuan',
+                'active' => 'Aktibo',
+                'all'    => 'Lahat',
+            ],
         ],
     ],
     'validation' => [

@@ -43,6 +43,26 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => '角色',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => '發現重複的角色名稱。',
+                    'name-not-found-to-delete' => '未找到指定名稱的角色以進行刪除。',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => '使用者',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => '未找到指定電子郵件的使用者以進行刪除。',
+                    'invalid-role'              => '發現無效的角色名稱。',
+                    'invalid-locale'            => '發現無效的介面語言代碼。',
+                ],
+            ],
+        ],
+
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +82,17 @@ return [
         ],
         'currencies' => [
             'title' => '貨幣',
+        ],
+        'roles' => [
+            'title' => '角色',
+        ],
+        'users' => [
+            'title'   => '使用者',
+            'filters' => [
+                'status' => '狀態',
+                'active' => '啟用',
+                'all'    => '全部',
+            ],
         ],
     ],
     'validation' => [

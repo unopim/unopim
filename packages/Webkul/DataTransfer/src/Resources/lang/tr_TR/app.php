@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Roller',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Yinelenen rol adı bulundu.',
+                    'name-not-found-to-delete' => 'Belirtilen ada sahip rol silinmek için bulunamadı.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Kullanıcılar',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Belirtilen e-posta adresine sahip kullanıcı silinmek için bulunamadı.',
+                    'invalid-role'              => 'Geçersiz rol adı bulundu.',
+                    'invalid-locale'            => 'Geçersiz UI yerel kodu bulundu.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Para Birimleri',
+        ],
+        'roles' => [
+            'title' => 'Roller',
+        ],
+        'users' => [
+            'title'   => 'Kullanıcılar',
+            'filters' => [
+                'status' => 'Durum',
+                'active' => 'Aktif',
+                'all'    => 'Tümü',
+            ],
         ],
     ],
     'validation' => [

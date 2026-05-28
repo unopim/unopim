@@ -43,6 +43,25 @@ return [
                 ],
             ],
         ],
+        'roles' => [
+            'title'      => 'Uloge',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Pronađeno je duplikatno ime uloge.',
+                    'name-not-found-to-delete' => 'Uloga s navedenim imenom nije pronađena za brisanje.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Korisnici',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'Korisnik s navedenom e-poštom nije pronađen za brisanje.',
+                    'invalid-role'              => 'Pronađeno je nevažeće ime uloge.',
+                    'invalid-locale'            => 'Pronađen je nevažeći kod jezika sučelja.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +81,17 @@ return [
         ],
         'currencies' => [
             'title' => 'Valute',
+        ],
+        'roles' => [
+            'title' => 'Uloge',
+        ],
+        'users' => [
+            'title'   => 'Korisnici',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktivan',
+                'all'    => 'Svi',
+            ],
         ],
     ],
     'validation' => [
