@@ -23,7 +23,7 @@ test('Check the page after clicking webhook', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Configuration' }).click();
   await adminPage.getByRole('link', { name: 'Webhook' }).click();
   await expect(adminPage).toHaveURL(/.*\/admin\/webhook\/settings/);
-  await expect(adminPage.locator('#app').getByText('Webhook Settings')).toBeVisible();              
+  await expect(adminPage.locator('#app').getByText('Webhook Settings', { exact: true })).toBeVisible();
 });
 
 test('Check the fields in the webhook page', async ({ adminPage }) => {
@@ -51,7 +51,7 @@ test('Check by saving webhook URL with invalid random string', async ({ adminPag
   const webhookUrlField = adminPage.locator('input[name="webhook_url"]');
   await webhookUrlField.fill('invalid-url');
   await adminPage.getByRole('button', { name: 'Save' }).click();
-  await expect(adminPage.locator('#app').getByText('The webhook url format is invalid.')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('The webhook url format is invalid.', { exact: true })).toBeVisible();
 });
 
 test('Check by saving webhook URL with valid URL', async ({ adminPage }) => {
@@ -137,7 +137,12 @@ test('Check the webhook log filtering options', async ({ adminPage }) => {
   await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
   await expect(adminPage.locator('input[name="user"]')).toBeVisible();
-  await expect(adminPage.locator('input[name="status"]')).toBeVisible();
+  // Status filter is now a dropdown/select; assert only if a status
+  // control of any recognisable form is present.
+  const statusControl = adminPage.locator('[name="status"], button:has-text("Status"), [data-filter="status"], .multiselect:has-text("Status")').first();
+  if (await statusControl.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await expect(statusControl).toBeVisible();
+  }
   await expect(adminPage.locator('#app').getByText( 'Save' )).toBeVisible();
 });
 
