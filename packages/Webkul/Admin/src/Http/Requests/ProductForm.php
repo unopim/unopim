@@ -10,15 +10,11 @@ class ProductForm extends FormRequest
 {
     /**
      * Rules.
-     *
-     * @var array
      */
-    protected $rules;
+    protected array $rules;
 
     /**
      * Create a new form request instance.
-     *
-     * @return void
      */
     public function __construct(
         protected ProductRepository $productRepository
@@ -26,20 +22,16 @@ class ProductForm extends FormRequest
 
     /**
      * Determine if the product is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $product = $this->productRepository->find($this->id);
 
@@ -51,7 +43,8 @@ class ProductForm extends FormRequest
         return $this->rules;
     }
 
-    public function prepareForValidation()
+    #[\Override]
+    public function prepareForValidation(): void
     {
         if (isset($this->uniqueFields['values.common.sku']) || isset($this->values['common']['sku'])) {
             $this->merge([

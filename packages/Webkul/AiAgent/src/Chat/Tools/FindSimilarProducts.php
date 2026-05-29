@@ -78,7 +78,7 @@ class FindSimilarProducts implements PimTool
                 $queryText = trim((string) $query);
 
                 if ($queryText === '' && $sourceProduct) {
-                    $sourceValues = json_decode($sourceProduct->values, true) ?? [];
+                    $sourceValues = json_decode((string) $sourceProduct->values, true) ?? [];
                     $sourceName = $sourceValues['channel_locale_specific'][$this->context->channel][$this->context->locale]['name']
                         ?? $sourceValues['common']['url_key']
                         ?? $sourceProduct->sku;
@@ -116,8 +116,8 @@ class FindSimilarProducts implements PimTool
 
                 $context = $this->context;
 
-                $rows = $products->map(function ($p) use ($context, $editBaseUrl) {
-                    $values = json_decode($p->values, true) ?? [];
+                $rows = $products->map(function (\stdClass $p) use ($context, $editBaseUrl) {
+                    $values = json_decode((string) $p->values, true) ?? [];
                     $name = $values['channel_locale_specific'][$context->channel][$context->locale]['name']
                         ?? $values['common']['url_key']
                         ?? '(unnamed)';
@@ -133,7 +133,7 @@ class FindSimilarProducts implements PimTool
                     ];
                 })->values();
 
-                $documents = $rows->map(fn ($item) => implode(' | ', [
+                $documents = $rows->map(fn (array $item) => implode(' | ', [
                     $item['sku'],
                     $item['name'],
                     $item['type'],
@@ -143,7 +143,7 @@ class FindSimilarProducts implements PimTool
 
                 $ranked = $this->embeddingSimilarityService->rank($queryText, $documents, $limit);
 
-                if (empty($ranked)) {
+                if ($ranked === []) {
                     return json_encode([
                         'total'    => 0,
                         'products' => [],

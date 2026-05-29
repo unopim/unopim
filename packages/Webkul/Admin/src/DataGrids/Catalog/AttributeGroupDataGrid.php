@@ -3,6 +3,7 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -10,10 +11,8 @@ class AttributeGroupDataGrid extends DataGrid
 {
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $tablePrefix = DB::getTablePrefix();
         $grammar = DB::rawQueryGrammar();
@@ -21,7 +20,7 @@ class AttributeGroupDataGrid extends DataGrid
         $nameField = "{$tablePrefix}attribute_group_name.name";
 
         $queryBuilder = DB::table('attribute_groups')
-            ->leftJoin('attribute_group_translations as attribute_group_name', function ($join) {
+            ->leftJoin('attribute_group_translations as attribute_group_name', function (JoinClause $join) {
                 $join->on('attribute_group_name.attribute_group_id', '=', 'attribute_groups.id')
                     ->where('attribute_group_name.locale', '=', core()->getRequestedLocaleCode());
             })
@@ -45,10 +44,8 @@ class AttributeGroupDataGrid extends DataGrid
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -80,10 +77,8 @@ class AttributeGroupDataGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('catalog.attribute_groups.edit')) {
             $this->addAction([
@@ -91,9 +86,7 @@ class AttributeGroupDataGrid extends DataGrid
                 'index'  => 'edit',
                 'title'  => trans('admin::app.catalog.attribute-groups.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.catalog.attribute.groups.edit', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.attribute.groups.edit', $row->id),
             ]);
         }
 
@@ -102,9 +95,7 @@ class AttributeGroupDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.catalog.attribute-groups.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.catalog.attribute.groups.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.attribute.groups.delete', $row->id),
             ]);
         }
     }

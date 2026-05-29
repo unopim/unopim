@@ -12,8 +12,6 @@ class AttributeFamilyDataSource extends ApiDataSource
 {
     /**
      * Create a new DataSource instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
@@ -25,7 +23,7 @@ class AttributeFamilyDataSource extends ApiDataSource
      *
      * @return Builder The query builder for the attribute  familyrepository.
      */
-    public function prepareApiQueryBuilder()
+    public function prepareApiQueryBuilder(): mixed
     {
         $this->addFilter('code', [
             '=',
@@ -43,17 +41,16 @@ class AttributeFamilyDataSource extends ApiDataSource
      *
      * @throws \Exception If the paginator data is not in the expected format.
      */
+    #[\Override]
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
 
-        return array_map(function ($data) {
-            return [
-                'code'             => $data['code'],
-                'labels'           => $this->getTranslations($data),
-                'attribute_groups' => $this->getFamilyGroups($data),
-            ];
-        }, $paginator['data'] ?? []);
+        return array_map(fn (mixed $data) => [
+            'code'             => $data['code'],
+            'labels'           => $this->getTranslations($data),
+            'attribute_groups' => $this->getFamilyGroups($data),
+        ], $paginator['data'] ?? []);
     }
 
     /**
@@ -64,7 +61,7 @@ class AttributeFamilyDataSource extends ApiDataSource
      *
      * @throws ModelNotFoundException If a attribute family with the given code is not found.
      */
-    public function getByCode(string $code)
+    public function getByCode(string $code): array
     {
         $this->prepareForSingleData();
 
@@ -83,7 +80,7 @@ class AttributeFamilyDataSource extends ApiDataSource
 
         if (! $attributeFamily) {
             throw new ModelNotFoundException(
-                sprintf('Attribute Family with code %s could not be found.', (string) $code)
+                sprintf('Attribute Family with code %s could not be found.', $code)
             );
         }
 
@@ -96,17 +93,14 @@ class AttributeFamilyDataSource extends ApiDataSource
 
     /**
      * Retrieves a list of attribute groups associated with a given attribute family.
-     *
-     *
-     * @return array
      */
-    public function getFamilyGroups(array $family)
+    public function getFamilyGroups(array $family): array
     {
         if (! isset($family['attribute_family_group_mappings']) || empty($family['attribute_family_group_mappings'])) {
             return [];
         }
 
-        return array_map(function ($groupMapping) {
+        return array_map(function (mixed $groupMapping) {
             $group = $this->getGroup($groupMapping['attribute_group_id']); // TODO: need to improve this use wouth repository
 
             return [
@@ -121,26 +115,20 @@ class AttributeFamilyDataSource extends ApiDataSource
      * Retrieves an attribute group by its ID.
      *
      * @param  int  $id  The unique identifier of the attribute group.
-     * @return array
      */
-    public function getGroup(int $id)
+    public function getGroup(int $id): array
     {
         return $this->attributeGroupRepository->find($id)->toArray();
     }
 
     /**
      * Retrieves a list of custom attributes for an attribute group.
-     *
-     *
-     * @return array
      */
-    public function getAttributes(array $attributes)
+    public function getAttributes(array $attributes): array
     {
-        return array_map(function ($attribute) {
-            return [
-                'code'     => $attribute['code'],
-                'position' => $attribute['pivot']['position'],
-            ];
-        }, $attributes);
+        return array_map(fn (mixed $attribute) => [
+            'code'     => $attribute['code'],
+            'position' => $attribute['pivot']['position'],
+        ], $attributes);
     }
 }

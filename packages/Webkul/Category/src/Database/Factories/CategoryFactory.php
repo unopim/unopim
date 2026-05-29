@@ -28,7 +28,7 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'            => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'code'            => $this->faker->regexify('/^[a-zA-Z]+\w+$/'),
             'parent_id'       => Category::whereIsRoot()->first()->id,
             'additional_data' => [
                 'locale_specific' => [

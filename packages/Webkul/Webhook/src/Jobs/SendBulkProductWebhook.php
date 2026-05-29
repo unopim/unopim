@@ -19,9 +19,8 @@ class SendBulkProductWebhook implements ShouldQueue
      * Create a new job instance.
      *
      * @param  array<int>  $ids
-     * @return void
      */
-    public function __construct(protected array $ids, protected $userId) {}
+    public function __construct(protected array $ids, protected mixed $userId) {}
 
     /**
      * Execute the job.

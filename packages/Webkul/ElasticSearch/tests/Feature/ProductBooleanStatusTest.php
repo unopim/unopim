@@ -1,7 +1,9 @@
 <?php
 
+use Elastic\Elasticsearch\Endpoints\Indices;
 use PHPUnit\Framework\ExpectationFailedException;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\ElasticSearch\Client\Fake\FakeElasticClient;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -12,7 +14,7 @@ beforeEach(function () {
         'elasticsearch.connections.default.hosts.0'  => 'testhost:9200',
     ]);
 
-    $elasticClientMock = Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient');
+    $elasticClientMock = Mockery::mock(FakeElasticClient::class);
 
     ElasticSearch::shouldReceive('makeConnection')
         ->andReturn($elasticClientMock)
@@ -32,17 +34,12 @@ describe('Product Observer indexes boolean status for ES8 compatibility (Issue #
 
         ElasticSearch::shouldReceive('index')
             ->once()
-            ->withArgs(function ($args) {
-                try {
-                    $this->assertArrayHasKey('body', $args);
-                    $status = $args['body']['status'];
-
-                    // CRITICAL: status must be boolean, not integer
-                    $this->assertIsBool($status, 'Product status sent to ES must be boolean, got: '.gettype($status).' value: '.var_export($status, true));
-                    $this->assertTrue($status);
-                } catch (ExpectationFailedException $e) {
-                    throw $e;
-                }
+            ->withArgs(function (mixed $args) {
+                $this->assertArrayHasKey('body', $args);
+                $status = $args['body']['status'];
+                // CRITICAL: status must be boolean, not integer
+                $this->assertIsBool($status, 'Product status sent to ES must be boolean, got: '.gettype($status).' value: '.var_export($status, true));
+                $this->assertTrue($status);
 
                 return true;
             });
@@ -61,16 +58,11 @@ describe('Product Observer indexes boolean status for ES8 compatibility (Issue #
 
         ElasticSearch::shouldReceive('index')
             ->once()
-            ->withArgs(function ($args) {
-                try {
-                    $this->assertArrayHasKey('body', $args);
-                    $status = $args['body']['status'];
-
-                    $this->assertIsBool($status, 'Product status sent to ES must be boolean, got: '.gettype($status).' value: '.var_export($status, true));
-                    $this->assertFalse($status);
-                } catch (ExpectationFailedException $e) {
-                    throw $e;
-                }
+            ->withArgs(function (mixed $args) {
+                $this->assertArrayHasKey('body', $args);
+                $status = $args['body']['status'];
+                $this->assertIsBool($status, 'Product status sent to ES must be boolean, got: '.gettype($status).' value: '.var_export($status, true));
+                $this->assertFalse($status);
 
                 return true;
             });
@@ -89,16 +81,11 @@ describe('Product Observer indexes boolean status for ES8 compatibility (Issue #
 
         ElasticSearch::shouldReceive('index')
             ->once()
-            ->withArgs(function ($args) {
-                try {
-                    $this->assertArrayHasKey('body', $args);
-
-                    if (isset($args['body']['attribute_family']['status'])) {
-                        $familyStatus = $args['body']['attribute_family']['status'];
-                        $this->assertIsBool($familyStatus, 'attribute_family.status sent to ES must be boolean, got: '.gettype($familyStatus));
-                    }
-                } catch (ExpectationFailedException $e) {
-                    throw $e;
+            ->withArgs(function (mixed $args) {
+                $this->assertArrayHasKey('body', $args);
+                if (isset($args['body']['attribute_family']['status'])) {
+                    $familyStatus = $args['body']['attribute_family']['status'];
+                    $this->assertIsBool($familyStatus, 'attribute_family.status sent to ES must be boolean, got: '.gettype($familyStatus));
                 }
 
                 return true;
@@ -117,18 +104,18 @@ describe('ProductIndexer maps status as boolean type for ES8 (Issue #243)', func
 
         config(['elasticsearch.enabled' => true]);
 
-        $indicesMock = Mockery::mock('Elastic\Elasticsearch\Endpoints\Indices');
+        $indicesMock = Mockery::mock(Indices::class);
 
         ElasticSearch::shouldReceive('indices')->andReturn($indicesMock)->between(1, 5);
 
-        $indicesMockResponse = Mockery::mock('Elastic\Elasticsearch\Response\Elasticsearch');
+        $indicesMockResponse = Mockery::mock(Elastic\Elasticsearch\Response\Elasticsearch::class);
 
         $indicesMock->shouldReceive('exists')->andReturn($indicesMockResponse);
         $indicesMockResponse->shouldReceive('asBool')->andReturn(false);
 
         $indicesMock->shouldReceive('create')
             ->once()
-            ->withArgs(function ($args) {
+            ->withArgs(function (mixed $args) {
                 try {
                     $this->assertArrayHasKey('body', $args);
                     $this->assertArrayHasKey('mappings', $args['body']);
@@ -176,10 +163,10 @@ describe('ProductIndexer maps status as boolean type for ES8 (Issue #243)', func
 
         config(['elasticsearch.enabled' => true]);
 
-        $indicesMock = Mockery::mock('Elastic\Elasticsearch\Endpoints\Indices');
+        $indicesMock = Mockery::mock(Indices::class);
         ElasticSearch::shouldReceive('indices')->andReturn($indicesMock)->between(1, 5);
 
-        $indicesMockResponse = Mockery::mock('Elastic\Elasticsearch\Response\Elasticsearch');
+        $indicesMockResponse = Mockery::mock(Elastic\Elasticsearch\Response\Elasticsearch::class);
         $indicesMock->shouldReceive('exists')->andReturn($indicesMockResponse);
         $indicesMockResponse->shouldReceive('asBool')->andReturn(true);
 
@@ -199,7 +186,7 @@ describe('ProductIndexer maps status as boolean type for ES8 (Issue #243)', func
 
         ElasticSearch::shouldReceive('bulk')
             ->between(1, 10000)
-            ->withArgs(function ($args) {
+            ->withArgs(function (mixed $args) {
                 $this->assertIsArray($args);
                 $this->assertArrayHasKey('body', $args);
 

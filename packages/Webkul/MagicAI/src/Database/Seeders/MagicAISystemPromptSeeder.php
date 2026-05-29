@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\MagicAI\Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -10,7 +12,7 @@ class MagicAISystemPromptSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run($parameters = []): void
+    public function run(array $parameters = []): void
     {
         $prompts = [
             [

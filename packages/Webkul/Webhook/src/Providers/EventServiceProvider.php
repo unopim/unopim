@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Webhook\Providers;
 
 use Illuminate\Support\Facades\Event;
@@ -11,10 +13,8 @@ class EventServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         Event::listen('catalog.product.update.after', [Product::class, 'afterUpdate']);
 

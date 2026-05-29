@@ -17,11 +17,12 @@ class Mailable extends BaseMailable implements ShouldQueue
      *
      * @param  Message  $message
      */
+    #[\Override]
     protected function buildFrom($message): Mailable
     {
-        ! empty($this->from)
-            ? $message->from($this->from[0]['address'], $this->from[0]['name'])
-            : $message->from(core()->getSenderEmailDetails()['email'], core()->getSenderEmailDetails()['name']);
+        empty($this->from)
+            ? $message->from(core()->getSenderEmailDetails()['email'], core()->getSenderEmailDetails()['name'])
+            : $message->from($this->from[0]['address'], $this->from[0]['name']);
 
         return $this;
     }

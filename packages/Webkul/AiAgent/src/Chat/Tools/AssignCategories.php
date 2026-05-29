@@ -10,6 +10,7 @@ use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Product\Repositories\ProductRepository;
 
 class AssignCategories implements PimTool
 {
@@ -46,15 +47,15 @@ class AssignCategories implements PimTool
                 $skus = $request->string('skus')->toString();
                 $categories = $request->string('categories')->toString();
 
-                $skuList = array_map('trim', explode(',', $skus));
-                $categoryInputs = array_map('trim', explode(',', $categories));
+                $skuList = array_map(trim(...), explode(',', $skus));
+                $categoryInputs = array_map(trim(...), explode(',', $categories));
 
                 // Build candidate codes to search for
                 $candidates = [];
 
                 foreach ($categoryInputs as $input) {
                     $candidates[] = $input;
-                    $segments = array_map('trim', explode('>', $input));
+                    $segments = array_map(trim(...), explode('>', $input));
                     $last = end($segments);
                     $candidates[] = $last;
                     $candidates[] = Str::slug($last);
@@ -73,7 +74,7 @@ class AssignCategories implements PimTool
 
                 $updated = 0;
                 $errors = [];
-                $repo = app('Webkul\Product\Repositories\ProductRepository');
+                $repo = app(ProductRepository::class);
 
                 foreach ($skuList as $sku) {
                     $product = $repo->findOneByField('sku', $sku);
@@ -102,7 +103,7 @@ class AssignCategories implements PimTool
                         'updated'    => $updated,
                         'skus'       => implode(', ', $skuList),
                         'categories' => implode(', ', $resolvedCodes),
-                        'errors'     => empty($errors) ? null : $errors,
+                        'errors'     => $errors === [] ? null : $errors,
                     ],
                 ]);
             }

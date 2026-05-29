@@ -11,7 +11,7 @@ class SKUStorage
     /**
      * Delimiter for SKU information
      */
-    private const DELIMITER = '|';
+    private const string DELIMITER = '|';
 
     /**
      * Items contains SKU as key and product information as value
@@ -30,8 +30,6 @@ class SKUStorage
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(protected ProductRepository $productRepository) {}
 
@@ -52,7 +50,7 @@ class SKUStorage
      */
     public function load(array $skus = []): void
     {
-        if (empty($skus)) {
+        if ($skus === []) {
             $products = DB::table('products')
                 ->select($this->selectColumns)
                 ->get();
@@ -73,7 +71,7 @@ class SKUStorage
          */
         $skusToLoad = array_filter($skus, fn (string $sku) => ! $this->has($sku));
 
-        if (empty($skusToLoad)) {
+        if ($skusToLoad === []) {
             return;
         }
 
@@ -129,7 +127,7 @@ class SKUStorage
             return null;
         }
 
-        $data = explode(self::DELIMITER, $this->items[$sku]);
+        $data = explode(self::DELIMITER, (string) $this->items[$sku]);
 
         return [
             'id'                  => $data[0],
@@ -143,11 +141,7 @@ class SKUStorage
      */
     public function getByType(string $type): ?array
     {
-        $result = Arr::where($this->items, function (string $row, string $key) use ($type) {
-            return str_contains($row, '|'.$type.'|');
-        });
-
-        return $result;
+        return Arr::where($this->items, fn (string $row, string $key) => str_contains($row, '|'.$type.'|'));
     }
 
     /**
@@ -155,7 +149,7 @@ class SKUStorage
      */
     public function isEmpty(): int
     {
-        return empty($this->items);
+        return $this->items === [];
     }
 
     /**
@@ -166,7 +160,7 @@ class SKUStorage
         $allItems = [];
 
         foreach ($this->items as $key => $item) {
-            $data = explode(self::DELIMITER, $item);
+            $data = explode(self::DELIMITER, (string) $item);
 
             $allItems[$key] = [
                 'id'                  => $data[0],

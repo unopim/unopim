@@ -33,14 +33,14 @@ class ProductCursor extends AbstractElasticCursor
             'stored_fields'    => [],
         ];
 
-        if (! empty($this->searchAfter)) {
+        if ($this->searchAfter !== []) {
             $query['search_after'] = $this->searchAfter;
         }
 
         $boolQuery = [];
 
         if (! empty($filters['status'])) {
-            $value = $filters['status'] == 'enable' ? true : false;
+            $value = $filters['status'] == 'enable';
             $boolQuery['filter'][] = [
                 'term' => ['status' => $value],
             ];
@@ -62,7 +62,7 @@ class ProductCursor extends AbstractElasticCursor
             if (! empty($hits)) {
                 $this->searchAfter = end($hits)['sort'];
 
-                return array_map(fn ($hit) => ['id' => $hit['_id']], $hits);
+                return array_map(fn (mixed $hit) => ['id' => $hit['_id']], $hits);
             }
         } catch (\Throwable $e) {
             \Log::error('Elasticsearch search error: '.$e->getMessage());

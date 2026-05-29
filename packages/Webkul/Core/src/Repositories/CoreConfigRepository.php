@@ -19,15 +19,14 @@ class CoreConfigRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Core\Contracts\CoreConfig';
+        return CoreConfig::class;
     }
 
     /**
      * Create.
-     *
-     * @return CoreConfig
      */
-    public function create(array $data)
+    #[\Override]
+    public function create(array $data): void
     {
         Event::dispatch('core.configuration.save.before');
 
@@ -49,16 +48,12 @@ class CoreConfigRepository extends Repository
                 // For null values, use the field's default_value if available, otherwise store an empty
                 // string so explicitly cleared fields (e.g. deselected multiselects) are persisted.
                 if (is_null($value)) {
-                    if (isset($field['default_value']) && $field['default_value'] !== '') {
-                        $value = $field['default_value'];
-                    } else {
-                        $value = '';
-                    }
+                    $value = isset($field['default_value']) && $field['default_value'] !== '' ? $field['default_value'] : '';
                 }
 
                 if (($field['type'] ?? null) === 'password' && preg_match('/^\*+$/', $value)) {
                     $original = core()->getConfigData($fieldName);
-                    if (strlen($value) === strlen($original)) {
+                    if (strlen($value) === strlen((string) $original)) {
                         $value = $original;
                     }
                 }
@@ -73,7 +68,7 @@ class CoreConfigRepository extends Repository
                     $value = request()->file($fieldName)->store('configuration');
                 }
 
-                if (! count($coreConfigValue)) {
+                if (count($coreConfigValue) === 0) {
                     parent::create([
                         'code'         => $fieldName,
                         'value'        => $value,
@@ -106,28 +101,17 @@ class CoreConfigRepository extends Repository
 
     /**
      * Search configuration.
-     *
-     * @param  array  $items
-     * @param  string  $searchTerm
-     * @return array
      */
-    public function search($items, $searchTerm, $path = [])
+    public function search(array $items, string $searchTerm, array $path = []): array
     {
         $results = [];
 
         foreach ($items as $configuration) {
             $title = trans($configuration['title'] ?? ($configuration['name'] ?? ''));
 
-            if (
-                stripos($title, $searchTerm) !== false
-                && count($path)
-            ) {
-                if (isset($path[1])) {
-                    $queryParam = $path[1]['key'];
-                } else {
-                    $queryParam = $configuration['key'];
-                }
-
+            if (stripos($title, $searchTerm) !== false
+            && count($path)) {
+                $queryParam = isset($path[1]) ? $path[1]['key'] : $configuration['key'];
                 $results[] = [
                     'title' => implode(' > ', [...Arr::pluck($path, 'title'), $title]),
                     'url'   => route('admin.configuration.index', Str::replace('.', '/', $queryParam)),
@@ -138,9 +122,9 @@ class CoreConfigRepository extends Repository
                 ! empty($configuration['children'])
                 || ! empty($configuration['fields'])
             ) {
-                $children = ! empty($configuration['children'])
-                    ? $configuration['children']
-                    : $configuration['fields'];
+                $children = empty($configuration['children'])
+                    ? $configuration['fields']
+                    : $configuration['children'];
 
                 $tempPath = array_merge($path, [[
                     'key'   => $configuration['key'] ?? null,
@@ -156,11 +140,8 @@ class CoreConfigRepository extends Repository
 
     /**
      * Recursive array.
-     *
-     * @param  string  $method
-     * @return array
      */
-    public function recursiveArray(array $formData, $method)
+    public function recursiveArray(array $formData, string $method): array
     {
         static $data = [];
 
@@ -174,7 +155,7 @@ class CoreConfigRepository extends Repository
 
                 if ($dim > 1) {
                     $this->recursiveArray($formValue, $value);
-                } elseif ($dim == 1) {
+                } elseif ($dim === 1) {
                     $data[$value] = $formValue;
                 }
             }
@@ -197,18 +178,9 @@ class CoreConfigRepository extends Repository
 
     /**
      * Return dimension of the array.
-     *
-     * @param  array  $array
-     * @return int
      */
-    public function countDim($array)
+    public function countDim(array $array): int
     {
-        if (is_array(reset($array))) {
-            $return = $this->countDim(reset($array)) + 1;
-        } else {
-            $return = 1;
-        }
-
-        return $return;
+        return is_array(reset($array)) ? $this->countDim(reset($array)) + 1 : 1;
     }
 }

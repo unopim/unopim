@@ -104,12 +104,12 @@ class ImportProducts implements PimTool
                     return json_encode(['error' => 'Unsupported file format. Please upload a CSV or XLSX file.']);
                 }
 
-                if (empty($rows)) {
+                if ($rows === []) {
                     return json_encode(['error' => 'The file is empty or could not be parsed.']);
                 }
 
                 // Normalize headers to lowercase
-                $headers = array_map(fn ($h) => strtolower(trim((string) $h)), array_keys($rows[0]));
+                $headers = array_map(fn (mixed $h) => strtolower(trim((string) $h)), array_keys($rows[0]));
                 $skuIndex = array_search('sku', $headers, true);
 
                 if ($skuIndex === false) {
@@ -138,7 +138,7 @@ class ImportProducts implements PimTool
 
                     $sku = trim((string) ($normalizedRow['sku'] ?? ''));
 
-                    if (empty($sku) || ! $this->outer->validateSku($sku)) {
+                    if ($sku === '' || $sku === '0' || ! $this->outer->validateSku($sku)) {
                         $skippedInvalidSku[] = 'Row '.($i + 2).': Invalid or empty SKU.';
 
                         continue;
@@ -340,7 +340,7 @@ class ImportProducts implements PimTool
         }
 
         // Strip BOM from first header
-        $headers[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headers[0]);
+        $headers[0] = preg_replace('/^\xEF\xBB\xBF/', '', (string) $headers[0]);
 
         $rows = [];
 
@@ -351,9 +351,7 @@ class ImportProducts implements PimTool
 
             $row = array_combine($headers, $data);
 
-            if ($row !== false) {
-                $rows[] = $row;
-            }
+            $rows[] = $row;
         }
 
         fclose($handle);
@@ -388,9 +386,7 @@ class ImportProducts implements PimTool
             foreach ($data as $rowData) {
                 if (count($rowData) === count($headers)) {
                     $row = array_combine($headers, $rowData);
-                    if ($row !== false) {
-                        $rows[] = $row;
-                    }
+                    $rows[] = $row;
                 }
             }
 

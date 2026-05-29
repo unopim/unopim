@@ -63,62 +63,51 @@ class AttributeFactory extends Factory
 
     public function validation_numeric(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'numeric',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'validation' => 'numeric',
+        ]);
     }
 
     public function validation_email(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'email',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'validation' => 'email',
+        ]);
     }
 
     public function validation_decimal(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'decimal',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'validation' => 'decimal',
+        ]);
     }
 
     public function validation_url(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'url',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'validation' => 'url',
+        ]);
     }
 
     public function required(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_required' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'is_required' => true,
+        ]);
     }
 
     public function unique(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_unique' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'is_unique' => true,
+        ]);
     }
 
     /**
      * Configure the model
      */
-    public function configure()
+    #[\Override]
+    public function configure(): static
     {
         return $this->afterCreating(function (Attribute $attribute) {
             if (in_array($attribute->type, ['select', 'multiselect', 'checkbox'])) {

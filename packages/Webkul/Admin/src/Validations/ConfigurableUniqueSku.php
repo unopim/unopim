@@ -9,11 +9,9 @@ class ConfigurableUniqueSku implements Rule
 {
     /**
      * Constructor.
-     *
-     * @param  array  $currentIds
      */
     public function __construct(
-        protected $currentIds = null,
+        protected ?array $currentIds = null,
     ) {}
 
     /**
@@ -21,29 +19,24 @@ class ConfigurableUniqueSku implements Rule
      *
      * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         return $this->isSkuExistsInProduct();
     }
 
     /**
      * Get the validation error message.
-     *
-     * @return string
      */
-    public function message()
+    public function message(): string
     {
         return trans('admin::app.catalog.products.index.already-taken', ['name' => ':attribute']);
     }
 
     /**
      * Is SKU is exists in product.
-     *
-     * @return bool
      */
-    protected function isSkuExistsInProduct()
+    protected function isSkuExistsInProduct(): bool
     {
         $requestedSkus = collect(request()->input('variants'))->pluck('sku')->toArray();
 
@@ -65,6 +58,6 @@ class ConfigurableUniqueSku implements Rule
          * Once, we don't found any sku in all the products then
          * we will check uniqueness in the current requested variant's skus.
          */
-        return ! (count($requestedSkus) !== count(array_unique($requestedSkus)));
+        return count($requestedSkus) === count(array_unique($requestedSkus));
     }
 }

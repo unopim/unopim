@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
@@ -23,8 +24,6 @@ class ExportController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobInstancesRepository $jobInstancesRepository,
@@ -53,7 +52,7 @@ class ExportController extends Controller
     {
         $exporterConfig = config('exporters');
 
-        return view('admin::settings.data-transfer.exports.create', compact('exporterConfig'));
+        return view('admin::settings.data-transfer.exports.create', ['exporterConfig' => $exporterConfig]);
     }
 
     /**
@@ -118,7 +117,7 @@ class ExportController extends Controller
 
         $export = $this->jobInstancesRepository->findOrFail($id);
 
-        return view('admin::settings.data-transfer.exports.edit', compact('export', 'exporterConfig'));
+        return view('admin::settings.data-transfer.exports.edit', ['export' => $export, 'exporterConfig' => $exporterConfig]);
     }
 
     /**
@@ -149,7 +148,6 @@ class ExportController extends Controller
             ]),
             [
                 'action'               => 'fetch',
-                'validation_strategy'  => '',
                 'validation_strategy'  => '',
                 'allowed_errors'       => '',
                 'state'                => 'pending',
@@ -188,10 +186,8 @@ class ExportController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
      */
-    public function destroy($id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
 
@@ -235,7 +231,7 @@ class ExportController extends Controller
 
         $export->unsetRelations();
 
-        return view('admin::settings.data-transfer.exports.export', compact('export'));
+        return view('admin::settings.data-transfer.exports.export', ['export' => $export]);
     }
 
     /**
@@ -343,14 +339,12 @@ class ExportController extends Controller
                     'message' => $e->getMessage(),
                 ], JsonResponse::HTTP_BAD_REQUEST);
             }
+        } elseif ($this->jobHelper->isLinkingRequired()) {
+            $this->jobHelper->linking();
+        } elseif ($this->jobHelper->isIndexingRequired()) {
+            $this->jobHelper->indexing();
         } else {
-            if ($this->jobHelper->isLinkingRequired()) {
-                $this->jobHelper->linking();
-            } elseif ($this->jobHelper->isIndexingRequired()) {
-                $this->jobHelper->indexing();
-            } else {
-                $this->jobHelper->completed();
-            }
+            $this->jobHelper->completed();
         }
 
         return new JsonResponse([
@@ -406,12 +400,10 @@ class ExportController extends Controller
                     'message' => $e->getMessage(),
                 ], JsonResponse::HTTP_BAD_REQUEST);
             }
+        } elseif ($this->jobHelper->isIndexingRequired()) {
+            $this->jobHelper->indexing();
         } else {
-            if ($this->jobHelper->isIndexingRequired()) {
-                $this->jobHelper->indexing();
-            } else {
-                $this->jobHelper->completed();
-            }
+            $this->jobHelper->completed();
         }
 
         return new JsonResponse([
@@ -500,7 +492,7 @@ class ExportController extends Controller
     /**
      * Download export error report
      */
-    public function downloadSample(string $type)
+    public function downloadSample(string $type): StreamedResponse
     {
         $exporter = config('exporters.'.$type);
 
@@ -510,7 +502,7 @@ class ExportController extends Controller
     /**
      * Download export error report
      */
-    public function download(int $id)
+    public function download(int $id): StreamedResponse
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
 
@@ -520,7 +512,7 @@ class ExportController extends Controller
     /**
      * Download export error report
      */
-    public function downloadErrorReport(int $id)
+    public function downloadErrorReport(int $id): StreamedResponse
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
 

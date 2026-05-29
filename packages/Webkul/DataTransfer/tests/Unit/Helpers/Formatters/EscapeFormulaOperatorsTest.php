@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 
 it('should escape string when it starts with a dangerous formula operator', function () {

@@ -18,12 +18,10 @@ class LogsDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
-        $queryBuilder = DB::table('webhook_logs')->select(
+        return DB::table('webhook_logs')->select(
             'id',
             'created_at',
             'sku',
@@ -31,16 +29,12 @@ class LogsDataGrid extends DataGrid
             'status',
             'extra'
         );
-
-        return $queryBuilder;
     }
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -58,12 +52,12 @@ class LogsDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
+            'closure'    => function (\stdClass $row) {
                 $timezone = auth('admin')->user()->timezone ?? config('app.timezone');
 
                 try {
                     $display = Carbon::parse($row->created_at)->setTimezone($timezone)->toDateTimeString();
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     $display = $row->created_at;
                 }
 
@@ -101,7 +95,7 @@ class LogsDataGrid extends DataGrid
                     'options' => $this->buildStatusFilterOptions(),
                 ],
             ],
-            'closure' => function ($row) {
+            'closure' => function (\stdClass $row) {
                 $extra = is_string($row->extra ?? null) ? json_decode($row->extra, true) : ($row->extra ?? []);
                 $code = $extra['response']['status'] ?? null;
 
@@ -155,7 +149,7 @@ class LogsDataGrid extends DataGrid
             $pairs[] = [(int) $row->status, (int) $row->code];
         }
 
-        usort($pairs, fn ($a, $b) => $b[0] <=> $a[0] ?: $a[1] <=> $b[1]);
+        usort($pairs, fn (array $a, array $b) => $b[0] <=> $a[0] ?: $a[1] <=> $b[1]);
 
         $options = [];
 
@@ -189,17 +183,18 @@ class LogsDataGrid extends DataGrid
      * Values are either "<status>:<code>" pairs (mirroring rows in the DB) or
      * the "timeout_or_error" sentinel for null/0 codes.
      */
-    public function processRequestedFilters(array $requestedFilters)
+    #[\Override]
+    public function processRequestedFilters(array $requestedFilters): mixed
     {
         if (isset($requestedFilters['status'])) {
             $statusValues = $requestedFilters['status'];
             unset($requestedFilters['status']);
 
-            $this->queryBuilder->where(function ($outer) use ($statusValues) {
+            $this->queryBuilder->where(function (Builder $outer) use ($statusValues) {
                 foreach ($statusValues as $value) {
-                    $outer->orWhere(function ($q) use ($value) {
+                    $outer->orWhere(function (Builder $q) use ($value) {
                         if ($value === 'timeout_or_error') {
-                            $q->where('status', 0)->where(function ($inner) {
+                            $q->where('status', 0)->where(function (Builder $inner) {
                                 $inner->whereNull('extra->response->status')
                                     ->orWhere('extra->response->status', 0);
                             });
@@ -227,10 +222,8 @@ class LogsDataGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('configuration.webhook.logs.delete')) {
             $this->addAction([
@@ -238,19 +231,15 @@ class LogsDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('webhook::app.configuration.webhook.logs.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('webhook.logs.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('webhook.logs.delete', $row->id),
             ]);
         }
     }
 
     /**
      * Prepare the mass actions
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         if (bouncer()->hasPermission('configuration.webhook.logs.mass_delete')) {
             $this->addMassAction([

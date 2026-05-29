@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\MagicAI\Repository;
 
 use Webkul\Core\Eloquent\Repository;
+use Webkul\MagicAI\Contracts\MagicPrompt;
 
 class MagicPromptRepository extends Repository
 {
@@ -11,6 +14,6 @@ class MagicPromptRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\MagicAI\Contracts\MagicPrompt';
+        return MagicPrompt::class;
     }
 }

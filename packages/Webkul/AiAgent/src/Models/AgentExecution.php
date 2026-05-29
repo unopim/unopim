@@ -16,10 +16,8 @@ class AgentExecution extends Model implements AgentExecutionContract, AuditableC
 
     /**
      * Tags for history/audit.
-     *
-     * @var array
      */
-    protected $historyTags = ['ai-agent-execution'];
+    protected array $historyTags = ['ai-agent-execution'];
 
     /**
      * @var string
@@ -56,17 +54,13 @@ class AgentExecution extends Model implements AgentExecutionContract, AuditableC
 
     /**
      * Fields excluded from history audit.
-     *
-     * @var array
      */
-    protected $auditExclude = [];
+    protected array $auditExclude = [];
 
     /**
      * History auditable attributes.
-     *
-     * @var array
      */
-    protected $historyAuditable = [
+    protected array $historyAuditable = [
         'status',
         'tokensUsed',
         'executionTimeMs',

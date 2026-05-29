@@ -261,7 +261,7 @@ class ImageCache
      */
     public function get(?int $lifetime = null, bool $returnObj = false): mixed
     {
-        $lifetime = is_null($lifetime) ? $this->lifetime : $lifetime;
+        $lifetime ??= $this->lifetime;
 
         $key = $this->checksum();
 

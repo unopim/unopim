@@ -93,7 +93,7 @@ it('should create the family sucessfully', function () {
 
         $pos = 1;
 
-        foreach ($attributes[$position - 1] as $key => $attr) {
+        foreach ($attributes[$position - 1] as $attr) {
             $attributeId ??= $attr['id'];
 
             $data['attribute_groups'][$groupId]['custom_attributes'][] = [

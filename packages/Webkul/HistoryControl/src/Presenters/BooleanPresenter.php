@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\HistoryControl\Presenters;
 
 use Webkul\HistoryControl\Interfaces\HistoryPresenterInterface;

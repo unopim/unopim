@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Installer\Listeners;
 
 use GuzzleHttp\Client;
@@ -16,17 +18,13 @@ class Installer
 
     /**
      * Create a new listener instance.
-     *
-     * @return void
      */
     public function __construct(protected AdminRepository $adminRepository) {}
 
     /**
      * After UnoPim is successfully installed
-     *
-     * @return void
      */
-    public function installed()
+    public function installed(): void
     {
         $admin = $this->adminRepository->first();
 
@@ -44,7 +42,7 @@ class Installer
                     'country_code' => config('app.default_country') ?? 'IN',
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             /**
              * Skip the error
              */

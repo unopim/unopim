@@ -1,5 +1,6 @@
 includes:
     - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
 
 parameters:
     level: 5
@@ -12,6 +13,3 @@ parameters:
         - packages/Webkul/*/tests/*
         - packages/Webkul/*/src/Database/*
         - packages/Webkul/DebugBar/*
-
-    ignoreErrors:
-        - identifier: missingType.generics

@@ -11,8 +11,6 @@ class CurrencyDataSource extends ApiDataSource
 {
     /**
      * Create a new DataSource instance.
-     *
-     * @return void
      */
     public function __construct(protected CurrencyRepository $currencyRepository) {}
 
@@ -21,7 +19,7 @@ class CurrencyDataSource extends ApiDataSource
      *
      * @return Builder The query builder for the currency repository.
      */
-    public function prepareApiQueryBuilder()
+    public function prepareApiQueryBuilder(): mixed
     {
         $this->addFilter('status', ['=']);
 
@@ -35,17 +33,16 @@ class CurrencyDataSource extends ApiDataSource
      *
      * @throws \Exception If the paginator data is not in the expected format.
      */
+    #[\Override]
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
 
-        return array_map(function ($data) {
-            return [
-                'code'   => $data['code'],
-                'status' => (int) $data['status'],
-                'label'  => core()->getCurrencyLabel($data['code'], core()->getCurrentLocale()->code),
-            ];
-        }, $paginator['data'] ?? []);
+        return array_map(fn (mixed $data) => [
+            'code'   => $data['code'],
+            'status' => (int) $data['status'],
+            'label'  => core()->getCurrencyLabel($data['code'], core()->getCurrentLocale()->code),
+        ], $paginator['data'] ?? []);
     }
 
     /**
@@ -56,13 +53,13 @@ class CurrencyDataSource extends ApiDataSource
      *
      * @throws ModelNotFoundException If a currency with the given code is not found.
      */
-    public function getByCode(string $code)
+    public function getByCode(string $code): array
     {
         $currency = $this->currencyRepository->findOneByField('code', $code);
 
         if (! $currency) {
             throw new ModelNotFoundException(
-                sprintf('Currency with code %s could not be found.', (string) $code)
+                sprintf('Currency with code %s could not be found.', $code)
             );
         }
 

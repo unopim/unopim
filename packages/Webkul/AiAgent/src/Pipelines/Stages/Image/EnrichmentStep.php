@@ -93,7 +93,7 @@ class EnrichmentStep implements PipelineStageContract
             fn (string $key) => empty($mapped[$key]),
         );
 
-        if (empty($missingTargets)) {
+        if ($missingTargets === []) {
             // Everything already populated — skip API call
             return $next($payload->withMetadata([
                 'enrichedAttributes' => $mapped,

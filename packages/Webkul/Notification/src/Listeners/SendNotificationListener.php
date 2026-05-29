@@ -20,10 +20,8 @@ class SendNotificationListener implements ShouldQueue
 
     /**
      * Handle the event.
-     *
-     * @return void
      */
-    public function sendNotification($event)
+    public function sendNotification(mixed $event): void
     {
         if (! env('NOTIFICATIONS_ENABLED', true)) {
             Log::info('Notifications are disabled. No notification sent.', ['event' => $event]);
@@ -37,7 +35,7 @@ class SendNotificationListener implements ShouldQueue
             Config::get('mail.mailers.smtp.username') &&
             Config::get('mail.mailers.smtp.password');
 
-        $metaData = json_decode($event->meta);
+        $metaData = json_decode((string) $event->meta);
         // @TODO: manage user details with relation to the event
         $admin = $this->adminRepository->find($event->user_id);
 
@@ -45,8 +43,8 @@ class SendNotificationListener implements ShouldQueue
             'type'         => $metaData->type,
             'route'        => 'admin.settings.data_transfer.tracker.view',
             'route_params' => ['batch_id' => $event->id],
-            'title'        => sprintf('%s #%d', ucfirst($metaData->type), $event->id),
-            'description'  => sprintf('%s "%s" %s', ucfirst($metaData->type), $metaData->code, $event->state),
+            'title'        => sprintf('%s #%d', ucfirst((string) $metaData->type), $event->id),
+            'description'  => sprintf('%s "%s" %s', ucfirst((string) $metaData->type), $metaData->code, $event->state),
             'user_ids'     => [$event->user_id],
             'mailable'     => $mailConfigured,
             'user_emails'  => [$admin['email']],

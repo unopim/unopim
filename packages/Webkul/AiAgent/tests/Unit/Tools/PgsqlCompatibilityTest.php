@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 describe('AiAgent tools — PostgreSQL raw SQL compatibility', function () {
 
     it('SearchProducts does not contain hardcoded MySQL JSON functions', function () {

@@ -32,7 +32,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     use HasFactory, Visitable;
     use HistoryTrait;
 
-    protected $historyTags = ['product'];
+    protected array $historyTags = ['product'];
 
     /**
      * The attributes that are mass assignable.
@@ -55,10 +55,8 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
 
     /**
      * The type of product.
-     *
-     * @var AbstractType
      */
-    protected $typeInstance;
+    protected ?AbstractType $typeInstance = null;
 
     /**
      * Get the product that owns the product.
@@ -109,7 +107,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      */
     public function getTypeInstance(): AbstractType
     {
-        if ($this->typeInstance) {
+        if ($this->typeInstance instanceof AbstractType) {
             return $this->typeInstance;
         }
 
@@ -126,10 +124,8 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
 
     /**
      * The images that belong to the product.
-     *
-     * @return string
      */
-    public function getBaseImageUrlAttribute()
+    public function getBaseImageUrlAttribute(): ?string
     {
         $image = $this->images->first();
 
@@ -140,26 +136,21 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      * Get an attribute from the model.
      *
      * @param  string  $key
-     * @return mixed
      */
-    public function getAttribute($key)
+    #[\Override]
+    public function getAttribute($key): mixed
     {
-        if (! method_exists(static::class, $key)
-            && ! in_array($key, [
-                'pivot',
-                'parent_id',
-                'attribute_family_id',
-            ])
-            && ! isset($this->attributes[$key])
-        ) {
-            if (isset($this->id) && $this->attribute_family?->id) {
-                $attribute = $this->checkInLoadedFamilyAttributes()->where('code', $key)->first();
-                if ($attribute) {
-                    $this->attributes[$key] = $this->getCustomAttributeValue($attribute);
-                }
-
-                return $this->getAttributeValue($key);
+        if (! method_exists(static::class, $key) && ! in_array($key, [
+            'pivot',
+            'parent_id',
+            'attribute_family_id',
+        ]) && ! isset($this->attributes[$key]) && (isset($this->id) && $this->attribute_family?->id)) {
+            $attribute = $this->checkInLoadedFamilyAttributes()->where('code', $key)->first();
+            if ($attribute) {
+                $this->attributes[$key] = $this->getCustomAttributeValue($attribute);
             }
+
+            return $this->getAttributeValue($key);
         }
 
         return parent::getAttribute($key);
@@ -169,22 +160,21 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      * Retrieve product attributes.
      *
      * @param  Group  $group
-     * @param  bool  $skipSuperAttribute
      *
      * @throws Exception
      */
-    public function getEditableAttributes($group = null, $skipSuperAttribute = true): Collection
+    public function getEditableAttributes(mixed $group = null, bool $skipSuperAttribute = true): Collection
     {
         return $this->getTypeInstance()
             ->getEditableAttributes($group, $skipSuperAttribute);
     }
 
-    public function completenessScores()
+    public function completenessScores(): HasMany
     {
         return $this->hasMany(ProductCompletenessScore::class, 'product_id');
     }
 
-    public function getCompletenessScore($channelId = null, $select = ['locale_id', 'score', 'missing_count']): array
+    public function getCompletenessScore(mixed $channelId = null, array $select = ['locale_id', 'score', 'missing_count']): array
     {
         $channelId = $channelId ?: core()->getRequestedChannel()?->id;
 
@@ -201,7 +191,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
         return $scores;
     }
 
-    public function getCompletenessAttributes($channelId = null)
+    public function getCompletenessAttributes(mixed $channelId = null): mixed
     {
         $channelId = $channelId ?: core()->getRequestedChannel()?->id;
 
@@ -216,13 +206,11 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
 
     /**
      * Get an product attribute value.
-     *
-     * @return mixed
      */
-    public function getCustomAttributeValue($attribute)
+    public function getCustomAttributeValue(mixed $attribute): mixed
     {
         if (! $attribute) {
-            return;
+            return null;
         }
 
         $locale = core()->getRequestedLocaleCodeInRequestedChannel();
@@ -254,24 +242,21 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
                     ->where('attribute_id', $attribute->id)
                     ->first();
             }
-        } else {
-            if ($attribute->value_per_locale) {
+        } elseif ($attribute->value_per_locale) {
+            $attributeValue = $this->attribute_values
+                ->where('locale', $locale)
+                ->where('attribute_id', $attribute->id)
+                ->first();
+            if (empty($attributeValue[$attribute->column_name])) {
                 $attributeValue = $this->attribute_values
-                    ->where('locale', $locale)
-                    ->where('attribute_id', $attribute->id)
-                    ->first();
-
-                if (empty($attributeValue[$attribute->column_name])) {
-                    $attributeValue = $this->attribute_values
-                        ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel())
-                        ->where('attribute_id', $attribute->id)
-                        ->first();
-                }
-            } else {
-                $attributeValue = $this->attribute_values
+                    ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel())
                     ->where('attribute_id', $attribute->id)
                     ->first();
             }
+        } else {
+            $attributeValue = $this->attribute_values
+                ->where('attribute_id', $attribute->id)
+                ->first();
         }
 
         return $attributeValue[$attribute->column_name] ?? $attribute->default_value;
@@ -290,9 +275,9 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      * Overrides the default Eloquent query builder.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return Builder
      */
-    public function newEloquentBuilder($query)
+    #[\Override]
+    public function newEloquentBuilder($query): Builder
     {
         return new Builder($query);
     }
@@ -319,7 +304,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     /**
      * Get all image attributes for the product
      */
-    public function getImageAttributes()
+    public function getImageAttributes(): Collection
     {
         return $this->attribute_family->customAttributes()->where('type', 'image')->get();
     }

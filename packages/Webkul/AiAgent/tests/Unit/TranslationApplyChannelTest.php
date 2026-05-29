@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 describe('Translation apply() sends targetChannel (Issue #647)', function () {
 
     it('translate-button apply() explicitly appends targetChannel to formData', function () {

@@ -107,24 +107,22 @@ class Export
      *
      * @var Error
      */
-    protected $typeExporter;
+    protected mixed $typeExporter = null;
 
     /**
      * Resource for data read
      */
-    protected $source;
+    protected mixed $source = null;
 
     /**
      * Job specific logger
      */
-    protected $jobLogger;
+    protected LoggerInterface $jobLogger;
 
-    protected $exportBuffer;
+    protected mixed $exportBuffer = null;
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackRepository $jobTrackRepository,
@@ -152,7 +150,7 @@ class Export
         return $this;
     }
 
-    public function setExportBuffer($exportBuffer): self
+    public function setExportBuffer(mixed $exportBuffer): self
     {
         $this->exportBuffer = $exportBuffer;
 
@@ -177,10 +175,8 @@ class Export
 
     /**
      * Returns error helper instance.
-     *
-     * @return Error
      */
-    public function getErrorHelper()
+    public function getErrorHelper(): Error
     {
         return $this->errorHelper;
     }
@@ -190,14 +186,10 @@ class Export
      */
     public function isValid(): bool
     {
-        if ($this->export->state == self::STATE_FAILED) {
-            return false;
-        }
-
-        return true;
+        return $this->export->state != self::STATE_FAILED;
     }
 
-    public function stateUpdate($state = self::STATE_VALIDATED): Export
+    public function stateUpdate(string $state = self::STATE_VALIDATED): Export
     {
         $export = $this->jobTrackRepository->update([
             'state' => $state,
@@ -365,7 +357,7 @@ class Export
         return in_array($this->export->state, [self::STATE_PAUSED, self::STATE_CANCELLED, self::STATE_FAILED]);
     }
 
-    public function flush($exportBuffer)
+    public function flush(mixed $exportBuffer): self
     {
         if (empty($exportBuffer)) {
             return $this;
@@ -452,7 +444,7 @@ class Export
     {
         $withMedia = (bool) ($filters['with_media'] ?? false);
         $filePath = $withMedia ? $temporaryPath : $filePath;
-        $export = $this->jobTrackRepository->update([
+        $this->jobTrackRepository->update([
             'file_path' => $filePath,
         ], $this->export->id);
     }

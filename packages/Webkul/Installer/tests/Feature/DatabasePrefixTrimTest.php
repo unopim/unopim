@@ -15,7 +15,7 @@ function bindInstallerCapturingEnvUpdate(array &$captured): Closure
                 $this->captured = &$captured;
             }
 
-            public function call($command, array $arguments = [], $output = null)
+            public function call($command, array $arguments = [], $output = null): int
             {
                 return 0;
             }
@@ -25,7 +25,7 @@ function bindInstallerCapturingEnvUpdate(array &$captured): Closure
                 $this->captured[$key] = $value;
             }
 
-            public function handle()
+            public function handle(): int
             {
                 $this->askForDatabaseDetails();
 

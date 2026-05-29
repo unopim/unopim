@@ -12,10 +12,8 @@ class CanInstall
 {
     /**
      * Handles Requests for Installer middleware.
-     *
-     * @return void
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if (Str::contains($request->getPathInfo(), '/install')) {
             if ($this->isAlreadyInstalled() && ! $request->ajax()) {
@@ -27,10 +25,8 @@ class CanInstall
                 // once `vendor/` exists. Redirect-only is enough.
                 return redirect()->route('admin.dashboard.index');
             }
-        } else {
-            if (! $this->isAlreadyInstalled()) {
-                return redirect()->route('installer.index');
-            }
+        } elseif (! $this->isAlreadyInstalled()) {
+            return redirect()->route('installer.index');
         }
 
         return $next($request);
@@ -38,10 +34,8 @@ class CanInstall
 
     /**
      * Application Already Installed.
-     *
-     * @return bool
      */
-    public function isAlreadyInstalled()
+    public function isAlreadyInstalled(): bool
     {
         if (file_exists(storage_path('installed'))) {
             return true;

@@ -16,10 +16,8 @@ class ElasticSearchServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application events.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         Products::observe(Product::class);
         Categories::observe(Category::class);
@@ -27,10 +25,9 @@ class ElasticSearchServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider
-     *
-     * @return void
      */
-    public function register()
+    #[\Override]
+    public function register(): void
     {
         $this->registerCommands();
         $this->registerFacades();
@@ -52,8 +49,6 @@ class ElasticSearchServiceProvider extends ServiceProvider
 
     public function registerFacades(): void
     {
-        $this->app->singleton('elastic-search-query', function ($app) {
-            return new ElasticSearchQuery;
-        });
+        $this->app->singleton('elastic-search-query', fn (mixed $app) => new ElasticSearchQuery);
     }
 }

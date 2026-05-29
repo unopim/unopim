@@ -11,38 +11,30 @@ class EnvValidatorServiceProvider extends ServiceProvider
 {
     /**
      * Set environment variable rules.
-     *
-     * @var array
      */
-    protected $rules = [
+    protected array $rules = [
         'DB_PREFIX' => 'not_regex:/[^A-Za-z0-9_]/',
     ];
 
     /**
      * Set environment variable error messages.
-     *
-     * @var array
      */
-    protected $messages = [
+    protected array $messages = [
         'not_regex' => 'DB_PREFIX ENV is not valid.',
     ];
 
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->validateEnvVariables();
     }
 
     /**
      * Validate environment variables.
-     *
-     * @return void
      */
-    private function validateEnvVariables()
+    private function validateEnvVariables(): void
     {
         $validator = Validator::make($_ENV, $this->rules, $this->messages);
 
@@ -58,12 +50,8 @@ class EnvValidatorServiceProvider extends ServiceProvider
 
     /**
      * Generate a friendly error message.
-     *
-     * @param  string  $cause
-     * @param  string  $subject
-     * @return string
      */
-    private function getErrorMessage($cause, $subject)
+    private function getErrorMessage(string $cause, string $subject): string
     {
         return sprintf(
             'Failed to parse dotenv file due to %s. Failed at [%s].',
@@ -74,10 +62,8 @@ class EnvValidatorServiceProvider extends ServiceProvider
 
     /**
      * Write the error information to the screen and exit.
-     *
-     * @return void
      */
-    private function writeErrorAndDie(InvalidFileException $e)
+    private function writeErrorAndDie(InvalidFileException $e): void
     {
         if (app()->runningInConsole()) {
             $output = (new ConsoleOutput)->getErrorOutput();

@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Catalog\Options;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
@@ -81,7 +82,7 @@ class AjaxOptionsController extends Controller
             $formattedOptions[] = [
                 'id'    => $option->id,
                 'code'  => $option->code,
-                'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
+                'label' => in_array($translatedOptionLabel, [null, '', '0'], true) ? "[{$option->code}]" : $translatedOptionLabel,
                 ...$option->makeHidden(['translations', 'label'])->toArray(),
             ];
         }
@@ -109,8 +110,8 @@ class AjaxOptionsController extends Controller
             $repository = $repository->where($entityName.'_id', $id);
         }
 
-        if (! empty($query)) {
-            $repository = $repository->where(function ($queryBuilder) use ($query, $entityName) {
+        if ($query !== '' && $query !== '0') {
+            $repository = $repository->where(function (Builder $queryBuilder) use ($query, $entityName) {
                 $queryBuilder->whereTranslationLike($this->getTranslationColumnName($entityName), '%'.$query.'%')
                     ->orWhere('code', $query);
             });

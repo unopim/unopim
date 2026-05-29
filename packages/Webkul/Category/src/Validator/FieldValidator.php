@@ -50,7 +50,7 @@ abstract class FieldValidator
      *                        for new records.
      * @return void
      */
-    abstract public function validate(array $requestData, ?int $id = null);
+    abstract public function validate(array $requestData, ?int $id = null); // @pest-ignore-type — implementations diverge (void vs array|Validator), no common return type
 
     /**
      * This function generates validation rules for a specific category field based on its type.
@@ -81,8 +81,6 @@ abstract class FieldValidator
                 $ruleFormat[] = new FieldOption($field);
                 break;
             case self::FILE_FIELD_TYPE:
-                $ruleFormat[] = 'string';
-                break;
             case self::IMAGE_FIELD_TYPE:
                 $ruleFormat[] = 'string';
                 break;
@@ -104,7 +102,7 @@ abstract class FieldValidator
         $rules = [];
         $defaultLocale = core()->getRequestedLocaleCode();
 
-        foreach ($existsFields as $key => $field) {
+        foreach ($existsFields as $field) {
             $fieldName = $field->code;
             $ruleFormat = $field->getValidationsFieldWithOutMedia();
             $ruleFormat = array_merge($ruleFormat, $this->fieldTypeRules($field));
@@ -114,7 +112,7 @@ abstract class FieldValidator
                 $localeSpecificData = $requestData['additional_data']['locale_specific'] ?? [$defaultLocale => ''];
                 foreach (array_keys($localeSpecificData) as $locale) {
                     $fieldNameKey = sprintf('additional_data.locale_specific.%s.%s', $locale, $fieldName);
-                    if (! empty($ruleFormat)) {
+                    if ($ruleFormat !== []) {
                         $rules[$fieldNameKey] = $ruleFormat;
                     }
 
@@ -126,7 +124,7 @@ abstract class FieldValidator
                 }
             } else {
                 $fieldNameKey = sprintf('additional_data.common.%s', $fieldName);
-                if (! empty($ruleFormat)) {
+                if ($ruleFormat !== []) {
                     $rules[$fieldNameKey] = $ruleFormat;
                 }
 

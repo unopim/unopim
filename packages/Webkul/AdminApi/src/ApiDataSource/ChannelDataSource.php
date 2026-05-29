@@ -11,8 +11,6 @@ class ChannelDataSource extends ApiDataSource
 {
     /**
      * Create a new DataSource instance.
-     *
-     * @return void
      */
     public function __construct(protected ChannelRepository $channelRepository) {}
 
@@ -21,7 +19,7 @@ class ChannelDataSource extends ApiDataSource
      *
      * @return Builder The query builder for the channel repository.
      */
-    public function prepareApiQueryBuilder()
+    public function prepareApiQueryBuilder(): mixed
     {
         return $this->channelRepository->queryBuilder();
     }
@@ -33,19 +31,18 @@ class ChannelDataSource extends ApiDataSource
      *
      * @throws \Exception If the paginator data is not in the expected format.
      */
+    #[\Override]
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
 
-        return array_map(function ($data) {
-            return [
-                'code'          => $data['code'],
-                'labels'        => $this->getTranslations($data),
-                'root_category' => $data['root_category'] ? $data['root_category']['code'] : null,
-                'locales'       => $this->getLocales($data),
-                'currencies'    => $this->getCurrencies($data),
-            ];
-        }, $paginator['data'] ?? []);
+        return array_map(fn (mixed $data) => [
+            'code'          => $data['code'],
+            'labels'        => $this->getTranslations($data),
+            'root_category' => $data['root_category'] ? $data['root_category']['code'] : null,
+            'locales'       => $this->getLocales($data),
+            'currencies'    => $this->getCurrencies($data),
+        ], $paginator['data'] ?? []);
     }
 
     /**
@@ -56,7 +53,7 @@ class ChannelDataSource extends ApiDataSource
      *
      * @throws ModelNotFoundException If a channel with the given code is not found.
      */
-    public function getByCode(string $code)
+    public function getByCode(string $code): array
     {
         $this->prepareForSingleData();
 
@@ -75,7 +72,7 @@ class ChannelDataSource extends ApiDataSource
 
         if (! $channel) {
             throw new ModelNotFoundException(
-                sprintf('Channel with code %s could not be found.', (string) $code)
+                sprintf('Channel with code %s could not be found.', $code)
             );
         }
 
@@ -94,17 +91,13 @@ class ChannelDataSource extends ApiDataSource
      * @param  array  $channel  The channel data from the database.
      * @return array An array of locales associated with the channel.
      */
-    public function getLocales(array $channel)
+    public function getLocales(array $channel): array
     {
         if (empty($channel['locales'])) {
             return [];
         }
 
-        $locales = array_map(function ($data) {
-            return $data['code'];
-        }, $channel['locales']);
-
-        return $locales;
+        return array_map(fn (mixed $data) => $data['code'], $channel['locales']);
     }
 
     /**
@@ -113,16 +106,12 @@ class ChannelDataSource extends ApiDataSource
      * @param  array  $channel  The channel data from the database.
      * @return array An array of currencies associated with the channel.
      */
-    public function getCurrencies(array $channel)
+    public function getCurrencies(array $channel): array
     {
         if (empty($channel['currencies'])) {
             return [];
         }
 
-        $currencies = array_map(function ($data) {
-            return $data['code'];
-        }, $channel['currencies']);
-
-        return $currencies;
+        return array_map(fn (mixed $data) => $data['code'], $channel['currencies']);
     }
 }

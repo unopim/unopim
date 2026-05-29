@@ -21,10 +21,8 @@ class AdminApiServiceProvider extends ServiceProvider
 {
     /**
      * Register your middleware aliases here.
-     *
-     * @var array
      */
-    protected $middlewareAliases = [
+    protected array $middlewareAliases = [
         'accept.json'    => EnsureAcceptsJson::class,
         'request.locale' => LocaleMiddleware::class,
         'api.scope'      => ScopeMiddleware::class,
@@ -47,10 +45,9 @@ class AdminApiServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    #[\Override]
+    public function register(): void
     {
         $this->registerCommands();
         $this->registerApiRoutes();
@@ -59,10 +56,8 @@ class AdminApiServiceProvider extends ServiceProvider
 
     /**
      * Register package config.
-     *
-     * @return void
      */
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/api.php', 'api'
@@ -79,10 +74,8 @@ class AdminApiServiceProvider extends ServiceProvider
 
     /**
      * Define the "api" routes for the application.
-     *
-     * @return void
      */
-    protected function registerApiRoutes()
+    protected function registerApiRoutes(): void
     {
         Route::prefix('api')
             ->middleware('api')
@@ -114,9 +107,7 @@ class AdminApiServiceProvider extends ServiceProvider
 
         // Register a custom UserRepository that uses the Admin model instead of App\Models\User
         // This ensures that Passport's OAuth2 password grant correctly authenticates admin users
-        $this->app->singleton(PassportUserRepository::class, function ($app) {
-            return new UserRepository($app->make('hash'));
-        });
+        $this->app->singleton(PassportUserRepository::class, fn (mixed $app) => new UserRepository($app->make('hash')));
 
         $accessTokenTtl = (int) config('api.access_token_ttl', 3600);
         $refreshTokenTtl = (int) config('api.refresh_token_ttl', 3600);
@@ -132,49 +123,39 @@ class AdminApiServiceProvider extends ServiceProvider
 
     /**
      * Activate middleware aliases.
-     *
-     * @return void
      */
-    protected function activateMiddlewareAliases()
+    protected function activateMiddlewareAliases(): void
     {
-        collect($this->middlewareAliases)->each(function ($className, $alias) {
+        collect($this->middlewareAliases)->each(function (string $className, string $alias) {
             $this->app['router']->aliasMiddleware($alias, $className);
         });
     }
 
     /**
      * Bind the the data to the views
-     *
-     * @return void
      */
-    protected function composeView()
+    protected function composeView(): void
     {
         view()->composer([
             'admin_api::integrations.api-keys.create',
             'admin_api::integrations.api-keys.edit',
-        ], function ($view) {
+        ], function (mixed $view) {
             $view->with('acl', $this->createACL());
         });
     }
 
     /**
      * Registers acl to entire application
-     *
-     * @return void
      */
-    public function registerACL()
+    public function registerACL(): void
     {
-        $this->app->singleton('api-acl', function () {
-            return $this->createACL();
-        });
+        $this->app->singleton('api-acl', fn () => $this->createACL());
     }
 
     /**
      * Create ACL tree.
-     *
-     * @return mixed
      */
-    protected function createACL()
+    protected function createACL(): mixed
     {
         static $tree;
 

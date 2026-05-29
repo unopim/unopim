@@ -18,6 +18,7 @@ use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Repositories\ProductRepository;
 
 class EditImage implements PimTool
 {
@@ -67,7 +68,7 @@ class EditImage implements PimTool
                 $image_index = $request->string('image_index')->toString() ?: null;
                 $size = $request->string('size')->toString() ?: '1024x1024';
 
-                $repo = app('Webkul\Product\Repositories\ProductRepository');
+                $repo = app(ProductRepository::class);
                 $product = $repo->findOneByField('sku', $sku);
 
                 if (! $product) {
@@ -139,7 +140,7 @@ class EditImage implements PimTool
                         mkdir($dir, 0755, true);
                     }
 
-                    file_put_contents($tempPath, base64_decode($imageData->image));
+                    file_put_contents($tempPath, base64_decode((string) $imageData->image));
 
                     // Save edited image back to the product
                     $saveResult = $this->outer->saveToProduct($product, $resolvedAttribute, $resolvedIndex, $scope, $tempPath, $repo);
@@ -188,7 +189,7 @@ class EditImage implements PimTool
                     'path'      => $path,
                     'attribute' => $attr,
                     'index'     => $imageIndex,
-                    'scope'     => $attr ? $this->getAttributeScope($attr) : 'common',
+                    'scope'     => $attr instanceof Attribute ? $this->getAttributeScope($attr) : 'common',
                 ];
             }
         }
@@ -196,7 +197,7 @@ class EditImage implements PimTool
         // Otherwise fetch from product
         $attr = $this->resolveImageAttribute($product, $attributeCode);
 
-        if (! $attr) {
+        if (! $attr instanceof Attribute) {
             return ['error' => 'No image or gallery attribute found for this product. Specify the attribute code explicitly.'];
         }
 
@@ -216,10 +217,10 @@ class EditImage implements PimTool
 
         // For gallery (array of paths), pick by index
         if ($attr->type === 'gallery') {
-            $images = is_array($value) ? $value : explode(',', $value);
+            $images = is_array($value) ? $value : explode(',', (string) $value);
             $images = array_values(array_filter($images));
 
-            if (empty($images)) {
+            if ($images === []) {
                 return ['error' => "Gallery attribute '{$attr->code}' has no images for product '{$product->sku}'."];
             }
 
@@ -292,9 +293,9 @@ class EditImage implements PimTool
     /**
      * Save the edited image back to the product.
      */
-    public function saveToProduct(Product $product, ?Attribute $attribute, int $imageIndex, string $scope, string $tempPath, $repo): array
+    public function saveToProduct(Product $product, ?Attribute $attribute, int $imageIndex, string $scope, string $tempPath, ProductRepository $repo): array
     {
-        if (! $attribute) {
+        if (! $attribute instanceof Attribute) {
             return ['error' => 'Cannot save — no attribute resolved.'];
         }
 
@@ -317,7 +318,7 @@ class EditImage implements PimTool
 
         if ($attribute->type === 'gallery') {
             $currentValue = $attribute->getValueFromProductValues($values, $channelCode, $localeCode);
-            $images = is_array($currentValue) ? $currentValue : ($currentValue ? explode(',', $currentValue) : []);
+            $images = is_array($currentValue) ? $currentValue : ($currentValue ? explode(',', (string) $currentValue) : []);
             $images = array_values(array_filter($images));
 
             if ($imageIndex < count($images)) {
@@ -358,7 +359,7 @@ class EditImage implements PimTool
             default  => [],
         };
 
-        if ($context->model) {
+        if ($context->model !== '' && $context->model !== '0') {
             foreach ($imageModelPatterns as $pattern) {
                 if (stripos($context->model, $pattern) !== false) {
                     return $context->model;
@@ -383,7 +384,7 @@ class EditImage implements PimTool
 
         foreach ($models as $model) {
             foreach ($imageModelPatterns as $pattern) {
-                if (stripos($model, $pattern) !== false) {
+                if (stripos((string) $model, $pattern) !== false) {
                     return $model;
                 }
             }

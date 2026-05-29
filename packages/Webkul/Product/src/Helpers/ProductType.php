@@ -31,7 +31,7 @@ class ProductType
 
         foreach (config('product_types') as $type) {
             if (self::hasVariants($type['key'])) {
-                array_push($havingVariants, $type['key']);
+                $havingVariants[] = $type['key'];
             }
         }
 
@@ -44,7 +44,7 @@ class ProductType
      * @return bool Returns true if the product type key exists in the configuration,
      *              false otherwise.
      */
-    public static function isProductType(string $productType)
+    public static function isProductType(string $productType): bool
     {
         return array_key_exists($productType, config('product_types'));
     }

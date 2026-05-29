@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $view = __DIR__.'/../../src/Resources/views/components/datagrid/manage-columns/index.blade.php';
 
 it('initializes the Selected Columns panel from visible grid columns only', function () use ($view) {

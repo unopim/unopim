@@ -14,6 +14,7 @@ use Webkul\DataTransfer\Helpers\Import as ImportHelper;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Services\JobLogger;
+use Webkul\Product\Repositories\ProductRepository;
 
 class ImportProductsJob implements ShouldQueue
 {
@@ -46,7 +47,7 @@ class ImportProductsJob implements ShouldQueue
         $skipped = 0;
         $errors = [];
         $processedRows = 0;
-        $repo = app('Webkul\Product\Repositories\ProductRepository');
+        $repo = app(ProductRepository::class);
 
         try {
             $jobTrackRepository->update([
@@ -59,7 +60,7 @@ class ImportProductsJob implements ShouldQueue
                 $processedRows++;
                 $sku = trim((string) ($normalizedRow['sku'] ?? ''));
 
-                if (empty($sku)) {
+                if ($sku === '' || $sku === '0') {
                     $skipped++;
 
                     continue;
@@ -81,7 +82,7 @@ class ImportProductsJob implements ShouldQueue
                     }
 
                     if ($existingProduct) {
-                        $values = json_decode($existingProduct->values, true) ?? [];
+                        $values = json_decode((string) $existingProduct->values, true) ?? [];
                         $productFamilyAttrs = $writerService->getFamilyAttributesPublic($existingProduct->attribute_family_id);
                         $this->handleStatus($normalizedRow, $existingProduct->id);
                         $this->handleCategories($values, $normalizedRow);
@@ -133,7 +134,7 @@ class ImportProductsJob implements ShouldQueue
                 'processed_rows_count' => $processedRows,
                 'invalid_rows_count'   => count($errors),
                 'errors_count'         => count($errors),
-                'errors'               => empty($errors) ? null : array_slice($errors, 0, 10),
+                'errors'               => $errors === [] ? null : array_slice($errors, 0, 10),
                 'summary'              => $summary,
                 'completed_at'         => now(),
             ], $this->jobTrackId);
@@ -170,7 +171,7 @@ class ImportProductsJob implements ShouldQueue
     protected function handleCategories(array &$values, array $row): void
     {
         if (! empty($row['categories'])) {
-            $catCodes = array_map('trim', explode(',', (string) $row['categories']));
+            $catCodes = array_map(trim(...), explode(',', (string) $row['categories']));
             $validCodes = DB::table('categories')->whereIn('code', $catCodes)->pluck('code')->toArray();
 
             if (! empty($validCodes)) {

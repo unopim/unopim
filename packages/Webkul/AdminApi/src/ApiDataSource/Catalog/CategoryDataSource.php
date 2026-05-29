@@ -11,15 +11,11 @@ class CategoryDataSource extends ApiDataSource
 {
     /**
      * Default sort column of data.
-     *
-     * @var ?string
      */
-    protected $sortColumn = 'categories.id';
+    protected ?string $sortColumn = 'categories.id';
 
     /**
      * Create a new DataSource instance.
-     *
-     * @return void
      */
     public function __construct(
         protected CategoryRepository $categoryRepository,
@@ -30,7 +26,7 @@ class CategoryDataSource extends ApiDataSource
      *
      * @return Builder The query builder for the category repository.
      */
-    public function prepareApiQueryBuilder()
+    public function prepareApiQueryBuilder(): mixed
     {
         $this->addFilter('code', [
             '=',
@@ -52,17 +48,16 @@ class CategoryDataSource extends ApiDataSource
      *
      * @throws \Exception If the paginator data is not in the expected format.
      */
+    #[\Override]
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
 
-        return array_map(function ($data) {
-            return [
-                'code'            => $data['code'],
-                'parent'          => $data['parent_category']['code'] ?? null,
-                'additional_data' => $data['additional_data'],
-            ];
-        }, $paginator['data'] ?? []);
+        return array_map(fn (mixed $data) => [
+            'code'            => $data['code'],
+            'parent'          => $data['parent_category']['code'] ?? null,
+            'additional_data' => $data['additional_data'],
+        ], $paginator['data'] ?? []);
     }
 
     /**
@@ -73,7 +68,7 @@ class CategoryDataSource extends ApiDataSource
      *
      * @throws ModelNotFoundException If a category field with the given code is not found.
      */
-    public function getByCode($code)
+    public function getByCode(string $code): array
     {
         $this->prepareForSingleData();
 
@@ -92,7 +87,7 @@ class CategoryDataSource extends ApiDataSource
 
         if (! $category) {
             throw new ModelNotFoundException(
-                sprintf('Category with code %s could not be found.', (string) $code)
+                sprintf('Category with code %s could not be found.', $code)
             );
         }
 
@@ -111,13 +106,14 @@ class CategoryDataSource extends ApiDataSource
      * @param  array  $value  The value and operator to apply.
      * @return Builder The updated query builder instance.
      */
-    public function operatorByFilter($scopeQueryBuilder, $requestedColumn, $value)
+    #[\Override]
+    public function operatorByFilter(mixed $scopeQueryBuilder, string $requestedColumn, array $value): mixed
     {
         $filterTable = isset($this->fieldFiltersAndOperators[$requestedColumn]['filterTable']) ? $this->fieldFiltersAndOperators[$requestedColumn]['filterTable'].'.' : 'categories.';
 
         if ($this->operators['EQUALS'] == $value['operator']) {
             // Apply the 'equals' operator to the query builder.
-            if ($requestedColumn == 'parent') {
+            if ($requestedColumn === 'parent') {
                 $scopeQueryBuilder->where($filterTable.'parent_id', $this->getParentIdByCode($scopeQueryBuilder, $value['value']));
             } else {
                 $scopeQueryBuilder->where($filterTable.$requestedColumn, $value['value']);
@@ -144,7 +140,7 @@ class CategoryDataSource extends ApiDataSource
      * @param Builder
      * @return int|null The ID of the product if found, otherwise null.
      */
-    private function getParentIdByCode($queryBuilder, string $code)
+    private function getParentIdByCode(mixed $queryBuilder, string $code): int
     {
         $query = clone $queryBuilder;
 
@@ -152,7 +148,7 @@ class CategoryDataSource extends ApiDataSource
 
         if (! $parentId) {
             throw new ModelNotFoundException(
-                sprintf('Category with code %s could not be found.', (string) $code)
+                sprintf('Category with code %s could not be found.', $code)
             );
         }
 

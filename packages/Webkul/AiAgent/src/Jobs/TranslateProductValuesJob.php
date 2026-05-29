@@ -53,7 +53,7 @@ class TranslateProductValuesJob implements ShouldQueue
             return;
         }
 
-        $values = json_decode($product->values, true) ?? [];
+        $values = json_decode((string) $product->values, true) ?? [];
 
         // Get all channels and their locales
         $allChannels = core()->getAllChannels();
@@ -68,7 +68,7 @@ class TranslateProductValuesJob implements ShouldQueue
             }
         }
 
-        if (empty($targetLocales)) {
+        if ($targetLocales === []) {
             return; // Only one locale configured — nothing to translate
         }
 
@@ -127,7 +127,7 @@ class TranslateProductValuesJob implements ShouldQueue
                 $fieldsText .= "{$fieldCode}: {$originalValue}\n";
             }
 
-            if (empty($translatableFields)) {
+            if ($translatableFields === []) {
                 continue;
             }
 
@@ -145,7 +145,7 @@ class TranslateProductValuesJob implements ShouldQueue
                 // Parse JSON from response
                 $translated = $this->extractJson($response);
 
-                if (empty($translated)) {
+                if ($translated === null || $translated === []) {
                     Log::warning("TranslateProductValuesJob: Failed to parse translation for {$product->sku} → {$targetLocale}");
 
                     continue;

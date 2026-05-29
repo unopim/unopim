@@ -8,8 +8,6 @@ class Locale extends AbstractReporting
 {
     /**
      * Create a helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected LocaleRepository $LocaleRepository,

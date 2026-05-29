@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -33,8 +34,6 @@ class ProductBulkEditController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobInstancesRepository $jobInstancesRepository,
@@ -101,7 +100,7 @@ class ProductBulkEditController extends Controller
             ->whereIn('id', $productIds)
             ->get()->toArray();
 
-        return view('admin::catalog.bulk-edit.index', compact('columns', 'rows'));
+        return view('admin::catalog.bulk-edit.index', ['columns' => $columns, 'rows' => $rows]);
     }
 
     /**
@@ -189,7 +188,7 @@ class ProductBulkEditController extends Controller
 
         $errors = $this->validateNumericAttributeValues($data['data'] ?? []);
 
-        if (! empty($errors)) {
+        if ($errors !== []) {
             return response()->json([
                 'message' => trans('admin::app.catalog.products.bulk-edit.validation.failed'),
                 'errors'  => $errors,
@@ -234,7 +233,7 @@ class ProductBulkEditController extends Controller
             }
         }
 
-        if (empty($attributeCodes)) {
+        if ($attributeCodes === []) {
             return [];
         }
 
@@ -293,19 +292,15 @@ class ProductBulkEditController extends Controller
 
     /**
      * Create a new job instance for bulk product update.
-     *
-     * @return mixed
      */
-    public function createBulkProductJobInstance()
+    public function createBulkProductJobInstance(): mixed
     {
-        $job = $this->jobInstancesRepository->create([
+        return $this->jobInstancesRepository->create([
             'type'           => 'system',
             'action'         => 'update',
             'code'           => 'bulk_product_update',
             'entity_type'    => 'products',
         ]);
-
-        return $job;
     }
 
     /**
@@ -339,7 +334,7 @@ class ProductBulkEditController extends Controller
         } elseif ($request->filled('query')) {
             $queryParam = $request->input('query', '');
 
-            $attributes = $query->where(function ($queryBuilder) use ($queryParam) {
+            $attributes = $query->where(function (Builder $queryBuilder) use ($queryParam) {
                 $queryBuilder->whereTranslationLike('name', '%'.$queryParam.'%')
                     ->orWhere('code', 'like', '%'.$queryParam.'%');
             })->paginate(self::DEFAULT_PER_PAGE);
@@ -358,7 +353,7 @@ class ProductBulkEditController extends Controller
             $formattedAttributes[] = [
                 'id'    => $attribute->id,
                 'code'  => $attribute->code,
-                'name'  => ! empty($translatedLabel->name) ? $translatedLabel->name : "[{$attribute->code}]",
+                'name'  => empty($translatedLabel->name) ? "[{$attribute->code}]" : $translatedLabel->name,
                 ...$attribute->makeHidden(['translations', 'name'])->toArray(),
             ];
         }

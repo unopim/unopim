@@ -8,8 +8,6 @@ class AttributeGroup extends AbstractReporting
 {
     /**
      * Create a helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeGroupRepository $attributeGroupRepository,

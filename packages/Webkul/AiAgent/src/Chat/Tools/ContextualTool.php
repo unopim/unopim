@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\AiAgent\Chat\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;

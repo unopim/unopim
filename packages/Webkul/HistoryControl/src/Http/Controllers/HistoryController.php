@@ -13,19 +13,21 @@ use Webkul\HistoryControl\Repositories\AuditRepository;
 
 class HistoryController extends Controller
 {
-    public function get(string $entityName, int $id)
+    public function get(string $entityName, int $id): mixed
     {
         if (request()->ajax()) {
             return app(HistoryDataGrid::class)->setEntityName($entityName)->setEntityId($id)->toJson();
         }
+
+        return null;
     }
 
-    public function getHistoryView(string $entityName, int $id)
+    public function getHistoryView(string $entityName, int $id): void
     {
         // Your code here
     }
 
-    public function getVersionHistoryView(string $entityName, int $id, int $versionId)
+    public function getVersionHistoryView(string $entityName, int $id, int $versionId): JsonResponse
     {
         $versionData = app(AuditRepository::class)->getVersionDataByNameIdVersionId($entityName, $id, $versionId);
 
@@ -137,12 +139,12 @@ class HistoryController extends Controller
         return $normalizedData;
     }
 
-    public function restoreHistory(string $entityName, int $id)
+    public function restoreHistory(string $entityName, int $id): void
     {
         // Your code here
     }
 
-    public function deleteHistory(string $entityName, int $id)
+    public function deleteHistory(string $entityName, int $id): void
     {
         // Your code here
     }

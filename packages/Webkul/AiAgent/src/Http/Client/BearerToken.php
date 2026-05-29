@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\AiAgent\Http\Client;
 
 /**
@@ -16,7 +18,7 @@ class BearerToken
      *
      * @param  resource|\CurlHandle  $ch
      */
-    public function apply($ch): void
+    public function apply(\CurlHandle $ch): void
     {
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Authorization: Bearer '.$this->token,

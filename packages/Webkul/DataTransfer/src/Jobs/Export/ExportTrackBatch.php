@@ -19,29 +19,19 @@ class ExportTrackBatch implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    protected $exportBatch;
+    public int $tries = 3;
 
-    public $tries = 3;
-
-    public $timeout = 300; // Adjust as needed
+    public int $timeout = 300; // Adjust as needed
 
     /**
      * Create a new job instance.
-     *
-     * @param  mixed  $exportBatch
-     * @return void
      */
-    public function __construct($exportBatch)
-    {
-        $this->exportBatch = $exportBatch;
-    }
+    public function __construct(protected mixed $exportBatch) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $exportHelper = app(ExportHelper::class);
 
@@ -86,10 +76,10 @@ class ExportTrackBatch implements ShouldQueue
             default => ExportHelper::STATE_COMPLETED,
         };
         // Gather stats
-        $stats = $exportHelper->stats($state);
+        $exportHelper->stats($state);
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         $logger = JobLogger::make($this->exportBatch->id);
 

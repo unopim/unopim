@@ -49,7 +49,7 @@ it('logs status=1 with HTTP 200 in extra when the endpoint succeeds', function (
     expect($log)->not->toBeNull();
     expect((int) $log->status)->toBe(1);
 
-    $extra = json_decode($log->extra, true);
+    $extra = json_decode((string) $log->extra, true);
     expect($extra['response']['status'] ?? null)->toBe(200);
 });
 
@@ -67,7 +67,7 @@ it('logs status=0 when the endpoint returns 404', function () {
     expect($log)->not->toBeNull();
     expect((int) $log->status)->toBe(0);
 
-    $extra = json_decode($log->extra, true);
+    $extra = json_decode((string) $log->extra, true);
     expect($extra['response']['status'] ?? null)->toBe(404);
 });
 
@@ -85,7 +85,7 @@ it('logs status=0 when the endpoint returns 500', function () {
     expect($log)->not->toBeNull();
     expect((int) $log->status)->toBe(0);
 
-    $extra = json_decode($log->extra, true);
+    $extra = json_decode((string) $log->extra, true);
     expect($extra['response']['status'] ?? null)->toBe(500);
 });
 
@@ -103,7 +103,7 @@ it('logs status=0 with the error message when the connection cannot be made', fu
     expect($log)->not->toBeNull();
     expect((int) $log->status)->toBe(0);
 
-    $extra = json_decode($log->extra, true);
+    $extra = json_decode((string) $log->extra, true);
     expect($extra['response']['error'] ?? null)
         ->toContain('Could not resolve host');
 });
@@ -128,7 +128,7 @@ function insertWebhookLogRow(int $status, ?int $code = null, ?string $error = nu
         'sku'        => 'DISPLAY-'.uniqid(),
         'user'       => 'tester',
         'status'     => $status,
-        'extra'      => $extra ? json_encode($extra) : null,
+        'extra'      => $extra !== [] ? json_encode($extra) : null,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
@@ -146,9 +146,9 @@ it('renders the status column with the HTTP code for successful and failed rows'
     // ability to resolve routes through a subdirectory-prefixed APP_URL.
     $payload = app(LogsDataGrid::class)->toJson();
 
-    $statuses = collect(json_decode($payload->getContent(), true)['records'] ?? [])
+    $statuses = collect(json_decode((string) $payload->getContent(), true)['records'] ?? [])
         ->pluck('status')
-        ->map(fn ($html) => strip_tags($html))
+        ->map(fn (mixed $html) => strip_tags((string) $html))
         ->all();
 
     expect($statuses)->toContain('Success (200)');

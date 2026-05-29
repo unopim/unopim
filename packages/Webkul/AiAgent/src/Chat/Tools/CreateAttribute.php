@@ -10,6 +10,7 @@ use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Attribute\Repositories\AttributeRepository;
 
 class CreateAttribute implements PimTool
 {
@@ -66,7 +67,7 @@ class CreateAttribute implements PimTool
                     return json_encode(['error' => "Attribute code '{$code}' already exists"]);
                 }
 
-                $repo = app('Webkul\Attribute\Repositories\AttributeRepository');
+                $repo = app(AttributeRepository::class);
 
                 $data = [
                     'code'                 => $code,
@@ -80,7 +81,7 @@ class CreateAttribute implements PimTool
 
                 // Add options for select/multiselect
                 if ($options && \in_array($type, ['select', 'multiselect', 'checkbox'])) {
-                    $optionItems = array_map('trim', explode(',', $options));
+                    $optionItems = array_map(trim(...), explode(',', $options));
                     $optionsData = [];
                     foreach ($optionItems as $i => $opt) {
                         $optionsData['option_'.$i] = [

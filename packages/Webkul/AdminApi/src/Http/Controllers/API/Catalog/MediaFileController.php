@@ -16,6 +16,7 @@ use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryMediaValidator;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Core\Rules\Code;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Validator\API\UploadMediaValidator;
 
@@ -23,8 +24,6 @@ class MediaFileController extends ApiController
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected CategoryRepository $categoryRepository,
@@ -143,6 +142,8 @@ class MediaFileController extends ApiController
                     ]
                 );
             }
+
+            return $this->validateErrorResponse(['file' => ['Invalid file uploaded.']]);
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
@@ -232,7 +233,7 @@ class MediaFileController extends ApiController
      * attribute's scope flags and the request's channel/locale (falling back
      * to defaults).
      */
-    protected function assignMediaToProductAttribute($product, string $attributeCode, string $filePath): void
+    protected function assignMediaToProductAttribute(Product $product, string $attributeCode, string $filePath): void
     {
         if ($filePath === '') {
             return;
@@ -270,7 +271,7 @@ class MediaFileController extends ApiController
      *
      * @throws ModelNotFoundException If the product is not found.
      */
-    protected function findProductOr404(string $sku)
+    protected function findProductOr404(string $sku): Product
     {
         $product = $this->productRepository->findByField('sku', $sku)->first();
         if (! $product) {

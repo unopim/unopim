@@ -20,6 +20,7 @@ class ChannelFactory extends Factory
     /**
      * Configure the model factory.
      */
+    #[\Override]
     public function configure(): static
     {
         return $this->hasAttached(Currency::inRandomOrder()->limit(2)->where('status', 1)->get())

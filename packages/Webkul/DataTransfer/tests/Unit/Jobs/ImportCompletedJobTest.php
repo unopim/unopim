@@ -35,14 +35,12 @@ describe('Import Completed Job', function () {
 
         ImportCompleted::dispatch($jobTrack, $jobTrack->id);
 
-        Queue::assertPushed(ImportCompleted::class, function ($job) use ($jobTrack) {
+        Queue::assertPushed(ImportCompleted::class, function (mixed $job) use ($jobTrack) {
             $reflection = new ReflectionClass($job);
 
             $importProp = $reflection->getProperty('import');
-            $importProp->setAccessible(true);
 
             $jobTrackIdProp = $reflection->getProperty('jobTrackId');
-            $jobTrackIdProp->setAccessible(true);
 
             return $importProp->getValue($job)->id === $jobTrack->id
                 && $jobTrackIdProp->getValue($job) === $jobTrack->id;

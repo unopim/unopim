@@ -20,24 +20,18 @@ class ExecuteAgentJob implements ShouldQueue
 
     /**
      * Number of times the job may be attempted.
-     *
-     * @var int
      */
-    public $tries = 3;
+    public int $tries = 3;
 
     /**
      * Number of seconds to wait before retrying.
-     *
-     * @var int
      */
-    public $backoff = 30;
+    public int $backoff = 30;
 
     /**
      * The job timeout in seconds.
-     *
-     * @var int
      */
-    public $timeout = 300;
+    public int $timeout = 300;
 
     /**
      * @param  array<string, mixed>  $payloadData  Serialized AgentPayload

@@ -6,13 +6,14 @@ use Spatie\ResponseCache\Facades\ResponseCache;
 
 class ThemeCustomization
 {
+    public mixed $themeCustomizationRepository;
+
     /**
      * After theme customization create
      *
      * @param  \Webkul\Shop\Contracts\ThemeCustomization  $themeCustomization
-     * @return void
      */
-    public function afterCreate($themeCustomization)
+    public function afterCreate(mixed $themeCustomization): void
     {
         if (in_array($themeCustomization->type, ['footer_links', 'services_content'])) {
             ResponseCache::clear();
@@ -27,9 +28,8 @@ class ThemeCustomization
      * After theme customization update
      *
      * @param  \Webkul\Shop\Contracts\ThemeCustomization  $themeCustomization
-     * @return void
      */
-    public function afterUpdate($themeCustomization)
+    public function afterUpdate(mixed $themeCustomization): void
     {
         if (in_array($themeCustomization->type, ['footer_links', 'services_content'])) {
             ResponseCache::clear();
@@ -42,11 +42,8 @@ class ThemeCustomization
 
     /**
      * Before theme customization delete
-     *
-     * @param  int  $themeCustomizationId
-     * @return void
      */
-    public function beforeDelete($themeCustomizationId)
+    public function beforeDelete(int $themeCustomizationId): void
     {
         $themeCustomization = $this->themeCustomizationRepository->find($themeCustomizationId);
 

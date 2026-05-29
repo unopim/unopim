@@ -3,6 +3,7 @@
 namespace Webkul\DataTransfer\Helpers\Importers\Category;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
@@ -101,7 +102,7 @@ class Importer extends AbstractImporter
 
     protected array $categoryFieldValidations = [];
 
-    protected $cachedCategoryFields = [];
+    protected array|Collection $cachedCategoryFields = [];
 
     /**
      * Category fields indexed by code for O(1) lookup in prepareCategories().
@@ -111,8 +112,6 @@ class Importer extends AbstractImporter
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
@@ -133,6 +132,7 @@ class Importer extends AbstractImporter
     /**
      * Initialize Product error templates
      */
+    #[\Override]
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -153,6 +153,7 @@ class Importer extends AbstractImporter
     /**
      * Validate data.
      */
+    #[\Override]
     public function validateData(): void
     {
         $this->validColumnNames = array_merge($this->validColumnNames, $this->getCategoryFields());
@@ -164,7 +165,7 @@ class Importer extends AbstractImporter
         parent::validateData();
     }
 
-    public function getCategoryFields()
+    public function getCategoryFields(): array
     {
         if (! isset($this->categoryFields)) {
             $this->cachedCategoryFields = $this->categoryFieldRepository->where('status', 1)->get();
@@ -217,7 +218,7 @@ class Importer extends AbstractImporter
             return false;
         }
 
-        if (empty($this->categoryFieldValidations)) {
+        if ($this->categoryFieldValidations === []) {
             $this->categoryFieldValidations = $this->getCategoryFieldValidations();
         }
 
@@ -341,8 +342,6 @@ class Importer extends AbstractImporter
 
         $categories = [];
 
-        $imagesData = [];
-
         foreach ($batch->data as $rowData) {
             /**
              * Prepare categories for import
@@ -418,7 +417,7 @@ class Importer extends AbstractImporter
     /**
      * Get the local id using code
      */
-    protected function getLocalId($localeCode)
+    protected function getLocalId(string $localeCode): mixed
     {
         return DB::table('locales')->where('code', $localeCode)->first()?->id;
     }
@@ -426,7 +425,7 @@ class Importer extends AbstractImporter
     /**
      * Get category Id by code
      */
-    public function getCategoryId(?string $code)
+    public function getCategoryId(?string $code): mixed
     {
         if (! $code) {
             throw new \Exception('category code not found');
@@ -464,7 +463,7 @@ class Importer extends AbstractImporter
                 ];
             }
 
-            if (! empty($updateData)) {
+            if ($updateData !== []) {
                 $chunkSize = (int) config('import.bulk_chunk_size', 500);
 
                 foreach (array_chunk($updateData, $chunkSize) as $chunk) {
@@ -495,7 +494,7 @@ class Importer extends AbstractImporter
         }
     }
 
-    public function updateParentCategoryId(&$category)
+    public function updateParentCategoryId(array &$category): void
     {
         if (! empty($category['parent'])) {
             // Use in-memory storage (pre-loaded with batch + parent codes) instead of
@@ -551,7 +550,7 @@ class Importer extends AbstractImporter
 
             $fieldValidation = array_merge($fieldValidation, $this->categoryRulesExtractor->getFieldTypeRules($categoryField));
 
-            if (empty($fieldValidation)) {
+            if ($fieldValidation === []) {
                 continue;
             }
 
@@ -564,7 +563,7 @@ class Importer extends AbstractImporter
     /**
      * Validate unique product attribute values
      */
-    protected function validateUniqueValues(array $rowData, int $rowNumber)
+    protected function validateUniqueValues(array $rowData, int $rowNumber): void
     {
         $existingCategoryId = $this->categoryStorage->get($rowData['code']) ?? null;
 
@@ -630,7 +629,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        if (empty($validations)) {
+        if ($validations === []) {
             return;
         }
 

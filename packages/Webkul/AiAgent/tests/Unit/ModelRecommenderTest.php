@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Webkul\MagicAI\Support\ModelRecommender;
 
 it('returns an empty list when no models are given', function () {

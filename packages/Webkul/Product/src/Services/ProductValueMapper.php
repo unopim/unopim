@@ -6,10 +6,8 @@ class ProductValueMapper
 {
     /**
      * Retrieves and formats the common fields for a product.
-     *
-     * @return array
      */
-    public function getCommonFields(array $data)
+    public function getCommonFields(array $data): array
     {
         if (
             ! array_key_exists('values', $data)
@@ -23,10 +21,8 @@ class ProductValueMapper
 
     /**
      * Retrieves and formats the locale-specific fields for a product.
-     *
-     * @return array
      */
-    public function getLocaleSpecificFields(array $data, string $locale)
+    public function getLocaleSpecificFields(array $data, string $locale): array
     {
         if (
             ! array_key_exists('values', $data)
@@ -40,10 +36,8 @@ class ProductValueMapper
 
     /**
      * Retrieves and formats the channel-specific fields for a product.
-     *
-     * @return array
      */
-    public function getChannelSpecificFields(array $data, string $channel)
+    public function getChannelSpecificFields(array $data, string $channel): array
     {
         if (
             ! array_key_exists('values', $data)
@@ -57,10 +51,8 @@ class ProductValueMapper
 
     /**
      * Retrieves and formats the channel-locale-specific fields for a product.
-     *
-     * @return array
      */
-    public function getChannelLocaleSpecificFields(array $data, string $channel, string $locale)
+    public function getChannelLocaleSpecificFields(array $data, string $channel, string $locale): array
     {
         if (
             ! array_key_exists('values', $data)
@@ -74,18 +66,15 @@ class ProductValueMapper
 
     /**
      * Retrieves and formats the categories associated with a product.
-     *
-     *
-     * @return string|null
      */
-    public function getCategories(array $data)
+    public function getCategories(array $data): ?string
     {
         if (
             ! array_key_exists('values', $data)
             || ! array_key_exists('categories', $data['values'] ?? [])
             || ! is_array($data['values']['categories'])
         ) {
-            return;
+            return null;
         }
 
         return implode(',', $data['values']['categories']);
@@ -93,11 +82,8 @@ class ProductValueMapper
 
     /**
      * Retrieves and formats the associated products for a given data row and type.
-     *
-     *
-     * @return string|null
      */
-    public function getAssociations(array $data, string $type)
+    public function getAssociations(array $data, string $type): ?string
     {
         if (
             ! array_key_exists('values', $data)
@@ -105,7 +91,7 @@ class ProductValueMapper
             || ! is_array($data['values']['associations'])
             || ! array_key_exists($type, $data['values']['associations'])
         ) {
-            return;
+            return null;
         }
 
         return implode(',', $data['values']['associations'][$type]) ?? null;

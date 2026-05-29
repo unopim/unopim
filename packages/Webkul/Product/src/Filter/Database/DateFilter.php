@@ -26,13 +26,13 @@ class DateFilter extends AbstractDatabaseAttributeFilter
      * {@inheritdoc}
      */
     public function addAttributeFilter(
-        $attribute,
-        $operator,
-        $value,
-        $locale = null,
-        $channel = null,
-        $options = []
-    ) {
+        mixed $attribute,
+        mixed $operator,
+        mixed $value,
+        ?string $locale = null,
+        ?string $channel = null,
+        array $options = []
+    ): static {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
@@ -43,26 +43,20 @@ class DateFilter extends AbstractDatabaseAttributeFilter
 
         $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $this->queryBuilder->whereRaw(
-                    $searchPath.' '.$grammar->getRegexOperator().' ?',
-                    is_array($value) ? implode('|', $value) : $value
-                );
-
-                break;
-
-            case FilterOperators::RANGE:
-                $this->queryBuilder->whereRaw(
-                    $searchPath.' BETWEEN ? AND ?',
-                    [
-                        ($value[0] ?? '').' 00:00:01',
-                        ($value[1] ?? '').' 23:59:59',
-                    ]
-                );
-
-                break;
-        }
+        match ($operator) {
+            FilterOperators::IN => $this->queryBuilder->whereRaw(
+                $searchPath.' '.$grammar->getRegexOperator().' ?',
+                is_array($value) ? implode('|', $value) : $value
+            ),
+            FilterOperators::RANGE => $this->queryBuilder->whereRaw(
+                $searchPath.' BETWEEN ? AND ?',
+                [
+                    ($value[0] ?? '').' 00:00:01',
+                    ($value[1] ?? '').' 23:59:59',
+                ]
+            ),
+            default => $this,
+        };
 
         return $this;
     }

@@ -19,17 +19,13 @@ class CommaSeparatedInteger implements ValidationRule
 
     /**
      * Determine if the value is comma separated integer.
-     *
-     * @param  string  $attribute
-     * @param  mixed  $value
-     * @return bool
      */
-    public function isCommaSeparatedInteger($attribute, $value)
+    public function isCommaSeparatedInteger(string $attribute, mixed $value): bool
     {
-        $integerValues = explode(',', $value);
+        $integerValues = explode(',', (string) $value);
 
         foreach ($integerValues as $integerValue) {
-            if (! preg_match('/^[0-9]+$/', $integerValue)) {
+            if (! preg_match('/^\d+$/', $integerValue)) {
                 return false;
             }
         }

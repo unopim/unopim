@@ -20,8 +20,6 @@ class UserController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AdminRepository $adminRepository,
@@ -42,7 +40,7 @@ class UserController extends Controller
 
         $roles = $this->roleRepository->all();
 
-        return view('admin::settings.users.index', compact('roles'));
+        return view('admin::settings.users.index', ['roles' => $roles]);
     }
 
     /**
@@ -104,10 +102,8 @@ class UserController extends Controller
 
     /**
      * User Details
-     *
-     * @param  int  $id
      */
-    public function edit($id): JsonResponse
+    public function edit(int $id): JsonResponse
     {
         $user = $this->adminRepository->findOrFail($id);
 
@@ -149,11 +145,9 @@ class UserController extends Controller
                 path: 'admins'.DIRECTORY_SEPARATOR.$admin->id,
                 file: current(request()->file('image'))
             );
-        } else {
-            if (! request()->has('image') && $admin->image) {
-                Storage::delete($admin->image);
-                $admin->image = null;
-            }
+        } elseif (! request()->has('image') && $admin->image) {
+            Storage::delete($admin->image);
+            $admin->image = null;
         }
 
         $admin->save();
@@ -171,12 +165,10 @@ class UserController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
      */
-    public function destroy($id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        if ($this->adminRepository->count() == 1) {
+        if ($this->adminRepository->count() === 1) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.last-delete-error'),
             ], JsonResponse::HTTP_BAD_REQUEST);
@@ -209,14 +201,12 @@ class UserController extends Controller
 
     /**
      * Show the form for confirming the user password.
-     *
-     * @param  int  $id
      */
-    public function confirm($id): View
+    public function confirm(int $id): View
     {
         $user = $this->adminRepository->findOrFail($id);
 
-        return view('admin::customers.customers.confirm-password', compact('user'));
+        return view('admin::customers.customers.confirm-password', ['user' => $user]);
     }
 
     /**
@@ -229,8 +219,10 @@ class UserController extends Controller
         $password = request()->input('password');
 
         if (Hash::check($password, auth()->guard('admin')->user()->password)) {
-            if ($this->adminRepository->count() == 1) {
-                session()->flash('error', trans('admin::app.settings.users.delete-last'));
+            if ($this->adminRepository->count() === 1) {
+                return new JsonResponse([
+                    'message' => trans('admin::app.settings.users.delete-last'),
+                ], JsonResponse::HTTP_BAD_REQUEST);
             } else {
                 $id = auth()->guard('admin')->user()->id;
 
@@ -254,11 +246,8 @@ class UserController extends Controller
 
     /**
      * Prepare user data.
-     *
-     * @param  int  $id
-     * @return array|RedirectResponse
      */
-    private function prepareUserData(UserForm $request, $id)
+    private function prepareUserData(UserForm $request, int $id): array|RedirectResponse
     {
         $data = $request->validated();
 
@@ -282,7 +271,7 @@ class UserController extends Controller
 
         if (
             $isStatusChangedToInactive
-            && (auth()->guard('admin')->user()->id === (int) $id
+            && (auth()->guard('admin')->user()->id === $id
                 && $this->adminRepository->countAdminsWithAllAccessAndActiveStatus() === 1
             )
         ) {

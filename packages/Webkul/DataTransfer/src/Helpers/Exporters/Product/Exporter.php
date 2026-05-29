@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Exporters\Product;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
@@ -24,25 +25,14 @@ class Exporter extends AbstractExporter
      */
     protected static ?array $staticInitCache = null;
 
-    /**
-     * @var array
-     */
-    protected $channelsAndLocales = [];
+    protected array $channelsAndLocales = [];
 
-    /**
-     * @var array
-     */
-    protected $currencies = [];
+    protected array $currencies = [];
 
-    /**
-     * @var array
-     */
-    protected $attributes = [];
+    protected array|Collection $attributes = [];
 
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -58,10 +48,8 @@ class Exporter extends AbstractExporter
      * Initializes the channels and locales for the export process.
      * Uses a static in-process cache so that the DB queries run only once
      * per worker process regardless of how many ExportBatch jobs are handled.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         if (self::$staticInitCache === null) {
             $channels = $this->channelRepository->all();
@@ -111,16 +99,17 @@ class Exporter extends AbstractExporter
     /**
      * {@inheritdoc}
      */
-    protected function getResults()
+    #[\Override]
+    protected function getResults(): mixed
     {
         $requestParam['filters'] = $this->getFilters();
 
         return $this->productSource->getResults($requestParam, $this->source, self::BATCH_SIZE);
     }
 
-    protected function getItemsFromIds(array $ids)
+    protected function getItemsFromIds(array $ids): mixed
     {
-        if (empty($ids)) {
+        if ($ids === []) {
             return [];
         }
 
@@ -141,7 +130,7 @@ class Exporter extends AbstractExporter
     /**
      * Prepare products from current batch
      */
-    public function prepareProducts(JobTrackBatchContract $batch, $filePath)
+    public function prepareProducts(JobTrackBatchContract $batch, mixed $filePath): array
     {
         $products = [];
         $flatIds = array_column($batch->data, 'id');
@@ -221,25 +210,21 @@ class Exporter extends AbstractExporter
         return $products;
     }
 
-    public function getSuperAttributes($data)
+    public function getSuperAttributes(array $data): ?string
     {
         if (! isset($data['super_attributes'])) {
             return null;
         }
 
-        $configurable_attributes = array_map(function ($data) {
-            return $data['code'];
-        }, $data['super_attributes'] ?? []);
+        $configurable_attributes = array_map(fn (mixed $data) => $data['code'], $data['super_attributes'] ?? []);
 
         return implode(',', $configurable_attributes);
     }
 
     /**
      * Sets attribute values for a product. If an attribute is not present in the given values array,
-     *
-     * @return array
      */
-    protected function setAttributesValues(array $values, mixed $filePath)
+    protected function setAttributesValues(array $values, mixed $filePath): array
     {
         $attributeValues = [];
         $filters = $this->getFilters();
@@ -296,10 +281,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the common fields for a product.
-     *
-     * @return array
      */
-    protected function getCommonFields(array $data)
+    protected function getCommonFields(array $data): array
     {
         if (
             ! array_key_exists('values', $data)
@@ -313,10 +296,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the locale-specific fields for a product.
-     *
-     * @return array
      */
-    protected function getLocaleSpecificFields(array $data, string $locale)
+    protected function getLocaleSpecificFields(array $data, string $locale): array
     {
         if (
             ! array_key_exists('values', $data)
@@ -330,10 +311,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the channel-specific fields for a product.
-     *
-     * @return array
      */
-    protected function getChannelSpecificFields(array $data, string $channel)
+    protected function getChannelSpecificFields(array $data, string $channel): array
     {
         if (
             ! array_key_exists('values', $data)
@@ -347,10 +326,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the channel-locale-specific fields for a product.
-     *
-     * @return array
      */
-    protected function getChannelLocaleSpecificFields(array $data, string $channel, string $locale)
+    protected function getChannelLocaleSpecificFields(array $data, string $channel, string $locale): array
     {
         if (
             ! array_key_exists('values', $data)
@@ -364,17 +341,15 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the categories associated with a product.
-     *
-     * @return string|null
      */
-    protected function getCategories(array $data)
+    protected function getCategories(array $data): ?string
     {
         if (
             ! array_key_exists('values', $data)
             || ! array_key_exists('categories', $data['values'])
             || ! is_array($data['values']['categories'])
         ) {
-            return;
+            return null;
         }
 
         return implode(',', $data['values']['categories']);
@@ -382,10 +357,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the associated products for a given data row and type.
-     *
-     * @return string|null
      */
-    protected function getAssociations(array $data, string $type)
+    protected function getAssociations(array $data, string $type): ?string
     {
         if (
             ! array_key_exists('values', $data)
@@ -393,7 +366,7 @@ class Exporter extends AbstractExporter
             || ! is_array($data['values']['associations'])
             || ! array_key_exists($type, $data['values']['associations'])
         ) {
-            return;
+            return null;
         }
 
         return implode(',', $data['values']['associations'][$type]) ?? null;

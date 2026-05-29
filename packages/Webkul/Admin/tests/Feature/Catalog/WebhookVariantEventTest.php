@@ -55,9 +55,7 @@ it('should dispatch catalog.product.create.after event for each variant created 
         'type'      => 'simple',
     ]);
 
-    Event::assertDispatched('catalog.product.create.after', function ($event, $product) use ($variantSku) {
-        return $product->sku === $variantSku;
-    });
+    Event::assertDispatched('catalog.product.create.after', fn (mixed $event, mixed $product) => $product->sku === $variantSku);
 });
 
 it('should dispatch catalog.product.create.after event for multiple variants created at once', function () {
@@ -119,13 +117,9 @@ it('should dispatch catalog.product.create.after event for multiple variants cre
         'parent_id' => $configurableProduct->id,
     ]);
 
-    Event::assertDispatched('catalog.product.create.after', function ($event, $product) use ($variantSku1) {
-        return $product->sku === $variantSku1;
-    });
+    Event::assertDispatched('catalog.product.create.after', fn (mixed $event, mixed $product) => $product->sku === $variantSku1);
 
-    Event::assertDispatched('catalog.product.create.after', function ($event, $product) use ($variantSku2) {
-        return $product->sku === $variantSku2;
-    });
+    Event::assertDispatched('catalog.product.create.after', fn (mixed $event, mixed $product) => $product->sku === $variantSku2);
 });
 
 it('should not dispatch catalog.product.create.after event when updating existing variants', function () {

@@ -74,10 +74,7 @@ class DemoExtrasTableSeeder extends Seeder
                 try {
                     DB::statement("SET session_replication_role = 'replica'");
                 } catch (Throwable $e) {
-                    throw new \RuntimeException(
-                        'PostgreSQL requires a superuser role to set session_replication_role; unable to bypass FK triggers for demo extras seeding.',
-                        previous: $e
-                    );
+                    throw new \RuntimeException('PostgreSQL requires a superuser role to set session_replication_role; unable to bypass FK triggers for demo extras seeding.', $e->getCode(), previous: $e);
                 }
             }
 
@@ -107,7 +104,7 @@ class DemoExtrasTableSeeder extends Seeder
 
                 DB::table($table)->delete();
 
-                if (empty($rows)) {
+                if ($rows === []) {
                     continue;
                 }
 
@@ -128,7 +125,7 @@ class DemoExtrasTableSeeder extends Seeder
 
             $tablesWithIdSequence = array_values(array_filter(
                 $appliedTables,
-                fn (string $table): bool => $this->hasIntegerIdSequence($table)
+                $this->hasIntegerIdSequence(...)
             ));
 
             DatabaseSequenceHelper::fixSequences($tablesWithIdSequence);
@@ -187,7 +184,7 @@ class DemoExtrasTableSeeder extends Seeder
             }
         }
 
-        if (empty($boolColumns)) {
+        if ($boolColumns === []) {
             return $rows;
         }
 
@@ -281,7 +278,7 @@ class DemoExtrasTableSeeder extends Seeder
                 'translations' => DB::table('channel_translations')
                     ->where('channel_id', $channel->id)
                     ->get(['locale', 'name'])
-                    ->map(static fn ($t) => ['locale' => $t->locale, 'name' => $t->name])
+                    ->map(static fn (mixed $t) => ['locale' => $t->locale, 'name' => $t->name])
                     ->all(),
             ];
         }

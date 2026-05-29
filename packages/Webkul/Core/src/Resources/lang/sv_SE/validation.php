@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => 'Adressen :attribute kan bara acceptera alfanumeriska tecken, mellanslag, komma och bindestreck.',
     'alpha-numeric-space'          => 'Fältet :attribute kan bara acceptera alfanumeriska tecken och mellanslag.',

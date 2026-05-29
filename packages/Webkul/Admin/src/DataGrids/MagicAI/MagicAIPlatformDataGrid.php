@@ -38,13 +38,13 @@ class MagicAIPlatformDataGrid extends DataGrid
             'options'    => [
                 'type'   => 'basic',
                 'params' => [
-                    'options' => array_map(fn ($case) => [
+                    'options' => array_map(fn (AiProvider $case) => [
                         'label' => $case->label(),
                         'value' => $case->value,
                     ], AiProvider::cases()),
                 ],
             ],
-            'closure' => fn ($row) => AiProvider::tryFrom($row->provider)?->label() ?? $row->provider,
+            'closure' => fn (\stdClass $row) => AiProvider::tryFrom($row->provider)?->label() ?? $row->provider,
         ]);
 
         $this->addColumn([
@@ -72,7 +72,7 @@ class MagicAIPlatformDataGrid extends DataGrid
                     ],
                 ],
             ],
-            'closure' => fn ($row) => $row->is_default
+            'closure' => fn (\stdClass $row) => $row->is_default
                 ? "<span class='label-active'>".trans('admin::app.common.yes').'</span>'
                 : "<span class='label-info'>".trans('admin::app.common.no').'</span>',
         ]);
@@ -93,7 +93,7 @@ class MagicAIPlatformDataGrid extends DataGrid
                     ],
                 ],
             ],
-            'closure' => fn ($row) => $row->status
+            'closure' => fn (\stdClass $row) => $row->status
                 ? "<span class='label-active'>".trans('admin::app.common.enable').'</span>'
                 : "<span class='label-info'>".trans('admin::app.common.disable').'</span>',
         ]);
@@ -115,7 +115,7 @@ class MagicAIPlatformDataGrid extends DataGrid
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.configuration.platform.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => fn ($row) => route('admin.magic_ai.platform.edit', $row->id),
+                'url'    => fn (\stdClass $row) => route('admin.magic_ai.platform.edit', $row->id),
             ]);
         }
 
@@ -124,7 +124,7 @@ class MagicAIPlatformDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.configuration.platform.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => fn ($row) => route('admin.magic_ai.platform.delete', $row->id),
+                'url'    => fn (\stdClass $row) => route('admin.magic_ai.platform.delete', $row->id),
             ]);
         }
     }

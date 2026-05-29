@@ -23,7 +23,7 @@ class FamilyFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
@@ -39,16 +39,13 @@ class FamilyFilter extends AbstractPropertyFilter
             );
         }
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $clause = [
-                    'terms' => [
-                        'attribute_family_id' => $value,
-                    ],
-                ];
-
-                $this->queryBuilder::where($clause);
-                break;
+        if ($operator === FilterOperators::IN) {
+            $clause = [
+                'terms' => [
+                    'attribute_family_id' => $value,
+                ],
+            ];
+            $this->queryBuilder::where($clause);
         }
 
         return $this;

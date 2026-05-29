@@ -40,7 +40,7 @@ trait CoreConfigField
      */
     public function getValidations($field)
     {
-        $field['validation'] = $field['validation'] ?? '';
+        $field['validation'] ??= '';
 
         foreach ($this->veeValidateMappings as $laravelRule => $veeValidateRule) {
             $field['validation'] = str_replace($laravelRule, $veeValidateRule, $field['validation']);
@@ -75,7 +75,7 @@ trait CoreConfigField
      */
     public function getDependentFieldOrValue($field, $fieldOrValue = 'field')
     {
-        $depends = explode(':', $field['depends']);
+        $depends = explode(':', (string) $field['depends']);
 
         return $fieldOrValue === 'field'
             ? current($depends) : end($depends);
@@ -130,6 +130,6 @@ trait CoreConfigField
             $info[] = $locale;
         }
 
-        return ! empty($info) ? '['.implode(' - ', $info).']' : '';
+        return empty($info) ? '' : '['.implode(' - ', $info).']';
     }
 }

@@ -12,20 +12,15 @@ class ProductImage
 {
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(protected ProductRepository $productRepository) {}
 
     /**
      * Retrieve collection of gallery images.
-     *
-     * @param  Product  $product
-     * @return array
      */
-    public function getGalleryImages($product)
+    public function getGalleryImages(?Product $product): array
     {
-        if (! $product) {
+        if (! $product instanceof Product) {
             return [];
         }
 
@@ -52,7 +47,7 @@ class ProductImage
          * parent is available. So recursing the method for getting the parent image if
          * images of the child are not found.
          */
-        if (empty($images)) {
+        if ($images === []) {
             $images = $this->getGalleryImages($product->parent);
         }
 
@@ -63,9 +58,8 @@ class ProductImage
      * Get product variant image if available otherwise product base image.
      *
      * @param  Wishlist  $item
-     * @return array
      */
-    public function getProductImage($item)
+    public function getProductImage(mixed $item): array
     {
         if ($item instanceof Wishlist) {
             if (isset($item->additional['selected_configurable_option'])) {
@@ -84,14 +78,12 @@ class ProductImage
      * This method will first check whether the gallery images are already
      * present or not. If not then it will load from the product.
      *
-     * @param  Product  $product
      * @param  array
-     * @return array
      */
-    public function getProductBaseImage($product, ?array $galleryImages = null)
+    public function getProductBaseImage(?Product $product, ?array $galleryImages = null): ?array
     {
-        if (! $product) {
-            return;
+        if (! $product instanceof Product) {
+            return null;
         }
 
         return $galleryImages
@@ -101,11 +93,8 @@ class ProductImage
 
     /**
      * Load product's base image.
-     *
-     * @param  Product  $product
-     * @return array
      */
-    protected function otherwiseLoadFromProduct($product)
+    protected function otherwiseLoadFromProduct(?Product $product): array
     {
         $images = $product?->images;
 
@@ -116,10 +105,8 @@ class ProductImage
 
     /**
      * Get cached urls configured for intervention package.
-     *
-     * @param  string  $path
      */
-    private function getCachedImageUrls($path): array
+    private function getCachedImageUrls(string $path): array
     {
         if (! $this->isDriverLocal()) {
             return [

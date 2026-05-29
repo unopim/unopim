@@ -78,7 +78,7 @@ describe('Product Importer Bulk Operations', function () {
 
         expect((int) $updated->status)->toBe(1);
 
-        $values = json_decode($updated->values, true);
+        $values = json_decode((string) $updated->values, true);
         expect($values['common']['name'])->toBe('Updated');
 
         /** Cleanup */
@@ -94,7 +94,7 @@ describe('Product Importer Bulk Operations', function () {
             $skus[] = 'chunk-test-'.uniqid().'-'.$i;
         }
 
-        $insertData = array_map(fn ($sku) => [
+        $insertData = array_map(fn (string $sku) => [
             'sku'                 => $sku,
             'type'                => 'simple',
             'parent_id'           => null,

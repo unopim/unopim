@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\DataTransfer\Validators\JobInstances\Export;
 
 use Webkul\DataTransfer\Validators\JobInstances\Default\JobValidator;

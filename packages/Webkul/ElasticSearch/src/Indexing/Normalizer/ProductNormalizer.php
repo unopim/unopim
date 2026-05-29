@@ -62,12 +62,12 @@ class ProductNormalizer
 
         $attributeCodes = array_values(array_filter(
             array_keys($attributeValues),
-            fn ($code) => is_string($code) && trim($code) !== ''
+            fn (mixed $code) => is_string($code) && trim($code) !== ''
         ));
 
-        $attributes = ! empty($attributeCodes)
-            ? $this->attributeService->findByCodes($attributeCodes)
-            : [];
+        $attributes = $attributeCodes === []
+            ? []
+            : $this->attributeService->findByCodes($attributeCodes);
 
         foreach ($attributeValues as $key => $value) {
             if (! is_string($key) || trim($key) === '') {

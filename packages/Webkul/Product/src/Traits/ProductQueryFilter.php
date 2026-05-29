@@ -12,7 +12,7 @@ trait ProductQueryFilter
      *
      * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): static
     {
         $this->qb = DB::table('products')
             ->leftJoin('attribute_families as af', 'products.attribute_family_id', '=', 'af.id')
@@ -24,7 +24,7 @@ trait ProductQueryFilter
     /**
      * {@inheritdoc}
      */
-    public function applyFilter($property, $operator, $value, array $context = [])
+    public function applyFilter($property, $operator, $value, array $context = []): static
     {
         $attribute = null;
         $filter = $this->filterManager->getPropertyFilter($property, $operator);

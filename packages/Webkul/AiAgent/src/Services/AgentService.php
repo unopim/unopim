@@ -100,7 +100,7 @@ class AgentService implements AgentServiceContract
      */
     protected function resolveStages(array $customStages): array
     {
-        if (! empty($customStages)) {
+        if ($customStages !== []) {
             return $customStages;
         }
 

@@ -16,20 +16,15 @@ class UpdateCreateVisitableIndex implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param  array  $log
-     * @return void
      */
-    public function __construct(protected $log) {}
+    public function __construct(protected array $log) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        $slugOrURLKey = urldecode(trim($this->log['path_info'], '/'));
+        $slugOrURLKey = urldecode(trim((string) $this->log['path_info'], '/'));
 
         /**
          * Support url for chinese, japanese, arabic and english with numbers.

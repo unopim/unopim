@@ -20,9 +20,7 @@ it('should save and update the settings for magic ai', function () {
 
     $configData = include __DIR__.'/../../../src/Config/system.php';
 
-    $configData = array_filter($configData, function ($item) {
-        return ($item['key'] ?? '') == 'general.magic_ai.settings';
-    });
+    $configData = array_filter($configData, fn (array $item) => ($item['key'] ?? '') == 'general.magic_ai.settings');
 
     $configData = json_encode(current($configData));
 
@@ -55,9 +53,7 @@ it('should save and update the translation settings for magic ai', function () {
 
     $configData = include __DIR__.'/../../../src/Config/system.php';
 
-    $configData = array_filter($configData, function ($item) {
-        return ($item['key'] ?? '') == 'general.magic_ai.translation';
-    });
+    $configData = array_filter($configData, fn (array $item) => ($item['key'] ?? '') == 'general.magic_ai.translation');
 
     $configData = json_encode(current($configData));
 
@@ -99,9 +95,7 @@ it('should save and update the image generation settings for magic ai', function
 
     $configData = include __DIR__.'/../../../src/Config/system.php';
 
-    $configData = array_filter($configData, function ($item) {
-        return ($item['key'] ?? '') == 'general.magic_ai.image_generation';
-    });
+    $configData = array_filter($configData, fn (array $item) => ($item['key'] ?? '') == 'general.magic_ai.image_generation');
 
     $configData = json_encode(current($configData));
 
@@ -134,9 +128,7 @@ it('should disable image generation for magic ai', function () {
 
     $configData = include __DIR__.'/../../../src/Config/system.php';
 
-    $configData = array_filter($configData, function ($item) {
-        return ($item['key'] ?? '') == 'general.magic_ai.image_generation';
-    });
+    $configData = array_filter($configData, fn (array $item) => ($item['key'] ?? '') == 'general.magic_ai.image_generation');
 
     $configData = json_encode(current($configData));
 
@@ -169,9 +161,7 @@ it('should disable the magic ai settings', function () {
 
     $configData = include __DIR__.'/../../../src/Config/system.php';
 
-    $configData = array_filter($configData, function ($item) {
-        return ($item['key'] ?? '') == 'general.magic_ai.settings';
-    });
+    $configData = array_filter($configData, fn (array $item) => ($item['key'] ?? '') == 'general.magic_ai.settings');
 
     $configData = json_encode(current($configData));
 
@@ -204,9 +194,7 @@ it('should save and update the translation settings with all fields for magic ai
 
     $configData = include __DIR__.'/../../../src/Config/system.php';
 
-    $configData = array_filter($configData, function ($item) {
-        return ($item['key'] ?? '') == 'general.magic_ai.translation';
-    });
+    $configData = array_filter($configData, fn (array $item) => ($item['key'] ?? '') == 'general.magic_ai.translation');
 
     $configData = json_encode(current($configData));
 
@@ -254,9 +242,7 @@ it('should save and update the agentic pim settings for magic ai', function () {
 
     $configData = include __DIR__.'/../../../src/Config/system.php';
 
-    $configData = array_filter($configData, function ($item) {
-        return ($item['key'] ?? '') == 'general.magic_ai.agentic_pim';
-    });
+    $configData = array_filter($configData, fn (array $item) => ($item['key'] ?? '') == 'general.magic_ai.agentic_pim');
 
     $configData = json_encode(current($configData));
 
@@ -304,9 +290,7 @@ it('should save agentic pim with strict confirm approval mode', function () {
 
     $configData = include __DIR__.'/../../../src/Config/system.php';
 
-    $configData = array_filter($configData, function ($item) {
-        return ($item['key'] ?? '') == 'general.magic_ai.agentic_pim';
-    });
+    $configData = array_filter($configData, fn (array $item) => ($item['key'] ?? '') == 'general.magic_ai.agentic_pim');
 
     $configData = json_encode(current($configData));
 
@@ -351,9 +335,7 @@ it('should save agentic pim with suggest only approval mode', function () {
 
     $configData = include __DIR__.'/../../../src/Config/system.php';
 
-    $configData = array_filter($configData, function ($item) {
-        return ($item['key'] ?? '') == 'general.magic_ai.agentic_pim';
-    });
+    $configData = array_filter($configData, fn (array $item) => ($item['key'] ?? '') == 'general.magic_ai.agentic_pim');
 
     $configData = json_encode(current($configData));
 

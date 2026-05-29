@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Providers;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -19,6 +20,7 @@ use Webkul\AiAgent\Services\ImageToProductService;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\AiAgent\Services\PromptBuilder;
 use Webkul\AiAgent\Services\VisionService;
+use Webkul\Theme\ViewRenderEventManager;
 
 class AiAgentServiceProvider extends ServiceProvider
 {
@@ -42,12 +44,12 @@ class AiAgentServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../../Database/Migration');
 
         // Inject assets into admin head — event name ends with .before
-        Event::listen('unopim.admin.layout.head.before', function ($viewRenderEventManager) {
+        Event::listen('unopim.admin.layout.head.before', function (ViewRenderEventManager $viewRenderEventManager) {
             $viewRenderEventManager->addTemplate('ai-agent::layouts.head');
         });
 
         // Inject the global AI chat widget only when Agentic PIM is enabled
-        Event::listen('unopim.admin.layout.content.after', function ($viewRenderEventManager) {
+        Event::listen('unopim.admin.layout.content.after', function (ViewRenderEventManager $viewRenderEventManager) {
             if (auth()->guard('admin')->check() && core()->getConfigData('general.magic_ai.agentic_pim.enabled')) {
                 $viewRenderEventManager->addTemplate('ai-agent::components.chat-widget');
             }
@@ -68,6 +70,7 @@ class AiAgentServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
+    #[\Override]
     public function register(): void
     {
         $this->app->register(ModuleServiceProvider::class);
@@ -103,7 +106,7 @@ class AiAgentServiceProvider extends ServiceProvider
         $this->app->singleton(ImageToProductService::class);
 
         // Agent tool calling infrastructure
-        $this->app->singleton(ToolRegistry::class, function ($app) {
+        $this->app->singleton(ToolRegistry::class, function (Application $app) {
             $registry = new ToolRegistry;
 
             // Product tools

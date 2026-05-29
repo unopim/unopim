@@ -41,7 +41,7 @@ class CoreServiceProvider extends ServiceProvider
         if ($appUrl = config('app.url')) {
             URL::forceRootUrl($appUrl);
 
-            if ($scheme = parse_url($appUrl, PHP_URL_SCHEME)) {
+            if ($scheme = parse_url((string) $appUrl, PHP_URL_SCHEME)) {
                 URL::forceScheme($scheme);
             }
         }
@@ -81,13 +81,9 @@ class CoreServiceProvider extends ServiceProvider
             $viewRenderEventManager->addTemplate('core::blade.tracer.style');
         });
 
-        $this->app->extend('command.down', function () {
-            return new DownCommand;
-        });
+        $this->app->extend('command.down', fn () => new DownCommand);
 
-        $this->app->extend('command.up', function () {
-            return new UpCommand;
-        });
+        $this->app->extend('command.up', fn () => new UpCommand);
 
         /**
          * Image Cache route
@@ -110,9 +106,10 @@ class CoreServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
+    #[\Override]
     public function register(): void
     {
-        $this->app->singleton('image_manager', function ($app) {
+        $this->app->singleton('image_manager', function (mixed $app) {
             $driver = $app['config']->get('image.driver', 'gd');
 
             return match ($driver) {
@@ -139,22 +136,16 @@ class CoreServiceProvider extends ServiceProvider
 
         $loader->alias('core', CoreFacade::class);
 
-        $this->app->singleton('core', function () {
-            return app()->make(Core::class);
-        });
+        $this->app->singleton('core', fn () => app()->make(Core::class));
 
         /**
          * Register ElasticSearch as a singleton.
          */
-        $this->app->singleton('elasticsearch', function () {
-            return new ElasticSearch;
-        });
+        $this->app->singleton('elasticsearch', fn () => new ElasticSearch);
 
         $loader->alias('elasticsearch', ElasticSearchFacade::class);
 
-        $this->app->singleton(ElasticSearchClient::class, function () {
-            return app()->make('elasticsearch')->connection();
-        });
+        $this->app->singleton(ElasticSearchClient::class, fn () => app()->make('elasticsearch')->connection());
     }
 
     /**
@@ -176,8 +167,6 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function registerBladeCompiler(): void
     {
-        $this->app->singleton('blade.compiler', function ($app) {
-            return new BladeCompiler($app['files'], $app['config']['view.compiled']);
-        });
+        $this->app->singleton('blade.compiler', fn (mixed $app) => new BladeCompiler($app['files'], $app['config']['view.compiled']));
     }
 }

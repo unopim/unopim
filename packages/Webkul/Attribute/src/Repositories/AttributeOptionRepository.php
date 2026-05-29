@@ -15,13 +15,11 @@ class AttributeOptionRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeOption';
+        return AttributeOption::class;
     }
 
-    /**
-     * @return AttributeOption
-     */
-    public function create(array $data)
+    #[\Override]
+    public function create(array $data): AttributeOption
     {
         if (! isset($data['sort_order'])) {
             $maxSortOrder = $this->model
@@ -41,9 +39,9 @@ class AttributeOptionRepository extends Repository
     /**
      * @param  int  $id
      * @param  string  $attribute
-     * @return AttributeOption
      */
-    public function update(array $data, $id)
+    #[\Override]
+    public function update(array $data, $id): AttributeOption
     {
 
         $option = parent::update($data, $id);
@@ -92,12 +90,7 @@ class AttributeOptionRepository extends Repository
         return true;
     }
 
-    /**
-     * @param  array  $data
-     * @param  int  $optionId
-     * @return void
-     */
-    public function uploadSwatchImage($data, $optionId)
+    public function uploadSwatchImage(array $data, int $optionId): void
     {
         if (empty($data['swatch_value'])) {
             return;

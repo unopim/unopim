@@ -3,6 +3,7 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -10,16 +11,14 @@ class AttributeFamilyDataGrid extends DataGrid
 {
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $tablePrefix = DB::getTablePrefix();
         $grammar = DB::rawQueryGrammar();
 
         $queryBuilder = DB::table('attribute_families')
-            ->leftJoin('attribute_family_translations as attribute_family_name', function ($join) {
+            ->leftJoin('attribute_family_translations as attribute_family_name', function (JoinClause $join) {
                 $join->on('attribute_family_name.attribute_family_id', '=', 'attribute_families.id')
                     ->where('attribute_family_name.locale', '=', core()->getRequestedLocaleCode());
             })
@@ -43,10 +42,8 @@ class AttributeFamilyDataGrid extends DataGrid
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -78,10 +75,8 @@ class AttributeFamilyDataGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('catalog.families.edit')) {
             $this->addAction([
@@ -89,9 +84,7 @@ class AttributeFamilyDataGrid extends DataGrid
                 'index'  => 'edit',
                 'title'  => trans('admin::app.catalog.families.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.catalog.families.edit', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.families.edit', $row->id),
             ]);
         }
 
@@ -100,9 +93,7 @@ class AttributeFamilyDataGrid extends DataGrid
                 'method' => 'GET',
                 'title'  => trans('admin::app.catalog.families.index.datagrid.copy'),
                 'icon'   => 'icon-copy',
-                'url'    => function ($row) {
-                    return route('admin.catalog.families.copy', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.families.copy', $row->id),
             ]);
         }
 
@@ -111,9 +102,7 @@ class AttributeFamilyDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.catalog.families.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.catalog.families.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.families.delete', $row->id),
             ]);
         }
     }

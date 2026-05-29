@@ -3,6 +3,7 @@
 namespace Webkul\MagicAI\Models;
 
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\MagicAI\Contracts\MagicAIPlatform as MagicAIPlatformContract;
 
@@ -32,21 +33,22 @@ class MagicAIPlatform extends Model implements MagicAIPlatformContract
         'api_key',
     ];
 
-    protected static function booted()
+    #[\Override]
+    protected static function booted(): void
     {
-        static::saving(function ($model) {
+        static::saving(function (Model $model): void {
             if ($model->is_default) {
                 static::where('id', '!=', $model->id ?? 0)->update(['is_default' => false]);
             }
         });
     }
 
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', true);
     }
 
-    public function scopeDefault($query)
+    public function scopeDefault(Builder $query): Builder
     {
         return $query->where('is_default', true);
     }
@@ -84,6 +86,6 @@ class MagicAIPlatform extends Model implements MagicAIPlatformContract
      */
     public function getModelListAttribute(): array
     {
-        return array_map('trim', explode(',', $this->models));
+        return array_map(trim(...), explode(',', $this->models));
     }
 }

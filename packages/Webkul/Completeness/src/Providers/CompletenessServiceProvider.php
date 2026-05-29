@@ -14,7 +14,7 @@ class CompletenessServiceProvider extends ServiceProvider
     /**
      * Bootstrap services.
      */
-    public function boot()
+    public function boot(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../Config/completeness.php', 'completeness');
 

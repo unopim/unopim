@@ -24,26 +24,21 @@ class UserServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    #[\Override]
+    public function register(): void
     {
         $this->registerBouncer();
     }
 
     /**
      * Register Bouncer as a singleton.
-     *
-     * @return void
      */
-    protected function registerBouncer()
+    protected function registerBouncer(): void
     {
         $loader = AliasLoader::getInstance();
         $loader->alias('Bouncer', BouncerFacade::class);
 
-        $this->app->singleton('bouncer', function () {
-            return new Bouncer;
-        });
+        $this->app->singleton('bouncer', fn () => new Bouncer);
     }
 }

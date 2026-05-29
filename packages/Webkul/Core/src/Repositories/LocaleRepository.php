@@ -20,10 +20,9 @@ class LocaleRepository extends Repository
 
     /**
      * Create.
-     *
-     * @return mixed
      */
-    public function create(array $attributes)
+    #[\Override]
+    public function create(array $attributes): mixed
     {
         Event::dispatch('core.locale.create.before');
 
@@ -36,10 +35,9 @@ class LocaleRepository extends Repository
 
     /**
      * Update.
-     *
-     * @return mixed
      */
-    public function update(array $attributes, $id)
+    #[\Override]
+    public function update(array $attributes, $id): mixed
     {
         Event::dispatch('core.locale.update.before', $id);
 
@@ -54,9 +52,9 @@ class LocaleRepository extends Repository
      * Delete.
      *
      * @param  int  $id
-     * @return void
      */
-    public function delete($id)
+    #[\Override]
+    public function delete($id): void
     {
         Event::dispatch('core.locale.delete.before', $id);
 
@@ -72,7 +70,7 @@ class LocaleRepository extends Repository
     /**
      * Fetchs All active locales
      */
-    public function getActiveLocales()
+    public function getActiveLocales(): mixed
     {
         return $this->where('status', 1)->orderBy('code')->get();
     }
@@ -90,7 +88,7 @@ class LocaleRepository extends Repository
      *
      * @return Builder
      */
-    public function queryBuilder()
+    public function queryBuilder(): static
     {
         return $this;
     }

@@ -27,7 +27,7 @@ class DateTimeFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
@@ -47,9 +47,7 @@ class DateTimeFilter extends AbstractPropertyFilter
             case FilterOperators::IN:
                 $clause = [
                     'terms' => [
-                        $property => array_map(function ($data) use ($property) {
-                            return $this->getFormattedDateTime($property, $data);
-                        }, $value),
+                        $property => array_map(fn (mixed $data) => $this->getFormattedDateTime($property, $data), $value),
                     ],
                 ];
 
@@ -77,13 +75,14 @@ class DateTimeFilter extends AbstractPropertyFilter
     /**
      * Format date time value according to elasticsearch mapping date format
      */
+    #[\Override]
     protected function getFormattedDateTime(string $field, string $value): string
     {
         try {
             $utcTimeZone = 'UTC';
 
             $dateTime = Carbon::parse($value, $utcTimeZone);
-        } catch (InvalidFormatException $e) {
+        } catch (InvalidFormatException) {
             throw new \LogicException(
                 sprintf(
                     'Invalid date format for field "%s", expected "Y-m-d H:i:s", but "%s" given',

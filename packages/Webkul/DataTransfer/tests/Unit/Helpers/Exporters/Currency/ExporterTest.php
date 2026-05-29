@@ -42,12 +42,11 @@ it('exports all currencies when status filter is set to all', function () {
     // Reflection to call protected getResults
     $reflection = new ReflectionClass($exporter);
     $method = $reflection->getMethod('getResults');
-    $method->setAccessible(true);
     $results = iterator_to_array($method->invoke($exporter));
 
     expect(count($results))->toBeGreaterThanOrEqual(2);
 
-    $codes = array_map(fn ($c) => $c->code, $results);
+    $codes = array_map(fn (mixed $c) => $c->code, $results);
     expect($codes)->toContain('USD');
     expect($codes)->toContain('EUR');
 });
@@ -86,10 +85,9 @@ it('exports only enabled currencies when status filter is set to enable', functi
 
     $reflection = new ReflectionClass($exporter);
     $method = $reflection->getMethod('getResults');
-    $method->setAccessible(true);
     $results = iterator_to_array($method->invoke($exporter));
 
-    $codes = array_map(fn ($c) => $c->code, $results);
+    $codes = array_map(fn (mixed $c) => $c->code, $results);
     expect($codes)->toContain('USD');
     expect($codes)->not->toContain('EUR');
 });

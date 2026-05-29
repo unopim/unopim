@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Shetabit\Visitor\Drivers\JenssegersAgent;
 use Shetabit\Visitor\Drivers\UAParser;
 

@@ -10,16 +10,16 @@ class BladeCompiler extends BaseBladeCompiler
      * Append the file path to the compiled string.
      *
      * @param  string  $contents
-     * @return string
      */
-    protected function appendFilePath($contents)
+    #[\Override]
+    protected function appendFilePath($contents): string
     {
         $tokens = $this->getOpenAndClosingPhpTokens($contents);
 
         if (
             config('view.tracer')
-            && strpos($this->getPath(), 'tracer/style.blade.php') == false
-            && strpos($this->getPath(), 'master.blade.php') == false
+            && ! str_contains($this->getPath(), 'tracer/style.blade.php')
+            && ! str_contains($this->getPath(), 'master.blade.php')
         ) {
             $finalPath = str_replace('/Providers/..', '', str_replace(base_path(), '', $this->getPath()));
 

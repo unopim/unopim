@@ -22,8 +22,6 @@ class AttributeController extends ApiController
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
@@ -124,7 +122,7 @@ class AttributeController extends ApiController
         }
 
         $immutable = array_intersect(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique'], array_keys(request()->all()));
-        if (! empty($immutable)) {
+        if ($immutable !== []) {
             return $this->validateErrorResponse([
                 'immutable' => [trans('admin::app.catalog.attributes.immutable-fields', ['fields' => implode(', ', $immutable)])],
             ]);
@@ -188,7 +186,7 @@ class AttributeController extends ApiController
                 ], $optionInputs));
             }
 
-            if (! empty($errors)) {
+            if ($errors !== []) {
                 return $this->validateErrorResponse($errors);
             }
 
@@ -234,7 +232,7 @@ class AttributeController extends ApiController
                 }
             }
 
-            if (! empty($errors)) {
+            if ($errors !== []) {
                 return $this->validateErrorResponse($errors);
             }
 
@@ -249,16 +247,12 @@ class AttributeController extends ApiController
 
     /**
      * Validates attribute option data.
-     *
-     * @return \Illuminate\Contracts\Validation\Validator
      */
-    private function optionValidate(array $requestData, int $attributeId)
+    private function optionValidate(array $requestData, int $attributeId): \Illuminate\Contracts\Validation\Validator
     {
         $rules = [
             'code' => ['required',
-                Rule::unique('attribute_options')->where(function ($query) use ($requestData, $attributeId) {
-                    return $query->where('code', $requestData['code'])->where('attribute_id', $attributeId);
-                }),
+                Rule::unique('attribute_options')->where(fn (mixed $query) => $query->where('code', $requestData['code'])->where('attribute_id', $attributeId)),
                 new Code,
             ],
             'swatch_value' => [new ValidSwatchValue($attributeId)],

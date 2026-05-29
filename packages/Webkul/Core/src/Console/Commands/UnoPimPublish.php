@@ -24,10 +24,8 @@ class UnoPimPublish extends Command
 
     /**
      * List of providers.
-     *
-     * @var array
      */
-    protected $providers = [
+    protected array $providers = [
         /**
          * UnoPim providers.
          */
@@ -43,10 +41,8 @@ class UnoPimPublish extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->publishAllPackages();
     }
@@ -56,7 +52,7 @@ class UnoPimPublish extends Command
      */
     public function publishAllPackages(): void
     {
-        collect($this->providers)->each(function ($provider) {
+        collect($this->providers)->each(function (mixed $provider) {
             $this->publishPackage($provider);
         });
     }

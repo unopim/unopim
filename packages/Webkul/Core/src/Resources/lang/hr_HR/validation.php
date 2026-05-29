@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => 'Adresa :attribute može sadržavati samo alfanumeričke znakove, brojeve, razmake, zareze i crte.',
     'alpha-numeric-space'          => 'Polje :attribute može sadržavati samo alfanumeričke znakove i razmake.',

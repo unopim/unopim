@@ -13,12 +13,12 @@ class AttributeFamilyTranslation extends Model implements AttributeFamilyTransla
 
     public $timestamps = false;
 
-    protected $historyTags = ['attributeFamily'];
+    protected array $historyTags = ['attributeFamily'];
 
     /**
      * Key => Label for history
      */
-    protected $historyTranslatableFields = [
+    protected array $historyTranslatableFields = [
         'name' => 'Name',
     ];
 

@@ -2,6 +2,7 @@
 
 namespace Webkul\Webhook\Listeners;
 
+use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Webhook\Jobs\SendBulkProductWebhook;
 use Webkul\Webhook\Jobs\SendProductWebhook;
 use Webkul\Webhook\Repositories\LogsRepository;
@@ -12,8 +13,6 @@ class Product
 {
     /**
      * Create a new listener instance.
-     *
-     * @return void
      */
     public function __construct(
         protected SettingsRepository $settingsRepository,
@@ -23,11 +22,8 @@ class Product
 
     /**
      * Update or create product indices
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
      */
-    public function afterUpdate($product)
+    public function afterUpdate(ProductContract $product): void
     {
         if (! $this->settingsRepository->isWebhookActive()) {
             return;
@@ -35,28 +31,28 @@ class Product
 
         $changes = $this->webhookService->getProductChangesForWebhook($product);
 
-        if (! $changes) {
+        if ($changes === []) {
             return;
         }
 
         SendProductWebhook::dispatch($product->id, $changes, 'updated', auth('admin')?->user()?->id)->onQueue('webhooks');
     }
 
-    public function afterCreate($product)
+    public function afterCreate(ProductContract $product): void
     {
         if (! $this->settingsRepository->isWebhookActive()) {
             return;
         }
 
         $changes = $this->webhookService->getProductChangesForWebhook($product);
-        if (! $changes) {
+        if ($changes === []) {
             return;
         }
 
         SendProductWebhook::dispatch($product->id, $changes, 'created', auth('admin')?->user()?->id)->onQueue('webhooks');
     }
 
-    public function afterBulkUpdate(array $ids)
+    public function afterBulkUpdate(array $ids): void
     {
         if (! $this->settingsRepository->isWebhookActive()) {
             return;
@@ -71,7 +67,7 @@ class Product
      *
      * @param  array<int>  $ids
      */
-    public function afterBulkEdit(array $ids)
+    public function afterBulkEdit(array $ids): void
     {
         if (! $this->settingsRepository->isWebhookActive()) {
             return;

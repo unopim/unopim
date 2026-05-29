@@ -3,6 +3,7 @@
 namespace Webkul\AiAgent\Chat\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -69,7 +70,7 @@ class ListAttributes implements PimTool
 
                 $context = $this->context;
 
-                $result = $attributes->map(function ($attr) use ($context) {
+                $result = $attributes->map(function (\stdClass $attr) use ($context) {
                     $info = [
                         'code'              => $attr->code,
                         'type'              => $attr->type,
@@ -81,7 +82,7 @@ class ListAttributes implements PimTool
                     // Include options for select/multiselect attributes
                     if (\in_array($attr->type, ['select', 'multiselect'])) {
                         $options = DB::table('attribute_options as ao')
-                            ->leftJoin('attribute_option_translations as aot', function ($join) use ($context) {
+                            ->leftJoin('attribute_option_translations as aot', function (JoinClause $join) use ($context) {
                                 $join->on('aot.attribute_option_id', '=', 'ao.id')
                                     ->where('aot.locale', '=', $context->locale);
                             })
@@ -89,7 +90,7 @@ class ListAttributes implements PimTool
                             ->select('ao.code', 'aot.label')
                             ->orderBy('ao.sort_order')
                             ->get()
-                            ->map(fn ($o) => ['code' => $o->code, 'label' => $o->label ?? $o->code])
+                            ->map(fn (\stdClass $o) => ['code' => $o->code, 'label' => $o->label ?? $o->code])
                             ->toArray();
 
                         $info['options'] = $options;

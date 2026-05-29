@@ -9,7 +9,7 @@ use Webkul\DataTransfer\Helpers\Import;
 
 class JobTrackerGrid extends DataGrid
 {
-    protected $importers;
+    protected ?array $importers;
 
     /**
      * Initialize the importers
@@ -21,10 +21,8 @@ class JobTrackerGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $queryBuilder = DB::table('job_track')
             ->leftJoin('job_instances as job', 'job.id', '=', 'job_track.job_instances_id')
@@ -55,10 +53,8 @@ class JobTrackerGrid extends DataGrid
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -85,9 +81,7 @@ class JobTrackerGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($row) {
-                return isset($this->importers[$row->entity_type]['title']) ? trans($this->importers[$row->entity_type]['title']) : $row->entity_type;
-            },
+            'closure'    => fn (\stdClass $row) => isset($this->importers[$row->entity_type]['title']) ? trans($this->importers[$row->entity_type]['title']) : $row->entity_type,
         ]);
 
         $this->addColumn([
@@ -106,7 +100,7 @@ class JobTrackerGrid extends DataGrid
             'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($row) {
+            'closure'    => function (\stdClass $row) {
                 switch ($row->state) {
                     case Import::STATE_PENDING:
                         return '<p class="label-pending">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.pending').'</p>';
@@ -178,7 +172,7 @@ class JobTrackerGrid extends DataGrid
         ]);
     }
 
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('data_transfer.job_tracker')) {
             $this->addAction([
@@ -186,9 +180,7 @@ class JobTrackerGrid extends DataGrid
                 'icon'   => 'icon-view',
                 'title'  => trans('admin::app.settings.data-transfer.tracker.index.datagrid.view'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.settings.data_transfer.tracker.view', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.data_transfer.tracker.view', $row->id),
             ]);
         }
     }

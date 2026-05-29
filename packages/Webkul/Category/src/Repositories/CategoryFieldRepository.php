@@ -4,6 +4,8 @@ namespace Webkul\Category\Repositories;
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Webkul\Category\Contracts\CategoryField;
 use Webkul\Core\Eloquent\Repository;
@@ -34,10 +36,9 @@ class CategoryFieldRepository extends Repository
 
     /**
      * Create a new category field according to type and options
-     *
-     * @return CategoryField
      */
-    public function create(array $data)
+    #[\Override]
+    public function create(array $data): CategoryField
     {
         $categoryField = parent::create($data);
 
@@ -61,9 +62,9 @@ class CategoryFieldRepository extends Repository
      * Update a category field in the database and its options if present.
      *
      * @param  int  $id
-     * @return CategoryField
      */
-    public function update(array $data, $id)
+    #[\Override]
+    public function update(array $data, $id): CategoryField
     {
         $categoryField = parent::update($data, $id);
 
@@ -109,7 +110,7 @@ class CategoryFieldRepository extends Repository
         return $this->where(['status' => 1])->orderBy('position')->get();
     }
 
-    public function queryBuilder()
+    public function queryBuilder(): static
     {
         return $this->with(['translations']);
     }
@@ -121,16 +122,16 @@ class CategoryFieldRepository extends Repository
     {
         $query = DB::table('category_fields')
             ->select($columns)
-            ->leftJoin('category_field_translations as requested_category_field_translation', function ($join) {
+            ->leftJoin('category_field_translations as requested_category_field_translation', function (JoinClause $join) {
                 $join->on('requested_category_field_translation.category_field_id', '=', 'category_fields.id')
                     ->where('requested_category_field_translation.locale', '=', core()->getRequestedLocaleCode());
             })
-            ->where(function ($query) use ($search) {
+            ->where(function (Builder $query) use ($search) {
                 $query->where('category_fields.code', 'LIKE', '%'.$search.'%')
                     ->orWhere('requested_category_field_translation.name', 'LIKE', '%'.$search.'%');
             });
 
-        if ($excludeTypes) {
+        if ($excludeTypes !== []) {
             $query->whereNotIn('category_fields.type', $excludeTypes);
         }
 

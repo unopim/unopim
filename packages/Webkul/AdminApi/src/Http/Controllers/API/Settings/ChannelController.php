@@ -26,7 +26,7 @@ class ChannelController extends ApiController
     /**
      * Display a single result of the resource.
      */
-    public function get($code): JsonResponse
+    public function get(string $code): JsonResponse
     {
         try {
             return response()->json(app(ChannelDataSource::class)->getByCode($code));

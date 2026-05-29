@@ -296,7 +296,7 @@ it('should return validation error for unique channel wise attribute value when 
     config(['elasticsearch.enabled' => false]);
 
     $this->put(route('admin.catalog.products.update', $product->id), $data)
-        ->assertInvalid('values[channel_specific][default]'.'['.$attributeCode.']');
+        ->assertInvalid('values[channel_specific][default]['.$attributeCode.']');
 
     config(['elasticsearch.enabled' => true]);
 

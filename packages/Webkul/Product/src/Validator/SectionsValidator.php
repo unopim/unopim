@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Product\Validator;
 
 use Webkul\Product\Type\AbstractType;
@@ -20,12 +22,10 @@ class SectionsValidator extends ValuesValidator
     /**
      * Validation rules to be used on the data
      */
-    protected function generateRules(mixed $data, ?string $productId, array $options)
+    protected function generateRules(mixed $data, ?string $productId, array $options): array
     {
-        $rules = [
+        return [
             '*' => new KeyExistsRule(self::ALLOWED_SECTIONS),
         ];
-
-        return $rules;
     }
 }

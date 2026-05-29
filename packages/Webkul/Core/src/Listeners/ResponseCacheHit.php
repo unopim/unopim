@@ -9,9 +9,8 @@ class ResponseCacheHit
 {
     /**
      * @param  ResponseCacheHitEvent  $request
-     * @return void
      */
-    public function handle(ResponseCacheHitEvent $event)
+    public function handle(ResponseCacheHitEvent $event): void
     {
         $log = visitor()->getLog();
 

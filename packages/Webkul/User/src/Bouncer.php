@@ -6,24 +6,15 @@ class Bouncer
 {
     /**
      * Checks if user allowed or not for certain action
-     *
-     * @param  string  $permission
-     * @return void
      */
-    public function hasPermission($permission)
+    public function hasPermission(string $permission): bool
     {
-        if (
-            auth()->guard('admin')->check()
-            && auth()->guard('admin')->user()->role->permission_type == 'all'
-        ) {
+        if (auth()->guard('admin')->check()
+        && auth()->guard('admin')->user()->role->permission_type == 'all') {
             return true;
-        } else {
-            if (
-                ! auth()->guard('admin')->check()
-                || ! auth()->guard('admin')->user()->hasPermission($permission)
-            ) {
-                return false;
-            }
+        } elseif (! auth()->guard('admin')->check()
+        || ! auth()->guard('admin')->user()->hasPermission($permission)) {
+            return false;
         }
 
         return true;
@@ -31,11 +22,8 @@ class Bouncer
 
     /**
      * Checks if user allowed or not for certain action
-     *
-     * @param  string  $permission
-     * @return void
      */
-    public static function allow($permission)
+    public static function allow(string $permission): void
     {
         if (
             ! auth()->guard('admin')->check()

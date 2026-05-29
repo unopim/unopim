@@ -9,10 +9,8 @@ class EnsureAcceptsJson
 {
     /**
      * Handle an incoming request.
-     *
-     * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if ($request->header('Accept') !== 'application/json') {
             return response()->json(['error' => 'Accept header must be application/json'], 406);

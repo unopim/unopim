@@ -36,17 +36,14 @@ describe('Export Completed Job', function () {
 
         ExportCompleted::dispatch($jobTrack, $jobTrack->id, $buffer);
 
-        Queue::assertPushed(ExportCompleted::class, function ($job) use ($jobTrack, $buffer) {
+        Queue::assertPushed(ExportCompleted::class, function (mixed $job) use ($jobTrack, $buffer) {
             $reflection = new ReflectionClass($job);
 
             $exportProp = $reflection->getProperty('export');
-            $exportProp->setAccessible(true);
 
             $jobTrackIdProp = $reflection->getProperty('jobTrackId');
-            $jobTrackIdProp->setAccessible(true);
 
             $exportBufferProp = $reflection->getProperty('exportBuffer');
-            $exportBufferProp->setAccessible(true);
 
             return $exportProp->getValue($job)->id === $jobTrack->id
                 && $jobTrackIdProp->getValue($job) === $jobTrack->id

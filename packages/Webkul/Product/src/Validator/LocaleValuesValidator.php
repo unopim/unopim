@@ -47,13 +47,11 @@ class LocaleValuesValidator
     /**
      * Validation rules to be used on the data
      */
-    protected function generateRules(array $locales = [], array $data = [], ?string $productId = null)
+    protected function generateRules(array $locales = [], array $data = [], ?string $productId = null): array
     {
-        $rules = [
+        return [
             AbstractType::LOCALE_VALUES_KEY.'.*'   => [new KeyExistsRule($locales, AbstractType::LOCALE_VALUES_KEY.'.'), 'array'],
             AbstractType::LOCALE_VALUES_KEY.'.*.*' => new AttributeValueRule(attributeService: $this->attributeService, isChannelBased: false, isLocaleBased: true, productId: $productId),
         ];
-
-        return $rules;
     }
 }

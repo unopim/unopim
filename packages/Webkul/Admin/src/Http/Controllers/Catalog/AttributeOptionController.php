@@ -15,8 +15,6 @@ class AttributeOptionController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeOptionRepository $attributeOptionRepository,
@@ -82,7 +80,7 @@ class AttributeOptionController extends Controller
             abort(404);
         }
 
-        foreach ($option['translations'] as $key => $translation) {
+        foreach ($option['translations'] as $translation) {
             $option['locales'][$translation['locale']] = $translation['label'] ?? '';
         }
 

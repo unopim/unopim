@@ -11,8 +11,6 @@ class LocaleDataSource extends ApiDataSource
 {
     /**
      * Create a new DataSource instance.
-     *
-     * @return void
      */
     public function __construct(protected LocaleRepository $localeRepository) {}
 
@@ -21,7 +19,7 @@ class LocaleDataSource extends ApiDataSource
      *
      * @return Builder The query builder for the locale repository.
      */
-    public function prepareApiQueryBuilder()
+    public function prepareApiQueryBuilder(): mixed
     {
         $this->addFilter('status', ['=']);
         $this->addFilter('code', ['=', 'IN', 'NOT IN']);
@@ -36,16 +34,15 @@ class LocaleDataSource extends ApiDataSource
      *
      * @throws \Exception If the paginator data is not in the expected format.
      */
+    #[\Override]
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
 
-        return array_map(function ($data) {
-            return [
-                'code'   => $data['code'],
-                'status' => (int) $data['status'],
-            ];
-        }, $paginator['data'] ?? []);
+        return array_map(fn (mixed $data) => [
+            'code'   => $data['code'],
+            'status' => (int) $data['status'],
+        ], $paginator['data'] ?? []);
     }
 
     /**
@@ -56,13 +53,13 @@ class LocaleDataSource extends ApiDataSource
      *
      * @throws ModelNotFoundException If a locale with the given code is not found.
      */
-    public function getByCode(string $code)
+    public function getByCode(string $code): array
     {
         $locale = $this->localeRepository->findOneByField('code', $code);
 
         if (! $locale) {
             throw new ModelNotFoundException(
-                sprintf('Locale with code %s could not be found.', (string) $code)
+                sprintf('Locale with code %s could not be found.', $code)
             );
         }
 

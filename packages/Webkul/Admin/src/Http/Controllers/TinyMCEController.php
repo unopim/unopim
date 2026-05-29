@@ -10,10 +10,8 @@ class TinyMCEController extends Controller
 {
     /**
      * Storage folder path.
-     *
-     * @var string
      */
-    private $storagePath = 'tinymce';
+    private string $storagePath = 'tinymce';
 
     /**
      * Return controller instance
@@ -27,7 +25,7 @@ class TinyMCEController extends Controller
     {
         $media = $this->storeMedia();
 
-        if (! empty($media)) {
+        if ($media !== []) {
             return response()->json([
                 'location' => $media['file_url'],
             ]);
@@ -45,7 +43,7 @@ class TinyMCEController extends Controller
             return [];
         }
 
-        $path = $this->fileStorer->store(file: request()->file('file'), path: $this->storagePath);
+        $path = $this->fileStorer->store(path: $this->storagePath, file: request()->file('file'));
 
         return [
             'file'      => $path,

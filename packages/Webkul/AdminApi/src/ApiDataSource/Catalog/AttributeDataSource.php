@@ -11,8 +11,6 @@ class AttributeDataSource extends ApiDataSource
 {
     /**
      * Create a new DataSource instance.
-     *
-     * @return void
      */
     public function __construct(protected AttributeRepository $attributeRepository) {}
 
@@ -21,7 +19,7 @@ class AttributeDataSource extends ApiDataSource
      *
      * @return Builder The query builder for the attribute repository.
      */
-    public function prepareApiQueryBuilder()
+    public function prepareApiQueryBuilder(): mixed
     {
         $this->addFilter('code', [
             '=',
@@ -45,26 +43,25 @@ class AttributeDataSource extends ApiDataSource
      *
      * @throws \Exception If the paginator data is not in the expected format.
      */
+    #[\Override]
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
 
-        return array_map(function ($data) {
-            return [
-                'code'              => $data['code'],
-                'type'              => $data['type'],
-                'swatch_type'       => $data['swatch_type'],
-                'validation'        => $data['validation'],
-                'regex_pattern'     => $data['regex_pattern'],
-                'position'          => $data['position'],
-                'is_required'       => $data['is_required'],
-                'is_unique'         => $data['is_unique'],
-                'value_per_locale'  => $data['value_per_locale'],
-                'value_per_channel' => $data['value_per_channel'],
-                'enable_wysiwyg'    => $data['enable_wysiwyg'],
-                'labels'            => $this->getTranslations($data),
-            ];
-        }, $paginator['data'] ?? []);
+        return array_map(fn (mixed $data) => [
+            'code'              => $data['code'],
+            'type'              => $data['type'],
+            'swatch_type'       => $data['swatch_type'],
+            'validation'        => $data['validation'],
+            'regex_pattern'     => $data['regex_pattern'],
+            'position'          => $data['position'],
+            'is_required'       => $data['is_required'],
+            'is_unique'         => $data['is_unique'],
+            'value_per_locale'  => $data['value_per_locale'],
+            'value_per_channel' => $data['value_per_channel'],
+            'enable_wysiwyg'    => $data['enable_wysiwyg'],
+            'labels'            => $this->getTranslations($data),
+        ], $paginator['data'] ?? []);
     }
 
     /**
@@ -75,7 +72,7 @@ class AttributeDataSource extends ApiDataSource
      *
      * @throws ModelNotFoundException If a attribute with the given code is not found.
      */
-    public function getByCode(string $code)
+    public function getByCode(string $code): array
     {
         $this->prepareForSingleData();
 
@@ -120,12 +117,12 @@ class AttributeDataSource extends ApiDataSource
      * @param  string  $attributeCode  The unique code of the attribute.
      * @return array An array of attribute options, each containing the option's code, sort order, and labels.
      */
-    public function getOptionsByAttributeCode(string $attributeCode)
+    public function getOptionsByAttributeCode(string $attributeCode): array
     {
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         $attributeOption = $attribute?->options()?->orderBy('sort_order')->get()->toArray();
 
-        return array_map(function ($data) use ($attribute) {
+        return array_map(function (mixed $data) use ($attribute) {
             $result = [
                 'code'       => $data['code'],
                 'sort_order' => $data['sort_order'],

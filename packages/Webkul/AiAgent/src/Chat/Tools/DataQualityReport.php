@@ -70,7 +70,7 @@ class DataQualityReport implements PimTool
                 $inactive = [];
 
                 foreach ($products as $p) {
-                    $values = json_decode($p->values, true) ?? [];
+                    $values = json_decode((string) $p->values, true) ?? [];
                     $common = $values['common'] ?? [];
                     $cl = $values['channel_locale_specific'][$channel][$locale] ?? [];
                     $cats = $values['categories'] ?? [];
@@ -84,7 +84,7 @@ class DataQualityReport implements PimTool
 
                     if (empty($desc)) {
                         $missingDescription[] = $p->sku;
-                    } elseif (mb_strlen($desc) < 50) {
+                    } elseif (mb_strlen((string) $desc) < 50) {
                         $shortDescription[] = $p->sku;
                     }
 

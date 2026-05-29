@@ -25,30 +25,25 @@ class PriceFilter extends AbstractElasticSearchAttributeFilter
      * {@inheritdoc}
      */
     public function addAttributeFilter(
-        $attribute,
-        $operator,
-        $value,
-        $locale = null,
-        $channel = null,
-        $options = []
-    ) {
+        mixed $attribute,
+        mixed $operator,
+        mixed $value,
+        ?string $locale = null,
+        ?string $channel = null,
+        array $options = []
+    ): static {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
-        if (is_numeric($value[1])) {
-            switch ($operator) {
-                case FilterOperators::EQUAL:
-                    $clause = [
-                        'term' => [
-                            sprintf('%s.%s', $attributePath, $value[0]) => $value[1],
-                        ],
-                    ];
-
-                    $this->queryBuilder::where($clause);
-                    break;
-            }
+        if (is_numeric($value[1]) && $operator === FilterOperators::EQUAL) {
+            $clause = [
+                'term' => [
+                    sprintf('%s.%s', $attributePath, $value[0]) => $value[1],
+                ],
+            ];
+            $this->queryBuilder::where($clause);
         }
 
         return $this;

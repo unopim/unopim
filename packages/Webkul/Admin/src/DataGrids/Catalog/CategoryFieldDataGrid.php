@@ -3,6 +3,7 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -30,16 +31,14 @@ class CategoryFieldDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $tablePrefix = DB::getTablePrefix();
         $grammar = DB::rawQueryGrammar();
 
         $queryBuilder = DB::table('category_fields')
-            ->leftJoin('category_field_translations as requested_category_field_translation', function ($leftJoin) {
+            ->leftJoin('category_field_translations as requested_category_field_translation', function (JoinClause $leftJoin) {
                 $leftJoin->on('requested_category_field_translation.category_field_id', '=', 'category_fields.id')
                     ->where('requested_category_field_translation.locale', core()->getRequestedLocaleCode());
             })
@@ -68,10 +67,8 @@ class CategoryFieldDataGrid extends DataGrid
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'code',
@@ -113,7 +110,7 @@ class CategoryFieldDataGrid extends DataGrid
                     ],
                 ],
             ],
-            'closure'    => fn ($row) => $row->status
+            'closure'    => fn (\stdClass $row) => $row->status
                 ? '<span class="label-active">'.trans('admin::app.catalog.category_fields.index.datagrid.activated').'</span>'
                 : '<span class="label-info">'.trans('admin::app.catalog.category_fields.index.datagrid.disabled').'</span>',
         ]);
@@ -132,7 +129,7 @@ class CategoryFieldDataGrid extends DataGrid
             'label'      => trans('admin::app.catalog.category_fields.index.datagrid.type'),
             'type'       => 'string',
             'searchable' => true,
-            'closure'    => fn ($row) => trans($this->typeConfig[$row->type]['name'] ?? "[$row->type]"),
+            'closure'    => fn (\stdClass $row) => trans($this->typeConfig[$row->type]['name'] ?? "[$row->type]"),
             'filterable' => true,
             'sortable'   => true,
         ]);
@@ -140,10 +137,8 @@ class CategoryFieldDataGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('catalog.category_fields.edit')) {
             $this->addAction([
@@ -151,9 +146,7 @@ class CategoryFieldDataGrid extends DataGrid
                 'index'  => 'edit',
                 'title'  => trans('admin::app.catalog.category_fields.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.catalog.category_fields.edit', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.category_fields.edit', $row->id),
             ]);
         }
 
@@ -162,19 +155,15 @@ class CategoryFieldDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.catalog.category_fields.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.catalog.category_fields.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.category_fields.delete', $row->id),
             ]);
         }
     }
 
     /**
      * Prepare mass actions.
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         if (bouncer()->hasPermission('catalog.category_fields.mass_delete')) {
             $this->addMassAction([

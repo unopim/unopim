@@ -278,7 +278,7 @@ it('should return 404 if product not found for delete', function () {
             'message',
         ])
         ->assertJsonFragment(['success' => false])
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.products.product-not-found', ['sku' => (string) $nonExistingSku])]);
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.products.product-not-found', ['sku' => $nonExistingSku])]);
 });
 
 it('should patch the product successfully', function () {
@@ -1164,7 +1164,7 @@ it('should store the gallery attribute value when updating simple product', func
         'values' => [
             'common' => [
                 'sku'          => $product->sku,
-                $attributeCode => explode(',', $response->json()['data']['filePath']),
+                $attributeCode => explode(',', (string) $response->json()['data']['filePath']),
             ],
         ],
     ];
@@ -1274,7 +1274,7 @@ it('should update the product status', function () {
 
     $updatedproduct = [
         'sku'    => $sku,
-        'status' => (bool) (! $product->status),
+        'status' => ! $product->status,
         'family' => $product->attribute_family->code,
         'parent' => null,
         'values' => [

@@ -15,12 +15,12 @@ class AttributeOptionTranslation extends Model implements AttributeOptionTransla
 
     protected $fillable = ['label'];
 
-    protected $historyTags = ['attribute'];
+    protected array $historyTags = ['attribute'];
 
     /**
      * Key => Label for history
      */
-    protected $historyTranslatableFields = [
+    protected array $historyTranslatableFields = [
         'label' => 'Option Label',
     ];
 

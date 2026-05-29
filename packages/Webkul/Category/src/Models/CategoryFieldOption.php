@@ -17,12 +17,12 @@ class CategoryFieldOption extends TranslatableModel implements CategoryFieldOpti
     use HistoryTrait;
 
     /** Tags for History */
-    protected $historyTags = ['category_field'];
+    protected array $historyTags = ['category_field'];
 
     /**
      * These columns history will not be generated
      */
-    protected $auditExclude = [
+    protected array $auditExclude = [
         'category_field_id',
         'id',
     ];

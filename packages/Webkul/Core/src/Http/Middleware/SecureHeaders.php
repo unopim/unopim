@@ -10,21 +10,16 @@ class SecureHeaders
 {
     /**
      * Unwanted header list.
-     *
-     * @var array
      */
-    private $unwantedHeaderList = [
+    private array $unwantedHeaderList = [
         'X-Powered-By',
         'Server',
     ];
 
     /**
      * Handle an incoming request.
-     *
-     * @param  Request  $request
-     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         $this->removeUnwantedHeaders();
 
@@ -39,9 +34,8 @@ class SecureHeaders
      * Set headers.
      *
      * @param  Response  $response
-     * @return void
      */
-    private function setHeaders($response)
+    private function setHeaders(\Symfony\Component\HttpFoundation\Response $response): void
     {
         $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
@@ -54,10 +48,8 @@ class SecureHeaders
 
     /**
      * Remove unwanted headers.
-     *
-     * @return void
      */
-    private function removeUnwantedHeaders()
+    private function removeUnwantedHeaders(): void
     {
         if (headers_sent()) {
             return;

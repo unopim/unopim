@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => 'Adres :attribute może przyjmować tylko alfanumeryczne znaki, spacje, przecinki i myślniki.',
     'alpha-numeric-space'          => 'Pole :attribute może przyjmować tylko alfanumeryczne znaki i spacje.',

@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Http\Controllers;
 
+use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -14,7 +15,7 @@ class ConversationController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(function ($request, $next) {
+        $this->middleware(function (Request $request, Closure $next) {
             if (! bouncer()->hasPermission('ai-agent.general')) {
                 abort(403, trans('ai-agent::app.common.unauthorized'));
             }
@@ -88,7 +89,7 @@ class ConversationController extends Controller
             'updated_at' => now(),
         ]);
 
-        $messages = collect($request->input('messages'))->map(fn ($m) => [
+        $messages = collect($request->input('messages'))->map(fn (array $m) => [
             'conversation_id' => $conversationId,
             'role'            => $m['role'],
             'content'         => $m['content'],

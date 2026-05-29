@@ -18,10 +18,6 @@ class FakeElasticClient implements ClientInterface
     use EndpointTrait;
     use NamespaceTrait;
 
-    protected $transport;
-
-    protected $logger;
-
     /**
      * Specify is the request is asyncronous
      */
@@ -43,12 +39,9 @@ class FakeElasticClient implements ClientInterface
     protected array $namespace;
 
     public function __construct(
-        $transport,
-        $logger
+        protected Transport $transport,
+        protected LoggerInterface $logger
     ) {
-        $this->transport = $transport;
-        $this->logger = $logger;
-
         $this->defaultTransportSettings($this->transport);
     }
 
@@ -71,7 +64,7 @@ class FakeElasticClient implements ClientInterface
     /**
      * Set the default settings for Elasticsearch
      */
-    protected function defaultTransportSettings($transport): void
+    protected function defaultTransportSettings(Transport $transport): void
     {
         $transport->setUserAgent('elasticsearch-php', self::VERSION);
     }
@@ -133,10 +126,8 @@ class FakeElasticClient implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request): Elasticsearch
     {
-        $result = new Elasticsearch;
-
-        return $result;
+        return new Elasticsearch;
     }
 }

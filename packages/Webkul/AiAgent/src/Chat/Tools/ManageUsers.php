@@ -20,9 +20,9 @@ class ManageUsers implements PimTool
     public function maskUserData(object $user): object
     {
         if (! empty($user->email)) {
-            $atPos = strpos($user->email, '@');
-            $local = substr($user->email, 0, $atPos);
-            $domain = substr($user->email, $atPos);
+            $atPos = strpos((string) $user->email, '@');
+            $local = substr((string) $user->email, 0, $atPos);
+            $domain = substr((string) $user->email, $atPos);
             $len = strlen($local);
 
             $user->email = match (true) {
@@ -82,7 +82,7 @@ class ManageUsers implements PimTool
                         ->orderBy('a.id')
                         ->limit(50)
                         ->get()
-                        ->map(fn ($u) => $this->outer->maskUserData($u));
+                        ->map(fn (object $u) => $this->outer->maskUserData($u));
 
                     return json_encode(['users' => $users->toArray()]);
                 }

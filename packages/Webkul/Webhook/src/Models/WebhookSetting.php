@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Webhook\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -12,9 +14,9 @@ class WebhookSetting extends Model implements HistoryAuditable, PresentableHisto
 {
     use HistoryTrait;
 
-    protected $auditExclude = ['value', 'extras'];
+    protected array $auditExclude = ['value', 'extras'];
 
-    protected $historyTags = ['webhook_settings'];
+    protected array $historyTags = ['webhook_settings'];
 
     protected $table = 'webhook_settings';
 

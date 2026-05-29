@@ -3,6 +3,7 @@
 namespace Webkul\Installer\Helpers;
 
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ class DatabaseManager
     /**
      * Check Database Connection.
      */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         if (! file_exists(base_path('.env'))) {
             return false;
@@ -36,22 +37,16 @@ class DatabaseManager
 
             $userCount = DB::table('admins')->count();
 
-            if (! $userCount) {
-                return false;
-            }
-
-            return true;
-        } catch (Exception $e) {
+            return (bool) $userCount;
+        } catch (Exception) {
             return false;
         }
     }
 
     /**
      * Drop all the tables and migrate in the database
-     *
-     * @return void|string
      */
-    public function migration()
+    public function migration(): ?JsonResponse
     {
         try {
             Artisan::call('migrate:fresh');
@@ -61,14 +56,13 @@ class DatabaseManager
             ], 500);
         }
 
+        return null;
     }
 
     /**
      * Seed the database.
-     *
-     * @return void|string
      */
-    public function seeder($data)
+    public function seeder(array $data): ?string
     {
         try {
             app(UnoPimDatabaseSeeder::class)->run($data['parameter']);
@@ -77,12 +71,14 @@ class DatabaseManager
         } catch (Exception $e) {
             return $e->getMessage();
         }
+
+        return null;
     }
 
     /**
      * Storage Link.
      */
-    private function storageLink()
+    private function storageLink(): void
     {
         Artisan::call('storage:link');
     }
@@ -95,7 +91,7 @@ class DatabaseManager
      * cipher key, so the user's existing session (and CSRF token) would be
      * silently discarded on the next request — surfacing as a 419 Page Expired
      */
-    public function generateKey()
+    public function generateKey(): void
     {
         if (! empty(config('app.key'))) {
             return;
@@ -103,7 +99,7 @@ class DatabaseManager
 
         try {
             Artisan::call('key:generate');
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
     }
 }

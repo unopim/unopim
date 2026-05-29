@@ -122,7 +122,7 @@ it('returns only root categories from getRootCategories', function () {
 
     expect($roots)->not->toBeEmpty();
 
-    $roots->each(function ($category) {
+    $roots->each(function (Category $category) {
         expect($category->parent_id)->toBeNull();
     });
 });

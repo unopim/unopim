@@ -14,8 +14,6 @@ class AccountController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(protected FileStorer $fileStorer) {}
 
@@ -26,7 +24,7 @@ class AccountController extends Controller
     {
         $user = auth()->guard('admin')->user();
 
-        return view('admin::account.edit', compact('user'));
+        return view('admin::account.edit', ['user' => $user]);
     }
 
     /**
@@ -78,16 +76,13 @@ class AccountController extends Controller
                 path: 'admins'.DIRECTORY_SEPARATOR.$user->id,
                 file: current(request()->file('image'))
             );
-        } else {
-            if (! isset($data['image'])) {
-                if (! empty($data['image'])) {
-                    Storage::delete($user->image);
-                }
-
-                $data['image'] = null;
-            } else {
-                $data['image'] = $user->image;
+        } elseif (! isset($data['image'])) {
+            if (! empty($data['image'])) {
+                Storage::delete($user->image);
             }
+            $data['image'] = null;
+        } else {
+            $data['image'] = $user->image;
         }
 
         $user->update($data);

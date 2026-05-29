@@ -20,7 +20,7 @@ trait AttributeColumnTrait
 
         $column = [
             'index'      => $attributeArray['code'],
-            'label'      => ! empty($label) ? $label : '['.$attributeArray['code'].']',
+            'label'      => empty($label) ? '['.$attributeArray['code'].']' : $label,
             'type'       => $attribute->getFilterType(),
             'searchable' => false,
             'filterable' => $attributeArray['is_filterable'] ?? false,
@@ -77,7 +77,7 @@ trait AttributeColumnTrait
 
     protected function getImageClosure()
     {
-        return fn ($value) => ! empty($value) ? Storage::url(is_array($value) ? $value[0] : $value) : '';
+        return fn ($value) => empty($value) ? '' : Storage::url(is_array($value) ? $value[0] : $value);
     }
 
     protected function getGalleryClosure()
@@ -91,7 +91,7 @@ trait AttributeColumnTrait
 
             try {
                 $mime = Storage::mimeType($first) ?: '';
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $mime = '';
             }
 

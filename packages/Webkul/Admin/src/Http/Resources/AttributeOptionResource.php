@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Admin\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -11,9 +13,9 @@ class AttributeOptionResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  Request
-     * @return array
      */
-    public function toArray($request)
+    #[\Override]
+    public function toArray($request): array
     {
         return [
             'id'   => $this->id,

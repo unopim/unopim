@@ -36,10 +36,8 @@ class DefaultUser extends Command
 
     /**
      * Locales list.
-     *
-     * @var array
      */
-    protected $locales = [
+    protected array $locales = [
         'ar_AE' => 'Arabic (United Arab Emirates)',
         'ca_ES' => 'Catalan (Spain)',
         'da_DK' => 'Danish (Denmark)',
@@ -76,7 +74,7 @@ class DefaultUser extends Command
     /**
      * Local codes.
      */
-    protected $localCodes = [
+    protected array $localCodes = [
         'af_ZA',
         'am_ET',
         'ar_AE',
@@ -294,7 +292,7 @@ class DefaultUser extends Command
     /**
      * Create UnoPim user.
      */
-    public function handle()
+    public function handle(): void
     {
         Log::info('User create command has started');
 
@@ -318,7 +316,7 @@ class DefaultUser extends Command
                     'name'            => $isAdmin ? 'Admin' : 'User',
                     'description'     => $isAdmin ? 'This role users will have all the access' : 'This role users have limited access',
                     'permission_type' => $isAdmin ? 'all' : 'custom',
-                    'permissions'     => ! $isAdmin ? json_encode(['dashboard']) : null,
+                    'permissions'     => $isAdmin ? null : json_encode(['dashboard']),
                 ],
             );
         }
@@ -360,13 +358,11 @@ class DefaultUser extends Command
      */
     protected function askForDefaultValues(string $key, string $question, array $choices): string
     {
-        $choice = select(
+        return select(
             label: $question,
             options: $choices,
             default: env($key)
         );
-
-        return $choice;
     }
 
     /**
@@ -378,7 +374,7 @@ class DefaultUser extends Command
 
         $formattedTimezones = [];
 
-        foreach ($timezones as $index => $timezone) {
+        foreach ($timezones as $timezone) {
             $now = Carbon::now($timezone);
 
             $offset = $now->offset / 60;
@@ -416,7 +412,7 @@ class DefaultUser extends Command
             $userName = null;
         }
 
-        $userName = $userName ?: text(
+        return $userName ?: text(
             label: 'Set the Name for User',
             default: $isAdmin ? 'Admin' : 'User',
             required: true,
@@ -425,8 +421,6 @@ class DefaultUser extends Command
                 default                                    => null
             }
         );
-
-        return $userName;
     }
 
     /**
@@ -500,13 +494,11 @@ class DefaultUser extends Command
             $timezone = null;
         }
 
-        $timezone = $timezone ?: $this->askForDefaultValues(
+        return $timezone ?: $this->askForDefaultValues(
             'APP_LOCALE',
             'Please select the default timezone',
             $this->getTimeZones()
         );
-
-        return $timezone;
     }
 
     /**
@@ -521,12 +513,10 @@ class DefaultUser extends Command
             $uiLocale = null;
         }
 
-        $defaultLocale = $uiLocale ?: $this->askForDefaultValues(
+        return $uiLocale ?: $this->askForDefaultValues(
             'APP_LOCALE',
             'Please select the default application locale',
             $this->locales
         );
-
-        return $defaultLocale;
     }
 }

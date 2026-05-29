@@ -7,29 +7,27 @@ module.exports = {
             center: true,
 
             screens: {
-                'xl': '1366px',
+                xl: "1366px",
             },
 
             padding: {
-                DEFAULT: '16px',
+                DEFAULT: "16px",
             },
         },
 
         screens: {
-            sm: '525px',
-            xl: '1366',
+            sm: "525px",
+            xl: "1366",
         },
 
         extend: {
-            colors: {
-            },
+            colors: {},
 
             fontFamily: {
-                inter: ['Inter'],
-            }
+                inter: ["Inter"],
+            },
         },
     },
 
     plugins: [],
-}
-
+};

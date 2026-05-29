@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Attribute\Repositories;
 
+use Webkul\Attribute\Contracts\AttributeFamilyGroupMapping;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeFamilyGroupMappingRepository extends Repository
@@ -11,6 +14,6 @@ class AttributeFamilyGroupMappingRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeFamilyGroupMapping';
+        return AttributeFamilyGroupMapping::class;
     }
 }

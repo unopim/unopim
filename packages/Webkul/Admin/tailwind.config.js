@@ -26,30 +26,30 @@ module.exports = {
         extend: {
             colors: {
                 cherry: {
-                    600: '#353061',
-                    700: '#28273F',
-                    800: '#1F1C30',
-                    900: '#26283D',
+                    600: "#353061",
+                    700: "#28273F",
+                    800: "#1F1C30",
+                    900: "#26283D",
                 },
                 sky: {
-                    500: '#0C8CE9',
-                }
+                    500: "#0C8CE9",
+                },
             },
 
             fontFamily: {
-                inter: ['Inter'],
-                icon: ['icomoon']
-            }
+                inter: ["Inter"],
+                icon: ["icomoon"],
+            },
         },
     },
 
-    darkMode: 'class',
+    darkMode: "class",
 
     plugins: [],
 
     safelist: [
         {
             pattern: /icon-/,
-        }
-    ]
+        },
+    ],
 };

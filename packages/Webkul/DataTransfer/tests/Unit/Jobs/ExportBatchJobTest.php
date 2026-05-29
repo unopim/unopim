@@ -65,20 +65,16 @@ describe('ExportBatch Job', function () {
 
         ExportBatch::dispatch($batch, $filePath, $jobTrack->id, $buffer);
 
-        Queue::assertPushed(ExportBatch::class, function ($job) use ($batch, $filePath, $jobTrack, $buffer) {
+        Queue::assertPushed(ExportBatch::class, function (mixed $job) use ($batch, $filePath, $jobTrack, $buffer) {
             $reflection = new ReflectionClass($job);
 
             $exportBatchProp = $reflection->getProperty('exportBatch');
-            $exportBatchProp->setAccessible(true);
 
             $filePathProp = $reflection->getProperty('filePath');
-            $filePathProp->setAccessible(true);
 
             $jobTrackIdProp = $reflection->getProperty('jobTrackId');
-            $jobTrackIdProp->setAccessible(true);
 
             $exportBufferProp = $reflection->getProperty('exportBuffer');
-            $exportBufferProp->setAccessible(true);
 
             return $exportBatchProp->getValue($job)->id === $batch->id
                 && $filePathProp->getValue($job) === $filePath

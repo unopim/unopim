@@ -47,7 +47,7 @@ class CategoryFieldFactory extends Factory
 
         return [
             'name'             => $this->faker->word,
-            'code'             => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'code'             => $this->faker->regexify('/^[a-zA-Z]+\w+$/'),
             'type'             => array_rand($types),
             'validation'       => '',
             'position'         => $this->faker->randomDigit,
@@ -61,62 +61,51 @@ class CategoryFieldFactory extends Factory
 
     public function validation_numeric(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'numeric',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'validation' => 'numeric',
+        ]);
     }
 
     public function validation_email(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'email',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'validation' => 'email',
+        ]);
     }
 
     public function validation_decimal(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'decimal',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'validation' => 'decimal',
+        ]);
     }
 
     public function validation_url(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'url',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'validation' => 'url',
+        ]);
     }
 
     public function required(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_required' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'is_required' => true,
+        ]);
     }
 
     public function unique(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_unique' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'is_unique' => true,
+        ]);
     }
 
     /**
      * Configure the model
      */
-    public function configure()
+    #[\Override]
+    public function configure(): static
     {
         return $this->afterCreating(function (CategoryField $field) {
             if (in_array($field->type, ['select', 'multiselect', 'checkbox'])) {

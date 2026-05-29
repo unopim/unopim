@@ -56,7 +56,7 @@ it('should return the locale json for edit if have permission', function () {
         ->assertOk()
         ->assertJsonFragment([
             ...$locale->toArray(),
-            'status' => $locale->status ? true : false,
+            'status' => (bool) $locale->status,
         ]);
 });
 

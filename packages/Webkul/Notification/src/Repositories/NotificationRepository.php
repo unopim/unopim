@@ -3,6 +3,7 @@
 namespace Webkul\Notification\Repositories;
 
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Notification\Contracts\Notification;
 
 class NotificationRepository extends Repository
 {
@@ -11,16 +12,13 @@ class NotificationRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Notification\Contracts\Notification';
+        return Notification::class;
     }
 
     /**
      * Return Filtered Notification resources
-     *
-     * @param  array  $params
-     * @return array
      */
-    public function getParamsData($params)
+    public function getParamsData(array $params): array
     {
         $user = auth()->user();
 
@@ -40,10 +38,8 @@ class NotificationRepository extends Repository
 
     /**
      * Return Notification resources
-     *
-     * @return array
      */
-    public function getAll()
+    public function getAll(): array
     {
         $user = auth()->user();
 

@@ -16,17 +16,17 @@ class CategoryFieldOptionTranslation extends Model implements CategoryFieldOptio
     protected $fillable = ['label'];
 
     /** Tags for History */
-    protected $historyTags = ['category_field'];
+    protected array $historyTags = ['category_field'];
 
     /**
      * For Multilocale values history to display correctly
      */
-    protected $historyTranslatableFields = ['label' => 'Option Label'];
+    protected array $historyTranslatableFields = ['label' => 'Option Label'];
 
     /**
      * These columns history will not be generated
      */
-    protected $auditExclude = [
+    protected array $auditExclude = [
         'category_field_option_id',
         'id',
     ];

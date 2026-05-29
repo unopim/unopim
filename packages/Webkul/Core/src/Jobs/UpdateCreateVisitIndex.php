@@ -17,22 +17,16 @@ class UpdateCreateVisitIndex implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param  Model  $model
-     * @param  array  $log
-     * @return void
      */
     public function __construct(
-        protected $model,
-        protected $log
+        protected ?Model $model,
+        protected array $log
     ) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $visitRepository = app(VisitRepository::class);
 
@@ -48,7 +42,7 @@ class UpdateCreateVisitIndex implements ShouldQueue
             return;
         }
 
-        if ($this->model !== null && method_exists($this->model, 'visitLogs')) {
+        if ($this->model instanceof Model && method_exists($this->model, 'visitLogs')) {
             $this->model->visitLogs()->create($this->log);
         } else {
             $visitRepository->create($this->log);

@@ -3,6 +3,7 @@
 use Webkul\Category\Models\Category;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Models\Channel;
+use Webkul\ElasticSearch\Client\Fake\FakeElasticClient;
 
 it('should return the category index page', function () {
     $this->loginAsAdmin();
@@ -260,7 +261,7 @@ it('should fall back to database query when Elasticsearch throws an exception on
         'elasticsearch.connections.default.hosts.0'  => 'testhost:9200',
     ]);
 
-    $elasticClientMock = Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient');
+    $elasticClientMock = Mockery::mock(FakeElasticClient::class);
     ElasticSearch::shouldReceive('makeConnection')->andReturn($elasticClientMock);
     ElasticSearch::shouldReceive('search')
         ->once()

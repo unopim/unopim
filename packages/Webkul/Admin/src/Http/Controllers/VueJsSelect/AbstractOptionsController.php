@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\VueJsSelect;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeRepository;
@@ -26,7 +27,7 @@ class AbstractOptionsController extends Controller
         protected CategoryFieldRepository $categoryFieldRepository
     ) {}
 
-    protected function getEntityRepository($entityName)
+    protected function getEntityRepository(string $entityName): mixed
     {
         return match ($entityName) {
             'attributes'      => $this->attributeRepository,
@@ -48,14 +49,14 @@ class AbstractOptionsController extends Controller
         ?array $queryParams = [],
         int $limit = self::DEFAULT_PER_PAGE,
         bool $isPaginate = true
-    ) {
+    ): mixed {
         $repository = $this->getEntityRepository($entityName);
 
         if (isset($queryParams['filters']) && is_array($queryParams['filters'])) {
             $repository = $this->applyFilters($repository, $queryParams['filters']);
         }
 
-        if (! empty($query)) {
+        if ($query !== '' && $query !== '0') {
             $repository = $this->applySearchQuery($repository, $query, $entityName);
         }
 
@@ -94,14 +95,14 @@ class AbstractOptionsController extends Controller
     /**
      * format option for select component
      */
-    protected function formatOption(Model $option, string $currentLocaleCode, string $entityName = '')
+    protected function formatOption(Model $option, string $currentLocaleCode, string $entityName = ''): array
     {
         $translatedOptionLabel = $this->getTranslatedLabel($currentLocaleCode, $option);
 
         return [
             'id'    => $option->id,
             'code'  => $option->code,
-            'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
+            'label' => in_array($translatedOptionLabel, [null, '', '0'], true) ? "[{$option->code}]" : $translatedOptionLabel,
             ...$option->makeHidden(['translations'])->toArray(),
         ];
     }
@@ -109,7 +110,7 @@ class AbstractOptionsController extends Controller
     /**
      * Apply Filters according to query on the query builder object
      */
-    protected function applyFilters($repository, array $filters)
+    protected function applyFilters(mixed $repository, array $filters): mixed
     {
         foreach ($filters as $filter) {
             $column = $filter['column'] ?? null;
@@ -127,15 +128,15 @@ class AbstractOptionsController extends Controller
     /**
      * Applies search query for the select field
      */
-    protected function applySearchQuery($repository, string $query, string $entityName)
+    protected function applySearchQuery(mixed $repository, string $query, string $entityName): mixed
     {
-        return $repository->where(function ($queryBuilder) use ($query, $entityName) {
+        return $repository->where(function (Builder $queryBuilder) use ($query, $entityName) {
             $queryBuilder->whereTranslationLike($this->getTranslationColumnName($entityName), '%'.$query.'%')
                 ->orWhere('code', $query);
         });
     }
 
-    protected function applyInitialValues($repository, array $initializeValues)
+    protected function applyInitialValues(mixed $repository, array $initializeValues): mixed
     {
         return $repository->whereIn(
             $initializeValues['columnName'],

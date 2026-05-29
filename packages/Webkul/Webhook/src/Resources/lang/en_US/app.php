@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'components' => [
         'layouts' => [
@@ -36,7 +38,6 @@ return [
             'settings' => [
                 'index' => [
                     'name'    => 'Settings',
-                    'title'   => 'Webhook Settings',
                     'save'    => 'Save',
                     'general' => 'General',
                     'active'  => [

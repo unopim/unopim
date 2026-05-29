@@ -23,7 +23,7 @@ it('should reject non-numeric values for price attributes during bulk save', fun
     ]);
 
     $response->assertStatus(422);
-    $response->assertJsonPath('errors.'.$priceAttribute->code.'.0', fn ($msg) => is_string($msg) && $msg !== '');
+    $response->assertJsonPath('errors.'.$priceAttribute->code.'.0', fn (mixed $msg) => is_string($msg) && $msg !== '');
 });
 
 it('should accept numeric values for price attributes during bulk save', function () {

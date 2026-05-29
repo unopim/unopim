@@ -90,7 +90,7 @@ it('fires catalog.product.update.after for every product saved by bulk edit', fu
 
     // One bulk event is dispatched carrying all processed product IDs.
     // The payload is ['ids' => [...]], matching how call_user_func_array passes it.
-    Event::assertDispatched('catalog.product.bulk.edit.after', function ($event, $payload) use ($products) {
+    Event::assertDispatched('catalog.product.bulk.edit.after', function (mixed $event, mixed $payload) use ($products) {
         $ids = $payload['ids'] ?? [];
 
         return count(array_intersect($products->pluck('id')->toArray(), $ids)) === $products->count();

@@ -21,63 +21,55 @@ abstract class DataGrid
      *
      * @var string
      */
-    protected $primaryColumn = 'id';
+    protected $primaryColumn = 'id'; // @pest-ignore-type — redeclared untyped across 24 DataGrid subclasses; typing base would cascade-break them
 
     /**
      * Default sort column of datagrid.
      *
      * @var ?string
      */
-    protected $sortColumn;
+    protected $sortColumn; // @pest-ignore-type — redeclared untyped across 24 DataGrid subclasses; typing base would cascade-break them
 
     /**
      * Default sort order of datagrid.
      *
      * @var string
      */
-    protected $sortOrder = 'desc';
+    protected $sortOrder = 'desc'; // @pest-ignore-type — redeclared untyped across 24 DataGrid subclasses; typing base would cascade-break them
 
     /**
      * Default items per page.
-     *
-     * @var int
      */
-    protected $itemsPerPage = 10;
+    protected int $itemsPerPage = 10;
 
     /**
      * Columns.
-     *
-     * @var array
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * Actions.
-     *
-     * @var array
      */
-    protected $actions = [];
+    protected array $actions = [];
 
     /**
      * Mass action.
-     *
-     * @var array
      */
-    protected $massActions = [];
+    protected array $massActions = [];
 
     /**
      * Query builder instance.
      *
      * @var object
      */
-    protected $queryBuilder;
+    protected mixed $queryBuilder = null;
 
     /**
      * Search Placeholder
      *
      * @var string
      */
-    protected $searchPlaceholder = 'admin::app.components.datagrid.toolbar.search.title';
+    protected $searchPlaceholder = 'admin::app.components.datagrid.toolbar.search.title'; // @pest-ignore-type — redeclared untyped across 24 DataGrid subclasses; typing base would cascade-break them
 
     /**
      * Paginator instance.
@@ -97,22 +89,22 @@ abstract class DataGrid
     /**
      * Prepare query builder.
      */
-    abstract public function prepareQueryBuilder();
+    abstract public function prepareQueryBuilder(); // @pest-ignore-type — subclasses return divergent types (Builder, static, mixed); no common return type
 
     /**
      * Prepare columns.
      */
-    abstract public function prepareColumns();
+    abstract public function prepareColumns(): void;
 
     /**
      * Prepare actions.
      */
-    public function prepareActions() {}
+    public function prepareActions(): void {}
 
     /**
      * Prepare mass actions.
      */
-    public function prepareMassActions() {}
+    public function prepareMassActions(): void {}
 
     /**
      * Get columns.
@@ -202,10 +194,8 @@ abstract class DataGrid
 
     /**
      * Set query builder.
-     *
-     * @param  mixed  $queryBuilder
      */
-    public function setQueryBuilder($queryBuilder = null): void
+    public function setQueryBuilder(mixed $queryBuilder = null): void
     {
         $this->queryBuilder = $queryBuilder ?: $this->prepareQueryBuilder();
     }
@@ -232,81 +222,60 @@ abstract class DataGrid
      *
      * @return Builder
      */
-    public function processRequestedFilters(array $requestedFilters)
+    public function processRequestedFilters(array $requestedFilters): mixed
     {
         foreach ($requestedFilters as $requestedColumn => $requestedValues) {
             if ($requestedColumn === 'all') {
-                $this->queryBuilder->where(function ($scopeQueryBuilder) use ($requestedValues) {
+                $this->queryBuilder->where(function (mixed $scopeQueryBuilder) use ($requestedValues) {
                     foreach ($requestedValues as $value) {
                         collect($this->columns)
-                            ->filter(fn ($column) => $column->searchable && $column->type !== ColumnTypeEnum::BOOLEAN->value)
-                            ->each(fn ($column) => $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%'));
+                            ->filter(fn (Column $column) => $column->searchable && $column->type !== ColumnTypeEnum::BOOLEAN->value)
+                            ->each(fn (Column $column) => $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%'));
                     }
                 });
             } else {
-                $column = collect($this->columns)->first(fn ($c) => $c->index === $requestedColumn);
+                $column = collect($this->columns)->first(fn (Column $c) => $c->index === $requestedColumn);
 
-                switch ($column->type) {
-                    case ColumnTypeEnum::STRING->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
-                            }
-                        });
-                        break;
-
-                    case ColumnTypeEnum::INTEGER->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
-                            }
-                        });
-                        break;
-
-                    case ColumnTypeEnum::DROPDOWN->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
-                            }
-                        });
-                        break;
-
-                    case ColumnTypeEnum::DATE_RANGE->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->whereBetween($column->getDatabaseColumnName(), [
-                                    ($value[0] ?? '').' 00:00:01',
-                                    ($value[1] ?? '').' 23:59:59',
-                                ]);
-                            }
-                        });
-                        break;
-
-                    case ColumnTypeEnum::DATE_TIME_RANGE->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->whereBetween($column->getDatabaseColumnName(), [$value[0] ?? '', $value[1] ?? '']);
-                            }
-                        });
-                        break;
-
-                    case ColumnTypeEnum::BOOLEAN->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.DB::rawQueryGrammar()->getBooleanValue($value).'%');
-                            }
-                        });
-
-                        break;
-                    default:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
-                            }
-                        });
-
-                        break;
-                }
+                match ($column->type) {
+                    ColumnTypeEnum::STRING->value => $this->queryBuilder->where(function (mixed $scopeQueryBuilder) use ($column, $requestedValues) {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
+                        }
+                    }),
+                    ColumnTypeEnum::INTEGER->value => $this->queryBuilder->where(function (mixed $scopeQueryBuilder) use ($column, $requestedValues) {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
+                        }
+                    }),
+                    ColumnTypeEnum::DROPDOWN->value => $this->queryBuilder->where(function (mixed $scopeQueryBuilder) use ($column, $requestedValues) {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
+                        }
+                    }),
+                    ColumnTypeEnum::DATE_RANGE->value => $this->queryBuilder->where(function (mixed $scopeQueryBuilder) use ($column, $requestedValues) {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->whereBetween($column->getDatabaseColumnName(), [
+                                ($value[0] ?? '').' 00:00:01',
+                                ($value[1] ?? '').' 23:59:59',
+                            ]);
+                        }
+                    }),
+                    ColumnTypeEnum::DATE_TIME_RANGE->value => $this->queryBuilder->where(function (mixed $scopeQueryBuilder) use ($column, $requestedValues) {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->whereBetween($column->getDatabaseColumnName(), [$value[0] ?? '', $value[1] ?? '']);
+                        }
+                    }),
+                    ColumnTypeEnum::BOOLEAN->value => $this->queryBuilder->where(function (mixed $scopeQueryBuilder) use ($column, $requestedValues) {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.DB::rawQueryGrammar()->getBooleanValue($value).'%');
+                        }
+                    }),
+                    default => $this->queryBuilder->where(function (mixed $scopeQueryBuilder) use ($column, $requestedValues) {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
+                        }
+                    }),
+                };
             }
         }
 
@@ -318,7 +287,7 @@ abstract class DataGrid
      *
      * @return Builder
      */
-    public function processRequestedSorting($requestedSort)
+    public function processRequestedSorting(mixed $requestedSort): mixed
     {
         if (! $this->sortColumn) {
             $this->sortColumn = $this->primaryColumn;
@@ -330,7 +299,7 @@ abstract class DataGrid
     /**
      * Process requested pagination.
      */
-    public function processRequestedPagination($requestedPagination): LengthAwarePaginator
+    public function processRequestedPagination(array $requestedPagination): LengthAwarePaginator
     {
         return $this->queryBuilder->paginate(
             $requestedPagination['per_page'] ?? $this->itemsPerPage,
@@ -378,10 +347,8 @@ abstract class DataGrid
      * Set export file.
      *
      * @param  Collection  $records
-     * @param  string  $format
-     * @return void
      */
-    public function setExportFile($records, $format = 'csv')
+    public function setExportFile(mixed $records, string $format = 'csv'): void
     {
         $this->exportFile = Excel::download(new DataGridExport($records), $this->getExportFileName().'.'.$format);
     }
@@ -391,7 +358,7 @@ abstract class DataGrid
      *
      * @return BinaryFileResponse
      */
-    public function downloadExportFile()
+    public function downloadExportFile(): mixed
     {
         return $this->exportFile;
     }
@@ -433,7 +400,7 @@ abstract class DataGrid
                 $getUrl = $action->url;
 
                 $record->actions[] = [
-                    'index'         => ! empty($action->index) ? $action->index : 'action_'.$index + 1,
+                    'index'         => empty($action->index) ? 'action_'.$index + 1 : $action->index,
                     'icon'          => $action->icon,
                     'title'         => $action->title,
                     'method'        => $action->method,
@@ -444,7 +411,7 @@ abstract class DataGrid
         }
 
         return [
-            'id'                 => Crypt::encryptString(get_called_class()),
+            'id'                 => Crypt::encryptString(static::class),
             'columns'            => $this->columns,
             'actions'            => $this->actions,
             'mass_actions'       => $this->massActions,
@@ -482,7 +449,7 @@ abstract class DataGrid
     /**
      * Prepare all the setup for datagrid.
      */
-    public function sanitizeRow($row): \stdClass
+    public function sanitizeRow(mixed $row): \stdClass
     {
         /**
          * Convert stdClass to array.
@@ -497,7 +464,7 @@ abstract class DataGrid
             if (is_array($value)) {
                 return $this->sanitizeRow($tempRow[$column]);
             } else {
-                $row->{$column} = strip_tags($value);
+                $row->{$column} = strip_tags((string) $value);
             }
         }
 
@@ -507,7 +474,7 @@ abstract class DataGrid
     /**
      * To json.
      */
-    public function toJson()
+    public function toJson(): mixed
     {
         $this->prepare();
 

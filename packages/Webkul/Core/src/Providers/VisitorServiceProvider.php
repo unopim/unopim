@@ -11,6 +11,7 @@ class VisitorServiceProvider extends BaseVisitorServiceProvider
     /**
      * Perform post-registration booting of services.
      */
+    #[\Override]
     public function boot(): void
     {
         $this->registerMacroHelpers();
@@ -19,6 +20,7 @@ class VisitorServiceProvider extends BaseVisitorServiceProvider
     /**
      * Register any package services.
      */
+    #[\Override]
     public function register(): void
     {
         /**

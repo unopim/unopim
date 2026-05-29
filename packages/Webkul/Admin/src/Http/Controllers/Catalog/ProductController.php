@@ -32,8 +32,6 @@ class ProductController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
@@ -64,7 +62,7 @@ class ProductController extends Controller
     {
         if (request()->has('super_attributes')) {
             request()->merge([
-                'super_attributes' => json_decode(request()->input('super_attributes'), true),
+                'super_attributes' => json_decode((string) request()->input('super_attributes'), true),
             ]);
         }
 
@@ -99,7 +97,7 @@ class ProductController extends Controller
                 ];
             }
 
-            if (empty($configurableAttributes)) {
+            if ($configurableAttributes === []) {
                 return new JsonResponse([
                     'errors' => [
                         'attribute_family_id' => [trans('admin::app.catalog.products.index.create.not-config-family-error')],
@@ -140,14 +138,14 @@ class ProductController extends Controller
 
         $requiredAttributes = $product->getCompletenessAttributes($requestedChannelId, core()->getRequestedLocale()->id)
             ->keyBy('attribute_id')
-            ->map(fn ($item) => $item->attribute_id)
+            ->map(fn (object $item) => $item->attribute_id)
             ->toArray();
 
         $scores = $product->getCompletenessScore($requestedChannelId);
 
-        $averageScore = count($scores) ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null;
+        $averageScore = count($scores) > 0 ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null;
 
-        return view('admin::catalog.products.edit', compact('product', 'requiredAttributes', 'scores', 'averageScore'));
+        return view('admin::catalog.products.edit', ['product' => $product, 'requiredAttributes' => $requiredAttributes, 'scores' => $scores, 'averageScore' => $averageScore]);
     }
 
     /**
@@ -169,7 +167,7 @@ class ProductController extends Controller
             $configurableValues[$attrCode] = $data['values']['common'][$attrCode] ?? null;
         }
 
-        if (! empty($configurableValues) && $product->parent_id) {
+        if ($configurableValues !== [] && $product->parent_id) {
             $isUnique = $this->productRepository->isUniqueVariantForProduct(
                 productId: $product->parent_id,
                 configAttributes: $configurableValues,
@@ -209,7 +207,7 @@ class ProductController extends Controller
             $product = $this->productRepository->update($data, $id);
         } catch (ValidationException $e) {
             $errors = $e->errors();
-            $firstMessage = ! empty($errors) ? (array_values($errors)[0][0] ?? $e->getMessage()) : $e->getMessage();
+            $firstMessage = empty($errors) ? ($e->getMessage()) : array_values($errors)[0][0] ?? $e->getMessage();
 
             session()->flash('error', $firstMessage);
 

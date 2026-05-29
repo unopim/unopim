@@ -17,8 +17,6 @@ class CategoryController extends ApiController
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected CategoryRepository $categoryRepository,
@@ -78,7 +76,7 @@ class CategoryController extends ApiController
                 'message' => trans('admin::app.catalog.categories.delete-success'),
                 'code'    => $code,
             ], JsonResponse::HTTP_OK);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
 
             return response()->json([
                 'success' => false,
@@ -170,7 +168,7 @@ class CategoryController extends ApiController
         }
     }
 
-    public function sanitizeInput(&$requestData): void
+    public function sanitizeInput(array &$requestData): void
     {
         $fields = $this->categoryFieldRepository->findByField('status', true)
             ->where('enable_wysiwyg', '==', 1)
@@ -264,7 +262,7 @@ class CategoryController extends ApiController
      *
      * @return int|null The ID of the category if found, otherwise null.
      */
-    private function getParentIdByCode(?string $code)
+    private function getParentIdByCode(?string $code): ?int
     {
         if ($code === null || $code === '') {
             return null;

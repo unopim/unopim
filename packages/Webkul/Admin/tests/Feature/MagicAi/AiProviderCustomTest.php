@@ -34,7 +34,7 @@ it('lists the Custom provider in the dropdown options payload', function () {
 });
 
 it('returns an empty model list for Custom when no api_url is supplied', function () {
-    expect(AiProvider::Custom->fetchModels('sk-test-key', null))->toBe([]);
+    expect(AiProvider::Custom->fetchModels('sk-test-key'))->toBe([]);
     expect(AiProvider::Custom->fetchModels('sk-test-key', ''))->toBe([]);
 });
 
@@ -72,8 +72,8 @@ it('surfaces the upstream Cerebras-style 402 body when Test Connection fails on 
     // The clean upstream message must reach the user — no "Unknown error",
     // no leaked "Groq Error" prefix, and the actual Cerebras text included.
     expect(
-        str_contains($body['message'], 'insufficient credits')
-        || str_contains($body['message'], 'Payment required to access this resource')
+        str_contains((string) $body['message'], 'insufficient credits')
+        || str_contains((string) $body['message'], 'Payment required to access this resource')
     )->toBeTrue();
     expect($body['message'])->not->toContain('Unknown error');
     expect($body['message'])->not->toContain('Groq Error');

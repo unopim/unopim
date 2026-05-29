@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Webkul\Admin\Providers\ModuleServiceProvider;
 use Webkul\Core\CoreConvention;
 

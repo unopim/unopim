@@ -17,15 +17,11 @@ class ConfigurationController extends Controller
 {
     /**
      * Tree instance.
-     *
-     * @var Tree
      */
-    protected $configTree;
+    protected Tree $configTree;
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(protected CoreConfigRepository $coreConfigRepository)
     {
@@ -34,10 +30,8 @@ class ConfigurationController extends Controller
 
     /**
      * Prepares config tree.
-     *
-     * @return void
      */
-    public function prepareConfigTree()
+    public function prepareConfigTree(): void
     {
         $tree = Tree::create();
 
@@ -67,11 +61,7 @@ class ConfigurationController extends Controller
             ]);
         }
 
-        if (! $groups) {
-            return back();
-        }
-
-        return view('admin::configuration.index', ['config' => $this->configTree]);
+        return back();
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'datagrid' => [
         'copy-of-slug'                  => 'kopi-av-:value',

@@ -63,7 +63,7 @@ class FileOrImageValidValue implements ValidationRule
     {
         // For gallery attribute during import which has comma separated values
         if ($this->isMultiple && is_string($value) && str_contains($value, ',')) {
-            $value = array_filter(explode(',', $value), 'trim');
+            $value = array_filter(explode(',', $value), trim(...));
         }
 
         $this->validateFileOrPath($attribute, $value, $fail);

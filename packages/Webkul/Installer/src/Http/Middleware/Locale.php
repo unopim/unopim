@@ -9,11 +9,8 @@ class Locale
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  Request  $request
-     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if ($localeCode = $request->query('locale')) {
             app()->setLocale($localeCode);

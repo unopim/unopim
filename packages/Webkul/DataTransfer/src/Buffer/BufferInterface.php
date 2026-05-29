@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\DataTransfer\Buffer;
 
 /**
@@ -14,5 +16,5 @@ interface BufferInterface
      *
      * @throws \InvalidArgumentException If the buffer implementation does not support item of this type
      */
-    public function addData($item);
+    public function addData(mixed $item): void;
 }

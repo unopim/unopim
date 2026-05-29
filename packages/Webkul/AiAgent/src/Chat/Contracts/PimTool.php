@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\AiAgent\Chat\Contracts;
 
 use Laravel\Ai\Contracts\Tool;

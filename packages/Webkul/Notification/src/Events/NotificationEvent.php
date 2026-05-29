@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Notification\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -10,15 +12,8 @@ class NotificationEvent implements NotificationEventInterface
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $notificationData;
-
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
-    public function __construct(array $notificationData)
-    {
-        $this->notificationData = $notificationData;
-    }
+    public function __construct(public array $notificationData) {}
 }

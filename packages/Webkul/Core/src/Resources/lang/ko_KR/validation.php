@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => ':attribute는 알파벳, 숫자, 공백, 콤마 및 대시만 허용됩니다.',
     'alpha-numeric-space'          => ':attribute는 알파벳, 숫자 및 공백만 허용됩니다.',

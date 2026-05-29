@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Token;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -23,8 +24,6 @@ class ApiKeysController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AdminRepository $adminRepository,
@@ -53,10 +52,7 @@ class ApiKeysController extends Controller
 
         $permissionTypes = json_encode($this->apiKeyRepository->getPermissionTypes());
 
-        return view('admin_api::integrations.api-keys.create', compact(
-            'adminUsers',
-            'permissionTypes',
-        ));
+        return view('admin_api::integrations.api-keys.create', ['adminUsers' => $adminUsers, 'permissionTypes' => $permissionTypes]);
     }
 
     /**
@@ -135,7 +131,7 @@ class ApiKeysController extends Controller
      * @param  object  $apiKey  The API key object to retrieve details from.
      * @return array An associative array containing the necessary details for the edit view.
      */
-    private function getDefaultDetails($apiKey)
+    private function getDefaultDetails(object $apiKey): array
     {
         $oauthClientId = $apiKey->oauthClients?->getKey();
         $clientId = $apiKey->oauthClients?->getKey();
@@ -184,7 +180,7 @@ class ApiKeysController extends Controller
 
         $clientId = $client->getKey();
 
-        $apiKey = $this->apiKeyRepository->update([
+        $this->apiKeyRepository->update([
             'oauth_client_id' => $clientId,
         ], $id);
 
@@ -210,7 +206,7 @@ class ApiKeysController extends Controller
 
         $client = $this->clients->find($data['oauth_client_id']);
 
-        if (! $client) {
+        if (! $client instanceof Client) {
             return new JsonResponse(['message' => trans('admin::app.integrations.api-keys.client-not-found')], JsonResponse::HTTP_NOT_FOUND);
         }
 

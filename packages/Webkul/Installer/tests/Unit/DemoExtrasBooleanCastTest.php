@@ -8,6 +8,7 @@ class StubBooleanCastSeeder extends DemoExtrasTableSeeder
     public array $boolColumnsByTable = [];
 
     /** {@inheritdoc} */
+    #[Override]
     protected function castBooleanColumns(string $table, array $rows): array
     {
         $boolColumns = $this->boolColumnsByTable[$table] ?? [];

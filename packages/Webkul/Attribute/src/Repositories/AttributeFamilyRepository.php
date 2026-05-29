@@ -12,8 +12,6 @@ class AttributeFamilyRepository extends Repository
 {
     /**
      * Create a new repository instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
@@ -29,13 +27,11 @@ class AttributeFamilyRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeFamily';
+        return AttributeFamily::class;
     }
 
-    /**
-     * @return AttributeFamily
-     */
-    public function create(array $data)
+    #[\Override]
+    public function create(array $data): AttributeFamily
     {
         $attributeGroups = $data['attribute_groups'] ?? [];
 
@@ -74,9 +70,9 @@ class AttributeFamilyRepository extends Repository
     /**
      * @param  int  $id
      * @param  string  $attribute
-     * @return AttributeFamily
      */
-    public function update(array $data, $id, $attribute = 'id')
+    #[\Override]
+    public function update(array $data, $id, $attribute = 'id'): AttributeFamily
     {
         $family = parent::update($data, $id, $attribute);
         $previousAttributeGroupMappingIds = $family->attributeFamilyGroupMappings()->pluck('id');
@@ -181,7 +177,7 @@ class AttributeFamilyRepository extends Repository
             $this->attributeFamilyGroupMappingRepository->delete($mappingId);
         }
 
-        if (! empty($addedAndRemovedAttributes['added']) || ! empty($addedAndRemovedAttributes['removed'])) {
+        if (isset($addedAndRemovedAttributes['added']) && $addedAndRemovedAttributes['added'] !== [] || isset($addedAndRemovedAttributes['removed']) && $addedAndRemovedAttributes['removed'] !== []) {
             Event::dispatch('catalog.attribute_family.attributes.changed', [
                 'data'      => $addedAndRemovedAttributes['added'],
                 'removed'   => $addedAndRemovedAttributes['removed'],
@@ -196,10 +192,7 @@ class AttributeFamilyRepository extends Repository
         return $family;
     }
 
-    /**
-     * @return array
-     */
-    public function getPartial()
+    public function getPartial(): array
     {
         $attributeFamilies = $this->model->all();
 
@@ -224,10 +217,8 @@ class AttributeFamilyRepository extends Repository
     /**
      * This function returns a query builder instance for the family model.
      * It eager loads the 'translations' relationship for the family.
-     *
-     * @return Builder
      */
-    public function queryBuilder()
+    public function queryBuilder(): static
     {
         return $this->with([
             'translations',

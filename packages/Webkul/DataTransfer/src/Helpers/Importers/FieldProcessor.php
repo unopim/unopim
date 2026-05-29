@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\DataTransfer\Helpers\Importers;
 
 use Illuminate\Support\Facades\Storage as StorageFacade;
@@ -24,10 +26,10 @@ class FieldProcessor
      * @param  string  $path  The path to the media files.
      * @return mixed The processed value of the field.
      */
-    public function handleField($field, mixed $value, ?string $path)
+    public function handleField(object $field, mixed $value, ?string $path): mixed
     {
         if (empty($value)) {
-            return;
+            return null;
         }
 
         switch ($field->type) {
@@ -75,7 +77,7 @@ class FieldProcessor
         $baseDir = rtrim($imgpath, '/');
 
         foreach ($paths as $path) {
-            $trimmedPath = ltrim(trim($path), '/');
+            $trimmedPath = ltrim(trim((string) $path), '/');
 
             $fullPath = $baseDir.'/'.$trimmedPath;
             $storagePath = 'public/'.$fullPath;

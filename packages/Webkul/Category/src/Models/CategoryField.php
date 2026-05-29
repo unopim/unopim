@@ -21,15 +21,15 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
     const NON_DELETABLE_FIELD_CODE = 'name';
 
     /** Tags for History */
-    protected $historyTags = ['category_field'];
+    protected array $historyTags = ['category_field'];
 
     /** Fields for History */
-    protected $historyFields = [
+    protected array $historyFields = [
         'root_category_id',
     ];
 
     /** Proxy Table Fields for History */
-    protected $historyProxyFields = [
+    protected array $historyProxyFields = [
         'options',
     ];
 
@@ -63,10 +63,8 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
 
     /**
      * field types.
-     *
-     * @var array
      */
-    public $categoryTypeFields = [
+    public array $categoryTypeFields = [
         'text'        => 'text_value',
         'textarea'    => 'text_value',
         'boolean'     => 'boolean_value',
@@ -126,9 +124,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
             };
         }
 
-        $validations = '{ '.implode(', ', array_filter($validations)).' }';
-
-        return $validations;
+        return '{ '.implode(', ', array_filter($validations)).' }';
     }
 
     /**
@@ -138,11 +134,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
     {
         $validations = [];
 
-        if ($this->is_required) {
-            $validations[] = 'required';
-        } else {
-            $validations[] = 'nullable';
-        }
+        $validations[] = $this->is_required ? 'required' : 'nullable';
 
         if ($this->validation) {
             $validations[] = match ($this->validation) {
@@ -161,7 +153,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
      *
      * @return string|null The validation rule string or null if no validation is required.
      */
-    public function getValidationUniqueField()
+    public function getValidationUniqueField(): ?string
     {
         $validation = null;
 
@@ -183,11 +175,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
     {
         $validations = [];
 
-        if ($this->is_required) {
-            $validations[] = 'required';
-        } else {
-            $validations[] = 'nullable';
-        }
+        $validations[] = $this->is_required ? 'required' : 'nullable';
 
         if ($this->type === 'file') {
             $validations[] = 'file';
@@ -220,7 +208,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
     /**
      * check if possible to delete this attribute
      */
-    public function canBeDeleted()
+    public function canBeDeleted(): bool
     {
         return $this->code !== self::NON_DELETABLE_FIELD_CODE;
     }
@@ -237,7 +225,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
      * Validation rules for validator
      * used while validating category field values
      */
-    public function getValidationRules(?string $currentLocaleCode = null, ?int $id = null, bool $withUniqueValidation = true)
+    public function getValidationRules(?string $currentLocaleCode = null, ?int $id = null, bool $withUniqueValidation = true): array
     {
         $validations = $this->is_required ? ['required'] : ['nullable'];
 

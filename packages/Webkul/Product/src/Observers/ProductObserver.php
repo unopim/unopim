@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Product\Observers;
 
 use Illuminate\Support\Facades\Storage;
@@ -9,11 +11,8 @@ class ProductObserver
 {
     /**
      * Handle the Product "deleted" event.
-     *
-     * @param  Product  $product
-     * @return void
      */
-    public function deleted($product)
+    public function deleted(Product $product): void
     {
         Storage::deleteDirectory('product/'.$product->id);
     }

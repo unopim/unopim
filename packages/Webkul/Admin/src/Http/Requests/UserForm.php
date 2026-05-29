@@ -14,8 +14,6 @@ class UserForm extends FormRequest
 {
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected LocaleRepository $localeRepository
@@ -23,20 +21,16 @@ class UserForm extends FormRequest
 
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $id = $this->id ?: null;
 
@@ -65,11 +59,11 @@ class UserForm extends FormRequest
     /**
      * Handle a failed validation attempt.
      *
-     * @return void
      *
      * @throws ValidationException
      */
-    protected function failedValidation(Validator $validator)
+    #[\Override]
+    protected function failedValidation(Validator $validator): void
     {
         $errors = $validator->errors()->toArray();
 

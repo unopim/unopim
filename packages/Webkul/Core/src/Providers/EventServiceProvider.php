@@ -1,8 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Core\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Prettus\Repository\Events\RepositoryEntityCreated;
+use Prettus\Repository\Events\RepositoryEntityDeleted;
+use Prettus\Repository\Events\RepositoryEntityUpdated;
+use Spatie\ResponseCache\Events\ResponseCacheHit;
+use Webkul\Core\Listeners\CleanCacheRepository;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -12,17 +19,17 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'Prettus\Repository\Events\RepositoryEntityCreated' => [
-            'Webkul\Core\Listeners\CleanCacheRepository',
+        RepositoryEntityCreated::class => [
+            CleanCacheRepository::class,
         ],
-        'Prettus\Repository\Events\RepositoryEntityUpdated' => [
-            'Webkul\Core\Listeners\CleanCacheRepository',
+        RepositoryEntityUpdated::class => [
+            CleanCacheRepository::class,
         ],
-        'Prettus\Repository\Events\RepositoryEntityDeleted' => [
-            'Webkul\Core\Listeners\CleanCacheRepository',
+        RepositoryEntityDeleted::class => [
+            CleanCacheRepository::class,
         ],
-        'Spatie\ResponseCache\Events\ResponseCacheHit' => [
-            'Webkul\Core\Listeners\ResponseCacheHit',
+        ResponseCacheHit::class => [
+            \Webkul\Core\Listeners\ResponseCacheHit::class,
         ],
     ];
 }

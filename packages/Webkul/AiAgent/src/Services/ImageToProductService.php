@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\AiAgent\Services;
 
 use Illuminate\Http\UploadedFile;
@@ -104,12 +106,12 @@ class ImageToProductService
 
         $raw = file_get_contents($filePath);
 
-        if ($raw === false || strlen($raw) === 0) {
+        if ($raw === false || $raw === '') {
             throw new \InvalidArgumentException("Failed to read image file: {$filePath}");
         }
 
         // Auto-detect mime type if not provided or unreliable
-        if (empty($mimeType) || $mimeType === 'application/octet-stream') {
+        if (in_array($mimeType, [null, '', '0', 'application/octet-stream'], true)) {
             $mimeType = mime_content_type($filePath) ?: 'image/jpeg';
         }
 

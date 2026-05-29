@@ -8,7 +8,7 @@ use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
 function buildImporterWithColumns(array $columns, array $validColumns): AbstractImporter
 {
-    $source = new class($columns)
+    $source = new readonly class($columns)
     {
         public function __construct(private array $columns) {}
 
@@ -22,7 +22,7 @@ function buildImporterWithColumns(array $columns, array $validColumns): Abstract
     {
         protected array $permanentAttributes = [];
 
-        public function __construct(JobTrackBatchRepository $repo, private array $validColumns)
+        public function __construct(JobTrackBatchRepository $repo, array $validColumns)
         {
             parent::__construct($repo);
             $this->validColumnNames = $validColumns;

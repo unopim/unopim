@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Notification\Events;
 
 use Illuminate\Broadcasting\Channel;
@@ -17,7 +19,7 @@ class CreateNotification implements ShouldBroadcast
      *
      * @return Channel|array
      */
-    public function broadcastOn()
+    public function broadcastOn(): Channel
     {
         return new Channel('notification');
     }
@@ -26,20 +28,16 @@ class CreateNotification implements ShouldBroadcast
      * Separate queue.
      *
      * Command: `php artisan queue:work --queue=broadcastable`
-     *
-     * @return string
      */
-    public function broadcastQueue()
+    public function broadcastQueue(): string
     {
         return 'broadcastable';
     }
 
     /**
      * Get the channels the event should broadcast as.
-     *
-     * @return string
      */
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
         return 'create-notification';
     }

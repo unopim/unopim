@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Webkul\MagicAI\Services\Prompt\CategoryPrompt;
 use Webkul\MagicAI\Services\Prompt\ProductPrompt;
 

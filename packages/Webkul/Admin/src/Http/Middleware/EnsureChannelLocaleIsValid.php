@@ -14,7 +14,7 @@ class EnsureChannelLocaleIsValid
     /**
      * Handle the incoming request.
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         $requestedChannel = core()->getRequestedChannel();
         $requestedLocaleCode = core()->getRequestedLocaleCode();

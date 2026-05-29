@@ -20,21 +20,13 @@ class JobTrackBatch implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param  mixed  $importBatch
-     * @return void
      */
-    public function __construct(protected $importBatch)
-    {
-        $this->importBatch = $importBatch;
-    }
+    public function __construct(protected mixed $importBatch) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $typeImported = app(ImportHelper::class)
             ->setImport($this->importBatch->import)

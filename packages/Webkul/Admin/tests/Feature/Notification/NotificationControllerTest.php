@@ -70,7 +70,7 @@ it('should return unread notifications when filtered by read status', function (
 
     $records = collect($data['search_results']['data']);
 
-    $this->assertTrue($records->every(fn ($n) => $n['read'] === 0));
+    $this->assertTrue($records->every(fn (array $n) => $n['read'] === 0));
 });
 
 it('should mark a notification as read and redirect', function () {

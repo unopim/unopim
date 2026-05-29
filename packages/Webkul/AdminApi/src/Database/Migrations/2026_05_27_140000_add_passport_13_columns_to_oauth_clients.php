@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Webkul\User\Models\Admin;
@@ -64,7 +65,7 @@ return new class extends Migration
         DB::table('oauth_clients')
             ->whereNull('redirect_uris')
             ->orderBy('id')
-            ->chunkById(200, function ($rows) {
+            ->chunkById(200, function (Collection $rows) {
                 foreach ($rows as $row) {
                     DB::table('oauth_clients')
                         ->where('id', $row->id)

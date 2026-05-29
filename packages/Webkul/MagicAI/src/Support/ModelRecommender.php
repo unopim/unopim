@@ -127,11 +127,11 @@ class ModelRecommender
      */
     public static function recommend(array $models): array
     {
-        if (empty($models)) {
+        if ($models === []) {
             return [];
         }
 
-        $recommended = array_values(array_filter($models, static function ($model) {
+        $recommended = array_values(array_filter($models, static function (string $model) {
             foreach (self::EXCLUDE_PATTERNS as $pattern) {
                 if (preg_match($pattern, $model)) {
                     return false;
@@ -162,7 +162,7 @@ class ModelRecommender
      */
     public static function pickTextModel(array $models): ?string
     {
-        if (empty($models)) {
+        if ($models === []) {
             return null;
         }
 

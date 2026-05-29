@@ -16,6 +16,7 @@ use Webkul\AiAgent\Http\Client\AiApiClient;
 use Webkul\AiAgent\Services\EnrichmentService;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\Product\Repositories\ProductRepository;
 
 /**
  * Automatically enriches a product with AI-generated content
@@ -70,7 +71,7 @@ class AutoEnrichProductJob implements ShouldQueue
             return;
         }
 
-        $values = json_decode($product->values, true) ?? [];
+        $values = json_decode((string) $product->values, true) ?? [];
         $common = $values['common'] ?? [];
         $cl = $values['channel_locale_specific'][$this->channel][$this->locale] ?? [];
 
@@ -108,8 +109,8 @@ class AutoEnrichProductJob implements ShouldQueue
             // Pass only the locale-specific bucket as attributes so the completeness
             // check inside EnrichmentService is not fooled by $common data.
             $ctx = new ImageProductContext(
-                attributes: $cl,
                 detectedProduct: $common['product_type'] ?? null,
+                attributes: $cl,
                 category: $values['categories'][0] ?? null,
             );
 
@@ -122,17 +123,17 @@ class AutoEnrichProductJob implements ShouldQueue
 
             $generated = $enriched->enrichment;
 
-            if (empty($generated)) {
+            if ($generated === []) {
                 return;
             }
 
             // Apply generated content
-            $productValues = json_decode($product->values, true) ?? [];
+            $productValues = json_decode((string) $product->values, true) ?? [];
             foreach ($generated as $key => $value) {
                 $productValues['channel_locale_specific'][$this->channel][$this->locale][$key] = $value;
             }
 
-            $repo = app('Webkul\Product\Repositories\ProductRepository');
+            $repo = app(ProductRepository::class);
             $repo->updateWithValues(['values' => $productValues], $product->id);
 
             // Record what was auto-generated

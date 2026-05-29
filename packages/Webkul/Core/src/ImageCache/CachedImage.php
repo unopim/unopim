@@ -4,26 +4,21 @@ namespace Webkul\Core\ImageCache;
 
 use Intervention\Image\Interfaces\ImageInterface;
 
-class CachedImage
+class CachedImage implements \Stringable
 {
-    /**
-     * The underlying Intervention Image instance.
-     */
-    protected ImageInterface $image;
-
-    /**
-     * The cache key or checksum for this image.
-     */
-    protected string $cacheKey;
-
     /**
      * Create a new CachedImage instance.
      */
-    public function __construct(ImageInterface $image, string $cacheKey = '')
-    {
-        $this->image = $image;
-        $this->cacheKey = $cacheKey;
-    }
+    public function __construct(
+        /**
+         * The underlying Intervention Image instance.
+         */
+        protected ImageInterface $image,
+        /**
+         * The cache key or checksum for this image.
+         */
+        protected string $cacheKey = ''
+    ) {}
 
     /**
      * Get the underlying image instance.

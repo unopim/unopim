@@ -9,8 +9,6 @@ class Review
 {
     /**
      * Create a new listener instance.
-     *
-     * @return void
      */
     public function __construct(protected ProductReviewRepository $productReviewRepository) {}
 
@@ -18,9 +16,8 @@ class Review
      * After review is updated
      *
      * @param  \Webkul\Product\Contracts\Review  $review
-     * @return void
      */
-    public function afterUpdate($review)
+    public function afterUpdate(mixed $review): void
     {
         ResponseCache::forget('/'.$review->product->url_key);
     }
@@ -29,9 +26,8 @@ class Review
      * Before review is deleted
      *
      * @param  \Webkul\Product\Contracts\Review  $review
-     * @return void
      */
-    public function beforeDelete($reviewId)
+    public function beforeDelete(int $reviewId): void
     {
         $review = $this->productReviewRepository->find($reviewId);
 

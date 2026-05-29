@@ -10,8 +10,6 @@ class NotificationController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(protected NotificationRepository $notificationRepository) {}
 
@@ -34,9 +32,9 @@ class NotificationController extends Controller
             ? $this->notificationRepository->getParamsData($params)
             : $this->notificationRepository->getAll();
 
-        $results = isset($searchResults['notifications']) ? $searchResults['notifications'] : $searchResults;
+        $results = $searchResults['notifications'] ?? $searchResults;
 
-        $totalUnread = isset($searchResults['total_unread']) ? $searchResults['total_unread'] : 0;
+        $totalUnread = $searchResults['total_unread'] ?? 0;
 
         return [
             'search_results' => $results,
@@ -46,10 +44,8 @@ class NotificationController extends Controller
 
     /**
      * Mark notification as read and redirect to its route.
-     *
-     * @param  int  $id
      */
-    public function viewedNotifications($id): RedirectResponse
+    public function viewedNotifications(int $id): RedirectResponse
     {
         $notification = $this->notificationRepository->find($id);
 

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Attribute\Repositories;
 
+use Webkul\Attribute\Contracts\AttributeOptionTranslation;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeOptionTranslationRepository extends Repository
@@ -11,6 +14,6 @@ class AttributeOptionTranslationRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeOptionTranslation';
+        return AttributeOptionTranslation::class;
     }
 }

@@ -24,7 +24,8 @@ class CategoryMediaValidator extends CategoryValidator
      *    'file'           => 'Illuminate\Http\UploadedFile',
      * ]
      */
-    public function validate(array $requestData, ?int $id = null)
+    #[\Override]
+    public function validate(array $requestData, ?int $id = null): array|\Illuminate\Validation\Validator
     {
         $unknownFieldsValidate = $this->unknownFieldsValidate($requestData);
         if ($unknownFieldsValidate instanceof \Illuminate\Validation\Validator && $unknownFieldsValidate->fails()) {
@@ -32,7 +33,7 @@ class CategoryMediaValidator extends CategoryValidator
         }
 
         $inputFieldsValidate = $this->inputFieldValidate($requestData, $id);
-        if ($inputFieldsValidate instanceof \Illuminate\Validation\Validator && $inputFieldsValidate->fails()) {
+        if ($inputFieldsValidate->fails()) {
             return $inputFieldsValidate;
         }
 
@@ -47,12 +48,13 @@ class CategoryMediaValidator extends CategoryValidator
      *                                                                                     If the category field is unknown or not related to media, an error message is added to the validator's errors.
      *                                                                                     If the category field is valid, an empty validator is returned.
      */
-    protected function unknownFieldsValidate(array $requestData)
+    #[\Override]
+    protected function unknownFieldsValidate(array $requestData): array|\Illuminate\Validation\Validator
     {
         $unknownFields = $this->getCategoryFields([$requestData['category_field']])->first()?->toArray();
         if (! $unknownFields) {
             $validator = Validator::make([], []);
-            $validator->after(function ($validator) use ($requestData) {
+            $validator->after(function (\Illuminate\Validation\Validator $validator) use ($requestData) {
                 $validator->errors()->add('additional_data', trans('admin::app.catalog.categories.unknown-fields', ['fields' => $requestData['category_field']]));
             });
 
@@ -61,7 +63,7 @@ class CategoryMediaValidator extends CategoryValidator
 
         if ($unknownFields && ! in_array($unknownFields['type'], [self::FILE_FIELD_TYPE, self::IMAGE_FIELD_TYPE])) {
             $validator = Validator::make([], []);
-            $validator->after(function ($validator) use ($requestData) {
+            $validator->after(function (\Illuminate\Validation\Validator $validator) use ($requestData) {
                 $validator->errors()->add('additional_data', trans('admin::app.catalog.categories.unknown-media-field', ['fields' => $requestData['category_field']]));
             });
 
@@ -78,7 +80,8 @@ class CategoryMediaValidator extends CategoryValidator
      * @param  int|null  $id  The ID of the category being validated (optional).
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator The validator instance.
      */
-    protected function inputFieldValidate(array $requestData, ?int $id)
+    #[\Override]
+    protected function inputFieldValidate(array $requestData, ?int $id): \Illuminate\Validation\Validator
     {
         $rules = [];
         $existsField = $this->getCategoryFields([$requestData['category_field']])->first();

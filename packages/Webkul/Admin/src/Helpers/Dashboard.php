@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Helpers;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -33,8 +34,6 @@ class Dashboard
 
     /**
      * Create a controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected Product $productReporting,
@@ -62,14 +61,12 @@ class Dashboard
      *
      * @return array An associative array containing the total count of each catalog entity.
      */
-    public function getTotalCatalogs()
+    public function getTotalCatalogs(): array
     {
-        return Cache::remember('dashboard.total_catalogs', self::CACHE_TTL, function () {
-            return [
-                'totalCategories' => $this->category->getTotalCategories(),
-                'totalProducts'   => $this->productReporting->getTotalProducts(),
-            ];
-        });
+        return Cache::remember('dashboard.total_catalogs', self::CACHE_TTL, fn () => [
+            'totalCategories' => $this->category->getTotalCategories(),
+            'totalProducts'   => $this->productReporting->getTotalProducts(),
+        ]);
     }
 
     /**
@@ -77,24 +74,22 @@ class Dashboard
      *
      * @return array An associative array containing the total count of each configuration entity.
      */
-    public function getTotalConfigurations()
+    public function getTotalConfigurations(): array
     {
-        return Cache::remember('dashboard.total_configurations', self::CACHE_TTL, function () {
-            return [
-                'totalCurrencies'        => $this->currency->getTotalActiveCurrencies(),
-                'totalChannels'          => $this->channel->getTotalChannels(),
-                'totalLocales'           => $this->locale->getTotalActiveLocales(),
-                'totalAttributes'        => $this->attribute->getTotalAttributes(),
-                'totalAttributeGroups'   => $this->attributeGroup->getTotalAttributeGroups(),
-                'totalAttributeFamilies' => $this->attributeFamily->getTotalFamilies(),
-            ];
-        });
+        return Cache::remember('dashboard.total_configurations', self::CACHE_TTL, fn () => [
+            'totalCurrencies'        => $this->currency->getTotalActiveCurrencies(),
+            'totalChannels'          => $this->channel->getTotalChannels(),
+            'totalLocales'           => $this->locale->getTotalActiveLocales(),
+            'totalAttributes'        => $this->attribute->getTotalAttributes(),
+            'totalAttributeGroups'   => $this->attributeGroup->getTotalAttributeGroups(),
+            'totalAttributeFamilies' => $this->attributeFamily->getTotalFamilies(),
+        ]);
     }
 
     /**
      * Get product statistics: type distribution, status breakdown, trends, and insights.
      */
-    public function getProductStats()
+    public function getProductStats(): array
     {
         return Cache::remember('dashboard.product_stats', self::CACHE_TTL, function () {
             // Single query for type + status using conditional aggregation.
@@ -162,7 +157,7 @@ class Dashboard
             // via product_relations always returned 0 (Internal-679).
             $withVariants = DB::table('products as parents')
                 ->where('parents.type', 'configurable')
-                ->whereExists(function ($query) {
+                ->whereExists(function (Builder $query) {
                     $query->select(DB::raw(1))
                         ->from('products as variants')
                         ->whereColumn('variants.parent_id', 'parents.id');
@@ -214,7 +209,7 @@ class Dashboard
     /**
      * Get items that need attention.
      */
-    public function getNeedsAttention()
+    public function getNeedsAttention(): array
     {
         return Cache::remember('dashboard.needs_attention', self::CACHE_TTL, function () {
             $unenriched = 0;
@@ -222,7 +217,7 @@ class Dashboard
 
             if (Schema::hasColumn('products', 'avg_completeness_score')) {
                 $unenriched = DB::table('products')
-                    ->where(function ($q) {
+                    ->where(function (Builder $q) {
                         $q->whereNull('avg_completeness_score')
                             ->orWhere('avg_completeness_score', 0);
                     })
@@ -250,7 +245,7 @@ class Dashboard
     /**
      * Get channel readiness data.
      */
-    public function getChannelReadiness()
+    public function getChannelReadiness(): array
     {
         return Cache::remember('dashboard.channel_readiness', self::CACHE_TTL, function () {
             if (! Schema::hasTable('product_completeness')) {
@@ -269,7 +264,7 @@ class Dashboard
                 ->groupBy('channels.code')
                 ->get();
 
-            return $readiness->map(fn ($row) => [
+            return $readiness->map(fn (\stdClass $row) => [
                 'channel'    => $row->channel,
                 'total'      => (int) $row->total,
                 'ready'      => (int) $row->ready,
@@ -281,7 +276,7 @@ class Dashboard
     /**
      * Get recent activity from audits table.
      */
-    public function getRecentActivity()
+    public function getRecentActivity(): array
     {
         $activities = DB::table('audits')
             ->leftJoin('admins', 'admins.id', '=', 'audits.user_id')
@@ -298,7 +293,7 @@ class Dashboard
             ->groupBy('audits.updated_at', 'audits.user_id', 'audits.version_id', 'admins.name', 'audits.id', 'audits.tags', 'audits.auditable_type', 'audits.event', 'audits.history_id')
             ->limit(10)
             ->get()
-            ->map(function ($activity) {
+            ->map(function (\stdClass $activity) {
                 $activity->time_ago = $this->calculateTimeAgo($activity->updated_at);
                 $activity->entity_type = $this->resolveEntityType($activity->entity_type, $activity->auditable_type);
                 unset($activity->auditable_type);
@@ -314,7 +309,7 @@ class Dashboard
     /**
      * Get recent data transfer job statuses.
      */
-    public function getDataTransferStatus()
+    public function getDataTransferStatus(): array
     {
         $recentJobs = DB::table('job_track')
             ->leftJoin('job_instances', 'job_instances.id', '=', 'job_track.job_instances_id')
@@ -337,8 +332,8 @@ class Dashboard
             ->orderByDesc('job_track.created_at')
             ->limit(10)
             ->get()
-            ->map(function ($job) {
-                $summary = ! empty($job->summary) ? json_decode($job->summary, true) : [];
+            ->map(function (\stdClass $job) {
+                $summary = empty($job->summary) ? [] : json_decode((string) $job->summary, true);
 
                 $job->processed_rows_count = $summary['processed'] ?? $job->processed_rows_count;
                 $job->time_ago = $this->calculateTimeAgo($job->created_at);
@@ -366,29 +361,27 @@ class Dashboard
      */
     protected function resolveEntityType(?string $tags, ?string $auditableType): ?string
     {
-        if (! empty($tags)) {
+        if (! in_array($tags, [null, '', '0'], true)) {
             return $tags;
         }
 
-        if (empty($auditableType)) {
+        if (in_array($auditableType, [null, '', '0'], true)) {
             return null;
         }
 
         $classBasename = class_basename($auditableType);
 
-        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $classBasename));
+        return strtolower((string) preg_replace('/(?<!^)[A-Z]/', '_$0', $classBasename));
     }
 
     /**
      * Calculate human-readable time ago string.
      */
-    protected function calculateTimeAgo($dateTime)
+    protected function calculateTimeAgo(mixed $dateTime): string
     {
-        $time = strtotime($dateTime);
+        $time = strtotime((string) $dateTime);
         $current = time();
         $diff = $current - $time;
-
-        $second = 1;
         $minute = 60;
         $hour = 60 * 60;
         $day = 24 * 60 * 60;

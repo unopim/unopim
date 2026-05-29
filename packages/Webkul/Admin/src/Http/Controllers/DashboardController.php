@@ -10,10 +10,8 @@ class DashboardController extends Controller
 {
     /**
      * Request param functions
-     *
-     * @var array
      */
-    protected $typeFunctions = [
+    protected array $typeFunctions = [
         'total-catalogs'        => 'getTotalCatalogs',
         'total-configurations'  => 'getTotalConfigurations',
         'product-stats'         => 'getProductStats',
@@ -25,8 +23,6 @@ class DashboardController extends Controller
 
     /**
      * Create a controller instance.
-     *
-     * @return void
      */
     public function __construct(protected Dashboard $dashboardHelper) {}
 

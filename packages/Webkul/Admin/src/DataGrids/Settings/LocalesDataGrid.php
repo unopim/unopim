@@ -19,22 +19,16 @@ class LocalesDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
-        $queryBuilder = DB::table('locales')->addSelect('id', 'code', 'status');
-
-        return $queryBuilder;
+        return DB::table('locales')->addSelect('id', 'code', 'status');
     }
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -61,9 +55,7 @@ class LocalesDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
-                return \Locale::getDisplayName($row->code, core()->getCurrentLocale()?->code);
-            },
+            'closure'    => fn (\stdClass $row) => \Locale::getDisplayName($row->code, core()->getCurrentLocale()?->code),
         ]);
 
         $this->addColumn([
@@ -88,20 +80,16 @@ class LocalesDataGrid extends DataGrid
                     ],
                 ],
             ],
-            'closure'    => function ($row) {
-                return $row->status
-                    ? '<span class="label-active">'.trans('admin::app.common.enable').'</span>'
-                    : '<span class="label-info">'.trans('admin::app.common.disable').'</span>';
-            },
+            'closure'    => fn (\stdClass $row) => $row->status
+                ? '<span class="label-active">'.trans('admin::app.common.enable').'</span>'
+                : '<span class="label-info">'.trans('admin::app.common.disable').'</span>',
         ]);
     }
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('settings.locales.edit')) {
             $this->addAction([
@@ -109,9 +97,7 @@ class LocalesDataGrid extends DataGrid
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.settings.locales.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.settings.locales.edit', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.locales.edit', $row->id),
             ]);
         }
 
@@ -121,19 +107,15 @@ class LocalesDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.settings.locales.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.settings.locales.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.locales.delete', $row->id),
             ]);
         }
     }
 
     /**
      * Prepare the mass actions
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         if (bouncer()->hasPermission('settings.locales.mass_update')) {
             $this->addMassAction([

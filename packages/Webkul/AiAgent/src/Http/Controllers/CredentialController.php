@@ -2,7 +2,9 @@
 
 namespace Webkul\AiAgent\Http\Controllers;
 
+use Closure;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 use Webkul\AiAgent\DataGrids\Credential\CredentialDataGrid;
@@ -17,7 +19,7 @@ class CredentialController extends Controller
         protected CredentialRepository $credentialRepository,
         protected AiApiClient $apiClient,
     ) {
-        $this->middleware(function ($request, $next) {
+        $this->middleware(function (Request $request, Closure $next) {
             if (! bouncer()->hasPermission('ai-agent.credentials')) {
                 abort(403, trans('ai-agent::app.common.unauthorized'));
             }
@@ -28,10 +30,8 @@ class CredentialController extends Controller
 
     /**
      * Display a listing of credentials.
-     *
-     * @return View|JsonResponse
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(CredentialDataGrid::class)->toJson();
@@ -42,10 +42,8 @@ class CredentialController extends Controller
 
     /**
      * Show the form for creating a new credential.
-     *
-     * @return View
      */
-    public function create()
+    public function create(): View
     {
         return view('ai-agent::credentials.create');
     }
@@ -65,14 +63,12 @@ class CredentialController extends Controller
 
     /**
      * Show the form for editing a credential.
-     *
-     * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $credential = $this->credentialRepository->findOrFail($id);
 
-        return view('ai-agent::credentials.edit', compact('credential'));
+        return view('ai-agent::credentials.edit', ['credential' => $credential]);
     }
 
     /**

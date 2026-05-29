@@ -10,10 +10,8 @@ class ScopeMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if ($this->getAclForCurrentRoute() && ! $this->hasPermission($this->getAclForCurrentRoute())) {
             return response()->json(['error' => 'This action is unauthorized'], 403);
@@ -24,24 +22,15 @@ class ScopeMiddleware
 
     /**
      * Checks if user allowed or not for certain action
-     *
-     * @param  string  $permission
-     * @return void
      */
-    public function hasPermission($permission)
+    public function hasPermission(string $permission): bool
     {
-        if (
-            auth()->guard('api')->check()
-            && auth()->guard('api')->user()->apiKey->permission_type == 'all'
-        ) {
+        if (auth()->guard('api')->check()
+        && auth()->guard('api')->user()->apiKey->permission_type == 'all') {
             return true;
-        } else {
-            if (
-                ! auth()->guard('api')->check()
-                || ! auth()->guard('api')->user()->apiKey->hasPermission($permission)
-            ) {
-                return false;
-            }
+        } elseif (! auth()->guard('api')->check()
+        || ! auth()->guard('api')->user()->apiKey->hasPermission($permission)) {
+            return false;
         }
 
         return true;
@@ -49,15 +38,13 @@ class ScopeMiddleware
 
     /**
      * Get current route.
-     *
-     * @return string|null
      */
-    public function getAclForCurrentRoute()
+    public function getAclForCurrentRoute(): ?string
     {
         $acl = app('api-acl');
 
         if (! $acl) {
-            return;
+            return null;
         }
 
         return $acl->roles[str_replace('.get', '.index', Route::currentRouteName())] ?? null;

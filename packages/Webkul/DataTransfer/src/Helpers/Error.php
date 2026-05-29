@@ -120,7 +120,7 @@ class Error
     protected function getErrorMessage(?string $code, ?string $message, ?string $columnName): string
     {
         if (
-            empty($message)
+            in_array($message, [null, '', '0'], true)
             && isset($this->messageTemplate[$code])
         ) {
             $message = (string) $this->messageTemplate[$code];

@@ -70,6 +70,9 @@
             <directory suffix=".php">app</directory>
             <directory suffix=".php">packages</directory>
         </include>
+        <exclude>
+            <directory>packages/*/*/vendor</directory>
+        </exclude>
     </source>
 
     <php>

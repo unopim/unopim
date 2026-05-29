@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\MagicAI\Agents;
 
 use Laravel\Ai\Contracts\Agent;

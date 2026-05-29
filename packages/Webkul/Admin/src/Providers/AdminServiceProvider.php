@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\View;
 use Webkul\Admin\Console\Commands\RefreshDashboardCacheCommand;
 use Webkul\Admin\Observers\ProductObserver;
 use Webkul\Core\Tree;
@@ -47,20 +48,17 @@ class AdminServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    #[\Override]
+    public function register(): void
     {
         $this->registerConfig();
     }
 
     /**
      * Register package config.
-     *
-     * @return void
      */
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/menu.php',
@@ -80,19 +78,17 @@ class AdminServiceProvider extends ServiceProvider
 
     /**
      * Bind the data to the views.
-     *
-     * @return void
      */
-    protected function composeView()
+    protected function composeView(): void
     {
         view()->composer([
             'admin::components.layouts.header.index',
             'admin::components.layouts.sidebar.index',
             'admin::components.layouts.tabs',
-        ], function ($view) {
+        ], function (View $view) {
             $tree = Tree::create();
 
-            foreach (config('menu.admin') as $index => $item) {
+            foreach (config('menu.admin') as $item) {
                 if (! bouncer()->hasPermission($item['key'])) {
                     continue;
                 }
@@ -119,29 +115,23 @@ class AdminServiceProvider extends ServiceProvider
         view()->composer([
             'admin::settings.roles.create',
             'admin::settings.roles.edit',
-        ], function ($view) {
+        ], function (View $view) {
             $view->with('acl', $this->createACL());
         });
     }
 
     /**
      * Register ACL to entire application.
-     *
-     * @return void
      */
-    protected function registerACL()
+    protected function registerACL(): void
     {
-        $this->app->singleton('acl', function () {
-            return $this->createACL();
-        });
+        $this->app->singleton('acl', fn () => $this->createACL());
     }
 
     /**
      * Create ACL tree.
-     *
-     * @return mixed
      */
-    protected function createACL()
+    protected function createACL(): mixed
     {
         static $tree;
 

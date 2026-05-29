@@ -3,14 +3,15 @@
 namespace Webkul\Completeness\DataGrids;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
 class AttributeCompletenessDataGrid extends DataGrid
 {
-    protected $familyId;
+    protected mixed $familyId;
 
-    public function setAttributeFamilyId($familyId): self
+    public function setAttributeFamilyId(mixed $familyId): self
     {
         $this->familyId = $familyId;
 
@@ -19,10 +20,8 @@ class AttributeCompletenessDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $locale = core()->getRequestedLocaleCode();
         $familyId = $this->familyId;
@@ -30,17 +29,17 @@ class AttributeCompletenessDataGrid extends DataGrid
 
         $queryBuilder = DB::table('attributes')
             ->join('attribute_group_mappings', 'attributes.id', '=', 'attribute_group_mappings.attribute_id')
-            ->join('attribute_family_group_mappings', function ($join) use ($familyId) {
+            ->join('attribute_family_group_mappings', function (JoinClause $join) use ($familyId) {
                 $join->on('attribute_group_mappings.attribute_family_group_id', '=', 'attribute_family_group_mappings.id')
                     ->where('attribute_family_group_mappings.attribute_family_id', '=', $familyId);
             })
             ->join('attribute_groups', 'attribute_family_group_mappings.attribute_group_id', '=', 'attribute_groups.id')
-            ->leftJoin('completeness_settings', function ($join) use ($familyId) {
+            ->leftJoin('completeness_settings', function (JoinClause $join) use ($familyId) {
                 $join->on('attributes.id', '=', 'completeness_settings.attribute_id')
                     ->where('completeness_settings.family_id', '=', $familyId);
             })
             ->leftJoin('channels', 'completeness_settings.channel_id', '=', 'channels.id')
-            ->join('attribute_translations', function ($join) use ($locale) {
+            ->join('attribute_translations', function (JoinClause $join) use ($locale) {
                 $join->on('attributes.id', '=', 'attribute_translations.attribute_id')
                     ->where('attribute_translations.locale', '=', $locale);
             })
@@ -72,10 +71,8 @@ class AttributeCompletenessDataGrid extends DataGrid
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'code',
@@ -107,17 +104,13 @@ class AttributeCompletenessDataGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions() {}
+    public function prepareActions(): void {}
 
     /**
      * Prepare mass actions.
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         $this->addMassAction([
             'type'    => 'edit',

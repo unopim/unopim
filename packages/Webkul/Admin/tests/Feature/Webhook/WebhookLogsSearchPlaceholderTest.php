@@ -7,7 +7,6 @@ it('webhook logs grid placeholder references the sku/user search key, not code',
 
     $reflection = new ReflectionClass($grid);
     $property = $reflection->getProperty('searchPlaceholder');
-    $property->setAccessible(true);
 
     $placeholderKey = $property->getValue($grid);
 

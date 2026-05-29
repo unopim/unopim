@@ -11,9 +11,8 @@ class Base
      * Get the locale of the customer if somehow item name changes then the english locale will pe provided.
      *
      * @param object \Webkul\Sales\Contracts\Order|\Webkul\Sales\Contracts\Invoice|\Webkul\Sales\Contracts\Refund|\Webkul\Sales\Contracts\Shipment|\Webkul\Sales\Contracts\OrderComment
-     * @return string
      */
-    protected function getLocale($object)
+    protected function getLocale(object $object): string
     {
         if ($object instanceof OrderComment) {
             $object = $object->order;
@@ -26,10 +25,8 @@ class Base
 
     /**
      * Prepare mail.
-     *
-     * @return void
      */
-    protected function prepareMail($entity, $notification)
+    protected function prepareMail(object $entity, mixed $notification): void
     {
         $customerLocale = $this->getLocale($entity);
 

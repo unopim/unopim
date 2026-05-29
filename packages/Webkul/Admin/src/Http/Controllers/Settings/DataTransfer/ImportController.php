@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
@@ -24,8 +25,6 @@ class ImportController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobInstancesRepository $jobInstancesRepository,
@@ -55,7 +54,7 @@ class ImportController extends Controller
     {
         $importerConfig = config(self::IMPORTERS);
 
-        return view('admin::settings.data-transfer.imports.create', compact('importerConfig'));
+        return view('admin::settings.data-transfer.imports.create', ['importerConfig' => $importerConfig]);
     }
 
     /**
@@ -131,7 +130,7 @@ class ImportController extends Controller
 
         $import = $this->jobInstancesRepository->findOrFail($id);
 
-        return view('admin::settings.data-transfer.imports.edit', compact('import', 'importerConfig'));
+        return view('admin::settings.data-transfer.imports.edit', ['import' => $import, 'importerConfig' => $importerConfig]);
     }
 
     /**
@@ -204,10 +203,8 @@ class ImportController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
      */
-    public function destroy($id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
@@ -247,7 +244,7 @@ class ImportController extends Controller
 
         $import->unsetRelations();
 
-        return view('admin::settings.data-transfer.imports.import', compact('import'));
+        return view('admin::settings.data-transfer.imports.import', ['import' => $import]);
     }
 
     /**
@@ -361,14 +358,12 @@ class ImportController extends Controller
                     'message' => $e->getMessage(),
                 ], JsonResponse::HTTP_BAD_REQUEST);
             }
+        } elseif ($this->importHelper->isLinkingRequired()) {
+            $this->importHelper->linking();
+        } elseif ($this->importHelper->isIndexingRequired()) {
+            $this->importHelper->indexing();
         } else {
-            if ($this->importHelper->isLinkingRequired()) {
-                $this->importHelper->linking();
-            } elseif ($this->importHelper->isIndexingRequired()) {
-                $this->importHelper->indexing();
-            } else {
-                $this->importHelper->completed();
-            }
+            $this->importHelper->completed();
         }
 
         return new JsonResponse([
@@ -424,12 +419,10 @@ class ImportController extends Controller
                     'message' => $e->getMessage(),
                 ], JsonResponse::HTTP_BAD_REQUEST);
             }
+        } elseif ($this->importHelper->isIndexingRequired()) {
+            $this->importHelper->indexing();
         } else {
-            if ($this->importHelper->isIndexingRequired()) {
-                $this->importHelper->indexing();
-            } else {
-                $this->importHelper->completed();
-            }
+            $this->importHelper->completed();
         }
 
         return new JsonResponse([
@@ -555,10 +548,10 @@ class ImportController extends Controller
     /**
      * Returns import stats
      */
-    public function stats(int $id, $state = Import::STATE_PROCESSED): JsonResponse
+    public function stats(int $id, string $state = Import::STATE_PROCESSED): JsonResponse
     {
         $import = $this->jobTrackRepository->findOrFail($id);
-        $jobInstance = json_decode($import->meta, true);
+        $jobInstance = json_decode((string) $import->meta, true);
         $summary = $this->normalizeSummary($import->summary);
 
         if ($jobInstance['type'] == 'export') {
@@ -586,7 +579,7 @@ class ImportController extends Controller
      * @param  array|null  $summary  The summary data to be normalized.
      * @return array The normalized summary data.
      */
-    private function normalizeSummary($summary)
+    private function normalizeSummary(?array $summary): array
     {
         $summaryData = [];
 
@@ -600,7 +593,7 @@ class ImportController extends Controller
     /**
      * Download import error report
      */
-    public function downloadSample(string $type)
+    public function downloadSample(string $type): StreamedResponse
     {
         $importer = config('importers.'.$type);
 
@@ -610,7 +603,7 @@ class ImportController extends Controller
     /**
      * Download import error report
      */
-    public function download(int $id)
+    public function download(int $id): StreamedResponse
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
@@ -620,7 +613,7 @@ class ImportController extends Controller
     /**
      * Download import error report
      */
-    public function downloadErrorReport(int $id)
+    public function downloadErrorReport(int $id): StreamedResponse
     {
         $import = $this->jobTrackRepository->findOrFail($id);
 
@@ -641,7 +634,7 @@ class ImportController extends Controller
         // Build a human-readable folder name from the zip filename
         $baseName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeName = preg_replace('/[^a-zA-Z0-9_\-]/', '-', $baseName);
-        $folderName = 'import-images/'.rtrim($safeName, '-').'-'.time();
+        $folderName = 'import-images/'.rtrim((string) $safeName, '-').'-'.time();
 
         $zip = new \ZipArchive;
 

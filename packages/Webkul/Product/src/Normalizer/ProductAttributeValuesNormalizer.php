@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Normalizer;
 
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\Product\Type\AbstractType;
@@ -32,12 +33,12 @@ class ProductAttributeValuesNormalizer
         foreach ($attributeValues as $attributeCode => $value) {
             $attribute = $this->attributeService->findAttributeByCode($attributeCode);
 
-            if (! $attribute) {
+            if (! $attribute instanceof Attribute) {
                 continue;
             }
 
             if ($attribute->type == 'price' && 'true' == ($options['forExport'] ?? '')) {
-                $value = ! is_array($value) ? [] : $value;
+                $value = is_array($value) ? $value : [];
 
                 foreach ($value as $currency => $price) {
                     $values["{$attributeCode} ({$currency})"] = $price;
@@ -61,7 +62,7 @@ class ProductAttributeValuesNormalizer
      */
     public function normalizeAssociations(array $associationValues, array $options = []): array
     {
-        if (empty($associationValues)) {
+        if ($associationValues === []) {
             return [];
         }
 

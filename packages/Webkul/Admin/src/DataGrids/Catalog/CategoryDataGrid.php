@@ -3,6 +3,7 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -37,16 +38,14 @@ class CategoryDataGrid extends DataGrid
      *
      * @var string[]
      */
-    protected $extraFilters = [
+    protected array $extraFilters = [
         'locales',
     ];
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $tablePrefix = DB::getTablePrefix();
         $localeCode = core()->getRequestedLocaleCode();
@@ -69,7 +68,7 @@ class CategoryDataGrid extends DataGrid
                 DB::raw($categoryNameExpr.' as category_name'),
                 DB::raw('category_display_names.name as display_name')
             )
-            ->leftJoin(DB::raw("({$subQuery}) as category_display_names"), function ($leftJoin) {
+            ->leftJoin(DB::raw("({$subQuery}) as category_display_names"), function (JoinClause $leftJoin) {
                 $leftJoin->on('cat.id', '=', DB::raw('category_display_names.id'));
             })
             ->groupBy('cat.id', 'cat.code', DB::raw('category_display_names.name'));
@@ -81,10 +80,8 @@ class CategoryDataGrid extends DataGrid
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'display_name',
@@ -116,10 +113,8 @@ class CategoryDataGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('catalog.categories.edit')) {
             $this->addAction([
@@ -127,9 +122,7 @@ class CategoryDataGrid extends DataGrid
                 'index'  => 'edit',
                 'title'  => trans('admin::app.catalog.categories.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.catalog.categories.edit', $row->category_id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.categories.edit', $row->category_id),
             ]);
         }
 
@@ -139,19 +132,15 @@ class CategoryDataGrid extends DataGrid
                 'index'  => 'delete',
                 'title'  => trans('admin::app.catalog.categories.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.catalog.categories.delete', $row->category_id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.categories.delete', $row->category_id),
             ]);
         }
     }
 
     /**
      * Add Datagrid Mass Actions
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         if (bouncer()->hasPermission('catalog.categories.mass_delete')) {
             $this->addMassAction([
@@ -166,6 +155,7 @@ class CategoryDataGrid extends DataGrid
     /**
      * Process request.
      */
+    #[\Override]
     public function processRequest(): void
     {
         if (! config('elasticsearch.enabled')) {
@@ -244,9 +234,7 @@ class CategoryDataGrid extends DataGrid
 
             $value = (array) $value;
 
-            $value = array_filter($value, function ($val) {
-                return $val !== null && $val !== '';
-            });
+            $value = array_filter($value, fn (mixed $val) => $val !== null && $val !== '');
 
             if (count($value) > 0) {
                 $filters['filter'][] = $this->getFilterValue($attribute, $value, $localeCode);
@@ -323,7 +311,7 @@ class CategoryDataGrid extends DataGrid
     /**
      * Process request.
      */
-    protected function getElasticSort($params): array
+    protected function getElasticSort(array $params): array
     {
         $sort = $params['column'] ?? $this->primaryColumn;
 

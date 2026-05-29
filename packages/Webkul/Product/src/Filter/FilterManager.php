@@ -3,15 +3,16 @@
 namespace Webkul\Product\Filter;
 
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\Collection;
 use Webkul\Product\Contracts\FilterManager as FilterManagerContract;
 use Webkul\Product\Filter\Database\SkuOrUniversalFilter as DatabaseSkuOrUniversalFilter;
 use Webkul\Product\Filter\ElasticSearch\SkuOrUniversalFilter;
 
 class FilterManager implements FilterManagerContract
 {
-    protected $attributeFilters;
+    protected Collection $attributeFilters;
 
-    protected $propertyFilters;
+    protected Collection $propertyFilters;
 
     public function __construct(Container $app)
     {
@@ -27,7 +28,7 @@ class FilterManager implements FilterManagerContract
     /**
      * {@inheritdoc}
      */
-    public function getPropertyFilter($property, $operator)
+    public function getPropertyFilter(mixed $property, mixed $operator): mixed
     {
         foreach ($this->propertyFilters as $filter) {
             if ($filter->supportsProperty($property)) {
@@ -41,7 +42,7 @@ class FilterManager implements FilterManagerContract
     /**
      * {@inheritdoc}
      */
-    public function getAttributeFilter($attribute, $operator)
+    public function getAttributeFilter(mixed $attribute, mixed $operator): mixed
     {
         foreach ($this->attributeFilters as $filter) {
             if ($filter->supportsAttribute($attribute)) {
@@ -55,7 +56,7 @@ class FilterManager implements FilterManagerContract
     /**
      * Get filter sku or universal attribute filter.
      */
-    public function getSkuOrUnfilteredFilter()
+    public function getSkuOrUnfilteredFilter(): AbstractFilter
     {
         return config('elasticsearch.enabled')
            ? app(SkuOrUniversalFilter::class)
@@ -65,7 +66,7 @@ class FilterManager implements FilterManagerContract
     /**
      * {@inheritdoc}
      */
-    public function getPropertyFilters()
+    public function getPropertyFilters(): Collection
     {
         return $this->propertyFilters;
     }
@@ -73,7 +74,7 @@ class FilterManager implements FilterManagerContract
     /**
      * {@inheritdoc}
      */
-    public function getAttributeFilters()
+    public function getAttributeFilters(): Collection
     {
         return $this->attributeFilters;
     }

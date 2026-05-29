@@ -3,6 +3,7 @@
 namespace Webkul\Notification\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Notification\Contracts\Notification as NotificationContract;
 
 class Notification extends Model implements NotificationContract
@@ -26,7 +27,7 @@ class Notification extends Model implements NotificationContract
     /**
      * Get the created_at field in a human-readable format.
      */
-    public function getCreatedAtHumanAttribute()
+    public function getCreatedAtHumanAttribute(): string
     {
         return $this->created_at->diffForHumans();
     }
@@ -34,7 +35,7 @@ class Notification extends Model implements NotificationContract
     /**
      * Get the user notifications associated with the notification.
      */
-    public function userNotifications()
+    public function userNotifications(): HasMany
     {
         return $this->hasMany(UserNotification::class);
     }

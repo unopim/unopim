@@ -15,11 +15,11 @@ class QueryString
     {
         $regex = '#[-+=|! &(){}\[\]^"~*<>?:/\\\]#';
 
-        return preg_replace($regex, '\\\$0', $value);
+        return preg_replace($regex, '\\\$0', (string) $value);
     }
 
     public static function escapeArrayValue(?array $values): array
     {
-        return array_map(fn ($value) => is_string($value) ? strtolower($value) : $value, $values);
+        return array_map(fn (mixed $value) => is_string($value) ? strtolower($value) : $value, $values);
     }
 }

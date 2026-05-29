@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+use Webkul\Product\Type\Configurable;
+use Webkul\Product\Type\Simple;
+
 return [
     'simple'       => [
         'key'   => 'simple',
         'name'  => 'product::app.type.simple',
-        'class' => 'Webkul\Product\Type\Simple',
+        'class' => Simple::class,
         'sort'  => 1,
     ],
 
     'configurable' => [
         'key'   => 'configurable',
         'name'  => 'product::app.type.configurable',
-        'class' => 'Webkul\Product\Type\Configurable',
+        'class' => Configurable::class,
         'sort'  => 2,
     ],
 ];

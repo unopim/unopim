@@ -11,9 +11,8 @@ class DataGridExport implements FromGenerator, WithCustomCsvSettings
      * Create a new instance.
      *
      * @param mixed DataGrid
-     * @return void
      */
-    public function __construct(protected $gridData = []) {}
+    public function __construct(protected array $gridData = []) {}
 
     /**
      * generator to create large excel files without loading everything in memory at once with generator
@@ -45,7 +44,7 @@ class DataGridExport implements FromGenerator, WithCustomCsvSettings
 
         $records = $this->gridData;
 
-        foreach ($this->gridData as $key => $gridData) {
+        foreach ($this->gridData as $gridData) {
             $columns = array_keys((array) $gridData);
 
             break;

@@ -21,8 +21,6 @@ class CategoryFieldController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected CategoryFieldRepository $categoryFieldRepository,

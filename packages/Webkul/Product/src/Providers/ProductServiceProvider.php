@@ -60,6 +60,7 @@ class ProductServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
+    #[\Override]
     public function register(): void
     {
         $this->registerConfig();
@@ -89,34 +90,26 @@ class ProductServiceProvider extends ServiceProvider
 
         $loader->alias('product_image', ProductImageFacade::class);
 
-        $this->app->singleton('product_image', function () {
-            return app()->make(ProductImage::class);
-        });
+        $this->app->singleton('product_image', fn () => app()->make(ProductImage::class));
 
         /**
          * Product video.
          */
         $loader->alias('product_video', ProductVideoFacade::class);
 
-        $this->app->singleton('product_video', function () {
-            return app()->make(ProductVideo::class);
-        });
+        $this->app->singleton('product_video', fn () => app()->make(ProductVideo::class));
 
         /**
          * Product Values setter
          */
         $loader->alias('value_setter', ProductValueSetter::class);
 
-        $this->app->singleton('value_setter', function () {
-            return app()->make(ValueSetter::class);
-        });
+        $this->app->singleton('value_setter', fn () => app()->make(ValueSetter::class));
 
         /**
          * Product value mapper
          */
-        $this->app->singleton('product_value_mapper', function ($app) {
-            return new ProductValueMapper;
-        });
+        $this->app->singleton('product_value_mapper', fn (mixed $app) => new ProductValueMapper);
     }
 
     protected function registerTags(): void

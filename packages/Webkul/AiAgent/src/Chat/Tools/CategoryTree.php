@@ -39,8 +39,8 @@ class CategoryTree implements PimTool
                     ->limit(200)
                     ->get();
 
-                $tree = $categories->map(function ($cat) {
-                    $data = json_decode($cat->additional_data, true) ?? [];
+                $tree = $categories->map(function (\stdClass $cat) {
+                    $data = json_decode((string) $cat->additional_data, true) ?? [];
                     $name = $data['locale_specific'][$this->context->locale]['name']
                         ?? $data['locale_specific']['en_US']['name']
                         ?? $cat->code;

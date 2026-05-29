@@ -2,9 +2,12 @@
 
 namespace Webkul\AiAgent\Http\Controllers;
 
+use Closure;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Webkul\Product\Repositories\ProductRepository;
 
 /**
  * AI Agent analytics dashboard and audit trail.
@@ -13,7 +16,7 @@ class DashboardController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(function ($request, $next) {
+        $this->middleware(function (Request $request, Closure $next) {
             if (! bouncer()->hasPermission('ai-agent.dashboard')) {
                 abort(403, trans('ai-agent::app.common.unauthorized'));
             }
@@ -108,12 +111,12 @@ class DashboardController extends Controller
             return new JsonResponse(['error' => 'Changeset not found or already rolled back'], 404);
         }
 
-        $changes = json_decode($changeset->changes, true) ?? [];
+        $changes = json_decode((string) $changeset->changes, true) ?? [];
 
         // Attempt to rollback product changes
         $rolledBack = 0;
         if (! empty($changes['product_id']) && ! empty($changes['previous_values'])) {
-            $repo = app('Webkul\Product\Repositories\ProductRepository');
+            $repo = app(ProductRepository::class);
             $repo->updateWithValues(['values' => $changes['previous_values']], $changes['product_id']);
             $rolledBack++;
         }
@@ -143,8 +146,8 @@ class DashboardController extends Controller
             ->orderByDesc('created_at')
             ->limit(20)
             ->get(['id', 'config', 'result', 'priority', 'created_at'])
-            ->map(function ($n) {
-                $config = json_decode($n->config, true) ?? [];
+            ->map(function (\stdClass $n) {
+                $config = json_decode((string) $n->config, true) ?? [];
 
                 return [
                     'id'       => $n->id,

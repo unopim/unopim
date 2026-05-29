@@ -3,6 +3,7 @@
 namespace Webkul\AiAgent\Chat\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -83,7 +84,7 @@ class SearchProducts implements PimTool
                 if ($query) {
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $query);
                     $context = $this->context;
-                    $qb->where(function ($q) use ($escaped, $context, $prefix, $grammar) {
+                    $qb->where(function (Builder $q) use ($escaped, $context, $prefix, $grammar) {
                         $q->where('p.sku', 'like', "%{$escaped}%")
                             ->orWhere('p.values->common->url_key', 'like', "%{$escaped}%")
                             ->orWhereRaw($grammar->jsonExtract("{$prefix}p.values", 'channel_locale_specific', $context->channel, $context->locale, 'name').' LIKE ?', ["%{$escaped}%"]);
@@ -98,24 +99,22 @@ class SearchProducts implements PimTool
 
                 $editBaseUrl = route('admin.catalog.products.edit', ['id' => '__ID__']);
 
-                $results = $products->map(function ($p) use ($editBaseUrl) {
-                    return [
-                        'id'              => $p->id,
-                        'sku'             => $p->sku,
-                        'name'            => $p->product_name ?? $p->url_key ?? '(unnamed)',
-                        'type'            => $p->type,
-                        'status'          => $p->status ? 'active' : 'inactive',
-                        'family'          => $p->family_code,
-                        'edit_url'        => str_replace('__ID__', (string) $p->id, $editBaseUrl),
-                        'relevance_score' => null,
-                    ];
-                });
+                $results = $products->map(fn (\stdClass $p) => [
+                    'id'              => $p->id,
+                    'sku'             => $p->sku,
+                    'name'            => $p->product_name ?? $p->url_key ?? '(unnamed)',
+                    'type'            => $p->type,
+                    'status'          => $p->status ? 'active' : 'inactive',
+                    'family'          => $p->family_code,
+                    'edit_url'        => str_replace('__ID__', (string) $p->id, $editBaseUrl),
+                    'relevance_score' => null,
+                ]);
 
                 $hasSemanticQuery = ! empty($query) && mb_strlen(trim($query)) > 2;
 
                 if ($hasSemanticQuery && $results->count() > 2) {
                     $documents = $results
-                        ->map(fn ($item) => implode(' | ', [
+                        ->map(fn (array $item) => implode(' | ', [
                             $item['sku'],
                             $item['name'],
                             $item['type'],
@@ -127,7 +126,7 @@ class SearchProducts implements PimTool
 
                     $ranked = $this->semanticRankingService->rank($query, $documents, $limit);
 
-                    if (! empty($ranked)) {
+                    if ($ranked !== []) {
                         $reranked = collect();
 
                         foreach ($ranked as $item) {

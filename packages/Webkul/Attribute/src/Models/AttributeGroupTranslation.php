@@ -13,14 +13,14 @@ class AttributeGroupTranslation extends Model implements AttributeGroupTranslati
 
     public $timestamps = false;
 
-    protected $historyTags = ['attributeGroup'];
+    protected array $historyTags = ['attributeGroup'];
 
     protected $fillable = ['name'];
 
     /**
      * Key => Label for history
      */
-    protected $historyTranslatableFields = [
+    protected array $historyTranslatableFields = [
         'name' => 'Name',
     ];
 

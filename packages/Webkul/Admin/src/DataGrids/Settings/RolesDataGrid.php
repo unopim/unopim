@@ -10,22 +10,16 @@ class RolesDataGrid extends DataGrid
 {
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
-        $queryBuilder = DB::table('roles')->addSelect('id', 'name', 'permission_type');
-
-        return $queryBuilder;
+        return DB::table('roles')->addSelect('id', 'name', 'permission_type');
     }
 
     /**
      * Add Columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -52,17 +46,15 @@ class RolesDataGrid extends DataGrid
             'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
-            'closure'    => fn ($row) => trans('admin::app.settings.roles.edit.'.$row->permission_type),
+            'closure'    => fn (\stdClass $row) => trans('admin::app.settings.roles.edit.'.$row->permission_type),
             'sortable'   => true,
         ]);
     }
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('settings.roles.edit')) {
             $this->addAction([
@@ -70,9 +62,7 @@ class RolesDataGrid extends DataGrid
                 'index'  => 'edit',
                 'title'  => trans('admin::app.settings.roles.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.settings.roles.edit', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.roles.edit', $row->id),
             ]);
         }
 
@@ -81,9 +71,7 @@ class RolesDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.settings.roles.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.settings.roles.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.roles.delete', $row->id),
             ]);
         }
     }

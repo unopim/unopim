@@ -25,7 +25,7 @@ class FileStorer
      *
      * Add hashedFolderName as parameter with value true to add an specific folder after path
      */
-    public function store(string $path, mixed $file, array $options = [])
+    public function store(string $path, mixed $file, array $options = []): string|false
     {
         $name = $this->getFileName($file);
 
@@ -35,7 +35,7 @@ class FileStorer
     /**
      * store file with custom name
      */
-    public function storeAs(string $path, string $name, mixed $file, array $options = [])
+    public function storeAs(string $path, string $name, mixed $file, array $options = []): string|false
     {
         $disk = Arr::pull($options, 'disk');
 
@@ -71,7 +71,7 @@ class FileStorer
      */
     protected function addHashedFolderName(string $path): string
     {
-        if (substr($path, -1) !== '/') {
+        if (! str_ends_with($path, '/')) {
             $path .= '/';
         }
 

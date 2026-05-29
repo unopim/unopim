@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => 'Adresa :attribute poate accepta doar caractere alfa, numerice, spații, virgulă și cratimă.',
     'alpha-numeric-space'          => 'Adresa :attribute poate accepta doar caractere alfa, numerice și spații.',

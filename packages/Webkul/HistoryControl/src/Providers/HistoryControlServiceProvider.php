@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\HistoryControl\Providers;
 
 use Illuminate\Support\ServiceProvider;
@@ -19,5 +21,6 @@ class HistoryControlServiceProvider extends ServiceProvider
     /**
      * Register the history control services.
      */
+    #[\Override]
     public function register(): void {}
 }

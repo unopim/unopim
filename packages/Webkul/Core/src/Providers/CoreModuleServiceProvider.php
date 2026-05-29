@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Core\Providers;
 
 use Konekt\Concord\BaseModuleServiceProvider;
 
 class CoreModuleServiceProvider extends BaseModuleServiceProvider
 {
+    #[\Override]
     public function boot(): void
     {
         if ($this->areMigrationsEnabled()) {

@@ -24,11 +24,11 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
 
     protected const BATCH_SIZE = 1000;
 
-    protected $productRepository;
+    protected ProductRepository $productRepository;
 
-    public $tries = 3;
+    public int $tries = 3;
 
-    public $uniqueFor = 300;
+    public int $uniqueFor = 300;
 
     public function __construct(
         protected array $product = [],
@@ -54,13 +54,13 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
         try {
             $allProductIds = $this->collectProductIds();
 
-            if (empty($allProductIds)) {
+            if ($allProductIds === []) {
                 return;
             }
 
             $jobs = $this->buildChunkedJobs($allProductIds);
 
-            if (empty($jobs)) {
+            if ($jobs === []) {
                 return;
             }
 
@@ -142,7 +142,7 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
             }
         }
 
-        if (empty($userIds)) {
+        if ($userIds === []) {
             $admins = DB::table('admins')
                 ->join('roles', 'admins.role_id', '=', 'roles.id')
                 ->where('roles.permission_type', 'all')

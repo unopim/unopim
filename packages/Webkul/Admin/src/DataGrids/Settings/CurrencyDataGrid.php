@@ -19,27 +19,21 @@ class CurrencyDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
-        $queryBuilder = DB::table('currencies')
+        return DB::table('currencies')
             ->addSelect(
                 'id',
                 'code',
                 'status',
             );
-
-        return $queryBuilder;
     }
 
     /**
      * Add Columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -66,9 +60,7 @@ class CurrencyDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
-                return core()->getCurrencyLabel($row->code, core()->getCurrentLocale()?->code);
-            },
+            'closure'    => fn (\stdClass $row) => core()->getCurrencyLabel($row->code, core()->getCurrentLocale()?->code),
         ]);
 
         $this->addColumn([
@@ -93,20 +85,16 @@ class CurrencyDataGrid extends DataGrid
                     ],
                 ],
             ],
-            'closure'    => function ($row) {
-                return $row->status
-                ? '<span class="label-active">'.trans('admin::app.common.enable').'</span>'
-                : '<span class="label-info">'.trans('admin::app.common.disable').'</span>';
-            },
+            'closure'    => fn (\stdClass $row) => $row->status
+            ? '<span class="label-active">'.trans('admin::app.common.enable').'</span>'
+            : '<span class="label-info">'.trans('admin::app.common.disable').'</span>',
         ]);
     }
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('settings.currencies.edit')) {
             $this->addAction([
@@ -114,9 +102,7 @@ class CurrencyDataGrid extends DataGrid
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.settings.currencies.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.settings.currencies.edit', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.currencies.edit', $row->id),
             ]);
         }
 
@@ -126,19 +112,15 @@ class CurrencyDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.settings.currencies.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.settings.currencies.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.currencies.delete', $row->id),
             ]);
         }
     }
 
     /**
      * Prepare the mass actions
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         if (bouncer()->hasPermission('settings.currencies.mass_update')) {
             $this->addMassAction([

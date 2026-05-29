@@ -4,9 +4,9 @@ namespace Webkul\DataTransfer\Cursor;
 
 abstract class AbstractCursor
 {
-    protected $requestParams;
+    protected array $requestParams;
 
-    protected $source;
+    protected mixed $source;
 
     protected int $offset = 0;
 
@@ -20,7 +20,7 @@ abstract class AbstractCursor
 
     protected ?array $items = null;
 
-    abstract protected function fetchNextBatch();
+    abstract protected function fetchNextBatch(): array;
 
     public function next(): void
     {
@@ -60,7 +60,7 @@ abstract class AbstractCursor
             $this->rewind();
         }
 
-        return ! empty($this->items);
+        return $this->items !== null && $this->items !== [];
     }
 
     public function count(): int

@@ -13,19 +13,17 @@ class HistoryDataGrid extends DataGrid
     /**
      * Datagrid entity name
      */
-    protected $entityName;
+    protected ?string $entityName = null;
 
     /**
      * Datagrid entity id
      */
-    protected $entityId;
+    protected ?string $entityId = null;
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         if (! $this->entityName) {
             throw new \Exception('entityName cannot be empty');
@@ -35,28 +33,24 @@ class HistoryDataGrid extends DataGrid
             throw new \Exception('entityId cannot be empty');
         }
 
-        $queryBuilder = DB::table('audits as his')
+        return DB::table('audits as his')
             ->leftJoin('admins', 'his.user_id', '=', 'admins.id')
             ->select(
                 'admins.name as user',
                 'his.updated_at',
                 'his.version_id'
             )
-            ->where(function ($query) {
+            ->where(function (Builder $query) {
                 $query->where('his.tags', '=', $this->entityName)
                     ->where('his.history_id', '=', $this->entityId);
             })
             ->groupBy('his.updated_at', 'his.user_id', 'his.version_id', 'admins.name');
-
-        return $queryBuilder;
     }
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'updated_at',
@@ -65,9 +59,7 @@ class HistoryDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
-                return '<span class="icon-calendar"> '.core()->formatDateWithTimeZone($row->updated_at, 'D, d-m-Y H:i:s').' ('.$this->calculateTimeAgo($row->updated_at).')</span>';
-            },
+            'closure'    => fn (\stdClass $row) => '<span class="icon-calendar"> '.core()->formatDateWithTimeZone($row->updated_at, 'D, d-m-Y H:i:s').' ('.$this->calculateTimeAgo($row->updated_at).')</span>',
         ]);
 
         $this->addColumn([
@@ -86,26 +78,22 @@ class HistoryDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
-                return '<span class="icon-user">'.$row->user.'</span>';
-            },
+            'closure'    => fn (\stdClass $row) => '<span class="icon-user">'.$row->user.'</span>',
         ]);
 
     }
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('history.view')) {
             $this->addAction([
                 'icon'   => 'icon-view',
                 'title'  => trans('admin::app.catalog.history.view'),
                 'method' => 'GET',
-                'url'    => function ($row) {
+                'url'    => function (\stdClass $row) {
                     if ($row->version_id) {
                         return route('admin.history.version.view', [$this->getEntityName(), $this->getEntityId(), $row->version_id]);
                     }
@@ -118,9 +106,9 @@ class HistoryDataGrid extends DataGrid
     /**
      * Calculate time ago.
      */
-    public function calculateTimeAgo($dateTime)
+    public function calculateTimeAgo(mixed $dateTime): string
     {
-        $time = strtotime($dateTime);
+        $time = strtotime((string) $dateTime);
         $current = time();
         $diff = $current - $time;
 
@@ -177,7 +165,7 @@ class HistoryDataGrid extends DataGrid
     /**
      * To get the entity name
      */
-    public function getEntityName()
+    public function getEntityName(): ?string
     {
         return $this->entityName;
     }
@@ -185,6 +173,7 @@ class HistoryDataGrid extends DataGrid
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function formatData(): array
     {
         $formatData = parent::formatData();
@@ -207,7 +196,7 @@ class HistoryDataGrid extends DataGrid
     /**
      * To get the entity id
      */
-    public function getEntityId()
+    public function getEntityId(): ?string
     {
         return $this->entityId;
     }

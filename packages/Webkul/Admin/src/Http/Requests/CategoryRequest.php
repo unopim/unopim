@@ -7,12 +7,12 @@ use Webkul\Core\Rules\Code;
 
 class CategoryRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
-    public function rules()
+    public function rules(): array
     {
         $uniqueRule = 'unique:categories,code';
 

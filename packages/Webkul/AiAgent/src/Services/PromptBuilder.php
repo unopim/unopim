@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\AiAgent\Services;
 
 use Webkul\AiAgent\Contracts\PromptBuilderContract;
@@ -29,7 +31,7 @@ class PromptBuilder implements PromptBuilderContract
         }
 
         // Inject context as a system-level message if present
-        if (! empty($payload->context)) {
+        if ($payload->context !== []) {
             $contextJson = json_encode($payload->context, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
             $messages[] = [

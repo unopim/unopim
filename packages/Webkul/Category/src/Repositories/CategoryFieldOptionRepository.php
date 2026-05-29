@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Category\Repositories;
 
 use Webkul\Category\Contracts\CategoryFieldOption;

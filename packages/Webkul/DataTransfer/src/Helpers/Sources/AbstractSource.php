@@ -59,7 +59,7 @@ abstract class AbstractSource
     {
         $row = $this->currentRowData;
 
-        if (count($row) != $this->totalColumns) {
+        if (count($row) !== $this->totalColumns) {
             if ($this->foundWrongQuoteFlag) {
                 throw new \InvalidArgumentException(AbstractImporter::ERROR_CODE_WRONG_QUOTES);
             } else {

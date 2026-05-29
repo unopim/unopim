@@ -11,9 +11,9 @@ class ResetPasswordNotification extends ResetPassword
      * Build the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return MailMessage
      */
-    public function toMail($notifiable)
+    #[\Override]
+    public function toMail($notifiable): MailMessage
     {
         if (static::$toMailCallback) {
             return call_user_func(static::$toMailCallback, $notifiable, $this->token);

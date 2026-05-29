@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => ':attribute hanya dapat menerima alfanumerik, spasi, koma, dan tanda hubung.',
     'alpha-numeric-space'          => ':attribute hanya dapat menerima alfanumerik, numerik, dan spasi.',

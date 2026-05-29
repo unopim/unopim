@@ -2,6 +2,7 @@
 
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\ElasticSearch\Client\Fake\FakeElasticClient;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -12,7 +13,7 @@ beforeEach(function () {
         'elasticsearch.connections.default.hosts.0' => 'testhost:9200',
     ]);
 
-    $elasticClientMock = Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient');
+    $elasticClientMock = Mockery::mock(FakeElasticClient::class);
 
     ElasticSearch::shouldReceive('makeConnection')
         ->andReturn($elasticClientMock);
@@ -40,7 +41,7 @@ it('should return the product grid data with default sort order when Elasticsear
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($sortData) {
+        ->withArgs(function (array $args) use ($sortData) {
             expect($args)->toBeArray();
             expect($args)->toHaveKey('index');
             expect($args)->toHaveKey('body');
@@ -79,7 +80,7 @@ it('should filter products by SKU using Elasticsearch', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) {
+        ->withArgs(function (array $args) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -138,7 +139,7 @@ it('should filter products by type using Elasticsearch', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) {
+        ->withArgs(function (array $args) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -193,7 +194,7 @@ it('should filter products by attribute family using Elasticsearch', function ()
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) {
+        ->withArgs(function (array $args) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -252,7 +253,7 @@ it('should filter products by ID using Elasticsearch', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) {
+        ->withArgs(function (array $args) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -317,7 +318,7 @@ it('should filter products by parent using Elasticsearch', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($productId) {
+        ->withArgs(function (array $args) use ($productId) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -377,7 +378,7 @@ it('should filter products by created_at using Elasticsearch', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) {
+        ->withArgs(function (array $args) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -436,7 +437,7 @@ it('should filter products by updated_at using Elasticsearch', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) {
+        ->withArgs(function (array $args) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -502,7 +503,7 @@ it('should filter products by text attribute using Elasticsearch', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -583,7 +584,7 @@ it('should filter products by textarea attribute using Elasticsearch', function 
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -649,7 +650,7 @@ it('should filter products by price attribute using Elasticsearch', function () 
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -711,7 +712,7 @@ it('should filter products by boolean attribute using Elasticsearch', function (
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -773,7 +774,7 @@ it('should filter products by select attribute using Elasticsearch', function ()
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -835,7 +836,7 @@ it('should filter products by multiselect attribute using Elasticsearch', functi
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -914,7 +915,7 @@ it('should filter products by date attribute using Elasticsearch', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -979,7 +980,7 @@ it('should filter products by datetime attribute using Elasticsearch', function 
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -1044,7 +1045,7 @@ it('should filter products by image attribute using Elasticsearch', function () 
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -1116,7 +1117,7 @@ it('should filter products by file attribute using Elasticsearch', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -1188,7 +1189,7 @@ it('should filter products by checkbox attribute using Elasticsearch', function 
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -1264,7 +1265,7 @@ it('should filter products by gallery attribute using Elasticsearch', function (
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($attribute) {
+        ->withArgs(function (array $args) use ($attribute) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [
@@ -1353,7 +1354,7 @@ it('should filter products by uppercase SKU using Elasticsearch (case-insensitiv
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) {
+        ->withArgs(function (array $args) {
             $expectedQuery = [
                 'constant_score' => [
                     'filter' => [

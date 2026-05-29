@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Core\Traits;
 
 use HTMLPurifier as BaseHTMLPurifier;
@@ -12,7 +14,7 @@ trait HtmlPurifier
      */
     public function purifyText(mixed $value): mixed
     {
-        $value = htmlspecialchars_decode($value, ENT_QUOTES);
+        $value = htmlspecialchars_decode((string) $value, ENT_QUOTES);
 
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Cache.SerializerPath', storage_path('app/purifier'));

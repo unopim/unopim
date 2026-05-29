@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $view = __DIR__.'/../../../src/Resources/views/configuration/magic-ai/platform/index.blade.php';
 
 it('should auto-fetch models on api_key input with a debounced handler (Issue #761)', function () use ($view) {

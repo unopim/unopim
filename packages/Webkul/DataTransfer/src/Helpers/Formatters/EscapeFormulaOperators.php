@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\DataTransfer\Helpers\Formatters;
 
 class EscapeFormulaOperators
 {
-    public static $operatorsToEscape = ['=', '-', '+', '@'];
+    public static array $operatorsToEscape = ['=', '-', '+', '@'];
 
     /**
      * Escape the value by adding a single quote at the beginning and end

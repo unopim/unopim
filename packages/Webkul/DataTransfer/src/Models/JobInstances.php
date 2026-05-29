@@ -18,7 +18,7 @@ class JobInstances extends Model implements HistoryContract, JobInstancesContrac
     protected $table = 'job_instances';
 
     /** Tags for History */
-    protected $historyTags = ['job_instance'];
+    protected array $historyTags = ['job_instance'];
 
     protected $casts = [
         'filters' => 'array',

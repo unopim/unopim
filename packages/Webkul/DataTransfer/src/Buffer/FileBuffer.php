@@ -5,6 +5,7 @@ namespace Webkul\DataTransfer\Buffer;
 use Maatwebsite\Excel\Files\TemporaryFile;
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
+use OpenSpout\Writer\WriterInterface;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Jobs\Export\File\TemporaryFileFactory;
 
@@ -16,31 +17,27 @@ class FileBuffer
 
     const PRIVATE_STORAGE_PATH = 'app/private/';
 
-    protected $highestRow;
+    protected mixed $highestRow;
 
     /**
      * @var Spreadsheet
      */
-    protected $spreadsheet;
+    protected mixed $spreadsheet;
 
-    /** @var array */
-    protected $headers = [];
+    protected array $headers = [];
 
-    protected $filePath;
+    protected mixed $filePath;
 
-    protected $writer;
+    protected mixed $writer = null;
 
-    /**
-     * @return TemporaryFile
-     */
-    public function make($directory, ?string $fileExtension = null, ?string $fileName = null)
+    public function make(string $directory, ?string $fileExtension = null, ?string $fileName = null): TemporaryFile
     {
         $temporaryFileFactory = new TemporaryFileFactory($directory);
 
         return $temporaryFileFactory->make($fileExtension, $fileName);
     }
 
-    protected function getWriter($filePath, array $options = [])
+    protected function getWriter(mixed $filePath, array $options = []): WriterInterface
     {
         if (! isset($options['type'])) {
             throw new \InvalidArgumentException('Option "type" have to be defined');
@@ -60,10 +57,8 @@ class FileBuffer
 
     /**
      * Return the headers of every columns
-     *
-     * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
@@ -71,7 +66,7 @@ class FileBuffer
     /**
      * Add the specified keys to the list of headers
      */
-    public function addToHeaders(array $keys)
+    public function addToHeaders(array $keys): void
     {
         $headers = array_merge($this->headers, $keys);
         $headers = array_unique($headers);

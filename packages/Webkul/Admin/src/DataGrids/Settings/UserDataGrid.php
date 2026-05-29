@@ -19,10 +19,8 @@ class UserDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $queryBuilder = DB::table('admins as u')
             ->leftJoin('roles as ro', 'u.role_id', '=', 'ro.id')
@@ -45,10 +43,8 @@ class UserDataGrid extends DataGrid
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'user_id',
@@ -75,7 +71,7 @@ class UserDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
+            'closure'    => function (\stdClass $row) {
                 if ($row->user_image) {
                     return Storage::url($row->user_image);
                 }
@@ -106,7 +102,7 @@ class UserDataGrid extends DataGrid
                     ],
                 ],
             ],
-            'closure'    => function ($value) {
+            'closure'    => function (\stdClass $value) {
                 if ($value->status) {
                     return '<span class="label-active">'.trans('admin::app.common.enable').'</span>';
                 }
@@ -136,10 +132,8 @@ class UserDataGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('settings.users.users.edit')) {
             $this->addAction([
@@ -147,9 +141,7 @@ class UserDataGrid extends DataGrid
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.settings.users.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.settings.users.edit', $row->user_id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.users.edit', $row->user_id),
             ]);
         }
 
@@ -159,9 +151,7 @@ class UserDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.settings.users.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.settings.users.delete', $row->user_id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.users.delete', $row->user_id),
             ]);
         }
     }

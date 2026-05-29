@@ -23,10 +23,8 @@ class TranslatableModel extends Model
      * Locale. This method is being overridden to address the
      * performance issues caused by the existing implementation
      * which increases application time.
-     *
-     * @return string
      */
-    protected function locale()
+    protected function locale(): string
     {
         if ($this->isChannelBased()) {
             return core()->getDefaultLocaleCodeFromDefaultChannel();
@@ -41,15 +39,13 @@ class TranslatableModel extends Model
 
     /**
      * Is channel based.
-     *
-     * @return bool
      */
-    protected function isChannelBased()
+    protected function isChannelBased(): bool
     {
         return false;
     }
 
-    public function scopeWhereTranslationIn(Builder $query, string $translationField, $value, ?string $locale = null, string $method = 'whereHas')
+    public function scopeWhereTranslationIn(Builder $query, string $translationField, mixed $value, ?string $locale = null, string $method = 'whereHas'): Builder
     {
         return $query->$method('translations', function (Builder $query) use ($translationField, $value, $locale) {
             $query->whereIn($this->getTranslationsTable().'.'.$translationField, $value);

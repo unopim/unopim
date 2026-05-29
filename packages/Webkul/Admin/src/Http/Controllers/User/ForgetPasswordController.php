@@ -21,7 +21,7 @@ class ForgetPasswordController extends Controller
             return redirect()->route('admin.dashboard.index');
         } else {
             $previous = url()->previous();
-            $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+            $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
             $previousHost = parse_url($previous, PHP_URL_HOST);
 
             if ($previousHost === $appHost && str_contains($previous, 'admin')) {

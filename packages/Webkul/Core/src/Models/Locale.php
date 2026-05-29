@@ -66,14 +66,8 @@ class Locale extends Model implements AuditableContract, LocaleContract
      */
     public function isLocaleBeingUsed(): bool
     {
-        if (
-            $this->user()->get()?->first()?->exists()
-            || $this->channel()?->get()?->first()?->exists()
-        ) {
-            return true;
-        }
-
-        return false;
+        return $this->user()->get()?->first()?->exists()
+        || $this->channel()->get()?->first()?->exists();
     }
 
     /**

@@ -33,10 +33,8 @@ class CategoryRepository extends Repository
 
     /**
      * Get categories.
-     *
-     * @return void
      */
-    public function getAll(array $params = [])
+    public function getAll(array $params = []): mixed
     {
         $queryBuilder = $this->query();
 
@@ -58,10 +56,9 @@ class CategoryRepository extends Repository
 
     /**
      * Create category.
-     *
-     * @return Category
      */
-    public function create(array $data, bool $withoutFormattingValues = false)
+    #[\Override]
+    public function create(array $data, bool $withoutFormattingValues = false): Category
     {
         $category = $this->model->create($data);
 
@@ -86,9 +83,9 @@ class CategoryRepository extends Repository
      *
      * @param  int  $id
      * @param  string  $attribute
-     * @return Category
      */
-    public function update(array $data, $id, $attribute = 'id', bool $withoutFormattingValues = false)
+    #[\Override]
+    public function update(array $data, $id, $attribute = 'id', bool $withoutFormattingValues = false): Category
     {
         $category = $this->find($id);
 
@@ -109,10 +106,9 @@ class CategoryRepository extends Repository
     /**
      * Specify category tree.
      *
-     * @param  int  $id
      * @return Category
      */
-    public function getCategoryTree($id = null)
+    public function getCategoryTree(?int $id = null): mixed
     {
         return $id
             ? $this->model->where('id', '!=', $id)->get()->toTree()
@@ -122,10 +118,9 @@ class CategoryRepository extends Repository
     /**
      * Specify category tree.
      *
-     * @param  int  $id
      * @return Collection
      */
-    public function getCategoryTreeWithoutDescendant($id = null)
+    public function getCategoryTreeWithoutDescendant(?int $id = null): mixed
     {
         return $id
             ? $this->model->where('id', '!=', $id)->whereNotDescendantOf($id)->get()->toTree()
@@ -139,14 +134,14 @@ class CategoryRepository extends Repository
      * @param  bool  $present  Whether to include the present category in the result.
      * @return array The branch of categories from the given category to its parent(s).
      */
-    public function getTreeBranchToParent(Category $category, bool $present = true)
+    public function getTreeBranchToParent(Category $category, bool $present = true): ?\Illuminate\Database\Eloquent\Collection
     {
         $parent = $category->parent;
 
         $id = $category->id;
 
         if (! $parent) {
-            return;
+            return null;
         }
 
         $ancestors = $this->model->ancestorsAndSelf($parent->id);
@@ -178,7 +173,7 @@ class CategoryRepository extends Repository
      *
      * @return Collection
      */
-    public function getRootCategories()
+    public function getRootCategories(): mixed
     {
         return $this->getModel()
             ->whereNull('parent_id')
@@ -190,11 +185,11 @@ class CategoryRepository extends Repository
      *
      * @return Collection
      */
-    public function getChildCategories(int $parentId, int $categoryId = 0)
+    public function getChildCategories(int $parentId, int $categoryId = 0): mixed
     {
         $query = $this->getModel()->where('parent_id', $parentId);
 
-        if ($categoryId) {
+        if ($categoryId !== 0) {
             $query->where('id', '!=', $categoryId);
         }
 
@@ -204,10 +199,9 @@ class CategoryRepository extends Repository
     /**
      * get visible category tree.
      *
-     * @param  int  $id
      * @return Collection
      */
-    public function getVisibleCategoryTree($id = null)
+    public function getVisibleCategoryTree(?int $id = null): mixed
     {
         return $id
             ? $this->model->descendantsAndSelf($id)->toTree($id)
@@ -216,11 +210,8 @@ class CategoryRepository extends Repository
 
     /**
      * Get partials.
-     *
-     * @param  array|null  $columns
-     * @return array
      */
-    public function getPartial($columns = null)
+    public function getPartial(?array $columns = null): array
     {
         $categories = $this->model->all();
 
@@ -246,9 +237,8 @@ class CategoryRepository extends Repository
      * this created method.
      *
      * @param  string  $attributeNames
-     * @return array
      */
-    private function setSameAttributeValueToAllLocale(array $data, ...$attributeNames)
+    private function setSameAttributeValueToAllLocale(array $data, ...$attributeNames): array
     {
         $requestedLocale = core()->getRequestedLocaleCode();
 
@@ -312,9 +302,9 @@ class CategoryRepository extends Repository
         }
 
         if (isset($category->additional_data[self::LOCALE_VALUES_KEY])) {
-            $localeValues = ! empty($localeValues)
-                ? array_merge($category->additional_data[self::LOCALE_VALUES_KEY], $localeValues)
-                : $category->additional_data[self::LOCALE_VALUES_KEY];
+            $localeValues = empty($localeValues)
+                ? $category->additional_data[self::LOCALE_VALUES_KEY]
+                : array_merge($category->additional_data[self::LOCALE_VALUES_KEY], $localeValues);
         }
 
         $localeValues = is_array($localeValues)
@@ -350,9 +340,9 @@ class CategoryRepository extends Repository
     protected function processAdditionalDataValues(int $categoryId, array $values, array $categoryValues = []): array
     {
         $values = array_filter(
-            ! empty($categoryValues)
-                ? array_merge($categoryValues, $values)
-                : $values
+            $categoryValues === []
+                ? $values
+                : array_merge($categoryValues, $values)
         );
 
         foreach ($values as $field => $fieldValue) {
@@ -378,7 +368,7 @@ class CategoryRepository extends Repository
         return $values;
     }
 
-    public function queryBuilder()
+    public function queryBuilder(): static
     {
         return $this->with(['parent_category']);
 
@@ -387,7 +377,7 @@ class CategoryRepository extends Repository
     /**
      * The products.
      */
-    public function getProducts(string $code)
+    public function getProducts(string $code): \Illuminate\Database\Eloquent\Collection
     {
         return ProductProxy::query()->whereJsonContains('values->categories', $code)->get();
     }

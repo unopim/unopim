@@ -7,19 +7,18 @@ use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 
 abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
 {
-    /** @var mixed */
-    protected $qb;
+    protected mixed $qb;
 
     protected array $rawFilters = [];
 
-    abstract public function prepareQueryBuilder();
+    abstract public function prepareQueryBuilder(): static;
 
-    abstract public function applyFilter($property, $operator, $value, array $context = []);
+    abstract public function applyFilter(mixed $property, mixed $operator, mixed $value, array $context = []): static;
 
     /**
      * {@inheritdoc}
      */
-    public function setQueryManager($queryBuilder)
+    public function setQueryManager($queryBuilder): static
     {
         $this->qb = $queryBuilder;
 
@@ -29,7 +28,7 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
     /**
      * {@inheritdoc}
      */
-    public function getQueryManager()
+    public function getQueryManager(): mixed
     {
         if ($this->qb === null) {
             throw new \LogicException('Query manager must be configured');
@@ -41,7 +40,7 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
     /**
      * {@inheritdoc}
      */
-    public function getRawFilters()
+    public function getRawFilters(): array
     {
         return $this->rawFilters;
     }
@@ -49,7 +48,7 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
     /**
      * {@inheritdoc}
      */
-    public function addSorter($property, $direction, array $context = [])
+    public function addSorter($property, $direction, array $context = []): static
     {
         $this->qb->addSort($property, $direction, $context);
 
@@ -59,7 +58,7 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
     /**
      * Add a filter condition on a property
      */
-    protected function applyPropertyFilter($filter, $property, $operator, $value, array $context)
+    protected function applyPropertyFilter(mixed $filter, mixed $property, mixed $operator, mixed $value, array $context): static
     {
         $filter->setQueryManager(new ElasticSearchQuery);
 
@@ -67,7 +66,7 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
             throw new \InvalidArgumentException(
                 sprintf(
                     'Unsupported operator. Only "%s" are supported, but "%s" was given.',
-                    implode(',', array_map(fn ($allowOperator) => $allowOperator->value, $filter->getAllowedOperators())),
+                    implode(',', array_map(fn (mixed $allowOperator) => $allowOperator->value, $filter->getAllowedOperators())),
                     $operator->value,
                 )
             );

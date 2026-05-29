@@ -21,6 +21,7 @@ class UserRepository extends BaseUserRepository
     /**
      * Get a user entity by user credentials.
      */
+    #[\Override]
     public function getUserEntityByUserCredentials(
         string $username,
         string $password,
@@ -49,11 +50,8 @@ class UserRepository extends BaseUserRepository
 
     /**
      * Make a Passport user entity from an Admin model instance.
-     *
-     * @param  Admin  $user
-     * @return User
      */
-    protected function makeUserEntity($user)
+    protected function makeUserEntity(Admin $user): User
     {
         return new User($user->id);
     }

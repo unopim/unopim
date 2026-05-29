@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\DataGrids\Integrations;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Webkul\AdminApi\Traits\OauthClientGenerator;
 use Webkul\DataGrid\DataGrid;
@@ -20,14 +21,12 @@ class ApiKeysDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $queryBuilder = DB::table('api_keys as api')
             ->join('admins as u', 'api.admin_id', '=', 'u.id')
-            ->leftJoin('oauth_clients as oc', function ($join) {
+            ->leftJoin('oauth_clients as oc', function (JoinClause $join) {
                 $join->on('api.admin_id', '=', 'oc.user_id')
                     ->where('oc.revoked', '=', 0);
             })
@@ -51,10 +50,8 @@ class ApiKeysDataGrid extends DataGrid
 
     /**
      * Add Columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'api_id',
@@ -91,9 +88,7 @@ class ApiKeysDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
-                return $row->client_id ? $this->maskClientIdAndScreatKey($row->client_id) : null;
-            },
+            'closure'    => fn (mixed $row) => $row->client_id ? $this->maskClientIdAndScreatKey($row->client_id) : null,
         ]);
 
         $this->addColumn([
@@ -103,18 +98,14 @@ class ApiKeysDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($row) {
-                return $row->api_permission_type == 'all' ? trans('admin::app.configuration.integrations.edit.all') : trans('admin::app.configuration.integrations.edit.custom');
-            },
+            'closure'    => fn (mixed $row) => $row->api_permission_type == 'all' ? trans('admin::app.configuration.integrations.edit.all') : trans('admin::app.configuration.integrations.edit.custom'),
         ]);
     }
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('configuration.integrations.edit')) {
             $this->addAction([
@@ -122,9 +113,7 @@ class ApiKeysDataGrid extends DataGrid
                 'index'  => 'edit',
                 'title'  => trans('admin::app.configuration.integrations.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.configuration.integrations.edit', $row->api_id);
-                },
+                'url'    => fn (mixed $row) => route('admin.configuration.integrations.edit', $row->api_id),
             ]);
         }
 
@@ -133,9 +122,7 @@ class ApiKeysDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.configuration.integrations.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.configuration.integrations.delete', $row->api_id);
-                },
+                'url'    => fn (mixed $row) => route('admin.configuration.integrations.delete', $row->api_id),
             ]);
         }
     }

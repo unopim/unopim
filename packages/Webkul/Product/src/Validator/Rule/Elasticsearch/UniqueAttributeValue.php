@@ -22,7 +22,7 @@ class UniqueAttributeValue implements ValidationRule
     {
         $queryBuilder = app(ElasticProductQueryBuilder::class);
 
-        $value = ! is_array($value) ? [$value] : $value;
+        $value = is_array($value) ? $value : [$value];
 
         $queryBuilder->applyFilter($this->attributeCode, FilterOperators::IN, $value);
 

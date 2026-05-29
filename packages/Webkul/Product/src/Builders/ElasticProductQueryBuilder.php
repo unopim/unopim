@@ -21,12 +21,12 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
      * Add a filter condition on an attribute
      */
     protected function addAttributeFilter(
-        $filter,
-        $attribute,
-        $operator,
-        $value,
+        mixed $filter,
+        mixed $attribute,
+        mixed $operator,
+        mixed $value,
         array $context
-    ) {
+    ): static {
         $locale = $attribute->value_per_locale ? ($context['locale'] ?? null) : null;
         $channel = $attribute->value_per_channel ? ($context['channel'] ?? null) : null;
 
@@ -36,7 +36,7 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
             throw new \InvalidArgumentException(
                 sprintf(
                     'Unsupported operator. Only "%s" are supported, but "%s" was given.',
-                    implode(',', array_map(fn ($allowOperator) => $allowOperator->value, $filter->getAllowedOperators())),
+                    implode(',', array_map(fn (mixed $allowOperator) => $allowOperator->value, $filter->getAllowedOperators())),
                     $operator->value,
                 )
             );
@@ -51,12 +51,12 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
      * Add a filter condition on an universal attribute
      */
     protected function applyUnfilteredFilter(
-        $filter,
-        $attribute,
-        $operator,
-        $value,
+        mixed $filter,
+        mixed $attribute,
+        mixed $operator,
+        mixed $value,
         array $context
-    ) {
+    ): static {
         $filter->setQueryManager(new ElasticSearchQuery);
 
         $filter->applyUnfilteredFilter($attribute, $operator, $value, $context);

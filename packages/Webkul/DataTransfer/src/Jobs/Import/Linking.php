@@ -16,21 +16,13 @@ class Linking implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param  mixed  $import
-     * @return void
      */
-    public function __construct(protected $import)
-    {
-        $this->import = $import;
-    }
+    public function __construct(protected mixed $import) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $logger = JobLogger::make($this->import->id);
 
@@ -42,7 +34,7 @@ class Linking implements ShouldQueue
             ->linking();
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         JobLogger::make($this->import->id)->error("Linking stage failed: {$exception->getMessage()}", [
             'exception' => $exception->getTraceAsString(),

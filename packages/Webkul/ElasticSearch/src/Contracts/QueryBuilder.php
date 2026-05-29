@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\ElasticSearch\Contracts;
 
 interface QueryBuilder
@@ -9,19 +11,17 @@ interface QueryBuilder
      *
      * @throws \LogicException in case the query builder has not been configured
      */
-    public function getQueryManager();
+    public function getQueryManager(): mixed;
 
     /**
      * Set query builder
      */
-    public function setQueryManager($queryBuilder);
+    public function setQueryManager(mixed $queryBuilder): static;
 
     /**
      * Returns applied filters
-     *
-     * @return array
      */
-    public function getRawFilters();
+    public function getRawFilters(): array;
 
     /**
      * Sort by field
@@ -29,9 +29,8 @@ interface QueryBuilder
      * @param  string  $field  the field to sort on
      * @param  string  $direction  the direction to use
      * @param  array  $context  the sorter context, used for locale and scope
-     * @return QueryBuilder
      *
      * @throws \LogicException
      */
-    public function addSorter($field, $direction, array $context = []);
+    public function addSorter(mixed $field, mixed $direction, array $context = []): static;
 }

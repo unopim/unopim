@@ -16,7 +16,7 @@ describe('Installer::loadEnvConfigAtRuntime DB default override (issue #797)', f
         // exactly what bit us when this test was first written.
         $cmd = new class extends Installer
         {
-            protected static function getEnvAtRuntime(string $key): string|bool
+            protected static function getEnvAtRuntime(string $key): string
             {
                 return match ($key) {
                     'DB_CONNECTION' => 'pgsql',

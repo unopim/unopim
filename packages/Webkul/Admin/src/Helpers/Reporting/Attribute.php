@@ -8,8 +8,6 @@ class Attribute extends AbstractReporting
 {
     /**
      * Create a helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,

@@ -5,13 +5,17 @@ namespace Webkul\Completeness\Jobs;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\Repositories\CompletenessSettingsRepository;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
+use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\Locale;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Product\Repositories\ProductRepository;
@@ -19,8 +23,6 @@ use Webkul\Product\Repositories\ProductRepository;
 class ProductCompletenessJob implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    protected array $productIds;
 
     protected ProductRepository $productRepository;
 
@@ -40,12 +42,10 @@ class ProductCompletenessJob implements ShouldQueue
 
     protected array $attributeCache = [];
 
-    public $tries = 3;
+    public int $tries = 3;
 
-    public function __construct(array $productIds)
+    public function __construct(protected array $productIds)
     {
-        $this->productIds = $productIds;
-
         $this->queue = 'system';
     }
 
@@ -64,7 +64,7 @@ class ProductCompletenessJob implements ShouldQueue
                 'productIds'    => $this->productIds,
                 'productsFound' => $products->keys()->toArray(),
                 'channelCount'  => count($this->channels),
-                'channels'      => collect($this->channels)->map(fn ($c) => ['id' => $c['id'], 'code' => $c['code'], 'locales' => count($c['locales'])])->toArray(),
+                'channels'      => collect($this->channels)->map(fn (array $c) => ['id' => $c['id'], 'code' => $c['code'], 'locales' => count($c['locales'])])->toArray(),
             ]);
         }
 
@@ -95,7 +95,7 @@ class ProductCompletenessJob implements ShouldQueue
         }
 
         // Bulk upsert all completeness scores in one query
-        if (! empty($scoreRows)) {
+        if ($scoreRows !== []) {
             DB::table('product_completeness')->upsert(
                 $scoreRows,
                 ['product_id', 'channel_id', 'locale_id'],
@@ -104,9 +104,9 @@ class ProductCompletenessJob implements ShouldQueue
         }
 
         // Bulk update avg_completeness_score with a single CASE statement
-        if (! empty($avgScores)) {
+        if ($avgScores !== []) {
             $cases = '';
-            $idList = implode(',', array_map('intval', array_keys($avgScores)));
+            $idList = implode(',', array_map(intval(...), array_keys($avgScores)));
 
             foreach ($avgScores as $pid => $score) {
                 $cases .= ' WHEN '.((int) $pid).' THEN '.($score === null ? 'NULL' : (int) $score);
@@ -133,23 +133,19 @@ class ProductCompletenessJob implements ShouldQueue
         $this->channels = $this->channelRepository
             ->skipCache()
             ->with([
-                'locales' => function ($query) {
+                'locales' => function (Relation $query) {
                     $query->select('locales.id', 'locales.code')->where('status', 1)->orderBy('code');
                 },
             ])
             ->get(['id', 'code'])
-            ->map(function ($channel) {
-                return [
-                    'id'      => $channel->id,
-                    'code'    => $channel->code,
-                    'locales' => $channel->locales->map(function ($locale) {
-                        return [
-                            'id'   => $locale->id,
-                            'code' => $locale->code,
-                        ];
-                    })->values()->toArray(),
-                ];
-            })
+            ->map(fn (Channel $channel) => [
+                'id'      => $channel->id,
+                'code'    => $channel->code,
+                'locales' => $channel->locales->map(fn (Locale $locale) => [
+                    'id'   => $locale->id,
+                    'code' => $locale->code,
+                ])->values()->toArray(),
+            ])
             ->toArray();
     }
 
@@ -222,7 +218,7 @@ class ProductCompletenessJob implements ShouldQueue
             $scoreRows = array_merge($scoreRows, $channelRows);
         }
 
-        $avgScore = $channelCount ? round($averageScore / $channelCount) : null;
+        $avgScore = $channelCount !== 0 ? round($averageScore / $channelCount) : null;
 
         return [$scoreRows, $avgScore, $deleteQueue];
     }
@@ -238,7 +234,7 @@ class ProductCompletenessJob implements ShouldQueue
         int $channelId,
         string $channelCode,
         array $locales,
-        $attributes
+        Collection $attributes
     ): array {
         $localizable = [];
         $nonLocalizable = [];

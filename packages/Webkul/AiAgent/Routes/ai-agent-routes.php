@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 use Webkul\AiAgent\Http\Controllers\AgentController;
 use Webkul\AiAgent\Http\Controllers\ChatController;

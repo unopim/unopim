@@ -28,7 +28,7 @@ class ProductCursor extends AbstractCursor
 
         foreach ($filters as $field => $value) {
             if ($field == 'status' && ! empty($value)) {
-                $value = $value == 'enable' ? true : false;
+                $value = $value == 'enable';
                 $query->where($field, $value);
             }
         }
@@ -38,7 +38,7 @@ class ProductCursor extends AbstractCursor
                 ->offset($this->offset)
                 ->limit($this->batchSize)
                 ->pluck('id')
-                ->map(fn ($id) => ['id' => $id])
+                ->map(fn (mixed $id) => ['id' => $id])
                 ->all();
 
             $this->offset += $this->batchSize;

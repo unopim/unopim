@@ -1,31 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Auth routes.
  */
-require 'auth-routes.php';
+require __DIR__.'/auth-routes.php';
 
 /**
  * Catalog routes.
  */
-require 'catalog-routes.php';
+require __DIR__.'/catalog-routes.php';
 
 /**
  * Settings routes.
  */
-require 'settings-routes.php';
+require __DIR__.'/settings-routes.php';
 
 /**
  * Configuration routes.
  */
-require 'configuration-routes.php';
+require __DIR__.'/configuration-routes.php';
 
 /**
  * Notification routes.
  */
-require 'notification-routes.php';
+require __DIR__.'/notification-routes.php';
 
 /**
  * Remaining routes.
  */
-require 'rest-routes.php';
+require __DIR__.'/rest-routes.php';

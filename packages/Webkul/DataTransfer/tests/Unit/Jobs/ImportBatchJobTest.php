@@ -41,14 +41,12 @@ describe('ImportBatch Job', function () {
 
         ImportBatch::dispatch($batch, $jobTrack->id);
 
-        Queue::assertPushed(ImportBatch::class, function ($job) use ($batch, $jobTrack) {
+        Queue::assertPushed(ImportBatch::class, function (mixed $job) use ($batch, $jobTrack) {
             $reflection = new ReflectionClass($job);
 
             $importBatchProp = $reflection->getProperty('importBatch');
-            $importBatchProp->setAccessible(true);
 
             $jobTrackIdProp = $reflection->getProperty('jobTrackId');
-            $jobTrackIdProp->setAccessible(true);
 
             return $importBatchProp->getValue($job)->id === $batch->id
                 && $jobTrackIdProp->getValue($job) === $jobTrack->id;

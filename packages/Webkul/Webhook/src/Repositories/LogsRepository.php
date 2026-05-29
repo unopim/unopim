@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Webhook\Repositories;
 
 use Webkul\Core\Eloquent\Repository;

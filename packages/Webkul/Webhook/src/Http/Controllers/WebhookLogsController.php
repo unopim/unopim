@@ -19,7 +19,7 @@ class WebhookLogsController
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (! bouncer()->hasPermission('configuration.webhook.logs')) {
             abort(403, 'This action is unauthorized');

@@ -53,11 +53,9 @@ class ChannelLocaleValuesValidator
      */
     protected function generateRules(array $channelsAndLocales = [], array $data = [], ?string $productId = null): array
     {
-        $rules = [
+        return [
             AbstractType::CHANNEL_LOCALE_VALUES_KEY.'.*'     => new ChannelLocalesRule($channelsAndLocales),
             AbstractType::CHANNEL_LOCALE_VALUES_KEY.'.*.*.*' => new AttributeValueRule(attributeService: $this->attributeService, isChannelBased: true, isLocaleBased: true, productId: $productId),
         ];
-
-        return $rules;
     }
 }

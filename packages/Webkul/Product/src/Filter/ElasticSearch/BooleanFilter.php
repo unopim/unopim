@@ -25,13 +25,13 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
      * {@inheritdoc}
      */
     public function addAttributeFilter(
-        $attribute,
-        $operator,
-        $value,
-        $locale = null,
-        $channel = null,
-        $options = []
-    ) {
+        mixed $attribute,
+        mixed $operator,
+        mixed $value,
+        ?string $locale = null,
+        ?string $channel = null,
+        array $options = []
+    ): static {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
@@ -40,22 +40,10 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
 
         switch ($operator) {
             case FilterOperators::IN:
-                $clause = [
-                    'terms' => [
-                        $attributePath => array_map(function ($val) {
-                            return ($val == '1') ? true : false;
-                        }, $value),
-                    ],
-                ];
-
-                $this->queryBuilder::where($clause);
-                break;
             case FilterOperators::EQUAL:
                 $clause = [
                     'terms' => [
-                        $attributePath => array_map(function ($val) {
-                            return ($val == '1') ? true : false;
-                        }, $value),
+                        $attributePath => array_map(fn (mixed $val) => $val == '1', $value),
                     ],
                 ];
 

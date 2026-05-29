@@ -8,7 +8,7 @@ use Webkul\DataGrid\DataGrid;
 
 class ImportDataGrid extends DataGrid
 {
-    protected $importers;
+    protected ?array $importers;
 
     /**
      * Initialize the importers
@@ -20,12 +20,10 @@ class ImportDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
-        $queryBuilder = DB::table('job_instances')
+        return DB::table('job_instances')
             ->addSelect(
                 'id',
                 'code',
@@ -35,16 +33,12 @@ class ImportDataGrid extends DataGrid
                 'images_directory_path',
 
             )->where('type', 'import');
-
-        return $queryBuilder;
     }
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -71,9 +65,7 @@ class ImportDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($row) {
-                return isset($this->importers[$row->entity_type]['title']) ? trans($this->importers[$row->entity_type]['title']) : $row->entity_type;
-            },
+            'closure'    => fn (\stdClass $row) => isset($this->importers[$row->entity_type]['title']) ? trans($this->importers[$row->entity_type]['title']) : $row->entity_type,
         ]);
 
         $this->addColumn([
@@ -83,13 +75,13 @@ class ImportDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($row) {
+            'closure'    => function (\stdClass $row) {
                 $options = [
                     'append' => trans('admin::app.settings.data-transfer.exports.edit.create-update'),
                     'delete' => trans('admin::app.settings.data-transfer.exports.edit.delete'),
                 ];
 
-                return isset($options[$row->action]) ? $options[$row->action] : $row->action;
+                return $options[$row->action] ?? $row->action;
             },
         ]);
 
@@ -100,19 +92,15 @@ class ImportDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
-                return '<a href="'.route('admin.settings.data_transfer.imports.download', $row->id).'" class="text-violet-700 dark:text-sky-500 hover:underline cursor-pointer">'.$row->file_path.'<a>';
-            },
+            'closure'    => fn (\stdClass $row) => '<a href="'.route('admin.settings.data_transfer.imports.download', $row->id).'" class="text-violet-700 dark:text-sky-500 hover:underline cursor-pointer">'.$row->file_path.'<a>',
         ]);
 
     }
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('data_transfer.imports.execute')) {
             $this->addAction([
@@ -120,9 +108,7 @@ class ImportDataGrid extends DataGrid
                 'icon'   => 'icon-import',
                 'title'  => trans('admin::app.settings.data-transfer.imports.index.datagrid.import'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.settings.data_transfer.imports.import-view', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.data_transfer.imports.import-view', $row->id),
             ]);
         }
 
@@ -132,9 +118,7 @@ class ImportDataGrid extends DataGrid
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.settings.data-transfer.imports.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.settings.data_transfer.imports.edit', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.data_transfer.imports.edit', $row->id),
             ]);
         }
 
@@ -144,9 +128,7 @@ class ImportDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.settings.data-transfer.imports.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.settings.data_transfer.imports.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.data_transfer.imports.delete', $row->id),
             ]);
         }
     }

@@ -18,6 +18,8 @@ use Webkul\Customer\Models\CustomerGroup;
 
 class Core
 {
+    public mixed $exchangeRateRepository = null;
+
     /**
      * The UnoPim version.
      *
@@ -27,80 +29,51 @@ class Core
 
     /**
      * Current Channel.
-     *
-     * @var Channel
      */
-    protected $currentChannel;
+    protected ?Channel $currentChannel = null;
 
     /**
      * Default Channel.
-     *
-     * @var Channel
      */
-    protected $defaultChannel;
+    protected ?Channel $defaultChannel = null;
 
     /**
      * Currency.
-     *
-     * @var Currency
      */
-    protected $currentCurrency;
+    protected ?Currency $currentCurrency = null;
 
     /**
      * Base Currency.
-     *
-     * @var Currency
      */
-    protected $baseCurrency;
+    protected ?Currency $baseCurrency = null;
 
     /**
      * Current Locale.
-     *
-     * @var Models\Locale
      */
-    protected $currentLocale;
+    protected ?Models\Locale $currentLocale = null;
 
     /**
      * Guest Customer Group
-     *
-     * @var CustomerGroup
      */
-    protected $guestCustomerGroup;
+    protected ?CustomerGroup $guestCustomerGroup = null;
 
     /**
      * Exchange rates
-     *
-     * @var array
      */
-    protected $exchangeRates = [];
+    protected array $exchangeRates = [];
 
     /**
      * Exchange rates
-     *
-     * @var array
      */
-    protected $taxCategoriesById = [];
+    protected array $taxCategoriesById = [];
 
     /**
      * Stores singleton instances
-     *
-     * @var array
      */
-    protected $singletonInstances = [];
-
-    /**
-     * Register your core config keys here which you don't want to
-     * load in static array. These keys will load from database
-     * every time the `getConfigData` method is called.
-     */
-    private $coreConfigExceptions = [
-        'catalog.products.guest_checkout.allow_guest_checkout',
-    ];
+    protected array $singletonInstances = [];
 
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected ChannelRepository $channelRepository,
@@ -111,20 +84,16 @@ class Core
 
     /**
      * Get the version number of the UnoPim.
-     *
-     * @return string
      */
-    public function version()
+    public function version(): string
     {
         return static::VERSION;
     }
 
     /**
      * Returns all channels.
-     *
-     * @return Collection
      */
-    public function getAllChannels()
+    public function getAllChannels(): Collection
     {
         return $this->channelRepository->all();
     }
@@ -142,7 +111,7 @@ class Core
      *
      * @return Contracts\Channel
      */
-    public function getCurrentChannel()
+    public function getCurrentChannel(): ?Channel
     {
         return $this->currentChannel ?? $this->getDefaultChannel();
     }
@@ -154,13 +123,13 @@ class Core
      */
     public function getDefaultChannel(): ?Channel
     {
-        if ($this->defaultChannel) {
+        if ($this->defaultChannel instanceof Channel) {
             return $this->defaultChannel;
         }
 
         $this->defaultChannel = $this->channelRepository->findOneByField('code', config('app.channel'));
 
-        if ($this->defaultChannel) {
+        if ($this->defaultChannel instanceof Channel) {
             return $this->defaultChannel;
         }
 
@@ -196,7 +165,7 @@ class Core
      *
      * @return Contracts\Channel
      */
-    public function getRequestedChannel()
+    public function getRequestedChannel(): ?Channel
     {
         $code = request()->query('channel');
 
@@ -221,7 +190,7 @@ class Core
      * @param  bool  $fallback  optional
      * @return string
      */
-    public function getRequestedChannelCode($fallback = true)
+    public function getRequestedChannelCode(bool $fallback = true): mixed
     {
         $channelCode = request()->input('channel');
 
@@ -235,44 +204,38 @@ class Core
     /**
      * Returns the channel name.
      */
-    public function getChannelName($channel): string
+    public function getChannelName(mixed $channel): string
     {
         return $channel->name ?? $channel->translate(app()->getLocale())->name ?? $channel->translate(config('app.fallback_locale'))->name;
     }
 
     /**
      * Return all locales.
-     *
-     * @return Collection
      */
-    public function getAllLocales()
+    public function getAllLocales(): Collection
     {
         return $this->localeRepository->all()->sortBy('name');
     }
 
     /**
      * Return all active locales.
-     *
-     * @return Collection
      */
-    public function getAllActiveLocales()
+    public function getAllActiveLocales(): Collection
     {
         return $this->localeRepository->getActiveLocales();
     }
 
     /**
      * Return all locales that have translation files in the Admin package.
-     *
-     * @return Collection
      */
-    public function getTranslatableLocales()
+    public function getTranslatableLocales(): Collection
     {
         $langPath = base_path('packages/Webkul/Admin/src/Resources/lang');
 
-        $availableDirs = array_map('basename', glob($langPath.'/*', GLOB_ONLYDIR) ?: []);
+        $availableDirs = array_map(basename(...), glob($langPath.'/*', GLOB_ONLYDIR) ?: []);
 
         return $this->localeRepository->all()
-            ->filter(fn ($locale) => in_array($locale->code, $availableDirs))
+            ->filter(fn (mixed $locale) => in_array($locale->code, $availableDirs))
             ->sortBy('name')
             ->values();
     }
@@ -282,15 +245,15 @@ class Core
      *
      * @return Contracts\Locale
      */
-    public function getCurrentLocale()
+    public function getCurrentLocale(): mixed
     {
-        if ($this->currentLocale) {
+        if ($this->currentLocale instanceof Models\Locale) {
             return $this->currentLocale;
         }
 
         $this->currentLocale = $this->localeRepository->findOneByField('code', app()->getLocale());
 
-        if (! $this->currentLocale) {
+        if (! $this->currentLocale instanceof Models\Locale) {
             $this->currentLocale = $this->localeRepository->findOneByField('code', config('app.fallback_locale'));
         }
 
@@ -302,7 +265,7 @@ class Core
      *
      * @return string
      */
-    public function getRequestedLocale()
+    public function getRequestedLocale(): mixed
     {
         $code = request()->query('locale');
 
@@ -321,7 +284,7 @@ class Core
      * @param  bool  $fallback  optional
      * @return string
      */
-    public function getRequestedLocaleCode($localeKey = 'locale', $fallback = true)
+    public function getRequestedLocaleCode(string $localeKey = 'locale', bool $fallback = true): mixed
     {
         $localeCode = request()->input($localeKey);
 
@@ -338,7 +301,7 @@ class Core
      *
      * @return string
      */
-    public function getRequestedLocaleCodeInRequestedChannel()
+    public function getRequestedLocaleCodeInRequestedChannel(): mixed
     {
         $requestedLocaleCode = $this->getRequestedLocaleCode();
 
@@ -353,20 +316,16 @@ class Core
 
     /**
      * Returns all currencies.
-     *
-     * @return Collection
      */
-    public function getAllCurrencies()
+    public function getAllCurrencies(): Collection
     {
         return $this->currencyRepository->all();
     }
 
     /**
      * Return all active currencies.
-     *
-     * @return Collection
      */
-    public function getAllActiveCurrencies()
+    public function getAllActiveCurrencies(): Collection
     {
         return $this->currencyRepository->getActiveCurrencies();
     }
@@ -376,15 +335,15 @@ class Core
      *
      * @return Contracts\Currency
      */
-    public function getBaseCurrency()
+    public function getBaseCurrency(): mixed
     {
-        if ($this->baseCurrency) {
+        if ($this->baseCurrency instanceof Currency) {
             return $this->baseCurrency;
         }
 
         $this->baseCurrency = $this->currencyRepository->findOneByField('code', config('app.currency'));
 
-        if (! $this->baseCurrency) {
+        if (! $this->baseCurrency instanceof Currency) {
             $this->baseCurrency = $this->currencyRepository->first();
         }
 
@@ -393,10 +352,8 @@ class Core
 
     /**
      * Returns base channel's currency code.
-     *
-     * @return string
      */
-    public function getBaseCurrencyCode()
+    public function getBaseCurrencyCode(): ?string
     {
         return $this->getBaseCurrency()?->code;
     }
@@ -405,15 +362,10 @@ class Core
      * Set currency.
      *
      * @param  string  $currencyCode
-     * @return void
      */
-    public function setCurrentCurrency($currencyCode)
+    public function setCurrentCurrency(mixed $currencyCode): void
     {
         $this->currentCurrency = $this->currencyRepository->findOneByField('code', $currencyCode);
-
-        if ($this->currentCurrency) {
-            return;
-        }
     }
 
     /**
@@ -423,7 +375,7 @@ class Core
      * @param  string  $targetCurrencyCode
      * @return string
      */
-    public function convertToBasePrice($amount, $targetCurrencyCode = null)
+    public function convertToBasePrice(mixed $amount, mixed $targetCurrencyCode = null): mixed
     {
         $targetCurrency = $this->currencyRepository->findOneByField('code', $targetCurrencyCode);
 
@@ -451,7 +403,7 @@ class Core
      * @param  float  $price
      * @return string
      */
-    public function currency($amount = 0)
+    public function currency(mixed $amount = 0): string|false
     {
         if (is_null($amount)) {
             $amount = 0;
@@ -466,7 +418,7 @@ class Core
      * @param  string|Contracts\Currency  $currency
      * @return string
      */
-    public function currencySymbol($currency)
+    public function currencySymbol(mixed $currency): string|false
     {
         $code = $currency instanceof Contracts\Currency ? $currency->code : $currency;
 
@@ -482,7 +434,7 @@ class Core
      * @param  string (optional)  $currencyCode
      * @return string
      */
-    public function formatPrice($price, $currencyCode)
+    public function formatPrice(mixed $price, mixed $currencyCode): string|false
     {
         if (is_null($price)) {
             $price = 0;
@@ -516,10 +468,9 @@ class Core
      * the base currency symbol and its optional.
      *
      * @param  float  $price
-     * @param  bool  $isEncoded
      * @return string
      */
-    public function formatBasePrice($price, $isEncoded = false)
+    public function formatBasePrice(mixed $price, bool $isEncoded = false): string|false
     {
         if (is_null($price)) {
             $price = 0;
@@ -539,7 +490,7 @@ class Core
             $content = $formatter->formatCurrency($price, $this->getBaseCurrencyCode());
         }
 
-        return ! $isEncoded ? $content : htmlentities($content);
+        return $isEncoded ? htmlentities($content) : $content;
     }
 
     /**
@@ -548,7 +499,7 @@ class Core
      * @param  Contracts\Channel  $channel
      * @return int
      */
-    public function channelTimeStamp($channel)
+    public function channelTimeStamp(mixed $channel): int|false
     {
         $timezone = $channel->timezone;
 
@@ -567,9 +518,8 @@ class Core
      * Check whether sql date is empty.
      *
      * @param  string  $date
-     * @return bool
      */
-    public function is_empty_date($date)
+    public function is_empty_date(mixed $date): bool
     {
         return preg_replace('#[ 0:-]#', '', $date) === '';
     }
@@ -578,10 +528,8 @@ class Core
      * Format date using current channel.
      *
      * @param  \Illuminate\Support\Carbon|string|null  $date
-     * @param  string  $format
-     * @return string
      */
-    public function formatDate($date = null, $format = 'd-m-Y H:i:s')
+    public function formatDate(mixed $date = null, string $format = 'd-m-Y H:i:s'): string
     {
         if (is_null($date)) {
             $date = Carbon::now();
@@ -598,10 +546,8 @@ class Core
      * Format date to current user timezone.
      *
      * @param  \Illuminate\Support\Carbon|string|null  $date
-     * @param  string  $format
-     * @return string
      */
-    public function formatDateWithTimeZone($date = null, $format = 'd-m-Y H:i:s')
+    public function formatDateWithTimeZone(mixed $date = null, string $format = 'd-m-Y H:i:s'): string
     {
         if (is_null($date)) {
             $date = Carbon::now();
@@ -624,9 +570,8 @@ class Core
      * @param  string  $field
      * @param  int|string|null  $channelId
      * @param  string|null  $locale
-     * @return mixed
      */
-    public function getConfigData($field, $channel = null, $locale = null)
+    public function getConfigData(mixed $field, mixed $channel = null, mixed $locale = null): mixed
     {
         if (empty($channel)) {
             $channel = $this->getRequestedChannelCode();
@@ -647,10 +592,8 @@ class Core
 
     /**
      * Retrieve all countries.
-     *
-     * @return Collection
      */
-    public function countries()
+    public function countries(): Collection
     {
         return DB::table('countries')->get();
     }
@@ -660,7 +603,7 @@ class Core
      *
      * @return \Webkul\Customer\Contract\CustomerGroup
      */
-    public function getGuestCustomerGroup()
+    public function getGuestCustomerGroup(): mixed
     {
         return null;
     }
@@ -670,18 +613,17 @@ class Core
      *
      * @param  string  $date
      * @param  int  $day
-     * @return string
      */
-    public function xWeekRange($date, $day)
+    public function xWeekRange(mixed $date, mixed $day): string
     {
         $ts = strtotime($date);
 
         if (! $day) {
-            $start = (date('D', $ts) == 'Sun') ? $ts : strtotime('last sunday', $ts);
+            $start = (date('D', $ts) === 'Sun') ? $ts : strtotime('last sunday', $ts);
 
             return date('Y-m-d', $start);
         } else {
-            $end = (date('D', $ts) == 'Sat') ? $ts : strtotime('next saturday', $ts);
+            $end = (date('D', $ts) === 'Sat') ? $ts : strtotime('next saturday', $ts);
 
             return date('Y-m-d', $end);
         }
@@ -689,36 +631,24 @@ class Core
 
     /**
      * Method to sort through the acl items and put them in order.
-     *
-     * @param  array  $items
-     * @return array
      */
-    public function sortItems($items)
+    public function sortItems(array $items): array
     {
         foreach ($items as &$item) {
-            if (count($item['children'])) {
+            if (count($item['children']) > 0) {
                 $item['children'] = $this->sortItems($item['children']);
             }
         }
 
-        usort($items, function ($a, $b) {
-            if ($a['sort'] == $b['sort']) {
-                return 0;
-            }
-
-            return ($a['sort'] < $b['sort']) ? -1 : 1;
-        });
+        usort($items, fn (mixed $a, mixed $b) => $a['sort'] <=> $b['sort']);
 
         return $this->convertToAssociativeArray($items);
     }
 
     /**
      * Get config field.
-     *
-     * @param  string  $fieldName
-     * @return array
      */
-    public function getConfigField($fieldName)
+    public function getConfigField(string $fieldName): ?array
     {
         foreach (config('core') as $coreData) {
             if (! isset($coreData['fields'])) {
@@ -728,32 +658,31 @@ class Core
             foreach ($coreData['fields'] as $field) {
                 $name = $coreData['key'].'.'.$field['name'];
 
-                if ($name == $fieldName) {
+                if ($name === $fieldName) {
                     return $field;
                 }
             }
         }
+
+        return null;
     }
 
     /**
      * Convert to associative array.
-     *
-     * @param  array  $items
-     * @return array
      */
-    public function convertToAssociativeArray($items)
+    public function convertToAssociativeArray(array $items): array
     {
         foreach ($items as $key1 => $level1) {
             unset($items[$key1]);
 
             $items[$level1['key']] = $level1;
 
-            if (! count($level1['children'])) {
+            if (count($level1['children']) === 0) {
                 continue;
             }
 
             foreach ($level1['children'] as $key2 => $level2) {
-                $temp2 = explode('.', $level2['key']);
+                $temp2 = explode('.', (string) $level2['key']);
 
                 $finalKey2 = end($temp2);
 
@@ -761,12 +690,12 @@ class Core
 
                 $items[$level1['key']]['children'][$finalKey2] = $level2;
 
-                if (! count($level2['children'])) {
+                if (count($level2['children']) === 0) {
                     continue;
                 }
 
                 foreach ($level2['children'] as $key3 => $level3) {
-                    $temp3 = explode('.', $level3['key']);
+                    $temp3 = explode('.', (string) $level3['key']);
 
                     $finalKey3 = end($temp3);
 
@@ -788,14 +717,13 @@ class Core
      * @param  string|int|float  $value
      * @return array
      */
-    public function array_set(&$array, $key, $value)
+    public function array_set(mixed &$array, mixed $key, mixed $value): mixed
     {
         if (is_null($key)) {
             return $array = $value;
         }
 
         $keys = explode('.', $key);
-        $count = count($keys);
 
         while (count($keys) > 1) {
             $key = array_shift($keys);
@@ -812,11 +740,7 @@ class Core
 
         $finalKey = array_shift($keys);
 
-        if (isset($array[$finalKey])) {
-            $array[$finalKey] = $this->arrayMerge($array[$finalKey], $value);
-        } else {
-            $array[$finalKey] = $value;
-        }
+        $array[$finalKey] = isset($array[$finalKey]) ? $this->arrayMerge($array[$finalKey], $value) : $value;
 
         return $array;
     }
@@ -825,9 +749,8 @@ class Core
      * Convert empty strings to null.
      *
      * @param  array  $array1
-     * @return array
      */
-    public function convertEmptyStringsToNull($array)
+    public function convertEmptyStringsToNull(array $array): array
     {
         foreach ($array as $key => $value) {
             if ($value == '' || $value == 'null') {
@@ -840,11 +763,8 @@ class Core
 
     /**
      * Create singleton object through single facade.
-     *
-     * @param  string  $className
-     * @return object
      */
-    public function getSingletonInstance($className)
+    public function getSingletonInstance(string $className): object
     {
         if (array_key_exists($className, $this->singletonInstances)) {
             return $this->singletonInstances[$className];
@@ -867,10 +787,10 @@ class Core
      * @param  string  $className
      * @return object
      */
-    public function getTaxCategoryById($id)
+    public function getTaxCategoryById(mixed $id): mixed
     {
         if (empty($id)) {
-            return;
+            return null;
         }
 
         if (array_key_exists($id, $this->taxCategoriesById)) {
@@ -882,10 +802,8 @@ class Core
 
     /**
      * Get sender email details.
-     *
-     * @return array
      */
-    public function getSenderEmailDetails()
+    public function getSenderEmailDetails(): array
     {
         $senderName = $this->getConfigData('emails.configure.email_settings.sender_name') ?: config('mail.from.name');
 
@@ -899,10 +817,8 @@ class Core
 
     /**
      * Get Admin email details.
-     *
-     * @return array
      */
-    public function getAdminEmailDetails()
+    public function getAdminEmailDetails(): array
     {
         $adminName = $this->getConfigData('emails.configure.email_settings.admin_name')
             ?: (config('mail.admin.name')
@@ -919,10 +835,8 @@ class Core
 
     /**
      * Array merge.
-     *
-     * @return array
      */
-    protected function arrayMerge(array &$array1, array &$array2)
+    protected function arrayMerge(array &$array1, array &$array2): array
     {
         $merged = $array1;
 
@@ -943,13 +857,8 @@ class Core
 
     /**
      * Get core config values.
-     *
-     * @param  mixed  $field
-     * @param  mixed  $channel
-     * @param  mixed  $locale
-     * @return mixed
      */
-    protected function getCoreConfig($field, $channel, $locale)
+    protected function getCoreConfig(mixed $field, mixed $channel, mixed $locale): mixed
     {
         $fields = $this->getConfigField($field);
 
@@ -966,17 +875,15 @@ class Core
                     'channel_code' => $channel,
                 ]);
             }
+        } elseif (! empty($fields['locale_based'])) {
+            $coreConfigValue = $this->coreConfigRepository->findOneWhere([
+                'code'        => $field,
+                'locale_code' => $locale,
+            ]);
         } else {
-            if (! empty($fields['locale_based'])) {
-                $coreConfigValue = $this->coreConfigRepository->findOneWhere([
-                    'code'        => $field,
-                    'locale_code' => $locale,
-                ]);
-            } else {
-                $coreConfigValue = $this->coreConfigRepository->findOneWhere([
-                    'code' => $field,
-                ]);
-            }
+            $coreConfigValue = $this->coreConfigRepository->findOneWhere([
+                'code' => $field,
+            ]);
         }
 
         return $coreConfigValue;
@@ -984,11 +891,8 @@ class Core
 
     /**
      * Get default config.
-     *
-     * @param  string  $field
-     * @return mixed
      */
-    protected function getDefaultConfig($field)
+    protected function getDefaultConfig(string $field): mixed
     {
         $configFieldInfo = $this->getConfigField($field);
 
@@ -1006,7 +910,7 @@ class Core
      *
      * @return string
      */
-    public function getMaxUploadSize()
+    public function getMaxUploadSize(): string|false
     {
         return ini_get('upload_max_filesize');
     }
@@ -1020,7 +924,7 @@ class Core
 
         $formattedTimezones = [];
 
-        foreach ($timezones as $index => $timezone) {
+        foreach ($timezones as $timezone) {
             $now = Carbon::now($timezone);
 
             $offset = $now->offset / 60;

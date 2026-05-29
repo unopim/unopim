@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -39,13 +40,10 @@ it('dispatches SendProductWebhook with the created event and the new product sku
         $reflection = new ReflectionClass($job);
 
         $eventTypeProp = $reflection->getProperty('eventType');
-        $eventTypeProp->setAccessible(true);
 
         $productIdProp = $reflection->getProperty('productId');
-        $productIdProp->setAccessible(true);
 
         $changesProp = $reflection->getProperty('changes');
-        $changesProp->setAccessible(true);
 
         $createdProduct = Product::where('sku', $data['sku'])->first();
         $changes = $changesProp->getValue($job);
@@ -90,7 +88,6 @@ it('passes the dispatching admin id into the SendProductWebhook job', function (
         $reflection = new ReflectionClass($job);
 
         $userIdProp = $reflection->getProperty('userId');
-        $userIdProp->setAccessible(true);
 
         return $userIdProp->getValue($job) === $admin->id;
     });
@@ -107,7 +104,7 @@ it('produces a product.created payload via the webhook service for a created pro
 
     $service->sendCreatedToWebhook($product);
 
-    Http::assertSent(function ($request) use ($product) {
+    Http::assertSent(function (Request $request) use ($product) {
         $body = $request->data();
 
         return ($body['event'] ?? null) === 'product.created'

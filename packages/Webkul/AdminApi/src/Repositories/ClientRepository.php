@@ -11,6 +11,7 @@ class ClientRepository extends BaseClientRepository
     /**
      * Get a client by the given ID.
      */
+    #[\Override]
     public function find(string|int $id): ?Client
     {
         $client = Passport::client();
@@ -31,6 +32,7 @@ class ClientRepository extends BaseClientRepository
     /**
      * Get an active client by the given ID.
      */
+    #[\Override]
     public function findActive(string|int $id): ?Client
     {
         $client = $this->find($id);

@@ -14,15 +14,11 @@ class ProductDataSource extends ApiDataSource
 {
     /**
      * Default sort column of datagrid.
-     *
-     * @var ?string
      */
-    protected $sortColumn = 'products.id';
+    protected ?string $sortColumn = 'products.id';
 
     /**
      * Create a new DataSource instance.
-     *
-     * @return void
      */
     public function __construct(
         protected ProductRepository $productRepository,
@@ -35,7 +31,7 @@ class ProductDataSource extends ApiDataSource
      *
      * @return \Illuminate\Database\Query\Builder The query builder for the product repository.
      */
-    public function prepareApiQueryBuilder()
+    public function prepareApiQueryBuilder(): mixed
     {
         [$queryBuilder] = $this->productRepository->queryBuilderFromDatabase([]);
 
@@ -49,6 +45,7 @@ class ProductDataSource extends ApiDataSource
      *
      * @throws \Exception If the paginator data is not in the expected format.
      */
+    #[\Override]
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
@@ -56,7 +53,7 @@ class ProductDataSource extends ApiDataSource
         $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
         return array_map(
-            fn ($item) => $this->normalizeProduct($item, $withCompleteness),
+            fn (mixed $item) => $this->normalizeProduct($item, $withCompleteness),
             $paginator['data'] ?? [],
         );
     }
@@ -69,7 +66,7 @@ class ProductDataSource extends ApiDataSource
      *
      * @throws ModelNotFoundException If a category field with the given code is not found.
      */
-    public function getByCode(string $code)
+    public function getByCode(string $code): array
     {
         $this->prepareForSingleData();
 
@@ -87,7 +84,7 @@ class ProductDataSource extends ApiDataSource
 
         if (! $product) {
             throw new ModelNotFoundException(
-                sprintf('Product with sku %s could not be found.', (string) $code)
+                sprintf('Product with sku %s could not be found.', $code)
             );
         }
 
@@ -96,15 +93,13 @@ class ProductDataSource extends ApiDataSource
         return $this->normalizeProduct($product, $withCompleteness);
     }
 
-    public function getSuperAttributes($data)
+    public function getSuperAttributes(array $data): array
     {
         if (! isset($data['super_attributes'])) {
             return [];
         }
 
-        return array_map(function ($data) {
-            return $data['code'];
-        }, $data['super_attributes']);
+        return array_map(fn (mixed $data) => $data['code'], $data['super_attributes']);
     }
 
     /**
@@ -112,15 +107,14 @@ class ProductDataSource extends ApiDataSource
      *
      * @param  array  $data  The product data containing variant information.
      * @param  array  $superAttributes  The super attributes of the product.
-     * @return array
      */
-    public function getVariants(array $data, array $superAttributes)
+    public function getVariants(array $data, array $superAttributes): array
     {
         if (! isset($data['variants'])) {
             return [];
         }
 
-        return array_map(function ($data) use ($superAttributes) {
+        return array_map(function (mixed $data) use ($superAttributes) {
             $variantAttributes = $this->getVariantAttributeAndOption(array_intersect($superAttributes, array_keys($data['values']['common'])), $data['values']['common']);
 
             return [
@@ -137,10 +131,10 @@ class ProductDataSource extends ApiDataSource
      * @param  array  $data  An array of product data containing variant information.
      * @return array An array of variant attribute and option data.
      */
-    public function getVariantAttributeAndOption(array $superAttributes, array $data)
+    public function getVariantAttributeAndOption(array $superAttributes, array $data): array
     {
         $variantAttributues = [];
-        foreach ($superAttributes as $key => $value) {
+        foreach ($superAttributes as $value) {
             $variantAttributues[$value] = $data[$value];
         }
 
@@ -155,7 +149,8 @@ class ProductDataSource extends ApiDataSource
      * @param  array  $value  The value and operator to apply.
      * @return Builder The updated query builder instance.
      */
-    public function operatorByFilter($scopeQueryBuilder, $requestedColumn, $value)
+    #[\Override]
+    public function operatorByFilter(mixed $scopeQueryBuilder, string $requestedColumn, array $value): mixed
     {
         $filterTable = isset($this->fieldFiltersAndOperators[$requestedColumn]['filterTable']) ? $this->fieldFiltersAndOperators[$requestedColumn]['filterTable'].'.' : 'products.';
 
@@ -181,11 +176,10 @@ class ProductDataSource extends ApiDataSource
      * Retrieves the ID of a product based on its code.
      *
      *
-     * @return int|null
      *
      * @throws ModelNotFoundException If a product with the given code is not found.
      */
-    protected function getParentIdByCode(Builder $queryBuilder, string $sku)
+    protected function getParentIdByCode(Builder $queryBuilder, string $sku): int
     {
         $parentQuery = clone $queryBuilder;
         // Parent lookup must match BOTH a configurable product AND the given SKU — previously an
@@ -196,7 +190,7 @@ class ProductDataSource extends ApiDataSource
 
         if (! $parentId) {
             throw new UnprocessableEntityHttpException(
-                sprintf('Parent filter value "%s" is not a valid configurable product SKU.', (string) $sku)
+                sprintf('Parent filter value "%s" is not a valid configurable product SKU.', $sku)
             );
         }
 
@@ -205,13 +199,10 @@ class ProductDataSource extends ApiDataSource
 
     /**
      * Filters the product query builder by the attribute family code.
-     *
-     *
-     * @return Builder
      */
-    protected function filterByFamily(Builder $scopeQueryBuilder, string $operator, array $code)
+    protected function filterByFamily(Builder $scopeQueryBuilder, string $operator, array $code): Builder
     {
-        $scopeQueryBuilder->whereHas('attribute_family', function ($query) use ($operator, $code) {
+        $scopeQueryBuilder->whereHas('attribute_family', function (mixed $query) use ($operator, $code) {
             if ($this->operators['IN_LIST'] == $operator) {
                 $query->whereIn('attribute_families.code', $code);
             } else {
@@ -228,9 +219,8 @@ class ProductDataSource extends ApiDataSource
      * Filters the product query builder by the category code.
      *
      * @param  array  $code
-     * @return Builder
      */
-    protected function filterByCategories(Builder $scopeQueryBuilder, string $operator, string $filterTable, array $value)
+    protected function filterByCategories(Builder $scopeQueryBuilder, string $operator, string $filterTable, array $value): Builder
     {
         if ($this->operators['IN_LIST'] == $operator) {
             $scopeQueryBuilder->whereJsonContains($filterTable.'values->categories', $value);

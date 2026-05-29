@@ -15,8 +15,6 @@ class RoleController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected RoleRepository $roleRepository,
@@ -81,7 +79,7 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->findOrFail($id);
 
-        return view('admin::settings.roles.edit', compact('role'));
+        return view('admin::settings.roles.edit', ['role' => $role]);
     }
 
     /**
@@ -125,7 +123,7 @@ class RoleController extends Controller
 
         session()->flash('success', trans('admin::app.settings.roles.update-success'));
 
-        return view('admin::settings.roles.edit', compact('role'));
+        return view('admin::settings.roles.edit', ['role' => $role]);
     }
 
     /**
@@ -159,7 +157,7 @@ class RoleController extends Controller
             Event::dispatch('user.role.delete.after', $id);
 
             return new JsonResponse(['message' => trans('admin::app.settings.roles.delete-success')]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
 
         return new JsonResponse([

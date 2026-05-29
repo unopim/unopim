@@ -3,31 +3,15 @@
 namespace Webkul\DataTransfer\Jobs\Export\File;
 
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Files\TemporaryFile;
 
 class TemporaryFileFactory
 {
     const FILE_PREFIX = 'uno-pim';
 
-    /**
-     * @var string|null
-     */
-    private $temporaryPath;
+    public function __construct(private readonly ?string $temporaryPath = null, private readonly ?string $temporaryDisk = null) {}
 
-    /**
-     * @var string|null
-     */
-    private $temporaryDisk;
-
-    public function __construct(?string $temporaryPath = null, ?string $temporaryDisk = null)
-    {
-        $this->temporaryPath = $temporaryPath;
-        $this->temporaryDisk = $temporaryDisk;
-    }
-
-    /**
-     * @return TemporaryFile
-     */
-    public function make(?string $fileExtension = null, $fileName = null)
+    public function make(?string $fileExtension = null, ?string $fileName = null): TemporaryFile
     {
         if ($this->temporaryDisk !== null) {
             return $this->makeRemote($fileExtension);

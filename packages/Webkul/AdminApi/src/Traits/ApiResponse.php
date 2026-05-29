@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\AdminApi\Traits;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -23,7 +25,7 @@ trait ApiResponse
             'message' => $message,
         ];
 
-        if (! empty($data)) {
+        if ($data !== []) {
             $responseData['data'] = $data;
         }
 

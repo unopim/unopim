@@ -9,13 +9,10 @@ class ProductVideo
 {
     /**
      * Retrieve collection of videos
-     *
-     * @param  Product  $product
-     * @return array
      */
-    public function getVideos($product)
+    public function getVideos(?Product $product): array
     {
-        if (! $product) {
+        if (! $product instanceof Product) {
             return [];
         }
 

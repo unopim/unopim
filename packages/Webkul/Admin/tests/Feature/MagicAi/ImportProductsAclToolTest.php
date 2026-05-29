@@ -99,7 +99,7 @@ it('skips existing products during mixed AI import when the user lacks edit perm
 /**
  * Build a chat context for direct AI import tool tests.
  */
-function buildAiImportChatContext($admin, ?string $filePath = null): ChatContext
+function buildAiImportChatContext(mixed $admin, ?string $filePath = null): ChatContext
 {
     return new ChatContext(
         message: 'Import products from file',
@@ -126,7 +126,7 @@ function buildAiImportChatContext($admin, ?string $filePath = null): ChatContext
  *
  * @param  array<int, array<int, string>>  $rows
  */
-function createTempImportFile($testCase, array $rows): string
+function createTempImportFile(mixed $testCase, array $rows): string
 {
     $filePath = tempnam(sys_get_temp_dir(), 'ai-import-');
 

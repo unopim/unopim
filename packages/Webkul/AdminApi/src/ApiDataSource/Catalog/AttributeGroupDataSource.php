@@ -11,8 +11,6 @@ class AttributeGroupDataSource extends ApiDataSource
 {
     /**
      * Create a new DataSource instance.
-     *
-     * @return void
      */
     public function __construct(protected AttributeGroupRepository $attributeGroupRepository) {}
 
@@ -21,7 +19,7 @@ class AttributeGroupDataSource extends ApiDataSource
      *
      * @return Builder The query builder for the attribute group repository.
      */
-    public function prepareApiQueryBuilder()
+    public function prepareApiQueryBuilder(): mixed
     {
         $this->addFilter('code', [
             '=',
@@ -39,16 +37,15 @@ class AttributeGroupDataSource extends ApiDataSource
      *
      * @throws \Exception If the paginator data is not in the expected format.
      */
+    #[\Override]
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
 
-        return array_map(function ($data) {
-            return [
-                'code'   => $data['code'],
-                'labels' => $this->getTranslations($data),
-            ];
-        }, $paginator['data'] ?? []);
+        return array_map(fn (mixed $data) => [
+            'code'   => $data['code'],
+            'labels' => $this->getTranslations($data),
+        ], $paginator['data'] ?? []);
     }
 
     /**
@@ -59,7 +56,7 @@ class AttributeGroupDataSource extends ApiDataSource
      *
      * @throws ModelNotFoundException If a attribute group with the given code is not found.
      */
-    public function getByCode(string $code)
+    public function getByCode(string $code): array
     {
         $this->prepareForSingleData();
 
@@ -78,7 +75,7 @@ class AttributeGroupDataSource extends ApiDataSource
 
         if (! $attributeGroup) {
             throw new ModelNotFoundException(
-                sprintf('attribute group with code %s could not be found.', (string) $code)
+                sprintf('attribute group with code %s could not be found.', $code)
             );
         }
 

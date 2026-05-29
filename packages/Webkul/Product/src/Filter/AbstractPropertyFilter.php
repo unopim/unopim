@@ -7,13 +7,12 @@ use Webkul\ElasticSearch\Contracts\PropertyFilter as PropertyFilterContract;
 
 abstract class AbstractPropertyFilter extends AbstractFilter implements PropertyFilterContract
 {
-    /** @var array */
-    protected $supportedProperties = [];
+    protected array $supportedProperties = [];
 
     /**
      * {@inheritdoc}
      */
-    public function supportsProperty($property)
+    public function supportsProperty($property): bool
     {
         return in_array($property, $this->supportedProperties);
     }
@@ -21,7 +20,7 @@ abstract class AbstractPropertyFilter extends AbstractFilter implements Property
     /**
      * Retrieves the search table path based on the provided options.
      */
-    protected function getSearchTablePath(array $options = [])
+    protected function getSearchTablePath(array $options = []): string
     {
         return $options['search_table_path'] ?? 'products';
     }
@@ -29,7 +28,7 @@ abstract class AbstractPropertyFilter extends AbstractFilter implements Property
     /**
      * Retrieves the IDs of parent products associated with the given SKUs.
      */
-    protected function getParentIdsBySkus(array $skus, array $options = [])
+    protected function getParentIdsBySkus(array $skus, array $options = []): array
     {
         $table = $this->getSearchTablePath($options);
 
@@ -44,7 +43,7 @@ abstract class AbstractPropertyFilter extends AbstractFilter implements Property
     /**
      * {@inheritdoc}
      */
-    public function getProperties()
+    public function getProperties(): array
     {
         return $this->supportedProperties;
     }

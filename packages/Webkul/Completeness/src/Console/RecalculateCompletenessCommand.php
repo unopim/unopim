@@ -3,6 +3,7 @@
 namespace Webkul\Completeness\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
 use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
 use Webkul\Completeness\Jobs\ProductCompletenessJob;
 use Webkul\Product\Repositories\ProductRepository;
@@ -47,7 +48,7 @@ class RecalculateCompletenessCommand extends Command
         return $this->handleFallback();
     }
 
-    protected function handleSingleProduct($productId): int
+    protected function handleSingleProduct(mixed $productId): int
     {
         $this->info("Dispatching completeness job for product ID: {$productId}");
 
@@ -56,7 +57,7 @@ class RecalculateCompletenessCommand extends Command
         return Command::SUCCESS;
     }
 
-    protected function handleFamily($familyId): int
+    protected function handleFamily(mixed $familyId): int
     {
         $this->info("Dispatching completeness job for family ID: {$familyId}");
 
@@ -81,7 +82,7 @@ class RecalculateCompletenessCommand extends Command
         $this->productRepository
             ->select('id')
             ->orderBy('id')
-            ->chunkById(self::BATCH_SIZE, function ($products) {
+            ->chunkById(self::BATCH_SIZE, function (Collection $products) {
                 BulkProductCompletenessJob::dispatch($products->pluck('id')->toArray());
             });
 

@@ -8,36 +8,28 @@ class Tree
 {
     /**
      * Contains tree item
-     *
-     * @var array
      */
-    public $items = [];
+    public array $items = [];
 
     /**
      * Contains acl roles
-     *
-     * @var array
      */
-    public $roles = [];
+    public array $roles = [];
 
     /**
      * Contains current item route
-     *
-     * @var string
      */
-    public $current;
+    public string $current;
 
     /**
      * Contains current item key
      *
      * @var string
      */
-    public $currentKey;
+    public mixed $currentKey = null;
 
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -51,7 +43,7 @@ class Tree
      * @param  callable  $callback  Callback to use after the Config creation
      * @return object
      */
-    public static function create($callback = null)
+    public static function create(?callable $callback = null): self
     {
         $tree = new Tree;
 
@@ -66,19 +58,18 @@ class Tree
      * Add a Config item to the item stack
      *
      * @param  string  $item
-     * @return void
      */
-    public function add($item, $type = '')
+    public function add(array $item, string $type = ''): void
     {
         $item['children'] = [];
 
-        if ($type == 'menu') {
+        if ($type === 'menu') {
             $item['url'] = route($item['route'], $item['params'] ?? []);
 
-            if (strpos($this->current, $item['url']) !== false) {
+            if (str_contains($this->current, $item['url'])) {
                 $this->currentKey = $item['key'];
             }
-        } elseif ($type == 'acl') {
+        } elseif ($type === 'acl') {
             $item['name'] = trans($item['name']);
 
             $this->roles[$item['route']] = $item['key'];
@@ -92,19 +83,20 @@ class Tree
     /**
      * Method to find the active links
      *
-     * @param  array  $item
-     * @return string|void
+     * @return string|null
      */
-    public function getActive($item)
+    public function getActive(array $item): ?bool
     {
-        $url = trim($item['url'], '/');
+        $url = trim((string) $item['url'], '/');
 
         if (
-            strpos($this->current, $url) !== false
-            || (strpos($this->currentKey, $item['key']) === 0)
+            str_contains($this->current, $url)
+            || (str_starts_with($this->currentKey, (string) $item['key']))
         ) {
             return true;
         }
+
+        return null;
     }
 
     /**
@@ -112,7 +104,7 @@ class Tree
      */
     public function removeUnauthorizedUrls(): array
     {
-        return collect($this->items)->map(function ($item) {
+        return collect($this->items)->map(function (mixed $item) {
             $this->removeChildrenUnauthorizedUrls($item);
 
             return $item;

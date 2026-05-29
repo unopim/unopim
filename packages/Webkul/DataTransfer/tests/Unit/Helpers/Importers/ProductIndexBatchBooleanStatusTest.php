@@ -4,6 +4,7 @@ use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Models\JobTrackBatch;
+use Webkul\ElasticSearch\Client\Fake\FakeElasticClient;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -14,7 +15,7 @@ beforeEach(function () {
         'elasticsearch.connections.default.hosts.0' => 'testhost:9200',
     ]);
 
-    $elasticClientMock = Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient');
+    $elasticClientMock = Mockery::mock(FakeElasticClient::class);
 
     ElasticSearch::shouldReceive('makeConnection')
         ->andReturn($elasticClientMock)
@@ -36,7 +37,7 @@ it('sends boolean true (not integer 1) when product status is enabled', function
 
     ElasticSearch::shouldReceive('bulk')
         ->once()
-        ->withArgs(function ($args) {
+        ->withArgs(function (array $args) {
             expect($args)->toHaveKey('body');
 
             $productBody = $args['body'][1] ?? null;
@@ -67,7 +68,7 @@ it('sends boolean false (not integer 0) when product status is disabled', functi
 
     ElasticSearch::shouldReceive('bulk')
         ->once()
-        ->withArgs(function ($args) {
+        ->withArgs(function (array $args) {
             $productBody = $args['body'][1] ?? null;
 
             expect($productBody)->not->toBeNull()

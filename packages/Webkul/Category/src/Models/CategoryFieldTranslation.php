@@ -16,12 +16,12 @@ class CategoryFieldTranslation extends Model implements CategoryFieldTranslation
     protected $fillable = ['name'];
 
     /** Tags for History */
-    protected $historyTags = ['category_field'];
+    protected array $historyTags = ['category_field'];
 
     /**
      * For Multilocale values history to display correctly
      */
-    protected $historyTranslatableFields = ['name' => 'Name'];
+    protected array $historyTranslatableFields = ['name' => 'Name'];
 
     /**
      * Id used for creating version for history

@@ -37,10 +37,8 @@ class Installer extends Command
 
     /**
      * Locales list.
-     *
-     * @var array
      */
-    protected $locales = [
+    protected array $locales = [
         'ar_AE' => 'Arabic (United Arab Emirates)',
         'ca_ES' => 'Catalan (Spain)',
         'da_DK' => 'Danish (Denmark)',
@@ -76,10 +74,8 @@ class Installer extends Command
 
     /**
      * Currencies list.
-     *
-     * @var array
      */
-    protected $currencies = [
+    protected array $currencies = [
         'CNY' => 'Chinese Yuan',
         'AED' => 'Dirham',
         'EUR' => 'Euro',
@@ -98,11 +94,11 @@ class Installer extends Command
     /**
      * Install and configure UnoPIm.
      */
-    public function handle()
+    public function handle(): mixed
     {
-        $applicationDetails = ! $this->option('skip-env-check')
-            ? $this->checkForEnvFile()
-            : [];
+        $applicationDetails = $this->option('skip-env-check')
+            ? []
+            : $this->checkForEnvFile();
 
         $this->loadEnvConfigAtRuntime();
 
@@ -114,7 +110,7 @@ class Installer extends Command
             if (! ElasticSearch::testConnection()) {
                 $this->error('Verify that the correct credentials are provided to establish a connection with ElasticSearch.');
 
-                return;
+                return null;
             } else {
                 $this->info('Elasticsearch Connected successfully');
             }
@@ -158,14 +154,14 @@ class Installer extends Command
         }
 
         ComposerEvents::postCreateProject();
+
+        return self::SUCCESS;
     }
 
     /**
      *  Checking .env file and if not found then create .env file.
-     *
-     * @return ?array
      */
-    protected function checkForEnvFile()
+    protected function checkForEnvFile(): ?array
     {
         if (! file_exists(base_path('.env'))) {
             $this->info('Creating the environment configuration file.');
@@ -181,10 +177,8 @@ class Installer extends Command
     /**
      * Create a new .env file. Afterwards, request environment configuration details and set them
      * in the .env file to facilitate the migration to our database.
-     *
-     * @return ?array
      */
-    protected function createEnvFile()
+    protected function createEnvFile(): ?array
     {
         try {
             $applicationDetails = $this->askForApplicationDetails();
@@ -194,17 +188,17 @@ class Installer extends Command
             $this->askForElasticSearchDetails();
 
             return $applicationDetails;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->error('Error in creating .env file, please create it manually and then run `php artisan migrate` again.');
         }
+
+        return null;
     }
 
     /**
      * Ask for application details.
-     *
-     * @return void
      */
-    protected function askForApplicationDetails()
+    protected function askForApplicationDetails(): array
     {
         $this->updateEnvVariable(
             'APP_NAME',
@@ -268,7 +262,7 @@ class Installer extends Command
     /**
      * Add the database credentials to the .env file.
      */
-    protected function askForDatabaseDetails()
+    protected function askForDatabaseDetails(): void
     {
         $databaseDetails = [
             'DB_CONNECTION' => select(
@@ -325,8 +319,8 @@ class Installer extends Command
                         default                                         => null,
                     };
                 },
-                transform: trim(...),
-                hint: 'or press enter to continue (leave empty to clear)'
+                hint: 'or press enter to continue (leave empty to clear)',
+                transform: trim(...)
             ),
 
             'DB_USERNAME' => text(
@@ -346,7 +340,7 @@ class Installer extends Command
         ];
 
         foreach (['DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_PREFIX', 'DB_USERNAME'] as $trimKey) {
-            $databaseDetails[$trimKey] = trim((string) ($databaseDetails[$trimKey] ?? ''));
+            $databaseDetails[$trimKey] = trim($databaseDetails[$trimKey] ?? '');
         }
 
         if (
@@ -354,7 +348,9 @@ class Installer extends Command
             || $databaseDetails['DB_USERNAME'] === ''
             || $databaseDetails['DB_PASSWORD'] === ''
         ) {
-            return $this->error('Please enter the database credentials.');
+            $this->error('Please enter the database credentials.');
+
+            return;
         }
 
         foreach ($databaseDetails as $key => $value) {
@@ -367,7 +363,7 @@ class Installer extends Command
     /**
      * Add the Elasticsearch credentials to the .env file.
      */
-    protected function askForElasticSearchDetails()
+    protected function askForElasticSearchDetails(): void
     {
         $isElasticEnabled = select(
             label: 'Do you want to enable Elasticsearch?',
@@ -439,10 +435,8 @@ class Installer extends Command
 
     /**
      * Create a admin credentials.
-     *
-     * @return mixed
      */
-    protected function createAdminCredentials()
+    protected function createAdminCredentials(): void
     {
         $adminName = text(
             label: 'Set the Name for Administrator',
@@ -513,7 +507,9 @@ class Installer extends Command
 
             Event::dispatch('unopim.installed');
         } catch (\Exception $e) {
-            return $this->error($e->getMessage());
+            $this->error($e->getMessage());
+
+            return;
         }
     }
 
@@ -539,35 +535,35 @@ class Installer extends Command
         /**
          * Setting application environment.
          */
-        app()['env'] = $this->getEnvAtRuntime('APP_ENV');
+        app()['env'] = static::getEnvAtRuntime('APP_ENV');
 
         /**
          * Setting application configuration.
          */
         config([
-            'app.env'      => $this->getEnvAtRuntime('APP_ENV'),
-            'app.name'     => $this->getEnvAtRuntime('APP_NAME'),
-            'app.url'      => $this->getEnvAtRuntime('APP_URL'),
-            'app.timezone' => $this->getEnvAtRuntime('APP_TIMEZONE'),
-            'app.locale'   => $this->getEnvAtRuntime('APP_LOCALE'),
-            'app.currency' => $this->getEnvAtRuntime('APP_CURRENCY'),
+            'app.env'      => static::getEnvAtRuntime('APP_ENV'),
+            'app.name'     => static::getEnvAtRuntime('APP_NAME'),
+            'app.url'      => static::getEnvAtRuntime('APP_URL'),
+            'app.timezone' => static::getEnvAtRuntime('APP_TIMEZONE'),
+            'app.locale'   => static::getEnvAtRuntime('APP_LOCALE'),
+            'app.currency' => static::getEnvAtRuntime('APP_CURRENCY'),
         ]);
 
         /**
          * Setting database configurations.
          */
-        $databaseConnection = $this->getEnvAtRuntime('DB_CONNECTION');
+        $databaseConnection = static::getEnvAtRuntime('DB_CONNECTION');
 
         $previousDefault = config('database.default');
 
         config([
             'database.default'                                    => $databaseConnection,
-            "database.connections.{$databaseConnection}.host"     => $this->getEnvAtRuntime('DB_HOST'),
-            "database.connections.{$databaseConnection}.port"     => $this->getEnvAtRuntime('DB_PORT'),
-            "database.connections.{$databaseConnection}.database" => $this->getEnvAtRuntime('DB_DATABASE'),
-            "database.connections.{$databaseConnection}.username" => $this->getEnvAtRuntime('DB_USERNAME'),
-            "database.connections.{$databaseConnection}.password" => $this->getEnvAtRuntime('DB_PASSWORD'),
-            "database.connections.{$databaseConnection}.prefix"   => $this->getEnvAtRuntime('DB_PREFIX'),
+            "database.connections.{$databaseConnection}.host"     => static::getEnvAtRuntime('DB_HOST'),
+            "database.connections.{$databaseConnection}.port"     => static::getEnvAtRuntime('DB_PORT'),
+            "database.connections.{$databaseConnection}.database" => static::getEnvAtRuntime('DB_DATABASE'),
+            "database.connections.{$databaseConnection}.username" => static::getEnvAtRuntime('DB_USERNAME'),
+            "database.connections.{$databaseConnection}.password" => static::getEnvAtRuntime('DB_PASSWORD'),
+            "database.connections.{$databaseConnection}.prefix"   => static::getEnvAtRuntime('DB_PREFIX'),
         ]);
 
         DB::setDefaultConnection($databaseConnection);
@@ -581,21 +577,21 @@ class Installer extends Command
         /**
          * Setting elasticsearch configurations.
          */
-        $elasticsearchPrefix = $this->getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') != '' ? $this->getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') : $this->getEnvAtRuntime('APP_NAME');
+        $elasticsearchPrefix = static::getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') != '' ? static::getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') : static::getEnvAtRuntime('APP_NAME');
 
         config([
-            'elasticsearch.connection'                => $this->getEnvAtRuntime('ELASTICSEARCH_CONNECTION'),
-            'elasticsearch.enabled'                   => $this->getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
+            'elasticsearch.connection'                => static::getEnvAtRuntime('ELASTICSEARCH_CONNECTION'),
+            'elasticsearch.enabled'                   => static::getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
             'elasticsearch.prefix'                    => $elasticsearchPrefix,
-            'elasticsearch.connections.default.hosts' => [$this->getEnvAtRuntime('ELASTICSEARCH_HOST')],
-            'elasticsearch.connections.default.user'  => $this->getEnvAtRuntime('ELASTICSEARCH_USER'),
-            'elasticsearch.connections.default.pass'  => $this->getEnvAtRuntime('ELASTICSEARCH_PASS'),
-            'elasticsearch.connections.api.hosts'     => [$this->getEnvAtRuntime('ELASTICSEARCH_HOST')],
-            'elasticsearch.connections.api.key'       => $this->getEnvAtRuntime('ELASTICSEARCH_API_KEY'),
-            'elasticsearch.connections.cloud.api_key' => $this->getEnvAtRuntime('ELASTICSEARCH_API_KEY'),
-            'elasticsearch.connections.cloud.id'      => $this->getEnvAtRuntime('ELASTICSEARCH_CLOUD_ID'),
-            'elasticsearch.connections.cloud.user'    => $this->getEnvAtRuntime('ELASTICSEARCH_USER'),
-            'elasticsearch.connections.cloud.pass'    => $this->getEnvAtRuntime('ELASTICSEARCH_PASS'),
+            'elasticsearch.connections.default.hosts' => [static::getEnvAtRuntime('ELASTICSEARCH_HOST')],
+            'elasticsearch.connections.default.user'  => static::getEnvAtRuntime('ELASTICSEARCH_USER'),
+            'elasticsearch.connections.default.pass'  => static::getEnvAtRuntime('ELASTICSEARCH_PASS'),
+            'elasticsearch.connections.api.hosts'     => [static::getEnvAtRuntime('ELASTICSEARCH_HOST')],
+            'elasticsearch.connections.api.key'       => static::getEnvAtRuntime('ELASTICSEARCH_API_KEY'),
+            'elasticsearch.connections.cloud.api_key' => static::getEnvAtRuntime('ELASTICSEARCH_API_KEY'),
+            'elasticsearch.connections.cloud.id'      => static::getEnvAtRuntime('ELASTICSEARCH_CLOUD_ID'),
+            'elasticsearch.connections.cloud.user'    => static::getEnvAtRuntime('ELASTICSEARCH_USER'),
+            'elasticsearch.connections.cloud.pass'    => static::getEnvAtRuntime('ELASTICSEARCH_PASS'),
         ]);
 
         $this->info('Configuration loaded...');
@@ -618,10 +614,8 @@ class Installer extends Command
 
     /**
      * Method for asking choice based on the list of options.
-     *
-     * @return string
      */
-    protected function updateEnvChoice(string $key, string $question, array $choices)
+    protected function updateEnvChoice(string $key, string $question, array $choices): string
     {
         $choice = select(
             label: $question,
@@ -637,7 +631,7 @@ class Installer extends Command
     /**
      * Function for getting allowed choices based on the list of options.
      */
-    protected function allowedChoice(string $question, array $choices)
+    protected function allowedChoice(string $question, array $choices): array
     {
         $selectedValues = multiselect(
             label: $question,
@@ -684,12 +678,10 @@ class Installer extends Command
             foreach ($data as $line) {
                 $line = preg_replace('/\s+/', '', $line);
 
-                $rowValues = explode('=', $line);
+                $rowValues = explode('=', (string) $line);
 
-                if (strlen($line) !== 0) {
-                    if (strpos($key, $rowValues[0]) !== false) {
-                        return $rowValues[1];
-                    }
+                if (strlen((string) $line) !== 0 && str_contains($key, $rowValues[0])) {
+                    return $rowValues[1];
                 }
             }
         }

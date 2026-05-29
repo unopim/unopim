@@ -8,8 +8,6 @@ class EnvironmentManager
 {
     /**
      * Create a helper instance.
-     *
-     * @return void
      */
     public function __construct(protected DatabaseManager $databaseManager) {}
 
@@ -18,7 +16,7 @@ class EnvironmentManager
      *
      * @param [object] $request
      */
-    public function generateEnv($request)
+    public function generateEnv(mixed $request): mixed
     {
         $envExamplePath = base_path('.env.example');
 
@@ -45,10 +43,8 @@ class EnvironmentManager
 
     /**
      * Set the ENV file configuration.
-     *
-     * @return string
      */
-    public function setEnvConfiguration($request)
+    public function setEnvConfiguration(mixed $request): bool
     {
         $envDBParams = [];
 
@@ -76,7 +72,7 @@ class EnvironmentManager
         $data = file_get_contents(base_path('.env'));
 
         foreach ($envDBParams as $key => $value) {
-            if (preg_match('/\s/', $value)) {
+            if (preg_match('/\s/', (string) $value)) {
                 $value = '"'.$value.'"';
             }
 
@@ -85,7 +81,7 @@ class EnvironmentManager
 
         try {
             file_put_contents(base_path('.env'), $data);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
 

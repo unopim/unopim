@@ -15,29 +15,24 @@ class ExportBatch implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $tries = 3;
+    public int $tries = 3;
 
-    public $timeout = 600;
+    public int $timeout = 600;
 
     /**
      * Create a new job instance.
-     *
-     * @param  mixed  $exportBatch
-     * @return void
      */
     public function __construct(
-        protected $exportBatch,
-        protected $filePath,
-        protected $jobTrackId,
-        protected $exportBuffer
+        protected mixed $exportBatch,
+        protected mixed $filePath,
+        protected mixed $jobTrackId,
+        protected mixed $exportBuffer
     ) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $logger = JobLogger::make($this->jobTrackId);
 
@@ -62,7 +57,7 @@ class ExportBatch implements ShouldQueue
         $logger->info("ExportBatch #{$this->exportBatch->id} completed.");
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         JobLogger::make($this->jobTrackId)->error("ExportBatch #{$this->exportBatch->id} failed: {$exception->getMessage()}", [
             'batch_id'  => $this->exportBatch->id,

@@ -86,7 +86,7 @@ it('should filter locales with equals operator', function () {
 
     $data = $response->json('data');
 
-    collect($data)->each(function ($locale) {
+    collect($data)->each(function (array $locale) {
         expect($locale['status'])->toBe(1);
     });
 });

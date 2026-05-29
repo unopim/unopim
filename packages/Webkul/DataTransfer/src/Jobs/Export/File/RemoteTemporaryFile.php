@@ -9,33 +9,11 @@ use Maatwebsite\Excel\Files\TemporaryFile;
 
 class RemoteTemporaryFile extends TemporaryFile
 {
-    /**
-     * @var string
-     */
-    private $disk;
+    private ?Disk $diskInstance = null;
 
-    /**
-     * @var Disk|null
-     */
-    private $diskInstance;
-
-    /**
-     * @var string
-     */
-    private $filename;
-
-    /**
-     * @var LocalTemporaryFile
-     */
-    private $localTemporaryFile;
-
-    public function __construct(string $disk, string $filename, LocalTemporaryFile $localTemporaryFile)
+    public function __construct(private readonly string $disk, private readonly string $filename, private LocalTemporaryFile $localTemporaryFile)
     {
-        $this->disk = $disk;
-        $this->filename = $filename;
-        $this->localTemporaryFile = $localTemporaryFile;
-
-        $this->disk()->touch($filename);
+        $this->disk()->touch($this->filename);
     }
 
     public function __sleep()
@@ -73,6 +51,7 @@ class RemoteTemporaryFile extends TemporaryFile
         return $this->disk()->delete($this->filename);
     }
 
+    #[\Override]
     public function sync(): TemporaryFile
     {
         if (! $this->localTemporaryFile->exists()) {
@@ -91,7 +70,7 @@ class RemoteTemporaryFile extends TemporaryFile
     /**
      * Store on remote disk.
      */
-    public function updateRemote()
+    public function updateRemote(): void
     {
         $this->disk()->copy(
             $this->localTemporaryFile,
@@ -102,7 +81,7 @@ class RemoteTemporaryFile extends TemporaryFile
     /**
      * @return resource
      */
-    public function readStream()
+    public function readStream(): mixed
     {
         return $this->disk()->readStream($this->filename);
     }
@@ -115,7 +94,7 @@ class RemoteTemporaryFile extends TemporaryFile
     /**
      * @param  string|resource  $contents
      */
-    public function put($contents)
+    public function put($contents): void
     {
         $this->disk()->put($this->filename, $contents);
     }
