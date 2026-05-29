@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'De Webhook-URL moet beginnen met http:// of https://.',
                         'connection_failed' => 'De Webhook-URL kon niet worden bereikt. Controleer de URL.',
                         'unreachable'       => 'De Webhook-URL is niet geldig (HTTP :code).',
+                        'unsafe'            => 'De Webhook-URL verwijst naar een privé-, loopback- of intern adres en is niet toegestaan.',
                     ],
                     'success'    => 'Webhook-instellingen succesvol opgeslagen',
                     'logs-title' => 'Logboeken',

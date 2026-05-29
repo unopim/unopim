@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'Webhook URL mora počinjati s http:// ili https://.',
                         'connection_failed' => 'Nije moguće pristupiti Webhook URL-u. Provjerite URL.',
                         'unreachable'       => 'Webhook URL nije ispravan (HTTP :code).',
+                        'unsafe'            => 'Webhook URL upućuje na privatnu, loopback ili internu adresu i nije dopušten.',
                     ],
                     'success'    => 'Postavke Webhooka uspješno spremljene',
                     'logs-title' => 'Zapisi',
