@@ -14,6 +14,7 @@ class SettingsPresenter extends JsonDataPresenter
      * @param  string  $fieldName  Name of the field being tracked.
      * @return array Normalized array of changes for history tracking.
      */
+    #[\Override]
     public static function representValueForHistory(mixed $oldValues, mixed $newValues, string $fieldName): array
     {
         $oldArray = is_string($oldValues) ? json_decode($oldValues, true) : $oldValues;
@@ -21,8 +22,8 @@ class SettingsPresenter extends JsonDataPresenter
 
         $normalizedData = [];
 
-        $arrayCheckOld = array_filter($oldArray, 'is_array');
-        $arrayCheckNew = array_filter($newArray, 'is_array');
+        $arrayCheckOld = array_filter($oldArray, is_array(...));
+        $arrayCheckNew = array_filter($newArray, is_array(...));
 
         if (count($arrayCheckOld) > 0) {
             $oldArray = array_merge(...array_values($oldArray));
@@ -55,17 +56,12 @@ class SettingsPresenter extends JsonDataPresenter
         return $normalizedData;
     }
 
-    protected static function formatekey(string $key)
+    protected static function formatekey(string $key): string
     {
-        switch ($key) {
-            case 'webhook_active':
-                $key = 'Active Webhook';
-                break;
-            case 'webhook_url':
-                $key = 'Webhook URL';
-                break;
-        }
-
-        return $key;
+        return match ($key) {
+            'webhook_active' => 'Active Webhook',
+            'webhook_url'    => 'Webhook URL',
+            default          => $key,
+        };
     }
 }

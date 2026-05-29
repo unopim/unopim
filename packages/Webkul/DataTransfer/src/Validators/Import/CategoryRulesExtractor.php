@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\DataTransfer\Validators\Import;
 
 use Webkul\Category\Contracts\CategoryField;
@@ -18,5 +20,5 @@ class CategoryRulesExtractor extends FieldValidator
     /**
      * extended abstract function validate from FieldValidator
      */
-    public function validate(array $requestData, ?int $id = null) {}
+    public function validate(array $requestData, ?int $id = null): void {}
 }

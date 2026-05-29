@@ -25,7 +25,7 @@ it('should return the user as json for edit', function () {
     $response->assertStatus(200)
         ->assertJsonFragment([
             ...$user->toArray(),
-            'status' => $user->status ? true : false,
+            'status' => (bool) $user->status,
         ]);
 });
 

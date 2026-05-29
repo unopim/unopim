@@ -1,22 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Category\Services;
 
 class CategoryAdditionalDataMapper
 {
     /**
      * Retrieves common fields from the given data array.
-     *
-     *
-     * @return array
      */
-    public function getCommonFields(array $data)
+    public function getCommonFields(array $data): array
     {
         if (! is_array($data['additional_data'])) {
             return [];
         }
 
-        if (! array_key_exists('additional_data', $data) || ! array_key_exists('common', $data['additional_data'])) {
+        if (! array_key_exists('common', $data['additional_data'])) {
             return [];
         }
 
@@ -25,17 +24,14 @@ class CategoryAdditionalDataMapper
 
     /**
      * Retrieves locale-specific fields from the given data array.
-     *
-     * @param  string  $locale
-     * @return array
      */
-    public function getLocaleSpecificFields(array $data, $locale)
+    public function getLocaleSpecificFields(array $data, string $locale): array
     {
         if (! is_array($data['additional_data'])) {
             return [];
         }
 
-        if (! array_key_exists('additional_data', $data) || ! array_key_exists('locale_specific', $data['additional_data'])) {
+        if (! array_key_exists('locale_specific', $data['additional_data'])) {
             return [];
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'datagrid' => [
         'copy-of-slug'                  => '복사본-:value',

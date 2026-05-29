@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\HistoryControl\Resolvers;
 
 use OwenIt\Auditing\Contracts\Auditable;
@@ -16,7 +18,7 @@ class PrimaryIdResolver implements Resolver
     /**
      * adds value to the history_id column
      */
-    public static function resolve(Auditable $auditable)
+    public static function resolve(Auditable $auditable): ?int
     {
         if (! $auditable instanceof HistoryAuditable) {
             return null;

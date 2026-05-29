@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\MagicAI;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -28,7 +29,7 @@ class MagicAIPlatformController extends Controller
         }
 
         $platformCount = $this->platformRepository->findWhere(['status' => true])->count();
-        $hasDefault = $this->platformRepository->getDefault() !== null;
+        $hasDefault = $this->platformRepository->getDefault() instanceof Model;
 
         return view('admin::configuration.magic-ai.platform.index', [
             'providerOptions' => AiProvider::options(),
@@ -133,7 +134,7 @@ class MagicAIPlatformController extends Controller
         $this->ensureDefaultPlatformIsEnabled($data);
 
         $apiKey = request()->input('api_key');
-        if ($apiKey && ! preg_match('/^\*+$/', $apiKey)) {
+        if ($apiKey && ! preg_match('/^\*+$/', (string) $apiKey)) {
             $data['api_key'] = $apiKey;
         }
 
@@ -176,7 +177,7 @@ class MagicAIPlatformController extends Controller
 
     public function setDefault(int $id): JsonResponse
     {
-        $platform = $this->platformRepository->findOrFail($id);
+        $this->platformRepository->findOrFail($id);
 
         DB::transaction(function () use ($id) {
             // Unset all other defaults first
@@ -205,7 +206,7 @@ class MagicAIPlatformController extends Controller
             // Custom providers reuse the Groq SDK under the hood, so without an
             // explicit api_url the request would silently hit Groq's default
             // endpoint and ship the caller's API key to the wrong host.
-            if ($provider === AiProvider::Custom && empty(trim((string) request()->input('api_url')))) {
+            if ($provider === AiProvider::Custom && in_array(trim((string) request()->input('api_url')), ['', '0'], true)) {
                 return new JsonResponse([
                     'success' => false,
                     'message' => trans('admin::app.configuration.platform.message.test-fail').': '.trans('admin::app.configuration.platform.message.custom-api-url-required'),
@@ -215,7 +216,7 @@ class MagicAIPlatformController extends Controller
             $this->configureProviderFromRequest($provider);
 
             $models = array_values(array_filter(array_map(
-                'trim',
+                trim(...),
                 explode(',', (string) request()->input('models'))
             )));
 
@@ -310,7 +311,7 @@ class MagicAIPlatformController extends Controller
      */
     protected function validateModelNames(string &$models): void
     {
-        $modelList = array_map(fn ($m) => ltrim(trim($m), '~'), explode(',', $models));
+        $modelList = array_map(fn (string $m) => ltrim(trim($m), '~'), explode(',', $models));
         $models = implode(',', $modelList);
         $invalid = [];
 
@@ -320,7 +321,7 @@ class MagicAIPlatformController extends Controller
             }
         }
 
-        if (! empty($invalid)) {
+        if ($invalid !== []) {
             throw ValidationException::withMessages([
                 'models' => trans('admin::app.configuration.platform.message.invalid-model-names', [
                     'names' => implode(', ', $invalid),
@@ -352,7 +353,7 @@ class MagicAIPlatformController extends Controller
         $apiKey = request()->input('api_key');
         $platformId = request()->input('id');
 
-        if ($apiKey && preg_match('/^\*+$/', $apiKey) && $platformId) {
+        if ($apiKey && preg_match('/^\*+$/', (string) $apiKey) && $platformId) {
             $platform = $this->platformRepository->find($platformId);
 
             return $platform?->safeApiKey();

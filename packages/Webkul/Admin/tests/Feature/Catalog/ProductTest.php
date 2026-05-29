@@ -34,7 +34,7 @@ it('should return the product datagrid', function () {
             $productIndex = strtolower($indexPrefix.'_products');
 
             ElasticSearch::indices()->refresh(['index' => $productIndex]);
-        } catch (Exception $e) {
+        } catch (Exception) {
             // ES not available, skip refresh
         }
     }
@@ -284,7 +284,7 @@ it('should search the products with uppercase sku successfully (case-insensitive
 
     $products = Product::factory()->simple()->withInitialValues()->createMany(2);
 
-    $sku = strtoupper($products->first()->sku);
+    $sku = strtoupper((string) $products->first()->sku);
 
     $this->get(route('admin.catalog.products.search', ['query' => $sku]))
         ->assertOk();

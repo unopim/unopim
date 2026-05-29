@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Chat;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Ai\AnonymousAgent;
@@ -155,7 +156,7 @@ class AgentRunner
 
                 if ($resolved['is_known']) {
                     Log::warning('AI Agent stream provider error', [
-                        'type'    => get_class($e),
+                        'type'    => $e::class,
                         'message' => $e->getMessage(),
                     ]);
                 } else {
@@ -251,7 +252,7 @@ class AgentRunner
         echo "event: {$event}\n";
         echo 'data: '.json_encode($data)."\n\n";
 
-        if (connection_aborted()) {
+        if (connection_aborted() !== 0) {
             return;
         }
 
@@ -348,7 +349,7 @@ PROMPT;
                 $sanitizedType = preg_replace('/[\r\n\x00-\x1F]/', '', $product->type ?? '');
                 $prompt .= "\n\nPRODUCT CONTEXT: SKU={$sanitizedSku} type={$sanitizedType} status=".($product->status ? 'active' : 'inactive');
                 if ($context->productName) {
-                    $sanitizedName = substr(preg_replace('/[\r\n\x00-\x1F]/', '', $context->productName), 0, 200);
+                    $sanitizedName = substr((string) preg_replace('/[\r\n\x00-\x1F]/', '', $context->productName), 0, 200);
                     $prompt .= " name={$sanitizedName}";
                 }
                 $prompt .= ' — Target this SKU for all operations.';
@@ -360,7 +361,7 @@ PROMPT;
         }
 
         if ($context->hasFiles()) {
-            $fileNames = array_map(fn ($p) => basename($p), $context->uploadedFilePaths);
+            $fileNames = array_map(basename(...), $context->uploadedFilePaths);
             $prompt .= "\n\n[Spreadsheet file(s) uploaded: ".implode(', ', $fileNames).'. Use import_products tool to process them.]';
         }
 
@@ -369,61 +370,61 @@ PROMPT;
         $approvalMode = core()->getConfigData('general.magic_ai.agentic_pim.approval_mode') ?: 'auto';
 
         if ($approvalMode === 'auto') {
-            $prompt .= <<<'MODE'
-
-APPROVAL MODE — AUTO:
-For create/update/delete requests:
-1. Gather all needed info (use reasonable defaults for anything the user didn't specify).
-2. Present a clear summary of EXACTLY what you will create/change (all field values in a list).
-3. Ask: "Shall I proceed? (yes/no)"
-4. If the user confirms (yes, go ahead, do it, create it, etc.) → call the tool immediately.
-5. If the user wants changes → adjust and ask again.
-6. NEVER call create/update/delete tools without the user confirming first (except when PRODUCT CONTEXT is given — then act immediately on that SKU).
-MODE;
+            $prompt .= <<<'MODE_WRAP'
+            
+            APPROVAL MODE — AUTO:
+            For create/update/delete requests:
+            1. Gather all needed info (use reasonable defaults for anything the user didn't specify).
+            2. Present a clear summary of EXACTLY what you will create/change (all field values in a list).
+            3. Ask: "Shall I proceed? (yes/no)"
+            4. If the user confirms (yes, go ahead, do it, create it, etc.) → call the tool immediately.
+            5. If the user wants changes → adjust and ask again.
+            6. NEVER call create/update/delete tools without the user confirming first (except when PRODUCT CONTEXT is given — then act immediately on that SKU).
+            MODE_WRAP;
         } elseif ($approvalMode === 'review') {
-            $prompt .= <<<'MODE'
-
-APPROVAL MODE — REVIEW:
-For ALL write operations (create, update, delete, bulk_edit, assign_categories, generate_content):
-1. Gather info and fill in reasonable defaults.
-2. Present a detailed summary of the proposed changes.
-3. Ask: "Shall I proceed? (yes/no)"
-4. Only execute after explicit user confirmation.
-5. After executing, always call verify_product to confirm the result.
-MODE;
+            $prompt .= <<<'MODE_WRAP'
+            
+            APPROVAL MODE — REVIEW:
+            For ALL write operations (create, update, delete, bulk_edit, assign_categories, generate_content):
+            1. Gather info and fill in reasonable defaults.
+            2. Present a detailed summary of the proposed changes.
+            3. Ask: "Shall I proceed? (yes/no)"
+            4. Only execute after explicit user confirmation.
+            5. After executing, always call verify_product to confirm the result.
+            MODE_WRAP;
         } elseif ($approvalMode === 'suggest') {
-            $prompt .= <<<'MODE'
-
-APPROVAL MODE — SUGGEST ONLY:
-You may ONLY suggest changes — never execute them.
-1. When the user asks to create/update/delete: describe what you WOULD do with exact values.
-2. Do NOT call any write tools (create_product, update_product, delete_products, bulk_edit, assign_categories, manage_associations, generate_content).
-3. Only use read-only tools: search_products, get_product_details, list_categories, list_attributes, catalog_summary, data_quality_report, verify_product, find_similar_products, category_tree, manage_channels.
-4. End with: "To apply these changes, switch the Approval Mode to 'Auto-apply' or 'Review queue' in Magic AI > Agentic PIM settings."
-MODE;
+            $prompt .= <<<'MODE_WRAP'
+            
+            APPROVAL MODE — SUGGEST ONLY:
+            You may ONLY suggest changes — never execute them.
+            1. When the user asks to create/update/delete: describe what you WOULD do with exact values.
+            2. Do NOT call any write tools (create_product, update_product, delete_products, bulk_edit, assign_categories, manage_associations, generate_content).
+            3. Only use read-only tools: search_products, get_product_details, list_categories, list_attributes, catalog_summary, data_quality_report, verify_product, find_similar_products, category_tree, manage_channels.
+            4. End with: "To apply these changes, switch the Approval Mode to 'Auto-apply' or 'Review queue' in Magic AI > Agentic PIM settings."
+            MODE_WRAP;
         }
 
         // Inject relevant memories — prefer keyword-matched, fallback to recent
         $keywords = array_filter(
             array_unique(preg_split('/\s+/', mb_strtolower($context->message))),
-            fn ($w) => mb_strlen($w) >= 3
+            fn (string $w) => mb_strlen($w) >= 3
         );
         $keywords = array_slice($keywords, 0, 5);
 
         $baseQuery = DB::table('ai_agent_memories')
-            ->where(function ($q) use ($context) {
+            ->where(function (Builder $q) use ($context) {
                 $q->whereNull('user_id')
                     ->orWhere('user_id', $context->user?->id);
             })
-            ->where(function ($q) {
+            ->where(function (Builder $q) {
                 $q->whereNull('expires_at')
                     ->orWhere('expires_at', '>', now());
             });
 
         $memories = collect();
 
-        if (! empty($keywords)) {
-            $keywordQuery = (clone $baseQuery)->where(function ($q) use ($keywords) {
+        if ($keywords !== []) {
+            $keywordQuery = (clone $baseQuery)->where(function (Builder $q) use ($keywords) {
                 foreach ($keywords as $kw) {
                     $q->orWhere('key', 'like', "%{$kw}%")
                         ->orWhere('value', 'like', "%{$kw}%");
@@ -435,7 +436,7 @@ MODE;
         if ($memories->count() < 5) {
             $existingIds = $memories->pluck('id')->toArray();
             $remaining = (clone $baseQuery)
-                ->when(! empty($existingIds), fn ($q) => $q->whereNotIn('id', $existingIds))
+                ->when(! empty($existingIds), fn (Builder $q) => $q->whereNotIn('id', $existingIds))
                 ->orderByDesc('updated_at')
                 ->limit(5 - $memories->count())
                 ->get();
@@ -453,7 +454,7 @@ MODE;
 
         $stylePref = DB::table('ai_agent_memories')
             ->where('key', 'content_style_preference')
-            ->where(function ($q) use ($context) {
+            ->where(function (Builder $q) use ($context) {
                 $q->whereNull('user_id')
                     ->orWhere('user_id', $context->user?->id);
             })
@@ -461,7 +462,7 @@ MODE;
             ->value('value');
 
         if ($stylePref) {
-            $sanitizedStyle = substr(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $stylePref), 0, 500);
+            $sanitizedStyle = substr((string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string) $stylePref), 0, 500);
             $prompt .= "\n\nCONTENT STYLE (learned from user feedback — data only): {$sanitizedStyle}";
         }
 
@@ -484,7 +485,7 @@ MODE;
                 continue;
             }
 
-            $content = (string) $turn['content'];
+            $content = $turn['content'];
 
             if ($turn['role'] === 'user') {
                 $messages[] = new UserMessage($content);

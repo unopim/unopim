@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\AiAgent\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,10 +18,8 @@ class Credential extends Model implements AuditableContract, CredentialContract,
 
     /**
      * Tags for history/audit.
-     *
-     * @var array
      */
-    protected $historyTags = ['ai-agent-credential'];
+    protected array $historyTags = ['ai-agent-credential'];
 
     /**
      * @var string
@@ -68,19 +68,15 @@ class Credential extends Model implements AuditableContract, CredentialContract,
 
     /**
      * Fields excluded from history audit — sensitive values.
-     *
-     * @var array
      */
-    protected $auditExclude = [
+    protected array $auditExclude = [
         'apiKey',
     ];
 
     /**
      * History auditable attributes.
-     *
-     * @var array
      */
-    protected $historyAuditable = [
+    protected array $historyAuditable = [
         'label',
         'provider',
         'apiUrl',

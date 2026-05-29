@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\HistoryControl\Presenters;
 
 use Webkul\HistoryControl\Interfaces\HistoryPresenterInterface;
@@ -19,7 +21,7 @@ class AttributeFamilyPresenter implements HistoryPresenterInterface
 
         foreach ($newValues['AttributeFamilyGroupMapping'] ?? [] as $key => $newValue) {
 
-            $oldValue = isset($oldValues['AttributeFamilyGroupMapping'][$key]) ? $oldValues['AttributeFamilyGroupMapping'][$key] : '';
+            $oldValue = $oldValues['AttributeFamilyGroupMapping'][$key] ?? '';
 
             if ($oldValue == $newValue) {
                 continue;

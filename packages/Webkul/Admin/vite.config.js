@@ -17,11 +17,7 @@ export default defineConfig(({ mode }) => {
                 output: {
                     manualChunks: {
                         vue: ["vue"],
-                        veeValidate: [
-                            "vee-validate",
-                            "@vee-validate/rules",
-                            "@vee-validate/i18n",
-                        ],
+                        veeValidate: ["vee-validate", "@vee-validate/rules", "@vee-validate/i18n"],
                         vendor: ["axios", "mitt", "flatpickr"],
                     },
                 },
@@ -42,10 +38,7 @@ export default defineConfig(({ mode }) => {
                 hotFile: "../../../public/admin-default-vite.hot",
                 publicDirectory: "../../../public",
                 buildDirectory: "themes/admin/default/build",
-                input: [
-                    "src/Resources/assets/css/app.css",
-                    "src/Resources/assets/js/app.js",
-                ],
+                input: ["src/Resources/assets/css/app.css", "src/Resources/assets/js/app.js"],
                 refresh: true,
             }),
         ],

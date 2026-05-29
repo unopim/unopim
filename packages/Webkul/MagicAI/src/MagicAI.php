@@ -154,7 +154,7 @@ class MagicAI
      */
     public function setPrompt(string $prompt, string $fieldType = 'tinymce'): self
     {
-        $this->prompt = $fieldType == 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
+        $this->prompt = $fieldType === 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
 
         return $this;
     }
@@ -226,7 +226,7 @@ class MagicAI
             return [];
         }
 
-        return array_map(fn ($model) => [
+        return array_map(fn (string $model) => [
             'id'    => $model,
             'label' => $model,
         ], $platform->model_list);

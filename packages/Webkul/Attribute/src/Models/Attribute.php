@@ -2,6 +2,8 @@
 
 namespace Webkul\Attribute\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,7 +53,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
     public $translatedAttributes = ['name'];
 
-    protected $historyTags = ['attribute'];
+    protected array $historyTags = ['attribute'];
 
     protected $fillable = [
         'code',
@@ -74,7 +76,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     /**
      * These columns history will not be generated
      */
-    protected $auditExclude = [
+    protected array $auditExclude = [
         'id',
     ];
 
@@ -88,10 +90,8 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
     /**
      * Returns attribute validation rules
-     *
-     * @return string
      */
-    public function getValidationsField()
+    public function getValidationsField(): string
     {
         $validations = [];
 
@@ -127,16 +127,14 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             };
         }
 
-        $validations = '{ '.implode(', ', array_filter($validations)).' }';
-
-        return $validations;
+        return '{ '.implode(', ', array_filter($validations)).' }';
     }
 
     /**
      * Validation rules for validator
      * used while validating product values
      */
-    public function getValidationRules(?string $currentChannelCode = null, ?string $currentLocaleCode = null, ?int $id = null, bool $withUniqueValidation = true)
+    public function getValidationRules(?string $currentChannelCode = null, ?string $currentLocaleCode = null, ?int $id = null, bool $withUniqueValidation = true): array
     {
         $validations = [
             $this->is_required ? 'required' : 'nullable',
@@ -187,11 +185,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     {
         $validations = [];
 
-        if ($this->is_required) {
-            $validations[] = 'required';
-        } else {
-            $validations[] = 'nullable';
-        }
+        $validations[] = $this->is_required ? 'required' : 'nullable';
 
         if ($this->type === 'file') {
             $validations[] = 'file';
@@ -249,7 +243,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
      */
     public function isLocaleAndChannelBasedAttribute(): bool
     {
-        return (bool) ($this->isLocaleBasedAttribute() && $this->isChannelBasedAttribute());
+        return $this->isLocaleBasedAttribute() && $this->isChannelBasedAttribute();
     }
 
     /**
@@ -358,7 +352,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     /**
      * check if possible to delete this attribute
      */
-    public function canBeDeleted()
+    public function canBeDeleted(): bool
     {
         return $this->code !== self::NON_DELETABLE_ATTRIBUTE_CODE;
     }
@@ -446,38 +440,18 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     /**
      * Get attribute filter type
      */
-    public function getFilterType()
+    public function getFilterType(): string
     {
-        switch ($this->type) {
-            case self::BOOLEAN_FIELD_TYPE:
-                $filterType = 'boolean';
-                break;
-            case self::DATETIME_FIELD_TYPE:
-                $filterType = 'datetime_range';
-                break;
-            case self::DATE_FIELD_TYPE:
-                $filterType = 'date_range';
-                break;
-            case self::SELECT_FIELD_TYPE:
-            case self::MULTISELECT_FIELD_TYPE:
-            case self::CHECKBOX_FIELD_TYPE:
-                $filterType = 'dropdown';
-                break;
-            case self::GALLERY_ATTRIBUTE_TYPE:
-                $filterType = 'gallery';
-                break;
-            case self::IMAGE_ATTRIBUTE_TYPE:
-                $filterType = 'image';
-                break;
-            case self::PRICE_FIELD_TYPE:
-                $filterType = 'price';
-                break;
-            default:
-                $filterType = 'string';
-                break;
-        }
-
-        return $filterType;
+        return match ($this->type) {
+            self::BOOLEAN_FIELD_TYPE                                                         => 'boolean',
+            self::DATETIME_FIELD_TYPE                                                        => 'datetime_range',
+            self::DATE_FIELD_TYPE                                                            => 'date_range',
+            self::SELECT_FIELD_TYPE, self::MULTISELECT_FIELD_TYPE, self::CHECKBOX_FIELD_TYPE => 'dropdown',
+            self::GALLERY_ATTRIBUTE_TYPE                                                     => 'gallery',
+            self::IMAGE_ATTRIBUTE_TYPE                                                       => 'image',
+            self::PRICE_FIELD_TYPE                                                           => 'price',
+            default                                                                          => 'string',
+        };
     }
 
     /**
@@ -497,14 +471,14 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     /**
      * Get the options by option code and locale.
      */
-    public function getOptionsByCodeAndLocale($codes, $locale = null)
+    public function getOptionsByCodeAndLocale(array $codes, ?string $locale = null): Collection
     {
-        $locale = $locale ?? core()->getRequestedLocaleCode();
+        $locale ??= core()->getRequestedLocaleCode();
 
         return $this->options()
             ->leftJoin('attribute_option_translations as aot', 'aot.attribute_option_id', 'attribute_options.id')
             ->whereIn('attribute_options.code', $codes)
-            ->where(function ($query) use ($locale) {
+            ->where(function (Builder $query) use ($locale) {
                 $query->where('aot.locale', $locale)
                     ->orWhereNull('aot.locale'); // Fallback if translation not found
             })

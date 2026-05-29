@@ -2,6 +2,7 @@
 
 namespace Webkul\Category\Providers;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Category\Models\CategoryProxy;
 use Webkul\Category\Observers\CategoryObserver;
@@ -22,6 +23,7 @@ class CategoryServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
+    #[\Override]
     public function register(): void
     {
         $this->registerConfig();
@@ -45,8 +47,6 @@ class CategoryServiceProvider extends ServiceProvider
         /**
          * Product value mapper
          */
-        $this->app->singleton('category_additional_data_mapper', function ($app) {
-            return new CategoryAdditionalDataMapper;
-        });
+        $this->app->singleton('category_additional_data_mapper', fn (Application $app) => new CategoryAdditionalDataMapper);
     }
 }

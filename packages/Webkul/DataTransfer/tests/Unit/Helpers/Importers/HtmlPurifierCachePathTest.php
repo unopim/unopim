@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Core\Traits\HtmlPurifier;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 
 describe('HtmlPurifier cache path configuration (Issue #350)', function () {
@@ -10,7 +11,7 @@ describe('HtmlPurifier cache path configuration (Issue #350)', function () {
         // Use reflection to inspect the purifyText method source
         $traitFile = (new ReflectionClass($processor))->getTraitNames();
 
-        expect($traitFile)->toContain('Webkul\Core\Traits\HtmlPurifier');
+        expect($traitFile)->toContain(HtmlPurifier::class);
 
         // Read the trait source to verify Cache.SerializerPath is configured
         $reflection = new ReflectionMethod($processor, 'purifyText');

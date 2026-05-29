@@ -4,6 +4,7 @@ namespace Webkul\Attribute\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Webkul\Attribute\Contracts\AttributeFamilyGroupMapping as AttributeFamilyGroupMappingContract;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
@@ -18,7 +19,7 @@ class AttributeFamilyGroupMapping extends Model implements AttributeFamilyGroupM
     public $timestamps = false;
 
     /** Tags for History */
-    protected $historyTags = ['attributeFamily'];
+    protected array $historyTags = ['attributeFamily'];
 
     protected $fillable = [
         'attribute_family_id',
@@ -29,7 +30,7 @@ class AttributeFamilyGroupMapping extends Model implements AttributeFamilyGroupM
     /**
      * Get the attributes that owns the attribute group.
      */
-    public function customAttributes()
+    public function customAttributes(): BelongsToMany
     {
         return $this->belongsToMany(AttributeProxy::modelClass(), 'attribute_group_mappings', 'attribute_family_group_id')
             ->withPivot('position')
@@ -39,7 +40,7 @@ class AttributeFamilyGroupMapping extends Model implements AttributeFamilyGroupM
     /**
      * Get all the attribute groups.
      */
-    public function attributeGroups()
+    public function attributeGroups(): BelongsToMany
     {
         $query = $this->belongsToMany(
             AttributeGroupProxy::modelClass(),

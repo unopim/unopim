@@ -13,26 +13,15 @@ class SaveTranslatedAllAttributesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $productId;
-
-    protected $translatedValues;
-
-    protected $channel;
-
     /**
      * Create a new job instance.
      */
-    public function __construct($productId, $translatedValues, $channel)
-    {
-        $this->productId = $productId;
-        $this->translatedValues = $translatedValues;
-        $this->channel = $channel;
-    }
+    public function __construct(protected mixed $productId, protected array $translatedValues, protected mixed $channel) {}
 
     /**
      * Execute the job.
      */
-    public function handle(ProductRepository $productRepository)
+    public function handle(ProductRepository $productRepository): void
     {
         $product = $productRepository->find($this->productId);
         $data = $product->values;

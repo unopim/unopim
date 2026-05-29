@@ -19,8 +19,6 @@ class CSV extends AbstractSource
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         string $filePath,
@@ -32,7 +30,7 @@ class CSV extends AbstractSource
             throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
         }
 
-        if ($detectedSeparator != $delimiter) {
+        if ($detectedSeparator !== $delimiter) {
             throw new \LogicException("Separator '{$delimiter}' is not supported in the provided file.");
         }
 
@@ -50,10 +48,8 @@ class CSV extends AbstractSource
             $headerRow = fgetcsv($this->reader, $this->maxLineLength, $delimiter);
 
             if (
-                $headerRow === false
-                || $headerRow === null
-                || $headerRow === [null]
-                || count(array_filter($headerRow, fn ($v) => $v !== null && $v !== '')) === 0
+                in_array($headerRow, [false, null, [null]], true)
+                || count(array_filter($headerRow, fn (mixed $v) => $v !== null && $v !== '')) === 0
             ) {
                 throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
             }
@@ -63,7 +59,7 @@ class CSV extends AbstractSource
             $this->totalColumns = count($this->columnNames);
         } catch (\LogicException $e) {
             throw $e;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }
     }
@@ -97,8 +93,6 @@ class CSV extends AbstractSource
 
     /**
      * Close file handle
-     *
-     * @return void
      */
     public function __destruct()
     {
@@ -116,9 +110,9 @@ class CSV extends AbstractSource
     {
         $parsed = fgetcsv($this->reader, $this->maxLineLength, $this->delimiter);
 
-        if (is_array($parsed) && count($parsed) != $this->totalColumns) {
+        if (is_array($parsed) && count($parsed) !== $this->totalColumns) {
             foreach ($parsed as $element) {
-                if ($element && strpos($element, "'") !== false) {
+                if ($element && str_contains($element, "'")) {
                     $this->foundWrongQuoteFlag = true;
 
                     break;
@@ -134,6 +128,7 @@ class CSV extends AbstractSource
     /**
      * Rewind the iterator to the first row
      */
+    #[\Override]
     public function rewind(): void
     {
         rewind($this->reader);

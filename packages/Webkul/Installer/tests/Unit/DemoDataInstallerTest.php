@@ -16,8 +16,8 @@ function demoInstaller(bool $alreadySeeded, bool $familyHasGroups = true): DemoD
     return new class($alreadySeeded, $familyHasGroups) extends DemoDataInstaller
     {
         public function __construct(
-            private bool $alreadySeeded,
-            private bool $familyHasGroups,
+            private readonly bool $alreadySeeded,
+            private readonly bool $familyHasGroups,
         ) {}
 
         public function isAlreadySeeded(): bool
@@ -44,7 +44,7 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
         ] as $class) {
             app()->instance($class, new class($calls, $class)
             {
-                public function __construct(private array &$calls, private string $name) {}
+                public function __construct(private array &$calls, private readonly string $name) {}
 
                 public function run(): void
                 {
@@ -81,7 +81,7 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
     it('reports the seeder failure message instead of bubbling the exception', function () {
         app()->instance(DemoExtrasTableSeeder::class, new class
         {
-            public function run(): void
+            public function run(): never
             {
                 throw new RuntimeException('boom');
             }
@@ -130,7 +130,7 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
         ] as $class) {
             app()->instance($class, new class($calls, $class)
             {
-                public function __construct(private array &$calls, private string $name) {}
+                public function __construct(private array &$calls, private readonly string $name) {}
 
                 public function run(): void
                 {

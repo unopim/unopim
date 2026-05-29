@@ -50,7 +50,7 @@ it('requires a webhook_url when the webhook is being activated', function () {
 it('allows an empty webhook_url when the webhook is inactive', function () {
     $response = storeWebhookSettings(['webhook_active' => 0, 'webhook_url' => '']);
 
-    $payload = json_decode($response->getContent(), true);
+    $payload = json_decode((string) $response->getContent(), true);
     expect($payload['success'] ?? null)->toBeTrue();
 });
 
@@ -64,7 +64,7 @@ it('saves a valid https webhook URL when the probe succeeds', function () {
         'webhook_url'    => 'https://1.1.1.1',
     ]);
 
-    $payload = json_decode($response->getContent(), true);
+    $payload = json_decode((string) $response->getContent(), true);
     expect($payload['success'] ?? null)->toBeTrue();
 
     $stored = DB::table('webhook_settings')->where('field', 'webhook_url')->value('value');
@@ -83,7 +83,7 @@ it('rejects the save when the probe returns a non-2xx response', function () {
 
     expect($response->getStatusCode())->toBe(422);
 
-    $payload = json_decode($response->getContent(), true);
+    $payload = json_decode((string) $response->getContent(), true);
     expect($payload['success'] ?? null)->toBeFalse();
     expect($payload['errors']['webhook_url'][0] ?? '')->toContain('404');
 
@@ -103,7 +103,7 @@ it('rejects the save when the probe cannot reach the host', function () {
 
     expect($response->getStatusCode())->toBe(422);
 
-    $payload = json_decode($response->getContent(), true);
+    $payload = json_decode((string) $response->getContent(), true);
     expect($payload['errors']['webhook_url'][0] ?? '')->toContain('could not be reached');
 
     $stored = DB::table('webhook_settings')->where('field', 'webhook_url')->value('value');
@@ -118,7 +118,7 @@ it('skips the probe when the webhook is being deactivated', function () {
         'webhook_url'    => 'https://anything.test/hook',
     ]);
 
-    $payload = json_decode($response->getContent(), true);
+    $payload = json_decode((string) $response->getContent(), true);
     expect($payload['success'] ?? null)->toBeTrue();
 
     Http::assertNothingSent();

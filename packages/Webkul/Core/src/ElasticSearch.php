@@ -11,10 +11,8 @@ class ElasticSearch
 {
     /**
      * Map configuration array keys with ES ClientBuilder setters
-     *
-     * @var array
      */
-    protected $configMappings = [
+    protected array $configMappings = [
         'retries'  => 'setRetries',
         'caBundle' => 'setCABundle',
     ];
@@ -37,19 +35,19 @@ class ElasticSearch
 
         $clientBuilder = ClientBuilder::create();
 
-        if ($connection == 'default') {
+        if ($connection === 'default') {
             /**
              * Build default connection
              */
             $clientBuilder->setHosts($config['hosts'])
                 ->setBasicAuthentication($config['user'] ?: '', $config['pass'] ?: '');
-        } elseif ($connection == 'api') {
+        } elseif ($connection === 'api') {
             /**
              * Build API key connection
              */
             $clientBuilder->setHosts($config['hosts'])
                 ->setApiKey($config['key']);
-        } elseif ($connection == 'cloud') {
+        } elseif ($connection === 'cloud') {
             /**
              * Build Elastic Cloud connection
              */
@@ -81,7 +79,7 @@ class ElasticSearch
         return $client;
     }
 
-    private function updateMaxResultWindow(Client $client)
+    private function updateMaxResultWindow(Client $client): void
     {
         // Setting the max_result_window to a large value
         $params = [
@@ -114,11 +112,10 @@ class ElasticSearch
      * Get the configuration for a named connection.
      *
      *
-     * @return mixed
      *
      * @throws \InvalidArgumentException
      */
-    protected function getConnectionConfig(string $name)
+    protected function getConnectionConfig(string $name): mixed
     {
         $connections = config('elasticsearch.connections');
 

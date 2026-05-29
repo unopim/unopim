@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $cellView = __DIR__.'/../../../src/Resources/views/components/bulkedit/cell.blade.php';
 $editorView = __DIR__.'/../../../src/Resources/views/components/bulkedit/editor.blade.php';
 $datetimeView = __DIR__.'/../../../src/Resources/views/components/bulkedit/type/datetime.blade.php';

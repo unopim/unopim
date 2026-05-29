@@ -9,21 +9,19 @@ use Webkul\Product\Type\AbstractType;
 
 class ProductValuesValidator
 {
-    private array $savedRules;
+    protected ChannelLocaleValuesValidator $channelLocaleValuesValidator;
 
-    protected $channelLocaleValuesValidator;
+    protected ChannelValuesValidator $channelValuesValidator;
 
-    protected $channelValuesValidator;
+    protected LocaleValuesValidator $localeValuesValidator;
 
-    protected $localeValuesValidator;
+    protected SectionsValidator $sectionsValidator;
 
-    protected $sectionsValidator;
+    protected CommonValuesValidator $commonValidator;
 
-    protected $commonValidator;
+    protected ProductCategoriesValidator $categoriesValidator;
 
-    protected $categoriesValidator;
-
-    protected $associationsValidator;
+    protected ProductAssociationsValidator $associationsValidator;
 
     /**
      * @return self

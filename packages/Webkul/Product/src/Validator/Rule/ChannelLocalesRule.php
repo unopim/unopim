@@ -33,8 +33,8 @@ class ChannelLocalesRule implements ValidationRule
 
         $unexpected = array_diff($locales, $this->channels[$attribute]);
 
-        if (! empty($unexpected)) {
-            $fail(sprintf('Unexpected locale(s) %s in channel %s', implode($unexpected), $attribute));
+        if ($unexpected !== []) {
+            $fail(sprintf('Unexpected locale(s) %s in channel %s', implode('', $unexpected), $attribute));
         }
     }
 }

@@ -17,39 +17,36 @@ use Konekt\Concord\Facades\Concord;
  */
 class ModuleCollector extends DataCollector implements AssetProvider, DataCollectorInterface, Renderable
 {
-    public $models = [];
+    public array $models = [];
 
-    public $views = [];
+    public array $views = [];
 
-    public $queries = [];
+    public array $queries = [];
 
-    public $count = 0;
+    public int $count = 0;
 
-    /**
-     * @return void
-     */
     public function __construct(
         Dispatcher $events,
         PDOCollector $pdoCollector
     ) {
-        $events->listen('eloquent.*', function ($event, $models) {
+        $events->listen('eloquent.*', function (string $event, array $models) {
             if (Str::contains($event, 'eloquent.retrieved')) {
                 foreach (array_filter($models) as $model) {
-                    $class = get_class($model);
+                    $class = $model::class;
                     $this->models[$class] = ($this->models[$class] ?? 0) + 1;
                     $this->count++;
                 }
             }
         });
 
-        $events->listen('composing:*', function ($view, $data = []) {
-            $view = $data ? $data[0] : $view;
+        $events->listen('composing:*', function (mixed $view, array $data = []) {
+            $view = $data !== [] ? $data[0] : $view;
 
             $this->views[] = $this->trimViewName($view->getName(), $view->getPath());
         });
 
         app()['db']->listen(
-            function ($query, $bindings = null, $time = null, $connectionName = null) use ($pdoCollector) {
+            function (QueryExecuted $query, mixed $bindings = null, mixed $time = null, mixed $connectionName = null) use ($pdoCollector) {
                 $this->queries[] = [
                     'sql'          => $this->addQueryBindings($query),
                     'duration'     => $query->time,
@@ -60,11 +57,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         );
     }
 
-    /**
-     * @param  QueryExecuted  $query
-     * @return string
-     */
-    public function addQueryBindings($query)
+    public function addQueryBindings(QueryExecuted $query): string
     {
         $sql = $query->sql;
 
@@ -83,7 +76,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
                     $binding = $query->connection->getPdo()->quote($binding ?? '');
                 }
 
-                $sql = preg_replace($regex, $binding, $sql, 1);
+                $sql = preg_replace($regex, $binding, (string) $sql, 1);
             }
         }
 
@@ -92,11 +85,8 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
 
     /**
      * Check bindings for illegal (non UTF-8) strings, like Binary data.
-     *
-     * @param  array  $bindings
-     * @return mixed
      */
-    public function checkBindings($bindings)
+    public function checkBindings(array $bindings): mixed
     {
         foreach ($bindings as &$binding) {
             if (
@@ -110,28 +100,23 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         return $bindings;
     }
 
-    /**
-     * @param  string  $name
-     * @param  string  $path
-     * @return string
-     */
-    public function trimViewName($name, $path)
+    public function trimViewName(string $name, string $path): string
     {
-        if ($path) {
+        if ($path !== '' && $path !== '0') {
             $path = ltrim(str_replace(base_path(), '', realpath($path)), '/');
         }
 
-        return $path ? sprintf('%s (%s)', $name, $path) : $name;
+        return $path !== '' && $path !== '0' ? sprintf('%s (%s)', $name, $path) : $name;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function collect()
+    public function collect(): array
     {
         $modules = [];
 
-        foreach (Concord::getModules() as $moduleId => $module) {
+        foreach (Concord::getModules() as $module) {
             $models = $this->getModels($module->getNamespaceRoot());
 
             $views = $this->getTemplates($module->getNamespaceRoot());
@@ -152,24 +137,18 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
             }
         }
 
-        $data = [
+        return [
             'count'   => count($modules),
             'modules' => $modules,
         ];
-
-        return $data;
     }
 
-    /**
-     * @param  string  $classNamespace
-     * @return array
-     */
-    public function getModels($classNamespace)
+    public function getModels(string $classNamespace): array
     {
         $models = [];
 
         foreach ($this->models as $model => $count) {
-            if (strpos($model, $classNamespace.'\\') !== false) {
+            if (str_contains((string) $model, $classNamespace.'\\')) {
                 $models[] = $model.' ('.$count.')';
             }
         }
@@ -177,11 +156,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         return $models;
     }
 
-    /**
-     * @param  string  $classNamespace
-     * @return array
-     */
-    public function getTemplates($classNamespace)
+    public function getTemplates(string $classNamespace): array
     {
         $viewNamespace = Str::lower(class_basename($classNamespace));
 
@@ -190,13 +165,13 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         $views = [];
 
         foreach ($this->views as $view) {
-            if (strpos($view, $classNamespace) !== false) {
+            if (str_contains((string) $view, $classNamespace)) {
                 $views[] = $view;
-            } elseif (strpos($view, 'resources/themes/'.$viewNamespace.'/') !== false) {
+            } elseif (str_contains((string) $view, 'resources/themes/'.$viewNamespace.'/')) {
                 $views[] = $view;
-            } elseif (strpos($view, 'resources/admin-themes/'.$viewNamespace.'/') !== false) {
+            } elseif (str_contains((string) $view, 'resources/admin-themes/'.$viewNamespace.'/')) {
                 $views[] = $view;
-            } elseif (strpos($view, 'resources/vendor/views/'.$viewNamespace.'/') !== false) {
+            } elseif (str_contains((string) $view, 'resources/vendor/views/'.$viewNamespace.'/')) {
                 $views[] = $view;
             }
         }
@@ -204,11 +179,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         return $views;
     }
 
-    /**
-     * @param  string  $classNamespace
-     * @return array
-     */
-    public function getQueries($classNamespace)
+    public function getQueries(string $classNamespace): array
     {
         $moduleTables = $this->getDatabaseTables($classNamespace);
 
@@ -227,16 +198,12 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         return $queries;
     }
 
-    /**
-     * @param  string  $classNamespace
-     * @return array
-     */
-    public function getDatabaseTables($classNamespace)
+    public function getDatabaseTables(string $classNamespace): array
     {
         $tables = [];
 
-        foreach (Concord::getModelBindings() as $contract => $model) {
-            if (strpos($model, $classNamespace.'\\') !== false) {
+        foreach (Concord::getModelBindings() as $model) {
+            if (str_contains($model, $classNamespace.'\\')) {
                 $tables[] = app($model)->getTable();
             }
         }
@@ -247,7 +214,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'modules';
     }
@@ -255,7 +222,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
     /**
      * {@inheritDoc}
      */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return [
             'modules'       => [
@@ -272,10 +239,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getAssets()
+    public function getAssets(): array
     {
         return [
             'base_path' => __DIR__.'/../Resources/',

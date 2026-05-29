@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'users' => [
         'sessions' => [
@@ -2386,7 +2388,6 @@ return [
         'events'                   => 'Events',
         'groups'                   => 'Groups',
         'import'                   => 'Import',
-        'imports'                  => 'Imports',
         'invoices'                 => 'Invoices',
         'locales'                  => 'Locales',
         'magic-ai'                 => 'Magic AI',

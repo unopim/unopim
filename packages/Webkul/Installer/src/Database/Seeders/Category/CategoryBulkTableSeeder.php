@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Installer\Database\Seeders\Category;
 
 use Faker\Generator as Faker;
@@ -15,23 +17,17 @@ use Webkul\Category\Repositories\CategoryRepository;
  */
 class CategoryBulkTableSeeder extends Seeder
 {
-    private $numberOfParentCategories = 10;
+    private int $numberOfParentCategories = 10;
 
-    private $numberOfChildCategories = 50;
+    private int $numberOfChildCategories = 50;
 
-    public function __construct(
-        Faker $faker,
-        CategoryRepository $categoryRepository
-    ) {
-        $this->faker = $faker;
-        $this->categoryRepository = $categoryRepository;
-    }
+    public function __construct(public Faker $faker, public CategoryRepository $categoryRepository) {}
 
-    public function run()
+    public function run(): void
     {
         for ($i = 0; $i < $this->numberOfParentCategories; $i++) {
             $createdCategory = $this->categoryRepository->create([
-                'code'        => $this->faker->firstName.rand(1, 1000),
+                'code'        => $this->faker->firstName.random_int(1, 1000),
                 'parent_id'   => 1,
             ]);
 
@@ -39,7 +35,7 @@ class CategoryBulkTableSeeder extends Seeder
                 for ($j = 0; $j < $this->numberOfChildCategories; $j++) {
 
                     $this->categoryRepository->create([
-                        'code'        => $this->faker->firstName.rand(1000, 10000),
+                        'code'        => $this->faker->firstName.random_int(1000, 10000),
                         'parent_id'   => $createdCategory->id,
                     ]);
                 }

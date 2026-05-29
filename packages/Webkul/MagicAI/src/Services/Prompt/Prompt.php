@@ -4,18 +4,16 @@ namespace Webkul\MagicAI\Services\Prompt;
 
 class Prompt
 {
-    protected $typeInstance;
+    protected ?AbstractPrompt $typeInstance = null;
 
-    public function getPrompt(string $prompt, int $resourceId, string $resourceType)
+    public function getPrompt(string $prompt, int $resourceId, string $resourceType): string
     {
         $typeInstance = $this->getTypeInstance($resourceType);
 
-        $prompt = $typeInstance ? $this->getTypeInstance($resourceType)->updatePrompt($prompt, $resourceId) : $prompt;
-
-        return $prompt;
+        return $typeInstance instanceof AbstractPrompt ? $this->getTypeInstance($resourceType)->updatePrompt($prompt, $resourceId) : $prompt;
     }
 
-    public function getTypeInstance($resourceType)
+    public function getTypeInstance(string $resourceType): ?AbstractPrompt
     {
         if ($resourceType === 'product') {
             $this->typeInstance = ProductPrompt::getInstance();

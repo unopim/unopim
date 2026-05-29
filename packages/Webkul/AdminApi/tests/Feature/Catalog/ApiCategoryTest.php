@@ -196,7 +196,7 @@ it('should return 404 if category not found for delete', function () {
             'message',
         ])
         ->assertJsonFragment(['success' => false])
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.categories.not-found', ['code' => (string) $nonExistingCode])]);
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.categories.not-found', ['code' => $nonExistingCode])]);
 });
 
 it('should partially update the category and its parent', function () {
@@ -249,7 +249,7 @@ it('should return 404 if category not found for patch', function () {
             'message',
         ])
         ->assertJsonFragment(['success' => false])
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.categories.not-found', ['code' => (string) $nonExistingCode])]);
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.categories.not-found', ['code' => $nonExistingCode])]);
 });
 
 it('should successfully patch the category', function () {
@@ -771,11 +771,7 @@ it('should update the multiselect type category fields value in the category', f
     $options = '';
 
     foreach ($categoryField->options()->getResults() as $option) {
-        if (empty($options)) {
-            $options = $options.$option->code;
-        } else {
-            $options = $options.','.$option->code;
-        }
+        $options = $options === '' || $options === '0' ? $options.$option->code : $options.','.$option->code;
     }
 
     $updatedCategory = [
@@ -811,11 +807,7 @@ it('should update the checkbox type category fields value in the category', func
 
     $options = '';
     foreach ($categoryField->options()->getResults() as $option) {
-        if (empty($options)) {
-            $options = $options.$option->code;
-        } else {
-            $options = $options.','.$option->code;
-        }
+        $options = $options === '' || $options === '0' ? $options.$option->code : $options.','.$option->code;
     }
 
     $updatedCategory = [

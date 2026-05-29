@@ -23,8 +23,6 @@ class ProductController extends ApiController
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected ProductRepository $productRepository,
@@ -107,7 +105,7 @@ class ProductController extends ApiController
         return $product;
     }
 
-    public function sanitizeData($product, $attributes): ?array
+    public function sanitizeData(?array $product, Collection $attributes): ?array
     {
         foreach ($attributes as $attribute) {
             if ($attribute->value_per_channel && $attribute->value_per_locale) {
@@ -181,7 +179,7 @@ class ProductController extends ApiController
         return $product;
     }
 
-    private function mergeValues(array $existing, array $new, Collection $attributes)
+    private function mergeValues(array $existing, array $new, Collection $attributes): array
     {
         foreach ($new as $key => $value) {
             if (is_array($value) && isset($existing[$key]) && is_array($existing[$key])) {
@@ -262,7 +260,7 @@ class ProductController extends ApiController
         $parentData['values'] = $parentProduct->values;
         $parentData['super_attributes'] = $superAttributes;
 
-        $parentProduct = $this->updateProduct($parentData, $parentProduct);
+        $this->updateProduct($parentData, $parentProduct);
 
         return $this->findProductOr404($data['sku']);
     }
@@ -287,7 +285,7 @@ class ProductController extends ApiController
             }
 
             $superAttributes = array_intersect($configurableAttributes, $data['super_attributes']);
-            if (empty($superAttributes)) {
+            if ($superAttributes === []) {
                 throw new ModelNotFoundException(trans('admin::app.catalog.products.index.create.not-config-super-attributes-error', ['super_attributes' => json_encode($data['super_attributes'], true)]));
             }
         }
@@ -319,7 +317,7 @@ class ProductController extends ApiController
         $existVariants = $product->variants()->get()?->toArray();
         foreach ($existVariants as $variant) {
             $commonValue = ['sku' => $variant['sku']];
-            foreach ($data['super_attributes'] as $key => $attrCode) {
+            foreach ($data['super_attributes'] as $attrCode) {
                 $commonValue[$attrCode] = $variant['values']['common'][$attrCode];
             }
 

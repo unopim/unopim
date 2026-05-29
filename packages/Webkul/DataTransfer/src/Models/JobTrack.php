@@ -66,20 +66,16 @@ class JobTrack extends Model implements JobTrackContract
 
     /**
      * Get the job that owns the job batch.
-     *
-     * @return HasMany
      */
-    public function batches()
+    public function batches(): HasMany
     {
         return $this->hasMany(JobTrackBatchProxy::modelClass());
     }
 
     /**
      * Get the job parent instance.
-     *
-     * @return BelongsTo
      */
-    public function jobInstance()
+    public function jobInstance(): BelongsTo
     {
         return $this->belongsTo(JobInstancesProxy::modelClass(), 'job_instances_id', 'id');
     }

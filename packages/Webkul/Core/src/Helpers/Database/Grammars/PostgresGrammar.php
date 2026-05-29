@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Core\Helpers\Database\Grammars;
 
 use Webkul\Core\Contracts\Database\Grammar;
@@ -44,26 +46,24 @@ class PostgresGrammar implements Grammar
 
     public function jsonExtract(string $column, string ...$pathSegments): string
     {
-        $operators = count($pathSegments) > 1 ? array_map(fn ($part) => "'{$part}'", $pathSegments) : $pathSegments;
+        $operators = count($pathSegments) > 1 ? array_map(fn (string $part) => "'{$part}'", $pathSegments) : $pathSegments;
 
         $lastKey = array_pop($operators);
 
         // Escape column name — handles both 'values' and 'table.values'
         $parts = explode('.', $column);
-        $quotedColumn = implode('.', array_map(fn ($p) => '"'.$p.'"', $parts));
+        $quotedColumn = implode('.', array_map(fn (string $p) => '"'.$p.'"', $parts));
 
-        $jsonString = ! empty($operators)
-            ? "{$quotedColumn}->".implode('->', $operators)."->>{$lastKey}"
-            : "{$quotedColumn}->>'{$lastKey}'";
-
-        return $jsonString;
+        return $operators === []
+            ? "{$quotedColumn}->>'{$lastKey}'"
+            : "{$quotedColumn}->".implode('->', $operators)."->>{$lastKey}";
     }
 
     public function jsonContains(string $column, array $pathSegments, string $value): string
     {
         $parts = explode('.', $column);
-        $quotedColumn = implode('.', array_map(fn ($p) => '"'.$p.'"', $parts));
-        $operators = array_map(fn ($p) => "'{$p}'", $pathSegments);
+        $quotedColumn = implode('.', array_map(fn (string $p) => '"'.$p.'"', $parts));
+        $operators = array_map(fn (string $p) => "'{$p}'", $pathSegments);
         $jsonExpr = $quotedColumn.'->'.implode('->', $operators);
 
         return "({$jsonExpr})::jsonb @> {$value}::jsonb";
@@ -81,7 +81,7 @@ class PostgresGrammar implements Grammar
         return '~';
     }
 
-    public function getBooleanValue(mixed $value)
+    public function getBooleanValue(mixed $value): string
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 't' : 'f';
     }

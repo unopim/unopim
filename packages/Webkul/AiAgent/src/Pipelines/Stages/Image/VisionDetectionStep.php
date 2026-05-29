@@ -73,19 +73,19 @@ class VisionDetectionStep implements PipelineStageContract
         // Merge vision output into the flowing ImageProductContext DTO
         $ctx = ImageProductContext::fromArray($payload->metadata['imageContext'] ?? []);
 
-        if (! empty($visionCtx->detectedProduct)) {
+        if (! in_array($visionCtx->detectedProduct, [null, '', '0'], true)) {
             $ctx = $ctx->withDetectedProduct($visionCtx->detectedProduct);
         }
 
-        if (! empty($visionCtx->rawAiResponse)) {
+        if (! in_array($visionCtx->rawAiResponse, [null, '', '0'], true)) {
             $ctx = $ctx->withRawAiResponse($visionCtx->rawAiResponse);
         }
 
-        if (! empty($visionCtx->category)) {
+        if (! in_array($visionCtx->category, [null, '', '0'], true)) {
             $ctx = $ctx->withCategory($visionCtx->category);
         }
 
-        if (! empty($visionCtx->attributes)) {
+        if ($visionCtx->attributes !== []) {
             $ctx = $ctx->withAttributes($visionCtx->attributes);
         }
 

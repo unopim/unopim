@@ -27,9 +27,10 @@ class MagicAISystemPrompt extends Model implements MagicAISystemPromptContract
         return MagicAISystemPromptFactory::new();
     }
 
-    protected static function booted()
+    #[\Override]
+    protected static function booted(): void
     {
-        static::saving(function ($model) {
+        static::saving(function (Model $model): void {
             if ($model->is_enabled) {
                 static::where('id', '!=', $model->id)->update(['is_enabled' => false]);
             }

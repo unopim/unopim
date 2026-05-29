@@ -17,18 +17,13 @@ class ImportBatch implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param  mixed  $importBatch
-     * @return void
      */
-    public function __construct(protected $importBatch, protected $jobTrackId) {}
+    public function __construct(protected mixed $importBatch, protected mixed $jobTrackId) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $logger = JobLogger::make($this->jobTrackId);
 
@@ -51,7 +46,7 @@ class ImportBatch implements ShouldQueue
         $logger->info("ImportBatch #{$this->importBatch->id} completed.");
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         JobLogger::make($this->jobTrackId)->error("ImportBatch #{$this->importBatch->id} failed: {$exception->getMessage()}", [
             'batch_id'  => $this->importBatch->id,

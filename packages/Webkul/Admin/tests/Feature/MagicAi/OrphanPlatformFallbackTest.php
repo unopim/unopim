@@ -104,7 +104,6 @@ it('falls back to default when request platform_id is deleted', function () {
     $this->app->instance('magic_ai', $mock);
 
     $reflection = new ReflectionMethod($controller, 'setPlatformOrDefault');
-    $reflection->setAccessible(true);
     $result = $reflection->invoke($controller, 99999);
 
     expect($result)->toBe($mock);

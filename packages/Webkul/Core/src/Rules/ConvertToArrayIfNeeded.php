@@ -29,17 +29,13 @@ class ConvertToArrayIfNeeded implements ValidationRule
 
     /**
      * Determine if the value is comma separated integer.
-     *
-     * @param  string  $attribute
-     * @param  mixed  $value
-     * @return bool
      */
-    public function isCommaSeparatedString($attribute, $value)
+    public function isCommaSeparatedString(string $attribute, mixed $value): bool
     {
 
-        if (strpos($value, ',') !== false) {
+        if (str_contains((string) $value, ',')) {
             // Convert to array
-            request()->merge([$attribute => explode(',', $value)]);
+            request()->merge([$attribute => explode(',', (string) $value)]);
         }
 
         return true;

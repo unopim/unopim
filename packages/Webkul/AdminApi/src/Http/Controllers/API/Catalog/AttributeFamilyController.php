@@ -16,8 +16,6 @@ class AttributeFamilyController extends ApiController
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
@@ -68,7 +66,7 @@ class AttributeFamilyController extends ApiController
         $errors = [];
         $requestData = $this->normalize($requestData, $errors);
 
-        if ($errors) {
+        if ($errors !== []) {
             return $this->validateErrorResponse($errors);
         }
 
@@ -104,7 +102,7 @@ class AttributeFamilyController extends ApiController
         $errors = [];
         $requestData = $this->normalize($requestData, $errors, $id);
 
-        if ($errors) {
+        if ($errors !== []) {
             return $this->validateErrorResponse($errors);
         }
 
@@ -124,13 +122,11 @@ class AttributeFamilyController extends ApiController
 
     /**
      * Normalize custom attributes, and custom attribute groups data.
-     *
-     * @return array
      */
-    private function normalize(array $requestData, &$errors, ?int $familyId = null)
+    private function normalize(array $requestData, array &$errors, ?int $familyId = null): array
     {
         $attributeGroup = [];
-        foreach ($requestData['attribute_groups'] as $key => $value) {
+        foreach ($requestData['attribute_groups'] as $value) {
             $groupId = $this->attributeGroupRepository->findOneByField('code', $value['code'])?->id;
             if (! $groupId) {
                 $errors[] = [
@@ -164,7 +160,7 @@ class AttributeFamilyController extends ApiController
      *
      * @return array The modified data array with attribute IDs and positions set.
      */
-    private function setAttributeAndPosition(array $data, &$errors)
+    private function setAttributeAndPosition(array $data, array &$errors): array
     {
         foreach ($data['custom_attributes'] as $key => $value) {
             $data['custom_attributes'][$key]['position'] = $value['position'];

@@ -3,6 +3,7 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -20,17 +21,15 @@ class AttributeDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $tablePrefix = DB::getTablePrefix();
 
         $grammar = DB::rawQueryGrammar();
 
-        $queryBuilder = DB::table('attributes')
-            ->leftJoin('attribute_translations as attribute_name', function ($join) {
+        return DB::table('attributes')
+            ->leftJoin('attribute_translations as attribute_name', function (JoinClause $join) {
                 $join->on('attribute_name.attribute_id', '=', 'attributes.id')
                     ->where('attribute_name.locale', '=', core()->getRequestedLocaleCode());
             })
@@ -52,16 +51,12 @@ class AttributeDataGrid extends DataGrid
                     END) AS name"
                 )
             );
-
-        return $queryBuilder;
     }
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'code',
@@ -88,7 +83,7 @@ class AttributeDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => fn ($row) => trans($this->typeConfig[$row->type]['name'] ?? "[$row->type]"),
+            'closure'    => fn (\stdClass $row) => trans($this->typeConfig[$row->type]['name'] ?? "[$row->type]"),
         ]);
 
         $this->addColumn([
@@ -98,7 +93,7 @@ class AttributeDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => fn ($row) => $row->is_required ? '<span class="label-active">'.trans('admin::app.common.yes').'</span>' : '<span class="label-info">'.trans('admin::app.common.no').'</span>',
+            'closure'    => fn (\stdClass $row) => $row->is_required ? '<span class="label-active">'.trans('admin::app.common.yes').'</span>' : '<span class="label-info">'.trans('admin::app.common.no').'</span>',
         ]);
 
         $this->addColumn([
@@ -108,7 +103,7 @@ class AttributeDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => fn ($row) => $row->is_unique ? '<span class="label-active">'.trans('admin::app.common.yes').'</span>' : '<span class="label-info">'.trans('admin::app.common.no').'</span>',
+            'closure'    => fn (\stdClass $row) => $row->is_unique ? '<span class="label-active">'.trans('admin::app.common.yes').'</span>' : '<span class="label-info">'.trans('admin::app.common.no').'</span>',
         ]);
 
         $this->addColumn([
@@ -118,7 +113,7 @@ class AttributeDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => fn ($row) => $row->value_per_locale ? '<span class="label-active">'.trans('admin::app.common.yes').'</span>' : '<span class="label-info">'.trans('admin::app.common.no').'</span>',
+            'closure'    => fn (\stdClass $row) => $row->value_per_locale ? '<span class="label-active">'.trans('admin::app.common.yes').'</span>' : '<span class="label-info">'.trans('admin::app.common.no').'</span>',
         ]);
 
         $this->addColumn([
@@ -128,7 +123,7 @@ class AttributeDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => fn ($row) => $row->value_per_channel ? '<span class="label-active">'.trans('admin::app.common.yes').'</span>' : '<span class="label-info">'.trans('admin::app.common.no').'</span>',
+            'closure'    => fn (\stdClass $row) => $row->value_per_channel ? '<span class="label-active">'.trans('admin::app.common.yes').'</span>' : '<span class="label-info">'.trans('admin::app.common.no').'</span>',
         ]);
 
         $this->addColumn([
@@ -143,10 +138,8 @@ class AttributeDataGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('catalog.attributes.edit')) {
             $this->addAction([
@@ -154,9 +147,7 @@ class AttributeDataGrid extends DataGrid
                 'index'  => 'edit',
                 'title'  => trans('admin::app.catalog.attributes.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.catalog.attributes.edit', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.attributes.edit', $row->id),
             ]);
         }
 
@@ -165,19 +156,15 @@ class AttributeDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.catalog.attributes.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.catalog.attributes.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.attributes.delete', $row->id),
             ]);
         }
     }
 
     /**
      * Prepare mass actions.
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         if (bouncer()->hasPermission('catalog.attributes.mass_delete')) {
             $this->addMassAction([

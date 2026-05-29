@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\AiAgent\Providers;
 
 use Webkul\AiAgent\Models\Agent;

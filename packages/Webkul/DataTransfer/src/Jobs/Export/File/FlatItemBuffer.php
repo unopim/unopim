@@ -11,12 +11,11 @@ use Webkul\DataTransfer\Buffer\FileBuffer;
  */
 class FlatItemBuffer extends FileBuffer implements BufferInterface
 {
-    /** @var int */
-    protected $count = 0;
+    protected int $count = 0;
 
-    protected $headerWritten = false;
+    protected bool $headerWritten = false;
 
-    public function initialize($directory, $fileName, $options = [])
+    public function initialize(string $directory, string $fileName, array $options = []): static
     {
         $this->count = 0;
 
@@ -34,7 +33,7 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
     /**
      * {@inheritdoc}
      */
-    public function addData($items)
+    public function addData(mixed $items): void
     {
         foreach ($items as $item) {
             if (! $this->headerWritten) {
@@ -48,12 +47,12 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
         }
     }
 
-    public function writerClose()
+    public function writerClose(): void
     {
         $this->writer->close();
     }
 
-    public function getFilePath()
+    public function getFilePath(): mixed
     {
         return $this->filePath;
     }

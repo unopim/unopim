@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Webkul\MagicAI\MagicAI;
 
 if (! function_exists('magic_ai')) {

@@ -18,10 +18,8 @@ class AgentRepository extends Repository
 
     /**
      * Get active agents for dropdowns.
-     *
-     * @return Collection
      */
-    public function getActiveList()
+    public function getActiveList(): Collection
     {
         return $this->model
             ->where('status', true)

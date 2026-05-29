@@ -23,7 +23,7 @@ class ParentFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
@@ -39,21 +39,17 @@ class ParentFilter extends AbstractPropertyFilter
             );
         }
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $this->queryBuilder->whereIn(
-                    sprintf('%s.%s', $this->getSearchTablePath($options), 'parent_id'),
-                    $this->getParentIdsBySkus($value, $options)
-                );
-                break;
-
-            case FilterOperators::CONTAINS:
-                $this->queryBuilder->whereIn(
-                    sprintf('%s.%s', $this->getSearchTablePath($options), 'parent_id'),
-                    $this->getParentIdsBySkus($value, $options)
-                );
-                break;
-        }
+        match ($operator) {
+            FilterOperators::IN => $this->queryBuilder->whereIn(
+                sprintf('%s.%s', $this->getSearchTablePath($options), 'parent_id'),
+                $this->getParentIdsBySkus($value, $options)
+            ),
+            FilterOperators::CONTAINS => $this->queryBuilder->whereIn(
+                sprintf('%s.%s', $this->getSearchTablePath($options), 'parent_id'),
+                $this->getParentIdsBySkus($value, $options)
+            ),
+            default => $this,
+        };
 
         return $this;
     }

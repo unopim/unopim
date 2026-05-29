@@ -10,40 +10,30 @@ class Themes
 {
     /**
      * Contains current activated theme code.
-     *
-     * @var string
      */
-    protected $activeTheme = null;
+    protected ?Theme $activeTheme = null;
 
     /**
      * Contains all themes.
-     *
-     * @var array
      */
-    protected $themes = [];
+    protected array $themes = [];
 
     /**
      * Contains laravel default view paths.
-     *
-     * @var array
      */
-    protected $laravelViewsPath;
+    protected array $laravelViewsPath;
 
     /**
      * Contains default theme code.
-     *
-     * @var string
      */
-    protected $defaultThemeCode = 'default';
+    protected string $defaultThemeCode = 'default';
 
     /**
      * Create a new themes instance.
-     *
-     * @return void
      */
     public function __construct()
     {
-        $this->defaultThemeCode = Config::get('themes.admin-default', null);
+        $this->defaultThemeCode = Config::get('themes.admin-default');
 
         $this->laravelViewsPath = Config::get('view.paths');
 
@@ -52,20 +42,16 @@ class Themes
 
     /**
      * Return list of all registered themes.
-     *
-     * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $this->themes;
     }
 
     /**
      * Return list of registered themes.
-     *
-     * @return array
      */
-    public function getChannelThemes()
+    public function getChannelThemes(): array
     {
         $themes = config('themes.admin', []);
 
@@ -77,7 +63,7 @@ class Themes
                 $data['name'] ?? '',
                 $data['assets_path'] ?? '',
                 $data['views_path'] ?? '',
-                isset($data['vite']) ? $data['vite'] : [],
+                $data['vite'] ?? [],
             );
 
             if (! empty($data['parent'])) {
@@ -90,10 +76,8 @@ class Themes
 
     /**
      * Check if specified exists.
-     *
-     * @return bool
      */
-    public function exists(string $themeName)
+    public function exists(string $themeName): bool
     {
         foreach ($this->themes as $theme) {
             if ($theme->code == $themeName) {
@@ -106,10 +90,8 @@ class Themes
 
     /**
      * Prepare all themes.
-     *
-     * @return void
      */
-    public function loadThemes()
+    public function loadThemes(): void
     {
         $parentThemes = [];
 
@@ -132,11 +114,7 @@ class Themes
         foreach ($parentThemes as $childCode => $parentCode) {
             $child = $this->find($childCode);
 
-            if ($this->exists($parentCode)) {
-                $parent = $this->find($parentCode);
-            } else {
-                $parent = new Theme($parentCode);
-            }
+            $parent = $this->exists($parentCode) ? $this->find($parentCode) : new Theme($parentCode);
 
             $child->setParent($parent);
         }
@@ -144,16 +122,10 @@ class Themes
 
     /**
      * Enable theme.
-     *
-     * @return Theme
      */
-    public function set(string $themeName)
+    public function set(string $themeName): Theme
     {
-        if ($this->exists($themeName)) {
-            $theme = $this->find($themeName);
-        } else {
-            $theme = new Theme($themeName);
-        }
+        $theme = $this->exists($themeName) ? $this->find($themeName) : new Theme($themeName);
 
         $this->activeTheme = $theme;
 
@@ -176,30 +148,24 @@ class Themes
 
     /**
      * Get current theme.
-     *
-     * @return Theme
      */
-    public function current()
+    public function current(): Theme
     {
         return $this->activeTheme ?? $this->set($this->defaultThemeCode);
     }
 
     /**
      * Get current theme's name.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->current()?->name ?? '';
     }
 
     /**
      * Find a theme by it's name.
-     *
-     * @return Theme
      */
-    public function find(string $themeName)
+    public function find(string $themeName): Theme
     {
         foreach ($this->themes as $theme) {
             if ($theme->code == $themeName) {
@@ -212,20 +178,16 @@ class Themes
 
     /**
      * Original view paths defined in `config.view.php`.
-     *
-     * @return array
      */
-    public function getLaravelViewPaths()
+    public function getLaravelViewPaths(): array
     {
         return $this->laravelViewsPath;
     }
 
     /**
      * Return the asset URL of the current theme if a theme is found; otherwise, check from the namespace.
-     *
-     * @return string
      */
-    public function url(string $filename, ?string $namespace = null)
+    public function url(string $filename, ?string $namespace = null): string
     {
         $url = trim($filename, '/');
 
@@ -233,7 +195,7 @@ class Themes
          * If the namespace is null, it means the theming system is activated. We use the request URI to
          * detect the theme and provide Vite assets based on the current theme.
          */
-        if (empty($namespace)) {
+        if (in_array($namespace, [null, '', '0'], true)) {
             return $this->current()->url($url);
         }
 
@@ -247,7 +209,7 @@ class Themes
             throw new ViterNotFound($namespace);
         }
 
-        $viteUrl = trim($viters[$namespace]['package_assets_directory'], '/').'/'.$url;
+        $viteUrl = trim((string) $viters[$namespace]['package_assets_directory'], '/').'/'.$url;
 
         return Vite::useHotFile($viters[$namespace]['hot_file'])
             ->useBuildDirectory($viters[$namespace]['build_directory'])
@@ -256,17 +218,14 @@ class Themes
 
     /**
      * Set UnoPim vite in current theme.
-     *
-     * @param  mixed  $entryPoints
-     * @return mixed
      */
-    public function setUnoPimVite($entryPoints, ?string $namespace = null)
+    public function setUnoPimVite(mixed $entryPoints, ?string $namespace = null): mixed
     {
         /**
          * If the namespace is null, it means the theming system is activated. We use the request URI to
          * detect the theme and provide Vite assets based on the current theme.
          */
-        if (empty($namespace)) {
+        if (in_array($namespace, [null, '', '0'], true)) {
             return $this->current()->setUnoPimVite($entryPoints);
         }
 

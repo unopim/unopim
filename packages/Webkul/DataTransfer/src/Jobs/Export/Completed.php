@@ -19,20 +19,17 @@ class Completed implements ShouldQueue
      * Create a new job instance.
      *
      * @param  mixed  $import
-     * @return void
      */
     public function __construct(
-        protected $export,
-        protected $jobTrackId,
-        protected $exportBuffer
+        protected mixed $export,
+        protected mixed $jobTrackId,
+        protected mixed $exportBuffer
     ) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $exportHelper = app(ExportHelper::class)
             ->setExport($this->export)
@@ -51,7 +48,7 @@ class Completed implements ShouldQueue
         Cache::forget('export_init_'.$this->export->id);
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         JobLogger::make($this->jobTrackId)->error("Export Completed job failed: {$exception->getMessage()}", [
             'exception' => $exception->getTraceAsString(),

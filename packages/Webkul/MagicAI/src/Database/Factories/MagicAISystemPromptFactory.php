@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\MagicAI\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -9,7 +11,7 @@ class MagicAISystemPromptFactory extends Factory
 {
     protected $model = MagicAISystemPrompt::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
             'title'        => $this->faker->sentence,

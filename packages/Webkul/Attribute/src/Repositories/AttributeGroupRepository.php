@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Attribute\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
+use Webkul\Attribute\Contracts\AttributeGroup;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeGroupRepository extends Repository
@@ -12,16 +15,14 @@ class AttributeGroupRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeGroup';
+        return AttributeGroup::class;
     }
 
     /**
      * This function returns a query builder instance for the AttributeGroup model.
      * It eager loads the 'translations' relationship for the attribute groups.
-     *
-     * @return Builder
      */
-    public function queryBuilder()
+    public function queryBuilder(): static
     {
         return $this->with(['translations']);
     }

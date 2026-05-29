@@ -31,11 +31,9 @@ if (! function_exists('view_render_event')) {
     /**
      * View render event.
      *
-     * @param  string  $eventName
-     * @param  mixed  $params
      * @return mixed
      */
-    function view_render_event($eventName, $params = null)
+    function view_render_event(string $eventName, mixed $params = null)
     {
         app()->singleton(ViewRenderEventManager::class);
 

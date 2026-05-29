@@ -23,17 +23,17 @@ window.app = createApp({
             setTimeout(() => {
                 const errorKeys = Object.entries(errors)
                     .map(([key, value]) => ({ key, value }))
-                    .filter(error => error["value"].length);
+                    .filter((error) => error["value"].length);
 
-                if (! errorKeys.length) return;
+                if (!errorKeys.length) return;
 
                 let firstErrorElement = document.querySelector('[name="' + errorKeys[0]["key"] + '"]');
 
-                if (! firstErrorElement) return;
+                if (!firstErrorElement) return;
 
                 firstErrorElement.scrollIntoView({
                     behavior: "smooth",
-                    block: "center"
+                    block: "center",
                 });
 
                 setTimeout(() => {
@@ -54,22 +54,12 @@ import Emitter from "./plugins/emitter";
 import Flatpickr from "./plugins/flatpickr";
 import VeeValidate from "./plugins/vee-validate";
 import Draggable from "./plugins/draggable";
-import Multiselect from './plugins/multiselect';
+import Multiselect from "./plugins/multiselect";
 import Tribute from "./plugins/tribute";
 
-[
-    Admin,
-    Axios,
-    CreateElement,
-    Emitter,
-    Flatpickr,
-    VeeValidate,
-    Draggable,
-    Multiselect,
-    Tribute,
-].forEach((plugin) => app.use(plugin));
-
-
+[Admin, Axios, CreateElement, Emitter, Flatpickr, VeeValidate, Draggable, Multiselect, Tribute].forEach((plugin) =>
+    app.use(plugin)
+);
 
 /**
  * Global directives.

@@ -4,6 +4,7 @@ namespace Webkul\Product\Validator\API;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -34,14 +35,14 @@ class UploadMediaValidator
         $rules = $this->generateRules($productAttribute);
         $validator = Validator::make($data, $rules);
 
-        if (! $productAttribute) {
-            $validator->after(function ($validator) use ($attributeCode) {
+        if (! $productAttribute instanceof Attribute) {
+            $validator->after(function (mixed $validator) use ($attributeCode) {
                 $validator->errors()->add('attribute', trans('admin::app.catalog.attributes.not-found', ['code' => $attributeCode]));
             });
         }
 
         if ($productAttribute && ! in_array($productAttribute->type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE, AttributeTypes::GALLERY_ATTRIBUTE_TYPE])) {
-            $validator->after(function ($validator) use ($attributeCode) {
+            $validator->after(function (mixed $validator) use ($attributeCode) {
                 $validator->errors()->add('attribute', trans('admin::app.catalog.attributes.not-found', ['code' => $attributeCode]));
             });
         }
@@ -54,12 +55,10 @@ class UploadMediaValidator
     /**
      * Validation rules to be used on the data
      */
-    protected function generateRules($productAttribute): array
+    protected function generateRules(mixed $productAttribute): array
     {
-        $rules = [
+        return [
             'file' => $productAttribute ? $productAttribute->getValidationsOnlyMedia() : [],
         ];
-
-        return $rules;
     }
 }

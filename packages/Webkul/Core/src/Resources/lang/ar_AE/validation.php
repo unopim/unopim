@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => 'لا يمكن لـ :attribute قبول سوى الأحرف الأبجدية والأرقام والمسافات والفاصلات والشرطات.',
     'alpha-numeric-space'          => 'لا يمكن لـ :attribute قبول سوى الأحرف الأبجدية والأرقام والمسافات.',

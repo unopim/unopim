@@ -32,7 +32,7 @@ class WebhookService
 
         $webhookUrl = $this->settingsRepository->getWebhookUrl();
 
-        if (empty($webhookUrl)) {
+        if (in_array($webhookUrl, [null, '', '0'], true)) {
             return null;
         }
 
@@ -86,7 +86,7 @@ class WebhookService
 
         $webhookUrl = $this->settingsRepository->getWebhookUrl();
 
-        if (empty($webhookUrl)) {
+        if (in_array($webhookUrl, [null, '', '0'], true)) {
             return null;
         }
 
@@ -170,13 +170,11 @@ class WebhookService
      * @param  bool  $requireChanges  When false, every product is included regardless
      *                                of whether an audit diff was detected (e.g. bulk-edit).
      */
-    protected function sendBatch($products, bool $requireChanges = true): ?Response
+    protected function sendBatch(mixed $products, bool $requireChanges = true): ?Response
     {
-        $webhookData = [];
-
         $webhookUrl = $this->settingsRepository->getWebhookUrl();
 
-        if (empty($webhookUrl)) {
+        if (in_array($webhookUrl, [null, '', '0'], true)) {
             return null;
         }
 
@@ -187,21 +185,19 @@ class WebhookService
                 ? $this->getProductChangesForWebhook($product)
                 : [];
 
-            if ($requireChanges && empty($productChanges)) {
+            if ($requireChanges && $productChanges === []) {
                 continue;
             }
 
             $normalized[] = $this->normalizeWebhookData($product, $productChanges);
         }
 
-        if (empty($normalized)) {
+        if ($normalized === []) {
             return null;
-        }
-
-        $webhookData = [
+        }[
             'event'     => 'product.updated',
-            'timestamp' => now()->toDateTimeString(),
-            'data'      => $normalized,
+        'timestamp'     => now()->toDateTimeString(),
+        'data'          => $normalized,
         ];
 
         try {
@@ -229,18 +225,14 @@ class WebhookService
         return $response;
     }
 
-    protected function storeLogs(string $code, int $status, $response = null): void
+    protected function storeLogs(string $code, int $status, mixed $response = null): void
     {
         $admin = auth('admin')->user()
             ?? auth('api')->user()
             ?? request()->user('admin')
             ?? request()->user('api');
 
-        if (is_array($admin)) {
-            $adminName = $admin['name'] ?? null;
-        } else {
-            $adminName = $admin?->name ?? null;
-        }
+        $adminName = is_array($admin) ? $admin['name'] ?? null : $admin?->name ?? null;
 
         $data = [
             'user'   => $adminName,
@@ -252,7 +244,7 @@ class WebhookService
         $this->logsRepository->create($data);
     }
 
-    protected function storeBatchLogs($products, int $status, $response = null): void
+    protected function storeBatchLogs(mixed $products, int $status, mixed $response = null): void
     {
         $admin = auth('admin')->user()
             ?? auth('api')->user()
@@ -287,18 +279,16 @@ class WebhookService
         ];
 
         if ($type === 'configurable') {
-            $normalized['variants'] = $product->variants->map(function ($variant) {
-                return [
-                    'sku'    => $variant->sku,
-                    'status' => (bool) $variant->status,
-                ];
-            })->toArray();
+            $normalized['variants'] = $product->variants->map(fn (mixed $variant) => [
+                'sku'    => $variant->sku,
+                'status' => (bool) $variant->status,
+            ])->toArray();
         }
 
         return $normalized;
     }
 
-    private function normalizeResponseForLog($response): mixed
+    private function normalizeResponseForLog(mixed $response): mixed
     {
         if ($response instanceof Response) {
             return [

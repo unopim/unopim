@@ -24,7 +24,7 @@ describe('CSV Source Optimizations', function () {
 
         expect($row['sku'])->toBe('test-sku');
         expect($row['name'])->toBe('Test Product');
-        expect(strlen($row['description']))->toBe(5000);
+        expect(strlen((string) $row['description']))->toBe(5000);
 
         /** Cleanup */
         Storage::disk('private')->delete('test-csv-long-rows.csv');

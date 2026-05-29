@@ -10,6 +10,7 @@ use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Product\Repositories\ProductRepository;
 
 class AttachImage implements PimTool
 {
@@ -48,7 +49,7 @@ class AttachImage implements PimTool
 
                 $sku = $request->string('sku')->toString();
 
-                $repo = app('Webkul\Product\Repositories\ProductRepository');
+                $repo = app(ProductRepository::class);
                 $product = $repo->findOneByField('sku', $sku);
 
                 if (! $product) {

@@ -191,7 +191,7 @@ enum AiProvider: string
 
         $data = json_decode($response->getBody()->getContents(), true);
         $models = array_map(
-            fn ($id) => ltrim((string) $id, '~'),
+            fn (mixed $id) => ltrim((string) $id, '~'),
             array_column($data['data'] ?? [], 'id')
         );
         sort($models);
@@ -248,7 +248,7 @@ enum AiProvider: string
             sort($models);
 
             return $models;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return [];
         }
     }

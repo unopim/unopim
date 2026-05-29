@@ -3,6 +3,7 @@
 namespace Webkul\Admin\DataGrids\Settings;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\DataGrid\DataGrid;
@@ -11,10 +12,8 @@ class ChannelDataGrid extends DataGrid
 {
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $requestedLocaleCode = core()->getRequestedLocaleCode();
 
@@ -26,17 +25,17 @@ class ChannelDataGrid extends DataGrid
         $grammar = GrammarQueryManager::getGrammar();
 
         $queryBuilder = DB::table('channels')
-            ->leftJoin('channel_translations as requested_channel_translation', function ($leftJoin) use ($requestedLocaleCode) {
+            ->leftJoin('channel_translations as requested_channel_translation', function (JoinClause $leftJoin) use ($requestedLocaleCode) {
                 $leftJoin->on('requested_channel_translation.channel_id', '=', 'channels.id')
                     ->where('requested_channel_translation.locale', $requestedLocaleCode);
 
             })
-            ->leftJoin('channel_translations as fallback_channel_translation', function ($leftJoin) use ($fallbackLocaleCode) {
+            ->leftJoin('channel_translations as fallback_channel_translation', function (JoinClause $leftJoin) use ($fallbackLocaleCode) {
                 $leftJoin->on('fallback_channel_translation.channel_id', '=', 'channels.id')
                     ->where('fallback_channel_translation.locale', $fallbackLocaleCode);
 
             })
-            ->leftJoinSub($tableCategories, 'categories', function ($leftJoin) {
+            ->leftJoinSub($tableCategories, 'categories', function (JoinClause $leftJoin) {
                 $leftJoin->on('categories.id', '=', 'channels.root_category_id');
             })
             ->select(
@@ -55,7 +54,7 @@ class ChannelDataGrid extends DataGrid
         return $queryBuilder;
     }
 
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -94,7 +93,7 @@ class ChannelDataGrid extends DataGrid
         ]);
     }
 
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('settings.channels.edit')) {
             $this->addAction([
@@ -102,9 +101,7 @@ class ChannelDataGrid extends DataGrid
                 'index'  => 'edit',
                 'title'  => trans('admin::app.settings.channels.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.settings.channels.edit', $row->id);
-                },
+                'url'    => fn (\stdClass $row): string => route('admin.settings.channels.edit', $row->id),
             ]);
         }
 
@@ -113,9 +110,7 @@ class ChannelDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.settings.channels.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.settings.channels.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row): string => route('admin.settings.channels.delete', $row->id),
             ]);
         }
     }

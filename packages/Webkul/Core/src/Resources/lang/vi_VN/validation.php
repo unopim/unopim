@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => 'Địa chỉ :attribute chỉ có thể chứa ký tự chữ cái, số, khoảng trắng, dấu phẩy và dấu gạch ngang.',
     'alpha-numeric-space'          => 'Địa chỉ :attribute chỉ có thể chứa ký tự chữ cái, số và khoảng trắng.',

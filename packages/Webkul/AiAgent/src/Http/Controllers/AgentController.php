@@ -2,7 +2,9 @@
 
 namespace Webkul\AiAgent\Http\Controllers;
 
+use Closure;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 use Webkul\AiAgent\DataGrids\Agent\AgentDataGrid;
@@ -16,7 +18,7 @@ class AgentController extends Controller
         protected AgentRepository $agentRepository,
         protected CredentialRepository $credentialRepository,
     ) {
-        $this->middleware(function ($request, $next) {
+        $this->middleware(function (Request $request, Closure $next) {
             if (! bouncer()->hasPermission('ai-agent.agents')) {
                 abort(403, trans('ai-agent::app.common.unauthorized'));
             }
@@ -27,10 +29,8 @@ class AgentController extends Controller
 
     /**
      * Display a listing of agents.
-     *
-     * @return View|JsonResponse
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(AgentDataGrid::class)->toJson();
@@ -41,14 +41,12 @@ class AgentController extends Controller
 
     /**
      * Show the form for creating a new agent.
-     *
-     * @return View
      */
-    public function create()
+    public function create(): View
     {
         $credentials = $this->credentialRepository->getActiveList();
 
-        return view('ai-agent::agents.create', compact('credentials'));
+        return view('ai-agent::agents.create', ['credentials' => $credentials]);
     }
 
     /**
@@ -66,15 +64,13 @@ class AgentController extends Controller
 
     /**
      * Show the form for editing an agent.
-     *
-     * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $agent = $this->agentRepository->findOrFail($id);
         $credentials = $this->credentialRepository->getActiveList();
 
-        return view('ai-agent::agents.edit', compact('agent', 'credentials'));
+        return view('ai-agent::agents.edit', ['agent' => $agent, 'credentials' => $credentials]);
     }
 
     /**

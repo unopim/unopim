@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\ElasticSearch\Contracts;
 
 interface SearchResponse
 {
-    /**
-     * @return mixed
-     */
-    public function getResponseData();
+    public function getResponseData(): mixed;
 }

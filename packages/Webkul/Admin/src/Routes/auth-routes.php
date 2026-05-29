@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Controllers\User\AvatarController;

@@ -1,0 +1,10 @@
+node_modules
+vendor
+public/build
+**/build
+**/dist
+*.min.js
+*.min.css
+storage
+bootstrap/cache
+tests/e2e-pw

@@ -5,15 +5,24 @@
     "description": "UnoPim - Open Source PIM",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "lint": "eslint . --fix && prettier --write \"{resources,packages}/**/*.{js,vue,css}\" \"*.{js,cjs,mjs}\"",
+        "test:lint": "eslint . && prettier --check \"{resources,packages}/**/*.{js,vue,css}\" \"*.{js,cjs,mjs}\""
     },
     "dependencies": {
         "vue-multiselect": "^3.0.0"
     },
     "devDependencies": {
+        "@eslint/js": "^9.39.4",
         "@playwright/test": "^1.58.2",
         "axios": "^1.6.4",
+        "eslint": "^9.39.4",
+        "eslint-config-prettier": "^9.1.2",
+        "eslint-plugin-vue": "^9.33.0",
+        "globals": "^15.15.0",
         "laravel-vite-plugin": "^1.2.0",
+        "prettier": "^3.8.3",
+        "prettier-plugin-tailwindcss": "^0.6.14",
         "vite": "^6.3.0"
     }
 }

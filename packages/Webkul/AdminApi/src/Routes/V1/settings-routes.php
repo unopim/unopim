@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 use Webkul\AdminApi\Http\Controllers\API\Settings\ChannelController;
 use Webkul\AdminApi\Http\Controllers\API\Settings\CurrencyController;

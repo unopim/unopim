@@ -15,7 +15,7 @@ class ProxyValueSyncEventListener
     /**
      * Handle the event.
      */
-    public function handle($event, $data): void
+    public function handle(string $event, array $data): void
     {
         $oldValues = $data['old_values'];
 

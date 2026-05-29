@@ -39,3 +39,6 @@ tests/e2e-pw/test-results/
 tests/e2e-pw/test-results/
 test-results
 
+
+# Accidental per-package composer artifacts
+packages/Webkul/*/vendor/

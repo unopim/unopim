@@ -2,6 +2,7 @@
 
 namespace Webkul\Attribute\Providers;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
@@ -17,11 +18,9 @@ class AttributeServiceProvider extends ServiceProvider
 
         $this->registerConfig();
 
-        $this->app->singleton(AttributeService::class, function ($app) {
-            return new AttributeService(
-                $app->make(AttributeRepository::class)
-            );
-        });
+        $this->app->singleton(AttributeService::class, fn (Application $app) => new AttributeService(
+            $app->make(AttributeRepository::class)
+        ));
     }
 
     /**

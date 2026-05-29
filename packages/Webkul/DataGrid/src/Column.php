@@ -11,7 +11,7 @@ class Column
     /**
      * Fully qualified database column name.
      */
-    public $databaseColumnName;
+    public mixed $databaseColumnName;
 
     /**
      * Form input type.
@@ -174,20 +174,20 @@ class Column
             [
                 'name'  => RangeOptionEnum::LAST_MONTH->value,
                 'label' => trans('admin::app.components.datagrid.filters.date-options.last-month'),
-                'from'  => now()->subMonth(1)->startOfMonth()->format($format),
-                'to'    => now()->subMonth(1)->endOfMonth()->format($format),
+                'from'  => now()->subMonth()->startOfMonth()->format($format),
+                'to'    => now()->subMonth()->endOfMonth()->format($format),
             ],
             [
                 'name'  => RangeOptionEnum::LAST_THREE_MONTHS->value,
                 'label' => trans('admin::app.components.datagrid.filters.date-options.last-three-months'),
-                'from'  => now()->subMonth(3)->startOfMonth()->format($format),
-                'to'    => now()->subMonth(1)->endOfMonth()->format($format),
+                'from'  => now()->subMonth()->startOfMonth()->format($format),
+                'to'    => now()->subMonth()->endOfMonth()->format($format),
             ],
             [
                 'name'  => RangeOptionEnum::LAST_SIX_MONTHS->value,
                 'label' => trans('admin::app.components.datagrid.filters.date-options.last-six-months'),
-                'from'  => now()->subMonth(6)->startOfMonth()->format($format),
-                'to'    => now()->subMonth(1)->endOfMonth()->format($format),
+                'from'  => now()->subMonth()->startOfMonth()->format($format),
+                'to'    => now()->subMonth()->endOfMonth()->format($format),
             ],
             [
                 'name'  => RangeOptionEnum::THIS_YEAR->value,

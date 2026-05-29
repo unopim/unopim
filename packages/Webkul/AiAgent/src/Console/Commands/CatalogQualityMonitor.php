@@ -59,7 +59,7 @@ class CatalogQualityMonitor extends Command
         ];
 
         foreach ($products as $p) {
-            $values = json_decode($p->values, true) ?? [];
+            $values = json_decode((string) $p->values, true) ?? [];
             $common = $values['common'] ?? [];
             $cl = $values['channel_locale_specific'][$channel][$locale] ?? [];
 
@@ -71,7 +71,7 @@ class CatalogQualityMonitor extends Command
             }
             if (empty($desc)) {
                 $issues['missing_description'][] = $p->sku;
-            } elseif (mb_strlen($desc) < 50) {
+            } elseif (mb_strlen((string) $desc) < 50) {
                 $issues['short_description'][] = $p->sku;
             }
             if (empty($common['image'])) {
@@ -83,7 +83,7 @@ class CatalogQualityMonitor extends Command
         }
 
         $total = $products->count();
-        $issueCount = array_sum(array_map('count', $issues));
+        $issueCount = array_sum(array_map(count(...), $issues));
 
         $healthScore = $total > 0
             ? round((1 - ($issueCount / ($total * 4))) * 100)
@@ -92,7 +92,7 @@ class CatalogQualityMonitor extends Command
         $resultData = [
             'scanned'      => $total,
             'health_score' => $healthScore,
-            'issues'       => array_map(fn ($skus) => [
+            'issues'       => array_map(fn (array $skus) => [
                 'count' => count($skus),
                 'skus'  => array_slice($skus, 0, 20),
             ], $issues),
@@ -139,7 +139,7 @@ class CatalogQualityMonitor extends Command
         $this->info("Health Score: {$healthScore}/100");
         $this->table(
             ['Issue', 'Count'],
-            collect($issues)->map(fn ($skus, $key) => [
+            collect($issues)->map(fn (array $skus, string $key) => [
                 str_replace('_', ' ', ucfirst($key)),
                 count($skus),
             ])->toArray(),

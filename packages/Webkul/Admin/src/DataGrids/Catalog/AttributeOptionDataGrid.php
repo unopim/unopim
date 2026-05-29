@@ -3,13 +3,14 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\DataGrid\DataGrid;
 
 class AttributeOptionDataGrid extends DataGrid
 {
-    protected ?int $attributeId;
+    protected ?int $attributeId = null;
 
     /**
      * Get the attribute ID.
@@ -31,17 +32,15 @@ class AttributeOptionDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $tablePrefix = DB::getTablePrefix();
 
         $this->attributeId ??= request()->id;
 
         $queryBuilder = DB::table('attribute_options')
-            ->leftJoin('attribute_option_translations as attribute_option_label', function ($join) {
+            ->leftJoin('attribute_option_translations as attribute_option_label', function (JoinClause $join) {
                 $join->on('attribute_option_label.attribute_option_id', '=', 'attribute_options.id');
             })
             ->where('attribute_options.attribute_id', $this->attributeId)
@@ -77,10 +76,8 @@ class AttributeOptionDataGrid extends DataGrid
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $locales = core()->getAllActiveLocales()->pluck('code');
 
@@ -109,10 +106,8 @@ class AttributeOptionDataGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('catalog.attributes.edit')) {
             $this->addAction([
@@ -120,9 +115,7 @@ class AttributeOptionDataGrid extends DataGrid
                 'index'  => 'edit',
                 'title'  => trans('admin::app.catalog.attributes.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.catalog.attributes.options.update', ['attribute_id' => $this->attributeId, 'id' => $row->id]);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.attributes.options.update', ['attribute_id' => $this->attributeId, 'id' => $row->id]),
             ]);
         }
 
@@ -132,9 +125,7 @@ class AttributeOptionDataGrid extends DataGrid
                 'index'  => 'delete',
                 'title'  => trans('admin::app.catalog.attributes.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.catalog.attributes.options.delete', ['attribute_id' => $this->attributeId, 'id' => $row->id]);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.attributes.options.delete', ['attribute_id' => $this->attributeId, 'id' => $row->id]),
             ]);
         }
     }

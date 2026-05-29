@@ -8,6 +8,7 @@ use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
@@ -16,6 +17,7 @@ class Handler extends ExceptionHandler
     /**
      * Register the exception handling callbacks for the application.
      */
+    #[\Override]
     public function register(): void
     {
         if (config('app.debug')) {
@@ -36,7 +38,8 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      */
-    public function render($request, Throwable $exception)
+    #[\Override]
+    public function render($request, Throwable $exception): Response
     {
         if ($exception instanceof PostTooLargeException) {
             return response()->view('admin::errors.index', ['errorCode' => JsonResponse::HTTP_REQUEST_ENTITY_TOO_LARGE]);
@@ -82,7 +85,7 @@ class Handler extends ExceptionHandler
                 ], $errorCode);
             }
 
-            return response()->view('admin::errors.index', compact('errorCode'));
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode]);
         });
     }
 
@@ -101,7 +104,7 @@ class Handler extends ExceptionHandler
                 ], $errorCode);
             }
 
-            return response()->view('admin::errors.index', compact('errorCode'));
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode]);
         });
     }
 
@@ -110,9 +113,7 @@ class Handler extends ExceptionHandler
      */
     private function handleValidationException(): void
     {
-        $this->renderable(function (ValidationException $exception, Request $request) {
-            return parent::convertValidationExceptionToResponse($exception, $request);
-        });
+        $this->renderable(fn (ValidationException $exception, Request $request) => parent::convertValidationExceptionToResponse($exception, $request));
     }
 
     /**
@@ -130,7 +131,7 @@ class Handler extends ExceptionHandler
                 ], $errorCode);
             }
 
-            return response()->view('admin::errors.index', compact('errorCode'));
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode]);
         });
     }
 

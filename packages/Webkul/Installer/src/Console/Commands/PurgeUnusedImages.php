@@ -24,10 +24,8 @@ class PurgeUnusedImages extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $this->info('Starting purge of unused images...');
 
@@ -78,10 +76,10 @@ class PurgeUnusedImages extends Command
     {
         return DB::table('products')
             ->pluck('values')
-            ->map(fn ($value) => $this->extractImagesFromProduct(json_decode($value, true), $imageAttributes))
+            ->map(fn (mixed $value) => $this->extractImagesFromProduct(json_decode((string) $value, true), $imageAttributes))
             ->flatten()
             ->filter()
-            ->map(fn ($path) => ltrim($path, '/'))
+            ->map(fn (mixed $path) => ltrim((string) $path, '/'))
             ->unique()
             ->toArray();
     }
@@ -95,7 +93,7 @@ class PurgeUnusedImages extends Command
         $sections = ['common', 'locale_specific', 'channel_specific', 'channel_locale_specific'];
 
         return collect($sections)
-            ->flatMap(fn ($section) => $this->processSection($section, $data, $imageAttributes))
+            ->flatMap(fn (mixed $section) => $this->processSection($section, $data, $imageAttributes))
             ->toArray();
     }
 
@@ -118,30 +116,28 @@ class PurgeUnusedImages extends Command
     private function extractImagesFromAttributes(array $attributes, array $imageAttributes): array
     {
         return collect($attributes)
-            ->filter(fn ($value, $key) => in_array($key, $imageAttributes))
-            ->flatMap(function ($value) {
-                return is_array($value) ? $value : [$value];
-            })
+            ->filter(fn (mixed $value, mixed $key) => in_array($key, $imageAttributes))
+            ->flatMap(fn (mixed $value) => is_array($value) ? $value : [$value])
             ->toArray();
     }
 
     private function extractLocaleOrChannelSpecificImages(array $sectionData, array $imageAttributes): array
     {
         return collect($sectionData)
-            ->flatMap(fn ($attributes) => $this->extractImagesFromAttributes($attributes, $imageAttributes))
+            ->flatMap(fn (mixed $attributes) => $this->extractImagesFromAttributes($attributes, $imageAttributes))
             ->toArray();
     }
 
     private function extractChannelLocaleSpecificImages(array $sectionData, array $imageAttributes): array
     {
         return collect($sectionData)
-            ->flatMap(fn ($channelData) => collect($channelData)
-                ->flatMap(fn ($attributes) => $this->extractImagesFromAttributes($attributes, $imageAttributes))
+            ->flatMap(fn (mixed $channelData) => collect($channelData)
+                ->flatMap(fn (mixed $attributes) => $this->extractImagesFromAttributes($attributes, $imageAttributes))
                 ->toArray())
             ->toArray();
     }
 
-    private function deleteEmptyDirectories(string $directory, string $baseDirectory)
+    private function deleteEmptyDirectories(string $directory, string $baseDirectory): void
     {
         if (Storage::disk('public')->exists($directory)) {
             $files = Storage::disk('public')->files($directory);
@@ -151,7 +147,7 @@ class PurgeUnusedImages extends Command
                 Storage::disk('public')->deleteDirectory($directory);
 
                 $parentDirectory = dirname($directory);
-                if ($parentDirectory !== '.' && $parentDirectory !== '/' && $parentDirectory !== $baseDirectory) {
+                if (! in_array($parentDirectory, ['.', '/', $baseDirectory], true)) {
                     $this->deleteEmptyDirectories($parentDirectory, $baseDirectory);
                 }
             }
@@ -169,7 +165,7 @@ class PurgeUnusedImages extends Command
     private function getAllImagesFromStorage(): array
     {
         return collect(Storage::disk('public')->allFiles('product'))
-            ->map(fn ($path) => ltrim($path, '/'))
+            ->map(fn (mixed $path) => ltrim($path, '/'))
             ->toArray();
     }
 
@@ -181,7 +177,7 @@ class PurgeUnusedImages extends Command
                 $this->info("Deleted: $unusedImage");
 
                 // Check and delete empty directories recursively
-                $directory = dirname($unusedImage);
+                $directory = dirname((string) $unusedImage);
                 $this->deleteEmptyDirectories($directory, 'product');
             } else {
                 $this->warn("File not found: $unusedImage");

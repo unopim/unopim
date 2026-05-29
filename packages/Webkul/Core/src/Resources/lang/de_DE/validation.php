@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => 'Das :attribute kann nur alphanumerische Zeichen, Leerzeichen, Kommas und Bindestriche akzeptieren.',
     'alpha-numeric-space'          => 'Das :attribute kann nur alphanumerische Zeichen, Leerzeichen und Kommas akzeptieren.',

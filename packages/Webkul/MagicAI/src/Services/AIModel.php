@@ -18,7 +18,7 @@ class AIModel
             return [];
         }
 
-        return array_map(fn ($model) => [
+        return array_map(fn (string $model) => [
             'id'    => $model,
             'label' => $model,
         ], $platform->model_list);
@@ -75,11 +75,11 @@ class AIModel
             default             => [],
         };
 
-        if (empty($imagePatterns)) {
+        if ($imagePatterns === []) {
             return $models;
         }
 
-        $filtered = array_filter($models, function ($model) use ($imagePatterns) {
+        $filtered = array_filter($models, function (mixed $model) use ($imagePatterns) {
             $id = is_array($model) ? ($model['id'] ?? '') : $model;
 
             foreach ($imagePatterns as $pattern) {
@@ -93,6 +93,6 @@ class AIModel
 
         // If no image-specific models found, return all models
         // (the provider supports images, user can pick any model that works)
-        return ! empty($filtered) ? array_values($filtered) : $models;
+        return $filtered === [] ? $models : array_values($filtered);
     }
 }

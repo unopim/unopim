@@ -165,7 +165,7 @@ it('should create category fields with certain types', function () {
 
             $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), $data);
         } catch (Exception $e) {
-            throw new Exception('Failed with categoryField code: '.$code.'. '.$e->getMessage());
+            throw new Exception('Failed with categoryField code: '.$code.'. '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 });
@@ -254,7 +254,7 @@ it('should not create category fields with certain codes', function () {
 
             $this->assertDatabaseMissing($this->getFullTableName(CategoryField::class), $data);
         } catch (Exception $e) {
-            throw new Exception('Failed with categoryField code: '.$code.'. '.$e->getMessage());
+            throw new Exception('Failed with categoryField code: '.$code.'. '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 });
@@ -363,7 +363,7 @@ it('should create text category field with these validation types', function () 
 
             $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), $data);
         } catch (Exception $e) {
-            throw new Exception('Failed with validation type code: '.$validation.'. '.$e->getMessage());
+            throw new Exception('Failed with validation type code: '.$validation.'. '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 });

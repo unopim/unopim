@@ -11,22 +11,20 @@ class PriceNormalizer extends AbstractNormalizer implements AttributeNormalizerI
     /**
      * Normalize the given attribute value.
      */
-    public function getData(mixed $data, ?Attribute $attribute = null, array $options = [])
+    public function getData(mixed $data, ?Attribute $attribute = null, array $options = []): mixed
     {
         $format = $options['format'] ?? 'default';
 
-        switch ($format) {
-            case 'datagrid':
-                return $this->datagridFormat($data, $options);
-            default:
-                return $data;
-        }
+        return match ($format) {
+            'datagrid' => $this->datagridFormat($data, $options),
+            default    => $data,
+        };
     }
 
     /**
      * Format the data for datagrid.
      */
-    protected function datagridFormat(mixed $data, array $options = [])
+    protected function datagridFormat(mixed $data, array $options = []): mixed
     {
         if (! is_array($data)) {
             return $data;
@@ -52,7 +50,7 @@ class PriceNormalizer extends AbstractNormalizer implements AttributeNormalizerI
      */
     protected function filterByChannelCurrencies(array $data, ?string $channelCode): array
     {
-        if (empty($channelCode)) {
+        if (in_array($channelCode, [null, '', '0'], true)) {
             return $data;
         }
 

@@ -14,7 +14,7 @@ class AttributeTranslation extends Model implements AttributeTranslationContract
     /**
      * These columns history will not be generated
      */
-    protected $auditExclude = [
+    protected array $auditExclude = [
         'id',
         'locale',
         'attribute_id',
@@ -24,12 +24,12 @@ class AttributeTranslation extends Model implements AttributeTranslationContract
 
     protected $fillable = ['name'];
 
-    protected $historyTags = ['attribute'];
+    protected array $historyTags = ['attribute'];
 
     /**
      * Key => Label for history
      */
-    protected $historyTranslatableFields = [
+    protected array $historyTranslatableFields = [
         'name' => 'Name',
     ];
 

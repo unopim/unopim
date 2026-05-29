@@ -48,7 +48,7 @@ class ManageColumnController extends SelectOptionsController
 
                     $columns = array_values(array_filter(
                         $columns,
-                        fn ($col) => str_contains(strtolower($col['label']), $query)
+                        fn (array $col) => str_contains(strtolower((string) $col['label']), $query)
                     ));
                 }
 
@@ -89,13 +89,14 @@ class ManageColumnController extends SelectOptionsController
     /**
      * {@inheritdoc}
      */
-    protected function formatOption(Model $option, string $currentLocaleCode, string $entityName = '')
+    #[\Override]
+    protected function formatOption(Model $option, string $currentLocaleCode, string $entityName = ''): array
     {
         $translatedOptionLabel = $this->getTranslatedLabel($currentLocaleCode, $option, $entityName);
 
         return [
             'code'  => $option->code,
-            'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
+            'label' => in_array($translatedOptionLabel, [null, '', '0'], true) ? "[{$option->code}]" : $translatedOptionLabel,
         ];
     }
 }

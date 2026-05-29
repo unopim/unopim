@@ -1,0 +1,15 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+
+    paths:
+        - app
+        - packages/Webkul
+
+    excludePaths:
+        - packages/Webkul/*/tests/*
+        - packages/Webkul/*/src/Database/*
+        - packages/Webkul/DebugBar/*

@@ -140,7 +140,7 @@ it('should update the sort order of attribute options when sorted up', function 
 
     $attribute->refresh();
 
-    $sortedOptionIds = $attribute->options()->orderBy('sort_order')->get()->map(fn ($option) => $option->id);
+    $sortedOptionIds = $attribute->options()->orderBy('sort_order')->get()->map(fn (object $option) => $option->id);
 
     $this->assertEquals($optionIds, $sortedOptionIds->toArray());
 });
@@ -173,7 +173,7 @@ it('should update the sort order of attribute options when sorted down', functio
 
     $attribute->refresh();
 
-    $sortedOptionIds = $attribute->options()->orderBy('sort_order')->get()->map(fn ($option) => $option->id);
+    $sortedOptionIds = $attribute->options()->orderBy('sort_order')->get()->map(fn (object $option) => $option->id);
 
     $this->assertEquals($optionIds, $sortedOptionIds->toArray());
 });

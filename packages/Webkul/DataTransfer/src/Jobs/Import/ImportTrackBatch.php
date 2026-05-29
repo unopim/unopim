@@ -20,29 +20,19 @@ class ImportTrackBatch implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    protected $importBatch;
+    public int $tries = 3;
 
-    public $tries = 3;
-
-    public $timeout = 0; // Adjust as needed
+    public int $timeout = 0; // Adjust as needed
 
     /**
      * Create a new job instance.
-     *
-     * @param  mixed  $importBatch
-     * @return void
      */
-    public function __construct($importBatch)
-    {
-        $this->importBatch = $importBatch;
-    }
+    public function __construct(protected mixed $importBatch) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         if (! auth()->guard('admin')->check()) {
             $user = AdminProxy::find($this->importBatch->user_id);
@@ -90,13 +80,11 @@ class ImportTrackBatch implements ShouldQueue
 
                 return;
             }
-        } else {
+        } elseif ($importHelper->isLinkingRequired()) {
             // Handle linking or indexing if required
-            if ($importHelper->isLinkingRequired()) {
-                $importHelper->linking();
-            } else {
-                $importHelper->completed();
-            }
+            $importHelper->linking();
+        } else {
+            $importHelper->completed();
         }
 
         // Determine final state based on current state
@@ -107,10 +95,10 @@ class ImportTrackBatch implements ShouldQueue
         };
 
         // Gather stats
-        $stats = $importHelper->stats($state);
+        $importHelper->stats($state);
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         $logger = JobLogger::make($this->importBatch->id);
 

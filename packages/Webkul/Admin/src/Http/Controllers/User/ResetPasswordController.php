@@ -23,10 +23,9 @@ class ResetPasswordController extends Controller
      *
      * If no token is present, display the link request form.
      *
-     * @param  string|null  $token
      * @return Factory|View
      */
-    public function create($token = null): View
+    public function create(?string $token = null): View
     {
         return view('admin::users.reset-password.create')->with([
             'token' => $token,
@@ -47,7 +46,7 @@ class ResetPasswordController extends Controller
             ]);
 
             $response = $this->broker()->reset(
-                request(['email', 'password', 'password_confirmation', 'token']), function ($admin, $password) {
+                request(['email', 'password', 'password_confirmation', 'token']), function (CanResetPassword $admin, string $password) {
                     $this->resetPassword($admin, $password);
                 }
             );
@@ -70,12 +69,8 @@ class ResetPasswordController extends Controller
 
     /**
      * Reset the given admin's password.
-     *
-     * @param  CanResetPassword  $admin
-     * @param  string  $password
-     * @return void
      */
-    protected function resetPassword($admin, $password)
+    protected function resetPassword(CanResetPassword $admin, string $password): void
     {
         $admin->password = Hash::make($password);
 

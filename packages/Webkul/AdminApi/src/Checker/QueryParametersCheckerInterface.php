@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\AdminApi\Checker;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -12,10 +14,9 @@ interface QueryParametersCheckerInterface
      * It throws exceptions if filter parameters are not correctly filled
      *
      *
-     * @return array
      *
      * @throws UnprocessableEntityHttpException
      * @throws BadRequestHttpException
      */
-    public static function checkCriterionParameters(string $filterString);
+    public static function checkCriterionParameters(string $filterString): array;
 }

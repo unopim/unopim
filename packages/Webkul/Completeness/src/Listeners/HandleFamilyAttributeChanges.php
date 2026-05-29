@@ -17,12 +17,12 @@ class HandleFamilyAttributeChanges
     /**
      * Handle the event when attributes are changed in a family.
      */
-    public function handle(array $added, array $removed, int $familyId)
+    public function handle(array $added, array $removed, int $familyId): void
     {
         $removedAttributes = $removed ?? [];
-        $familyId = $familyId ?? null;
+        $familyId ??= null;
 
-        if (empty($removedAttributes) || empty($familyId)) {
+        if ($removedAttributes === [] || $familyId === 0) {
             return;
         }
 

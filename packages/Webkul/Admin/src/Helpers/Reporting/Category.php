@@ -8,8 +8,6 @@ class Category extends AbstractReporting
 {
     /**
      * Create a helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected CategoryRepository $categoryRepository,

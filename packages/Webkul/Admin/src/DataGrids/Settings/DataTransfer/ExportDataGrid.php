@@ -8,7 +8,7 @@ use Webkul\DataGrid\DataGrid;
 
 class ExportDataGrid extends DataGrid
 {
-    protected $exporters;
+    protected ?array $exporters;
 
     /**
      * Initialize the exporters
@@ -20,12 +20,10 @@ class ExportDataGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
-        $queryBuilder = DB::table('job_instances')
+        return DB::table('job_instances')
             ->addSelect(
                 'id',
                 'code',
@@ -33,16 +31,12 @@ class ExportDataGrid extends DataGrid
                 'action',
 
             )->where('type', 'export');
-
-        return $queryBuilder;
     }
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -69,18 +63,14 @@ class ExportDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($row) {
-                return isset($this->exporters[$row->entity_type]['title']) ? trans($this->exporters[$row->entity_type]['title']) : $row->entity_type;
-            },
+            'closure'    => fn (\stdClass $row) => isset($this->exporters[$row->entity_type]['title']) ? trans($this->exporters[$row->entity_type]['title']) : $row->entity_type,
         ]);
     }
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('data_transfer.export.execute')) {
             $this->addAction([
@@ -88,9 +78,7 @@ class ExportDataGrid extends DataGrid
                 'icon'   => 'icon-export',
                 'title'  => trans('admin::app.settings.data-transfer.exports.index.datagrid.export'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.settings.data_transfer.exports.export-view', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.data_transfer.exports.export-view', $row->id),
             ]);
         }
 
@@ -100,9 +88,7 @@ class ExportDataGrid extends DataGrid
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.settings.data-transfer.exports.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.settings.data_transfer.exports.edit', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.data_transfer.exports.edit', $row->id),
             ]);
         }
 
@@ -112,9 +98,7 @@ class ExportDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.settings.data-transfer.exports.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.settings.data_transfer.exports.delete', $row->id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.settings.data_transfer.exports.delete', $row->id),
             ]);
         }
     }

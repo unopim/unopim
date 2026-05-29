@@ -25,16 +25,16 @@ class Apikey extends Model implements ApikeyContract, HistoryContract
     protected $table = 'api_keys';
 
     /** Tags for History */
-    protected $historyTags = ['Apikey'];
+    protected array $historyTags = ['Apikey'];
 
     /** Fields for History */
-    protected $historyFields = [
+    protected array $historyFields = [
         'name',
         'oauth_client_id',
     ];
 
     /** Proxy Table Fields for History */
-    protected $historyProxyFields = [];
+    protected array $historyProxyFields = [];
 
     /**
      * The attributes that are mass assignable.
@@ -65,20 +65,16 @@ class Apikey extends Model implements ApikeyContract, HistoryContract
 
     /**
      * Get the admins.
-     *
-     * @return BelongsTo
      */
-    public function admins()
+    public function admins(): BelongsTo
     {
         return $this->belongsTo(AdminProxy::modelClass(), 'admin_id');
     }
 
     /**
      * Get the oauthClients.
-     *
-     * @return BelongsTo
      */
-    public function oauthClients()
+    public function oauthClients(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'oauth_client_id');
     }
@@ -93,11 +89,8 @@ class Apikey extends Model implements ApikeyContract, HistoryContract
 
     /**
      * Checks if admin has permission to perform certain action.
-     *
-     * @param  string  $permission
-     * @return bool
      */
-    public function hasPermission($permission)
+    public function hasPermission(string $permission): bool
     {
         if (
             $this->permission_type == 'custom'
@@ -114,7 +107,7 @@ class Apikey extends Model implements ApikeyContract, HistoryContract
      *
      * @return array An array containing permission type details. Each element is an associative array with 'id' and 'label' keys.
      */
-    public function getPermissionTypes()
+    public function getPermissionTypes(): array
     {
         return [
             [

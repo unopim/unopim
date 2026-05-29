@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => ':attribute может принимать только буквы, цифры, пробелы, запятые и тире.',
     'alpha-numeric-space'          => ':attribute может принимать только буквы, цифры и пробелы.',

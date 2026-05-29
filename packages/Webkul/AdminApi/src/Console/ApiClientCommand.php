@@ -36,6 +36,7 @@ class ApiClientCommand extends Passport
     /**
      * Execute the console command.
      */
+    #[\Override]
     public function handle(ClientRepository $clients): void
     {
         $this->createPasswordClient($clients);
@@ -44,6 +45,7 @@ class ApiClientCommand extends Passport
     /**
      * Create a new password grant client.
      */
+    #[\Override]
     protected function createPasswordClient(ClientRepository $clients): Client
     {
         $userName = $this->option('user_name') ?: $this->ask(

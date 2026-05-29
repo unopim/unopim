@@ -18,18 +18,13 @@ class Completed implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param  mixed  $import
-     * @return void
      */
-    public function __construct(protected $import, protected $jobTrackId) {}
+    public function __construct(protected mixed $import, protected mixed $jobTrackId) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $logger = JobLogger::make($this->jobTrackId);
 
@@ -50,7 +45,7 @@ class Completed implements ShouldQueue
         $this->dispatchPostImportCompleteness();
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         JobLogger::make($this->jobTrackId)->error("Completed job failed: {$exception->getMessage()}", [
             'exception' => $exception->getTraceAsString(),
@@ -84,7 +79,7 @@ class Completed implements ShouldQueue
         $skus = $this->import->batches()
             ->where('state', ImportHelper::STATE_PROCESSED)
             ->get('data')
-            ->flatMap(fn ($batch) => array_column($batch->data ?? [], 'sku'))
+            ->flatMap(fn (mixed $batch) => array_column($batch->data ?? [], 'sku'))
             ->filter()
             ->unique()
             ->values()

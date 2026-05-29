@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\FPC\Listeners;
 
 use Spatie\ResponseCache\Facades\ResponseCache;
@@ -9,11 +11,8 @@ class Channel
 {
     /**
      * After category update
-     *
-     * @param  Category  $category
-     * @return void
      */
-    public function afterUpdate($category)
+    public function afterUpdate(Category $category): void
     {
         ResponseCache::clear();
     }

@@ -10,10 +10,8 @@ class CredentialDataGrid extends DataGrid
 {
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         return DB::table('ai_agent_credentials')
             ->select('id', 'label', 'provider', 'model', 'status', 'created_at');
@@ -67,7 +65,7 @@ class CredentialDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => fn ($row) => $row->status
+            'closure'    => fn (\stdClass $row) => $row->status
                 ? '<span class="label-active">'.trans('ai-agent::app.common.yes').'</span>'
                 : '<span class="label-info text-gray-600 dark:text-gray-300">'.trans('ai-agent::app.common.no').'</span>',
         ]);
@@ -83,18 +81,14 @@ class CredentialDataGrid extends DataGrid
             'index'  => 'edit',
             'title'  => trans('ai-agent::app.credentials.datagrid.edit'),
             'method' => 'GET',
-            'url'    => function ($row) {
-                return route('ai-agent.credentials.edit', $row->id);
-            },
+            'url'    => fn (\stdClass $row) => route('ai-agent.credentials.edit', $row->id),
         ]);
 
         $this->addAction([
             'icon'   => 'icon-delete',
             'title'  => trans('ai-agent::app.credentials.datagrid.delete'),
             'method' => 'DELETE',
-            'url'    => function ($row) {
-                return route('ai-agent.credentials.destroy', $row->id);
-            },
+            'url'    => fn (\stdClass $row) => route('ai-agent.credentials.destroy', $row->id),
         ]);
     }
 }

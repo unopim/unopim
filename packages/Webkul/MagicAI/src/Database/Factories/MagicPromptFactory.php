@@ -10,7 +10,7 @@ class MagicPromptFactory extends Factory
 {
     protected $model = MagicPrompt::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
             'title'   => $this->faker->sentence,

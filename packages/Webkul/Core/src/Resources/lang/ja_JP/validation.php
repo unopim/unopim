@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => ':attribute は、英字、数字、スペース、カンマ、ダッシュのみを受け入れることができます。',
     'alpha-numeric-space'          => ':attribute は、英字、数字、スペースのみを受け入れることができます。',

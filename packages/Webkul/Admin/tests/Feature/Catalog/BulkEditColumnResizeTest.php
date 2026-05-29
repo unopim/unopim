@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $headerCell = __DIR__.'/../../../src/Resources/views/components/bulkedit/header-cell.blade.php';
 $header = __DIR__.'/../../../src/Resources/views/components/bulkedit/header.blade.php';
 

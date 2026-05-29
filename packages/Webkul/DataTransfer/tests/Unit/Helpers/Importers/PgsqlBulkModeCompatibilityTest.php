@@ -15,7 +15,6 @@ describe('Product Importer pgsql bulk-mode compatibility (issue #798)', function
             ->toBeTrue('Importer must expose toggleMysqlBulkMode helper that gates MySQL session vars by driver');
 
         $method = $reflection->getMethod('toggleMysqlBulkMode');
-        $method->setAccessible(true);
 
         $original = DB::getDefaultConnection();
 

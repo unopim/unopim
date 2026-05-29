@@ -6,11 +6,9 @@ class JSONFileBuffer implements \Iterator
 {
     const FILE_PREFIX = 'unopim_buffer_';
 
-    /** @var string */
-    protected $filename;
+    protected string $filename;
 
-    /** @var \SplFileObject|null */
-    protected $file;
+    protected ?\SplFileObject $file = null;
 
     public function __construct(?string $filename = null)
     {
@@ -18,12 +16,11 @@ class JSONFileBuffer implements \Iterator
         $this->openFile();
     }
 
-    public static function initialize($export)
+    public static function initialize(mixed $export): self
     {
         $filename = sprintf('%s%s_', JSONFileBuffer::FILE_PREFIX, $export->id);
-        $jsonFileBuffer = new self($filename, true);
 
-        return $jsonFileBuffer;
+        return new self($filename, true);
     }
 
     protected function openFile(): void
@@ -45,11 +42,11 @@ class JSONFileBuffer implements \Iterator
         return $instance;
     }
 
-    public function write($item, array $options = [])
+    public function write(mixed $item, array $options = []): void
     {
         if (! is_array($item) && ! is_scalar($item)) {
             throw new \Exception(
-                sprintf('%s only supports items of type scalar or array', __CLASS__)
+                sprintf('%s only supports items of type scalar or array', self::class)
             );
         }
 

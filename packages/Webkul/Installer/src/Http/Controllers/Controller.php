@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Installer\Http\Controllers;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;

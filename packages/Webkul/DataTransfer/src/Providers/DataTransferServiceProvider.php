@@ -26,6 +26,7 @@ class DataTransferServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    #[\Override]
     public function register(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/importers.php', 'importers');
@@ -42,15 +43,11 @@ class DataTransferServiceProvider extends ServiceProvider
 
     /**
      * Register the queue worker.
-     *
-     * @return void
      */
-    protected function registerWorker()
+    protected function registerWorker(): void
     {
-        $this->app->singleton('unopim.singlejob.queue.worker', function ($app) {
-            $isDownForMaintenance = function () {
-                return $this->app->isDownForMaintenance();
-            };
+        $this->app->singleton('unopim.singlejob.queue.worker', function (mixed $app) {
+            $isDownForMaintenance = (fn () => $this->app->isDownForMaintenance());
 
             $resetScope = function () use ($app) {
                 $app['log']->flushSharedContext();
@@ -92,14 +89,12 @@ class DataTransferServiceProvider extends ServiceProvider
             ]);
         }
 
-        $this->app->singleton(JobExecuteCommand::class, function ($app) {
-            return new JobExecuteCommand(
-                $app['unopim.singlejob.queue.worker'],
-                $app['cache.store'],
-                $app->make(JobInstancesRepository::class),
-                $app->make(JobTrackRepository::class),
-                $app->make(AdminRepository::class),
-            );
-        });
+        $this->app->singleton(JobExecuteCommand::class, fn (mixed $app) => new JobExecuteCommand(
+            $app['unopim.singlejob.queue.worker'],
+            $app['cache.store'],
+            $app->make(JobInstancesRepository::class),
+            $app->make(JobTrackRepository::class),
+            $app->make(AdminRepository::class),
+        ));
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as ExportJobTrackContract;
+use Webkul\DataTransfer\Contracts\JobTrackBatch;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Source;
@@ -81,10 +82,8 @@ abstract class AbstractExporter
 
     /**
      * Error helper instance.
-     *
-     * @var Error
      */
-    protected $errorHelper;
+    protected Error $errorHelper;
 
     /**
      * export instance.
@@ -96,7 +95,7 @@ abstract class AbstractExporter
      *
      * @var Source
      */
-    protected $source;
+    protected mixed $source = null;
 
     /**
      * Valid column names
@@ -141,21 +140,17 @@ abstract class AbstractExporter
     /**
      * For job specific log file
      */
-    protected $jobLogger;
+    protected LoggerInterface $jobLogger;
 
     /**
      * The name of the queue the job should be sent to.
-     *
-     * @var string|null
      */
-    public $queue;
+    public ?string $queue = null;
 
-    protected $exportBuffer;
+    protected mixed $exportBuffer = null;
 
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -170,7 +165,7 @@ abstract class AbstractExporter
     /**
      * export data rows
      */
-    abstract public function exportBatch(JobTrackBatchContract $exportBatchContract, $filePath): bool;
+    abstract public function exportBatch(JobTrackBatchContract $exportBatchContract, mixed $filePath): bool;
 
     /**
      * Initialize Product error messages
@@ -184,10 +179,8 @@ abstract class AbstractExporter
 
     /**
      * Initializes for the export process.
-     *
-     * @return void
      */
-    public function initilize() {}
+    public function initilize(): void {}
 
     /**
      * export instance.
@@ -230,7 +223,7 @@ abstract class AbstractExporter
     /**
      * BufferFile instance.
      */
-    public function setExportBuffer($exportBuffer): self
+    public function setExportBuffer(mixed $exportBuffer): self
     {
         $this->exportBuffer = $exportBuffer;
 
@@ -240,7 +233,7 @@ abstract class AbstractExporter
     /**
      * BufferFile instance.
      */
-    public function getBufferFile()
+    public function getBufferFile(): FileExportFileBuffer
     {
         return $this->exportFileBuffer;
     }
@@ -250,7 +243,7 @@ abstract class AbstractExporter
      *
      * @param  Source  $errorHelper
      */
-    public function setSource($source)
+    public function setSource(mixed $source): self
     {
         $this->source = $source;
 
@@ -259,10 +252,8 @@ abstract class AbstractExporter
 
     /**
      * export instance.
-     *
-     * @param  Error  $errorHelper
      */
-    public function setErrorHelper($errorHelper): self
+    public function setErrorHelper(Error $errorHelper): self
     {
         $this->errorHelper = $errorHelper;
 
@@ -276,21 +267,21 @@ abstract class AbstractExporter
      *
      * @return Source
      */
-    public function getSource()
+    public function getSource(): mixed
     {
         return $this->source;
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
-        if (empty($this->filters)) {
+        if ($this->filters === []) {
             $this->filters = $this->export->jobInstance->filters ?? [];
         }
 
         return $this->filters;
     }
 
-    protected function getResults()
+    protected function getResults(): mixed
     {
         return $this->source->all()?->getIterator();
     }
@@ -300,17 +291,15 @@ abstract class AbstractExporter
      */
     protected function getFileName(): string
     {
-        $fileName = sprintf(
+        return sprintf(
             '%s-%s.%s',
             $this->export->jobInstance->code,
             $this->export->jobInstance->entity_type,
             strtolower($this->filters['file_format'] ?? SpoutWriterFactory::CSV),
         );
-
-        return $fileName;
     }
 
-    public function initializeFileBuffer()
+    public function initializeFileBuffer(): FileExportFileBuffer
     {
         $fileName = $this->getFileName();
         $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
@@ -325,7 +314,7 @@ abstract class AbstractExporter
     /**
      * Start the export process
      */
-    public function exportData(?JobTrackBatchContract $exportBatch = null, $filePath = null): bool
+    public function exportData(?JobTrackBatchContract $exportBatch = null, mixed $filePath = null): bool
     {
         if (! $filePath) {
             $this->filters = $this->export->jobInstance->filters ?? [];
@@ -339,7 +328,7 @@ abstract class AbstractExporter
             $filePath = $fileBuffer->getFilePath();
         }
 
-        if ($exportBatch) {
+        if ($exportBatch instanceof JobTrackBatch) {
             $this->exportBatch($exportBatch, $filePath);
 
             return true;
@@ -436,20 +425,17 @@ abstract class AbstractExporter
 
     /**
      * Updates the state of a batch in the export process.
-     *
-     *
-     * @return void
      */
-    public function updateBatchState(int $id, string $state)
+    public function updateBatchState(int $id, string $state): void
     {
         $processed = $this->getCreatedItemsCount() - $this->getskippedtemsCount();
         /**
          * Update import batch summary
          */
-        $batch = $this->exportBatchRepository->update([
+        $this->exportBatchRepository->update([
             'state'   => $state,
             'summary' => [
-                'processed' => $processed < 0 ? 0 : $processed,
+                'processed' => max(0, $processed),
                 'created'   => $this->getCreatedItemsCount(),
                 'skipped'   => $this->getskippedtemsCount(),
             ],
@@ -459,7 +445,7 @@ abstract class AbstractExporter
     /**
      * Update summary
      */
-    public function updateSummary(array $summaryData)
+    public function updateSummary(array $summaryData): void
     {
         $summary = $this->export->summary;
         foreach ($summaryData as $key => $value) {
@@ -477,12 +463,9 @@ abstract class AbstractExporter
     /**
      * Add row as skipped
      *
-     * @param  int|null  $rowNumber
-     * @param  string|null  $columnName
-     * @param  string|null  $errorMessage
      * @return $this
      */
-    protected function skipRow($rowNumber, string $errorCode, $columnName = null, $errorMessage = null): self
+    protected function skipRow(?int $rowNumber, string $errorCode, ?string $columnName = null, ?string $errorMessage = null): self
     {
         $this->errorHelper->addError(
             $errorCode,
@@ -542,9 +525,8 @@ abstract class AbstractExporter
      *
      * @param  string  $sourcePath  The path of the source media file.
      * @param  string  $destinationPath  The path where the media file will be copied.
-     * @return void
      */
-    public function copyMedia(string $sourcePath, string $destinationPath)
+    public function copyMedia(string $sourcePath, string $destinationPath): void
     {
         if (Storage::exists($sourcePath)) {
             // Copy the file

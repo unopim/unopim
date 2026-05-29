@@ -2,16 +2,20 @@
 
 namespace Webkul\Admin\DataGrids\Catalog;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\Admin\Traits\AttributeColumnTrait;
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Enums\FilterOperators;
@@ -29,10 +33,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     /**
      * Prepare query builder.
-     *
-     * @var object
      */
-    protected $prepareQuery;
+    protected object $prepareQuery;
 
     /**
      * Primary column.
@@ -43,13 +45,13 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     protected $sortColumn = 'products.updated_at';
 
-    protected $elasticSearchSortColumn = 'updated_at';
+    protected string $elasticSearchSortColumn = 'updated_at';
 
-    protected $attributeColumns = [];
+    protected array $attributeColumns = [];
 
-    protected $productQueryBuilder;
+    protected mixed $productQueryBuilder = null;
 
-    protected $defaultColumns = [
+    protected array $defaultColumns = [
         'sku',
         'image',
         'name',
@@ -67,12 +69,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Managed columns.
      */
-    protected $managedColumns = [];
+    protected array $managedColumns = [];
 
     /**
      * Constructor for the class.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
@@ -83,7 +83,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected AttributeValueNormalizer $attributeValueNormalizer,
     ) {}
 
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): mixed
     {
         $tablePrefix = DB::getTablePrefix();
 
@@ -93,7 +93,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $queryBuilder = $this->prepareQuery->getQueryManager();
 
-        $queryBuilder->leftJoin('attribute_family_translations as attribute_family_name', function ($join) {
+        $queryBuilder->leftJoin('attribute_family_translations as attribute_family_name', function (JoinClause $join) {
             $join->on('attribute_family_name.attribute_family_id', '=', 'af.id')
                 ->where('attribute_family_name.locale', '=', core()->getRequestedLocaleCode());
         })
@@ -124,10 +124,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     /**
      * Property column list.
-     *
-     * @return array
      */
-    public function getPropertyColumns()
+    public function getPropertyColumns(): array
     {
         return [
             'sku' => [
@@ -176,11 +174,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                         ],
                     ],
                 ],
-                'closure' => function ($row) {
-                    return $row->status
-                        ? "<span class='label-active'>".trans('admin::app.common.enable').'</span>'
-                        : "<span class='label-info'>".trans('admin::app.common.disable').'</span>';
-                },
+                'closure' => fn (\stdClass $row) => $row->status
+                    ? "<span class='label-active'>".trans('admin::app.common.enable').'</span>'
+                    : "<span class='label-info'>".trans('admin::app.common.disable').'</span>',
             ],
             'parent' => [
                 'index'      => 'parent',
@@ -208,12 +204,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
                     'params' => [
                         'options' => collect(config('product_types'))
-                            ->map(fn ($type) => ['label' => trans($type['name']), 'value' => $type['key']])
+                            ->map(fn (array $type) => ['label' => trans($type['name']), 'value' => $type['key']])
                             ->values()
                             ->toArray(),
                     ],
                 ],
-                'closure'    => fn ($row) => trans('product::app.type.'.$row->type),
+                'closure'    => fn (\stdClass $row) => trans('product::app.type.'.$row->type),
                 'searchable' => false,
                 'filterable' => true,
                 'sortable'   => true,
@@ -235,16 +231,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'searchable' => false,
                 'filterable' => true,
                 'sortable'   => true,
-                'closure'    => function ($row) {
-                    return core()->formatDateWithTimeZone($row->updated_at, 'Y-m-d H:i:s');
-                },
+                'closure'    => fn (\stdClass $row) => core()->formatDateWithTimeZone($row->updated_at, 'Y-m-d H:i:s'),
             ],
 
             'completeness' => [
                 'index'   => 'completeness',
                 'label'   => trans('completeness::app.catalog.products.index.datagrid.completeness'),
                 'type'    => 'integer',
-                'closure' => function ($row) {
+                'closure' => function (\stdClass $row) {
                     if (is_null($row->completeness)) {
                         return '<span class="label-info break-words">'.trans('completeness::app.catalog.products.index.datagrid.missing-completeness-setting').'</span>';
                     }
@@ -271,15 +265,13 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     /**
      * Prepare columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->managedColumns = request()->input('managedColumns', []);
-        $this->defaultColumns = ! empty($this->managedColumns)
-            ? $this->managedColumns
-            : $this->defaultColumns;
+        $this->defaultColumns = $this->managedColumns === []
+            ? $this->defaultColumns
+            : $this->managedColumns;
 
         $propertyColumns = $this->getPropertyColumns();
 
@@ -296,11 +288,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->addFilterableAttributes();
     }
 
-    public function prepareAttributeColumns($column)
+    public function prepareAttributeColumns(string $column): void
     {
         $attribute = $this->attributeService->findAttributeByCode($column);
 
-        if (! $attribute) {
+        if (! $attribute instanceof Attribute) {
             return;
         }
 
@@ -337,10 +329,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('catalog.products.edit')) {
             $this->addAction([
@@ -348,9 +338,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.catalog.products.index.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => function ($row) {
-                    return route('admin.catalog.products.edit', $row->product_id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.products.edit', $row->product_id),
             ]);
         }
 
@@ -360,9 +348,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'icon'   => 'icon-copy',
                 'title'  => trans('admin::app.catalog.products.index.datagrid.copy'),
                 'method' => 'POST',
-                'url'    => function ($row) {
-                    return route('admin.catalog.products.copy', $row->product_id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.products.copy', $row->product_id),
             ]);
         }
 
@@ -372,19 +358,15 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'index'  => 'delete',
                 'title'  => trans('admin::app.catalog.products.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('admin.catalog.products.delete', $row->product_id);
-                },
+                'url'    => fn (\stdClass $row) => route('admin.catalog.products.delete', $row->product_id),
             ]);
         }
     }
 
     /**
      * Prepare mass actions.
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         if (bouncer()->hasPermission('catalog.products.mass_update')) {
             $this->addMassAction([
@@ -427,6 +409,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Process request.
      */
+    #[\Override]
     public function processRequest(): void
     {
         if (! config('elasticsearch.enabled')) {
@@ -506,9 +489,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * {@inheritdoc}
      */
-    public function processRequestedFilters(array $requestedFilters)
+    #[\Override]
+    public function processRequestedFilters(array $requestedFilters): mixed
     {
-        if (empty($requestedFilters)) {
+        if ($requestedFilters === []) {
             return $this->queryBuilder;
         }
 
@@ -520,7 +504,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * {@inheritdoc}
      */
-    public function processRequestedSorting($requestedSort)
+    #[\Override]
+    public function processRequestedSorting($requestedSort): mixed
     {
         $sortColumn = $requestedSort['column'] ?? $this->sortColumn ?? $this->primaryColumn;
         $sortOrder = $requestedSort['order'] ?? $this->sortOrder;
@@ -551,9 +536,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Process request.
      */
-    protected function setElasticFilters($params)
+    protected function setElasticFilters(array $params): void
     {
-        if (empty($params)) {
+        if ($params === []) {
             return;
         }
 
@@ -600,14 +585,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
     }
 
-    protected function getOperatorAndValue($attribute, $value)
+    protected function getOperatorAndValue(mixed $attribute, mixed $value): ?array
     {
-        $column = array_filter($this->columns, function ($column) use ($attribute) {
-            return $column->index === $attribute;
-        });
+        $column = array_filter($this->columns, fn (Column $column) => $column->index === $attribute);
 
-        if (empty($column)) {
-            return;
+        if ($column === []) {
+            return null;
         }
 
         $column = reset($column);
@@ -646,7 +629,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Process request.
      */
-    protected function setElasticSort($params)
+    protected function setElasticSort(array $params): void
     {
         $sort = $params['column'] ?? $this->elasticSearchSortColumn;
 
@@ -675,11 +658,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      *  Process request. sort order by attribute
      */
-    protected function getAttributePathForSort($attributeCode, string $searchEngine = 'database')
+    protected function getAttributePathForSort(string $attributeCode, string $searchEngine = 'database'): mixed
     {
         $attribute = $this->attributeService->findAttributeByCode($attributeCode);
 
-        if (! $attribute) {
+        if (! $attribute instanceof Attribute) {
             return null;
         }
 
@@ -708,7 +691,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return $path;
         }
 
-        $driver = DB::rawQueryGrammar();
+        DB::rawQueryGrammar();
 
         $path = explode('.', $attribute->getScope($locale, $channel));
 
@@ -739,12 +722,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'products.avg_completeness_score as completeness'
         );
 
-        $gridData = ! empty($parameters['productIds'])
-            ? $this->queryBuilder->get()
-            : $this->queryBuilder->paginate(
+        $gridData = empty($parameters['productIds'])
+            ? $this->queryBuilder->paginate(
                 perPage: $parameters['pagination']['per_page'] ?? $this->itemsPerPage,
                 page: $parameters['pagination']['page'] ?? 1
-            );
+            )
+            : $this->queryBuilder->get();
 
         $exportableData = [];
         $columns = [];
@@ -780,7 +763,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Format product values for quick export
      */
-    protected function formatProductValues(array $productValues, string $locale, string $channel)
+    protected function formatProductValues(array $productValues, string $locale, string $channel): array
     {
         $values = $productValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channel][$locale] ?? [];
 
@@ -859,6 +842,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Set File name to be used during quick export
      */
+    #[\Override]
     protected function getExportFileName(): string
     {
         return 'products';
@@ -881,6 +865,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Format data.
      */
+    #[\Override]
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
@@ -916,7 +901,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $getUrl = $action->url;
 
                 $record->actions[] = [
-                    'index'         => ! empty($action->index) ? $action->index : 'action_'.$index + 1,
+                    'index'         => empty($action->index) ? 'action_'.$index + 1 : $action->index,
                     'icon'          => $action->icon,
                     'title'         => $action->title,
                     'method'        => $action->method,
@@ -927,7 +912,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return [
-            'id'                 => Crypt::encryptString(get_called_class()),
+            'id'                 => Crypt::encryptString(static::class),
             'columns'            => $this->columns,
             'actions'            => $this->actions,
             'mass_actions'       => $this->massActions,
@@ -957,7 +942,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected function processRawValues(object &$record): void
     {
-        if (empty($this->attributeColumns)) {
+        if ($this->attributeColumns === []) {
             return;
         }
 
@@ -966,7 +951,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'locale'                 => core()->getRequestedLocaleCode(),
             'channel'                => core()->getRequestedChannelCode(),
             'format'                 => 'datagrid',
-            'processed_on_attribute' => ! empty($this->attributeColumns) ?? false,
+            'processed_on_attribute' => $this->attributeColumns !== [] ?? false,
             'attribute_codes'        => array_keys($this->attributeColumns),
         ]);
 
@@ -1010,14 +995,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         $skuAttributeTranslation = $this->attributeService->findAttributeByCode('sku')?->name;
 
-        return ! empty($skuAttributeTranslation)
-            ? $skuAttributeTranslation
-            : trans('admin::app.catalog.products.index.datagrid.sku');
+        return empty($skuAttributeTranslation)
+            ? trans('admin::app.catalog.products.index.datagrid.sku')
+            : $skuAttributeTranslation;
     }
 
-    protected function processSwatchAttribute($attribute, $value, $record, string $code)
+    protected function processSwatchAttribute(mixed $attribute, mixed $value, mixed $record, string $code): ?string
     {
-        $mapSwatch = function ($optionValue) use ($attribute) {
+        $mapSwatch = function (mixed $optionValue) use ($attribute) {
             if (! $optionValue) {
                 return null;
             }
@@ -1025,9 +1010,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $cleanValue = trim($optionValue, '[]');
 
             $option = $attribute->options()
-                ->where(function ($q) use ($cleanValue) {
+                ->where(function (Builder $q) use ($cleanValue) {
                     $q->where('code', $cleanValue)
-                        ->orWhereHas('translations', function ($q2) use ($cleanValue) {
+                        ->orWhereHas('translations', function (Builder $q2) use ($cleanValue) {
                             $q2->where('label', $cleanValue)
                                 ->where('locale', core()->getRequestedLocaleCode());
                         });
@@ -1068,7 +1053,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         return "<div class='flex flex-wrap items-center gap-2 min-w-0'>".$swatchHtml.'</div>';
     }
 
-    protected function isSwatchAttribute($attribute): bool
+    protected function isSwatchAttribute(mixed $attribute): bool
     {
         return $attribute
             && in_array($attribute->type, ['select', 'multiselect'], true)

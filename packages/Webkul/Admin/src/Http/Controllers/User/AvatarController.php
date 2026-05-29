@@ -27,7 +27,7 @@ class AvatarController extends Controller
                     'Accept'     => 'image/*',
                 ])
                 ->get($gravatarUrl);
-        } catch (ConnectionException $exception) {
+        } catch (ConnectionException) {
             abort(404);
         }
 
@@ -36,7 +36,7 @@ class AvatarController extends Controller
         }
 
         return response($response->body())
-            ->header('Content-Type', $response->header('Content-Type', 'image/png'))
+            ->header('Content-Type', $response->header('Content-Type'))
             ->header('Cache-Control', 'public, max-age=300');
     }
 }

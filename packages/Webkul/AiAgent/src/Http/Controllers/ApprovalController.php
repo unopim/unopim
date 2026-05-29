@@ -2,9 +2,12 @@
 
 namespace Webkul\AiAgent\Http\Controllers;
 
+use Closure;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Webkul\Product\Repositories\ProductRepository;
 
 /**
  * Manages the approval queue for AI-generated changes.
@@ -17,7 +20,7 @@ class ApprovalController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(function ($request, $next) {
+        $this->middleware(function (Request $request, Closure $next) {
             if (! bouncer()->hasPermission('ai-agent.approvals')) {
                 abort(403, trans('ai-agent::app.common.unauthorized'));
             }
@@ -42,8 +45,8 @@ class ApprovalController extends Controller
             )
             ->limit(100)
             ->get()
-            ->map(function ($row) {
-                $row->changes = json_decode($row->changes, true);
+            ->map(function (\stdClass $row) {
+                $row->changes = json_decode((string) $row->changes, true);
 
                 return $row;
             });
@@ -65,12 +68,12 @@ class ApprovalController extends Controller
             return new JsonResponse(['error' => 'Changeset not found or already processed'], 404);
         }
 
-        $changes = json_decode($changeset->changes, true) ?? [];
+        $changes = json_decode((string) $changeset->changes, true) ?? [];
         $applied = 0;
 
         // Apply the queued change based on its type
         $type = $changes['type'] ?? 'unknown';
-        $repo = app('Webkul\Product\Repositories\ProductRepository');
+        $repo = app(ProductRepository::class);
 
         if ($type === 'create_product' && ! empty($changes['data'])) {
             $product = $repo->create($changes['data']['create'] ?? []);

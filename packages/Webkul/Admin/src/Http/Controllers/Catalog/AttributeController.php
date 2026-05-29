@@ -32,8 +32,6 @@ class AttributeController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
@@ -112,7 +110,7 @@ class AttributeController extends Controller
 
         $swatchTypes = SwatchTypeEnum::getValues();
 
-        return view('admin::catalog.attributes.edit', compact('attribute', 'locales', 'swatchTypes'));
+        return view('admin::catalog.attributes.edit', ['attribute' => $attribute, 'locales' => $locales, 'swatchTypes' => $swatchTypes]);
     }
 
     /**

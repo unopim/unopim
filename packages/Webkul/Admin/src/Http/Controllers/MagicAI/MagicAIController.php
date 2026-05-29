@@ -55,7 +55,7 @@ class MagicAIController extends Controller
                 'models'  => $models,
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-error'),
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -72,7 +72,7 @@ class MagicAIController extends Controller
                 'models'  => AIModel::validate(),
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-error'),
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -103,10 +103,10 @@ class MagicAIController extends Controller
 
         if ($purpose === 'image_generation') {
             $platforms = array_values(array_filter(
-                array_map(function ($platform) {
+                array_map(function (array $platform) {
                     $filtered = AIModel::filterImageModels($platform['models'] ?? [], $platform['id']);
 
-                    if (empty($filtered)) {
+                    if ($filtered === []) {
                         return null;
                     }
 
@@ -140,12 +140,10 @@ class MagicAIController extends Controller
             $data = $this->attributeRepository->getAttributeListBySearch($query, ['code', 'name'], excludeTypes: ['image', 'gallery', 'file', 'asset']);
         }
 
-        $data = array_map(function ($item) {
-            return [
-                'code' => $item->code,
-                'name' => $item->name ? $item->name : '['.$item->code.']',
-            ];
-        }, $data);
+        $data = array_map(fn (object $item) => [
+            'code' => $item->code,
+            'name' => $item->name ?: '['.$item->code.']',
+        ], $data);
 
         return new JsonResponse($data);
     }
@@ -397,7 +395,7 @@ class MagicAIController extends Controller
         }
 
         $field = request()->input('field');
-        $targetLocales = explode(',', request()->input('targetLocale'));
+        $targetLocales = explode(',', (string) request()->input('targetLocale'));
         $translatedData = [];
 
         $magicAi = $this->resolveTranslationPlatform();
@@ -456,7 +454,7 @@ class MagicAIController extends Controller
         $locale = core()->getRequestedLocaleCode();
         $channel = core()->getRequestedChannelCode();
         $arr = ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $channel, $locale);
-        $sourceField = explode(',', request()->input('attributes'));
+        $sourceField = explode(',', (string) request()->input('attributes'));
         $result = [];
 
         foreach ($sourceField as $field) {
@@ -466,8 +464,8 @@ class MagicAIController extends Controller
                 $result[$field] = [
                     'fieldLabel'     => $attribute->name,
                     'fieldName'      => $field,
-                    'isTranslatable' => ! empty($arr) && array_key_exists($field, $arr),
-                    'sourceData'     => ! empty($arr) && array_key_exists($field, $arr) ? $arr[$field] : null,
+                    'isTranslatable' => $arr !== [] && array_key_exists($field, $arr),
+                    'sourceData'     => $arr !== [] && array_key_exists($field, $arr) ? $arr[$field] : null,
                     'translatedData' => null,
                     'type'           => $attribute->type,
                 ];
@@ -495,13 +493,13 @@ class MagicAIController extends Controller
             'translated' => [],
         ];
 
-        $targetLocales = explode(',', request()->input('targetLocale'));
+        $targetLocales = explode(',', (string) request()->input('targetLocale'));
         $magicAi = $this->resolveTranslationPlatform();
 
         foreach ($targetLocales as $locale) {
             $translatedDataForLocale = [];
 
-            foreach ($attributes as $key => $attribute) {
+            foreach ($attributes as $attribute) {
                 $field = $attribute['fieldName'];
 
                 $p = "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text.";
@@ -596,7 +594,7 @@ class MagicAIController extends Controller
     {
         try {
             return MagicAI::setPlatformId($platformId);
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return MagicAI::useDefault();
         }
     }

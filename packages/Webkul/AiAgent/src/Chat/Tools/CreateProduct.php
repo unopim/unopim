@@ -15,6 +15,7 @@ use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Jobs\TranslateProductValuesJob;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Product\Repositories\ProductRepository;
 
 class CreateProduct implements PimTool
 {
@@ -110,7 +111,7 @@ class CreateProduct implements PimTool
                     'meta_title'        => $meta_title,
                     'meta_description'  => $meta_description,
                     'meta_keywords'     => $meta_keywords,
-                ]), fn ($v) => $v !== null && $v !== '');
+                ]), fn (mixed $v) => $v !== null && $v !== '');
 
                 $sku = $sku ?: Str::slug($name).'-'.strtoupper(Str::random(6));
 
@@ -127,11 +128,11 @@ class CreateProduct implements PimTool
                 }
 
                 $familyId = DB::table('attribute_families')->value('id') ?? 1;
-                $repo = app('Webkul\Product\Repositories\ProductRepository');
+                $repo = app(ProductRepository::class);
 
                 // Create the product (simple or configurable parent)
                 if ($type === 'configurable' && $super_attributes) {
-                    $superAttrCodes = array_map('trim', explode(',', $super_attributes));
+                    $superAttrCodes = array_map(trim(...), explode(',', $super_attributes));
 
                     $product = $repo->create([
                         'sku'                 => $sku,
@@ -255,11 +256,11 @@ class CreateProduct implements PimTool
                 }
 
                 // Assign categories
-                if ($categories || (is_array($categoryValues) && ! empty($categoryValues))) {
+                if ($categories || (is_array($categoryValues) && $categoryValues !== [])) {
                     $catInputs = [];
 
                     if ($categories) {
-                        $catInputs = array_map('trim', explode(',', $categories));
+                        $catInputs = array_map(trim(...), explode(',', $categories));
                     }
 
                     if (is_array($categoryValues)) {
@@ -273,7 +274,7 @@ class CreateProduct implements PimTool
                             continue;
                         }
                         $candidates[] = $input;
-                        $segments = array_map('trim', explode('>', $input));
+                        $segments = array_map(trim(...), explode('>', $input));
                         $last = end($segments);
                         $candidates[] = $last;
                         $candidates[] = Str::slug($last);
@@ -340,7 +341,7 @@ class CreateProduct implements PimTool
                     $variants = json_decode($variants_json, true) ?? [];
 
                     if (! empty($variants) && $super_attributes) {
-                        $superAttrCodes = array_map('trim', explode(',', $super_attributes));
+                        $superAttrCodes = array_map(trim(...), explode(',', $super_attributes));
                         $superAttrs = $product->super_attributes;
 
                         foreach ($variants as $variantData) {
@@ -374,7 +375,7 @@ class CreateProduct implements PimTool
 
                             // Override variant-specific attributes (price, etc.)
                             foreach ($variantData as $vCode => $vValue) {
-                                if (\in_array($vCode, ['sku'], true) || \in_array($vCode, $superAttrCodes, true)) {
+                                if ($vCode === 'sku' || \in_array($vCode, $superAttrCodes, true)) {
                                     continue;
                                 }
 
@@ -426,7 +427,7 @@ class CreateProduct implements PimTool
                 }
 
                 // Dispatch async translation for text fields to other locales
-                if (! empty($translatableFields)) {
+                if ($translatableFields !== []) {
                     TranslateProductValuesJob::dispatch(
                         productId: $product->id,
                         sourceLocale: $this->context->locale,
@@ -439,8 +440,8 @@ class CreateProduct implements PimTool
 
                 // Collect all filled attributes across all channels/locales
                 $filledAttrs = array_keys($values['common'] ?? []);
-                foreach ($values['channel_locale_specific'] ?? [] as $ch => $locales) {
-                    foreach ($locales as $loc => $attrs) {
+                foreach ($values['channel_locale_specific'] ?? [] as $locales) {
+                    foreach ($locales as $attrs) {
                         $filledAttrs = array_merge($filledAttrs, array_keys($attrs));
                     }
                 }
@@ -458,14 +459,14 @@ class CreateProduct implements PimTool
                         'categories'       => $values['categories'] ?? [],
                         'has_image'        => ! empty($values['common']['image']),
                         'image_error'      => $imageAttachError,
-                        'skipped'          => empty($skippedAttrs) ? null : $skippedAttrs,
-                        'auto_translating' => ! empty($translatableFields),
+                        'skipped'          => $skippedAttrs === [] ? null : $skippedAttrs,
+                        'auto_translating' => $translatableFields !== [],
                     ],
                 ];
 
                 if ($type === 'configurable') {
                     $result['result']['variants_created'] = $variantsCreated;
-                    $result['result']['super_attributes'] = array_map('trim', explode(',', $super_attributes ?? ''));
+                    $result['result']['super_attributes'] = array_map(trim(...), explode(',', $super_attributes ?? ''));
                 }
 
                 return json_encode($result);

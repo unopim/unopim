@@ -2,6 +2,7 @@
 
 namespace Webkul\Theme\Repositories;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -24,13 +25,14 @@ class ThemeCustomizationRepository extends Repository
      * @param  array  $data
      * @param  int  $id
      */
+    #[\Override]
     public function update($data, $id): ThemeCustomization
     {
         $locale = core()->getRequestedLocaleCode();
 
         if ($data['type'] == 'static_content') {
-            $data[$locale]['options']['html'] = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $data[$locale]['options']['html']);
-            $data[$locale]['options']['css'] = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $data[$locale]['options']['css']);
+            $data[$locale]['options']['html'] = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', (string) $data[$locale]['options']['html']);
+            $data[$locale]['options']['css'] = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', (string) $data[$locale]['options']['css']);
         }
 
         if (in_array($data['type'], ['image_carousel', 'services_content'])) {
@@ -48,10 +50,8 @@ class ThemeCustomizationRepository extends Repository
 
     /**
      * Upload images
-     *
-     * @return void|string
      */
-    public function uploadImage(array $data, ThemeCustomization $theme)
+    public function uploadImage(array $data, ThemeCustomization $theme): string|RedirectResponse|null
     {
         $locale = core()->getRequestedLocaleCode();
 
@@ -62,7 +62,7 @@ class ThemeCustomizationRepository extends Repository
         }
 
         if (! isset($data[$locale]['options'])) {
-            return;
+            return null;
         }
 
         $options = [];
@@ -104,5 +104,7 @@ class ThemeCustomizationRepository extends Repository
         $translatedModel->options = $options ?? [];
         $translatedModel->theme_customization_id = $theme->id;
         $translatedModel->save();
+
+        return null;
     }
 }

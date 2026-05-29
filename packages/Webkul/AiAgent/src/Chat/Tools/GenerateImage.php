@@ -13,6 +13,7 @@ use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\Product\Repositories\ProductRepository;
 
 class GenerateImage implements PimTool
 {
@@ -118,7 +119,7 @@ class GenerateImage implements PimTool
                         mkdir($dir, 0755, true);
                     }
 
-                    file_put_contents($fullPath, base64_decode($imageData->image));
+                    file_put_contents($fullPath, base64_decode((string) $imageData->image));
 
                     $result = [
                         'generated'    => true,
@@ -128,7 +129,7 @@ class GenerateImage implements PimTool
 
                     // Attach to product if SKU provided
                     if ($sku) {
-                        $repo = app('Webkul\Product\Repositories\ProductRepository');
+                        $repo = app(ProductRepository::class);
                         $product = $repo->findOneByField('sku', $sku);
 
                         if ($product) {
@@ -184,7 +185,7 @@ class GenerateImage implements PimTool
         };
 
         // 1. If the user explicitly selected an image-capable model, use it
-        if ($context->model) {
+        if ($context->model !== '' && $context->model !== '0') {
             foreach ($imageModelPatterns as $pattern) {
                 if (stripos($context->model, $pattern) !== false) {
                     return $context->model;
@@ -212,7 +213,7 @@ class GenerateImage implements PimTool
         // Second pass: any model matching image patterns
         foreach ($models as $model) {
             foreach ($imageModelPatterns as $pattern) {
-                if (stripos($model, $pattern) !== false) {
+                if (stripos((string) $model, $pattern) !== false) {
                     return $model;
                 }
             }

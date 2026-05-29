@@ -27,13 +27,13 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterCon
      * {@inheritdoc}
      */
     public function addAttributeFilter(
-        $attribute,
-        $operator,
-        $value,
-        $locale = null,
-        $channel = null,
-        $options = []
-    ) {
+        mixed $attribute,
+        mixed $operator,
+        mixed $value,
+        ?string $locale = null,
+        ?string $channel = null,
+        array $options = []
+    ): static {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
@@ -46,23 +46,17 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterCon
 
         $searchPath .= ' '.$grammar->getRegexOperator().' ?';
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $this->queryBuilder->whereRaw(
-                    $searchPath,
-                    $this->formatBooleanValue($value)
-                );
-
-                break;
-
-            case FilterOperators::EQUAL:
-                $this->queryBuilder->whereRaw(
-                    $searchPath,
-                    $this->formatBooleanValue($value),
-                );
-
-                break;
-        }
+        match ($operator) {
+            FilterOperators::IN => $this->queryBuilder->whereRaw(
+                $searchPath,
+                $this->formatBooleanValue($value)
+            ),
+            FilterOperators::EQUAL => $this->queryBuilder->whereRaw(
+                $searchPath,
+                $this->formatBooleanValue($value),
+            ),
+            default => $this,
+        };
 
         return $this;
     }
@@ -71,7 +65,7 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterCon
     {
         return [
             is_array($value)
-                ? implode('|', array_map(fn ($val) => ($val == '1' ? 'true' : 'false'), $value))
+                ? implode('|', array_map(fn (mixed $val) => ($val == '1' ? 'true' : 'false'), $value))
                 : ($value == '1' ? 'true' : 'false'),
         ];
     }

@@ -55,8 +55,6 @@ class Importer extends AbstractImporter
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
@@ -69,6 +67,7 @@ class Importer extends AbstractImporter
     /**
      * Initialize Product error templates
      */
+    #[\Override]
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -81,6 +80,7 @@ class Importer extends AbstractImporter
     /**
      * Validate data.
      */
+    #[\Override]
     public function validateData(): void
     {
         Log::info('Currency Importer Valid Columns:', $this->getValidColumnNames());

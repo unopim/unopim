@@ -1,7 +1,9 @@
 <?php
 
+use Elastic\Elasticsearch\Endpoints\Indices;
 use PHPUnit\Framework\ExpectationFailedException;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\ElasticSearch\Client\Fake\FakeElasticClient;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -12,7 +14,7 @@ beforeEach(function () {
         'elasticsearch.connections.default.hosts.0' => 'testhost:9200',
     ]);
 
-    $elasticClientMock = Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient');
+    $elasticClientMock = Mockery::mock(FakeElasticClient::class);
 
     ElasticSearch::shouldReceive('makeConnection')
         ->andReturn($elasticClientMock);
@@ -39,7 +41,7 @@ it('should index product in elastic search', function () {
         ],
     ]);
 
-    $indicesMock = Mockery::mock('Elastic\Elasticsearch\Endpoints\Indices');
+    $indicesMock = Mockery::mock(Indices::class);
 
     ElasticSearch::shouldReceive('indices')->andReturn($indicesMock);
 
@@ -47,7 +49,7 @@ it('should index product in elastic search', function () {
 
     $productIndex = strtolower($indexPrefix.'_products');
 
-    $indicesMockResponse = Mockery::mock('Elastic\Elasticsearch\Response\Elasticsearch');
+    $indicesMockResponse = Mockery::mock(Elastic\Elasticsearch\Response\Elasticsearch::class);
 
     $indicesMock->shouldReceive('exists')->with([
         'index' => $productIndex,
@@ -55,7 +57,7 @@ it('should index product in elastic search', function () {
 
     $indicesMockResponse->shouldReceive('asBool')->andReturn(true);
 
-    ElasticSearch::shouldReceive('bulk')->between(1, 10000)->withArgs(function ($args) {
+    ElasticSearch::shouldReceive('bulk')->between(1, 10000)->withArgs(function (mixed $args) {
         $this->assertIsArray($args);
 
         $this->assertArrayHasKey('body', $args);
@@ -83,26 +85,19 @@ it('should index the product to elastic when product is created', function () {
     /** This is called after the product->save function is called so here product id is available */
     ElasticSearch::shouldReceive('index')
         ->once()
-        ->withArgs(function ($args) use ($product) {
-            try {
-                $this->assertArrayHasKey('index', $args);
-                $this->assertArrayHasKey('id', $args);
-                $this->assertArrayHasKey('body', $args);
-
-                $this->assertEquals('testing_products', $args['index']);
-                $this->assertEquals($product->id, $args['id']);
-
-                $expectedBody = $product->toArray();
-                // Observer sanitizes status to boolean for ES8 compatibility
-                $expectedBody['status'] = (bool) $expectedBody['status'];
-                if (isset($expectedBody['attribute_family']['status'])) {
-                    $expectedBody['attribute_family']['status'] = (bool) $expectedBody['attribute_family']['status'];
-                }
-
-                $this->assertEquals($expectedBody, $args['body']);
-            } catch (ExpectationFailedException $e) {
-                throw $e;
+        ->withArgs(function (mixed $args) use ($product) {
+            $this->assertArrayHasKey('index', $args);
+            $this->assertArrayHasKey('id', $args);
+            $this->assertArrayHasKey('body', $args);
+            $this->assertEquals('testing_products', $args['index']);
+            $this->assertEquals($product->id, $args['id']);
+            $expectedBody = $product->toArray();
+            // Observer sanitizes status to boolean for ES8 compatibility
+            $expectedBody['status'] = (bool) $expectedBody['status'];
+            if (isset($expectedBody['attribute_family']['status'])) {
+                $expectedBody['attribute_family']['status'] = (bool) $expectedBody['attribute_family']['status'];
             }
+            $this->assertEquals($expectedBody, $args['body']);
 
             return is_array($args) && ! empty($args['body']);
         });
@@ -121,7 +116,7 @@ it('should index the product to elastic when product is updated', function () {
 
     ElasticSearch::shouldReceive('index')
         ->once()
-        ->withArgs(function ($args) use ($product) {
+        ->withArgs(function (mixed $args) use ($product) {
             try {
                 $this->assertArrayHasKey('index', $args);
                 $this->assertArrayHasKey('id', $args);
@@ -163,7 +158,7 @@ it('should remove product from elastic when product is deleted', function () {
 
     ElasticSearch::shouldReceive('delete')
         ->once()
-        ->withArgs(function ($args) use ($product) {
+        ->withArgs(function (mixed $args) use ($product) {
             try {
                 $this->assertArrayHasKey('index', $args);
                 $this->assertArrayHasKey('id', $args);
@@ -187,18 +182,18 @@ it('should create dynamic mapping templates for product attributes', function ()
 
     config(['elasticsearch.enabled' => true]);
 
-    $indicesMock = Mockery::mock('Elastic\Elasticsearch\Endpoints\Indices');
+    $indicesMock = Mockery::mock(Indices::class);
 
     ElasticSearch::shouldReceive('indices')->andReturn($indicesMock)->between(1, 5);
 
-    $indicesMockResponse = Mockery::mock('Elastic\Elasticsearch\Response\Elasticsearch');
+    $indicesMockResponse = Mockery::mock(Elastic\Elasticsearch\Response\Elasticsearch::class);
 
     $indicesMock->shouldReceive('exists')->andReturn($indicesMockResponse);
     $indicesMockResponse->shouldReceive('asBool')->andReturn(false);
 
     $indicesMock->shouldReceive('create')
         ->once()
-        ->withArgs(function ($args) {
+        ->withArgs(function (mixed $args) {
             try {
                 $this->assertArrayHasKey('index', $args);
                 $this->assertArrayHasKey('body', $args);

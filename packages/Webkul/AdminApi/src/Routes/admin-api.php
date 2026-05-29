@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -14,11 +16,11 @@ Route::group([
     /**
      * Settings API
      */
-    require 'V1/settings-routes.php';
+    require __DIR__.'/V1/settings-routes.php';
 
     /**
      * Catalog API
      */
-    require 'V1/catalog-routes.php';
+    require __DIR__.'/V1/catalog-routes.php';
 
 });

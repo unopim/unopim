@@ -10,6 +10,7 @@ class CategoryJobValidator extends JobValidator
     /**
      * Validation rules for job instance
      */
+    #[\Override]
     public function getRules(array $options): array
     {
         $this->rules['file'] = [
@@ -46,6 +47,7 @@ class CategoryJobValidator extends JobValidator
     /**
      * Add Custom error messages for validation
      */
+    #[\Override]
     public function getMessages(array $options): array
     {
         return array_merge(parent::getMessages($options), [

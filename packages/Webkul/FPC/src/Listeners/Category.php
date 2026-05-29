@@ -3,24 +3,20 @@
 namespace Webkul\FPC\Listeners;
 
 use Spatie\ResponseCache\Facades\ResponseCache;
+use Webkul\Category\Contracts\Category as CategoryContract;
 use Webkul\Category\Repositories\CategoryRepository;
 
 class Category
 {
     /**
      * Create a new listener instance.
-     *
-     * @return void
      */
     public function __construct(protected CategoryRepository $categoryRepository) {}
 
     /**
      * After category update
-     *
-     * @param  \Webkul\Category\Contracts\Category  $category
-     * @return void
      */
-    public function afterUpdate($category)
+    public function afterUpdate(CategoryContract $category): void
     {
         foreach (core()->getAllActiveLocales() as $locale) {
             if ($categoryTranslation = $category->translate($locale->code)) {
@@ -33,11 +29,8 @@ class Category
 
     /**
      * Before category delete
-     *
-     * @param  int  $categoryId
-     * @return void
      */
-    public function beforeDelete($categoryId)
+    public function beforeDelete(int $categoryId): void
     {
         $category = $this->categoryRepository->find($categoryId);
 

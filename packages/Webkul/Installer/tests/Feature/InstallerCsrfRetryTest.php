@@ -14,7 +14,7 @@ beforeEach(function () {
 
     app()->instance(EnvironmentManager::class, new class(app(DatabaseManager::class)) extends EnvironmentManager
     {
-        public function generateEnv($request)
+        public function generateEnv($request): bool
         {
 
             $this->databaseManager->generateKey();

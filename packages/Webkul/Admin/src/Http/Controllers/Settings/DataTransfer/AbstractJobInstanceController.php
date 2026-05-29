@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Helpers\Import;
@@ -14,12 +15,12 @@ use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 
 abstract class AbstractJobInstanceController extends Controller
 {
+    public mixed $jobTrackRepository;
+
     const TYPE = '';
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobInstancesRepository $jobInstancesRepository,
@@ -106,7 +107,7 @@ abstract class AbstractJobInstanceController extends Controller
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
-        return view('admin::settings.data-transfer.imports.edit', compact('import'));
+        return view('admin::settings.data-transfer.imports.edit', ['import' => $import]);
     }
 
     /**
@@ -178,10 +179,8 @@ abstract class AbstractJobInstanceController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
      */
-    public function destroy($id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
@@ -195,7 +194,7 @@ abstract class AbstractJobInstanceController extends Controller
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.delete-success'),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
 
         return response()->json([
@@ -230,13 +229,13 @@ abstract class AbstractJobInstanceController extends Controller
 
         $import->unsetRelations();
 
-        return view('admin::settings.data-transfer.imports.import', compact('import'));
+        return view('admin::settings.data-transfer.imports.import', ['import' => $import]);
     }
 
     /**
      * importNow function dispatch the job asynchronously
      */
-    abstract public function importNow(int $id);
+    abstract public function importNow(int $id): mixed;
 
     /**
      * Store a newly created resource in storage.
@@ -299,14 +298,12 @@ abstract class AbstractJobInstanceController extends Controller
                     'message' => $e->getMessage(),
                 ], JsonResponse::HTTP_BAD_REQUEST);
             }
+        } elseif ($this->importHelper->isLinkingRequired()) {
+            $this->importHelper->linking();
+        } elseif ($this->importHelper->isIndexingRequired()) {
+            $this->importHelper->indexing();
         } else {
-            if ($this->importHelper->isLinkingRequired()) {
-                $this->importHelper->linking();
-            } elseif ($this->importHelper->isIndexingRequired()) {
-                $this->importHelper->indexing();
-            } else {
-                $this->importHelper->completed();
-            }
+            $this->importHelper->completed();
         }
 
         return new JsonResponse([
@@ -362,12 +359,10 @@ abstract class AbstractJobInstanceController extends Controller
                     'message' => $e->getMessage(),
                 ], JsonResponse::HTTP_BAD_REQUEST);
             }
+        } elseif ($this->importHelper->isIndexingRequired()) {
+            $this->importHelper->indexing();
         } else {
-            if ($this->importHelper->isIndexingRequired()) {
-                $this->importHelper->indexing();
-            } else {
-                $this->importHelper->completed();
-            }
+            $this->importHelper->completed();
         }
 
         return new JsonResponse([
@@ -456,7 +451,7 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Download import error report
      */
-    public function downloadSample(string $type)
+    public function downloadSample(string $type): StreamedResponse
     {
         $importer = config('importers.'.$type);
 
@@ -466,7 +461,7 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Download import error report
      */
-    public function download(int $id)
+    public function download(int $id): StreamedResponse
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
@@ -476,7 +471,7 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Download import error report
      */
-    public function downloadErrorReport(int $id)
+    public function downloadErrorReport(int $id): StreamedResponse
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 

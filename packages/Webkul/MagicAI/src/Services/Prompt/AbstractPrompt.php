@@ -6,17 +6,15 @@ use Illuminate\Support\Str;
 
 abstract class AbstractPrompt
 {
-    abstract protected function updatePrompt(string $prompt, int $resourceId);
+    abstract protected function updatePrompt(string $prompt, int $resourceId): string;
 
     // Implement the searchStringWithAt method
-    protected function searchStringWithAt($string)
+    protected function searchStringWithAt(string $string): array
     {
-        $matches = Str::matchAll('/@\w+/', $string)->toArray();
-
-        return $matches;
+        return Str::matchAll('/@\w+/', $string)->toArray();
     }
 
-    public function getValue(array $values, string $key)
+    public function getValue(array $values, string $key): mixed
     {
         return $values[$key] ?? '';
     }

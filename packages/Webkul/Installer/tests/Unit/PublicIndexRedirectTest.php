@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Regression: when vendor/ is deleted (manual reinstall scenario), public/index.php
  * sends a relative Location header to install.php. If the user was on /admin/dashboard

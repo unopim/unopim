@@ -9,7 +9,7 @@ use Webkul\Category\Repositories\CategoryRepository;
 
 class CategoryPrompt extends AbstractPrompt
 {
-    private static $instance;
+    private static ?CategoryPrompt $instance = null;
 
     public function __construct(
         protected CategoryRepository $categoryRepository,
@@ -21,7 +21,7 @@ class CategoryPrompt extends AbstractPrompt
      */
     public static function getInstance(): CategoryPrompt
     {
-        if (self::$instance === null) {
+        if (! self::$instance instanceof CategoryPrompt) {
             self::$instance = new self(app(CategoryRepository::class), app(CategoryFieldRepository::class));
         }
 
@@ -68,12 +68,12 @@ class CategoryPrompt extends AbstractPrompt
         return $prompt;
     }
 
-    public function getCategoryById($categoryId)
+    public function getCategoryById(int $categoryId): mixed
     {
         return $this->categoryRepository->find($categoryId);
     }
 
-    public function findCategoryFieldByCode($code)
+    public function findCategoryFieldByCode(string $code): mixed
     {
         return $this->categoryFieldRepository->findOneByField('code', $code);
     }

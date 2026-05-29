@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\HistoryControl\Contracts;
 
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;

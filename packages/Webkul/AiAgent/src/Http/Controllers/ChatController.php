@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -59,7 +60,7 @@ class ChatController extends Controller
 
             if ($resolved['is_known']) {
                 Log::warning('AI Agent chat provider error', [
-                    'type'    => get_class($e),
+                    'type'    => $e::class,
                     'message' => $e->getMessage(),
                 ]);
             } else {
@@ -104,9 +105,9 @@ class ChatController extends Controller
             'images'      => 'nullable|array|max:5',
             'images.*'    => 'image|mimes:jpeg,png,webp,gif|max:10240',
             'files'       => 'nullable|array|max:3',
-            'files.*'     => ['file', 'max:102400', function (string $attribute, $value, $fail) {
+            'files.*'     => ['file', 'max:102400', function (string $attribute, mixed $value, \Closure $fail) {
                 $allowed = ['csv', 'xlsx', 'xls'];
-                $ext = strtolower($value->getClientOriginalExtension());
+                $ext = strtolower((string) $value->getClientOriginalExtension());
                 if (! in_array($ext, $allowed, true)) {
                     $fail(trans('ai-agent::app.common.invalid-file-type', ['types' => implode(', ', $allowed)]));
                 }
@@ -130,7 +131,7 @@ class ChatController extends Controller
         // Check daily token budget
         $budgetError = $this->checkTokenBudget();
 
-        if ($budgetError) {
+        if ($budgetError instanceof JsonResponse) {
             return $budgetError;
         }
 
@@ -139,7 +140,7 @@ class ChatController extends Controller
             (int) $request->input('platform_id', 0),
         );
 
-        if (! $platform) {
+        if (! $platform instanceof MagicAIPlatform) {
             return new JsonResponse([
                 'reply'  => trans('ai-agent::app.common.no-platform'),
                 'action' => 'error',
@@ -175,7 +176,7 @@ class ChatController extends Controller
             $imagePaths[] = storage_path('app/public/'.$stored);
         }
 
-        if (! empty($imagePaths)) {
+        if ($imagePaths !== []) {
             // New images uploaded — save to session
             session(['ai_agent_image_paths' => $imagePaths]);
             session(['ai_agent_image_uploaded_at' => now()->timestamp]);
@@ -186,7 +187,7 @@ class ChatController extends Controller
 
             if ($isFresh) {
                 $sessionImages = session('ai_agent_image_paths', []);
-                $imagePaths = array_filter($sessionImages, fn ($p) => file_exists($p));
+                $imagePaths = array_filter($sessionImages, file_exists(...));
             }
         }
 
@@ -207,15 +208,15 @@ class ChatController extends Controller
             $filePaths[] = storage_path('app/public/'.$stored);
         }
 
-        if (! empty($filePaths)) {
+        if ($filePaths !== []) {
             session(['ai_agent_file_paths' => $filePaths]);
             session(['ai_agent_file_uploaded_at' => now()->timestamp]);
-        } elseif (empty($filePaths)) {
+        } elseif ($filePaths === []) {
             $uploadedAt = session('ai_agent_file_uploaded_at', 0);
 
             if ((now()->timestamp - $uploadedAt) < 600) {
                 $sessionFiles = session('ai_agent_file_paths', []);
-                $filePaths = array_filter($sessionFiles, fn ($p) => file_exists($p));
+                $filePaths = array_filter($sessionFiles, file_exists(...));
             }
         }
 
@@ -224,14 +225,14 @@ class ChatController extends Controller
         $message = $request->input('message', '');
 
         // If no message but files/images attached, provide a default instruction
-        if (empty($message) && (! empty($imagePaths) || ! empty($filePaths))) {
+        if (empty($message) && ($imagePaths !== [] || $filePaths !== [])) {
             $message = trans('ai-agent::app.common.process-attached-files');
         }
 
         return new ChatContext(
             message: $message,
             history: $request->input('history', []),
-            productId: ! empty($context['product_id']) ? (int) $context['product_id'] : null,
+            productId: empty($context['product_id']) ? null : (int) $context['product_id'],
             productSku: $context['product_sku'] ?? null,
             productName: $context['product_name'] ?? null,
             locale: app()->getLocale() ?: 'en_US',
@@ -325,7 +326,7 @@ class ChatController extends Controller
         // Try default platform
         $platform = $this->platformRepository->getDefault();
 
-        if ($platform) {
+        if ($platform instanceof Model) {
             return $platform;
         }
 
@@ -354,7 +355,7 @@ class ChatController extends Controller
             'scope'      => 'catalog',
             'key'        => "message_feedback:{$ratingLabel}",
             'user_id'    => $user?->id,
-            'value'      => mb_substr($messageText, 0, 500),
+            'value'      => mb_substr((string) $messageText, 0, 500),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -366,7 +367,7 @@ class ChatController extends Controller
                 ->where('user_id', $user?->id)
                 ->first();
 
-            $hint = 'User found this response helpful: '.mb_substr($messageText, 0, 200);
+            $hint = 'User found this response helpful: '.mb_substr((string) $messageText, 0, 200);
 
             if ($existing) {
                 $styleHints = mb_substr($existing->value.'; '.$hint, -500);
@@ -399,15 +400,15 @@ class ChatController extends Controller
         $enabled = (bool) core()->getConfigData('general.magic_ai.settings.enabled');
         $agenticEnabled = (bool) core()->getConfigData('general.magic_ai.agentic_pim.enabled');
 
-        $modelList = array_values(array_filter(array_map('trim', explode(',', $models))));
-        $model = (string) (ModelRecommender::pickTextModel($modelList) ?? '');
+        $modelList = array_values(array_filter(array_map(trim(...), explode(',', $models))));
+        $model = ModelRecommender::pickTextModel($modelList) ?? '';
 
         return new JsonResponse([
             'enabled'         => $enabled,
             'agentic_enabled' => $agenticEnabled,
             'platform'        => $platform,
             'model'           => $model ?: ucfirst($platform),
-            'label'           => $model ? $model.' ('.ucfirst($platform).')' : ucfirst($platform),
+            'label'           => $model !== '' && $model !== '0' ? $model.' ('.ucfirst($platform).')' : ucfirst($platform),
         ]);
     }
 }

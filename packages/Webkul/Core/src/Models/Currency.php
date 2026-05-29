@@ -41,9 +41,9 @@ class Currency extends Model implements AuditableContract, CurrencyContract
     /**
      * Set currency code in capital
      */
-    public function setCodeAttribute($code): void
+    public function setCodeAttribute(mixed $code): void
     {
-        $this->attributes['code'] = strtoupper($code);
+        $this->attributes['code'] = strtoupper((string) $code);
     }
 
     /**
@@ -75,7 +75,7 @@ class Currency extends Model implements AuditableContract, CurrencyContract
      */
     public function isCurrencyBeingUsed(): bool
     {
-        return $this->channel()?->get()?->first()?->exists() ?? false;
+        return $this->channel()->get()?->first()?->exists() ?? false;
     }
 
     /**
@@ -87,7 +87,7 @@ class Currency extends Model implements AuditableContract, CurrencyContract
             get: function (?string $value, array $attributes) {
                 try {
                     return Currencies::getName($attributes['code'], \Locale::getPrimaryLanguage(app()->getLocale()));
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     return $attributes['code'];
                 }
             }

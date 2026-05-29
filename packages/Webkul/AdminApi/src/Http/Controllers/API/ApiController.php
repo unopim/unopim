@@ -16,10 +16,8 @@ class ApiController extends BaseController
 
     /**
      * This function processes and transforms the 'labels' key in the given request data.
-     *
-     * @return array
      */
-    protected function setLabels(array $requestData, string $labelKey = 'name')
+    protected function setLabels(array $requestData, string $labelKey = 'name'): array
     {
         if (! isset($requestData['labels'])) {
             return $requestData;
@@ -31,9 +29,8 @@ class ApiController extends BaseController
         }
 
         unset($requestData['labels']);
-        $requestData = array_merge($requestData, $labels);
 
-        return $requestData;
+        return array_merge($requestData, $labels);
     }
 
     /**
@@ -41,7 +38,7 @@ class ApiController extends BaseController
      *
      * @return \Illuminate\Contracts\Validation\Validator The validator instance.
      */
-    protected function codeRequireWithUniqueValidator(string $table, array $newRules = [])
+    protected function codeRequireWithUniqueValidator(string $table, array $newRules = []): \Illuminate\Contracts\Validation\Validator
     {
         $rules = [
             'code' => [
@@ -51,12 +48,10 @@ class ApiController extends BaseController
             ],
         ];
 
-        $validator = Validator::make(
+        return Validator::make(
             request()->all(),
             array_merge($rules, $newRules)
         );
-
-        return $validator;
     }
 
     /**
@@ -64,13 +59,11 @@ class ApiController extends BaseController
      *
      * @return \Illuminate\Contracts\Validation\Validator The validator instance.
      */
-    protected function validator(array $Rules = [])
+    protected function validator(array $Rules = []): \Illuminate\Contracts\Validation\Validator
     {
-        $validator = Validator::make(
+        return Validator::make(
             request()->all(),
             $Rules
         );
-
-        return $validator;
     }
 }

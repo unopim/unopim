@@ -11,6 +11,7 @@ use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Psr\Log\LoggerInterface;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
@@ -143,7 +144,7 @@ class ExportProducts implements PimTool
      */
     public function buildFilters(ChatContext $context, ?string $skus, string $status, ?string $category, string $format): array
     {
-        $skuList = array_values(array_filter(array_map('trim', explode(',', (string) $skus))));
+        $skuList = array_values(array_filter(array_map(trim(...), explode(',', (string) $skus))));
 
         return [
             'file_format' => $format === 'xlsx' ? 'Xlsx' : 'Csv',
@@ -220,8 +221,8 @@ class ExportProducts implements PimTool
             return $products;
         }
 
-        return $products->filter(function ($product) use ($filters) {
-            $values = json_decode($product->values, true) ?? [];
+        return $products->filter(function (\stdClass $product) use ($filters) {
+            $values = json_decode((string) $product->values, true) ?? [];
 
             return in_array($filters['category'], $values['categories'] ?? [], true);
         })->values();
@@ -237,7 +238,7 @@ class ExportProducts implements PimTool
         ];
 
         foreach ($products as $product) {
-            $values = json_decode($product->values, true) ?? [];
+            $values = json_decode((string) $product->values, true) ?? [];
             $channelLocaleValues = $values['channel_locale_specific'][$context->channel][$context->locale] ?? [];
             $commonValues = $values['common'] ?? [];
 
@@ -245,7 +246,7 @@ class ExportProducts implements PimTool
 
             if (isset($channelLocaleValues['price']) && is_array($channelLocaleValues['price'])) {
                 $price = implode(', ', array_map(
-                    fn ($currency, $amount) => "{$currency}: {$amount}",
+                    fn (mixed $currency, mixed $amount) => "{$currency}: {$amount}",
                     array_keys($channelLocaleValues['price']),
                     $channelLocaleValues['price']
                 ));
@@ -323,7 +324,7 @@ class ExportProducts implements PimTool
     /**
      * Mark the tracker and its single batch as completed.
      */
-    public function markTrackAsCompleted(int $jobTrackId, Collection $products, string $relativePath, $logger): void
+    public function markTrackAsCompleted(int $jobTrackId, Collection $products, string $relativePath, LoggerInterface $logger): void
     {
         $summary = [
             'processed' => $products->count(),
@@ -333,7 +334,7 @@ class ExportProducts implements PimTool
 
         $this->jobTrackBatchRepository->create([
             'state'        => ExportHelper::STATE_PROCESSED,
-            'data'         => $products->pluck('id')->map(fn ($id) => ['id' => $id])->values()->all(),
+            'data'         => $products->pluck('id')->map(fn (mixed $id) => ['id' => $id])->values()->all(),
             'summary'      => $summary,
             'job_track_id' => $jobTrackId,
         ]);
@@ -352,7 +353,7 @@ class ExportProducts implements PimTool
     /**
      * Mark the tracker row as failed so the issue is visible in job history.
      */
-    public function markTrackAsFailed(int $jobTrackId, string $message, $logger): void
+    public function markTrackAsFailed(int $jobTrackId, string $message, LoggerInterface $logger): void
     {
         $this->jobTrackRepository->update([
             'state'        => ExportHelper::STATE_FAILED,

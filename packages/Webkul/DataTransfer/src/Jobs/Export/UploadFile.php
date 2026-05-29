@@ -17,26 +17,13 @@ class UploadFile implements ShouldQueue
      * Create a new job instance.
      *
      * @param  mixed  $import
-     * @return void
      */
-    public function __construct(
-        protected $export,
-        protected $filePath,
-        protected $temporaryPath,
-        protected $filters
-    ) {
-        $this->export = $export;
-        $this->filePath = $filePath;
-        $this->temporaryPath = $temporaryPath;
-        $this->filters = $filters;
-    }
+    public function __construct(protected mixed $export, protected mixed $filePath, protected mixed $temporaryPath, protected mixed $filters) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         app(ExportHelper::class)
             ->setExport($this->export)

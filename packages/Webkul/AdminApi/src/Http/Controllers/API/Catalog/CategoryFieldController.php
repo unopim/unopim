@@ -20,8 +20,6 @@ class CategoryFieldController extends ApiController
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected CategoryFieldRepository $categoryFieldRepository,
@@ -115,7 +113,7 @@ class CategoryFieldController extends ApiController
         }
 
         $immutable = array_intersect(['code', 'type', 'value_per_locale', 'is_unique'], array_keys(request()->all()));
-        if (! empty($immutable)) {
+        if ($immutable !== []) {
             return $this->validateErrorResponse([
                 'immutable' => [trans('admin::app.catalog.category_fields.immutable-fields', ['fields' => implode(', ', $immutable)])],
             ]);
@@ -145,17 +143,17 @@ class CategoryFieldController extends ApiController
      *
      * @return array The updated request data array with default values.
      */
-    private function setDefaultValues(array $requestData)
+    private function setDefaultValues(array $requestData): array
     {
-        $requestData['status'] = $requestData['status'] ?? 1;
-        $requestData['position'] = $requestData['position'] ?? 0;
-        $requestData['is_required'] = $requestData['is_required'] ?? 0;
-        $requestData['is_unique'] = $requestData['is_unique'] ?? 0;
-        $requestData['value_per_locale'] = $requestData['value_per_locale'] ?? 0;
-        $requestData['enable_wysiwyg'] = $requestData['enable_wysiwyg'] ?? 0;
-        $requestData['section'] = $requestData['section'] ?? 'left';
-        $requestData['validation'] = $requestData['validation'] ?? null;
-        $requestData['regex_pattern'] = $requestData['regex_pattern'] ?? null;
+        $requestData['status'] ??= 1;
+        $requestData['position'] ??= 0;
+        $requestData['is_required'] ??= 0;
+        $requestData['is_unique'] ??= 0;
+        $requestData['value_per_locale'] ??= 0;
+        $requestData['enable_wysiwyg'] ??= 0;
+        $requestData['section'] ??= 'left';
+        $requestData['validation'] ??= null;
+        $requestData['regex_pattern'] ??= null;
 
         return $requestData;
     }
@@ -163,7 +161,7 @@ class CategoryFieldController extends ApiController
     /**
      * Display a single result of the resource.
      */
-    public function getOptions($code): JsonResponse
+    public function getOptions(string $code): JsonResponse
     {
         try {
             return response()->json(app(CategoryFieldDataSource::class)->getOptionsByFieldCode($code));
@@ -202,7 +200,7 @@ class CategoryFieldController extends ApiController
                 ], $optionInputs));
             }
 
-            if (! empty($errors)) {
+            if ($errors !== []) {
                 return $this->validateErrorResponse($errors);
             }
 
@@ -246,7 +244,7 @@ class CategoryFieldController extends ApiController
                 $this->categoryFieldOptionRepository->update($optionInputs, $categoryFieldOption->id);
             }
 
-            if (! empty($errors)) {
+            if ($errors !== []) {
                 return $this->validateErrorResponse($errors);
             }
 
@@ -264,13 +262,11 @@ class CategoryFieldController extends ApiController
      *
      * @return \Illuminate\Contracts\Validation\Validator The Validator instance with the applied rules.
      */
-    private function optionValidate(array $requestData, int $categoryFieldId)
+    private function optionValidate(array $requestData, int $categoryFieldId): \Illuminate\Contracts\Validation\Validator
     {
         $rules = [
             'code' => ['required',
-                Rule::unique('category_field_options')->where(function ($query) use ($requestData, $categoryFieldId) {
-                    return $query->where('code', $requestData['code'])->where('category_field_id', $categoryFieldId);
-                }),
+                Rule::unique('category_field_options')->where(fn (mixed $query) => $query->where('code', $requestData['code'])->where('category_field_id', $categoryFieldId)),
                 new Code,
             ],
         ];

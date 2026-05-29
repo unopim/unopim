@@ -2,7 +2,7 @@
 
 namespace Webkul\AdminApi;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\Checker\QueryParametersChecker;
@@ -11,31 +11,23 @@ abstract class ApiDataSource
 {
     /**
      * set filter column and filter by operator
-     *
-     * @var array
      */
-    protected $fieldFiltersAndOperators = [];
+    protected array $fieldFiltersAndOperators = [];
 
     /**
      * Primary column.
-     *
-     * @var string
      */
-    protected $primaryColumn = 'id';
+    protected string $primaryColumn = 'id';
 
     /**
      * Default sort column of datagrid.
-     *
-     * @var ?string
      */
-    protected $sortColumn;
+    protected ?string $sortColumn = null;
 
     /**
      * Default filter operators.
-     *
-     * @var array
      */
-    protected $operators = [
+    protected array $operators = [
         'EQUALS'      => '=',
         'IN_LIST'     => 'IN',
         'NOT_IN_LIST' => 'NOT IN',
@@ -43,24 +35,18 @@ abstract class ApiDataSource
 
     /**
      * Default sort order of datagrid.
-     *
-     * @var string
      */
-    protected $sortOrder = 'asc';
+    protected string $sortOrder = 'asc';
 
     /**
      * Default items per page.
-     *
-     * @var int
      */
-    protected $itemsPerPage = 10;
+    protected int $itemsPerPage = 10;
 
     /**
      * Query builder instance.
-     *
-     * @var object
      */
-    protected $queryBuilder;
+    protected object $queryBuilder;
 
     /**
      * Paginator instance.
@@ -70,12 +56,12 @@ abstract class ApiDataSource
     /**
      * Prepare query builder.
      */
-    abstract public function prepareApiQueryBuilder();
+    abstract public function prepareApiQueryBuilder(): mixed;
 
     /**
      * format Data.
      */
-    public function formatData()
+    public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
 
@@ -85,7 +71,7 @@ abstract class ApiDataSource
     /**
      * Map your filter.
      */
-    public function addFilter(string $column, mixed $operators, $filterTable = null): void
+    public function addFilter(string $column, mixed $operators, ?string $filterTable = null): void
     {
         $this->fieldFiltersAndOperators[$column]['operators'] = $operators;
         if ($filterTable) {
@@ -95,10 +81,8 @@ abstract class ApiDataSource
 
     /**
      * Set query builder.
-     *
-     * @param  mixed  $queryBuilder
      */
-    public function setQueryBuilder($queryBuilder = null): void
+    public function setQueryBuilder(mixed $queryBuilder = null): void
     {
         $this->queryBuilder = $queryBuilder ?: $this->prepareApiQueryBuilder();
     }
@@ -108,9 +92,9 @@ abstract class ApiDataSource
      *
      * @return Builder
      */
-    public function processRequestedFilters(array $requestedFilters)
+    public function processRequestedFilters(array $requestedFilters): mixed
     {
-        return $this->queryBuilder->scopeQuery(function ($scopeQueryBuilder) use ($requestedFilters) {
+        return $this->queryBuilder->scopeQuery(function (mixed $scopeQueryBuilder) use ($requestedFilters) {
             $this->setDefaultFilters($scopeQueryBuilder);
 
             foreach ($requestedFilters as $requestedColumn => $requestedValues) {
@@ -123,7 +107,7 @@ abstract class ApiDataSource
         });
     }
 
-    public function setDefaultFilters($queryBuilder)
+    public function setDefaultFilters(mixed $queryBuilder): mixed
     {
         return $queryBuilder;
     }
@@ -136,7 +120,7 @@ abstract class ApiDataSource
      *
      * @throws UnprocessableEntityHttpException If the 'filters' key is missing in the request parameters.
      */
-    public function validateFilterCriterias($requestedParams)
+    public function validateFilterCriterias(array $requestedParams): array
     {
         if (! isset($requestedParams['filters'])) {
             return [];
@@ -156,7 +140,7 @@ abstract class ApiDataSource
      *
      * @throws UnprocessableEntityHttpException If a filter parameter is not supported, has an unsupported operator, or lacks a value.
      */
-    public function validateFilterParameters($filterParameters)
+    public function validateFilterParameters(array $filterParameters): void
     {
         foreach ($filterParameters as $filterKey => $filterParameter) {
             foreach ($filterParameter as $filterOperator) {
@@ -226,7 +210,7 @@ abstract class ApiDataSource
      * @param  array  $value  The value and operator to apply.
      * @return Builder The updated query builder instance.
      */
-    public function operatorByFilter($scopeQueryBuilder, $requestedColumn, $value)
+    public function operatorByFilter(mixed $scopeQueryBuilder, string $requestedColumn, array $value): mixed
     {
         if ($this->operators['EQUALS'] == $value['operator']) {
             // Apply the 'equals' operator to the query builder.
@@ -252,7 +236,7 @@ abstract class ApiDataSource
      *
      * @return Builder
      */
-    public function processRequestedSorting($requestedSort)
+    public function processRequestedSorting(mixed $requestedSort): mixed
     {
         if (! $this->sortColumn) {
             $this->sortColumn = $this->primaryColumn;
@@ -264,7 +248,7 @@ abstract class ApiDataSource
     /**
      * Process requested pagination.
      */
-    public function processRequestedPagination($requestedPagination)
+    public function processRequestedPagination(array $requestedPagination): LengthAwarePaginator
     {
         return $this->queryBuilder->paginate(
             $requestedPagination['limit'] ?? $this->itemsPerPage,
@@ -275,7 +259,7 @@ abstract class ApiDataSource
     /**
      * Process requested pagination.
      */
-    public function processRequestedSingleData()
+    public function processRequestedSingleData(): object
     {
         return $this->queryBuilder;
     }
@@ -313,13 +297,13 @@ abstract class ApiDataSource
      * @param  array  $channel  The channel data from the database.
      * @return array An associative array containing the locales as keys and their corresponding channel names as values.
      */
-    public function getTranslations($data, $labelKey = 'name')
+    public function getTranslations(array $data, string $labelKey = 'name'): array
     {
         if (empty($data['translations'])) {
             return [];
         }
 
-        return array_reduce($data['translations'], function ($carry, $item) use ($labelKey) {
+        return array_reduce($data['translations'], function (mixed $carry, mixed $item) use ($labelKey) {
             if (isset($item[$labelKey]) && ! empty($item[$labelKey])) {
                 $carry[$item['locale']] = $item[$labelKey];
             }
@@ -370,7 +354,7 @@ abstract class ApiDataSource
     /**
      * To json.
      */
-    public function toJson()
+    public function toJson(): JsonResponse
     {
         $this->prepare();
 

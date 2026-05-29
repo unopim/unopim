@@ -4,6 +4,11 @@ namespace Webkul\HistoryControl\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Prettus\Repository\Events\RepositoryEntityCreated;
+use Prettus\Repository\Events\RepositoryEntityCreating;
+use Prettus\Repository\Events\RepositoryEntityDeleted;
+use Prettus\Repository\Events\RepositoryEntityUpdated;
+use Webkul\HistoryControl\Listeners\History;
 use Webkul\HistoryControl\Listeners\ProxyValueSyncEventListener;
 
 class EventServiceProvider extends ServiceProvider
@@ -14,26 +19,25 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'Prettus\Repository\Events\RepositoryEntityCreating' => [
-            'Webkul\HistoryControl\Listeners\History',
+        RepositoryEntityCreating::class => [
+            History::class,
         ],
-        'Prettus\Repository\Events\RepositoryEntityCreated' => [
-            'Webkul\HistoryControl\Listeners\History',
+        RepositoryEntityCreated::class => [
+            History::class,
         ],
-        'Prettus\Repository\Events\RepositoryEntityUpdated' => [
-            'Webkul\HistoryControl\Listeners\History',
+        RepositoryEntityUpdated::class => [
+            History::class,
         ],
-        'Prettus\Repository\Events\RepositoryEntityDeleted' => [
-            'Webkul\HistoryControl\Listeners\History',
+        RepositoryEntityDeleted::class => [
+            History::class,
         ],
     ];
 
     /**
      * Register the application's event listeners.
-     *
-     * @return void
      */
-    public function boot()
+    #[\Override]
+    public function boot(): void
     {
         $events = app('events');
 
@@ -49,17 +53,17 @@ class EventServiceProvider extends ServiceProvider
     /**
      * {@inheritdoc}
      */
-    public function register()
+    #[\Override]
+    public function register(): void
     {
         //
     }
 
     /**
      * Get the events and handlers.
-     *
-     * @return array
      */
-    public function listens()
+    #[\Override]
+    public function listens(): array
     {
         return $this->listen;
     }

@@ -5,6 +5,8 @@ namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\JobTrackerGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Helpers\Export;
@@ -18,8 +20,6 @@ class TrackerController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobInstancesRepository $jobInstancesRepository,
@@ -45,14 +45,14 @@ class TrackerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function view($batchId = null): View
+    public function view(mixed $batchId = null): View
     {
         if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
             abort(403, 'This action is unauthorized');
         }
 
         $import = $this->jobTrackRepository->findOrFail($batchId);
-        $jobInstance = json_decode($import->meta, true);
+        $jobInstance = json_decode((string) $import->meta, true);
         $summary = $this->normalizeSummary($import->summary);
 
         $batchState = $this->mapJobStateToBatchState($import->state);
@@ -65,13 +65,7 @@ class TrackerController extends Controller
             $stats = $this->importHelper->stats($batchState);
         }
 
-        return view('admin::settings.data-transfer.tracker.import', compact(
-            'import',
-            'isValid',
-            'stats',
-            'jobInstance',
-            'summary',
-        ));
+        return view('admin::settings.data-transfer.tracker.import', ['import' => $import, 'isValid' => $isValid, 'stats' => $stats, 'jobInstance' => $jobInstance, 'summary' => $summary]);
     }
 
     /**
@@ -94,7 +88,7 @@ class TrackerController extends Controller
      * @param  array|null  $summary  The summary data to be normalized.
      * @return array The normalized summary data.
      */
-    private function normalizeSummary($summary)
+    private function normalizeSummary(?array $summary): array
     {
         $summaryData = [];
 
@@ -109,7 +103,7 @@ class TrackerController extends Controller
     /**
      * Download
      */
-    public function download(int $id)
+    public function download(int $id): StreamedResponse
     {
         $import = $this->jobTrackRepository->findOrFail($id);
 
@@ -119,7 +113,7 @@ class TrackerController extends Controller
     /**
      * Download archive
      */
-    public function downloadArchive(int $id)
+    public function downloadArchive(int $id): mixed
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
         $zip = new ZipArchive;
@@ -152,7 +146,7 @@ class TrackerController extends Controller
     /**
      * Download Log file for the job
      */
-    public function downloadLogFile(int $id)
+    public function downloadLogFile(int $id): BinaryFileResponse
     {
         $path = JobLogger::getJobLogPath($id);
 

@@ -61,7 +61,7 @@ it('should return the locale as json for edit modal', function () {
         ->assertOk()
         ->assertJsonFragment([
             ...$locale->toArray(),
-            'status' => $locale->status ? true : false,
+            'status' => (bool) $locale->status,
         ]);
 });
 

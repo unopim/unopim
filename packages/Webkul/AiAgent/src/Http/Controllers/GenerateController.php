@@ -18,14 +18,12 @@ class GenerateController extends Controller
 
     /**
      * Show the Generate page.
-     *
-     * @return View
      */
-    public function index()
+    public function index(): View
     {
         $credentials = $this->credentialRepository->getActiveList();
 
-        return view('ai-agent::generate.index', compact('credentials'));
+        return view('ai-agent::generate.index', ['credentials' => $credentials]);
     }
 
     /**

@@ -2,7 +2,10 @@
 
 namespace Webkul\MagicAI\Repository;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\MagicAI\Contracts\MagicAIPlatform;
 
 class MagicAIPlatformRepository extends Repository
 {
@@ -11,13 +14,13 @@ class MagicAIPlatformRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\MagicAI\Contracts\MagicAIPlatform';
+        return MagicAIPlatform::class;
     }
 
     /**
      * Get the default active platform.
      */
-    public function getDefault()
+    public function getDefault(): ?Model
     {
         return $this->model->active()->default()->first();
     }
@@ -25,7 +28,7 @@ class MagicAIPlatformRepository extends Repository
     /**
      * Get all active platforms.
      */
-    public function getActiveList()
+    public function getActiveList(): Collection
     {
         return $this->model->active()->get();
     }
@@ -35,15 +38,13 @@ class MagicAIPlatformRepository extends Repository
      */
     public function getActivePlatformOptions(): array
     {
-        return $this->model->active()->get()->map(function ($platform) {
-            return [
-                'id'         => $platform->id,
-                'label'      => $platform->label.' ('.ucfirst($platform->provider).')',
-                'provider'   => $platform->provider,
-                'models'     => $platform->model_list,
-                'is_default' => $platform->is_default,
-            ];
-        })->toArray();
+        return $this->model->active()->get()->map(fn (Model $platform) => [
+            'id'         => $platform->id,
+            'label'      => $platform->label.' ('.ucfirst((string) $platform->provider).')',
+            'provider'   => $platform->provider,
+            'models'     => $platform->model_list,
+            'is_default' => $platform->is_default,
+        ])->toArray();
     }
 
     /**
@@ -57,11 +58,9 @@ class MagicAIPlatformRepository extends Repository
             return [];
         }
 
-        return array_map(function ($model) {
-            return [
-                'id'    => $model,
-                'label' => $model,
-            ];
-        }, $platform->model_list);
+        return array_map(fn (string $model) => [
+            'id'    => $model,
+            'label' => $model,
+        ], $platform->model_list);
     }
 }

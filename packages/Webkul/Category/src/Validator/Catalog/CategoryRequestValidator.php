@@ -15,6 +15,7 @@ class CategoryRequestValidator extends CategoryValidator
     /**
      * Validates the category data based on the provided request data and optional category ID.
      */
+    #[\Override]
     public function validate(array $requestData, ?int $id = null): void
     {
         $validator = parent::validate($requestData, $id);
@@ -39,7 +40,8 @@ class CategoryRequestValidator extends CategoryValidator
     /**
      * Validates the input fields of the category based on the provided request data and category ID.
      */
-    protected function inputFieldValidate(array $requestData, ?int $id)
+    #[\Override]
+    protected function inputFieldValidate(array $requestData, ?int $id): array|Validator
     {
         if (! array_key_exists(CategoryRepository::ADDITIONAL_VALUES_KEY, $requestData)) {
             return [];
@@ -51,7 +53,7 @@ class CategoryRequestValidator extends CategoryValidator
 
         $fieldKeys = [];
 
-        foreach ($rules as $key => $validationRules) {
+        foreach (array_keys($rules) as $key) {
             if (! is_string($key)) {
                 continue;
             }
@@ -72,6 +74,7 @@ class CategoryRequestValidator extends CategoryValidator
         return ValidatorFacade::make($requestData, $rules, [], $fieldKeys);
     }
 
+    #[\Override]
     protected function fieldTypeRules(CategoryField $field): array
     {
         $rules = parent::fieldTypeRules($field);

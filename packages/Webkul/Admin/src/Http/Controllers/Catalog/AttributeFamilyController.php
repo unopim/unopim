@@ -20,8 +20,6 @@ class AttributeFamilyController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
@@ -55,22 +53,20 @@ class AttributeFamilyController extends Controller
 
     /**
      * Normalize attribute family, custom attributes, and custom attribute groups data.
-     *
-     * @return array
      */
-    private function normalize($attributeFamily = null)
+    private function normalize(?AttributeFamily $attributeFamily = null): array
     {
-        $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings()->with('attributeGroups')->get()->map(function ($familyGroupMapping) {
+        $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings()->with('attributeGroups')->get()->map(function (object $familyGroupMapping) {
             $attributeGroup = $familyGroupMapping->attributeGroups->first();
 
-            $customAttributes = $attributeGroup->customAttributes($familyGroupMapping->attribute_family_id)->map(function ($attribute) use ($attributeGroup) {
+            $customAttributes = $attributeGroup->customAttributes($familyGroupMapping->attribute_family_id)->map(function (object $attribute) use ($attributeGroup) {
                 $attributeArray = $attribute->toArray();
 
                 return [
                     'id'       => $attributeArray['id'],
                     'code'     => $attributeArray['code'],
                     'group_id' => $attributeGroup->id,
-                    'name'     => ! empty($attributeArray['name']) ? $attributeArray['name'] : '['.$attributeArray['code'].']',
+                    'name'     => empty($attributeArray['name']) ? '['.$attributeArray['code'].']' : $attributeArray['name'],
                     'type'     => $attributeArray['type'],
                 ];
             })->toArray();
@@ -81,7 +77,7 @@ class AttributeFamilyController extends Controller
                 'id'               => $attributeGroup['id'],
                 'code'             => $attributeGroup['code'],
                 'group_mapping_id' => $familyGroupMapping->id,
-                'name'             => ! empty($attributeGroup['name']) ? $attributeGroup['name'] : '['.$attributeGroup['code'].']',
+                'name'             => empty($attributeGroup['name']) ? '['.$attributeGroup['code'].']' : $attributeGroup['name'],
                 'customAttributes' => $customAttributes,
             ];
         })->toArray();
@@ -211,7 +207,7 @@ class AttributeFamilyController extends Controller
     /**
      * Check product has variant products and return family if exists
      */
-    protected function hasVariantProducts($id): ?AttributeFamily
+    protected function hasVariantProducts(int $id): ?AttributeFamily
     {
         $family = $this->attributeFamilyRepository->find($id);
 

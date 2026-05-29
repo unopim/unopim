@@ -2,8 +2,10 @@
 
 namespace Webkul\Attribute\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Attribute\Contracts\AttributeGroup as AttributeGroupContract;
 use Webkul\Attribute\Database\Factories\AttributeGroupFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
@@ -19,7 +21,7 @@ class AttributeGroup extends TranslatableModel implements AttributeGroupContract
 
     public $translatedAttributes = ['name'];
 
-    protected $historyTags = ['attributeGroup'];
+    protected array $historyTags = ['attributeGroup'];
 
     protected $fillable = [
         'code',
@@ -30,7 +32,7 @@ class AttributeGroup extends TranslatableModel implements AttributeGroupContract
     /**
      * Get all the attribute groups.
      */
-    public function customAttributes($familyId)
+    public function customAttributes(mixed $familyId): Collection
     {
         return (AttributeProxy::modelClass())::join('attribute_group_mappings', 'attributes.id', '=', 'attribute_group_mappings.attribute_id')
             ->join('attribute_family_group_mappings', 'attribute_group_mappings.attribute_family_group_id', '=', 'attribute_family_group_mappings.id')
@@ -44,7 +46,7 @@ class AttributeGroup extends TranslatableModel implements AttributeGroupContract
     /**
      * Get all the group mapping with mapping.
      */
-    public function groupMappings()
+    public function groupMappings(): HasMany
     {
         return $this->hasMany(AttributeFamilyGroupMappingProxy::modelClass());
     }

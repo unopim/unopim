@@ -8,31 +8,28 @@ use Prettus\Repository\Traits\CacheableRepository;
 
 abstract class Repository extends BaseRepository implements CacheableInterface
 {
+    public mixed $cleanEnabled = null;
+
+    public mixed $cacheOnly = null;
+
+    public mixed $cacheExcept = null;
+
     use CacheableRepository;
 
-    /**
-     * @var bool
-     */
-    protected $cacheEnabled = false;
+    protected bool $cacheEnabled = false;
 
-    /**
-     * @return bool
-     */
-    public function allowedClean()
+    public function allowedClean(): bool
     {
-        if (! isset($this->cleanEnabled)) {
+        if ($this->cleanEnabled === null) {
             return config('repository.cache.clean.enabled', true);
         }
 
         return $this->cleanEnabled;
     }
 
-    /**
-     * @return bool
-     */
-    protected function allowedCache($method)
+    protected function allowedCache(mixed $method): bool
     {
-        $className = get_class($this);
+        $className = static::class;
 
         $cacheEnabled = config("repository.cache.repositories.{$className}.enabled", config('repository.cache.enabled', true));
 
@@ -40,8 +37,8 @@ abstract class Repository extends BaseRepository implements CacheableInterface
             return false;
         }
 
-        $cacheOnly = isset($this->cacheOnly) ? $this->cacheOnly : config("repository.cache.repositories.{$className}.allowed.only", config('repository.cache.allowed.only', null));
-        $cacheExcept = isset($this->cacheExcept) ? $this->cacheExcept : config("repository.cache.repositories.{$className}.allowed.except", config('repository.cache.allowed.only', null));
+        $cacheOnly = $this->cacheOnly ?? config("repository.cache.repositories.{$className}.allowed.only", config('repository.cache.allowed.only'));
+        $cacheExcept = $this->cacheExcept ?? config("repository.cache.repositories.{$className}.allowed.except", config('repository.cache.allowed.only'));
 
         if (is_array($cacheOnly)) {
             return in_array($method, $cacheOnly);
@@ -51,17 +48,14 @@ abstract class Repository extends BaseRepository implements CacheableInterface
             return ! in_array($method, $cacheExcept);
         }
 
-        if (is_null($cacheOnly) && is_null($cacheExcept)) {
-            return true;
-        }
-
-        return false;
+        return is_null($cacheOnly) && is_null($cacheExcept);
     }
 
     /**
      * @throws RepositoryException
      */
-    public function resetModel()
+    #[\Override]
+    public function resetModel(): static
     {
         $this->makeModel();
 
@@ -71,12 +65,9 @@ abstract class Repository extends BaseRepository implements CacheableInterface
     /**
      * Find data by field and value
      *
-     * @param  string  $field
      * @param  string  $value
-     * @param  array  $columns
-     * @return mixed
      */
-    public function findOneByField($field, $value = null, $columns = ['*'])
+    public function findOneByField(string $field, mixed $value = null, array $columns = ['*']): mixed
     {
         $model = $this->findByField($field, $value, $columns = ['*']);
 
@@ -88,10 +79,8 @@ abstract class Repository extends BaseRepository implements CacheableInterface
      *
      * @param  string  $field
      * @param  string  $value
-     * @param  array  $columns
-     * @return mixed
      */
-    public function findOneWhere(array $where, $columns = ['*'])
+    public function findOneWhere(array $where, array $columns = ['*']): mixed
     {
         $model = $this->findWhere($where, $columns);
 
@@ -103,9 +92,9 @@ abstract class Repository extends BaseRepository implements CacheableInterface
      *
      * @param  int  $id
      * @param  array  $columns
-     * @return mixed
      */
-    public function find($id, $columns = ['*'])
+    #[\Override]
+    public function find($id, $columns = ['*']): mixed
     {
         $this->applyCriteria();
         $this->applyScope();
@@ -119,10 +108,8 @@ abstract class Repository extends BaseRepository implements CacheableInterface
      * Find data by id
      *
      * @param  int  $id
-     * @param  array  $columns
-     * @return mixed
      */
-    public function findOrFail($id, $columns = ['*'])
+    public function findOrFail(mixed $id, array $columns = ['*']): mixed
     {
         $this->applyCriteria();
         $this->applyScope();
@@ -136,14 +123,14 @@ abstract class Repository extends BaseRepository implements CacheableInterface
      * Count results of repository
      *
      * @param  string  $columns
-     * @return int
      */
-    public function count(array $where = [], $columns = '*')
+    #[\Override]
+    public function count(array $where = [], $columns = '*'): int
     {
         $this->applyCriteria();
         $this->applyScope();
 
-        if ($where) {
+        if ($where !== []) {
             $this->applyConditions($where);
         }
 
@@ -156,9 +143,8 @@ abstract class Repository extends BaseRepository implements CacheableInterface
 
     /**
      * @param  string  $columns
-     * @return mixed
      */
-    public function sum($columns)
+    public function sum(mixed $columns): mixed
     {
         $this->applyCriteria();
         $this->applyScope();
@@ -171,9 +157,8 @@ abstract class Repository extends BaseRepository implements CacheableInterface
 
     /**
      * @param  string  $columns
-     * @return mixed
      */
-    public function avg($columns)
+    public function avg(mixed $columns): mixed
     {
         $this->applyCriteria();
         $this->applyScope();
@@ -184,10 +169,8 @@ abstract class Repository extends BaseRepository implements CacheableInterface
         return $avg;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getModel()
+    #[\Override]
+    public function getModel(): mixed
     {
         return $this->model;
     }

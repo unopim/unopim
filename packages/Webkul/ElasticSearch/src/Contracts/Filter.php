@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\ElasticSearch\Contracts;
 
 interface Filter
@@ -7,20 +9,17 @@ interface Filter
     /**
      * Inject the query builder
      */
-    public function setQueryManager($queryBuilder);
+    public function setQueryManager(mixed $queryBuilder): void;
 
     /**
      * This filter supports the operator
      *
      * @param  string  $operator
-     * @return bool
      */
-    public function isOperatorAllowed($operator);
+    public function isOperatorAllowed(mixed $operator): bool;
 
     /**
      * Filter operators
-     *
-     * @return array
      */
-    public function getAllowedOperators();
+    public function getAllowedOperators(): array;
 }

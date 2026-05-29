@@ -14,26 +14,22 @@ class LocaleMiddleware
 
     /**
      * Create a middleware instance.
-     *
-     * @return void
      */
     public function __construct(protected LocaleRepository $localeRepository) {}
 
     /**
      * Handle an incoming request.
-     *
-     * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
-        $requestedLocales = $this->getLocales($request);
+        $requestedLocales = $this->getLocales();
         if ($requestedLocales) {
             $activeLocales = $this->localeRepository->getActiveLocales()->pluck('code')->toArray();
             $localeNotExists = array_diff($requestedLocales, $activeLocales);
             if (count($localeNotExists) > 0) {
                 $validator = Validator::make([], []);
                 // Add the locale check to the validator
-                $validator->after(function ($validator) use ($localeNotExists) {
+                $validator->after(function (mixed $validator) use ($localeNotExists) {
                     $validator->errors()->add('locale', trans('admin::app.validations.invalid-locale', ['locales' => json_encode($localeNotExists)]));
                 });
 
@@ -49,14 +45,12 @@ class LocaleMiddleware
     /**
      * This function retrieves the locales from the request data.
      * It first checks for locales under the 'labels' key. If not found, it checks under the 'locale_specific' key.
-     *
-     * @return array|null
      */
-    public function getLocales()
+    public function getLocales(): ?array
     {
         $requestData = request()->all();
         $locales = $this->checkKeyExists($requestData, 'labels');
-        if (! $locales) {
+        if ($locales === []) {
             $locales = $this->checkKeyExists($requestData, 'locale_specific');
         }
 
@@ -72,13 +66,13 @@ class LocaleMiddleware
      * @param  string  $key  The key to search for.
      * @return array The unique keys of the nested arrays under the given key.
      */
-    public function checkKeyExists(array $array, string $key)
+    public function checkKeyExists(array $array, string $key): array
     {
         $locales = [];
         if (array_key_exists($key, $array)) {
             return array_unique(array_keys($array[$key]));
         }
-        foreach ($array as $index => $element) {
+        foreach ($array as $element) {
             if (is_array($element)) {
                 if (array_key_exists($key, $element)) {
                     $locales = array_merge($element[$key], $locales);

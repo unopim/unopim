@@ -70,7 +70,7 @@ class ProductTableSeeder extends Seeder
                     ];
                 }
 
-                if (! empty($variantRows)) {
+                if ($variantRows !== []) {
                     DB::table('products')->insert($variantRows);
                 }
 
@@ -234,9 +234,9 @@ class ProductTableSeeder extends Seeder
      * @param  array<string, array<int, string>>  $superAttributes
      * @param  Collection<string, int>  $parentMap
      */
-    protected function insertSuperAttributes(array $superAttributes, $parentMap): void
+    protected function insertSuperAttributes(array $superAttributes, Collection $parentMap): void
     {
-        if (empty($superAttributes)) {
+        if ($superAttributes === []) {
             return;
         }
 
@@ -292,7 +292,7 @@ class ProductTableSeeder extends Seeder
             }
         }
 
-        if (! empty($pivotRows)) {
+        if ($pivotRows !== []) {
             DB::table('product_super_attributes')->insertOrIgnore($pivotRows);
         }
     }
@@ -303,7 +303,7 @@ class ProductTableSeeder extends Seeder
      */
     protected function storeProductImage(?string $imagePath): ?string
     {
-        if (empty($imagePath)) {
+        if (in_array($imagePath, [null, '', '0'], true)) {
             return null;
         }
 

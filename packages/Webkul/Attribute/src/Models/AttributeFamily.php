@@ -2,8 +2,11 @@
 
 namespace Webkul\Attribute\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Attribute\Contracts\AttributeFamily as AttributeFamilyContract;
 use Webkul\Attribute\Database\Factories\AttributeFamilyFactory;
@@ -26,10 +29,10 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     public $translatedAttributes = ['name'];
 
     /** Tags for History */
-    protected $historyTags = ['attributeFamily'];
+    protected array $historyTags = ['attributeFamily'];
 
     /** Proxy Table Fields for History */
-    protected $historyProxyFields = [
+    protected array $historyProxyFields = [
         'attribute_family_group_mappings',
         'attribute_group_mappings',
     ];
@@ -38,7 +41,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
         'code',
     ];
 
-    protected $auditInclude = [
+    protected array $auditInclude = [
         'name',
         'code',
     ];
@@ -46,7 +49,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     /**
      * Get all the attributes for the attribute groups.
      */
-    public function customAttributes()
+    public function customAttributes(): Builder
     {
         return (AttributeProxy::modelClass())::join('attribute_group_mappings', 'attributes.id', '=', 'attribute_group_mappings.attribute_id')
             ->join('attribute_family_group_mappings', 'attribute_group_mappings.attribute_family_group_id', '=', 'attribute_family_group_mappings.id')
@@ -59,7 +62,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     /**
      * Get all the attributes for the attribute groups.
      */
-    public function getCustomAttributesAttribute()
+    public function getCustomAttributesAttribute(): Collection
     {
         return $this->customAttributes()->get();
     }
@@ -67,13 +70,13 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     /**
      * Get all the attribute groups.
      */
-    public function attributeFamilyGroupMappings()
+    public function attributeFamilyGroupMappings(): HasMany
     {
         return $this->hasMany(AttributeFamilyGroupMappingProxy::modelClass())
             ->orderBy('position');
     }
 
-    public function familyGroups()
+    public function familyGroups(): BelongsToMany
     {
         return $this->belongsToMany(AttributeGroupProxy::modelClass(), 'attribute_family_group_mappings');
     }
@@ -81,7 +84,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     /**
      * Get all the attributes for the attribute groups.
      */
-    public function getConfigurableAttributes()
+    public function getConfigurableAttributes(): Collection
     {
         return $this->customAttributes()
             ->whereIn('attributes.type', self::ALLOWED_VARIANT_OPTION_TYPES)

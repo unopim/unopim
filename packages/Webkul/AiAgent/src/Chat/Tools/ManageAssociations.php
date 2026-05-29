@@ -9,6 +9,7 @@ use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Product\Repositories\ProductRepository;
 
 class ManageAssociations implements PimTool
 {
@@ -51,7 +52,7 @@ class ManageAssociations implements PimTool
                 $cross_sells = $request->string('cross_sells')->toString() ?: null;
                 $mode = $request->string('mode')->toString() ?: 'append';
 
-                $productRepo = app('Webkul\Product\Repositories\ProductRepository');
+                $productRepo = app(ProductRepository::class);
                 $product = $productRepo->findOneByField('sku', $sku);
 
                 if (! $product) {
@@ -72,7 +73,7 @@ class ManageAssociations implements PimTool
                         continue;
                     }
 
-                    $requestedSkus = array_filter(array_map('trim', explode(',', $skuString)));
+                    $requestedSkus = array_filter(array_map(trim(...), explode(',', $skuString)));
 
                     // Validate that all SKUs exist and are not self-referencing
                     $validSkus = DB::table('products')
@@ -82,7 +83,7 @@ class ManageAssociations implements PimTool
                         ->toArray();
 
                     $invalid = array_diff($requestedSkus, $validSkus);
-                    if (! empty($invalid)) {
+                    if ($invalid !== []) {
                         $errors[] = "{$type}: SKUs not found — ".implode(', ', $invalid);
                     }
 
@@ -101,7 +102,7 @@ class ManageAssociations implements PimTool
 
                 if (empty($resolvedAssociations)) {
                     $msg = 'No valid associations to apply.';
-                    if (! empty($errors)) {
+                    if ($errors !== []) {
                         $msg .= ' Errors: '.implode('; ', $errors);
                     }
 
@@ -125,7 +126,7 @@ class ManageAssociations implements PimTool
                         'sku'          => $sku,
                         'associations' => $resolvedAssociations,
                         'mode'         => $mode,
-                        'errors'       => empty($errors) ? null : $errors,
+                        'errors'       => $errors === [] ? null : $errors,
                     ],
                 ]);
             }

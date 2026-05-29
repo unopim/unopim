@@ -10,10 +10,8 @@ class Client extends PassportClient
 {
     /**
      * Get the admins.
-     *
-     * @return BelongsTo
      */
-    public function admins()
+    public function admins(): BelongsTo
     {
         return $this->belongsTo(AdminProxy::modelClass(), 'user_id');
     }

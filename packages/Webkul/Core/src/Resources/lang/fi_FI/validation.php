@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => ':attribute voi sisältää vain aakkosnumeerisia merkkejä, numeroita, välilyöntejä, pilkkuja ja viivoja.',
     'alpha-numeric-space'          => ':attribute voi sisältää vain aakkosnumeerisia merkkejä ja välilyöntejä.',

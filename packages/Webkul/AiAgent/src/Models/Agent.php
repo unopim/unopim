@@ -18,10 +18,8 @@ class Agent extends Model implements AgentContract, AuditableContract, Presentab
 
     /**
      * Tags for history/audit.
-     *
-     * @var array
      */
-    protected $historyTags = ['ai-agent'];
+    protected array $historyTags = ['ai-agent'];
 
     /**
      * @var string
@@ -60,17 +58,13 @@ class Agent extends Model implements AgentContract, AuditableContract, Presentab
 
     /**
      * Fields excluded from history audit.
-     *
-     * @var array
      */
-    protected $auditExclude = [];
+    protected array $auditExclude = [];
 
     /**
      * History auditable attributes.
-     *
-     * @var array
      */
-    protected $historyAuditable = [
+    protected array $historyAuditable = [
         'name',
         'description',
         'systemPrompt',

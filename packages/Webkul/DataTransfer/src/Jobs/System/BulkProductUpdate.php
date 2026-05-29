@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\DataTransfer\Helpers\AbstractJob;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
@@ -38,10 +39,8 @@ class BulkProductUpdate implements ShouldQueue
 
     /**
      * Current job track instance.
-     *
-     * @var mixed
      */
-    protected $jobTrackInstance;
+    protected mixed $jobTrackInstance;
 
     /**
      * Validator for product attribute values.
@@ -60,27 +59,21 @@ class BulkProductUpdate implements ShouldQueue
 
     /**
      * Logger instance for this job.
-     *
-     * @var mixed
      */
-    protected $jobLogger;
+    protected mixed $jobLogger;
 
     /**
      * Create a new shouldqueue instance.
-     *
-     * @return void
      */
     public function __construct(
         protected array $updateProducts,
-        protected $userId
+        protected mixed $userId
     ) {}
 
     /**
      * Handle the bulk product update job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->jobInstancesRepository = app(JobInstancesRepository::class);
         $this->jobTrackRepository = app(JobTrackRepository::class);
@@ -132,9 +125,8 @@ class BulkProductUpdate implements ShouldQueue
      *
      * @param  array  $updateProducts  Product updates keyed by product ID.
      * @param  ProductRepository  $productRepository  Repository for fetching and saving products.
-     * @return void
      */
-    protected function saveProducts(array $updateProducts, ProductRepository $productRepository)
+    protected function saveProducts(array $updateProducts, ProductRepository $productRepository): void
     {
         $processed = 0;
         $productIds = [];
@@ -155,7 +147,7 @@ class BulkProductUpdate implements ShouldQueue
             foreach ($attributeData as $attributeCode => $value) {
                 $attribute = $this->attributeService->findAttributeByCode($attributeCode);
 
-                if (! $attribute) {
+                if (! $attribute instanceof Attribute) {
                     continue;
                 }
 
@@ -225,7 +217,7 @@ class BulkProductUpdate implements ShouldQueue
         // handle all processed products in one shot without per-product overhead.
         // Payload is wrapped in a named key so call_user_func_array passes the
         // full ID array as the first argument, not spread as individual ints.
-        if (! empty($productIds)) {
+        if ($productIds !== []) {
             Event::dispatch('catalog.product.bulk.edit.after', ['ids' => $productIds]);
         }
 
@@ -325,10 +317,8 @@ class BulkProductUpdate implements ShouldQueue
 
     /**
      * Mark the job as started and update its state.
-     *
-     * @return void
      */
-    public function started()
+    public function started(): void
     {
         $this->jobLogger->info(trans('data_transfer::app.job.started'));
 
@@ -343,9 +333,8 @@ class BulkProductUpdate implements ShouldQueue
      * Mark the job as validated and update summary counts.
      *
      * @param  int  $count  Number of successfully validated products.
-     * @return void
      */
-    public function markValidated($count)
+    public function markValidated(int $count): void
     {
         $this->jobTrackRepository->update([
             'state'              => AbstractJob::STATE_VALIDATED,
@@ -358,10 +347,8 @@ class BulkProductUpdate implements ShouldQueue
 
     /**
      * Mark the job as completed and update summary details.
-     *
-     * @return void
      */
-    public function markCompleted()
+    public function markCompleted(): void
     {
         $this->jobTrackInstance->refresh();
 
@@ -384,9 +371,8 @@ class BulkProductUpdate implements ShouldQueue
      * Update job progress with the number of processed rows.
      *
      * @param  int  $processedCount  Number of processed rows so far.
-     * @return void
      */
-    public function updateProgress(int $processedCount)
+    public function updateProgress(int $processedCount): void
     {
         $this->jobTrackRepository->update([
             'state'                => AbstractJob::STATE_PROCESSING,
@@ -399,7 +385,7 @@ class BulkProductUpdate implements ShouldQueue
      *
      * @return mixed The created job instance.
      */
-    public function createDemoJobInstance()
+    public function createDemoJobInstance(): mixed
     {
         return $this->jobInstancesRepository->create([
             'type'                  => 'system',
@@ -422,7 +408,7 @@ class BulkProductUpdate implements ShouldQueue
      * @param  ProductRepository  $productRepository  Repository to fetch product details.
      * @return array List of attribute codes belonging to the family.
      */
-    public function getFamilyAttribute(int $productId, ProductRepository $productRepository)
+    public function getFamilyAttribute(int $productId, ProductRepository $productRepository): array
     {
         $product = $productRepository->find($productId);
 

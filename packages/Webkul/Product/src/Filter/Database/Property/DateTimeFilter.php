@@ -25,7 +25,7 @@ class DateTimeFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
@@ -41,20 +41,14 @@ class DateTimeFilter extends AbstractPropertyFilter
             );
         }
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $this->queryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value);
-
-                break;
-
-            case FilterOperators::RANGE:
-                $this->queryBuilder->whereBetween(sprintf('%s.%s', $this->getSearchTablePath($options), $property), [
-                    ($value[0] ?? '').' 00:00:01',
-                    ($value[1] ?? '').' 23:59:59',
-                ]);
-
-                break;
-        }
+        match ($operator) {
+            FilterOperators::IN    => $this->queryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value),
+            FilterOperators::RANGE => $this->queryBuilder->whereBetween(sprintf('%s.%s', $this->getSearchTablePath($options), $property), [
+                ($value[0] ?? '').' 00:00:01',
+                ($value[1] ?? '').' 23:59:59',
+            ]),
+            default => $this,
+        };
 
         return $this;
     }

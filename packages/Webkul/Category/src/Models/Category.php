@@ -25,13 +25,13 @@ class Category extends Model implements CategoryContract, HistoryContract, Prese
     /**
      * These columns history will not be generated
      */
-    protected $auditExclude = [
+    protected array $auditExclude = [
         '_lft',
         '_rgt',
         'id',
     ];
 
-    protected $historyTags = ['category'];
+    protected array $historyTags = ['category'];
 
     /**
      * Fillable.
@@ -75,6 +75,8 @@ class Category extends Model implements CategoryContract, HistoryContract, Prese
         if ($fallback = core()->getDefaultLocaleCodeFromDefaultChannel()) {
             return $fallback;
         }
+
+        return $locale;
     }
 
     /**
@@ -89,9 +91,9 @@ class Category extends Model implements CategoryContract, HistoryContract, Prese
      * Overrides the default Eloquent query builder.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return Builder
      */
-    public function newEloquentBuilder($query)
+    #[\Override]
+    public function newEloquentBuilder($query): Builder
     {
         return new Builder($query);
     }

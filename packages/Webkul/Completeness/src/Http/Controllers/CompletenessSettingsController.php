@@ -2,6 +2,7 @@
 
 namespace Webkul\Completeness\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Webkul\Completeness\DataGrids\AttributeCompletenessDataGrid;
 use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
@@ -15,12 +16,12 @@ class CompletenessSettingsController extends Controller
         protected CompletenessSettingsRepository $completenessSettingsRepository
     ) {}
 
-    public function edit($familyId)
+    public function edit(mixed $familyId): mixed
     {
         return app(AttributeCompletenessDataGrid::class)->setAttributeFamilyId($familyId)->toJson();
     }
 
-    public function update()
+    public function update(): JsonResponse
     {
         $data = request()->only(['channel_requirements', 'familyId', 'attributeId']);
 
@@ -37,7 +38,7 @@ class CompletenessSettingsController extends Controller
         $toInsert = array_diff($newCodes, $existingCodes);
         $toDelete = array_diff($existingCodes, $newCodes);
 
-        if (! empty($toInsert)) {
+        if ($toInsert !== []) {
             $channels = $this->channelRepository->findWhereIn('code', $toInsert);
 
             foreach ($channels as $channel) {
@@ -49,7 +50,7 @@ class CompletenessSettingsController extends Controller
             }
         }
 
-        if (! empty($toDelete)) {
+        if ($toDelete !== []) {
             $channels = $this->channelRepository->findWhereIn('code', $toDelete);
 
             foreach ($channels as $channel) {
@@ -61,7 +62,7 @@ class CompletenessSettingsController extends Controller
             }
         }
 
-        if (! empty($toDelete) || ! empty($toInsert)) {
+        if ($toDelete !== [] || $toInsert !== []) {
             BulkProductCompletenessJob::dispatch([], $familyId, auth()->guard('admin')->id());
         }
 
@@ -71,7 +72,7 @@ class CompletenessSettingsController extends Controller
         ]);
     }
 
-    public function massUpdate()
+    public function massUpdate(): JsonResponse
     {
         $data = request()->only(['channel_requirements', 'indices', 'familyId']);
 
@@ -91,7 +92,7 @@ class CompletenessSettingsController extends Controller
             $toInsert = array_diff($newCodes, $existingCodes);
             $toDelete = array_diff($existingCodes, $newCodes);
 
-            if (! empty($toInsert)) {
+            if ($toInsert !== []) {
                 $channels = $this->channelRepository->findWhereIn('code', $toInsert);
 
                 foreach ($channels as $channel) {
@@ -103,7 +104,7 @@ class CompletenessSettingsController extends Controller
                 }
             }
 
-            if (! empty($toDelete)) {
+            if ($toDelete !== []) {
                 $channels = $this->channelRepository->findWhereIn('code', $toDelete);
 
                 foreach ($channels as $channel) {
@@ -115,7 +116,7 @@ class CompletenessSettingsController extends Controller
                 }
             }
 
-            if (! empty($toDelete) || ! empty($toInsert)) {
+            if ($toDelete !== [] || $toInsert !== []) {
                 $hasChanged = true;
             }
         }

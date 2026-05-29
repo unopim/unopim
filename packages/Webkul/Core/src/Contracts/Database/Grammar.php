@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Core\Contracts\Database;
 
 interface Grammar
@@ -26,5 +28,5 @@ interface Grammar
 
     public function getRegexOperator(): string;
 
-    public function getBooleanValue(mixed $value);
+    public function getBooleanValue(mixed $value): int|string;
 }

@@ -10,7 +10,7 @@ use Webkul\ElasticSearch\Enums\FilterOperators;
  */
 class DateFilter extends AbstractElasticSearchAttributeFilter
 {
-    protected $dateFormat = 'Y-m-d';
+    protected string $dateFormat = 'Y-m-d';
 
     /**
      * @param  array  $supportedProperties
@@ -27,13 +27,13 @@ class DateFilter extends AbstractElasticSearchAttributeFilter
      * {@inheritdoc}
      */
     public function addAttributeFilter(
-        $attribute,
-        $operator,
-        $value,
-        $locale = null,
-        $channel = null,
-        $options = []
-    ) {
+        mixed $attribute,
+        mixed $operator,
+        mixed $value,
+        ?string $locale = null,
+        ?string $channel = null,
+        array $options = []
+    ): static {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
@@ -46,9 +46,7 @@ class DateFilter extends AbstractElasticSearchAttributeFilter
             case FilterOperators::IN:
                 $clause = [
                     'terms' => [
-                        $attributePath => array_map(function ($data) use ($attributeCode) {
-                            return $this->getFormattedDateTime($attributeCode, $data);
-                        }, $value),
+                        $attributePath => array_map(fn (mixed $data) => $this->getFormattedDateTime($attributeCode, $data), $value),
                     ],
                 ];
 

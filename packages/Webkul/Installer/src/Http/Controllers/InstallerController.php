@@ -4,6 +4,7 @@ namespace Webkul\Installer\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -32,8 +33,6 @@ class InstallerController extends Controller
 
     /**
      * Create a new controller instance
-     *
-     * @return void
      */
     public function __construct(
         protected ServerRequirements $serverRequirements,
@@ -46,7 +45,7 @@ class InstallerController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): RedirectResponse|View
     {
         $phpVersion = $this->serverRequirements->checkPHPversion(self::MIN_PHP_VERSION);
 
@@ -56,7 +55,7 @@ class InstallerController extends Controller
             return redirect()->route('installer.index');
         }
 
-        return view('installer::installer.index', compact('requirements', 'phpVersion'));
+        return view('installer::installer.index', ['requirements' => $requirements, 'phpVersion' => $phpVersion]);
     }
 
     /**
@@ -70,9 +69,7 @@ class InstallerController extends Controller
             $request['db_prefix'] = trim((string) $request['db_prefix']);
         }
 
-        $request = array_map(function ($input) {
-            return strip_tags((string) $input);
-        }, $request);
+        $request = array_map(fn (mixed $input) => strip_tags((string) $input), $request);
 
         // Match the CLI installer's prefix validation 1:1 so both install
         // paths surface the same migration-blocking errors up-front.
@@ -98,7 +95,7 @@ class InstallerController extends Controller
     /**
      * Run Migration
      */
-    public function runMigration()
+    public function runMigration(): ?JsonResponse
     {
         try {
             DB::connection()->getPdo();
@@ -106,17 +103,13 @@ class InstallerController extends Controller
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
 
-        $migration = $this->databaseManager->migration();
-
-        return $migration;
+        return $this->databaseManager->migration();
     }
 
     /**
      * Run Seeder
-     *
-     * @return void|string
      */
-    public function runSeeder()
+    public function runSeeder(): ?string
     {
         $selectedParameters = request()->selectedParameters;
         $allParameters = request()->allParameters;
@@ -146,20 +139,18 @@ class InstallerController extends Controller
         $response = $this->environmentManager->setEnvConfiguration(request()->allParameters);
 
         if ($response) {
-            $seeder = $this->databaseManager->seeder($parameter);
-
-            return $seeder;
+            return $this->databaseManager->seeder($parameter);
         }
+
+        return null;
     }
 
     /**
      * Admin Configuration Setup.
-     *
-     * @return void
      */
-    public function adminConfigSetup()
+    public function adminConfigSetup(): void
     {
-        $password = password_hash(request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
+        $password = password_hash((string) request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
         $uiLocaleId = DB::table('locales')->where('code', request()->input('locale'))->where('status', 1)->first()?->id ?? 58;
 
         try {
@@ -205,7 +196,7 @@ class InstallerController extends Controller
     /**
      * SMTP connection setup for Mail
      */
-    public function smtpConfigSetup()
+    public function smtpConfigSetup(): string
     {
         $this->environmentManager->setEnvConfiguration(request()->input());
 

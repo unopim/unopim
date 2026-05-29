@@ -26,12 +26,12 @@ abstract class ValuesValidator
     /**
      * Validation rules to be used on the data
      */
-    abstract protected function generateRules(mixed $data, ?string $productId, array $options);
+    abstract protected function generateRules(mixed $data, ?string $productId, array $options): array;
 
     /**
      * Get validation messages for the validator
      */
-    protected function getMessages()
+    protected function getMessages(): array
     {
         return [];
     }

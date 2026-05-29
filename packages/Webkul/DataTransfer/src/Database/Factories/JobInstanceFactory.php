@@ -30,60 +30,48 @@ class JobInstanceFactory extends Factory
         ];
     }
 
-    public function importJob($action = null, $validation = null): JobInstanceFactory
+    public function importJob(?string $action = null, ?string $validation = null): JobInstanceFactory
     {
         Storage::fake();
 
-        if ($action !== 'delete' || $action !== 'append') {
-            $action = 'append';
-        }
+        $action = 'append';
 
-        if ($validation !== 'skip-erros' || $validation !== 'stop-on-errors') {
-            $validation = 'skip-erros';
-        }
+        $validation = 'skip-erros';
 
-        return $this->state(function () use ($action, $validation) {
-            return [
-                'type'                  => 'import',
-                'images_directory_path' => '',
-                'allowed_errors'        => fake()->numberBetween(0, 20),
-                'file_path'             => UploadedFile::fake()->create('product.csv')->path(),
-                'action'                => $action,
-                'validation_strategy'   => $validation,
-            ];
-        });
+        return $this->state(fn () => [
+            'type'                  => 'import',
+            'images_directory_path' => '',
+            'allowed_errors'        => fake()->numberBetween(0, 20),
+            'file_path'             => UploadedFile::fake()->create('product.csv')->path(),
+            'action'                => $action,
+            'validation_strategy'   => $validation,
+        ]);
     }
 
     public function entityProduct(): JobInstanceFactory
     {
-        return $this->state(function () {
-            return [
-                'entity_type' => 'products',
-            ];
-        });
+        return $this->state(fn () => [
+            'entity_type' => 'products',
+        ]);
     }
 
     public function entityCategory(): JobInstanceFactory
     {
-        return $this->state(function () {
-            return [
-                'entity_type' => 'categories',
-            ];
-        });
+        return $this->state(fn () => [
+            'entity_type' => 'categories',
+        ]);
     }
 
     public function exportJob(): JobInstanceFactory
     {
-        return $this->state(function () {
-            return [
-                'type'                  => 'export',
-                'action'                => 'export',
-                'validation_strategy'   => '',
-                'filters'               => [
-                    'file_format' => 'Csv',
-                    'with_media'  => 1,
-                ],
-            ];
-        });
+        return $this->state(fn () => [
+            'type'                  => 'export',
+            'action'                => 'export',
+            'validation_strategy'   => '',
+            'filters'               => [
+                'file_format' => 'Csv',
+                'with_media'  => 1,
+            ],
+        ]);
     }
 }

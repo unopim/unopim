@@ -5,6 +5,8 @@ namespace Webkul\Attribute\Repositories;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Contracts\Attribute;
@@ -13,12 +15,10 @@ use Webkul\Core\Eloquent\Repository;
 
 class AttributeRepository extends Repository
 {
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * Create a new repository instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeOptionRepository $attributeOptionRepository,
@@ -37,10 +37,9 @@ class AttributeRepository extends Repository
 
     /**
      * Create attribute.
-     *
-     * @return Attribute
      */
-    public function create(array $data)
+    #[\Override]
+    public function create(array $data): Attribute
     {
         $validatedData = $this->validateUserInput($data);
 
@@ -66,9 +65,9 @@ class AttributeRepository extends Repository
      *
      * @param  int  $id
      * @param  string  $attribute
-     * @return Attribute
      */
-    public function update(array $data, $id, $attribute = 'id')
+    #[\Override]
+    public function update(array $data, $id, $attribute = 'id'): Attribute
     {
         $validatedData = $this->validateUserInput($data);
 
@@ -86,16 +85,13 @@ class AttributeRepository extends Repository
                     if (empty($optionInputs['code'])) {
                         $optionInputs['code'] = 'option_'.strtolower(Str::random(8));
                     }
-
                     $this->attributeOptionRepository->create(array_merge([
                         'attribute_id' => $attribute->id,
                     ], $optionInputs));
+                } elseif ($optionInputs['isDelete'] == 'true') {
+                    $this->attributeOptionRepository->delete($optionId);
                 } else {
-                    if ($optionInputs['isDelete'] == 'true') {
-                        $this->attributeOptionRepository->delete($optionId);
-                    } else {
-                        $this->attributeOptionRepository->update($optionInputs, $optionId);
-                    }
+                    $this->attributeOptionRepository->update($optionInputs, $optionId);
                 }
             }
         }
@@ -105,11 +101,8 @@ class AttributeRepository extends Repository
 
     /**
      * Validate user input.
-     *
-     * @param  array  $data
-     * @return array
      */
-    public function validateUserInput($data)
+    public function validateUserInput(array $data): array
     {
         if (isset($data['type']) && $data['type'] !== 'text') {
             unset($data['is_unique']);
@@ -128,11 +121,8 @@ class AttributeRepository extends Repository
 
     /**
      * Get product default attributes.
-     *
-     * @param  array  $codes
-     * @return Collection
      */
-    public function getProductDefaultAttributes($codes = null)
+    public function getProductDefaultAttributes(?array $codes = null): Collection
     {
         $attributeColumns = [
             'id',
@@ -172,7 +162,7 @@ class AttributeRepository extends Repository
      * @param  \Webkul\Attribute\Contracts\AttributeFamily  $attributeFamily
      * @return Attribute
      */
-    public function getFamilyAttributes($attributeFamily)
+    public function getFamilyAttributes(AttributeFamily $attributeFamily): mixed
     {
         if (array_key_exists($attributeFamily->id, $this->attributes)) {
             return $this->attributes[$attributeFamily->id];
@@ -183,39 +173,35 @@ class AttributeRepository extends Repository
 
     /**
      * Get partials.
-     *
-     * @return array
      */
-    public function getPartial()
+    public function getPartial(): array
     {
         $attributes = $this->model->all();
 
         $trimmed = [];
 
-        foreach ($attributes as $key => $attribute) {
-            if (
-                $attribute->code != 'tax_category_id'
-                && (
-                    in_array($attribute->type, ['select', 'multiselect'])
-                    || $attribute->code == 'sku'
-                )
-            ) {
-                array_push($trimmed, [
+        foreach ($attributes as $attribute) {
+            if ($attribute->code != 'tax_category_id'
+            && (
+                in_array($attribute->type, ['select', 'multiselect'])
+                || $attribute->code == 'sku'
+            )) {
+                $trimmed[] = [
                     'id'      => $attribute->id,
                     'name'    => $attribute->admin_name,
                     'type'    => $attribute->type,
                     'code'    => $attribute->code,
                     'options' => $attribute->options,
-                ]);
+                ];
             }
         }
 
         return $trimmed;
     }
 
-    public function findVariantOption(string $attribute, string $option)
+    public function findVariantOption(string $attribute, string $option): Collection
     {
-        return $this->queryBuilder()->scopeQuery(function ($query) use ($attribute, $option) {
+        return $this->queryBuilder()->scopeQuery(function (Builder $query) use ($attribute, $option) {
             $query->join('attribute_options', 'attributes.id', '=', 'attribute_options.attribute_id')
                 ->whereIn('attributes.type', AttributeFamily::ALLOWED_VARIANT_OPTION_TYPES)
                 ->where('attributes.code', $attribute)
@@ -228,10 +214,8 @@ class AttributeRepository extends Repository
     /**
      * This function returns a query builder instance for the Attribute model.
      * It eager loads the 'translations' relationship for the Attribute.
-     *
-     * @return Builder
      */
-    public function queryBuilder()
+    public function queryBuilder(): static
     {
         return $this->with(['translations']);
     }
@@ -242,7 +226,7 @@ class AttributeRepository extends Repository
     public function getAttributeListBySearch(string $search, array $columns = ['*'], array $excludeTypes = []): array
     {
         // Resolve ambiguous columns — `name` lives on attribute_translations, not attributes.
-        $resolvedColumns = array_map(function ($col) {
+        $resolvedColumns = array_map(function (string $col) {
             if ($col === '*') {
                 return 'attributes.*';
             }
@@ -255,16 +239,16 @@ class AttributeRepository extends Repository
 
         $query = DB::table('attributes')
             ->select($resolvedColumns)
-            ->leftJoin('attribute_translations as attribute_name', function ($join) {
+            ->leftJoin('attribute_translations as attribute_name', function (JoinClause $join) {
                 $join->on('attribute_name.attribute_id', '=', 'attributes.id')
                     ->where('attribute_name.locale', '=', core()->getRequestedLocaleCode());
             })
-            ->where(function ($query) use ($search) {
+            ->where(function (QueryBuilder $query) use ($search) {
                 $query->where('attributes.code', 'LIKE', '%'.$search.'%')
                     ->orWhere('attribute_name.name', 'LIKE', '%'.$search.'%');
             });
 
-        if ($excludeTypes) {
+        if ($excludeTypes !== []) {
             $query->whereNotIn('attributes.type', $excludeTypes);
         }
 

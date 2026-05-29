@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\AdminApi\ApiDataSource\Catalog;
 
 use Webkul\Product\Database\Eloquent\Builder;
@@ -11,7 +13,8 @@ class SimpleProductDataSource extends ProductDataSource
      *
      * @return Builder The query builder for the product repository.
      */
-    public function prepareApiQueryBuilder()
+    #[\Override]
+    public function prepareApiQueryBuilder(): mixed
     {
         [$queryBuilder] = $this->productRepository->queryBuilderFromDatabase([]);
 
@@ -40,12 +43,14 @@ class SimpleProductDataSource extends ProductDataSource
      * This function adds a filter to the query builder to only retrieve simple products.
      *
      * @param  Builder  $queryBuilder  The query builder for the product repository.
-     * @return void
      */
-    public function setDefaultFilters($queryBuilder)
+    #[\Override]
+    public function setDefaultFilters(mixed $queryBuilder): mixed
     {
         $queryBuilder->where('products.type', config('product_types.simple.key'));
 
         $this->queryBuilder = $queryBuilder;
+
+        return $this->queryBuilder;
     }
 }

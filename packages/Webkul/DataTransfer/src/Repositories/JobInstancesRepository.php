@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\DataTransfer\Repositories;
 
 use Illuminate\Support\Facades\DB;
@@ -52,7 +54,8 @@ class JobInstancesRepository extends Repository
     /**
      * Update job instance.
      */
-    public function update(array $data, $id)
+    #[\Override]
+    public function update(array $data, $id): mixed
     {
         $data = $this->normalizeData($data);
 
@@ -62,7 +65,8 @@ class JobInstancesRepository extends Repository
     /**
      * Create job instance.
      */
-    public function create(array $data)
+    #[\Override]
+    public function create(array $data): mixed
     {
         $data = $this->normalizeData($data);
 

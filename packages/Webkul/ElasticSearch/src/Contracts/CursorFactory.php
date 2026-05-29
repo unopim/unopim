@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\ElasticSearch\Contracts;
 
 use Webkul\ElasticSearch\Contracts\ResultCursor as ResultCursorContract;

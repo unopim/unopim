@@ -3,6 +3,7 @@
 use PHPUnit\Framework\ExpectationFailedException;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\ElasticSearch\Client\Fake\FakeElasticClient;
 
 beforeEach(function () {
     config([
@@ -12,7 +13,7 @@ beforeEach(function () {
         'elasticsearch.connections.default.hosts.0' => 'testhost:9200',
     ]);
 
-    $elasticClientMock = Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient');
+    $elasticClientMock = Mockery::mock(FakeElasticClient::class);
 
     ElasticSearch::shouldReceive('makeConnection')
         ->andReturn($elasticClientMock);
@@ -33,7 +34,7 @@ it('should index category in elastic search', function () {
         ],
     ]);
 
-    ElasticSearch::shouldReceive('bulk')->between(1, 10000)->withArgs(function ($args) {
+    ElasticSearch::shouldReceive('bulk')->between(1, 10000)->withArgs(function (mixed $args) {
         $this->assertIsArray($args);
 
         $this->assertArrayHasKey('body', $args);
@@ -59,18 +60,13 @@ it('should index the category to elastic when category is created', function () 
     /** This is called after the category->save function is called so here category id is available */
     ElasticSearch::shouldReceive('index')
         ->once()
-        ->withArgs(function ($args) use ($category) {
-            try {
-                $this->assertArrayHasKey('index', $args);
-                $this->assertArrayHasKey('id', $args);
-                $this->assertArrayHasKey('body', $args);
-
-                $this->assertEquals('testing_categories', $args['index']);
-                $this->assertEquals($category->id, $args['id']);
-                $this->assertEquals($category->toArray(), $args['body']);
-            } catch (ExpectationFailedException $e) {
-                throw $e;
-            }
+        ->withArgs(function (mixed $args) use ($category) {
+            $this->assertArrayHasKey('index', $args);
+            $this->assertArrayHasKey('id', $args);
+            $this->assertArrayHasKey('body', $args);
+            $this->assertEquals('testing_categories', $args['index']);
+            $this->assertEquals($category->id, $args['id']);
+            $this->assertEquals($category->toArray(), $args['body']);
 
             return is_array($args) && ! empty($args['body']);
         });
@@ -97,7 +93,7 @@ it('should index the category to elastic when category is updated', function () 
     // the call that targets our category.
     ElasticSearch::shouldReceive('index')
         ->atLeast()->once()
-        ->withArgs(function ($args) use ($category, &$targetAsserted) {
+        ->withArgs(function (mixed $args) use ($category, &$targetAsserted) {
             if (($args['id'] ?? null) === $category->id) {
                 try {
                     $this->assertArrayHasKey('index', $args);
@@ -124,7 +120,7 @@ it('should remove category from elastic when category is deleted', function () {
 
     ElasticSearch::shouldReceive('delete')
         ->once()
-        ->withArgs(function ($args) use ($category) {
+        ->withArgs(function (mixed $args) use ($category) {
             try {
                 $this->assertArrayHasKey('index', $args);
                 $this->assertArrayHasKey('id', $args);

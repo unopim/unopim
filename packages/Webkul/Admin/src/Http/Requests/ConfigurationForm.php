@@ -8,25 +8,21 @@ class ConfigurationForm extends FormRequest
 {
     /**
      * Determine if the Configuration is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
-        return collect(request()->input('keys', []))->mapWithKeys(function ($item) {
+        return collect(request()->input('keys', []))->mapWithKeys(function (string $item) {
             $data = json_decode($item, true);
 
-            return collect($data['fields'])->mapWithKeys(function ($field) use ($data) {
+            return collect($data['fields'])->mapWithKeys(function (array $field) use ($data) {
                 $key = $data['key'].'.'.$field['name'];
 
                 // Check delete key exist in the request

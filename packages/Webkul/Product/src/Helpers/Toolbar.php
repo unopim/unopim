@@ -90,7 +90,7 @@ class Toolbar
     public function getAvailableLimits(): Collection
     {
         if ($productsPerPage = core()->getConfigData('catalog.products.storefront.products_per_page')) {
-            $pages = explode(',', $productsPerPage);
+            $pages = explode(',', (string) $productsPerPage);
 
             return collect($pages);
         }
@@ -137,8 +137,6 @@ class Toolbar
 
     /**
      * Returns default mode.
-     *
-     * @return int
      */
     public function getDefaultMode(): string
     {

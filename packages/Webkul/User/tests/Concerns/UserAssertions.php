@@ -31,7 +31,7 @@ trait UserAssertions
 
     public function loginAsAdmin(?AdminContract $admin = null): AdminContract
     {
-        $admin = $admin ?? Admin::factory()->create([
+        $admin ??= Admin::factory()->create([
             'password' => Hash::make('password'),
         ]);
 

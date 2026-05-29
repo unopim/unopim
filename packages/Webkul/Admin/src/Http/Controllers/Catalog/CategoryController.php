@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,10 +21,10 @@ use Webkul\Core\Repositories\ChannelRepository;
 
 class CategoryController extends Controller
 {
+    public CategoryRequestValidator $categoryValidator;
+
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected ChannelRepository $channelRepository,
@@ -60,7 +61,7 @@ class CategoryController extends Controller
 
         $rightCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('right');
 
-        return view('admin::catalog.categories.create', compact('categories', 'leftCategoryFields', 'rightCategoryFields'));
+        return view('admin::catalog.categories.create', ['categories' => $categories, 'leftCategoryFields' => $leftCategoryFields, 'rightCategoryFields' => $rightCategoryFields]);
     }
 
     /**
@@ -70,16 +71,14 @@ class CategoryController extends Controller
      */
     public function transformCategoryTree(Collection $categories): array
     {
-        return $categories->map(function ($category) {
-            return [
-                'id'       => $category->id,
-                'code'     => $category->code,
-                'name'     => $category->name,
-                'children' => [],
-                '_rgt'     => $category->_rgt,
-                '_lft'     => $category->_lft,
-            ];
-        })->toArray();
+        return $categories->map(fn (object $category) => [
+            'id'       => $category->id,
+            'code'     => $category->code,
+            'name'     => $category->name,
+            'children' => [],
+            '_rgt'     => $category->_rgt,
+            '_lft'     => $category->_lft,
+        ])->toArray();
     }
 
     /**
@@ -131,7 +130,7 @@ class CategoryController extends Controller
 
         $rightCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('right');
 
-        return view('admin::catalog.categories.edit', compact('category', 'branchToParent', 'categories', 'leftCategoryFields', 'rightCategoryFields'));
+        return view('admin::catalog.categories.edit', ['category' => $category, 'branchToParent' => $branchToParent, 'categories' => $categories, 'leftCategoryFields' => $leftCategoryFields, 'rightCategoryFields' => $rightCategoryFields]);
     }
 
     /**
@@ -252,16 +251,9 @@ class CategoryController extends Controller
             }
         }
 
-        if (
-            count($categoryIds) != 1
-            || $suppressFlash == true
-        ) {
-            return new JsonResponse([
-                'message' => trans('admin::app.catalog.categories.delete-success'),
-            ]);
-        }
-
-        return redirect()->route('admin.catalog.categories.index');
+        return new JsonResponse([
+            'message' => trans('admin::app.catalog.categories.delete-success'),
+        ]);
     }
 
     /**
@@ -334,13 +326,9 @@ class CategoryController extends Controller
      */
     public function search(): JsonResponse
     {
-        $results = [];
-
-        $categories = $this->categoryRepository->scopeQuery(function ($query) {
-            return $query
-                ->select('categories.*')
-                ->orderBy('created_at', 'desc');
-        })->paginate(10);
+        $categories = $this->categoryRepository->scopeQuery(fn (Builder $query) => $query
+            ->select('categories.*')
+            ->orderBy('created_at', 'desc'))->paginate(10);
 
         return response()->json($categories);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     [
         'title'  => 'admin::app.default-prompt.detailed.title',

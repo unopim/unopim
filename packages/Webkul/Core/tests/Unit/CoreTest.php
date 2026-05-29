@@ -108,7 +108,7 @@ it('returns the current channel code if requested channel code is not provided',
 it('validation passes for valid code', function () {
     $rule = new Code;
     $message = null;
-    $rule->validate('code', 'valid_code_123', function ($msg) use (&$message) {
+    $rule->validate('code', 'valid_code_123', function (mixed $msg) use (&$message) {
         $message = $msg;
     });
 
@@ -118,7 +118,7 @@ it('validation passes for valid code', function () {
 it('validation passes for code with underscores', function () {
     $rule = new Code;
     $message = null;
-    $rule->validate('code', 'valid_code_with_underscores', function ($msg) use (&$message) {
+    $rule->validate('code', 'valid_code_with_underscores', function (mixed $msg) use (&$message) {
         $message = $msg;
     });
 
@@ -128,7 +128,7 @@ it('validation passes for code with underscores', function () {
 it('validation passes for code with numbers', function () {
     $rule = new Code;
     $message = null;
-    $rule->validate('code', 'code123', function ($msg) use (&$message) {
+    $rule->validate('code', 'code123', function (mixed $msg) use (&$message) {
         $message = $msg;
     });
 

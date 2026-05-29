@@ -17,7 +17,7 @@ class EmbeddingSimilarityService
      */
     public function rank(string $query, array $documents, ?int $limit = null): array
     {
-        if (trim($query) === '' || empty($documents)) {
+        if (trim($query) === '' || $documents === []) {
             return [];
         }
 
@@ -27,14 +27,14 @@ class EmbeddingSimilarityService
             $vectors = $response->embeddings;
             $queryVector = $vectors[0] ?? null;
 
-            if (! is_array($queryVector) || empty($queryVector)) {
+            if (! is_array($queryVector) || $queryVector === []) {
                 return [];
             }
 
             $scores = [];
 
             foreach (array_slice($vectors, 1) as $index => $vector) {
-                if (! is_array($vector) || empty($vector)) {
+                if (! is_array($vector) || $vector === []) {
                     continue;
                 }
 
@@ -44,7 +44,7 @@ class EmbeddingSimilarityService
                 ];
             }
 
-            usort($scores, fn ($a, $b) => $b['score'] <=> $a['score']);
+            usort($scores, fn (array $a, array $b) => $b['score'] <=> $a['score']);
 
             if (! is_null($limit)) {
                 $scores = array_slice($scores, 0, max(1, $limit));

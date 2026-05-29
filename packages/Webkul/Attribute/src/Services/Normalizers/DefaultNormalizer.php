@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Attribute\Services\Normalizers;
 
 use Webkul\Attribute\Contracts\Attribute;
@@ -10,7 +12,7 @@ class DefaultNormalizer extends AbstractNormalizer implements AttributeNormalize
     /**
      * Normalize the given attribute value.
      */
-    public function getData(mixed $data, ?Attribute $attribute = null, array $options = [])
+    public function getData(mixed $data, ?Attribute $attribute = null, array $options = []): mixed
     {
         return $data;
     }

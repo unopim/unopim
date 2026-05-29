@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $view = __DIR__.'/../../../src/Resources/views/configuration/magic-ai/platform/index.blade.php';
 
 it('should call the test-connection endpoint before saving a Magic AI platform (Issue #760)', function () use ($view) {

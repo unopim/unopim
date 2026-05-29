@@ -52,10 +52,8 @@ class JobExecuteCommand extends Command
 
     /**
      * Holds the start time of the last processed job, if any.
-     *
-     * @var float|null
      */
-    protected $latestStartedAt;
+    protected ?float $latestStartedAt = null;
 
     public function __construct(
         protected Worker $worker,
@@ -189,7 +187,7 @@ class JobExecuteCommand extends Command
         $convertedString = preg_replace('/[^a-zA-Z0-9]+/', '-', $code);
 
         // Optionally, trim any leading or trailing hyphens
-        $convertedString = trim($convertedString, '-');
+        $convertedString = trim((string) $convertedString, '-');
 
         return $convertedString;
     }
@@ -199,19 +197,19 @@ class JobExecuteCommand extends Command
      */
     protected function listenForEvents(): void
     {
-        $this->laravel['events']->listen(JobProcessing::class, function ($event) {
+        $this->laravel['events']->listen(JobProcessing::class, function (JobProcessing $event) {
             $this->writeOutput($event->job, 'starting');
         });
 
-        $this->laravel['events']->listen(JobProcessed::class, function ($event) {
+        $this->laravel['events']->listen(JobProcessed::class, function (JobProcessed $event) {
             $this->writeOutput($event->job, 'success');
         });
 
-        $this->laravel['events']->listen(JobReleasedAfterException::class, function ($event) {
+        $this->laravel['events']->listen(JobReleasedAfterException::class, function (JobReleasedAfterException $event) {
             $this->writeOutput($event->job, 'released_after_exception');
         });
 
-        $this->laravel['events']->listen(JobFailed::class, function ($event) {
+        $this->laravel['events']->listen(JobFailed::class, function (JobFailed $event) {
             $this->writeOutput($event->job, 'failed');
 
             $this->logFailedJob($event);
@@ -232,7 +230,7 @@ class JobExecuteCommand extends Command
             : ''
         ));
 
-        if ($status == 'starting') {
+        if ($status === 'starting') {
             $this->latestStartedAt = microtime(true);
 
             $dots = max(terminal()->width() - mb_strlen($job->resolveName()) - (

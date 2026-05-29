@@ -26,13 +26,13 @@ class PriceFilter extends AbstractDatabaseAttributeFilter
      * {@inheritdoc}
      */
     public function addAttributeFilter(
-        $attribute,
-        $operator,
-        $value,
-        $locale = null,
-        $channel = null,
-        $options = []
-    ) {
+        mixed $attribute,
+        mixed $operator,
+        mixed $value,
+        ?string $locale = null,
+        ?string $channel = null,
+        array $options = []
+    ): static {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
@@ -46,23 +46,17 @@ class PriceFilter extends AbstractDatabaseAttributeFilter
 
         $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $this->queryBuilder->whereRaw(
-                    $searchPath.' '.$grammar->getRegexOperator().' ?',
-                    $value[1]
-                );
-
-                break;
-
-            case FilterOperators::EQUAL:
-                $this->queryBuilder->whereRaw(
-                    "CAST($searchPath AS DECIMAL(8,2)) = ?",
-                    $value[1]
-                );
-
-                break;
-        }
+        match ($operator) {
+            FilterOperators::IN => $this->queryBuilder->whereRaw(
+                $searchPath.' '.$grammar->getRegexOperator().' ?',
+                $value[1]
+            ),
+            FilterOperators::EQUAL => $this->queryBuilder->whereRaw(
+                "CAST($searchPath AS DECIMAL(8,2)) = ?",
+                $value[1]
+            ),
+            default => $this,
+        };
 
         return $this;
     }

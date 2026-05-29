@@ -4,18 +4,18 @@ namespace Webkul\Webhook\Helpers;
 
 class ProductComparer
 {
-    public static $sections = [
+    public static array $sections = [
         'locale_specific',
         'channel_specific',
         'channel_locale_specific',
         'associations',
     ];
 
-    public static $otherSections = [
+    public static array $otherSections = [
         'categories',
     ];
 
-    public static $channelAndLocaleSpecific = 'channel_locale_specific';
+    public static string $channelAndLocaleSpecific = 'channel_locale_specific';
 
     public static function compare(mixed $oldValues, mixed $newValues): array
     {
@@ -180,11 +180,11 @@ class ProductComparer
             $removed = array_diff($oldSection, $newSection);
             $added = array_diff($newSection, $oldSection);
 
-            if (! empty($removed)) {
+            if ($removed !== []) {
                 $diff['removed'][$sectionName] = array_values($removed);
             }
 
-            if (! empty($added)) {
+            if ($added !== []) {
                 $diff['added'][$sectionName] = array_values($added);
             }
 

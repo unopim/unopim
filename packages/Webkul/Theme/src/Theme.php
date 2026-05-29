@@ -8,67 +8,54 @@ class Theme
 {
     /**
      * Contains theme parent.
-     *
-     * @var Theme
      */
-    public $parent;
+    public ?Theme $parent = null;
 
     /**
      * Create a new theme instance.
-     *
-     * @param  string  $code
-     * @param  string  $name
-     * @param  string  $assetsPath
-     * @param  string  $viewsPath
-     * @return void
      */
     public function __construct(
-        public $code,
-        public $name = null,
-        public $assetsPath = null,
-        public $viewsPath = null,
-        public $vite = []
+        public string $code,
+        public ?string $name = null,
+        public ?string $assetsPath = null,
+        public ?string $viewsPath = null,
+        public array $vite = []
     ) {
-        $this->assetsPath = $assetsPath === null ? $code : $assetsPath;
+        $this->assetsPath = $assetsPath ?? $code;
 
-        $this->viewsPath = $viewsPath === null ? $code : $viewsPath;
+        $this->viewsPath = $viewsPath ?? $code;
     }
 
     /**
      * Sets the parent.
      *
      * @param  Theme
-     * @return void
      */
-    public function setParent(Theme $parent)
+    public function setParent(Theme $parent): void
     {
         $this->parent = $parent;
     }
 
     /**
      * Return the parent.
-     *
-     * @return Theme
      */
-    public function getParent()
+    public function getParent(): ?Theme
     {
         return $this->parent;
     }
 
     /**
      * Return all the possible view paths.
-     *
-     * @return array
      */
-    public function getViewPaths()
+    public function getViewPaths(): array
     {
         $paths = [];
 
         $theme = $this;
 
         do {
-            if (substr($theme->viewsPath, 0, 1) === DIRECTORY_SEPARATOR) {
-                $path = base_path(substr($theme->viewsPath, 1));
+            if (substr((string) $theme->viewsPath, 0, 1) === DIRECTORY_SEPARATOR) {
+                $path = base_path(substr((string) $theme->viewsPath, 1));
             } else {
                 $path = $theme->viewsPath;
             }
@@ -83,12 +70,10 @@ class Theme
 
     /**
      * Convert to asset url based on current theme.
-     *
-     * @return string
      */
-    public function url(string $url)
+    public function url(string $url): string
     {
-        $viteUrl = trim($this->vite['package_assets_directory'], '/').'/'.$url;
+        $viteUrl = trim((string) $this->vite['package_assets_directory'], '/').'/'.$url;
 
         return Vite::useHotFile($this->vite['hot_file'])
             ->useBuildDirectory($this->vite['build_directory'])
@@ -97,10 +82,8 @@ class Theme
 
     /**
      * Set UnoPim vite.
-     *
-     * @return \Illuminate\Foundation\Vite
      */
-    public function setUnoPimVite(array $entryPoints)
+    public function setUnoPimVite(array $entryPoints): \Illuminate\Foundation\Vite
     {
         return Vite::useHotFile($this->vite['hot_file'])
             ->useBuildDirectory($this->vite['build_directory'])

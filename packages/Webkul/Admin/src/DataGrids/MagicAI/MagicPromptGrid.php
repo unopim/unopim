@@ -17,23 +17,17 @@ class MagicPromptGrid extends DataGrid
 
     /**
      * Prepare query builder.
-     *
-     * @return Builder
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
-        $queryBuilder = DB::table('magic_ai_prompts')
+        return DB::table('magic_ai_prompts')
             ->select('id', 'prompt', 'title', 'type', 'purpose', 'created_at', 'updated_at');
-
-        return $queryBuilder;
     }
 
     /**
      * Prepare columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'title',
@@ -93,7 +87,7 @@ class MagicPromptGrid extends DataGrid
                     ],
                 ],
             ],
-            'closure' => fn ($row) => match ($row->purpose) {
+            'closure' => fn (\stdClass $row) => match ($row->purpose) {
                 'text_generation'  => trans('admin::app.configuration.prompt.datagrid.text-generation'),
                 'image_generation' => trans('admin::app.configuration.prompt.datagrid.image-generation'),
                 default            => $row->purpose,
@@ -121,17 +115,15 @@ class MagicPromptGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('ai-agent.prompt.edit')) {
             $this->addAction([
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.configuration.prompt.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => fn ($row) => route('admin.magic_ai.prompt.edit', $row->id),
+                'url'    => fn (\stdClass $row) => route('admin.magic_ai.prompt.edit', $row->id),
             ]);
         }
 
@@ -140,7 +132,7 @@ class MagicPromptGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.configuration.prompt.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => fn ($row) => route('admin.magic_ai.prompt.delete', $row->id),
+                'url'    => fn (\stdClass $row) => route('admin.magic_ai.prompt.delete', $row->id),
             ]);
         }
     }

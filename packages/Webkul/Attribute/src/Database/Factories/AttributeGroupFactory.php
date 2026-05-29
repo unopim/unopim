@@ -28,25 +28,21 @@ class AttributeGroupFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'code' => $this->faker->regexify('/^[a-zA-Z]+\w+$/'),
         ];
     }
 
     public function required(): AttributeGroupFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_required' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'is_required' => true,
+        ]);
     }
 
     public function unique(): AttributeGroupFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_unique' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'is_unique' => true,
+        ]);
     }
 }

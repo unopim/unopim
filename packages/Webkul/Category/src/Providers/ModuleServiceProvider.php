@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Category\Providers;
 
 use Webkul\Category\Models\Category;

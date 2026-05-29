@@ -27,13 +27,13 @@ class TextFilter extends AbstractDatabaseAttributeFilter
      * {@inheritdoc}
      */
     public function addAttributeFilter(
-        $attribute,
-        $operator,
-        $value,
-        $locale = null,
-        $channel = null,
-        $options = []
-    ) {
+        mixed $attribute,
+        mixed $operator,
+        mixed $value,
+        ?string $locale = null,
+        ?string $channel = null,
+        array $options = []
+    ): static {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
@@ -44,29 +44,23 @@ class TextFilter extends AbstractDatabaseAttributeFilter
 
         $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $this->queryBuilder->whereRaw(
-                    $searchPath.' '.$grammar->getRegexOperator().' ?',
-                    is_array($value) ? implode('|', $value) : $value
-                );
+        match ($operator) {
+            FilterOperators::IN => $this->queryBuilder->whereRaw(
+                $searchPath.' '.$grammar->getRegexOperator().' ?',
+                is_array($value) ? implode('|', $value) : $value
+            ),
+            FilterOperators::CONTAINS => $this->queryBuilder->where(function (mixed $query) use ($searchPath, $value) {
+                foreach ($value as $val) {
+                    $escapedValue = strtolower(QueryString::escapeValue($val));
 
-                break;
-
-            case FilterOperators::CONTAINS:
-                $this->queryBuilder->where(function ($query) use ($searchPath, $value) {
-                    foreach ($value as $val) {
-                        $escapedValue = strtolower(QueryString::escapeValue($val));
-
-                        $query->orWhereRaw(
-                            "LOWER($searchPath) LIKE ?",
-                            "%$escapedValue%"
-                        );
-                    }
-                });
-
-                break;
-        }
+                    $query->orWhereRaw(
+                        "LOWER($searchPath) LIKE ?",
+                        "%$escapedValue%"
+                    );
+                }
+            }),
+            default => $this,
+        };
 
         return $this;
     }

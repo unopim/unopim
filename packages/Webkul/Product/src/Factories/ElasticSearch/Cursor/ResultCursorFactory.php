@@ -20,7 +20,7 @@ class ResultCursorFactory implements CursorFactoryContract
         $query['track_total_hits'] = true;
         $query['size'] = $options['per_page'];
         $query['from'] = ($options['page'] * $options['per_page']) - $options['per_page'];
-        $query['sort'] = isset($query['sort']) ? $query['sort'] : $sort;
+        $query['sort'] ??= $sort;
         $query['stored_fields'] = [];
         if (! isset($query['query'])) {
             $query['query']['bool'] = new \stdClass;
@@ -35,11 +35,7 @@ class ResultCursorFactory implements CursorFactoryContract
             $results = ElasticSearch::search($requestParam);
         } catch (\Exception $e) {
             if (str_contains($e->getMessage(), 'attribute_family_id')) {
-                try {
-                    $results = ElasticSearch::search($requestParam);
-                } catch (\Exception $retryException) {
-                    throw $retryException;
-                }
+                $results = ElasticSearch::search($requestParam);
             } else {
                 throw $e;
             }
@@ -51,17 +47,14 @@ class ResultCursorFactory implements CursorFactoryContract
         return new ResultIterator($ids, $totalCount, new SearchResponse($results['hits']['hits'] ?? []));
     }
 
-    /**
-     * @return array
-     */
-    protected static function resolveOptions(array $options)
+    protected static function resolveOptions(array $options): array
     {
-        $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+        $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ?: env('APP_NAME');
 
         $options['page'] = $options['pagination']['page'] ?? 1;
         $options['per_page'] = $options['pagination']['per_page'] ?? 10;
-        $options['sort'] = $options['sort'] ?? [];
-        $options['filters'] = $options['filters'] ?? [];
+        $options['sort'] ??= [];
+        $options['filters'] ??= [];
 
         $options['index'] = strtolower($indexPrefix.'_products');
 

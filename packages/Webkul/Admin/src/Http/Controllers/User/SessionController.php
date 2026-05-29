@@ -25,14 +25,10 @@ class SessionController extends Controller
         }
 
         $previous = url()->previous();
-        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
         $previousHost = parse_url($previous, PHP_URL_HOST);
 
-        if ($previousHost === $appHost && str_contains($previous, 'admin')) {
-            $intendedUrl = $previous;
-        } else {
-            $intendedUrl = null;
-        }
+        $intendedUrl = $previousHost === $appHost && str_contains($previous, 'admin') ? $previous : null;
 
         if ($intendedUrl) {
             session()->put('url.intended', $intendedUrl);
@@ -81,10 +77,10 @@ class SessionController extends Controller
     {
         $items = array_filter(
             config('menu.admin') ?? [],
-            fn ($item) => ! empty($item['key']) && ! str_contains($item['key'], '.'),
+            fn (array $item) => ! empty($item['key']) && ! str_contains((string) $item['key'], '.'),
         );
 
-        usort($items, fn ($a, $b) => ($a['sort'] ?? 0) <=> ($b['sort'] ?? 0));
+        usort($items, fn (array $a, array $b) => ($a['sort'] ?? 0) <=> ($b['sort'] ?? 0));
 
         // app('acl')->roles maps every admin route name to the ACL key that the
         // Bouncer middleware will actually enforce on it. We need to land users

@@ -3,6 +3,7 @@
 namespace Webkul\AiAgent\Chat\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -56,7 +57,7 @@ class ListCategories implements PimTool
 
                 if ($search) {
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $search);
-                    $qb->where(function ($q) use ($escaped, $context, $grammar) {
+                    $qb->where(function (Builder $q) use ($escaped, $context, $grammar) {
                         $q->where('code', 'like', "%{$escaped}%")
                             ->orWhereRaw($grammar->jsonExtract('additional_data', 'locale_specific', $context->locale, 'name').' LIKE ?', ["%{$escaped}%"]);
                     });
@@ -64,8 +65,8 @@ class ListCategories implements PimTool
 
                 $categories = $qb->orderBy('_lft')->limit($limit)->get();
 
-                $results = $categories->map(function ($cat) use ($context) {
-                    $data = json_decode($cat->additional_data, true) ?? [];
+                $results = $categories->map(function (\stdClass $cat) use ($context) {
+                    $data = json_decode((string) $cat->additional_data, true) ?? [];
                     $name = $data['locale_specific'][$context->locale]['name'] ?? $data['locale_specific']['en_US']['name'] ?? $cat->code;
 
                     return [

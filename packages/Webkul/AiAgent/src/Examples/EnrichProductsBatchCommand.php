@@ -59,7 +59,7 @@ class EnrichProductsBatchCommand extends Command
         $this->info('Processing '.$products->count().' products...');
 
         // Convert to array format for agent
-        $productData = $products->map(fn ($p) => [
+        $productData = $products->map(fn (mixed $p) => [
             'sku'         => $p->sku,
             'name'        => $p->name,
             'description' => $p->description,
@@ -104,13 +104,13 @@ class EnrichProductsBatchCommand extends Command
      */
     protected function displayResults(array $data): void
     {
-        if (empty($data)) {
+        if ($data === []) {
             return;
         }
 
         $this->table(
             ['SKU', 'Name', 'Category', 'Quality Score'],
-            array_map(fn ($item) => [
+            array_map(fn (array $item) => [
                 $item['sku'] ?? '—',
                 $item['name'] ?? '—',
                 $item['category'] ?? '—',

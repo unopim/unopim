@@ -12,7 +12,7 @@ class ImportBatch
     /**
      * Set current user for this request which will be used while adding logs for the webhook
      */
-    public function handle($batch)
+    public function handle(mixed $batch): void
     {
         $userId = $batch->jobTrack->user_id ?? null;
 
@@ -25,9 +25,8 @@ class ImportBatch
      * Set the authenticated user for the current request.
      *
      * @param  \Admin|int  $user
-     * @return void
      */
-    public function setAuthForRequest(int|Admin $user)
+    public function setAuthForRequest(int|Admin $user): void
     {
         if (is_int($user)) {
             $user = AdminProxy::find($user);

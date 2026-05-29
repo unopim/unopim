@@ -21,15 +21,15 @@ class Channel extends TranslatableModel implements ChannelContract, HistoryContr
     protected $table = 'channels';
 
     /** Tags for History */
-    protected $historyTags = ['channel'];
+    protected array $historyTags = ['channel'];
 
     /** Fields for History */
-    protected $historyFields = [
+    protected array $historyFields = [
         'root_category_id',
     ];
 
     /** Proxy Table Fields for History */
-    protected $historyProxyFields = [
+    protected array $historyProxyFields = [
         'currencies',
         'locales',
     ];

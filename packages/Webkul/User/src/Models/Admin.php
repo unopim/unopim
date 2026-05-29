@@ -5,6 +5,8 @@ namespace Webkul\User\Models;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
@@ -53,10 +55,10 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     /**
      * Get image url for the product image.
      */
-    public function image_url()
+    public function image_url(): ?string
     {
         if (! $this->image) {
-            return;
+            return null;
         }
 
         return Storage::url($this->image);
@@ -65,7 +67,7 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     /**
      * Get image url for the product image.
      */
-    public function getImageUrlAttribute()
+    public function getImageUrlAttribute(): ?string
     {
         return $this->image_url();
     }
@@ -105,15 +107,13 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
 
         try {
             return route('admin.avatar.public', ['hash' => $hash]);
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
             return "https://gravatar.com/avatar/{$hash}?s=200&d=404";
         }
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    #[\Override]
+    public function toArray(): array
     {
         $array = parent::toArray();
 
@@ -124,10 +124,8 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
 
     /**
      * Get the role that owns the admin.
-     *
-     * @return BelongsTo
      */
-    public function role()
+    public function role(): BelongsTo
     {
         return $this->belongsTo(RoleProxy::modelClass());
     }
@@ -137,18 +135,15 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
      *
      * @return BelongsTo
      */
-    public function apiKey()
+    public function apiKey(): HasOne
     {
         return $this->hasOne(Apikey::class);
     }
 
     /**
      * Checks if admin has permission to perform certain action.
-     *
-     * @param  string  $permission
-     * @return bool
      */
-    public function hasPermission($permission)
+    public function hasPermission(string $permission): bool
     {
         if (
             $this->role->permission_type == 'custom'
@@ -164,9 +159,9 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
      * Send the password reset notification.
      *
      * @param  string  $token
-     * @return void
      */
-    public function sendPasswordResetNotification($token)
+    #[\Override]
+    public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordNotification($token));
     }
@@ -190,7 +185,7 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     /**
      * Find the user instance for the given username.
      */
-    public function findForPassport(string $username)
+    public function findForPassport(string $username): ?self
     {
         return $this->where('email', $username)->first();
     }
@@ -198,7 +193,7 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     /**
      * Returns the notifications associated with the user.
      */
-    public function notifications()
+    public function notifications(): HasMany
     {
         return $this->hasMany(UserNotification::class);
     }

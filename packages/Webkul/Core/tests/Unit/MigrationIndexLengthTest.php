@@ -34,7 +34,7 @@ it('does not generate index names exceeding MySQL 64-character limit with wk_ pr
 
         foreach ($files as $file) {
             $content = file_get_contents($file);
-            $filename = basename($file);
+            $filename = basename((string) $file);
 
             // Extract all Schema::create calls with their table names and body
             preg_match_all(

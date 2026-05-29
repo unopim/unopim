@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\DataGrid\Providers;
 
 use Illuminate\Support\ServiceProvider;
@@ -14,5 +16,6 @@ class DataGridServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    #[\Override]
     public function register(): void {}
 }

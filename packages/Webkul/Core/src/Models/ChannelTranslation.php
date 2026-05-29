@@ -15,12 +15,12 @@ class ChannelTranslation extends Model implements ChannelTranslationContract, Hi
     use HasFactory;
     use HistoryTrait;
 
-    protected $historyTags = ['channel'];
+    protected array $historyTags = ['channel'];
 
     /**
      * Key => Label for history
      */
-    protected $historyTranslatableFields = [
+    protected array $historyTranslatableFields = [
         'name' => 'Name',
     ];
 

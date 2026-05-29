@@ -12,11 +12,11 @@
 
 @layer components {
     ::selection {
-        background-color: rgba(0, 68, 242, .2);
+        background-color: rgba(0, 68, 242, 0.2);
     }
 
     body {
-        @apply bg-violet-50 bg-opacity-50 font-inter;
+        @apply font-inter bg-violet-50 bg-opacity-50;
     }
 
     button:disabled {
@@ -59,17 +59,17 @@
     }
 
     html.dark [class^="icon-"],
-    html.dark [class*=" icon-"]{
-       @apply text-slate-50;
+    html.dark [class*=" icon-"] {
+        @apply text-slate-50;
     }
 
     html.dark .active [class^="icon-"],
-    html.dark .active [class*=" icon-"]{
+    html.dark .active [class*=" icon-"] {
         @apply text-violet-700;
     }
 
     .box-shadow {
-        @apply shadow-[0px_0px_0px_0px_rgba(0,0,0,0.03),0px_1px_1px_0px_rgba(0,0,0,0.03),0px_3px_3px_0px_rgba(0,0,0,0.03),0px_6px_4px_0px_rgba(0,0,0,0.02),0px_11px_4px_0px_rgba(0,0,0,0.00),0px_17px_5px_0px_rgba(0,0,0,0.00)] border-[1px] dark:border-gray-800;
+        @apply border-[1px] shadow-[0px_0px_0px_0px_rgba(0,0,0,0.03),0px_1px_1px_0px_rgba(0,0,0,0.03),0px_3px_3px_0px_rgba(0,0,0,0.03),0px_6px_4px_0px_rgba(0,0,0,0.02),0px_11px_4px_0px_rgba(0,0,0,0.00),0px_17px_5px_0px_rgba(0,0,0,0.00)] dark:border-gray-800;
     }
 
     .overflow-wrap {
@@ -95,19 +95,19 @@
     }
 
     .primary-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 bg-violet-600 border border-violet-700 hover:bg-violet-500 hover:border-violet-500 rounded-md text-gray-50 font-semibold cursor-pointer transition-all hover:opacity-[0.9] focus:opacity-[0.9];
+        @apply flex cursor-pointer items-center gap-x-1 rounded-md border border-violet-700 bg-violet-600 px-3 py-1.5 font-semibold text-gray-50 transition-all hover:border-violet-500 hover:bg-violet-500 hover:opacity-[0.9] focus:opacity-[0.9];
     }
 
     .secondary-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 bg-white border-2 border-violet-600 text-violet-600 rounded-md font-semibold whitespace-nowrap cursor-pointer transition-all hover:text-violet-500 hover:border-violet-500 hover:bg-violet-100 dark:bg-cherry-900 dark:border-violet-400 dark:text-violet-200 dark:hover:bg-cherry-800 dark:hover:border-violet-300 dark:hover:text-violet-100;
+        @apply dark:bg-cherry-900 dark:hover:bg-cherry-800 flex cursor-pointer items-center gap-x-1 whitespace-nowrap rounded-md border-2 border-violet-600 bg-white px-3 py-1.5 font-semibold text-violet-600 transition-all hover:border-violet-500 hover:bg-violet-100 hover:text-violet-500 dark:border-violet-400 dark:text-violet-200 dark:hover:border-violet-300 dark:hover:text-violet-100;
     }
 
     .transparent-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md text-violet-600 font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:text-violet-500 hover:bg-violet-50 dark:hover:bg-cherry-900  dark:text-slate-50 ;
+        @apply dark:hover:bg-cherry-900 flex cursor-pointer appearance-none items-center gap-x-1 whitespace-nowrap rounded-md border-2 border-transparent px-3 py-1.5 font-semibold text-violet-600 transition-all marker:shadow hover:bg-violet-50 hover:text-violet-500 dark:text-slate-50;
     }
 
     .danger-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 bg-red-600 rounded-md text-gray-50 font-semibold cursor-pointer transition-all hover:opacity-90 focus:opacity-90;
+        @apply flex cursor-pointer items-center gap-x-1 rounded-md bg-red-600 px-3 py-1.5 font-semibold text-gray-50 transition-all hover:opacity-90 focus:opacity-90;
     }
 
     .journal-scroll::-webkit-scrollbar {
@@ -322,7 +322,7 @@
         background-position-x: calc(100% - 10px);
         background-position-y: 50%;
     }
-    .dark .custom-select{
+    .dark .custom-select {
         background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
     }
 
@@ -338,30 +338,30 @@
     .label-fraud,
     .label-completed,
     .label-active {
-        @apply text-[12px] text-white font-semibold py-px px-1.5 max-w-max rounded-[35px];
+        @apply max-w-max rounded-[35px] px-1.5 py-px text-[12px] font-semibold text-white;
     }
 
     .history-version {
-        @apply text-[12px] text-white font-semibold py-px px-2.5 max-w-max rounded-[35px];
+        @apply max-w-max rounded-[35px] px-2.5 py-px text-[12px] font-semibold text-white;
         @apply bg-gray-600;
     }
 
-	.label-pending {
-		@apply bg-yellow-500;
-	}
-
-	.label-processing{
-		@apply bg-cyan-600;
+    .label-pending {
+        @apply bg-yellow-500;
     }
 
-	.label-completed,
-    .label-active {
-		@apply bg-green-600;
-	}
+    .label-processing {
+        @apply bg-cyan-600;
+    }
 
-	.label-closed {
-		@apply bg-blue-600;
-	}
+    .label-completed,
+    .label-active {
+        @apply bg-green-600;
+    }
+
+    .label-closed {
+        @apply bg-blue-600;
+    }
 
     .label-canceled,
     .label-fraud {
@@ -382,15 +382,15 @@
     }
 
     .pill-low {
-        @apply bg-red-600 border border-red-700;
+        @apply border border-red-700 bg-red-600;
     }
 
     .pill-medium {
-        @apply bg-yellow-500 border border-yellow-600;
+        @apply border border-yellow-600 bg-yellow-500;
     }
 
     .pill-high {
-        @apply bg-green-600 border border-green-700;
+        @apply border border-green-700 bg-green-600;
     }
 
     .shimmer {
@@ -399,22 +399,12 @@
         animation-iteration-count: infinite;
         animation-name: skeleton;
         animation-timing-function: linear;
-        background: linear-gradient(
-            to right,
-            #f6f6f6 8%,
-            #f0f0f0 18%,
-            #f6f6f6 33%
-        );
+        background: linear-gradient(to right, #f6f6f6 8%, #f0f0f0 18%, #f6f6f6 33%);
         background-size: 1250px 100%;
     }
 
     .dark .shimmer {
-        background: linear-gradient(
-            to right,
-            #1f2937 8%,
-            #1a2232 18%,
-            #1f2937 33%
-        );
+        background: linear-gradient(to right, #1f2937 8%, #1a2232 18%, #1f2937 33%);
     }
 
     @keyframes skeleton {
@@ -432,23 +422,22 @@
     }
 
     .CodeMirror {
-        @apply !h-[calc(100vh-367px)]
+        @apply !h-[calc(100vh-367px)];
     }
 
     .highlighted-tribute-item {
-        @apply bg-violet-100 dark:bg-cherry-600 rounded-md;
+        @apply dark:bg-cherry-600 rounded-md bg-violet-100;
     }
 }
 
 .tox .tox-toolbar__group:last-child button {
     padding: 6px 8px;
-    @apply text-violet-700 bg-violet-100;
+    @apply bg-violet-100 text-violet-700;
 }
 
 .tox .tox-toolbar__group:last-child button:hover {
     @apply bg-violet-200;
 }
-
 
 .tox .tox-toolbar__group:last-child button[aria-disabled="true"] {
     @apply cursor-not-allowed opacity-50;
@@ -461,32 +450,34 @@
 .multiselect__option--highlight,
 .multiselect__tag,
 .multiselect__spinner:after {
-    @apply !bg-violet-100 dark:!bg-cherry-600;
+    @apply dark:!bg-cherry-600 !bg-violet-100;
     @apply !text-violet-600 dark:!text-slate-50;
 }
 
 .multiselect__option--selected.multiselect__option--highlight,
 .multiselect__option--highlight:after {
-    @apply !bg-violet-100 dark:!bg-cherry-600;;
+    @apply dark:!bg-cherry-600 !bg-violet-100;
     @apply !text-violet-600 dark:!text-slate-50;
 }
 
 .multiselect__option--highlight {
-    @apply !bg-violet-100 dark:!bg-cherry-600;
-    @apply !text-violet-600 dark:!text-slate-50;;
-
+    @apply dark:!bg-cherry-600 !bg-violet-100;
+    @apply !text-violet-600 dark:!text-slate-50;
 }
 
 .multiselect__option--highlight.multiselect__option--selected.multiselect__option,
 .multiselect__option--selected.multiselect__option--highlight {
-    @apply !bg-violet-100 dark:!bg-cherry-600;
+    @apply dark:!bg-cherry-600 !bg-violet-100;
     @apply !text-red-600 dark:!text-red-600;
 }
 
 .multiselect__tag-icon:after {
-    @apply !text-violet-600 dark:!bg-cherry-600 dark:!text-slate-50;
+    @apply dark:!bg-cherry-600 !text-violet-600 dark:!text-slate-50;
 }
 
-.multiselect__content-wrapper, .multiselect__tags, .multiselect__input, .multiselect__single {
-    @apply bg-violet-100 dark:bg-cherry-900 dark:!text-slate-50 dark:hover:border-slate-300 dark:border-gray-600;
+.multiselect__content-wrapper,
+.multiselect__tags,
+.multiselect__input,
+.multiselect__single {
+    @apply dark:bg-cherry-900 bg-violet-100 dark:border-gray-600 dark:!text-slate-50 dark:hover:border-slate-300;
 }

@@ -156,14 +156,14 @@ it('should have acl top-level sort values matching menu sort values for common i
     $menuConfig = config('menu.admin');
 
     $aclTopLevel = collect($aclConfig)
-        ->filter(fn ($item) => ! str_contains($item['key'], '.'))
+        ->filter(fn (array $item) => ! str_contains((string) $item['key'], '.'))
         ->keyBy('key')
-        ->map(fn ($item) => $item['sort']);
+        ->map(fn (array $item) => $item['sort']);
 
     $menuTopLevel = collect($menuConfig)
-        ->filter(fn ($item) => ! str_contains($item['key'], '.'))
+        ->filter(fn (array $item) => ! str_contains((string) $item['key'], '.'))
         ->keyBy('key')
-        ->map(fn ($item) => $item['sort']);
+        ->map(fn (array $item) => $item['sort']);
 
     // For each key that exists in both ACL and menu, sort values must match
     foreach ($menuTopLevel as $key => $menuSort) {

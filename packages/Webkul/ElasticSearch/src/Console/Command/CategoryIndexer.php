@@ -18,12 +18,7 @@ class CategoryIndexer extends Command
 
     protected $description = 'Index all categories into Elasticsearch';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    public function handle()
+    public function handle(): void
     {
         if (config('elasticsearch.enabled')) {
             $indexPrefix = config('elasticsearch.prefix');
@@ -104,11 +99,11 @@ class CategoryIndexer extends Command
                         ],
                         'size' => 1000000000,
                     ],
-                ])['hits']['hits'])->pluck('_id')->map(fn ($id) => (int) $id)->toArray();
+                ])['hits']['hits'])->pluck('_id')->map(fn (mixed $id) => (int) $id)->toArray();
 
                 $categoriesToDelete = array_diff($elasticCategoryIds, $dbCategoryIds);
 
-                if (! empty($categoriesToDelete)) {
+                if ($categoriesToDelete !== []) {
                     $this->info('Deleting stale categories from Elasticsearch...');
                     $deleteProgressBar = new ProgressBar($this->output, count($categoriesToDelete));
                     $deleteProgressBar->start();
@@ -182,7 +177,7 @@ class CategoryIndexer extends Command
         }
     }
 
-    public function getCategoryUpdates($categoryIndex, $command = null)
+    public function getCategoryUpdates(string $categoryIndex, ?Command $command = null): array
     {
         $scrollSize = 10000;
         $elasticCategory = [];
@@ -233,7 +228,7 @@ class CategoryIndexer extends Command
 
         } catch (\Exception $e) {
             if (str_contains($e->getMessage(), 'index_not_found_exception')) {
-                if ($command) {
+                if ($command instanceof Command) {
                     $command->info('No data found. Initiating fresh indexing');
                 }
                 Log::channel('elasticsearch')->info('No data found. Initiating fresh indexing');

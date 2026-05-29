@@ -9,17 +9,14 @@ use ReflectionFunction;
 class HashableClosure
 {
     /**
-     * The closure to hash.
-     */
-    protected Closure $closure;
-
-    /**
      * Create a new HashableClosure instance.
      */
-    public function __construct(Closure $closure)
-    {
-        $this->closure = $closure;
-    }
+    public function __construct(
+        /**
+         * The closure to hash.
+         */
+        protected Closure $closure
+    ) {}
 
     /**
      * Get a unique hash for the closure.
@@ -63,7 +60,7 @@ class HashableClosure
             if ($value instanceof Closure) {
                 $processed[$name] = (new self($value))->getHash();
             } elseif (is_object($value)) {
-                $processed[$name] = get_class($value).':'.spl_object_id($value);
+                $processed[$name] = $value::class.':'.spl_object_id($value);
             } elseif (is_resource($value)) {
                 $processed[$name] = 'resource:'.get_resource_type($value);
             } else {

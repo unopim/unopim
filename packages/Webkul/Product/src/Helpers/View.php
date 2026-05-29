@@ -10,10 +10,9 @@ class View
     /**
      * Returns the visible custom attributes
      *
-     * @param  Product  $product
      * @return void|array
      */
-    public function getAdditionalData($product)
+    public function getAdditionalData(Product $product): array
     {
         $data = [];
 
@@ -43,7 +42,7 @@ class View
                 ) {
                     $labels = [];
 
-                    $attributeOptions = $attributeOptionRepository->findWhereIn('id', explode(',', $value));
+                    $attributeOptions = $attributeOptionRepository->findWhereIn('id', explode(',', (string) $value));
 
                     foreach ($attributeOptions as $attributeOption) {
                         if ($label = $attributeOption->label) {

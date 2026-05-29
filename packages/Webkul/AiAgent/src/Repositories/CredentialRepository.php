@@ -18,10 +18,8 @@ class CredentialRepository extends Repository
 
     /**
      * Get active credentials list for dropdowns.
-     *
-     * @return Collection
      */
-    public function getActiveList()
+    public function getActiveList(): Collection
     {
         return $this->model
             ->where('status', true)

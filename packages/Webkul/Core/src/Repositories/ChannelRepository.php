@@ -15,7 +15,7 @@ class ChannelRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Core\Contracts\Channel';
+        return Channel::class;
     }
 
     /**
@@ -23,7 +23,8 @@ class ChannelRepository extends Repository
      *
      * @return Channel
      */
-    public function create(array $data)
+    #[\Override]
+    public function create(array $data): mixed
     {
         $model = $this->getModel();
 
@@ -81,7 +82,8 @@ class ChannelRepository extends Repository
      * @param  string  $attribute
      * @return Channel
      */
-    public function update(array $data, $id, $attribute = 'id')
+    #[\Override]
+    public function update(array $data, $id, $attribute = 'id'): mixed
     {
         $model = $this->getModel();
 
@@ -113,7 +115,7 @@ class ChannelRepository extends Repository
     /**
      * Remove locale translation payloads when every translated attribute is empty.
      */
-    protected function removeEmptyTranslations(array $data, $model): array
+    protected function removeEmptyTranslations(array $data, mixed $model): array
     {
         foreach (core()->getAllActiveLocales() as $locale) {
             $localeCode = $locale->code;
@@ -147,7 +149,7 @@ class ChannelRepository extends Repository
      *
      * @return Builder
      */
-    public function queryBuilder()
+    public function queryBuilder(): static
     {
         return $this->with([
             'translations',
@@ -159,7 +161,7 @@ class ChannelRepository extends Repository
 
     public function getChannelAsOptions(): Collection
     {
-        return $this->all()->map(function ($channel) {
+        return $this->all()->map(function (mixed $channel) {
             $channelLabel = $channel->name;
 
             return [

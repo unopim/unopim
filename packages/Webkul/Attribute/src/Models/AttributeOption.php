@@ -21,7 +21,7 @@ class AttributeOption extends TranslatableModel implements AttributeOptionContra
 
     public $translatedAttributes = ['label'];
 
-    protected $historyTags = ['attribute'];
+    protected array $historyTags = ['attribute'];
 
     protected $fillable = [
         'code',
@@ -50,7 +50,7 @@ class AttributeOption extends TranslatableModel implements AttributeOptionContra
     /**
      * Get image url for the swatch value url.
      */
-    public function swatch_value_url()
+    public function swatch_value_url(): ?string
     {
         if (
             $this->attribute
@@ -66,7 +66,7 @@ class AttributeOption extends TranslatableModel implements AttributeOptionContra
     /**
      * Get image url for the product image.
      */
-    public function getSwatchValueUrlAttribute()
+    public function getSwatchValueUrlAttribute(): ?string
     {
         return $this->swatch_value_url();
     }

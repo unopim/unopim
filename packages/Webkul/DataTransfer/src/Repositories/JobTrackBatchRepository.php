@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\DataTransfer\Repositories;
 
 use Webkul\Core\Eloquent\Repository;

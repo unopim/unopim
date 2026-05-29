@@ -163,7 +163,7 @@ it('should create attributes with certain attribute types', function () {
 
             $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $data);
         } catch (Exception $e) {
-            throw new Exception('Failed with attribute code: '.$code.'. '.$e->getMessage());
+            throw new Exception('Failed with attribute code: '.$code.'. '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 });
@@ -260,7 +260,7 @@ it('should not create attributes with certain codes', function () {
 
             $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), $data);
         } catch (Exception $e) {
-            throw new Exception('Failed with attribute code: '.$code.'. '.$e->getMessage());
+            throw new Exception('Failed with attribute code: '.$code.'. '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 });
@@ -373,7 +373,7 @@ it('should create text attribute with these validation types', function () {
 
             $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $data);
         } catch (Exception $e) {
-            throw new Exception('Failed with validation type code: '.$validation.'. '.$e->getMessage());
+            throw new Exception('Failed with validation type code: '.$validation.'. '.$e->getMessage(), $e->getCode(), $e);
         }
     }
 });

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => ':attribute केवल अल्फा, संख्यात्मक, रिक्त स्थान, अल्पविराम और डैश स्वीकार कर सकता है।',
     'alpha-numeric-space'          => ':attribute केवल अल्फा, संख्यात्मक और रिक्त स्थान स्वीकार कर सकता है।',

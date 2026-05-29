@@ -33,7 +33,7 @@ import tl from "../../locales/tl.json";
 import tr from "@vee-validate/i18n/dist/locale/tr.json";
 import uk from "@vee-validate/i18n/dist/locale/uk.json";
 import vi from "@vee-validate/i18n/dist/locale/vi.json";
-import * as AllRules from '@vee-validate/rules';
+import * as AllRules from "@vee-validate/rules";
 
 window.defineRule = defineRule;
 
@@ -52,8 +52,8 @@ export default {
          * Registration of all global validators.
          */
         Object.keys(AllRules)
-            .filter(rule => typeof AllRules[rule] === 'function')
-            .forEach(rule => defineRule(rule, AllRules[rule]));
+            .filter((rule) => typeof AllRules[rule] === "function")
+            .forEach((rule) => defineRule(rule, AllRules[rule]));
 
         /**
          * This regular expression allows phone numbers with the following conditions:
@@ -64,11 +64,11 @@ export default {
          * someone wants to customize it, they can override this rule.
          */
         defineRule("phone", (value) => {
-            if (! value || ! value.length) {
+            if (!value || !value.length) {
                 return true;
             }
 
-            if (! /^\+?\d+$/.test(value)) {
+            if (!/^\+?\d+$/.test(value)) {
                 return false;
             }
 
@@ -91,8 +91,8 @@ export default {
             return true;
         });
 
-        defineRule("decimal", (value, { decimals = '*', separator = '.' } = {}) => {
-            if (value === null || value === undefined || value === '') {
+        defineRule("decimal", (value, { decimals = "*", separator = "." } = {}) => {
+            if (value === null || value === undefined || value === "") {
                 return true;
             }
 
@@ -100,7 +100,7 @@ export default {
                 return /^-?\d*$/.test(value);
             }
 
-            const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
+            const regexPart = decimals === "*" ? "+" : `{1,${decimals}}`;
             const regex = new RegExp(`^[-+]?\\d*(\\${separator}\\d${regexPart})?([eE]{1}[-]?\\d+)?$`);
 
             return regex.test(value);
@@ -108,7 +108,7 @@ export default {
 
         defineRule("required_if", (value, { condition = true } = {}) => {
             if (condition) {
-                if (value === null || value === undefined || value === '') {
+                if (value === null || value === undefined || value === "") {
                     return false;
                 }
             }

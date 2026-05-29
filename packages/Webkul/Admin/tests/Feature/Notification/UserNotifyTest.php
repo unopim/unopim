@@ -35,7 +35,5 @@ it('dispatches NotificationEvent with correct parameters', function () {
     NotificationEvent::dispatch($notificationData);
 
     // Assert the event was dispatched with the correct data
-    Event::assertDispatched(NotificationEvent::class, function ($event) use ($notificationData) {
-        return $event->notificationData === $notificationData;
-    });
+    Event::assertDispatched(NotificationEvent::class, fn (NotificationEvent $event) => $event->notificationData === $notificationData);
 });

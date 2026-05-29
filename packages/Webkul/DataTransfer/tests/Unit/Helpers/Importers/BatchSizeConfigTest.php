@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 
 describe('Import Batch Size Configuration', function () {
@@ -22,7 +24,7 @@ describe('Import Batch Size Configuration', function () {
     });
 
     it('falls back to default batch size when config is null', function () {
-        config()->set('import.batch_size', null);
+        config()->set('import.batch_size');
 
         $batchSize = (int) (config('import.batch_size') ?? AbstractImporter::BATCH_SIZE);
 

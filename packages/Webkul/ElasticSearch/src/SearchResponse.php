@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\ElasticSearch;
 
 use Webkul\ElasticSearch\Contracts\SearchResponse as SearchResponseContract;

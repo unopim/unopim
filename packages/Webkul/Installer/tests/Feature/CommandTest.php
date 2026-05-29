@@ -168,31 +168,29 @@ it('should ask for name if invalid user name given in the command', function () 
 });
 
 it('should validate database prefix in unopim:install command', function () {
-    $this->app->extend(Installer::class, function ($service) {
-        return new class extends Installer
+    $this->app->extend(Installer::class, fn (mixed $service): Installer => new class extends Installer
+    {
+        public function call($command, array $arguments = [], $output = null): int
         {
-            public function call($command, array $arguments = [], $output = null)
-            {
-                return 0;
-            }
+            return 0;
+        }
 
-            protected function databaseConnectionSuccessful(array $config): bool
-            {
-                return true;
-            }
+        protected function databaseConnectionSuccessful(array $config): bool
+        {
+            return true;
+        }
 
-            protected function envUpdate(string $key, string $value): void
-            { /* Mute */
-            }
+        protected function envUpdate(string $key, string $value): void
+        { /* Mute */
+        }
 
-            public function handle()
-            {
-                // Ensure prompts occur even if .env exists
-                $this->askForDatabaseDetails();
+        public function handle(): int
+        {
+            // Ensure prompts occur even if .env exists
+            $this->askForDatabaseDetails();
 
-                return 0;
-            }
-        };
+            return 0;
+        }
     });
 
     $this->artisan('unopim:install', ['--skip-admin-creation' => true])

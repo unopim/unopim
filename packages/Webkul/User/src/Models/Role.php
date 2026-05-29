@@ -17,16 +17,16 @@ class Role extends Model implements HistoryContract, RoleContract
     use HistoryTrait;
 
     /** Tags for History */
-    protected $historyTags = ['role'];
+    protected array $historyTags = ['role'];
 
     /** Fields for History */
-    protected $historyFields = [
+    protected array $historyFields = [
         'name',
         'description',
     ];
 
     /** Proxy Table Fields for History */
-    protected $historyProxyFields = [];
+    protected array $historyProxyFields = [];
 
     /**
      * The attributes that are mass assignable.
@@ -51,10 +51,8 @@ class Role extends Model implements HistoryContract, RoleContract
 
     /**
      * Get the admins.
-     *
-     * @return HasMany
      */
-    public function admins()
+    public function admins(): HasMany
     {
         return $this->hasMany(AdminProxy::modelClass());
     }

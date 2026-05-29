@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Admin\Observers;
 
 use Webkul\Admin\Helpers\Dashboard;

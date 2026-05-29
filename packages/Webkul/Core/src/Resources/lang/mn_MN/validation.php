@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => ':attribute  нь зөвхөн альфа, тоо, зай, таслал, зураасыг хүлээн авах боломжтой.',
     'alpha-numeric-space'          => ':attribute  нь зөвхөн альфа, тоо болон хоосон зайг хүлээн авах боломжтой.',

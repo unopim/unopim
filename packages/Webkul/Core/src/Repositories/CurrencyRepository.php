@@ -19,10 +19,9 @@ class CurrencyRepository extends Repository
 
     /**
      * Create.
-     *
-     * @return mixed
      */
-    public function create(array $attributes)
+    #[\Override]
+    public function create(array $attributes): mixed
     {
         Event::dispatch('core.currency.create.before');
 
@@ -39,10 +38,9 @@ class CurrencyRepository extends Repository
 
     /**
      * Update.
-     *
-     * @return mixed
      */
-    public function update(array $attributes, $id)
+    #[\Override]
+    public function update(array $attributes, $id): mixed
     {
         Event::dispatch('core.currency.update.before', $id);
 
@@ -61,9 +59,9 @@ class CurrencyRepository extends Repository
      * Delete.
      *
      * @param  int  $id
-     * @return bool
      */
-    public function delete($id)
+    #[\Override]
+    public function delete($id): bool
     {
         Event::dispatch('core.currency.delete.before', $id);
 
@@ -91,7 +89,7 @@ class CurrencyRepository extends Repository
     /**
      * Fetchs All active currencies
      */
-    public function getActiveCurrencies()
+    public function getActiveCurrencies(): mixed
     {
         return $this->where('status', 1)->orderBy('code')->get();
     }
@@ -101,7 +99,7 @@ class CurrencyRepository extends Repository
      *
      * @return Builder
      */
-    public function queryBuilder()
+    public function queryBuilder(): static
     {
         return $this;
 

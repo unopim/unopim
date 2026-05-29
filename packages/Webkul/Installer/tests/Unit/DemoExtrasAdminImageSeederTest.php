@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 describe('DemoExtrasTableSeeder – admins table handling', function () {
     it('skips the admins table entirely so the seeder cannot clobber the credentials set via the installer admin step', function () {
         $source = file_get_contents(

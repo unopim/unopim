@@ -91,8 +91,8 @@ class ConfidenceScoreStep implements PipelineStageContract
             }
         }
 
-        $overall = empty($scores) ? 0.0 : array_sum($scores) / count($scores);
-        $requiresReview = ! empty($lowConfidence);
+        $overall = $scores === [] ? 0.0 : array_sum($scores) / count($scores);
+        $requiresReview = $lowConfidence !== [];
 
         $ctx = ImageProductContext::fromArray($payload->metadata['imageContext'] ?? [])
             ->withConfidence($scores);
@@ -141,7 +141,7 @@ class ConfidenceScoreStep implements PipelineStageContract
      */
     protected function qualityFactor(mixed $value): float
     {
-        if ($value === null || $value === '' || $value === []) {
+        if (in_array($value, [null, '', []], true)) {
             return 0.0;
         }
 

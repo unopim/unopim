@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\ElasticSearch;
 
 use Webkul\ElasticSearch\Contracts\ResultCursor as ResultCursorContract;
@@ -7,14 +9,7 @@ use Webkul\ElasticSearch\Contracts\SearchResponse;
 
 class ResultIterator implements ResultCursorContract
 {
-    /** @var \ArrayIterator */
-    private $idIterator;
-
-    /** @var int */
-    private $totalResults;
-
-    /** @var SearchResponse */
-    private $searchResponse;
+    private readonly \ArrayIterator $idIterator;
 
     /**
      * Constructor.
@@ -23,11 +18,9 @@ class ResultIterator implements ResultCursorContract
      * @param  int  $totalResults  The total number of results.
      * @param  SearchResponse  $searchResponse  The search response object.
      */
-    public function __construct(array $ids, int $totalResults, SearchResponse $searchResponse)
+    public function __construct(array $ids, private readonly int $totalResults, private readonly SearchResponse $searchResponse)
     {
         $this->idIterator = new \ArrayIterator($ids);
-        $this->totalResults = $totalResults;
-        $this->searchResponse = $searchResponse;
     }
 
     /**

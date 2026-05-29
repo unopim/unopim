@@ -12,8 +12,8 @@ describe('EnrichmentService locale-aware completeness check', function () {
         $channelLocale = [];  // fr_FR has nothing yet
 
         $ctx = new ImageProductContext(
-            attributes: $channelLocale,
             detectedProduct: 'Electronics',
+            attributes: $channelLocale,
         );
 
         // $ctx->attributes is empty → every TARGETS key is missing.

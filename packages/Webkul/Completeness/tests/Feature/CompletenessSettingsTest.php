@@ -63,9 +63,7 @@ it('should insert and delete completeness settings on update', function () {
         'channel_id'   => $channel2->id,
     ]);
 
-    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
-        return $job->uniqueId() === 'completeness-job-'.$family->id;
-    });
+    Queue::assertPushed(BulkProductCompletenessJob::class, fn (BulkProductCompletenessJob $job) => $job->uniqueId() === 'completeness-job-'.$family->id);
 });
 
 it('should apply channel requirements across multiple attributes on mass update', function () {
@@ -98,9 +96,7 @@ it('should apply channel requirements across multiple attributes on mass update'
         ]);
     }
 
-    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
-        return $job->uniqueId() === 'completeness-job-'.$family->id;
-    });
+    Queue::assertPushed(BulkProductCompletenessJob::class, fn (BulkProductCompletenessJob $job) => $job->uniqueId() === 'completeness-job-'.$family->id);
 });
 
 it('should not dispatch job if mass update does not change any channel requirements', function () {
@@ -164,9 +160,7 @@ it('should dispatch job when a completeness setting is deleted via update', func
     $this->postJson(route('admin.catalog.families.completeness.update'), $payload)
         ->assertOk();
 
-    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
-        return $job->uniqueId() === 'completeness-job-'.$family->id;
-    });
+    Queue::assertPushed(BulkProductCompletenessJob::class, fn (BulkProductCompletenessJob $job) => $job->uniqueId() === 'completeness-job-'.$family->id);
 });
 
 it('should dispatch job when completeness settings are deleted via mass update', function () {
@@ -216,7 +210,5 @@ it('should dispatch job when completeness settings are deleted via mass update',
         ]);
     }
 
-    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
-        return $job->uniqueId() === 'completeness-job-'.$family->id;
-    });
+    Queue::assertPushed(BulkProductCompletenessJob::class, fn (BulkProductCompletenessJob $job) => $job->uniqueId() === 'completeness-job-'.$family->id);
 });

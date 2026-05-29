@@ -127,7 +127,7 @@ class AiApiClient
 
         curl_close($ch);
 
-        if ($curlErrno) {
+        if ($curlErrno !== 0) {
             throw new ApiException('cURL error: '.$curlError, $curlErrno);
         }
 
@@ -214,7 +214,7 @@ class AiApiClient
      */
     protected function convertToAnthropicFormat(array $messages): array
     {
-        return array_values(array_filter($messages, fn ($m) => $m['role'] !== 'system'));
+        return array_values(array_filter($messages, fn (array $m) => $m['role'] !== 'system'));
     }
 
     /**
@@ -224,7 +224,7 @@ class AiApiClient
      */
     protected function extractSystemMessage(array $messages): string
     {
-        $systemParts = array_filter($messages, fn ($m) => $m['role'] === 'system');
+        $systemParts = array_filter($messages, fn (array $m) => $m['role'] === 'system');
 
         return implode("\n\n", array_column($systemParts, 'content'));
     }

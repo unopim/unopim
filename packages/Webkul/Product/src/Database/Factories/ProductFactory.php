@@ -40,15 +40,13 @@ class ProductFactory extends Factory
 
     public function withInitialValues(): ProductFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'values' => [
-                    'common' => [
-                        'sku'    => $attributes['sku'],
-                    ],
+        return $this->state(fn (array $attributes) => [
+            'values' => [
+                'common' => [
+                    'sku'    => $attributes['sku'],
                 ],
-            ];
-        });
+            ],
+        ]);
     }
 
     /**
@@ -56,11 +54,9 @@ class ProductFactory extends Factory
      */
     public function simple(): ProductFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => 'simple',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'type' => 'simple',
+        ]);
     }
 
     /**
@@ -68,11 +64,9 @@ class ProductFactory extends Factory
      */
     public function configurable(): ProductFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => 'configurable',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'type' => 'configurable',
+        ]);
     }
 
     /**

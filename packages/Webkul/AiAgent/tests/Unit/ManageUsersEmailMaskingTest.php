@@ -9,7 +9,6 @@ function maskEmail(string $email): string
 {
     $tool = new ManageUsers;
     $ref = new ReflectionMethod($tool, 'maskUserData');
-    $ref->setAccessible(true);
 
     $user = (object) ['email' => $email];
     $masked = $ref->invoke($tool, $user);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $view = __DIR__.'/../../src/Resources/views/components/datagrid/manage-columns/index.blade.php';
 
 it('should not render the attribute code next to the name in the manage-columns list (Issue #716)', function () use ($view) {

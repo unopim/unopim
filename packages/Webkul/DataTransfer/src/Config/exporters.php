@@ -1,12 +1,21 @@
 <?php
 
+declare(strict_types=1);
+use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Core\Repositories\CurrencyRepository;
+use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
+use Webkul\DataTransfer\Validators\JobInstances\Export\CategoryJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\CurrencyJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\ProductJobValidator;
+use Webkul\Product\Repositories\ProductRepository;
+
 return [
     'products' => [
         'title'       => 'data_transfer::app.exporters.products.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Product\Exporter',
-        'source'      => 'Webkul\Product\Repositories\ProductRepository',
+        'exporter'    => Exporter::class,
+        'source'      => ProductRepository::class,
         'sample_path' => 'data-transfer/samples/products.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\ProductJobValidator',
+        'validator'   => ProductJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -53,10 +62,10 @@ return [
 
     'categories' => [
         'title'       => 'data_transfer::app.exporters.categories.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Category\Exporter',
-        'source'      => 'Webkul\Category\Repositories\CategoryRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Category\Exporter::class,
+        'source'      => CategoryRepository::class,
         'sample_path' => 'data-transfer/samples/categories.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\CategoryJobValidator',
+        'validator'   => CategoryJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -120,10 +129,10 @@ return [
 
     'currencies' => [
         'title'       => 'data_transfer::app.exporters.currencies.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Currency\Exporter',
-        'source'      => 'Webkul\Core\Repositories\CurrencyRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Currency\Exporter::class,
+        'source'      => CurrencyRepository::class,
         'sample_path' => 'data-transfer/samples/currencies.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\CurrencyJobValidator',
+        'validator'   => CurrencyJobValidator::class,
         'filters'     => [
             'fields' => [
                 [

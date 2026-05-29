@@ -26,10 +26,7 @@ export default defineConfig(({ mode }) => {
                 hotFile: "../../../public/installer-default-vite.hot",
                 publicDirectory: "../../../public",
                 buildDirectory: "themes/installer/default/build",
-                input: [
-                    "src/Resources/assets/css/app.css",
-                    "src/Resources/assets/js/app.js",
-                ],
+                input: ["src/Resources/assets/css/app.css", "src/Resources/assets/js/app.js"],
                 refresh: true,
             }),
         ],

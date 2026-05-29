@@ -10,6 +10,7 @@ class DefaultHasher extends BaseDefaultHasher
     /**
      * Get the hash for the given request.
      */
+    #[\Override]
     protected function getNormalizedRequestUri(Request $request): string
     {
         return $request->getBaseUrl().$request->getPathInfo();
@@ -18,14 +19,13 @@ class DefaultHasher extends BaseDefaultHasher
     /**
      * Get the cache name suffix for the given request.
      */
+    #[\Override]
     protected function getCacheNameSuffix(Request $request): string
     {
         if ($request->attributes->has('responsecache.cacheNameSuffix')) {
             return $request->attributes->get('responsecache.cacheNameSuffix');
         }
 
-        $cacheNameSuffix = $this->cacheProfile->useCacheNameSuffix($request);
-
-        return $cacheNameSuffix;
+        return $this->cacheProfile->useCacheNameSuffix($request);
     }
 }

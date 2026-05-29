@@ -15,15 +15,14 @@ import { createApp } from "vue/dist/vue.esm-bundler";
 import { configure, defineRule } from "vee-validate";
 import { localize } from "@vee-validate/i18n";
 import en from "@vee-validate/i18n/dist/locale/en.json";
-import { all as AllRules } from '@vee-validate/rules';
+import { all as AllRules } from "@vee-validate/rules";
 
 /**
  * Registration of all global validators.
  */
-Object.keys(AllRules).forEach(rule => {
+Object.keys(AllRules).forEach((rule) => {
     defineRule(rule, AllRules[rule]);
 });
-
 
 defineRule("", () => true);
 
@@ -66,10 +65,7 @@ window.app = createApp({
  * Global plugins registration.
  */
 import Axios from "./plugins/axios";
-[
-    Axios,
-].forEach((plugin) => app.use(plugin));
-
+[Axios].forEach((plugin) => app.use(plugin));
 
 /**
  * Global components registration;
@@ -79,7 +75,6 @@ import { Field, Form, ErrorMessage } from "vee-validate";
 app.component("VForm", Form);
 app.component("VField", Field);
 app.component("VErrorMessage", ErrorMessage);
-
 
 /**
  * Load event, the purpose of using the event is to mount the application

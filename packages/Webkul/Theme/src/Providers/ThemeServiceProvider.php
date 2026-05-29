@@ -11,35 +11,25 @@ class ThemeServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         include __DIR__.'/../Http/helpers.php';
 
-        Blade::directive('unoPimVite', function ($expression) {
-            return "<?php echo themes()->setUnoPimVite({$expression})->toHtml(); ?>";
-        });
+        Blade::directive('unoPimVite', fn (string $expression) => "<?php echo themes()->setUnoPimVite({$expression})->toHtml(); ?>");
     }
 
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    #[\Override]
+    public function register(): void
     {
-        $this->app->singleton('themes', function () {
-            return new Themes;
-        });
+        $this->app->singleton('themes', fn () => new Themes);
 
-        $this->app->singleton('view.finder', function ($app) {
-            return new ThemeViewFinder(
-                $app['files'],
-                $app['config']['view.paths'],
-                null
-            );
-        });
+        $this->app->singleton('view.finder', fn (mixed $app) => new ThemeViewFinder(
+            $app['files'],
+            $app['config']['view.paths']
+        ));
     }
 }

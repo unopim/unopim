@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 it('should have a translated value for the history view action tooltip', function () {
     $translated = trans('admin::app.catalog.history.view');
 

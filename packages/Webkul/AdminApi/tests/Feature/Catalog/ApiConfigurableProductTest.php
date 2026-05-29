@@ -620,7 +620,7 @@ it('should store the gallery attribute value when updating configurable product'
         'values' => [
             'common' => [
                 'sku'          => $product->sku,
-                $attributeCode => explode(',', $response->json()['data']['filePath']),
+                $attributeCode => explode(',', (string) $response->json()['data']['filePath']),
             ],
         ],
     ];
@@ -888,7 +888,7 @@ it('should patch the gallery attribute value when patching configurable product'
         'values' => [
             'common' => [
                 'sku'          => $product->sku,
-                $attributeCode => explode(',', $response->json()['data']['filePath']),
+                $attributeCode => explode(',', (string) $response->json()['data']['filePath']),
             ],
         ],
     ];

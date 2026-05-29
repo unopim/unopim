@@ -2,6 +2,7 @@
 
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataTransfer\Helpers\Sources\Export\Elastic\ProductCursor;
+use Webkul\ElasticSearch\Client\Fake\FakeElasticClient;
 
 describe('ElasticProductCursor boolean status filter (Issue #243)', function () {
 
@@ -13,7 +14,7 @@ describe('ElasticProductCursor boolean status filter (Issue #243)', function () 
             'elasticsearch.connections.default.hosts.0'  => 'testhost:9200',
         ]);
 
-        $elasticClientMock = Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient');
+        $elasticClientMock = Mockery::mock(FakeElasticClient::class);
 
         ElasticSearch::shouldReceive('makeConnection')
             ->andReturn($elasticClientMock);
@@ -22,7 +23,7 @@ describe('ElasticProductCursor boolean status filter (Issue #243)', function () 
     it('sends boolean true (not integer 1) when status filter is "enable"', function () {
         ElasticSearch::shouldReceive('search')
             ->once()
-            ->withArgs(function ($args) {
+            ->withArgs(function (array $args) {
                 $boolFilter = $args['body']['query']['bool']['filter'] ?? [];
 
                 // The status filter must exist
@@ -62,7 +63,7 @@ describe('ElasticProductCursor boolean status filter (Issue #243)', function () 
     it('sends boolean false (not integer 0) when status filter is "disable"', function () {
         ElasticSearch::shouldReceive('search')
             ->once()
-            ->withArgs(function ($args) {
+            ->withArgs(function (array $args) {
                 $boolFilter = $args['body']['query']['bool']['filter'] ?? [];
 
                 expect($boolFilter)->not->toBeEmpty();
@@ -100,7 +101,7 @@ describe('ElasticProductCursor boolean status filter (Issue #243)', function () 
     it('sends no status filter when status is empty', function () {
         ElasticSearch::shouldReceive('search')
             ->once()
-            ->withArgs(function ($args) {
+            ->withArgs(function (array $args) {
                 $boolQuery = $args['body']['query']['bool'];
 
                 // When no status filter, bool query should be empty stdClass or have no filter

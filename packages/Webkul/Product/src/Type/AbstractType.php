@@ -5,9 +5,7 @@ namespace Webkul\Product\Type;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use Webkul\Attribute\Contracts\Group;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
@@ -47,47 +45,35 @@ abstract class AbstractType
      *
      * @var \Webkul\Product\Models\Product
      */
-    protected $product;
+    protected Product $product;
 
     /**
      * Products of this type can be copied in the admin backend.
-     *
-     * @var bool
      */
-    protected $canBeCopied = true;
+    protected bool $canBeCopied = true;
 
     /**
      * Has child products aka variants.
-     *
-     * @var bool
      */
-    protected $hasVariants = false;
+    protected bool $hasVariants = false;
 
     /**
      * Product children price can be calculated or not.
-     *
-     * @var bool
      */
-    protected $isChildrenCalculated = false;
+    protected bool $isChildrenCalculated = false;
 
     /**
      * Skip attribute for simple product type.
-     *
-     * @var array
      */
-    protected $skipAttributes = [];
+    protected array $skipAttributes = [];
 
     /**
      * These blade files will be included in product edit page.
-     *
-     * @var array
      */
-    protected $additionalViews = [];
+    protected array $additionalViews = [];
 
     /**
      * Create a new product type instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
@@ -97,10 +83,8 @@ abstract class AbstractType
 
     /**
      * Create product.
-     *
-     * @return Product
      */
-    public function create(array $data)
+    public function create(array $data): Product
     {
         $product = $this->productRepository->getModel()->fill($data);
 
@@ -113,12 +97,8 @@ abstract class AbstractType
 
     /**
      * Update product.
-     *
-     * @param  int  $id
-     * @param  string  $attribute
-     * @return Product
      */
-    public function update(array $data, $id, $attribute = 'id')
+    public function update(array $data, int $id, string $attribute = 'id'): Product
     {
         $product = $this->productRepository->find($id);
 
@@ -327,9 +307,9 @@ abstract class AbstractType
     protected function processValues(int $productId, array $values, array $productValues = [], bool $isCommonAttribute = false): array
     {
         $values = array_filter(
-            ! empty($productValues)
-                ? array_merge($productValues, $values)
-                : $values
+            $productValues === []
+                ? $values
+                : array_merge($productValues, $values)
         );
 
         foreach ($values as $field => $fieldValue) {
@@ -337,11 +317,11 @@ abstract class AbstractType
                 $attribute = $this->attributeRepository->findOneByField('code', $field);
                 $type = $attribute?->type;
 
-                if ($type === 'image' || $type === 'gallery' || $type === 'file') {
+                if (in_array($type, ['image', 'gallery', 'file'], true)) {
                     $path = 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$field;
 
                     if ($type === 'gallery') {
-                        $values[$field] = array_map(function ($val) use ($path) {
+                        $values[$field] = array_map(function (mixed $val) use ($path) {
                             if ($val instanceof UploadedFile && ! $val->isValid()) {
                                 if (in_array($val->getError(), [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE])) {
                                     throw ValidationException::withMessages([
@@ -358,7 +338,7 @@ abstract class AbstractType
                         }, $fieldValue);
 
                         $values[$field] = array_values($values[$field]);
-                    } elseif (! empty($fieldValue) && current($fieldValue) instanceof UploadedFile) {
+                    } elseif ($fieldValue !== [] && current($fieldValue) instanceof UploadedFile) {
                         $uploadedFile = current($fieldValue);
 
                         if (! $uploadedFile->isValid()) {
@@ -390,7 +370,7 @@ abstract class AbstractType
             if (is_array($fieldValue)) {
                 $fieldValue = array_filter($fieldValue);
 
-                if (empty($fieldValue)) {
+                if ($fieldValue === []) {
                     unset($values[$field]);
                 } else {
                     $values[$field] = array_is_list($fieldValue) ? implode(',', $fieldValue) : $fieldValue;
@@ -404,11 +384,10 @@ abstract class AbstractType
     /**
      * Copy product.
      *
-     * @return Product
      *
      * @throws \Exception
      */
-    public function copy()
+    public function copy(): Product
     {
         if (! $this->canBeCopied()) {
             throw new \Exception(trans('product::app.response.product-can-not-be-copied', ['type' => $this->product->type]));
@@ -435,9 +414,8 @@ abstract class AbstractType
      * Copy relationships.
      *
      * @param  \Webkul\Product\Models\Product  $product
-     * @return void
      */
-    protected function copyRelationships($product)
+    protected function copyRelationships(Product $product): void
     {
         $attributesToSkip = config('products.copy.skip_attributes') ?? [];
 
@@ -450,28 +428,9 @@ abstract class AbstractType
     }
 
     /**
-     * Copy product image video.
-     */
-    private function copyMedia($product, $media, $copiedMedia): void
-    {
-        $path = explode('/', $media->path);
-
-        $copiedMedia->path = 'product/'.$product->id.'/'.end($path);
-
-        $copiedMedia->save();
-
-        Storage::makeDirectory('product/'.$product->id);
-
-        Storage::copy($media->path, $copiedMedia->path);
-    }
-
-    /**
      * Specify type instance product.
-     *
-     * @param  Product  $product
-     * @return AbstractType
      */
-    public function setProduct($product)
+    public function setProduct(Product $product): static
     {
         $this->product = $product;
 
@@ -480,30 +439,24 @@ abstract class AbstractType
 
     /**
      * Returns children ids.
-     *
-     * @return array
      */
-    public function getChildrenIds()
+    public function getChildrenIds(): array
     {
         return [];
     }
 
     /**
      * Return true if this product can have variants.
-     *
-     * @return bool
      */
-    public function hasVariants()
+    public function hasVariants(): bool
     {
         return $this->hasVariants;
     }
 
     /**
      * Product children price can be calculated or not.
-     *
-     * @return bool
      */
-    public function isChildrenCalculated()
+    public function isChildrenCalculated(): bool
     {
         return $this->isChildrenCalculated;
     }
@@ -519,11 +472,9 @@ abstract class AbstractType
     /**
      * Retrieve product attributes.
      *
-     * @param  Group  $group
-     * @param  bool  $skipSuperAttribute
      * @return Collection
      */
-    public function getEditableAttributes($group = null, $skipSuperAttribute = true)
+    public function getEditableAttributes(mixed $group = null, bool $skipSuperAttribute = true): mixed
     {
         if ($skipSuperAttribute) {
             $this->skipAttributes = array_merge(
@@ -593,52 +544,40 @@ abstract class AbstractType
 
     /**
      * Returns additional views.
-     *
-     * @return array
      */
-    public function getAdditionalViews()
+    public function getAdditionalViews(): array
     {
         return $this->additionalViews;
     }
 
     /**
      * Returns validation rules.
-     *
-     * @return array
      */
-    public function getTypeValidationRules()
+    public function getTypeValidationRules(): array
     {
         return [];
     }
 
     /**
      * Compare options.
-     *
-     * @param  array  $options1
-     * @param  array  $options2
-     * @return bool
      */
-    public function compareOptions($options1, $options2)
+    public function compareOptions(array $options1, array $options2): ?bool
     {
         if ($this->product->id != $options2['product_id']) {
             return false;
-        } else {
-            if (
-                isset($options1['parent_id'])
-                && isset($options2['parent_id'])
-            ) {
-                return $options1['parent_id'] == $options2['parent_id'];
-            } elseif (
-                isset($options1['parent_id'])
-                && ! isset($options2['parent_id'])
-            ) {
-                return false;
-            } elseif (
-                isset($options2['parent_id'])
-                && ! isset($options1['parent_id'])
-            ) {
-                return false;
-            }
+        } elseif (isset($options1['parent_id'])
+        && isset($options2['parent_id'])) {
+            return $options1['parent_id'] == $options2['parent_id'];
+        } elseif (
+            isset($options1['parent_id'])
+            && ! isset($options2['parent_id'])
+        ) {
+            return false;
+        } elseif (
+            isset($options2['parent_id'])
+            && ! isset($options1['parent_id'])
+        ) {
+            return false;
         }
 
         return true;
@@ -646,11 +585,8 @@ abstract class AbstractType
 
     /**
      * Returns additional information for items.
-     *
-     * @param  array  $data
-     * @return array
      */
-    public function getAdditionalOptions($data)
+    public function getAdditionalOptions(array $data): array
     {
         return $data;
     }

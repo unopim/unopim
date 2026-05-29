@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'address'                      => 'Ang :attribute ay maaari lamang tumanggap ng alphanumeric, mga puwang, kuwit at mga hyphen.',
     'alpha-numeric-space'          => 'Ang :attribute ay maaari lamang tumanggap ng alphanumeric at mga puwang.',

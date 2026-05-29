@@ -17,8 +17,6 @@ class AttributeGroupController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeGroupRepository $attributeGroupRepository,
@@ -79,7 +77,7 @@ class AttributeGroupController extends Controller
 
         $locales = $this->localeRepository->getActiveLocales();
 
-        return view('admin::catalog.attributegroups.edit', compact('attributeGroup', 'locales'));
+        return view('admin::catalog.attributegroups.edit', ['attributeGroup' => $attributeGroup, 'locales' => $locales]);
     }
 
     /**

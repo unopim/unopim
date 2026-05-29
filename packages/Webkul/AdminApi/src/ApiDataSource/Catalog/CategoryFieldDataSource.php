@@ -11,8 +11,6 @@ class CategoryFieldDataSource extends ApiDataSource
 {
     /**
      * Create a new DataSource instance.
-     *
-     * @return void
      */
     public function __construct(protected CategoryFieldRepository $categoryFieldRepository) {}
 
@@ -21,7 +19,7 @@ class CategoryFieldDataSource extends ApiDataSource
      *
      * @return Builder The query builder for the CategoryField repository.
      */
-    public function prepareApiQueryBuilder()
+    public function prepareApiQueryBuilder(): mixed
     {
         $this->addFilter('code', [
             '=',
@@ -45,28 +43,25 @@ class CategoryFieldDataSource extends ApiDataSource
      *
      * @throws \Exception If the paginator data is not in the expected format.
      */
+    #[\Override]
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
 
-        return array_map(function ($data) {
-
-            return [
-                'code'             => $data['code'],
-                'type'             => $data['type'],
-                'status'           => $data['status'],
-                'validation'       => $data['validation'],
-                'regex_pattern'    => $data['regex_pattern'],
-                'position'         => $data['position'],
-                'is_required'      => $data['is_required'],
-                'is_unique'        => $data['is_unique'],
-                'value_per_locale' => $data['value_per_locale'],
-                'enable_wysiwyg'   => $data['enable_wysiwyg'],
-                'section'          => $data['section'],
-                'regex_pattern'    => $data['regex_pattern'],
-                'labels'           => $this->getTranslations($data),
-            ];
-        }, $paginator['data'] ?? []);
+        return array_map(fn (mixed $data) => [
+            'code'             => $data['code'],
+            'type'             => $data['type'],
+            'status'           => $data['status'],
+            'validation'       => $data['validation'],
+            'position'         => $data['position'],
+            'is_required'      => $data['is_required'],
+            'is_unique'        => $data['is_unique'],
+            'value_per_locale' => $data['value_per_locale'],
+            'enable_wysiwyg'   => $data['enable_wysiwyg'],
+            'section'          => $data['section'],
+            'regex_pattern'    => $data['regex_pattern'],
+            'labels'           => $this->getTranslations($data),
+        ], $paginator['data'] ?? []);
     }
 
     /**
@@ -77,7 +72,7 @@ class CategoryFieldDataSource extends ApiDataSource
      *
      * @throws ModelNotFoundException If a category field with the given code is not found.
      */
-    public function getByCode($code)
+    public function getByCode(string $code): array
     {
         $this->prepareForSingleData();
 
@@ -96,7 +91,7 @@ class CategoryFieldDataSource extends ApiDataSource
 
         if (! $categoryField) {
             throw new ModelNotFoundException(
-                sprintf('Category field with code %s could not be found.', (string) $code)
+                sprintf('Category field with code %s could not be found.', $code)
             );
         }
 
@@ -105,7 +100,6 @@ class CategoryFieldDataSource extends ApiDataSource
             'type'             => $categoryField['type'],
             'status'           => $categoryField['status'],
             'validation'       => $categoryField['validation'],
-            'regex_pattern'    => $categoryField['regex_pattern'],
             'position'         => $categoryField['position'],
             'is_required'      => $categoryField['is_required'],
             'is_unique'        => $categoryField['is_unique'],
@@ -125,23 +119,21 @@ class CategoryFieldDataSource extends ApiDataSource
      *
      * @throws ModelNotFoundException If a category field with the given code is not found.
      */
-    public function getOptionsByFieldCode($fieldCode)
+    public function getOptionsByFieldCode(string $fieldCode): array
     {
         $categoryField = $this->categoryFieldRepository->findOneByField('code', $fieldCode);
         if (! $categoryField) {
             throw new ModelNotFoundException(
-                sprintf('Category field with code %s could not be found.', (string) $fieldCode)
+                sprintf('Category field with code %s could not be found.', $fieldCode)
             );
         }
 
         $fieldOption = $categoryField->options()->orderBy('sort_order')->get()->toArray();
 
-        return array_map(function ($data) {
-            return [
-                'code'       => $data['code'],
-                'sort_order' => $data['sort_order'],
-                'labels'     => $this->getTranslations($data, 'label'),
-            ];
-        }, $fieldOption ?? []);
+        return array_map(fn (mixed $data) => [
+            'code'       => $data['code'],
+            'sort_order' => $data['sort_order'],
+            'labels'     => $this->getTranslations($data, 'label'),
+        ], $fieldOption ?? []);
     }
 }

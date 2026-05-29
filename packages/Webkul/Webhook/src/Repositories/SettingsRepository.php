@@ -2,6 +2,7 @@
 
 namespace Webkul\Webhook\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Webhook\Models\WebhookSetting;
 
@@ -15,17 +16,15 @@ class SettingsRepository extends Repository
         return WebhookSetting::class;
     }
 
-    public function createOrUpdate(string $field, $value, array $extra = [])
+    public function createOrUpdate(string $field, mixed $value, array $extra = []): Model
     {
-        $config = $this->updateOrCreate(
+        return $this->updateOrCreate(
             ['field' => $field],
             [
                 'value' => $value,
                 'extra' => $extra,
             ]
         );
-
-        return $config;
     }
 
     public function getAllDataAndNormalize(): array

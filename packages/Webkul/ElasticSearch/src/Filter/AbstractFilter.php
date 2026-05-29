@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\ElasticSearch\Filter;
 
 use Carbon\Carbon;
@@ -9,18 +11,17 @@ use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 
 abstract class AbstractFilter implements FilterContract
 {
-    protected $dateFormat = 'Y-m-d H:i:s';
+    protected string $dateFormat = 'Y-m-d H:i:s';
 
     /** @var ElasticSearchQuery */
-    protected $queryBuilder = null;
+    protected mixed $queryBuilder = null;
 
-    /** @var array */
-    protected $allowedOperators = [];
+    protected array $allowedOperators = [];
 
     /**
      * {@inheritdoc}
      */
-    public function isOperatorAllowed($operator)
+    public function isOperatorAllowed($operator): bool
     {
         return in_array($operator, $this->allowedOperators);
     }
@@ -28,7 +29,7 @@ abstract class AbstractFilter implements FilterContract
     /**
      * {@inheritdoc}
      */
-    public function getAllowedOperators()
+    public function getAllowedOperators(): array
     {
         return $this->allowedOperators;
     }
@@ -36,7 +37,7 @@ abstract class AbstractFilter implements FilterContract
     /**
      * {@inheritdoc}
      */
-    public function setQueryManager($queryBuilder)
+    public function setQueryManager($queryBuilder): void
     {
         if (! $queryBuilder instanceof ElasticSearchQuery) {
             throw new \InvalidArgumentException(
@@ -53,7 +54,7 @@ abstract class AbstractFilter implements FilterContract
             $utcTimeZone = 'UTC';
 
             $dateTime = Carbon::parse($value, $utcTimeZone);
-        } catch (InvalidFormatException $e) {
+        } catch (InvalidFormatException) {
             throw new \LogicException(
                 sprintf(
                     'Invalid date format for field "%s", expected "Y-m-d H:i:s", but "%s" given',

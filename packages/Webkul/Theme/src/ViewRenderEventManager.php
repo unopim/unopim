@@ -8,26 +8,20 @@ class ViewRenderEventManager
 {
     /**
      * Contains all themes
-     *
-     * @var array
      */
-    protected $templates = [];
+    protected array $templates = [];
 
     /**
      * Paramters passed with event
-     *
-     * @var array
      */
-    protected $params;
+    protected ?array $params = null;
 
     /**
      * Fires event for rendering template
      *
-     * @param  string  $eventName
-     * @param  array|null  $params
      * @return string
      */
-    public function handleRenderEvent($eventName, $params = null)
+    public function handleRenderEvent(string $eventName, ?array $params = null): array
     {
         $this->params = $params ?? [];
 
@@ -38,20 +32,16 @@ class ViewRenderEventManager
 
     /**
      *  get params
-     *
-     * @return array
      */
-    public function getParams()
+    public function getParams(): ?array
     {
         return $this->params;
     }
 
     /**
      *  get param
-     *
-     * @return mixed
      */
-    public function getParam($name)
+    public function getParam(mixed $name): mixed
     {
         return optional($this->params)[$name];
     }
@@ -60,19 +50,16 @@ class ViewRenderEventManager
      * Add templates for render
      *
      * @param  string  $template
-     * @return void
      */
-    public function addTemplate($template)
+    public function addTemplate(mixed $template): void
     {
-        array_push($this->templates, $template);
+        $this->templates[] = $template;
     }
 
     /**
      * Renders templates
-     *
-     * @return string
      */
-    public function render()
+    public function render(): string
     {
         $string = '';
 

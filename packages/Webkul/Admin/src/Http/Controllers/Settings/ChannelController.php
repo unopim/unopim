@@ -16,8 +16,6 @@ class ChannelController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(protected ChannelRepository $channelRepository) {}
 
@@ -83,7 +81,7 @@ class ChannelController extends Controller
     {
         $channel = $this->channelRepository->with(['locales', 'currencies'])->findOrFail($id);
 
-        return view('admin::settings.channels.edit', compact('channel'));
+        return view('admin::settings.channels.edit', ['channel' => $channel]);
     }
 
     /**
@@ -134,7 +132,6 @@ class ChannelController extends Controller
         if ($channel->code == config('app.channel')) {
             return new JsonResponse([
                 'message'    => trans('admin::app.settings.channels.index.last-delete-error'),
-                'message'    => trans('admin::app.settings.channels.index.last-delete-error'),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
@@ -148,7 +145,7 @@ class ChannelController extends Controller
             return new JsonResponse([
                 'message' => trans('admin::app.settings.channels.index.delete-success'),
             ], JsonResponse::HTTP_OK);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.channels.index.delete-failed'),
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -157,11 +154,8 @@ class ChannelController extends Controller
 
     /**
      * Unset keys.
-     *
-     * @param  array  $keys
-     * @return array
      */
-    private function unsetKeys($data, $keys)
+    private function unsetKeys(array $data, array $keys): array
     {
         foreach ($keys as $key) {
             unset($data[$key]);

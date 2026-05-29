@@ -24,7 +24,7 @@ class ProductIndexer extends Command
         parent::__construct();
     }
 
-    public function handle()
+    public function handle(): void
     {
         if (config('elasticsearch.enabled')) {
             $indexPrefix = config('elasticsearch.prefix');
@@ -140,11 +140,11 @@ class ProductIndexer extends Command
                         $progressBar->advance();
                     }
 
-                    if ($productsToUpdate) {
+                    if ($productsToUpdate !== []) {
                         $response = ElasticSearch::bulk($productsToUpdate);
 
                         if (isset($response['errors']) && $response['errors']) {
-                            foreach ($response['items'] as $index => $result) {
+                            foreach ($response['items'] as $result) {
                                 if (isset($result['index']['error'])) {
                                     $failedProductIds[] = $result['index']['_id'];
 
@@ -171,7 +171,7 @@ class ProductIndexer extends Command
                 }
             }
 
-            if (! empty($failedProductIds)) {
+            if ($failedProductIds !== []) {
                 $this->newLine();
                 $this->error('Please check elasticsearch.log, failed to index the following product IDs: '.implode(', ', $failedProductIds));
             }
@@ -193,11 +193,11 @@ class ProductIndexer extends Command
                     ],
                     'size' => 1000000000,
                 ],
-            ])['hits']['hits'])->pluck('_id')->map(fn ($id) => (int) $id)->toArray();
+            ])['hits']['hits'])->pluck('_id')->map(fn (mixed $id) => (int) $id)->toArray();
 
             $productsToDelete = array_diff($elasticProductIds, $dbProductIds);
 
-            if (! empty($productsToDelete)) {
+            if ($productsToDelete !== []) {
                 $this->info('Deleting stale products from Elasticsearch...');
                 $deleteProgressBar = new ProgressBar($this->output, count($productsToDelete));
                 $deleteProgressBar->start();
@@ -218,9 +218,7 @@ class ProductIndexer extends Command
                         $deleteProgressBar->advance();
                     }
 
-                    if ($deleteProducts) {
-                        ElasticSearch::bulk($deleteProducts);
-                    }
+                    ElasticSearch::bulk($deleteProducts);
                 }
 
                 $deleteProgressBar->finish();
@@ -247,7 +245,7 @@ class ProductIndexer extends Command
     /**
      * Get product updated at values from Elasticsearch
      */
-    public function getProductUpdates($productIndex, $command = null, array $searchIds = [])
+    public function getProductUpdates(string $productIndex, ?Command $command = null, array $searchIds = []): array
     {
         $elasticProduct = [];
 
@@ -270,7 +268,7 @@ class ProductIndexer extends Command
             }
         } catch (\Exception $e) {
             if (str_contains($e->getMessage(), 'index_not_found_exception')) {
-                if ($command) {
+                if ($command instanceof Command) {
                     $command->info('No data found. Initiating fresh indexing');
                 }
                 Log::channel('elasticsearch')->info('No data found. Initiating fresh indexing');
@@ -289,7 +287,7 @@ class ProductIndexer extends Command
     /**
      * Check if the index exists
      */
-    public function hasIndex($productIndex): bool
+    public function hasIndex(string $productIndex): bool
     {
         return ElasticSearch::indices()->exists(['index' => $productIndex])->asBool();
     }
@@ -297,7 +295,7 @@ class ProductIndexer extends Command
     /**
      * Create Elasticsearch index with settings and mappings
      */
-    public function elasticConfiguration($productIndex)
+    public function elasticConfiguration(string $productIndex): void
     {
         try {
             ElasticSearch::indices()->create([
@@ -321,7 +319,7 @@ class ProductIndexer extends Command
     /**
      * Get index mappings for product
      */
-    private function getUnopimProductMapping()
+    private function getUnopimProductMapping(): array
     {
         $statusMapping = ['type' => 'boolean'];
 
@@ -403,7 +401,7 @@ class ProductIndexer extends Command
      *
      * See 'packages/Webkul/ElasticSearch/tests/Feature/ProductIndexTest.php' for full dynamic mapping template as an array
      */
-    protected function dynamicAttributeMappings()
+    protected function dynamicAttributeMappings(): array
     {
         $attributeTypes = [
             'text'     => 'text',
@@ -494,7 +492,7 @@ class ProductIndexer extends Command
     /**
      * Get index settings for product
      */
-    private function getUnopimProductSetting()
+    private function getUnopimProductSetting(): array
     {
         return [
             'analysis' => [

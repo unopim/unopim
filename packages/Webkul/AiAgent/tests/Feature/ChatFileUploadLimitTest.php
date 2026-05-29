@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 it('should allow CSV / spreadsheet uploads up to 100MB in the Agentic AI chat (Issue #723)', function () {
     $contents = file_get_contents(__DIR__.'/../../src/Http/Controllers/ChatController.php');
 

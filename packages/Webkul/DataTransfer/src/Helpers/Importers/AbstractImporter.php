@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Contracts\JobTrack as ImportJobTrackContract;
+use Webkul\DataTransfer\Contracts\JobTrackBatch;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as ImportJobBatchContract;
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Import;
@@ -20,6 +21,8 @@ use Webkul\DataTransfer\Repositories\JobTrackBatchRepository as ImportJobBatchRe
 
 abstract class AbstractImporter
 {
+    protected array $permanentAttributes = [];
+
     /**
      * Error code for system exception.
      */
@@ -87,10 +90,8 @@ abstract class AbstractImporter
 
     /**
      * Error helper instance.
-     *
-     * @var Error
      */
-    protected $errorHelper;
+    protected Error $errorHelper;
 
     /**
      * Import instance.
@@ -102,7 +103,7 @@ abstract class AbstractImporter
      *
      * @var Source
      */
-    protected $source;
+    protected mixed $source = null;
 
     /**
      * Valid column names
@@ -137,19 +138,15 @@ abstract class AbstractImporter
     /**
      * For job specific log file
      */
-    protected $jobLogger;
+    protected LoggerInterface $jobLogger;
 
     /**
      * The name of the queue the job should be sent to.
-     *
-     * @var string|null
      */
-    public $queue;
+    public ?string $queue = null;
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(protected ImportJobBatchRepository $importBatchRepository) {}
 
@@ -188,7 +185,7 @@ abstract class AbstractImporter
      *
      * @param  Source  $errorHelper
      */
-    public function setSource($source)
+    public function setSource(mixed $source): self
     {
         $this->source = $source;
 
@@ -197,10 +194,8 @@ abstract class AbstractImporter
 
     /**
      * Import instance.
-     *
-     * @param  Error  $errorHelper
      */
-    public function setErrorHelper($errorHelper): self
+    public function setErrorHelper(Error $errorHelper): self
     {
         $this->errorHelper = $errorHelper;
 
@@ -232,7 +227,7 @@ abstract class AbstractImporter
      *
      * @return Source
      */
-    public function getSource()
+    public function getSource(): mixed
     {
         return $this->source;
     }
@@ -256,7 +251,7 @@ abstract class AbstractImporter
 
         $absentColumns = array_diff($this->permanentAttributes, $this->getSource()->getColumnNames());
 
-        if (! empty($absentColumns)) {
+        if ($absentColumns !== []) {
             $errors[self::ERROR_CODE_COLUMN_NOT_FOUND] = $absentColumns;
         }
 
@@ -264,12 +259,12 @@ abstract class AbstractImporter
 
         // Trim trailing empty columns — XLSX readers often report thousands of blank
         // trailing columns when a file has been opened in Excel.
-        while (! empty($columnNames) && empty(trim((string) end($columnNames)))) {
+        while (! empty($columnNames) && in_array(trim((string) end($columnNames)), ['', '0'], true)) {
             array_pop($columnNames);
         }
 
         foreach ($columnNames as $columnNumber => $columnName) {
-            if (empty(trim((string) $columnName))) {
+            if (in_array(trim((string) $columnName), ['', '0'], true)) {
                 $errors[self::ERROR_CODE_COLUMN_EMPTY_HEADER][] = $columnNumber + 1;
             } elseif (! in_array($columnName, $this->getValidColumnNames())) {
                 $errors[self::ERROR_CODE_INVALID_ATTRIBUTE][] = $columnName;
@@ -283,7 +278,7 @@ abstract class AbstractImporter
             $this->addErrors($errorCode, $error);
         }
 
-        if (! $this->errorHelper->getErrorsCount()) {
+        if ($this->errorHelper->getErrorsCount() === 0) {
             $this->saveValidatedBatches();
         }
 
@@ -324,7 +319,7 @@ abstract class AbstractImporter
             || count($batchRows)
         ) {
             if (
-                count($batchRows) == $batchSize
+                count($batchRows) === $batchSize
                 || ! $source->valid()
             ) {
                 $this->importBatchRepository->create([
@@ -356,7 +351,7 @@ abstract class AbstractImporter
      */
     public function importData(?ImportJobBatchContract $importBatch = null): bool
     {
-        if ($importBatch) {
+        if ($importBatch instanceof JobTrackBatch) {
             $this->importBatch($importBatch);
 
             return true;
@@ -364,7 +359,7 @@ abstract class AbstractImporter
 
         $typeBatches = [];
 
-        $this->import->batches()->chunk(100, function ($batches) use (&$typeBatches) {
+        $this->import->batches()->chunk(100, function (mixed $batches) use (&$typeBatches) {
             foreach ($batches as $batch) {
                 if ($batch->state === Import::STATE_PENDING) {
                     $typeBatches['import'][] = new ImportBatchJob($batch, $this->import->id);
@@ -382,17 +377,17 @@ abstract class AbstractImporter
 
         $chain = [];
 
-        if (! empty($typeBatches['import'])) {
+        if (isset($typeBatches['import']) && $typeBatches['import'] !== []) {
             $chain[] = Bus::batch($typeBatches['import']);
         }
 
-        if (! empty($typeBatches['link'])) {
+        if (isset($typeBatches['link']) && $typeBatches['link'] !== []) {
             $chain[] = new LinkingJob($this->import);
 
             $chain[] = Bus::batch($typeBatches['link']);
         }
 
-        if (! empty($typeBatches['index'])) {
+        if (isset($typeBatches['index']) && $typeBatches['index'] !== []) {
             $chain[] = new IndexingJob($this->import);
 
             $chain[] = Bus::batch($typeBatches['index']);
@@ -454,12 +449,9 @@ abstract class AbstractImporter
     /**
      * Add row as skipped
      *
-     * @param  int|null  $rowNumber
-     * @param  string|null  $columnName
-     * @param  string|null  $errorMessage
      * @return $this
      */
-    protected function skipRow($rowNumber, string $errorCode, $columnName = null, $errorMessage = null): self
+    protected function skipRow(?int $rowNumber, string $errorCode, ?string $columnName = null, ?string $errorMessage = null): self
     {
         $this->errorHelper->addError(
             $errorCode,
@@ -478,11 +470,7 @@ abstract class AbstractImporter
      */
     protected function prepareRowForDb(array $rowData): array
     {
-        $rowData = array_map(function ($value) {
-            return $value === '' ? null : $value;
-        }, $rowData);
-
-        return $rowData;
+        return array_map(fn (mixed $value) => $value === '' ? null : $value, $rowData);
     }
 
     /**

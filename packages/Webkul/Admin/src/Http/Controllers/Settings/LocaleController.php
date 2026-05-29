@@ -15,8 +15,6 @@ class LocaleController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(protected LocaleRepository $localeRepository) {}
 
@@ -119,7 +117,7 @@ class LocaleController extends Controller
             return new JsonResponse([
                 'message' => trans('admin::app.settings.locales.index.delete-success'),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return response()->json([
                 'message' => trans('admin::app.settings.locales.index.delete-failed'),
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);

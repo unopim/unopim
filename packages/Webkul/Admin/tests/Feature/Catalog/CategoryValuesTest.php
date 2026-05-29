@@ -540,7 +540,7 @@ it('should not allow invalid files upload for image type field', function () {
 
     $invalidData = $category->toArray();
 
-    foreach ($invalidFiles as $extension => $file) {
+    foreach ($invalidFiles as $file) {
         $invalidData['additional_data']['common'] = [$categoryFieldCode => [$file]];
 
         $this->put(route('admin.catalog.categories.update', $category->id), $invalidData)
@@ -574,7 +574,7 @@ it('should not allow invalid files upload for file type field', function () {
 
     $invalidData = $category->toArray();
 
-    foreach ($invalidFiles as $extension => $file) {
+    foreach ($invalidFiles as $file) {
         $invalidData['additional_data']['common'] = [$categoryFieldCode => [$file]];
 
         $this->put(route('admin.catalog.categories.update', $category->id), $invalidData)

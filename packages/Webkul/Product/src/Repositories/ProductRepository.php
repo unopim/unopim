@@ -14,8 +14,6 @@ class ProductRepository extends Repository
 {
     /**
      * Create a new repository instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
@@ -29,21 +27,18 @@ class ProductRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Product\Contracts\Product';
+        return Product::class;
     }
 
     /**
      * Create product.
-     *
-     * @return Product
      */
-    public function create(array $data)
+    #[\Override]
+    public function create(array $data): Product
     {
         $typeInstance = app(config('product_types.'.$data['type'].'.class'));
 
-        $product = $typeInstance->create($data);
-
-        return $product;
+        return $typeInstance->create($data);
     }
 
     /**
@@ -51,9 +46,9 @@ class ProductRepository extends Repository
      *
      * @param  int  $id
      * @param  string  $attribute
-     * @return Product
      */
-    public function update(array $data, $id, $attribute = 'id')
+    #[\Override]
+    public function update(array $data, $id, $attribute = 'id'): Product
     {
         $product = $this->findOrFail($id);
 
@@ -100,9 +95,8 @@ class ProductRepository extends Repository
      * Copy product.
      *
      * @param  int  $id
-     * @return Product
      */
-    public function copy($id)
+    public function copy(mixed $id): Product
     {
         $product = $this->with([
             'attribute_family',
@@ -112,11 +106,7 @@ class ProductRepository extends Repository
             throw new \Exception(trans('product::app.datagrid.variant-already-exist-message'));
         }
 
-        return DB::transaction(function () use ($product) {
-            $copiedProduct = $product->getTypeInstance()->copy();
-
-            return $copiedProduct;
-        });
+        return DB::transaction(fn () => $product->getTypeInstance()->copy());
     }
 
     /**
@@ -130,14 +120,14 @@ class ProductRepository extends Repository
             $query = $query->where('values->common->'.$variantAttribute, $value);
         }
 
-        if (! empty($variantId)) {
+        if (! in_array($variantId, ['', '0', 0], true)) {
             $query = $query->where('id', '<>', $variantId);
         }
 
         if ($sku) {
             $query = $query->orWhere('sku', $sku);
 
-            if (! empty($variantId)) {
+            if (! in_array($variantId, ['', '0', 0], true)) {
                 $query = $query->where('id', '<>', $variantId);
             }
         }
@@ -153,28 +143,22 @@ class ProductRepository extends Repository
 
     /**
      * Retrieve product from slug without throwing an exception.
-     *
-     * @param  string  $slug
-     * @return Product
      */
-    public function findBySlug($slug)
+    public function findBySlug(string $slug): ?Product
     {
         return $this->findByAttributeCode('url_key', $slug);
     }
 
     /**
      * Retrieve product from slug.
-     *
-     * @param  string  $slug
-     * @return Product
      */
-    public function findBySlugOrFail($slug)
+    public function findBySlugOrFail(string $slug): Product
     {
         $product = $this->findBySlug($slug);
 
-        if (! $product) {
+        if (! $product instanceof Product) {
             throw (new ModelNotFoundException)->setModel(
-                get_class($this->model), $slug
+                $this->model::class, $slug
             );
         }
 
@@ -190,7 +174,7 @@ class ProductRepository extends Repository
      *
      * @return Collection
      */
-    public function getAll()
+    public function getAll(): mixed
     {
         return $this->searchFromDatabase();
     }
@@ -200,7 +184,7 @@ class ProductRepository extends Repository
      *
      * @return Collection
      */
-    public function searchFromDatabase()
+    public function searchFromDatabase(): mixed
     {
         $params = array_merge([
             'status'               => 1,
@@ -219,14 +203,14 @@ class ProductRepository extends Repository
         return $query->paginate($limit);
     }
 
-    public function queryBuilderFromDatabase($params)
+    public function queryBuilderFromDatabase(array $params): array
     {
         $query = $this->with([
             'attribute_family',
             'parent',
             'super_attributes',
             'variants',
-        ])->scopeQuery(function ($query) use ($params) {
+        ])->scopeQuery(function (mixed $query) use ($params) {
             $prefix = DB::getTablePrefix();
 
             // Check if distinct is actually required here
@@ -271,10 +255,9 @@ class ProductRepository extends Repository
     /**
      * Returns product's super attribute with options.
      *
-     * @param  Product  $product
      * @return Collection
      */
-    public function getSuperAttributes($product)
+    public function getSuperAttributes(Product $product): array
     {
         $superAttributes = [];
 

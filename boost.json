@@ -1,0 +1,34 @@
+{
+    "agents": [
+        "cursor",
+        "claude_code",
+        "codex",
+        "copilot",
+        "opencode"
+    ],
+    "cloud": false,
+    "guidelines": true,
+    "mcp": true,
+    "nightwatch": false,
+    "sail": false,
+    "skills": [
+        "ai-sdk-development",
+        "laravel-best-practices",
+        "passport-development",
+        "socialite-development",
+        "pest-testing",
+        "unopim-backend-dev",
+        "unopim-code-review",
+        "unopim-connector-export-mapping",
+        "unopim-connector-quickstart",
+        "unopim-credential-management",
+        "unopim-data-transfer",
+        "unopim-datagrid",
+        "unopim-dev-cycle",
+        "unopim-export-workflow",
+        "unopim-git",
+        "unopim-http-client",
+        "unopim-package",
+        "unopim-plugin-dev"
+    ]
+}

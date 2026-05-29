@@ -162,7 +162,7 @@ class Controller extends BaseController
         $paths = config('imagecache.paths', []);
 
         foreach ($paths as $basePath) {
-            $fullPath = rtrim($basePath, '/').'/'.ltrim($filename, '/');
+            $fullPath = rtrim((string) $basePath, '/').'/'.ltrim($filename, '/');
 
             if (file_exists($fullPath)) {
                 return $fullPath;

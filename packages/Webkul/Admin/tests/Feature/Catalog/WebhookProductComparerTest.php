@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Webkul\Webhook\Helpers\ProductComparer;
 
 it('detects status transitions from 0 to 1', function () {

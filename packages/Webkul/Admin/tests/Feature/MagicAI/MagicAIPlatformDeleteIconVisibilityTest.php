@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $view = __DIR__.'/../../../src/Resources/views/configuration/magic-ai/platform/index.blade.php';
 
 it('should conditionally render the delete icon based on whether the delete action exists (Issue #721)', function () use ($view) {

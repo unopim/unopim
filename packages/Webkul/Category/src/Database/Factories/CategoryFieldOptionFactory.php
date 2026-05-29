@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Webkul\Category\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,7 +22,7 @@ class CategoryFieldOptionFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'         => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'code'         => $this->faker->regexify('/^[a-zA-Z]+\w+$/'),
             'sort_order'   => $this->faker->randomDigit(),
         ];
     }

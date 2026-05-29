@@ -12,6 +12,7 @@ class StubSequenceFilterSeeder extends DemoExtrasTableSeeder
     /** @var array<string, array<int, array{name: string, type_name?: string, type?: string}>> */
     public array $columnsByTable = [];
 
+    #[Override]
     protected function getTableColumns(string $table): array
     {
         return $this->columnsByTable[$table] ?? [];

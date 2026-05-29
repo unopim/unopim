@@ -23,7 +23,7 @@ class StatusFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
         if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
@@ -39,26 +39,22 @@ class StatusFilter extends AbstractPropertyFilter
             );
         }
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                // The ES mapping for `status` is a boolean field (see
-                // ProductIndexer). ES8's strict parser rejects the raw "1"/"0"
-                // strings the DataGrid forwards from filter option values, so
-                // coerce each candidate to a real boolean before emitting the
-                // terms clause.
-                $values = array_values(array_unique(array_map(
-                    fn ($item) => filter_var($item, FILTER_VALIDATE_BOOLEAN),
-                    (array) $value
-                )));
-
-                $clause = [
-                    'terms' => [
-                        $property => $values,
-                    ],
-                ];
-
-                $this->queryBuilder::where($clause);
-                break;
+        if ($operator === FilterOperators::IN) {
+            // The ES mapping for `status` is a boolean field (see
+            // ProductIndexer). ES8's strict parser rejects the raw "1"/"0"
+            // strings the DataGrid forwards from filter option values, so
+            // coerce each candidate to a real boolean before emitting the
+            // terms clause.
+            $values = array_values(array_unique(array_map(
+                fn (mixed $item) => filter_var($item, FILTER_VALIDATE_BOOLEAN),
+                (array) $value
+            )));
+            $clause = [
+                'terms' => [
+                    $property => $values,
+                ],
+            ];
+            $this->queryBuilder::where($clause);
         }
 
         return $this;

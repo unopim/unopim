@@ -22,10 +22,8 @@ class WebhookSettingsController
 
     /**
      * Display a listing of the resource.
-     *
-     * @return View
      */
-    public function index()
+    public function index(): View
     {
         return view('webhook::settings.index');
     }
@@ -35,7 +33,7 @@ class WebhookSettingsController
      *
      * @return Response
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'webhook_active' => 'sometimes|in:0,1,true,false',

@@ -21,21 +21,9 @@ class UnoPimVersion extends Command
     protected $description = 'Displays current version of UnoPim installed';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $this->comment(core()->version());
     }

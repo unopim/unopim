@@ -2,6 +2,7 @@
 
 namespace Webkul\HistoryControl\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use OwenIt\Auditing\Models\Audit;
 use Webkul\Core\Eloquent\Repository;
 
@@ -18,7 +19,7 @@ class AuditRepository extends Repository
     /**
      * Get version changed data
      */
-    public function getVersionDataByNameIdVersionId(string $entityName, int $id, int $versionId)
+    public function getVersionDataByNameIdVersionId(string $entityName, int $id, int $versionId): Collection
     {
         $versionData = $this->model->query()
             ->leftJoin('admins', 'admins.id', '=', 'audits.user_id')

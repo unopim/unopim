@@ -44,10 +44,8 @@ class JobTrackBatch extends Model implements JobTrackBatchContract
 
     /**
      * Get the jobTrack that owns the jobTrack batch.
-     *
-     * @return BelongsTo
      */
-    public function jobTrack()
+    public function jobTrack(): BelongsTo
     {
         return $this->belongsTo(JobTrackProxy::modelClass());
     }
