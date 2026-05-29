@@ -160,7 +160,7 @@ class Importer extends AbstractImporter
         $isUpdate = $this->attributeStorage->has($rowData['code']) || in_array($rowData['code'], $this->attributeCodesInBatch);
 
         $validator = Validator::make($rowData, [
-            'code' => ['required', 'string', new Code, $isUpdate ? '' : 'unique:attributes,code'],
+            'code' => ['required', 'string', new Code],
             'type' => [$isUpdate ? 'nullable' : 'required', 'string', 'in:text,textarea,boolean,price,select,multiselect,datetime,date,checkbox,file,image,gallery'],
         ]);
 
@@ -189,10 +189,20 @@ class Importer extends AbstractImporter
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
 
-        if ($batch->jobTrack->action == Import::ACTION_DELETE) {
-            $this->deleteAttributeData($batch);
-        } else {
-            $this->saveAttributeData($batch);
+        DB::beginTransaction();
+
+        try {
+            if ($batch->jobTrack->action == Import::ACTION_DELETE) {
+                $this->deleteAttributeData($batch);
+            } else {
+                $this->saveAttributeData($batch);
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            throw $e;
         }
 
         $batch = $this->importBatchRepository->update([
