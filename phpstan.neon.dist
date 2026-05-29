@@ -1,0 +1,17 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+
+    paths:
+        - app
+        - packages/Webkul
+
+    excludePaths:
+        - packages/Webkul/*/tests/*
+        - packages/Webkul/*/src/Database/*
+        - packages/Webkul/DebugBar/*
+
+    ignoreErrors:
+        - identifier: missingType.generics

@@ -1,10 +1,18 @@
 {
     "name": "unopim/unopim",
     "type": "project",
-    "description": "UnoPim Laravel PIM",
+    "description": "Unopim is a free and open-source Laravel-based Product Information Management (PIM) system that helps businesses manage and enrich product data from a single platform. Built to scale beyond 10M+ products, now evolving with Agentic PIM capabilities.",
     "keywords": [
         "framework",
-        "laravel"
+        "laravel",
+        "open-source",
+        "php",
+        "opensource",
+        "product",
+        "pim",
+        "pxm",
+        "product-management",
+        "product-information-management"
     ],
     "license": "MIT",
     "require": {
@@ -48,6 +56,7 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.2",
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.0",
         "laravel/boost": "^2.1",
         "laravel/pint": "^1.29.1",
         "mockery/mockery": "^1.6",
@@ -55,6 +64,7 @@
         "pestphp/pest": "^3.0",
         "pestphp/pest-plugin-laravel": "^3.0",
         "phpunit/phpunit": "^11.0",
+        "rector/rector": "^2.0",
         "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
@@ -109,6 +119,25 @@
         "post-create-project-cmd": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate --ansi"
+        ],
+        "lint": [
+            "rector",
+            "pint -v --parallel",
+            "npm run lint"
+        ],
+        "test:lint": [
+            "pint --test -v --parallel",
+            "rector --dry-run",
+            "npm run test:lint"
+        ],
+        "test:types": "phpstan analyse --ansi",
+        "test:type-coverage": "pest --type-coverage --min=100",
+        "test:unit": "pest --colors=always",
+        "test": [
+            "@test:lint",
+            "@test:types",
+            "@test:type-coverage",
+            "@test:unit"
         ]
     },
     "extra": {
