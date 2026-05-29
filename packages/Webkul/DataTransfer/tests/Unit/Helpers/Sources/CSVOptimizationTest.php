@@ -5,6 +5,26 @@ use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Helpers\Sources\CSV;
 
 describe('CSV Source Optimizations', function () {
+    it('removes UTF-8 BOM from first header column', function () {
+        $csvContent = "\xEF\xBB\xBFchannel;locale;sku\n";
+        $csvContent .= "default;de_DE;sku-1\n";
+
+        Storage::disk('private')->put('test-csv-bom-header.csv', $csvContent);
+
+        $source = new CSV('test-csv-bom-header.csv', ';');
+
+        expect($source->getColumnNames())->toBe(['channel', 'locale', 'sku']);
+
+        $source->rewind();
+        $row = $source->current();
+
+        expect($row['channel'])->toBe('default');
+        expect($row['locale'])->toBe('de_DE');
+        expect($row['sku'])->toBe('sku-1');
+
+        Storage::disk('private')->delete('test-csv-bom-header.csv');
+    });
+
     it('reads CSV files with unlimited line length', function () {
         /** Create a test CSV with a row longer than 4096 bytes */
         $longValue = str_repeat('abcdefghij', 500); // 5000 chars

@@ -126,6 +126,7 @@
                         <v-async-select-handler
                             :name="'filters[' + filterField.name + ']'"
                             multiple='true'
+                            :onselect="false"
                             v-bind="field"
                             :class="[errors.length ? 'border border-red-500' : JSON.stringify(errors)]"
                             :track-by="filterField.track_by"
