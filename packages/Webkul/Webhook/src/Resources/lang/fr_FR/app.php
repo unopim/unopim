@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'L\'URL du Webhook doit commencer par http:// ou https://.',
                         'connection_failed' => 'L\'URL du Webhook n\'a pas pu être atteinte. Veuillez vérifier l\'URL.',
                         'unreachable'       => 'L\'URL du Webhook n\'est pas valide (HTTP :code).',
+                        'unsafe'            => 'L\'URL du webhook pointe vers une adresse privée, loopback ou interne et n\'est pas autorisée.',
                     ],
                     'success'    => 'Paramètres du Webhook enregistrés avec succès',
                     'logs-title' => 'Journaux',

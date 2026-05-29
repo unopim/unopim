@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'URL Webhook harus dimulai dengan http:// atau https://.',
                         'connection_failed' => 'URL Webhook tidak dapat dijangkau. Silakan periksa URL.',
                         'unreachable'       => 'URL Webhook tidak valid (HTTP :code).',
+                        'unsafe'            => 'URL Webhook menunjuk ke alamat pribadi, loopback, atau internal dan tidak diizinkan.',
                     ],
                     'success'    => 'Pengaturan Webhook berhasil disimpan',
                     'logs-title' => 'Log',
