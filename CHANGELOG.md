@@ -1,5 +1,10 @@
 # v2.1.x
 
+## v2.1.2 - 2026-05-29
+
+### Improvements
+- Hardened **webhook URL handling** — webhook target URLs are now validated to ensure they resolve to a publicly reachable host before any request is made, applied both when saving the webhook settings and on each product-save dispatch. Outgoing webhook requests connect only to the validated address and no longer follow HTTP redirects ([#448](https://github.com/unopim/unopim/pull/448), [#450](https://github.com/unopim/unopim/pull/450)).
+
 ## v2.1.1 - 2026-05-26
 
 ### Security
