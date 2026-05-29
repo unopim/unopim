@@ -89,9 +89,18 @@ class DatabaseManager
 
     /**
      * Generate New Application Key
+     *
+     * Only generates a key when one is not already set. Rotating APP_KEY on
+     * every UI-installer retry would re-encrypt the session cookie with a new
+     * cipher key, so the user's existing session (and CSRF token) would be
+     * silently discarded on the next request — surfacing as a 419 Page Expired
      */
     public function generateKey()
     {
+        if (! empty(config('app.key'))) {
+            return;
+        }
+
         try {
             Artisan::call('key:generate');
         } catch (Exception $e) {

@@ -2,29 +2,48 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class ListAttributes implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('list_attributes')
-            ->for('List attributes for a product family with types and options.')
-            ->withStringParameter('sku', 'Product SKU to get attributes for (uses its attribute family)')
-            ->withNumberParameter('family_id', 'Attribute family ID (alternative to SKU)')
-            ->using(function (?string $sku = null, ?int $family_id = null) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.attributes')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'list_attributes';
+            }
+
+            public function description(): string
+            {
+                return 'List attributes for a product family with types and options.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'sku'       => $schema->string()->description('Product SKU to get attributes for (uses its attribute family)'),
+                    'family_id' => $schema->integer()->description('Attribute family ID (alternative to SKU)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.attributes')) {
                     return $denied;
                 }
 
-                $familyId = $family_id;
+                $sku = $request->string('sku')->toString() ?: null;
+                $familyId = $request->has('family_id') ? (int) $request->get('family_id') : null;
 
                 if ($sku && ! $familyId) {
                     $familyId = DB::table('products')
@@ -47,6 +66,8 @@ class ListAttributes implements PimTool
                     ->select('a.id', 'a.code', 'a.type', 'a.value_per_locale', 'a.value_per_channel', 'a.is_required')
                     ->orderBy('a.code')
                     ->get();
+
+                $context = $this->context;
 
                 $result = $attributes->map(function ($attr) use ($context) {
                     $info = [
@@ -81,6 +102,7 @@ class ListAttributes implements PimTool
                     'family_id'  => $familyId,
                     'attributes' => $result->toArray(),
                 ]);
-            });
+            }
+        };
     }
 }

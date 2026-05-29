@@ -1,5 +1,10 @@
 @php
     $admin = auth()->guard('admin')->user();
+    $themeToggleTitles = [
+        'auto'  => trans('admin::app.components.layouts.header.theme-auto'),
+        'dark'  => trans('admin::app.components.layouts.header.theme-dark'),
+        'light' => trans('admin::app.components.layouts.header.theme-light'),
+    ];
 @endphp
 
 <header class="flex justify-between items-center px-4 py-2.5 bg-white dark:bg-cherry-700  border-b dark:border-cherry-800 sticky top-0 z-[10001]">
@@ -12,7 +17,7 @@
         </i>
 
         <!-- Logo -->
-        <a href="{{ route('admin.dashboard.index') }}">
+        <a href="{{ $adminLandingUrl ?? route('admin.dashboard.index') }}">
             @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
                 <img
                     class="h-10"
@@ -21,8 +26,14 @@
                 />
             @else
                 <img
-                    src="{{ request()->cookie('dark_mode') ? unopim_asset('images/dark_logo.svg') : unopim_asset('images/logo.svg') }}"
-                    id="logo-image"
+                    src="{{ unopim_asset('images/logo.svg') }}"
+                    class="theme-logo-light block dark:hidden"
+                    alt="{{ config('app.name') }}"
+                />
+
+                <img
+                    src="{{ unopim_asset('images/dark_logo.svg') }}"
+                    class="theme-logo-dark hidden dark:block"
                     alt="{{ config('app.name') }}"
                 />
             @endif
@@ -35,7 +46,7 @@
         <v-dark>
             <div class="flex">
                 <span
-                    class="{{ request()->cookie('dark_mode') ? 'icon-light' : 'icon-dark' }} p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                    class="{{ in_array(request()->cookie('dark_mode'), ['1', 'dark'], true) ? 'icon-light' : 'icon-dark' }} p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
                 ></span>
             </div>
         </v-dark>
@@ -132,8 +143,14 @@
                 />
             @else
                 <img
-                    src="{{ request()->cookie('dark_mode') ? unopim_asset('images/dark_logo.svg') : unopim_asset('images/logo.svg') }}"
-                    id="logo-image"
+                    src="{{ unopim_asset('images/logo.svg') }}"
+                    class="theme-logo-light block dark:hidden"
+                    alt="{{ config('app.name') }}"
+                />
+
+                <img
+                    src="{{ unopim_asset('images/dark_logo.svg') }}"
+                    class="theme-logo-dark hidden dark:block"
                     alt="{{ config('app.name') }}"
                 />
             @endif
@@ -315,7 +332,8 @@
         <div class="flex">
             <span
                 class="p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
-                :class="[isDarkMode ? 'icon-light' : 'icon-dark']"
+                :class="[toggleIconClass]"
+                :title="toggleTitle"
                 @click="toggle"
             ></span>
         </div>
@@ -327,50 +345,85 @@
 
             data() {
                 return {
-                    isDarkMode: {{ request()->cookie('dark_mode') ?? 0 }},
+                    darkMode: @json(request()->cookie('dark_mode', 'auto')),
 
-                    logo: "{{ unopim_asset('images/logo.svg') }}",
-
-                    dark_logo: "{{ unopim_asset('images/dark_logo.svg') }}",
+                    mediaQuery: null,
+                    titleMap: @json($themeToggleTitles),
                 };
+            },
+
+            computed: {
+                toggleIconClass() {
+                    if (this.darkMode === 'auto') {
+                        return this.isDarkFromBrowser() ? 'icon-light' : 'icon-dark';
+                    }
+
+                    return this.darkMode === 'dark' ? 'icon-light' : 'icon-dark';
+                },
+
+                toggleTitle() {
+                    return this.titleMap[this.darkMode] ?? this.titleMap.auto;
+                },
             },
 
             methods: {
                 toggle() {
-                    this.isDarkMode = parseInt(this.isDarkModeCookie()) ? 0 : 1;
+                    const sequence = ['auto', 'dark', 'light'];
+                    const currentIndex = sequence.indexOf(this.darkMode);
+                    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % sequence.length;
 
-                    var expiryDate = new Date();
+                    this.darkMode = sequence[nextIndex];
 
-                    expiryDate.setMonth(expiryDate.getMonth() + 1);
+                    this.applyTheme(this.darkMode, true);
+                },
 
-                    document.cookie = 'dark_mode=' + this.isDarkMode + '; path=/; expires=' + expiryDate.toGMTString();
+                applyTheme(mode, persist = false) {
+                    const shouldUseDark = mode === 'dark' || (mode === 'auto' && this.isDarkFromBrowser());
 
-                    document.documentElement.classList.toggle('dark', this.isDarkMode === 1);
+                    document.documentElement.classList.toggle('dark', shouldUseDark);
 
-                    if (this.isDarkMode) {
-                        this.$emitter.emit('change-theme', 'dark');
+                    this.$emitter.emit('change-theme', shouldUseDark ? 'dark' : 'light');
 
-                        document.getElementById('logo-image').src = this.dark_logo;
-                    } else {
-                        this.$emitter.emit('change-theme', 'light');
+                    if (persist) {
+                        const expiryDate = new Date();
 
-                        document.getElementById('logo-image').src = this.logo;
+                        expiryDate.setMonth(expiryDate.getMonth() + 1);
+
+                        document.cookie = `dark_mode=${mode}; path=/; expires=${expiryDate.toUTCString()}`;
                     }
                 },
 
-                isDarkModeCookie() {
-                    const cookies = document.cookie.split(';');
+                isDarkFromBrowser() {
+                    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                },
 
-                    for (const cookie of cookies) {
-                        const [name, value] = cookie.trim().split('=');
+                normalizeMode(mode) {
+                    if (mode === '1') {
+                        return 'dark';
+                    }
 
-                        if (name === 'dark_mode') {
-                            return value;
+                    if (mode === '0') {
+                        return 'light';
+                    }
+
+                    return ['light', 'dark', 'auto'].includes(mode) ? mode : 'auto';
+                },
+            },
+
+            mounted() {
+                this.darkMode = this.normalizeMode(this.darkMode);
+
+                this.applyTheme(this.darkMode);
+
+                this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+                if (this.mediaQuery?.addEventListener) {
+                    this.mediaQuery.addEventListener('change', () => {
+                        if (this.darkMode === 'auto') {
+                            this.applyTheme('auto');
                         }
-                    }
-
-                    return 0;
-                },
+                    });
+                }
             },
         });
     </script>

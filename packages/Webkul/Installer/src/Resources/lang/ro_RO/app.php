@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Administrator',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Confirmare Parolă',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'Email',
-                'password'         => 'Parolă',
-                'title'            => 'Creare Administrator',
+                'admin'                   => 'Administrator',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Confirmare Parolă',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'Email',
+                'password'                => 'Parolă',
+                'title'                   => 'Creare Administrator',
+                'seed-sample-data'        => 'Instalează produse de eșantion și date demo',
+                'seeding-sample-data'     => 'Se inserează produse de eșantion și date demo, această operațiune poate dura câteva minute...',
+                'seed-sample-data-failed' => 'Datele de eșantion nu au putut fi inserate. Le poți instala mai târziu prin `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Monede Permise',

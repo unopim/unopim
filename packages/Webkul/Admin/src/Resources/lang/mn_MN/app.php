@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Имэйл хаяг',
-            'forget-password-link'   => 'Нууц үгээ мартах уу?',
-            'password'               => 'Нууц үг',
-            'submit-btn'             => 'Нэвтрэх',
-            'title'                  => 'Нэвтрэх',
-            'powered-by'             => ':unopim-аас дэмжигдсэн,',
-            'open-source-project-by' => ':webkul-ийн нээлттэй эхийн төсөл.',
+            'email'                      => 'Имэйл хаяг',
+            'forget-password-link'       => 'Нууц үгээ мартах уу?',
+            'password'                   => 'Нууц үг',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Нэвтрэх',
+            'title'                      => 'Нэвтрэх',
+            'powered-by'                 => ':unopim-аас дэмжигдсэн,',
+            'open-source-project-by'     => ':webkul-ийн нээлттэй эхийн төсөл.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Зөв URL оруулна уу.',
                     'regex'                      => 'Утга шаардлагатай загварт тохирохгүй байна.',
                     'invalid-pattern'            => 'Буруу хэрэглэгчийн загвар өгөгдсөн.',
-
                     'numeric'                    => '«:attribute» тоон шинж чанарын утга зөв тоо байх ёстой.',
                     'select-attribute-or-family' => 'Дор хаяж нэг атрибут эсвэл атрибутын бүлгийг сонгоно уу.',
                     'failed'                     => 'Шалгалт амжилтгүй боллоо.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Бөөнөөр засвар амжилттай.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Хадгалах өөрчлөлт алга.',
-
-                'invalid-datetime'            => 'Хүчинтэй огноо, цаг оруулна уу.',
-
-                'resize-column'               => 'Баганы өргөнийг өөрчлөх',
-                'success'                     => 'Ажил амжилттай гүйцэтгэгдлээ.',
-                'fetch-failed'                => 'Мэдээлэл татаж чадсангүй.',
-                'action'                      => 'Бөөнөөр засах',
-                'description'                 => 'Олон бүтээгдэхүүнийг нэг дор засварлана. Өөрчлөлтүүд цаана нь боловсруулагдана.',
-                'gallery-preview'             => 'Галлерейн урьдчилсан харагдац',
-                'img-preview'                 => 'Зургийн урьдчилсан харагдац',
-                'no-image'                    => 'Зураг алга',
-                'img-fail'                    => 'Зураг байршуулах амжилтгүй боллоо',
-                'no-option'                   => 'Сонголт байхгүй',
-                'keyboard-shortcuts'          => 'Гарын товчлолууд',
-                'shortcuts-navigation'        => 'Навигаци',
-                'shortcuts-editing'           => 'Засварлах',
-                'shortcuts-selection'         => 'Сонголт',
-                'shortcuts-clipboard'         => 'Хурамтлуур ба дүүргэх',
-                'shortcuts-move-cell'         => 'Нүднүүдийн хооронд шилжих',
-                'shortcuts-move-down'         => 'Доош шилжих / засварыг баталгаажуулах',
-                'shortcuts-move-up'           => 'Дээш шилжих',
-                'shortcuts-move-right-left'   => 'Баруун / зүүн тийш шилжих',
-                'shortcuts-home-end'          => 'Мөрийн эхний / сүүлийн багана',
-                'shortcuts-ctrl-home-end'     => 'Хүснэгтийн эхний / сүүлийн нүд',
-                'shortcuts-extend-selection'  => 'Сонголтыг өргөтгөх',
-                'shortcuts-select-all'        => 'Бүх нүдийг сонгох',
-                'shortcuts-enter-edit'        => 'Засварлах горимд орох',
-                'shortcuts-confirm-move-down' => 'Баталгаажуулах + доош шилжих',
-                'shortcuts-confirm-move-right'=> 'Баталгаажуулах + баруун тийш шилжих',
-                'shortcuts-escape-revert'     => 'Утгыг сэргээх + засварлахаас гарах',
-                'shortcuts-clear-cell'        => 'Нүдийг цэвэрлэх',
-                'shortcuts-copy'              => 'Хуулах',
-                'shortcuts-cut'               => 'Тайрах',
-                'shortcuts-paste'             => 'Буулгах',
-                'shortcuts-fill-down'         => 'Доош дүүргэх',
-                'shortcuts-fill-right'        => 'Баруун тийш дүүргэх',
-                'shortcuts-undo'              => 'Буцаах',
-                'shortcuts-redo'              => 'Дахин хийх',
-                'shortcuts-help'              => 'Гарын товчлолуудыг харуулах/нуух',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Хадгалах өөрчлөлт алга.',
+                'invalid-datetime'             => 'Хүчинтэй огноо, цаг оруулна уу.',
+                'resize-column'                => 'Баганы өргөнийг өөрчлөх',
+                'success'                      => 'Ажил амжилттай гүйцэтгэгдлээ.',
+                'fetch-failed'                 => 'Мэдээлэл татаж чадсангүй.',
+                'action'                       => 'Бөөнөөр засах',
+                'description'                  => 'Олон бүтээгдэхүүнийг нэг дор засварлана. Өөрчлөлтүүд цаана нь боловсруулагдана.',
+                'gallery-preview'              => 'Галлерейн урьдчилсан харагдац',
+                'img-preview'                  => 'Зургийн урьдчилсан харагдац',
+                'no-image'                     => 'Зураг алга',
+                'img-fail'                     => 'Зураг байршуулах амжилтгүй боллоо',
+                'no-option'                    => 'Сонголт байхгүй',
+                'keyboard-shortcuts'           => 'Гарын товчлолууд',
+                'shortcuts-navigation'         => 'Навигаци',
+                'shortcuts-editing'            => 'Засварлах',
+                'shortcuts-selection'          => 'Сонголт',
+                'shortcuts-clipboard'          => 'Хурамтлуур ба дүүргэх',
+                'shortcuts-move-cell'          => 'Нүднүүдийн хооронд шилжих',
+                'shortcuts-move-down'          => 'Доош шилжих / засварыг баталгаажуулах',
+                'shortcuts-move-up'            => 'Дээш шилжих',
+                'shortcuts-move-right-left'    => 'Баруун / зүүн тийш шилжих',
+                'shortcuts-home-end'           => 'Мөрийн эхний / сүүлийн багана',
+                'shortcuts-ctrl-home-end'      => 'Хүснэгтийн эхний / сүүлийн нүд',
+                'shortcuts-extend-selection'   => 'Сонголтыг өргөтгөх',
+                'shortcuts-select-all'         => 'Бүх нүдийг сонгох',
+                'shortcuts-enter-edit'         => 'Засварлах горимд орох',
+                'shortcuts-confirm-move-down'  => 'Баталгаажуулах + доош шилжих',
+                'shortcuts-confirm-move-right' => 'Баталгаажуулах + баруун тийш шилжих',
+                'shortcuts-escape-revert'      => 'Утгыг сэргээх + засварлахаас гарах',
+                'shortcuts-clear-cell'         => 'Нүдийг цэвэрлэх',
+                'shortcuts-copy'               => 'Хуулах',
+                'shortcuts-cut'                => 'Тайрах',
+                'shortcuts-paste'              => 'Буулгах',
+                'shortcuts-fill-down'          => 'Доош дүүргэх',
+                'shortcuts-fill-right'         => 'Баруун тийш дүүргэх',
+                'shortcuts-undo'               => 'Буцаах',
+                'shortcuts-redo'               => 'Дахин хийх',
+                'shortcuts-help'               => 'Гарын товчлолуудыг харуулах/нуух',
             ],
             'create-success'          => 'Бүтээгдэхүүн амжилттай бүтээгдсэн',
             'delete-failed'           => 'Бүтээгдэхүүнийг устгасан бүтэлгүйтэв',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Шүүж болох',
                 'ai-translate'          => 'ХИ Орчуулга',
                 'invalid-swatch-type'   => ':attribute нь :type төрлийн шинж чанарт :swatch_type өнгөний төрлийг ашиглахыг зөвшөөрөхгүй.',
-
                 'single-object-only'    => 'Үүсгэх хүсэлт бүр нь зөвхөн нэг шинж чанарын объект илгээх ёстой.',
                 'option'                => [
                     'color'    => 'Өнгөт сэлгэлт',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Аттрибут амжилттай устгасан',
             'update-success'    => 'Аттрибут амжилттай шинэчлэгдсэн',
             'user-define-error' => 'Системийн шинж чанарыг устгах боломжгүй',
-
             'immutable-fields'  => 'Дараах талбаруудыг өөрчилөх боломжгүй: :fields.',
             'not-found'         => '":code" кодтой атрибут олдсонгүй',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Ангилалын талбар амжилттай шинэчлэгдсэн',
             'user-define-error' => 'Системийн ангиллын талбарыг устгах боломжгүй',
             'not-found'         => '":code" кодтой ангиллын талбар олдсонгүй',
-
             'immutable-fields'  => 'Дараах талбаруудыг өөрчилөх боломжгүй: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Энэ гэр бүлд аль хэдийн хувьсагчдын хувилбаруудтай тохируулах сонголтыг шинэчлэх боломжгүй байна.',
         ],
         'history' => [
-            'view' => 'Хувилбарын дэлгэрэнгүйг харах',
-
+            'view'  => 'Хувилбарын дэлгэрэнгүйг харах',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Таамаглал',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Түр зогссон',
                         'cancelled'            => 'Цуцлагдсан',
                         'failed'               => 'Амсхийээгүй',
-
-                        'view'       => 'Харах',
+                        'view'                 => 'Харах',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Санамжууд',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Гарчиг',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Текст үүсгэх',
                 'image-generation'    => 'Зураг үүсгэх',
                 'select-purpose'      => 'Зорилго сонгох',
-                'select-model'        => '-- Загвар сонгох --',
+                'select-model'        => 'Загвар сонгох',
                 'loading-models'      => 'Загварууд ачааллаж байна...',
                 'no-models-available' => 'Боломжтой загвар байхгүй байна. Платформ сонгох эсвэл Платформ табаас тохируулна уу.',
                 'type'                => 'Төрөл',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Системийн санамжууд',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Гарчиг',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Шошго',
                 'provider'                 => 'Үйлчилгээ үзүүлэгч',
-                'select-provider'          => '-- Үйлчилгээ үзүүлэгч сонгох --',
+                'select-provider'          => 'Үйлчилгээ үзүүлэгч сонгох',
                 'api-url'                  => 'API URL',
                 'api-url-hint'             => 'Үндсэн төгсгөлийн цэгээр урьдчилан бөглөгдсөн. Зөвхөн прокси эсвэл тусгай байршуулалт ашиглаж байгаа бол засварлана уу.',
                 'api-key'                  => 'API түлхүүр',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'API хувилбар',
                 'is-default'               => 'Үндсэн болгох',
                 'status'                   => 'Төлөв',
-                'use-default'              => '-- Үндсэн платформ ашиглах --',
+                'use-default'              => 'Үндсэн платформ ашиглах',
                 'use-default-hint'         => 'Үндсэн гэж тэмдэглэгдсэн платформыг ашиглахын тулд хоосон орхино уу. * тэмдэгтэй платформууд үндсэн юм.',
                 'no-image-platform'        => 'Зураг үүсгэх чадвартай платформ тохируулагдаагүй байна. Эхлээд OpenAI, Gemini, эсвэл xAI платформ нэмнэ үү.',
                 'image-platform-hint'      => 'Зөвхөн зураг үүсгэхийг дэмждэг платформууд жагсаагдсан (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Миний данс',
                 'notifications' => 'Мэдэгдэл',
                 'visit-shop'    => 'Дэлгүүр',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Аттригийн гэр бүлүүд',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Бичлэгийг сонгоогүй байна.',
                 'must-select-a-mass-action-option' => 'Та массын үйлдлийг сонгох ёстой \'s option.',
                 'must-select-a-mass-action'        => 'Та массын үйлдлийг сонгох ёстой.',
+                'link-copied'                      => 'Холбоосыг түр санах ой руу хууллаа.',
+                'copy-failed'                      => 'Хуулж чадсангүй. Холбоосыг гараар хуулна уу.',
             ],
             'toolbar' => [
                 'length-of'    => ':length -ын',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Шүүх',
                 ],
                 'search_by' => [
-                    'code'       => 'Кодоор хайлт хийх',
-                    'code_or_id' => 'Код эсвэл ID-ээр хайх',
+                    'code'        => 'Кодоор хайлт хийх',
+                    'code_or_id'  => 'Код эсвэл ID-ээр хайх',
+                    'sku_or_user' => 'SKU эсвэл хэрэглэгчээр хайх',
                 ],
                 'search' => [
                     'title' => 'Эрэл хайгуул хийх',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Хүрээ',
                 'llava'                  => 'Лава',
                 'default-prompt'         => 'Төсөл урьдчилсан тохиргоо',
-                'select-prompt-template' => '-- Зөвлөмжийн загвар сонгох --',
+                'select-prompt-template' => 'Зөвлөмжийн загвар сонгох',
             ],
         ],
     ],
@@ -2289,6 +2283,10 @@ return [
             'description' => 'Өө!Таны хуралдаан хугацаа дууссан байна.Хуудсыг сэргээнэ үү, Үргэлжлүүлэхийн тулд дахин нэвтрэн орно уу.',
             'title'       => '419 хуралдаан хугацаа дууссан байна',
         ],
+        '405' => [
+            'description' => 'Уучлаарай! Энэ URL-д хүсэлтийн арга зөвшөөрөгдөөгүй байна. Зөв аргыг ашиглах эсвэл өмнөх хуудас руу буцна уу.',
+            'title'       => '405 Арга Зөвшөөрөгдөөгүй',
+        ],
         '500' => [
             'description' => 'Өө!Ямар нэгэн зүйл буруугаар эргэсэн.Бид тийм санагдаж байна\'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Дотоод серверийн алдаа',
@@ -2331,13 +2329,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Мон',
-        'no'             => '-Гүй / -битгий',
-        'true'           => 'Үнэн',
-        'false'          => 'Хуурамч',
-        'enable'         => 'Оруулах',
-        'disable'        => 'Эрэмдэг зэрэмдэг',
-        'no-match-found' => 'Тохирох зүйл олдсонгүй!',
+        'yes'               => 'Мон',
+        'no'                => '-Гүй / -битгий',
+        'true'              => 'Үнэн',
+        'false'             => 'Хуурамч',
+        'enable'            => 'Оруулах',
+        'disable'           => 'Эрэмдэг зэрэмдэг',
+        'no-match-found'    => 'Тохирох зүйл олдсонгүй!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

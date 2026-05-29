@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => '电子邮件地址',
-            'forget-password-link'   => '忘记密码 ？',
-            'password'               => '密码',
-            'submit-btn'             => '登入',
-            'title'                  => '登入',
-            'powered-by'             => '由 :unopim 提供支持,',
-            'open-source-project-by' => '由 :webkul 开源项目提供。',
+            'email'                      => '电子邮件地址',
+            'forget-password-link'       => '忘记密码 ？',
+            'password'                   => '密码',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => '登入',
+            'title'                      => '登入',
+            'powered-by'                 => '由 :unopim 提供支持,',
+            'open-source-project-by'     => '由 :webkul 开源项目提供。',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => '请输入有效的URL地址。',
                     'regex'                      => '该值不符合所需的模式。',
                     'invalid-pattern'            => '提供了无效的自定义模式。',
-
                     'numeric'                    => '数字属性":attribute"的值必须为有效的数字。',
                     'select-attribute-or-family' => '请选择至少一个属性或一个属性族。',
                     'failed'                     => '验证失败。',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => '批量编辑成功。',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => '没有可保存的更改。',
-
-                'invalid-datetime'            => '请输入有效的日期和时间。',
-
-                'resize-column'               => '拖动以调整列宽',
-                'success'                     => '任务已成功执行。',
-                'fetch-failed'                => '获取失败。',
-                'action'                      => '批量编辑',
-                'description'                 => '一次编辑多个产品。更改将在后台处理。',
-                'gallery-preview'             => '图库预览',
-                'img-preview'                 => '图片预览',
-                'no-image'                    => '无图片',
-                'img-fail'                    => '图片上传失败',
-                'no-option'                   => '无选项',
-                'keyboard-shortcuts'          => '键盘快捷键',
-                'shortcuts-navigation'        => '导航',
-                'shortcuts-editing'           => '编辑',
-                'shortcuts-selection'         => '选择',
-                'shortcuts-clipboard'         => '剪贴板与填充',
-                'shortcuts-move-cell'         => '在单元格间移动',
-                'shortcuts-move-down'         => '向下移动 / 确认编辑',
-                'shortcuts-move-up'           => '向上移动',
-                'shortcuts-move-right-left'   => '向右 / 向左移动',
-                'shortcuts-home-end'          => '行中第一 / 最后一列',
-                'shortcuts-ctrl-home-end'     => '网格中第一 / 最后一个单元格',
-                'shortcuts-extend-selection'  => '扩展选择',
-                'shortcuts-select-all'        => '选择所有单元格',
-                'shortcuts-enter-edit'        => '进入编辑模式',
-                'shortcuts-confirm-move-down' => '确认 + 向下移动',
-                'shortcuts-confirm-move-right'=> '确认 + 向右移动',
-                'shortcuts-escape-revert'     => '恢复值 + 退出编辑',
-                'shortcuts-clear-cell'        => '清除单元格',
-                'shortcuts-copy'              => '复制',
-                'shortcuts-cut'               => '剪切',
-                'shortcuts-paste'             => '粘贴',
-                'shortcuts-fill-down'         => '向下填充',
-                'shortcuts-fill-right'        => '向右填充',
-                'shortcuts-undo'              => '撤销',
-                'shortcuts-redo'              => '重做',
-                'shortcuts-help'              => '显示/隐藏键盘快捷键',
+                'id'                           => 'ID',
+                'no-changes'                   => '没有可保存的更改。',
+                'invalid-datetime'             => '请输入有效的日期和时间。',
+                'resize-column'                => '拖动以调整列宽',
+                'success'                      => '任务已成功执行。',
+                'fetch-failed'                 => '获取失败。',
+                'action'                       => '批量编辑',
+                'description'                  => '一次编辑多个产品。更改将在后台处理。',
+                'gallery-preview'              => '图库预览',
+                'img-preview'                  => '图片预览',
+                'no-image'                     => '无图片',
+                'img-fail'                     => '图片上传失败',
+                'no-option'                    => '无选项',
+                'keyboard-shortcuts'           => '键盘快捷键',
+                'shortcuts-navigation'         => '导航',
+                'shortcuts-editing'            => '编辑',
+                'shortcuts-selection'          => '选择',
+                'shortcuts-clipboard'          => '剪贴板与填充',
+                'shortcuts-move-cell'          => '在单元格间移动',
+                'shortcuts-move-down'          => '向下移动 / 确认编辑',
+                'shortcuts-move-up'            => '向上移动',
+                'shortcuts-move-right-left'    => '向右 / 向左移动',
+                'shortcuts-home-end'           => '行中第一 / 最后一列',
+                'shortcuts-ctrl-home-end'      => '网格中第一 / 最后一个单元格',
+                'shortcuts-extend-selection'   => '扩展选择',
+                'shortcuts-select-all'         => '选择所有单元格',
+                'shortcuts-enter-edit'         => '进入编辑模式',
+                'shortcuts-confirm-move-down'  => '确认 + 向下移动',
+                'shortcuts-confirm-move-right' => '确认 + 向右移动',
+                'shortcuts-escape-revert'      => '恢复值 + 退出编辑',
+                'shortcuts-clear-cell'         => '清除单元格',
+                'shortcuts-copy'               => '复制',
+                'shortcuts-cut'                => '剪切',
+                'shortcuts-paste'              => '粘贴',
+                'shortcuts-fill-down'          => '向下填充',
+                'shortcuts-fill-right'         => '向右填充',
+                'shortcuts-undo'               => '撤销',
+                'shortcuts-redo'               => '重做',
+                'shortcuts-help'               => '显示/隐藏键盘快捷键',
             ],
             'create-success'          => '成功创建的产品',
             'delete-failed'           => '产品删除失败',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => '可筛选',
                 'ai-translate'          => 'AI翻译',
                 'invalid-swatch-type'   => ':attribute 不允许用于属性类型 :type 和样本类型 :swatch_type。',
-
                 'single-object-only'    => '每个创建请求只能发送一个属性对象。',
                 'option'                => [
                     'color'    => '色板',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => '属性成功删除',
             'update-success'    => '属性成功更新',
             'user-define-error' => '无法删除系统属性',
-
             'immutable-fields'  => '以下字段无法修改：:fields。',
             'not-found'         => '无法找到代码为“:code”的属性',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => '类别字段成功更新',
             'user-define-error' => '无法删除系统类别字段',
             'not-found'         => '无法找到代码为“:code”的类别字段',
-
             'immutable-fields'  => '以下字段无法修改：:fields。',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => '无法更新可配置的选项，因为该家族已经拥有变体产品。',
         ],
         'history' => [
-            'view' => '查看版本详情',
-
+            'view'  => '查看版本详情',
             'index' => [
                 'datagrid' => [
                     'version'   => '版本',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => '已暂停',
                         'cancelled'            => '已取消',
                         'failed'               => '失败的',
-
-                        'view'       => '查看',
+                        'view'                 => '查看',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => '提示词',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '标题',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => '文本生成',
                 'image-generation'    => '图像生成',
                 'select-purpose'      => '选择用途',
-                'select-model'        => '-- 选择模型 --',
+                'select-model'        => '选择模型',
                 'loading-models'      => '正在加载模型...',
                 'no-models-available' => '没有可用的模型。请选择一个平台或在平台选项卡中进行配置。',
                 'type'                => '类型',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => '系统提示词',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '标题',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => '标签',
                 'provider'                 => '提供商',
-                'select-provider'          => '-- 选择提供商 --',
+                'select-provider'          => '选择提供商',
                 'api-url'                  => 'API 网址',
                 'api-url-hint'             => '已预填默认端点。仅在使用代理或自定义部署时编辑。',
                 'api-key'                  => 'API 密钥',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'API 版本',
                 'is-default'               => '设为默认',
                 'status'                   => '状态',
-                'use-default'              => '-- 使用默认平台 --',
+                'use-default'              => '使用默认平台',
                 'use-default-hint'         => '留空将使用标记为默认的平台。标有 * 的平台为默认平台。',
                 'no-image-platform'        => '未配置支持图像的平台。请先添加 OpenAI、Gemini 或 xAI 平台。',
                 'image-platform-hint'      => '仅列出支持图像生成的平台 (OpenAI, Gemini, xAI)。',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => '我的账户',
                 'notifications' => '通知',
                 'visit-shop'    => '访问商店',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => '属性家庭',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => '没有选择记录。',
                 'must-select-a-mass-action-option' => '您必须选择质量行动\'s option.',
                 'must-select-a-mass-action'        => '您必须选择质量行动。',
+                'link-copied'                      => '链接已复制到剪贴板。',
+                'copy-failed'                      => '复制失败。请手动复制链接。',
             ],
             'toolbar' => [
                 'length-of'    => ':length 的',
@@ -2011,8 +2004,9 @@ return [
                     'title' => '筛选',
                 ],
                 'search_by' => [
-                    'code'       => '通过代码搜索',
-                    'code_or_id' => '通过代码或ID搜索',
+                    'code'        => '通过代码搜索',
+                    'code_or_id'  => '通过代码或ID搜索',
+                    'sku_or_user' => '按 SKU 或用户搜索',
                 ],
                 'search' => [
                     'title' => '搜索',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => '维库纳',
                 'llava'                  => '熔岩',
                 'default-prompt'         => '默认提示',
-                'select-prompt-template' => '-- 选择提示模板 --',
+                'select-prompt-template' => '选择提示模板',
             ],
         ],
     ],
@@ -2289,6 +2283,10 @@ return [
             'description' => '哎呀！您的会话已过期。请刷新页面并重新登录以继续。',
             'title'       => '419 会话已过期',
         ],
+        '405' => [
+            'description' => '哎呀！此 URL 不允许使用该请求方法。请使用正确的方法或返回上一页。',
+            'title'       => '405 方法不允许',
+        ],
         '500' => [
             'description' => '哎呀！出了些问题。我们似乎无法加载您正在查找的页面。',
             'title'       => '500内部服务器错误',
@@ -2331,13 +2329,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => '是的',
-        'no'             => '不',
-        'true'           => '真的',
-        'false'          => '错误的',
-        'enable'         => '启用',
-        'disable'        => '残疾人',
-        'no-match-found' => '未找到匹配项！',
+        'yes'               => '是的',
+        'no'                => '不',
+        'true'              => '真的',
+        'false'             => '错误的',
+        'enable'            => '启用',
+        'disable'           => '残疾人',
+        'no-match-found'    => '未找到匹配项！',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

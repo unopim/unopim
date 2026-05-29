@@ -84,6 +84,48 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Каналы',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Канал с кодом :code не найден для удаления.',
+                    'locale-not-found'         => 'Один или несколько языков не существуют.',
+                    'root-category-not-found'  => 'Корневая категория не существует.',
+                    'currency-not-found'       => 'Одна или несколько валют не существуют.',
+                    'invalid-locale'           => 'Язык не существует.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -115,6 +157,23 @@ return [
         ],
         'attribute-options' => [
             'title' => 'Параметры атрибутов',
+        ],
+        'channels' => [
+            'title' => 'Каналы',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
     'validation' => [

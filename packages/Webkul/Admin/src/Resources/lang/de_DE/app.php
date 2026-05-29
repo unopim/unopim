@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'E-Mail-Adresse',
-            'forget-password-link'   => 'Passwort vergessen?',
-            'password'               => 'Passwort',
-            'submit-btn'             => 'Anmelden',
-            'title'                  => 'Anmelden',
-            'powered-by'             => 'Bereitgestellt von :unopim,',
-            'open-source-project-by' => 'Ein Open-Source-Projekt von :webkul.',
+            'email'                      => 'E-Mail-Adresse',
+            'forget-password-link'       => 'Passwort vergessen?',
+            'password'                   => 'Passwort',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Anmelden',
+            'title'                      => 'Anmelden',
+            'powered-by'                 => 'Bereitgestellt von :unopim,',
+            'open-source-project-by'     => 'Ein Open-Source-Projekt von :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Bitte geben Sie eine gültige URL ein.',
                     'regex'                      => 'Der Wert entspricht nicht dem erforderlichen Muster.',
                     'invalid-pattern'            => 'Ungültiges benutzerdefiniertes Muster angegeben.',
-
                     'numeric'                    => 'Der Wert für das numerische Attribut „:attribute“ muss eine gültige Zahl sein.',
                     'select-attribute-or-family' => 'Bitte wählen Sie mindestens ein Attribut oder eine Attributfamilie aus.',
                     'failed'                     => 'Validierung fehlgeschlagen.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Massenbearbeitung erfolgreich.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Keine Änderungen zum Speichern.',
-
-                'invalid-datetime'            => 'Bitte ein gültiges Datum mit Uhrzeit eingeben.',
-
-                'resize-column'               => 'Ziehen, um die Spaltenbreite zu ändern',
-                'success'                     => 'Vorgang erfolgreich abgeschlossen.',
-                'fetch-failed'                => 'Abruf fehlgeschlagen.',
-                'action'                      => 'Massenbearbeitung',
-                'description'                 => 'Mehrere Produkte gleichzeitig bearbeiten. Änderungen werden im Hintergrund verarbeitet.',
-                'gallery-preview'             => 'Galerievorschau',
-                'img-preview'                 => 'Bildvorschau',
-                'no-image'                    => 'Kein Bild',
-                'img-fail'                    => 'Bildupload fehlgeschlagen.',
-                'no-option'                   => 'Keine Optionen',
-                'keyboard-shortcuts'          => 'Tastaturkürzel',
-                'shortcuts-navigation'        => 'Navigation',
-                'shortcuts-editing'           => 'Bearbeitung',
-                'shortcuts-selection'         => 'Auswahl',
-                'shortcuts-clipboard'         => 'Zwischenablage & Ausfüllen',
-                'shortcuts-move-cell'         => 'Zwischen Zellen wechseln',
-                'shortcuts-move-down'         => 'Nach unten / Bearbeitung bestätigen',
-                'shortcuts-move-up'           => 'Nach oben',
-                'shortcuts-move-right-left'   => 'Nach rechts / links',
-                'shortcuts-home-end'          => 'Erste / letzte Spalte in der Zeile',
-                'shortcuts-ctrl-home-end'     => 'Erste / letzte Zelle im Raster',
-                'shortcuts-extend-selection'  => 'Auswahl erweitern',
-                'shortcuts-select-all'        => 'Alle Zellen auswählen',
-                'shortcuts-enter-edit'        => 'Bearbeitungsmodus aktivieren',
-                'shortcuts-confirm-move-down' => 'Bestätigen + nach unten',
-                'shortcuts-confirm-move-right'=> 'Bestätigen + nach rechts',
-                'shortcuts-escape-revert'     => 'Wert zurücksetzen + Bearbeitung beenden',
-                'shortcuts-clear-cell'        => 'Zelle leeren',
-                'shortcuts-copy'              => 'Kopieren',
-                'shortcuts-cut'               => 'Ausschneiden',
-                'shortcuts-paste'             => 'Einfügen',
-                'shortcuts-fill-down'         => 'Nach unten ausfüllen',
-                'shortcuts-fill-right'        => 'Nach rechts ausfüllen',
-                'shortcuts-undo'              => 'Rückgängig',
-                'shortcuts-redo'              => 'Wiederholen',
-                'shortcuts-help'              => 'Tastaturkürzel ein-/ausblenden',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Keine Änderungen zum Speichern.',
+                'invalid-datetime'             => 'Bitte ein gültiges Datum mit Uhrzeit eingeben.',
+                'resize-column'                => 'Ziehen, um die Spaltenbreite zu ändern',
+                'success'                      => 'Vorgang erfolgreich abgeschlossen.',
+                'fetch-failed'                 => 'Abruf fehlgeschlagen.',
+                'action'                       => 'Massenbearbeitung',
+                'description'                  => 'Mehrere Produkte gleichzeitig bearbeiten. Änderungen werden im Hintergrund verarbeitet.',
+                'gallery-preview'              => 'Galerievorschau',
+                'img-preview'                  => 'Bildvorschau',
+                'no-image'                     => 'Kein Bild',
+                'img-fail'                     => 'Bildupload fehlgeschlagen.',
+                'no-option'                    => 'Keine Optionen',
+                'keyboard-shortcuts'           => 'Tastaturkürzel',
+                'shortcuts-navigation'         => 'Navigation',
+                'shortcuts-editing'            => 'Bearbeitung',
+                'shortcuts-selection'          => 'Auswahl',
+                'shortcuts-clipboard'          => 'Zwischenablage & Ausfüllen',
+                'shortcuts-move-cell'          => 'Zwischen Zellen wechseln',
+                'shortcuts-move-down'          => 'Nach unten / Bearbeitung bestätigen',
+                'shortcuts-move-up'            => 'Nach oben',
+                'shortcuts-move-right-left'    => 'Nach rechts / links',
+                'shortcuts-home-end'           => 'Erste / letzte Spalte in der Zeile',
+                'shortcuts-ctrl-home-end'      => 'Erste / letzte Zelle im Raster',
+                'shortcuts-extend-selection'   => 'Auswahl erweitern',
+                'shortcuts-select-all'         => 'Alle Zellen auswählen',
+                'shortcuts-enter-edit'         => 'Bearbeitungsmodus aktivieren',
+                'shortcuts-confirm-move-down'  => 'Bestätigen + nach unten',
+                'shortcuts-confirm-move-right' => 'Bestätigen + nach rechts',
+                'shortcuts-escape-revert'      => 'Wert zurücksetzen + Bearbeitung beenden',
+                'shortcuts-clear-cell'         => 'Zelle leeren',
+                'shortcuts-copy'               => 'Kopieren',
+                'shortcuts-cut'                => 'Ausschneiden',
+                'shortcuts-paste'              => 'Einfügen',
+                'shortcuts-fill-down'          => 'Nach unten ausfüllen',
+                'shortcuts-fill-right'         => 'Nach rechts ausfüllen',
+                'shortcuts-undo'               => 'Rückgängig',
+                'shortcuts-redo'               => 'Wiederholen',
+                'shortcuts-help'               => 'Tastaturkürzel ein-/ausblenden',
             ],
             'create-success'          => 'Produkt erfolgreich erstellt',
             'delete-failed'           => 'Produkt gelöscht Fehlgeschlagen',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Ist filterbar',
                 'ai-translate'          => 'KI Übersetzen',
                 'invalid-swatch-type'   => 'Der :attribute ist für den Attributtyp :type mit dem Farbmuster :swatch_type nicht erlaubt.',
-
                 'single-object-only'    => 'Pro Erstellungsanfrage darf nur ein Attributobjekt gesendet werden.',
                 'option'                => [
                     'color'    => 'Farbfeld',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Attribut erfolgreich gelöscht',
             'update-success'    => 'Attribut erfolgreich aktualisiert',
             'user-define-error' => 'Systemattribut kann nicht gelöscht werden',
-
             'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
             'not-found'         => 'Attribut mit Code „:code“ konnte nicht gefunden werden',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Kategoriefeld erfolgreich aktualisiert',
             'user-define-error' => 'Systemkategoriefeld kann nicht gelöscht werden',
             'not-found'         => 'Kategoriefeld mit Code „:code“ konnte nicht gefunden werden',
-
             'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Konfigurierbare Optionen können nicht aktualisiert werden, da diese Familie bereits Variantenprodukte hat.',
         ],
         'history' => [
-            'view' => 'Versionsdetails anzeigen',
-
+            'view'  => 'Versionsdetails anzeigen',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Pausiert',
                         'cancelled'            => 'Abgebrochen',
                         'failed'               => 'Fehlgeschlagen',
-
-                        'view'       => 'Ansehen',
+                        'view'                 => 'Ansehen',
                     ],
                 ],
                 'import' => [
@@ -1602,18 +1596,18 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Benutzer bearbeiten',
             ],
-            'activate-warning'           => 'Ihr Konto muss noch aktiviert werden. Bitte wenden Sie sich an Administrator.',
-            'cannot-change'              => 'Der Benutzer kann nicht geändert werden',
-            'cannot-escalate-role'       => 'Sie haben keine Berechtigung, eine Rolle mit Vollzugriff zuzuweisen.',
-            'create-success'             => 'Benutzer erfolgreich erstellt.',
-            'delete-failed'              => 'Benutzer gelöscht fehlgeschlagen.',
-            'delete-success'             => 'Benutzer erfolgreich gelöscht.',
-            'delete-warning'             => 'Sind Sie sicher, Sie möchten diese Aktion ausführen?',
-            'incorrect-password'         => 'Falsches Passwort',
-            'last-delete-error'          => 'Der letzte Benutzer löschen fehlgeschlagen',
-            'login-error'                => 'Bitte überprüfen Sie Ihre Anmeldeinformationen und versuchen Sie es erneut.',
-            'update-success'             => 'Benutzer erfolgreich aktualisiert.',
-            'current-user-delete-error'  => 'Der angemeldete Benutzer kann nicht gelöscht werden.',
+            'activate-warning'          => 'Ihr Konto muss noch aktiviert werden. Bitte wenden Sie sich an Administrator.',
+            'cannot-change'             => 'Der Benutzer kann nicht geändert werden',
+            'cannot-escalate-role'      => 'Sie haben keine Berechtigung, eine Rolle mit Vollzugriff zuzuweisen.',
+            'create-success'            => 'Benutzer erfolgreich erstellt.',
+            'delete-failed'             => 'Benutzer gelöscht fehlgeschlagen.',
+            'delete-success'            => 'Benutzer erfolgreich gelöscht.',
+            'delete-warning'            => 'Sind Sie sicher, Sie möchten diese Aktion ausführen?',
+            'incorrect-password'        => 'Falsches Passwort',
+            'last-delete-error'         => 'Der letzte Benutzer löschen fehlgeschlagen',
+            'login-error'               => 'Bitte überprüfen Sie Ihre Anmeldeinformationen und versuchen Sie es erneut.',
+            'update-success'            => 'Benutzer erfolgreich aktualisiert.',
+            'current-user-delete-error' => 'Der angemeldete Benutzer kann nicht gelöscht werden.',
         ],
         'roles' => [
             'index' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompts',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titel',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Textgenerierung',
                 'image-generation'    => 'Bildgenerierung',
                 'select-purpose'      => 'Zweck auswählen',
-                'select-model'        => '-- Modell auswählen --',
+                'select-model'        => 'Modell auswählen',
                 'loading-models'      => 'Modelle werden geladen...',
                 'no-models-available' => 'Keine Modelle verfügbar. Wählen Sie eine Plattform aus oder konfigurieren Sie eine im Reiter Plattformen.',
                 'type'                => 'Typ',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'System-Prompts',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titel',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Bezeichnung',
                 'provider'                 => 'Anbieter',
-                'select-provider'          => '-- Anbieter auswählen --',
+                'select-provider'          => 'Anbieter auswählen',
                 'api-url'                  => 'API-URL',
                 'api-url-hint'             => 'Vorausgefüllt mit dem Standard-Endpunkt. Nur bearbeiten, wenn Sie einen Proxy oder eine benutzerdefinierte Bereitstellung verwenden.',
                 'api-key'                  => 'API-Schlüssel',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'API-Version',
                 'is-default'               => 'Als Standard festlegen',
                 'status'                   => 'Status',
-                'use-default'              => '-- Standardplattform verwenden --',
+                'use-default'              => 'Standardplattform verwenden',
                 'use-default-hint'         => 'Leer lassen, um die als Standard markierte Plattform zu verwenden. Mit * markierte Plattformen sind Standard.',
                 'no-image-platform'        => 'Keine bildfähige Plattform konfiguriert. Fügen Sie zuerst eine OpenAI-, Gemini- oder xAI-Plattform hinzu.',
                 'image-platform-hint'      => 'Nur Plattformen, die Bildgenerierung unterstützen, werden aufgelistet (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Mein Konto',
                 'notifications' => 'Benachrichtigungen',
                 'visit-shop'    => 'Shop besuchen',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Attributfamilien',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Es wurden keine Datensätze ausgewählt.',
                 'must-select-a-mass-action-option' => 'Sie müssen eine Option für eine Massenaktion auswählen.',
                 'must-select-a-mass-action'        => 'Sie müssen eine Massenaktion auswählen.',
+                'link-copied'                      => 'Link in die Zwischenablage kopiert.',
+                'copy-failed'                      => 'Kopieren fehlgeschlagen. Bitte kopieren Sie den Link manuell.',
             ],
             'toolbar' => [
                 'length-of'    => ':length von',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Filter',
                 ],
                 'search_by' => [
-                    'code'       => 'Suche nach Code',
-                    'code_or_id' => 'Suche nach Code oder ID',
+                    'code'        => 'Suche nach Code',
+                    'code_or_id'  => 'Suche nach Code oder ID',
+                    'sku_or_user' => 'Suche nach SKU oder Benutzer',
                 ],
                 'search' => [
                     'title' => 'Suchen',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Standardaufforderung',
-                'select-prompt-template' => '-- Eingabeaufforderungsvorlage auswählen --',
+                'select-prompt-template' => 'Eingabeaufforderungsvorlage auswählen',
             ],
         ],
     ],
@@ -2289,6 +2283,10 @@ return [
             'description' => 'Hoppla! Ihre Sitzung ist abgelaufen. Bitte aktualisieren Sie die Seite und melden Sie sich erneut an, um fortzufahren.',
             'title'       => '419 Sitzung ist abgelaufen',
         ],
+        '405' => [
+            'description' => 'Hoppla! Die Anfragemethode ist für diese URL nicht erlaubt. Bitte verwenden Sie die korrekte Methode oder kehren Sie zur vorherigen Seite zurück.',
+            'title'       => '405 Methode nicht erlaubt',
+        ],
         '500' => [
             'description' => 'Hoppla! Da ist etwas schiefgelaufen. Es scheint, als hätten wir Probleme beim Laden der gesuchten Seite.',
             'title'       => '500 Interner Serverfehler',
@@ -2331,13 +2329,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Ja',
-        'no'             => 'Nein',
-        'true'           => 'Richtig',
-        'false'          => 'Falsch',
-        'enable'         => 'Aktiviert',
-        'disable'        => 'Deaktiviert',
-        'no-match-found' => 'Kein Ergebnis gefunden!',
+        'yes'               => 'Ja',
+        'no'                => 'Nein',
+        'true'              => 'Richtig',
+        'false'             => 'Falsch',
+        'enable'            => 'Aktiviert',
+        'disable'           => 'Deaktiviert',
+        'no-match-found'    => 'Kein Ergebnis gefunden!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

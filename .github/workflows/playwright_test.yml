@@ -20,8 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard-index: [1, 2, 3, 4]
-        shard-total: [4]
+        shard-index: [1,2,3,4,5,6,7,8]
+        shard-total: [8]
 
     services:
       mysql:
@@ -117,8 +117,9 @@ jobs:
       - name: Running UnoPim Installer & Start Server
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+          chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
           php artisan serve --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
-          php artisan queue:work --queue=default,system,completeness > /tmp/queue.log 2>&1 &
+          php artisan queue:work --queue=webhooks,default,system,completeness > /tmp/queue.log 2>&1 &
           echo "Waiting for server..."
           timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (cat /tmp/server.log && exit 1)
 
@@ -129,7 +130,7 @@ jobs:
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
           path: |

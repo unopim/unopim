@@ -2,8 +2,10 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
@@ -11,24 +13,51 @@ use Webkul\AiAgent\Services\EmbeddingSimilarityService;
 
 class FindSimilarProducts implements PimTool
 {
-    use ChecksPermission;
-
     public function __construct(
         protected EmbeddingSimilarityService $embeddingSimilarityService,
     ) {}
 
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('find_similar_products')
-            ->for('Find similar products using AI embeddings.')
-            ->withStringParameter('query', 'Semantic query text for similarity search')
-            ->withStringParameter('sku', 'Existing product SKU to find similar items for')
-            ->withNumberParameter('limit', 'Maximum similar products to return (default 10, max 30)')
-            ->using(function (?string $query = null, ?string $sku = null, int $limit = 10) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products')) {
+        $embeddingSimilarityService = $this->embeddingSimilarityService;
+
+        return new class($context, $embeddingSimilarityService) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function __construct(ChatContext $context, protected EmbeddingSimilarityService $embeddingSimilarityService)
+            {
+                parent::__construct($context);
+            }
+
+            public function name(): string
+            {
+                return 'find_similar_products';
+            }
+
+            public function description(): string
+            {
+                return 'Find similar products using AI embeddings.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'query' => $schema->string()->description('Semantic query text for similarity search'),
+                    'sku'   => $schema->string()->description('Existing product SKU to find similar items for'),
+                    'limit' => $schema->integer()->description('Maximum similar products to return (default 10, max 30)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products')) {
                     return $denied;
                 }
+
+                $query = $request->string('query')->toString() ?: null;
+                $sku = $request->string('sku')->toString() ?: null;
+                $limit = $request->has('limit') ? (int) $request->get('limit') : 10;
 
                 $limit = min(max($limit, 1), 30);
                 $poolLimit = 150;
@@ -50,7 +79,7 @@ class FindSimilarProducts implements PimTool
 
                 if ($queryText === '' && $sourceProduct) {
                     $sourceValues = json_decode($sourceProduct->values, true) ?? [];
-                    $sourceName = $sourceValues['channel_locale_specific'][$context->channel][$context->locale]['name']
+                    $sourceName = $sourceValues['channel_locale_specific'][$this->context->channel][$this->context->locale]['name']
                         ?? $sourceValues['common']['url_key']
                         ?? $sourceProduct->sku;
 
@@ -84,6 +113,8 @@ class FindSimilarProducts implements PimTool
                 }
 
                 $editBaseUrl = route('admin.catalog.products.edit', ['id' => '__ID__']);
+
+                $context = $this->context;
 
                 $rows = $products->map(function ($p) use ($context, $editBaseUrl) {
                     $values = json_decode($p->values, true) ?? [];
@@ -139,6 +170,7 @@ class FindSimilarProducts implements PimTool
                     'products' => $results,
                     'query'    => $queryText,
                 ]);
-            });
+            }
+        };
     }
 }

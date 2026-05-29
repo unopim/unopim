@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Administrator',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Bekræft adgangskode',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'E-mail',
-                'password'         => 'Adgangskode',
-                'title'            => 'Opret administrator',
+                'admin'                   => 'Administrator',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Bekræft adgangskode',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'E-mail',
+                'password'                => 'Adgangskode',
+                'title'                   => 'Opret administrator',
+                'seed-sample-data'        => 'Installer demoprodukter og demodata',
+                'seeding-sample-data'     => 'Indlæser demoprodukter og demodata, dette kan tage et par minutter...',
+                'seed-sample-data-failed' => 'Demodata kunne ikke indlæses. Du kan installere dem senere via `php artisan unopim:install:demo-data`.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Tilladte valutaer',

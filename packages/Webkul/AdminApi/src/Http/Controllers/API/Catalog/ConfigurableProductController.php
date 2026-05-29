@@ -64,6 +64,7 @@ class ConfigurableProductController extends ProductController
             'additional',
             'values',
             'super_attributes',
+            'variants',
         ]);
 
         try {
@@ -80,6 +81,14 @@ class ConfigurableProductController extends ProductController
                 $this->valuesValidator->validate(data: $data[AbstractType::PRODUCT_VALUES_KEY]);
             } catch (ValidationException $e) {
                 return $this->validateErrorResponse($e->validator->errors()->messages());
+            }
+
+            if (! empty($data['variants']) && is_array($data['variants'])) {
+                try {
+                    $data['variants'] = $this->normalizeVariantsPayload($data['variants']);
+                } catch (ValidationException $e) {
+                    return $this->validateErrorResponse($e->validator->errors()->messages());
+                }
             }
 
             Event::dispatch('catalog.product.create.before');
@@ -222,5 +231,57 @@ class ConfigurableProductController extends ProductController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+    }
+
+    /**
+     * Convert the API-facing `variants` payload as `[{sku, attributes:{attr1: val, attr2: val}}]`
+     *
+     * @param  array<int, array<string, mixed>>  $variants
+     * @return array<string, array<string, mixed>>
+     *
+     * @throws ValidationException
+     */
+    protected function normalizeVariantsPayload(array $variants): array
+    {
+        $validator = Validator::make(
+            ['variants' => $variants],
+            [
+                'variants'              => ['array'],
+                'variants.*'            => ['required', 'array'],
+                'variants.*.sku'        => ['required', 'string'],
+                'variants.*.attributes' => ['required', 'array'],
+            ]
+        );
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $normalized = [];
+
+        foreach (array_values($variants) as $index => $variant) {
+            if (! is_array($variant)) {
+                continue;
+            }
+
+            $sku = $variant['sku'] ?? null;
+            $attributes = $variant['attributes'] ?? null;
+
+            if (empty($sku) || ! is_array($attributes)) {
+                continue;
+            }
+
+            $common = $attributes;
+            $common['sku'] = $sku;
+
+            $normalized['variant_'.$index] = [
+                'sku'    => $sku,
+                'values' => [
+                    AbstractType::COMMON_VALUES_KEY => $common,
+                ],
+            ];
+        }
+
+        return $normalized;
     }
 }
