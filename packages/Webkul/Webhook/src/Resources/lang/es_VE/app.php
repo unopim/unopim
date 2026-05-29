@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'La URL del Webhook debe comenzar con http:// o https://.',
                         'connection_failed' => 'No se pudo acceder a la URL del Webhook. Verifique la URL.',
                         'unreachable'       => 'La URL del Webhook no es válida (HTTP :code).',
+                        'unsafe'            => 'La URL del webhook apunta a una dirección privada, de loopback o interna y no está permitida.',
                     ],
                     'success'    => 'Configuración del Webhook guardada exitosamente',
                     'logs-title' => 'Registros',

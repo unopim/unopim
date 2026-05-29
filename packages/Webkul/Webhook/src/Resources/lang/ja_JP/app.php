@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'Webhook URL は http:// または https:// で始まる必要があります。',
                         'connection_failed' => 'Webhook URL に到達できませんでした。URL を確認してください。',
                         'unreachable'       => 'Webhook URL が無効です (HTTP :code)。',
+                        'unsafe'            => 'Webhook URL がプライベート、ループバック、または内部アドレスを指しているため許可されていません。',
                     ],
                     'success'    => 'Webhook設定が正常に保存されました',
                     'logs-title' => 'ログ',

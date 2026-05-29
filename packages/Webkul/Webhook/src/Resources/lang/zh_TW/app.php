@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'Webhook URL 必須以 http:// 或 https:// 開頭。',
                         'connection_failed' => '無法存取 Webhook URL。請檢查 URL。',
                         'unreachable'       => 'Webhook URL 無效 (HTTP :code)。',
+                        'unsafe'            => 'Webhook URL 指向私有、回環或內部地址,不被允許。',
                     ],
                     'success'    => 'Webhook 設定已成功儲存',
                     'logs-title' => '日誌',

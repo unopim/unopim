@@ -48,6 +48,11 @@ jobs:
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
       INVALID_ADMIN_EMAIL: ${{ secrets.INVALID_ADMIN_EMAIL }}
       INVALID_ADMIN_PASSWORD: ${{ secrets.INVALID_ADMIN_PASSWORD }}
+      # E2E only: lets webhook-delivery.spec.js point UnoPim at a localhost
+      # catcher (127.0.0.1:<port>). SafeWebhookUrl blocks loopback by default
+      # in prod; this flag re-allows loopback ONLY — private / link-local /
+      # multicast / reserved IP ranges stay blocked.
+      WEBHOOK_ALLOW_LOOPBACK: 'true'
 
     steps:
       - name: Checkout

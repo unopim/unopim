@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'Webhook URL\'si http:// veya https:// ile başlamalıdır.',
                         'connection_failed' => 'Webhook URL\'sine erişilemedi. Lütfen URL\'yi kontrol edin.',
                         'unreachable'       => 'Webhook URL geçerli değil (HTTP :code).',
+                        'unsafe'            => 'Webhook URL\'si özel, geri döngü veya dahili bir adrese işaret ediyor ve izin verilmiyor.',
                     ],
                     'success'    => 'Webhook ayarları başarıyla kaydedildi',
                     'logs-title' => 'Günlükler',
