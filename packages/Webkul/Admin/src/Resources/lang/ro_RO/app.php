@@ -1609,6 +1609,20 @@ return [
             'update-success'            => 'Utilizatorul a fost actualizat cu succes.',
             'current-user-delete-error' => 'Nu se poate șterge utilizatorul conectat.',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Creează Rol',
@@ -1977,6 +1991,7 @@ return [
                 'themes'             => 'Teme',
                 'users'              => 'Utilizatori',
                 'integrations'       => 'Integrare',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'Prompt',
                 'general-tab'        => 'Configurare',
             ],
@@ -2198,6 +2213,7 @@ return [
         'attributes'               => 'Atribute',
         'cancel'                   => 'Anulare',
         'catalog'                  => 'Catalog',
+        'appearance'               => 'Appearance',
         'categories'               => 'Categorii',
         'channels'                 => 'Canale',
         'configure'                => 'Configurare',

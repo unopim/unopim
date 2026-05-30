@@ -1609,6 +1609,20 @@ return [
             'update-success'            => 'Användare uppdaterad framgångsrikt.',
             'current-user-delete-error' => 'Den inloggade användaren kan inte tas bort.',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Skapa Roll',
@@ -1977,6 +1991,7 @@ return [
                 'themes'             => 'Teman',
                 'users'              => 'Användare',
                 'integrations'       => 'Integrationer',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'Prompt',
                 'general-tab'        => 'Konfiguration',
             ],
@@ -2198,6 +2213,7 @@ return [
         'attributes'               => 'Attribut',
         'cancel'                   => 'Avbryt',
         'catalog'                  => 'Katalog',
+        'appearance'               => 'Appearance',
         'categories'               => 'Kategorier',
         'channels'                 => 'Kanaler',
         'configure'                => 'Konfigurera',

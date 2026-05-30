@@ -1609,6 +1609,20 @@ return [
             'update-success'            => 'Käyttäjä päivitettiin onnistuneesti.',
             'current-user-delete-error' => 'Kirjautunutta käyttäjää ei voi poistaa.',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Luo Rooli',
@@ -1977,6 +1991,7 @@ return [
                 'themes'             => 'Teemat',
                 'users'              => 'Käyttäjät',
                 'integrations'       => 'Integraatiot',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'Kehote',
                 'general-tab'        => 'Määritys',
             ],
@@ -2198,6 +2213,7 @@ return [
         'attributes'               => 'Attribuutit',
         'cancel'                   => 'Peruuta',
         'catalog'                  => 'Tuoteluettelo',
+        'appearance'               => 'Appearance',
         'categories'               => 'Kategoriat',
         'channels'                 => 'Kanavat',
         'configure'                => 'Konfiguroi',

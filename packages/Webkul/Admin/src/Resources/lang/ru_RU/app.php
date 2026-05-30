@@ -1609,6 +1609,20 @@ return [
             'update-success'            => 'Пользователь успешно обновлен.',
             'current-user-delete-error' => 'Зарегистрированный пользователь не может быть удален.',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Создать роль',
@@ -1977,6 +1991,7 @@ return [
                 'themes'             => 'Темы',
                 'users'              => 'Пользователи',
                 'integrations'       => 'Интеграции',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'Подсказка',
                 'general-tab'        => 'Настройки',
             ],
@@ -2198,6 +2213,7 @@ return [
         'attributes'               => 'Атрибуты',
         'cancel'                   => 'Отмена',
         'catalog'                  => 'Каталог',
+        'appearance'               => 'Appearance',
         'categories'               => 'Категории',
         'channels'                 => 'каналы',
         'configure'                => 'Настройка',

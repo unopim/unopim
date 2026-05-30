@@ -1609,6 +1609,20 @@ return [
             'update-success'            => '사용자가 성공적으로 업데이트되었습니다.',
             'current-user-delete-error' => '로그인한 사용자는 삭제할 수 없습니다.',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => '역할 생성',
@@ -1977,6 +1991,7 @@ return [
                 'themes'             => '테마',
                 'users'              => '사용자',
                 'integrations'       => '통합',
+                'appearance'         => 'Appearance',
                 'prompt'             => '프롬프트',
                 'general-tab'        => '구성',
             ],
@@ -2198,6 +2213,7 @@ return [
         'attributes'               => '속성',
         'cancel'                   => '취소',
         'catalog'                  => '카탈로그',
+        'appearance'               => 'Appearance',
         'categories'               => '카테고리',
         'channels'                 => '채널',
         'configure'                => '구성',
