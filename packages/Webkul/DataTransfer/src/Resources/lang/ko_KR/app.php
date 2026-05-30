@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => '카테고리 필드',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '카테고리 필드 코드 :code 는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 카테고리 필드 코드를 찾을 수 없습니다.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => '속성',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '속성 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete'             => '삭제할 속성 코드를 찾을 수 없습니다.',
+                    'code_is_system_and_cannot_be_deleted' => '시스템 속성은 삭제할 수 없습니다.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => '속성 그룹',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '속성 그룹 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete'             => '삭제할 속성 그룹 코드를 찾을 수 없습니다.',
+                    'code_is_system_and_cannot_be_deleted' => '시스템 속성 그룹은 삭제할 수 없습니다.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => '속성 계열',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '속성 계열 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 속성 계열 코드를 찾을 수 없습니다.',
+                    'invalid-attribute-group'  => '속성 그룹 ":code"가 존재하지 않습니다.',
+                    'invalid-attribute'        => '속성 ":code"가 존재하지 않습니다.',
+                    'invalid-channel'          => '채널 ":code"가 존재하지 않습니다.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => '속성 옵션',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '속성 옵션 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 속성 옵션 코드를 찾을 수 없습니다.',
+                    'locale-not-exist'         => '로캘 ":code"가 존재하지 않습니다.',
+                    'invalid-attribute'        => '속성 ":code"가 존재하지 않습니다.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => '채널',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => '카테고리',
         ],
+        'category-fields' => [
+            'title' => '카테고리 필드',
+        ],
+        'attributes' => [
+            'title' => '속성',
+        ],
+        'attribute-groups' => [
+            'title' => '속성 그룹',
+        ],
+        'attribute-families' => [
+            'title' => '속성 계열',
+        ],
+        'attribute-options' => [
+            'title' => '속성 옵션',
+        ],
         'channels' => [
             'title' => '채널',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => '헤더에 유효하지 않은 속성이 있습니다: "%s".',
             'system'               => '예기치 않은 시스템 오류가 발생했습니다.',
             'wrong-quotes'         => '쌍따옴표 대신 곧은 따옴표가 사용되었습니다.',
-            'file-empty'           => '파일이 비어 있거나 헤더 행이 없습니다. 데이터가 포함된 유효한 파일을 업로드하세요.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

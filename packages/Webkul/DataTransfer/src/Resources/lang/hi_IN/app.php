@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'श्रेणी फ़ील्ड',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'श्रेणी फ़ील्ड कोड :code पहले से उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए श्रेणी फ़ील्ड कोड नहीं मिला।',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'विशेषताएँ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'विशेषता कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete'             => 'हटाने के लिए विशेषता कोड नहीं मिला।',
+                    'code_is_system_and_cannot_be_deleted' => 'सिस्टम विशेषता को हटाया नहीं जा सकता।',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'विशेषता समूह',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'विशेषता समूह कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete'             => 'हटाने के लिए विशेषता समूह कोड नहीं मिला।',
+                    'code_is_system_and_cannot_be_deleted' => 'सिस्टम विशेषता समूह को हटाया नहीं जा सकता।',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'विशेषता परिवार',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'विशेषता परिवार कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए विशेषता परिवार कोड नहीं मिला।',
+                    'invalid-attribute-group'  => 'विशेषता समूह ":code" मौजूद नहीं है।',
+                    'invalid-attribute'        => 'विशेषता ":code" मौजूद नहीं है।',
+                    'invalid-channel'          => 'चैनल ":code" मौजूद नहीं है।',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'विशेषता विकल्प',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'विशेषता विकल्प कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए विशेषता विकल्प कोड नहीं मिला।',
+                    'locale-not-exist'         => 'लोकेल ":code" मौजूद नहीं है।',
+                    'invalid-attribute'        => 'विशेषता ":code" मौजूद नहीं है।',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'चैनल',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'श्रेणियाँ',
         ],
+        'category-fields' => [
+            'title' => 'श्रेणी फ़ील्ड',
+        ],
+        'attributes' => [
+            'title' => 'विशेषताएँ',
+        ],
+        'attribute-groups' => [
+            'title' => 'विशेषता समूह',
+        ],
+        'attribute-families' => [
+            'title' => 'विशेषता परिवार',
+        ],
+        'attribute-options' => [
+            'title' => 'विशेषता विकल्प',
+        ],
         'channels' => [
             'title' => 'चैनल',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'शीर्षलेख में अमान्य विशेषताएँ शामिल हैं: "%s"।',
             'system'               => 'एक अप्रत्याशित सिस्टम त्रुटि उत्पन्न हुई.',
             'wrong-quotes'         => 'सीधे उद्धरणों के स्थान पर घुंघराले उद्धरणों का प्रयोग किया गया।',
-            'file-empty'           => 'फ़ाइल खाली है या इसमें शीर्षक पंक्ति नहीं है। कृपया डेटा वाली एक वैध फ़ाइल अपलोड करें।',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

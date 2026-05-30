@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Câmpuri categorie',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Codul câmpului de categorie :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul câmpului de categorie nu a fost găsit pentru ștergere.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atribute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Codul atributului :code este deja utilizat.',
+                    'code_not_found_to_delete'             => 'Codul atributului nu a fost găsit pentru ștergere.',
+                    'code_is_system_and_cannot_be_deleted' => 'Atributul de sistem nu poate fi șters.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupuri de atribute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Codul grupului de atribute :code este deja utilizat.',
+                    'code_not_found_to_delete'             => 'Codul grupului de atribute nu a fost găsit pentru ștergere.',
+                    'code_is_system_and_cannot_be_deleted' => 'Grupul de atribute de sistem nu poate fi șters.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Familii de atribute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Codul familiei de atribute :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul familiei de atribute nu a fost găsit pentru ștergere.',
+                    'invalid-attribute-group'  => 'Grupul de atribute ":code" nu există.',
+                    'invalid-attribute'        => 'Atributul ":code" nu există.',
+                    'invalid-channel'          => 'Canalul ":code" nu există.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opțiuni atribute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Codul opțiunii atributului :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul opțiunii atributului nu a fost găsit pentru ștergere.',
+                    'locale-not-exist'         => 'Numele de localizare ":code" nu există.',
+                    'invalid-attribute'        => 'Atributul ":code" nu există.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Canale',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Categorii',
         ],
+        'category-fields' => [
+            'title' => 'Câmpuri categorie',
+        ],
+        'attributes' => [
+            'title' => 'Atribute',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupuri de atribute',
+        ],
+        'attribute-families' => [
+            'title' => 'Familii de atribute',
+        ],
+        'attribute-options' => [
+            'title' => 'Opțiuni atribute',
+        ],
         'channels' => [
             'title' => 'Canale',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Antetul conține atribute invalide: "%s".',
             'system'               => 'A apărut o eroare sistemică neașteptată.',
             'wrong-quotes'         => 'A fost utilizată virgulă în loc de virgulă directă.',
-            'file-empty'           => 'Fișierul este gol sau nu conține un rând de antet. Vă rugăm să încărcați un fișier valid cu date.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

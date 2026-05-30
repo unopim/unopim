@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Champs de catégorie',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Le code du champ de catégorie :code est déjà utilisé.',
+                    'code_not_found_to_delete' => 'Le code du champ de catégorie n\'a pas été trouvé pour suppression.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attributs',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Le code d\'attribut :code est déjà utilisé.',
+                    'code_not_found_to_delete'             => 'Code d\'attribut introuvable pour la suppression.',
+                    'code_is_system_and_cannot_be_deleted' => 'L\'attribut système ne peut pas être supprimé.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Groupes d\'attributs',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Le code du groupe d\'attributs :code est déjà utilisé.',
+                    'code_not_found_to_delete'             => 'Code du groupe d\'attributs introuvable pour la suppression.',
+                    'code_is_system_and_cannot_be_deleted' => 'Le groupe d\'attributs système ne peut pas être supprimé.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Familles d\'attributs',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Le code de la famille d\'attributs :code est déjà utilisé.',
+                    'code_not_found_to_delete' => 'Code de la famille d\'attributs introuvable pour la suppression.',
+                    'invalid-attribute-group'  => 'Le groupe d\'attributs ":code" n\'existe pas.',
+                    'invalid-attribute'        => 'L\'attribut ":code" n\'existe pas.',
+                    'invalid-channel'          => 'Le canal ":code" n\'existe pas.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Options d\'attribut',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Le code de l\'option d\'attribut :code est déjà utilisé.',
+                    'code_not_found_to_delete' => 'Code de l\'option d\'attribut introuvable pour la suppression.',
+                    'locale-not-exist'         => 'La langue ":code" n\'existe pas.',
+                    'invalid-attribute'        => 'L\'attribut ":code" n\'existe pas.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Canaux',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Catégories',
         ],
+        'category-fields' => [
+            'title' => 'Champs de catégorie',
+        ],
+        'attributes' => [
+            'title' => 'Attributs',
+        ],
+        'attribute-groups' => [
+            'title' => 'Groupes d\'attributs',
+        ],
+        'attribute-families' => [
+            'title' => 'Familles d\'attributs',
+        ],
+        'attribute-options' => [
+            'title' => 'Options d\'attribut',
+        ],
         'channels' => [
             'title' => 'Canaux',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Header enthält ungültige Attribute: „%s“.',
             'system'               => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
             'wrong-quotes'         => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
-            'file-empty'           => 'Le fichier est vide ou ne contient pas de ligne d\'en-tête. Veuillez télécharger un fichier valide contenant des données.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

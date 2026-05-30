@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Mga Field ng Kategorya',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Ang code ng field ng kategorya :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng field ng kategorya para burahin.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Mga Tampok',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Ang code ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete'             => 'Hindi natagpuan ang code ng tampok para burahin.',
+                    'code_is_system_and_cannot_be_deleted' => 'Hindi maaaring burahin ang system feature.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Mga Grupo ng Tampok',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Ang code ng grupo ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete'             => 'Hindi natagpuan ang code ng grupo ng tampok para burahin.',
+                    'code_is_system_and_cannot_be_deleted' => 'Hindi maaaring burahin ang system feature group.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Mga Pamilya ng Tampok',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Ang code ng pamilya ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng pamilya ng tampok para burahin.',
+                    'invalid-attribute-group'  => 'Ang grupo ng tampok na ":code" ay hindi umiiral.',
+                    'invalid-attribute'        => 'Ang tampok na ":code" ay hindi umiiral.',
+                    'invalid-channel'          => 'Ang channel na ":code" ay hindi umiiral.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Mga Pagpipilian sa Tampok',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Ang code ng opsyon ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng opsyon ng tampok para burahin.',
+                    'locale-not-exist'         => 'Ang locale na ":code" ay hindi umiiral.',
+                    'invalid-attribute'        => 'Ang tampok na ":code" ay hindi umiiral.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Mga Channel',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Mga Kategorya',
         ],
+        'category-fields' => [
+            'title' => 'Mga Field ng Kategorya',
+        ],
+        'attributes' => [
+            'title' => 'Mga Tampok',
+        ],
+        'attribute-groups' => [
+            'title' => 'Mga Grupo ng Tampok',
+        ],
+        'attribute-families' => [
+            'title' => 'Mga Pamilya ng Tampok',
+        ],
+        'attribute-options' => [
+            'title' => 'Mga Pagpipilian sa Tampok',
+        ],
         'channels' => [
             'title' => 'Mga Channel',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Ang ulo ay may hindi wasto na mga attribute: "%s".',
             'system'               => 'Isang hindi inaasahang error ng sistema ang nangyari.',
             'wrong-quotes'         => 'Ginamit ang mga kurbadong mga quote sa halip na mga tuwid na quote.',
-            'file-empty'           => 'Ang file ay walang laman o walang header row. Mangyaring mag-upload ng wastong file na may datos.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

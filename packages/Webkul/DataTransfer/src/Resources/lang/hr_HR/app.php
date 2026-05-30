@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Polja kategorije',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod polja kategorije :code već je u upotrebi.',
+                    'code_not_found_to_delete' => 'Kod polja kategorije nije pronađen za brisanje.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Značajke',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod značajke :code već se koristi.',
+                    'code_not_found_to_delete'             => 'Kod značajke nije pronađen za brisanje.',
+                    'code_is_system_and_cannot_be_deleted' => 'Značajka sustava ne može se izbrisati.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupe značajki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod grupe značajki :code već se koristi.',
+                    'code_not_found_to_delete'             => 'Kod grupe značajki nije pronađen za brisanje.',
+                    'code_is_system_and_cannot_be_deleted' => 'Grupa značajki sustava ne može se izbrisati.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Obitelji značajki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod obitelji značajki :code već se koristi.',
+                    'code_not_found_to_delete' => 'Kod obitelji značajki nije pronađen za brisanje.',
+                    'invalid-attribute-group'  => 'Grupa značajki ":code" ne postoji.',
+                    'invalid-attribute'        => 'Značajka ":code" ne postoji.',
+                    'invalid-channel'          => 'Kanal ":code" ne postoji.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opcije značajki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod opcije značajki :code već se koristi.',
+                    'code_not_found_to_delete' => 'Kod opcije značajki nije pronađen za brisanje.',
+                    'locale-not-exist'         => 'Lokalizacija ":code" ne postoji.',
+                    'invalid-attribute'        => 'Značajka ":code" ne postoji.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanali',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Kategorije',
         ],
+        'category-fields' => [
+            'title' => 'Polja kategorije',
+        ],
+        'attributes' => [
+            'title' => 'Značajke',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupe značajki',
+        ],
+        'attribute-families' => [
+            'title' => 'Obitelji značajki',
+        ],
+        'attribute-options' => [
+            'title' => 'Opcije značajki',
+        ],
         'channels' => [
             'title' => 'Kanali',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Zaglavlje sadrži neispravne atribut(e): "%s".',
             'system'               => 'Došlo je do neočekivane sistemske greške.',
             'wrong-quotes'         => 'Kovrčave navodnike koristite umjesto ravnih navodnika.',
-            'file-empty'           => 'Datoteka je prazna ili ne sadrži redak zaglavlja. Molimo učitajte valjanu datoteku s podacima.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Campi categoria',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Il codice del campo categoria :code è già in uso.',
+                    'code_not_found_to_delete' => 'Il codice del campo categoria non è stato trovato per l\'eliminazione.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attributi',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Il codice attributo :code è già in uso.',
+                    'code_not_found_to_delete'             => 'Codice attributo non trovato per l\'eliminazione.',
+                    'code_is_system_and_cannot_be_deleted' => 'L\'attributo di sistema non può essere eliminato.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Gruppi di attributi',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Il codice del gruppo di attributi :code è già in uso.',
+                    'code_not_found_to_delete'             => 'Codice del gruppo di attributi non trovato per l\'eliminazione.',
+                    'code_is_system_and_cannot_be_deleted' => 'Il gruppo di attributi di sistema non può essere eliminato.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Famiglie di attributi',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Il codice della famiglia di attributi :code è già in uso.',
+                    'code_not_found_to_delete' => 'Codice della famiglia di attributi non trovato per l\'eliminazione.',
+                    'invalid-attribute-group'  => 'Il gruppo di attributi ":code" non esiste.',
+                    'invalid-attribute'        => 'L\'attributo ":code" non esiste.',
+                    'invalid-channel'          => 'Il canale ":code" non esiste.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opzioni attributo',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Il codice dell\'opzione attributo :code è già in uso.',
+                    'code_not_found_to_delete' => 'Codice dell\'opzione attributo non trovato per l\'eliminazione.',
+                    'locale-not-exist'         => 'La lingua ":code" non esiste.',
+                    'invalid-attribute'        => 'L\'attributo ":code" non esiste.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Canali',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Categorie',
         ],
+        'category-fields' => [
+            'title' => 'Campi categoria',
+        ],
+        'attributes' => [
+            'title' => 'Attributi',
+        ],
+        'attribute-groups' => [
+            'title' => 'Gruppi di attributi',
+        ],
+        'attribute-families' => [
+            'title' => 'Famiglie di attributi',
+        ],
+        'attribute-options' => [
+            'title' => 'Opzioni attributo',
+        ],
         'channels' => [
             'title' => 'Canali',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'L\'intestazione contiene attributi non validi: "%s".',
             'system'               => 'Si è verificato un errore di sistema imprevisto.',
             'wrong-quotes'         => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
-            'file-empty'           => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

@@ -312,6 +312,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Add filterable attributes that are not already in the visible columns
      * so they appear in the filter panel without being shown in the grid.
+     *
+     * Performance: Loading ALL filterable attributes on every page request causes
+     * a PHP timeout with large attribute sets (1800+). Instead, we only hydrate
+     * the specific attribute columns that are actually being filtered in this
+     * request. On a plain listing page (no attribute filters), this method
+     * returns immediately with zero extra DB queries.
      */
     protected function addFilterableAttributes(): void
     {
@@ -320,9 +326,28 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             array_keys($this->attributeColumns)
         );
 
+        // Determine which filters are being applied in this request.
+        $requestedFilters = array_keys(request()->input('filters', []));
+
+        // Remove built-in property columns and reserved filter keys so we are
+        // left with only the attribute codes the user is filtering on.
+        $propertyColumnKeys = array_merge(
+            array_keys($this->getPropertyColumns()),
+            ['channel', 'locale', 'all', 'indices']
+        );
+
+        $activeAttributeFilters = array_diff($requestedFilters, $propertyColumnKeys, $existingCodes);
+
+        // No attribute-based filters active — skip the expensive full load.
+        if (empty($activeAttributeFilters)) {
+            return;
+        }
+
+        // Only fetch the specific attributes being filtered right now.
         $filterableAttributes = app(AttributeRepository::class)
             ->where('is_filterable', true)
             ->whereNotIn('code', $existingCodes)
+            ->whereIn('code', array_values($activeAttributeFilters))
             ->get();
 
         foreach ($filterableAttributes as $attribute) {

@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Pola kategorii',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod pola kategorii :code jest już używany.',
+                    'code_not_found_to_delete' => 'Nie znaleziono kodu pola kategorii do usunięcia.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atrybuty',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod atrybutu :code jest już w użyciu.',
+                    'code_not_found_to_delete'             => 'Nie znaleziono kodu atrybutu do usunięcia.',
+                    'code_is_system_and_cannot_be_deleted' => 'Nie można usunąć atrybutu systemowego.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupy atrybutów',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod grupy atrybutów :code jest już w użyciu.',
+                    'code_not_found_to_delete'             => 'Nie znaleziono kodu grupy atrybutów do usunięcia.',
+                    'code_is_system_and_cannot_be_deleted' => 'Nie można usunąć systemowej grupy atrybutów.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Rodziny atrybutów',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod rodziny atrybutów :code jest już w użyciu.',
+                    'code_not_found_to_delete' => 'Nie znaleziono kodu rodziny atrybutów do usunięcia.',
+                    'invalid-attribute-group'  => 'Grupa atrybutów ":code" nie istnieje.',
+                    'invalid-attribute'        => 'Atrybut ":code" nie istnieje.',
+                    'invalid-channel'          => 'Kanał ":code" nie istnieje.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opcje atrybutu',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod opcji atrybutu :code jest już w użyciu.',
+                    'code_not_found_to_delete' => 'Nie znaleziono kodu opcji atrybutu do usunięcia.',
+                    'locale-not-exist'         => 'Ustawienia regionalne ":code" nie istnieją.',
+                    'invalid-attribute'        => 'Atrybut ":code" nie istnieje.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanały',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Kategorie',
         ],
+        'category-fields' => [
+            'title' => 'Pola kategorii',
+        ],
+        'attributes' => [
+            'title' => 'Atrybuty',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupy atrybutów',
+        ],
+        'attribute-families' => [
+            'title' => 'Rodziny atrybutów',
+        ],
+        'attribute-options' => [
+            'title' => 'Opcje atrybutu',
+        ],
         'channels' => [
             'title' => 'Kanały',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Nagłówek zawiera nieprawidłowe atrybuty: "%s".',
             'system'               => 'Wystąpił nieoczekiwany błąd systemowy.',
             'wrong-quotes'         => 'Zastosowano krzywe cudzysłowy zamiast prostych cudzysłowów.',
-            'file-empty'           => 'Plik jest pusty lub nie zawiera wiersza nagłówkowego. Proszę przesłać prawidłowy plik z danymi.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Поля категорії',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код поля категорії :code вже використовується.',
+                    'code_not_found_to_delete' => 'Код поля категорії не знайдено для видалення.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Атрибути',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Код атрибута :code вже використовується.',
+                    'code_not_found_to_delete'             => 'Код атрибута для видалення не знайдено.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системний атрибут не може бути видалено.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Групи атрибутів',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Код групи атрибутів :code вже використовується.',
+                    'code_not_found_to_delete'             => 'Код групи атрибутов для видалення не знайдено.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системна група атрибутів не може бути видалена.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Сімейства атрибутів',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код сімейства атрибутів :code вже використовується.',
+                    'code_not_found_to_delete' => 'Код сімейства атрибутів для видалення не знайдено.',
+                    'invalid-attribute-group'  => 'Група атрибутів ":code" не існує.',
+                    'invalid-attribute'        => 'Атрибут ":code" не існує.',
+                    'invalid-channel'          => 'Канал ":code" не існує.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Варіанти атрибутів',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код варіанта атрибута :code вже використовується.',
+                    'code_not_found_to_delete' => 'Код варіанта атрибута для видалення не знайдено.',
+                    'locale-not-exist'         => 'Локаль ":code" не існує.',
+                    'invalid-attribute'        => 'Атрибут ":code" не існує.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Канали',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Категорії',
         ],
+        'category-fields' => [
+            'title' => 'Поля категорії',
+        ],
+        'attributes' => [
+            'title' => 'Атрибути',
+        ],
+        'attribute-groups' => [
+            'title' => 'Групи атрибутів',
+        ],
+        'attribute-families' => [
+            'title' => 'Сімейства атрибутів',
+        ],
+        'attribute-options' => [
+            'title' => 'Варіанти атрибутів',
+        ],
         'channels' => [
             'title' => 'Канали',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Заголовок містить недійсні атрибути: "%s".',
             'system'               => 'Сталася несподівана система помилка.',
             'wrong-quotes'         => 'Використано криві лапки замість прямих лапок.',
-            'file-empty'           => 'Файл порожній або не містить рядка заголовка. Будь ласка, завантажте коректний файл з даними.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

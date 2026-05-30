@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'حقول الفئة',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'رمز حقل الفئة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على رمز حقل الفئة للحذف.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'السمات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'كود السمة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete'             => 'لم يتم العثور على كود السمة للحذف.',
+                    'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف سمة النظام.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'مجموعات السمات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'كود مجموعة السمات :code مستخدم بالفعل.',
+                    'code_not_found_to_delete'             => 'لم يتم العثور على كود مجموعة السمات للحذف.',
+                    'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف مجموعة سمات النظام.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'عائلات السمات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'كود عائلة السمات :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على كود عائلة السمات للحذف.',
+                    'invalid-attribute-group'  => 'مجموعة السمات ":code" غير موجودة.',
+                    'invalid-attribute'        => 'السمة ":code" غير موجودة.',
+                    'invalid-channel'          => 'القناة ":code" غير موجودة.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'خيارات السمة',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'كود خيار السمة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على كود خيار السمة للحذف.',
+                    'locale-not-exist'         => 'اللغة المحلية ":code" غير موجودة.',
+                    'invalid-attribute'        => 'السمة ":code" غير موجودة.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'القنوات',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'فئات',
         ],
+        'attributes' => [
+            'title' => 'السمات',
+        ],
+        'attribute-groups' => [
+            'title' => 'مجموعات السمات',
+        ],
+        'attribute-families' => [
+            'title' => 'عائلات السمات',
+        ],
+        'attribute-options' => [
+            'title' => 'خيارات السمة',
+        ],
+        'category-fields' => [
+            'title' => 'حقول الفئة',
+        ],
         'channels' => [
             'title' => 'القنوات',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'يحتوي الرأس على سمة (سمات) غير صالحة: "%s".',
             'system'               => 'حدث خطأ غير متوقع في النظام.',
             'wrong-quotes'         => 'يتم استخدام علامات الاقتباس المتعرجة بدلاً من علامات الاقتباس المستقيمة.',
-            'file-empty'           => 'الملف فارغ أو لا يحتوي على صف رأس. يرجى تحميل ملف صالح يحتوي على بيانات.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

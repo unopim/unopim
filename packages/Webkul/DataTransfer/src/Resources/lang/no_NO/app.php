@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Kategorifelter',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategorifeltskode :code er allerede i bruk.',
+                    'code_not_found_to_delete' => 'Kategorifeltskode ble ikke funnet for sletting.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attributter',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributtkoden :code er allerede i bruk.',
+                    'code_not_found_to_delete'             => 'Attributtkoden ble ikke funnet for sletting.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributt kan ikke slettes.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attributtgrupper',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributtgruppekoden :code er allerede i bruk.',
+                    'code_not_found_to_delete'             => 'Attributtgruppekoden ble ikke funnet for sletting.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributtgruppe kan ikke slettes.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attributtfamilier',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributtfamiliekoden :code er allerede i bruk.',
+                    'code_not_found_to_delete' => 'Attributtfamiliekoden ble ikke funnet for sletting.',
+                    'invalid-attribute-group'  => 'Attributtgruppen ":code" eksisterer ikke.',
+                    'invalid-attribute'        => 'Attributtet ":code" eksisterer ikke.',
+                    'invalid-channel'          => 'Kanalen ":code" eksisterer ikke.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attributtalternativer',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributtalternativkoden :code er allerede i bruk.',
+                    'code_not_found_to_delete' => 'Attributtalternativkoden ble ikke funnet for sletting.',
+                    'locale-not-exist'         => 'Språket ":code" eksisterer ikke.',
+                    'invalid-attribute'        => 'Attributtet ":code" eksisterer ikke.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanaler',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Kategorier',
         ],
+        'category-fields' => [
+            'title' => 'Kategorifelter',
+        ],
+        'attributes' => [
+            'title' => 'Attributter',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attributtgrupper',
+        ],
+        'attribute-families' => [
+            'title' => 'Attributtfamilier',
+        ],
+        'attribute-options' => [
+            'title' => 'Attributtalternativer',
+        ],
         'channels' => [
             'title' => 'Kanaler',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Overskrift inneholder ugyldige attributter: "%s".',
             'system'               => 'En uventet systemfeil oppstod.',
             'wrong-quotes'         => 'Skråstilt anførselstegn brukt i stedet for rette anførselstegn.',
-            'file-empty'           => 'Filen er tom eller inneholder ingen overskriftsrad. Vennligst last opp en gyldig fil med data.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

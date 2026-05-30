@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Field Kategori',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kode field kategori :code sudah digunakan.',
+                    'code_not_found_to_delete' => 'Kode field kategori tidak ditemukan untuk dihapus.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atribut',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kode atribut :code sudah digunakan.',
+                    'code_not_found_to_delete'             => 'Kode atribut tidak ditemukan untuk dihapus.',
+                    'code_is_system_and_cannot_be_deleted' => 'Atribut sistem tidak dapat dihapus.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grup Atribut',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kode grup atribut :code sudah digunakan.',
+                    'code_not_found_to_delete'             => 'Kode grup atribut tidak ditemukan untuk dihapus.',
+                    'code_is_system_and_cannot_be_deleted' => 'Grup atribut sistem tidak dapat dihapus.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Keluarga Atribut',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kode keluarga atribut :code sudah digunakan.',
+                    'code_not_found_to_delete' => 'Kode keluarga atribut tidak ditemukan untuk dihapus.',
+                    'invalid-attribute-group'  => 'Grup atribut ":code" tidak ada.',
+                    'invalid-attribute'        => 'Atribut ":code" tidak ada.',
+                    'invalid-channel'          => 'Saluran ":code" tidak ada.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opsi Atribut',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kode opsi atribut :code sudah digunakan.',
+                    'code_not_found_to_delete' => 'Kode opsi atribut tidak ditemukan untuk dihapus.',
+                    'locale-not-exist'         => 'Lokal ":code" tidak ada.',
+                    'invalid-attribute'        => 'Atribut ":code" tidak ada.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Saluran',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Kategori',
         ],
+        'category-fields' => [
+            'title' => 'Field Kategori',
+        ],
+        'attributes' => [
+            'title' => 'Atribut',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grup Atribut',
+        ],
+        'attribute-families' => [
+            'title' => 'Keluarga Atribut',
+        ],
+        'attribute-options' => [
+            'title' => 'Opsi Atribut',
+        ],
         'channels' => [
             'title' => 'Saluran',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Header berisi atribut yang tidak valid: "%s".',
             'system'               => 'Terjadi kesalahan sistem yang tidak terduga.',
             'wrong-quotes'         => 'Kutipan keriting digunakan sebagai pengganti tanda kutip lurus.',
-            'file-empty'           => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

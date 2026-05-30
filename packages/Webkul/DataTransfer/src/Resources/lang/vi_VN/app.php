@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Trường danh mục',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Mã trường danh mục :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã trường danh mục để xóa.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Mã thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete'             => 'Không tìm thấy mã thuộc tính để xóa.',
+                    'code_is_system_and_cannot_be_deleted' => 'Không thể xóa thuộc tính hệ thống.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Nhóm thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Mã nhóm thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete'             => 'Không tìm thấy mã nhóm thuộc tính để xóa.',
+                    'code_is_system_and_cannot_be_deleted' => 'Không thể xóa nhóm thuộc tính hệ thống.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Họ thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Mã họ thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã họ thuộc tính để xóa.',
+                    'invalid-attribute-group'  => 'Nhóm thuộc tính ":code" không tồn tại.',
+                    'invalid-attribute'        => 'Thuộc tính ":code" không tồn tại.',
+                    'invalid-channel'          => 'Kênh ":code" không tồn tại.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Tùy chọn thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Mã tùy chọn thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã tùy chọn thuộc tính để xóa.',
+                    'locale-not-exist'         => 'Vị trí ":code" không tồn tại.',
+                    'invalid-attribute'        => 'Thuộc tính ":code" không tồn tại.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kênh',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Các danh mục',
         ],
+        'category-fields' => [
+            'title' => 'Trường danh mục',
+        ],
+        'attributes' => [
+            'title' => 'Thuộc tính',
+        ],
+        'attribute-groups' => [
+            'title' => 'Nhóm thuộc tính',
+        ],
+        'attribute-families' => [
+            'title' => 'Họ thuộc tính',
+        ],
+        'attribute-options' => [
+            'title' => 'Tùy chọn thuộc tính',
+        ],
         'channels' => [
             'title' => 'Kênh',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
             'system'               => 'Lỗi hệ thống không mong muốn xảy ra.',
             'wrong-quotes'         => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
-            'file-empty'           => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

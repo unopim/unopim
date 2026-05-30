@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => '分類欄位',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '分類欄位代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '找不到要刪除的分類欄位代碼。',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => '屬性',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '屬性代碼 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要刪除的屬性代碼。',
+                    'code_is_system_and_cannot_be_deleted' => '無法刪除系統屬性。',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => '屬性組',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '屬性組代碼 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要刪除的屬性組代碼。',
+                    'code_is_system_and_cannot_be_deleted' => '無法刪除系統屬性組。',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => '屬性族',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '屬性族代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要刪除的屬性族代碼。',
+                    'invalid-attribute-group'  => '屬性組“:code”不存在。',
+                    'invalid-attribute'        => '屬性“:code”不存在。',
+                    'invalid-channel'          => '渠道“:code”不存在。',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => '屬性選項',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '屬性選項代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要刪除的屬性選項代碼。',
+                    'locale-not-exist'         => '區域設置“:code”不存在。',
+                    'invalid-attribute'        => '屬性“:code”不存在。',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => '渠道',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => '分類',
         ],
+        'category-fields' => [
+            'title' => '分類欄位',
+        ],
+        'attributes' => [
+            'title' => '屬性',
+        ],
+        'attribute-groups' => [
+            'title' => '屬性組',
+        ],
+        'attribute-families' => [
+            'title' => '屬性族',
+        ],
+        'attribute-options' => [
+            'title' => '屬性選項',
+        ],
         'channels' => [
             'title' => '渠道',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => '標題包含無效屬性: "%s".',
             'system'               => '發生了一個意外的系統錯誤。',
             'wrong-quotes'         => '使用了弓形引號而不是直引號。',
-            'file-empty'           => '檔案為空或不包含標題列。請上傳包含資料的有效檔案。',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

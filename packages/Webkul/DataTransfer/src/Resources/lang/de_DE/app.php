@@ -32,6 +32,59 @@ return [
                 ],
             ],
         ],
+
+        'category-fields' => [
+            'title'      => 'Kategoriefelder',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Der Code des Kategoriefeldes :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Der Code des Kategoriefeldes wurde zum Löschen nicht gefunden.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attribute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributcode :code wird bereits verwendet.',
+                    'code_not_found_to_delete'             => 'Attributcode zum Löschen nicht gefunden.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattribut kann nicht gelöscht werden.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attributgruppen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributgruppencode :code wird bereits verwendet.',
+                    'code_not_found_to_delete'             => 'Attributgruppencode zum Löschen nicht gefunden.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributgruppe kann nicht gelöscht werden.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attributfamilien',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributfamiliencode :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Attributfamiliencode zum Löschen nicht gefunden.',
+                    'invalid-attribute-group'  => 'Attributgruppe ":code" existiert nicht.',
+                    'invalid-attribute'        => 'Attribut ":code" existiert nicht.',
+                    'invalid-channel'          => 'Kanal ":code" existiert nicht.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attributoptionen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributoptionscode :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Attributoptionscode zum Löschen nicht gefunden.',
+                    'locale-not-exist'         => 'Gebietsschema ":code" existiert nicht.',
+                    'invalid-attribute'        => 'Attribut ":code" existiert nicht.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanäle',
             'validation' => [
@@ -91,6 +144,22 @@ return [
         'categories' => [
             'title' => 'Kategorien',
         ],
+
+        'category-fields' => [
+            'title' => 'Kategoriefelder',
+        ],
+        'attributes' => [
+            'title' => 'Attribute',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attributgruppen',
+        ],
+        'attribute-families' => [
+            'title' => 'Attributfamilien',
+        ],
+        'attribute-options' => [
+            'title' => 'Attributoptionen',
+        ],
         'channels' => [
             'title' => 'Kanäle',
         ],
@@ -118,7 +187,7 @@ return [
             'invalid-attribute'    => 'Header enthält ungültige Attribute: „%s“.',
             'system'               => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
             'wrong-quotes'         => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
-            'file-empty'           => 'Die Datei ist leer oder enthält keine Kopfzeile. Bitte laden Sie eine gültige Datei mit Daten hoch.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

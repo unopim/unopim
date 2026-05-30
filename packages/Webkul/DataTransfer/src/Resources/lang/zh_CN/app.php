@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => '分类字段',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '分类字段代码 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到用于删除的分类字段代码。',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => '属性',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '属性代码 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要删除的属性代码。',
+                    'code_is_system_and_cannot_be_deleted' => '无法删除系统属性。',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => '属性组',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '属性组代码 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要删除的属性组代码。',
+                    'code_is_system_and_cannot_be_deleted' => '无法删除系统属性组。',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => '属性族',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '属性族代码 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要删除的属性族代码。',
+                    'invalid-attribute-group'  => '属性组“:code”不存在。',
+                    'invalid-attribute'        => '属性“:code”不存在。',
+                    'invalid-channel'          => '渠道“:code”不存在。',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => '属性选项',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '属性选项代码 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要删除的属性选项代码。',
+                    'locale-not-exist'         => '区域设置“:code”不存在。',
+                    'invalid-attribute'        => '属性“:code”不存在。',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => '渠道',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => '类别',
         ],
+        'category-fields' => [
+            'title' => '分类字段',
+        ],
+        'attributes' => [
+            'title' => '属性',
+        ],
+        'attribute-groups' => [
+            'title' => '属性组',
+        ],
+        'attribute-families' => [
+            'title' => '属性族',
+        ],
+        'attribute-options' => [
+            'title' => '属性选项',
+        ],
         'channels' => [
             'title' => '渠道',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => '标头包含无效属性：“%s”。',
             'system'               => '发生意外的系统错误。',
             'wrong-quotes'         => '使用弯引号代替直引号。',
-            'file-empty'           => '文件为空或不包含标题行。请上传包含数据的有效文件。',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

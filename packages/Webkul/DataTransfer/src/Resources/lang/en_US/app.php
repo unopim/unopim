@@ -2,6 +2,7 @@
 
 return [
     'importers' => [
+
         'products' => [
             'title' => 'Products',
 
@@ -30,6 +31,63 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'You cannot delete the root category that is associated with a channel',
+                ],
+            ],
+        ],
+
+        'category-fields' => [
+            'title'      => 'Category Fields',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Category field code :code is already in use.',
+                    'code_not_found_to_delete' => 'Category field code not found for deletion.',
+                ],
+            ],
+        ],
+
+        'attributes' => [
+            'title'      => 'Attributes',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribute code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
+                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                ],
+            ],
+        ],
+
+        'attribute-groups' => [
+            'title'      => 'Attribute Groups',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribute group code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute group code not found for deletion.',
+                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                ],
+            ],
+        ],
+
+        'attribute-families' => [
+            'title'      => 'Attribute Families',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribute family code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
+                    'invalid-attribute-group'  => 'Attribute group ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                    'invalid-channel'          => 'Channel ":code" does not exist.',
+                ],
+            ],
+        ],
+
+        'attribute-options' => [
+            'title'      => 'Attribute Options',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribute option code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
+                    'locale-not-exist'         => 'Locale ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
                 ],
             ],
         ],
@@ -78,6 +136,7 @@ return [
     ],
 
     'exporters' => [
+
         'products' => [
             'title' => 'Products',
 
@@ -94,6 +153,26 @@ return [
         'categories' => [
             'title' => 'Categories',
         ],
+        'category-fields' => [
+            'title' => 'Category Fields',
+        ],
+
+        'attributes' => [
+            'title' => 'Attributes',
+        ],
+
+        'attribute-groups' => [
+            'title' => 'Attribute Groups',
+        ],
+
+        'attribute-families' => [
+            'title' => 'Attribute Families',
+        ],
+
+        'attribute-options' => [
+            'title' => 'Attribute Options',
+        ],
+
         'channels' => [
             'title' => 'Channels',
         ],

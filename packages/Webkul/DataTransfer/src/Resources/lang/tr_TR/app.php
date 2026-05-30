@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Kategori Alanları',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategori alan kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silmek için kategori alan kodu bulunamadı.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Nitelikler',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Nitelik kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete'             => 'Silinecek nitelik kodu bulunamadı.',
+                    'code_is_system_and_cannot_be_deleted' => 'Sistem niteliği silinemez.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Nitelik Grupları',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Nitelik grup kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete'             => 'Silinecek nitelik grup kodu bulunamadı.',
+                    'code_is_system_and_cannot_be_deleted' => 'Sistem nitelik grubu silinemez.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Nitelik Aileleri',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Nitelik ailesi kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silinecek nitelik ailesi kodu bulunamadı.',
+                    'invalid-attribute-group'  => 'Nitelik grubu ":code" mevcut değil.',
+                    'invalid-attribute'        => 'Nitelik ":code" mevcut değil.',
+                    'invalid-channel'          => 'Kanal ":code" mevcut değil.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Nitelik Seçenekleri',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Nitelik seçenek kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silinecek nitelik seçenek kodu bulunamadı.',
+                    'locale-not-exist'         => 'Yerel ":code" mevcut değil.',
+                    'invalid-attribute'        => 'Nitelik ":code" mevcut değil.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanallar',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Kategoriler',
         ],
+        'category-fields' => [
+            'title' => 'Kategori Alanları',
+        ],
+        'attributes' => [
+            'title' => 'Nitelikler',
+        ],
+        'attribute-groups' => [
+            'title' => 'Nitelik Grupları',
+        ],
+        'attribute-families' => [
+            'title' => 'Nitelik Aileleri',
+        ],
+        'attribute-options' => [
+            'title' => 'Nitelik Seçenekleri',
+        ],
         'channels' => [
             'title' => 'Kanallar',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Başlık geçersiz attribute(s) içeriyor: "%s".',
             'system'               => 'Beklenmeyen bir sistem hatası oluştu.',
             'wrong-quotes'         => 'Kıvrık tırnaklar, doğru tırnaklar yerine kullanıldı.',
-            'file-empty'           => 'Dosya boş veya başlık satırı içermiyor. Lütfen veri içeren geçerli bir dosya yükleyin.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

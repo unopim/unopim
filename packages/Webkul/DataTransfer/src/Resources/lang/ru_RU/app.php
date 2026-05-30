@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Поля категории',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код поля категории :code уже используется.',
+                    'code_not_found_to_delete' => 'Код поля категории не найден для удаления.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Атрибуты',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Код атрибута :code уже используется.',
+                    'code_not_found_to_delete'             => 'Код атрибута для удаления не найден.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системный атрибут не может быть удален.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Группы атрибутов',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Код группы атрибутов :code уже используется.',
+                    'code_not_found_to_delete'             => 'Код группы атрибутов для удаления не найден.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системная группа атрибутов не может быть удалена.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Семейства атрибутов',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код семейства атрибутов :code уже используется.',
+                    'code_not_found_to_delete' => 'Код семейства атрибутов для удаления не найден.',
+                    'invalid-attribute-group'  => 'Группа атрибутов ":code" не существует.',
+                    'invalid-attribute'        => 'Атрибут ":code" не существует.',
+                    'invalid-channel'          => 'Канал ":code" не существует.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Параметры атрибутов',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код параметра атрибута :code уже используется.',
+                    'code_not_found_to_delete' => 'Код параметра атрибута для удаления не найден.',
+                    'locale-not-exist'         => 'Локаль ":code" не существует.',
+                    'invalid-attribute'        => 'Атрибут ":code" не существует.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Каналы',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Категории',
         ],
+        'category-fields' => [
+            'title' => 'Поля категории',
+        ],
+        'attributes' => [
+            'title' => 'Атрибуты',
+        ],
+        'attribute-groups' => [
+            'title' => 'Группы атрибутов',
+        ],
+        'attribute-families' => [
+            'title' => 'Семейства атрибутов',
+        ],
+        'attribute-options' => [
+            'title' => 'Параметры атрибутов',
+        ],
         'channels' => [
             'title' => 'Каналы',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'Заголовок содержит недопустимые атрибуты: "%s".',
             'system'               => 'Произошла непредвиденная системная ошибка.',
             'wrong-quotes'         => 'Вместо прямых кавычек используются фигурные кавычки.',
-            'file-empty'           => 'Файл пуст или не содержит строку заголовка. Пожалуйста, загрузите корректный файл с данными.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

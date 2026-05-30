@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Campos de categoria',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'O código do campo de categoria :code já está em uso.',
+                    'code_not_found_to_delete' => 'Código do campo de categoria não encontrado para exclusão.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'O código do atributo :code já está em uso.',
+                    'code_not_found_to_delete'             => 'Código de atributo não encontrado para exclusão.',
+                    'code_is_system_and_cannot_be_deleted' => 'O atributo do sistema não pode ser excluído.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupos de atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'O código do grupo de atributos :code já está em uso.',
+                    'code_not_found_to_delete'             => 'Código de grupo de atributos não encontrado para exclusão.',
+                    'code_is_system_and_cannot_be_deleted' => 'O grupo de atributos do sistema não pode ser excluído.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Famílias de atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'O código da família de atributos :code já está em uso.',
+                    'code_not_found_to_delete' => 'Código de família de atributos não encontrado para exclusão.',
+                    'invalid-attribute-group'  => 'O grupo de atributos ":code" não existe.',
+                    'invalid-attribute'        => 'O atributo ":code" não existe.',
+                    'invalid-channel'          => 'O canal ":code" não existe.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opções de atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'O código de opção de atributo :code já está em uso.',
+                    'code_not_found_to_delete' => 'Código de opção de atributo não encontrado para exclusão.',
+                    'locale-not-exist'         => 'A localidade ":code" não existe.',
+                    'invalid-attribute'        => 'O atributo ":code" não existe.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Canais',
             'validation' => [
@@ -91,6 +143,21 @@ return [
         'categories' => [
             'title' => 'Categorias',
         ],
+        'category-fields' => [
+            'title' => 'Campos de categoria',
+        ],
+        'attributes' => [
+            'title' => 'Atributos',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupos de atributos',
+        ],
+        'attribute-families' => [
+            'title' => 'Famílies de atributos',
+        ],
+        'attribute-options' => [
+            'title' => 'Opções de atributos',
+        ],
         'channels' => [
             'title' => 'Canais',
         ],
@@ -118,7 +185,7 @@ return [
             'invalid-attribute'    => 'O cabeçalho contém atributos inválidos: "%s".',
             'system'               => 'Ocorreu um erro do sistema inesperado.',
             'wrong-quotes'         => 'Aspas inclinadas usadas em vez de aspas diretas.',
-            'file-empty'           => 'O arquivo está vazio ou não contém uma linha de cabeçalho. Por favor, envie um arquivo válido com dados.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

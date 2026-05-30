@@ -32,6 +32,59 @@ return [
                 ],
             ],
         ],
+
+        'category-fields' => [
+            'title'      => 'Camps de categoria',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El codi del camp de categoria :code ja està en ús.',
+                    'code_not_found_to_delete' => 'No s\'ha trobat el codi del camp de categoria per eliminar.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atributs',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'El codi d\'atribut :code ja està en ús.',
+                    'code_not_found_to_delete'             => 'Codi d\'atribut no trobat per a supressió.',
+                    'code_is_system_and_cannot_be_deleted' => 'L\'atribut del sistema no es pot eliminar.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grups d\'Atributs',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'El codi de grup d\'atributs :code ja està en ús.',
+                    'code_not_found_to_delete'             => 'Codi de grup d\'atributs no trobat per a supressió.',
+                    'code_is_system_and_cannot_be_deleted' => 'El grup d\'atributs del sistema no es pot eliminar.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Famílies d\'Atributs',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El codi de família d\'atributs :code ja està en ús.',
+                    'code_not_found_to_delete' => 'Codi de família d\'atributs no trobat per a supressió.',
+                    'invalid-attribute-group'  => 'El grup d\'atributs ":code" no existeix.',
+                    'invalid-attribute'        => 'L\'atribut ":code" no existeix.',
+                    'invalid-channel'          => 'El canal ":code" no existeix.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opcions d\'Atribut',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El codi d\'opció d\'atribut :code ja està en ús.',
+                    'code_not_found_to_delete' => 'Codi d\'opció d\'atribut no trobat per a supressió.',
+                    'locale-not-exist'         => 'L\'idioma ":code" no existeix.',
+                    'invalid-attribute'        => 'L\'atribut ":code" no existeix.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Canals',
             'validation' => [
@@ -91,6 +144,21 @@ return [
         'categories' => [
             'title' => 'Categories',
         ],
+        'category-fields' => [
+            'title' => 'Camps de categoria',
+        ],
+        'attributes' => [
+            'title' => 'Atributs',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grups d\'Atributs',
+        ],
+        'attribute-families' => [
+            'title' => 'Famílies d\'Atributs',
+        ],
+        'attribute-options' => [
+            'title' => 'Opcions d\'Atribut',
+        ],
         'channels' => [
             'title' => 'Canals',
         ],
@@ -118,7 +186,7 @@ return [
             'invalid-attribute'    => 'Capçalera conté atribut(s) invàlid(s): "%s".',
             'system'               => 'S\'ha produït un error de sistema inesperat.',
             'wrong-quotes'         => 'S\'han utilitzat guions curts en lloc de guions rectes.',
-            'file-empty'           => 'El fitxer està buit o no conté una fila de capçalera. Si us plau, pengeu un fitxer vàlid amb dades.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

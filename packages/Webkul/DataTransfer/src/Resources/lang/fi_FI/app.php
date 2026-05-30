@@ -32,6 +32,59 @@ return [
                 ],
             ],
         ],
+
+        'category-fields' => [
+            'title'      => 'Kategoriakentät',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategoriakentän koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Kategoriakentän koodia ei löytynyt poistamista varten.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attribuutit',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribuuttikoodi :code on jo käytössä.',
+                    'code_not_found_to_delete'             => 'Attribuuttikoodia ei löytynyt poistettavaksi.',
+                    'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttia ei voi poistaa.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attribuuttiryhmät',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribuuttiryhmän koodi :code on jo käytössä.',
+                    'code_not_found_to_delete'             => 'Attribuuttiryhmän koodia ei löytynyt poistettavaksi.',
+                    'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttiryhmää ei voi poistaa.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attribuuttiperheet',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribuuttiperheen koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Attribuuttiperheen koodia ei löytynyt poistettavaksi.',
+                    'invalid-attribute-group'  => 'Attribuuttiryhmää ":code" ei ole olemassa.',
+                    'invalid-attribute'        => 'Attribuuttia ":code" ei ole olemassa.',
+                    'invalid-channel'          => 'Kanavaa ":code" ei ole olemassa.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attribuuttivaihtoehdot',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribuuttivaihtoehdon koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Attribuuttivaihtoehdon koodia ei löytynyt poistettavaksi.',
+                    'locale-not-exist'         => 'Kieltä ":code" ei ole olemassa.',
+                    'invalid-attribute'        => 'Attribuuttia ":code" ei ole olemassa.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanavat',
             'validation' => [
@@ -88,8 +141,23 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title' => 'Kategoriakentät',
+        ],
         'categories' => [
             'title' => 'Kategoriat',
+        ],
+        'attributes' => [
+            'title' => 'Attribuutit',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attribuuttiryhmät',
+        ],
+        'attribute-families' => [
+            'title' => 'Attribuuttiperheet',
+        ],
+        'attribute-options' => [
+            'title' => 'Attribuuttivaihtoehdot',
         ],
         'channels' => [
             'title' => 'Kanavat',
@@ -118,7 +186,7 @@ return [
             'invalid-attribute'    => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
             'system'               => 'Odottamaton järjestelmävirhe tapahtui.',
             'wrong-quotes'         => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
-            'file-empty'           => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

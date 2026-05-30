@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Kategorifält',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategorifältskod :code används redan.',
+                    'code_not_found_to_delete' => 'Kategorifältskod hittades inte för borttagning.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attribut',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributkoden :code används redan.',
+                    'code_not_found_to_delete'             => 'Attributkoden för borttagning hittades inte.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributet kan inte tas bort.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attributgrupper',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributgruppskoden :code används redan.',
+                    'code_not_found_to_delete'             => 'Attributgruppskoden för borttagning hittades inte.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributgruppen kan inte tas bort.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attributfamiljer',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributfamiljkoden :code används redan.',
+                    'code_not_found_to_delete' => 'Attributfamiljkoden för borttagning hittades inte.',
+                    'invalid-attribute-group'  => 'Attributgruppen ":code" existerar inte.',
+                    'invalid-attribute'        => 'Attributet ":code" existerar inte.',
+                    'invalid-channel'          => 'Kanalen ":code" existerar inte.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attributalternativ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributalternativkoden :code används redan.',
+                    'code_not_found_to_delete' => 'Attributalternativkoden för borttagning hittades inte.',
+                    'locale-not-exist'         => 'Språkinställningen ":code" existerar inte.',
+                    'invalid-attribute'        => 'Attributet ":code" existerar inte.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanaler',
             'validation' => [
@@ -91,6 +143,22 @@ return [
         'categories' => [
             'title' => 'Kategorier',
         ],
+        'category-fields' => [
+            'title' => 'Kategorifält',
+        ],
+
+        'attributes' => [
+            'title' => 'Attribut',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attributgrupper',
+        ],
+        'attribute-families' => [
+            'title' => 'Attributfamiljer',
+        ],
+        'attribute-options' => [
+            'title' => 'Attributalternativ',
+        ],
         'channels' => [
             'title' => 'Kanaler',
         ],
@@ -118,7 +186,7 @@ return [
             'invalid-attribute'    => 'Rubriken innehåller ogiltiga attribut: "%s".',
             'system'               => 'Ett oväntat systemfel inträffade.',
             'wrong-quotes'         => 'Krokiga citattecken användes i stället för raka citattecken.',
-            'file-empty'           => 'Filen är tom eller innehåller ingen rubrikrad. Vänligen ladda upp en giltig fil med data.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [
