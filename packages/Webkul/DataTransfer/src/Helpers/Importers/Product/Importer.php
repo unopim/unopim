@@ -1300,6 +1300,8 @@ class Importer extends AbstractImporter
             }
         }
 
+        $this->saveLinks();
+
         return true;
     }
 
@@ -1660,8 +1662,8 @@ class Importer extends AbstractImporter
              */
             $associationProducts = array_filter($filteredAssociation, fn ($sku) => $this->skuStorage->has($sku));
 
-            if (empty($associationProducts)) {
-                continue;
+            if (! empty($associationProducts)) {
+                $product[AbstractType::PRODUCT_VALUES_KEY][AbstractType::ASSOCIATION_VALUES_KEY][$section] = $associationProducts;
             }
 
             $product[AbstractType::PRODUCT_VALUES_KEY][AbstractType::ASSOCIATION_VALUES_KEY][$section] = array_values($associationProducts);
