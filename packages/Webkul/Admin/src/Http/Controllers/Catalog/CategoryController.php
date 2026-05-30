@@ -147,17 +147,25 @@ class CategoryController extends Controller
             return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
         }
 
-        if (! empty($categoryRequest->input('parent_id'))) {
-            $parentId = (int) $categoryRequest->input('parent_id');
-            $category = $this->categoryRepository->find($id);
-            $parentCategory = $this->categoryRepository->find($parentId);
+        $parentId = $categoryRequest->input('parent_id');
 
-            if ($parentId === $id || ($category && $parentCategory && $parentCategory->isDescendantOf($category))) {
-                session()->flash('error', trans('admin::app.catalog.categories.invalid-parent'));
+        if (! empty($parentId) && $parentId == $id) {
+        session()->flash('error', 'Category cannot be its own parent.');
 
-                return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
-            }
+        return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+    }
+
+    if (! empty($parentId)) {
+
+        $category = $this->categoryRepository->find($id);
+
+        if ($category && $category->descendants->pluck('id')->contains($parentId)) {
+
+            session()->flash('error', 'You cannot assign a child category as parent.');
+
+            return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
         }
+    }
 
         try {
             $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']), $id);
@@ -180,6 +188,7 @@ class CategoryController extends Controller
 
         return redirect()->route('admin.catalog.categories.edit', ['id' => $id, 'locale' => core()->getRequestedLocaleCode()]);
     }
+
 
     /**
      * Remove the specified resource from storage.
