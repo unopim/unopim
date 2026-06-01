@@ -187,46 +187,80 @@ class MeasurementUnitsController extends Controller
                 404,
                 trans('measurement::app.messages.family.not_found')
             );
-
         }
 
-        request()->validate(MeasurementUnitValidator::updateRules(), MeasurementUnitValidator::messages());
+        request()->validate(
+            MeasurementUnitValidator::updateRules(),
+            MeasurementUnitValidator::messages()
+        );
 
         $units = $family->units ?? [];
 
         $newLabels = request('labels', []);
+
         foreach ($units as &$unit) {
 
-            if ($unit['code'] === $code) {
+            if ($unit['code'] !== $code) {
+                continue;
+            }
 
-                $unit['labels'] = array_merge(
-                    $unit['labels'] ?? [],
-                    $newLabels
-                );
+            // Update labels
+            $unit['labels'] = array_merge(
+                $unit['labels'] ?? [],
+                $newLabels
+            );
 
-                $conversionOperators = request('convert_from_standard', []);
-                $conversionValues = request('convert_value', []);
+            // Update symbol
+            $unit['symbol'] = request('symbol');
 
+            $conversionOperators = request('convert_from_standard');
+            $conversionValues = request('convert_value');
+
+            /**
+             * Only update conversion data when fields are submitted.
+             * Otherwise preserve existing values.
+             */
+            if (
+                request()->has('convert_from_standard')
+                || request()->has('convert_value')
+            ) {
                 $conversionRows = [];
+
                 foreach ((array) $conversionOperators as $index => $operator) {
                     $conversionRows[] = [
                         'operator' => $operator ?: 'mul',
-                        'value'    => isset($conversionValues[$index]) ? (string) $conversionValues[$index] : null,
+                        'value'    => isset($conversionValues[$index])
+                            ? (string) $conversionValues[$index]
+                            : '1',
                     ];
                 }
 
-                if (count($conversionRows) === 0) {
+                // Standard unit fallback
+                if (empty($conversionRows)) {
                     $conversionRows[] = [
                         'operator' => 'mul',
-                        'value'    => null,
+                        'value'    => '1',
                     ];
                 }
 
-                $unit['symbol'] = request('symbol');
-                $unit['convert_from_standard'] = array_slice($conversionRows, 0, 4);
-
-                break;
+                $unit['convert_from_standard'] = array_slice(
+                    $conversionRows,
+                    0,
+                    4
+                );
             }
+
+            // Ensure standard unit always has valid conversion
+            if (empty($unit['convert_from_standard'])) {
+                $unit['convert_from_standard'] = [
+                    [
+                        'operator' => 'mul',
+                        'value'    => '1',
+                    ],
+                ];
+            }
+
+            break;
         }
 
         $this->measurementFamilyRepository->update([
@@ -238,7 +272,10 @@ class MeasurementUnitsController extends Controller
                 'data' => [
                     'redirect_url' => route(
                         'admin.measurement.families.units.edit',
-                        ['familyId' => $familyId, 'code' => $code]
+                        [
+                            'familyId' => $familyId,
+                            'code'     => $code,
+                        ]
                     ),
                 ],
             ]);

@@ -176,36 +176,40 @@ class UnitDataGrid extends DataGrid
 
     public function prepareActions()
     {
-        $this->addAction([
-            'index'  => 'edit',
-            'icon'   => 'icon-edit',
-            'title'  => 'Edit',
-            'method' => 'GET',
-            'url'    => function ($row) {
+        if (bouncer()->hasPermission('catalog.measurements.units.edit')) {
+            $this->addAction([
+                'index'  => 'edit',
+                'icon'   => 'icon-edit',
+                'title'  => 'Edit',
+                'method' => 'GET',
+                'url'    => function ($row) {
 
-                return route('admin.measurement.families.units.edit', [
-                    'familyId' => $this->familyId,
-                    'code'     => $row->code,
-                ]);
-            },
-        ]);
+                    return route('admin.measurement.families.units.edit', [
+                        'familyId' => $this->familyId,
+                        'code'     => $row->code,
+                    ]);
+                },
+            ]);
+        }
 
-        $this->addAction([
-            'index'  => 'delete',
-            'icon'   => 'icon-delete',
-            'title'  => 'Delete',
-            'method' => 'DELETE',
-            'url'    => function ($row) {
+        if (bouncer()->hasPermission('catalog.measurements.units.delete')) {
+            $this->addAction([
+                'index'  => 'delete',
+                'icon'   => 'icon-delete',
+                'title'  => 'Delete',
+                'method' => 'DELETE',
+                'url'    => function ($row) {
 
-                if ($row->is_standard) {
-                    return null;
-                }
+                    if ($row->is_standard) {
+                        return null;
+                    }
 
-                return route('admin.measurement.families.units.delete', [
-                    'familyId' => $this->familyId,
-                    'code'     => $row->code,
-                ]);
-            },
-        ]);
+                    return route('admin.measurement.families.units.delete', [
+                        'familyId' => $this->familyId,
+                        'code'     => $row->code,
+                    ]);
+                },
+            ]);
+        }
     }
 }
