@@ -6,7 +6,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\PostTooLargeException;
-use App\Http\Middleware\VerifyAppUrlMatches;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Webkul\Core\Http\Middleware\CheckForMaintenanceMode;
@@ -55,7 +54,6 @@ return Application::configure(basePath: dirname(__DIR__))
             NoCacheMiddleware::class,
             CheckForMaintenanceMode::class,
             CanInstall::class,
-            VerifyAppUrlMatches::class,
         ]);
         $middleware->api(remove: [
             SubstituteBindings::class,
