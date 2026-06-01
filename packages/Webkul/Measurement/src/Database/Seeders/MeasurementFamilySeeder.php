@@ -526,6 +526,30 @@ class MeasurementFamilySeeder extends Seeder
                 ],
             ],
 
+              /*
+            |------------------------------------------------------------------
+            | 23. ANGLE (standard: Radian)
+            |------------------------------------------------------------------
+            */
+            [
+                'code'          => 'Angle',
+                'name'          => 'Angle',
+                'labels'        => $makeLabels('angle'),
+                'standard_unit' => 'RADIAN',
+                'symbol'        => 'rad',
+                'units'         => [
+                    ['code' => 'DEGREE',        'labels' => $makeLabels('degree'),        'symbol' => '°',   'convert_from_standard' => [['value' => '57.2958',    'operator' => 'mul']]],
+                    ['code' => 'RADIAN',       'labels' => $makeLabels('radian'),       'symbol' => 'rad', 'convert_from_standard' => [['value' => '1',          'operator' => 'mul']]],
+                    ['code' => 'GRADIAN',      'labels' => $makeLabels('gradian'),      'symbol' => 'grad', 'convert_from_standard' => [['value' => '63.662',     'operator' => 'mul']]],
+                    ['code' => 'MINUTE_ANGLE', 'labels' => $makeLabels('minute angle'),   'symbol' => "'",   'convert_from_standard' => [['value' => '3437.75',    'operator' => 'mul']]],
+                    ['code' => 'SECOND_ANGLE', 'labels' => $makeLabels('second angle'),   'symbol' => '"',    'convert_from_standard' => [['value' => '206265',     'operator' => 'mul']]],
+                    ['code' => 'REVOLUTION',   'labels' => $makeLabels('revolution'),   'symbol' => 'rev',  'convert_from_standard' => [['value' => '6.28319',    'operator' => 'div']]],
+                    ['code' => 'RIGHT_ANGLE',  'labels' => $makeLabels('right angle'),  'symbol' => '∠',   'convert_from_standard' => [['value' => '6.28319',    'operator' => 'div']]],
+                    ['code' => 'OCTANT',       'labels' => $makeLabels('octant'),       'symbol' => 'oct',  'convert_from_standard' => [['value' => '1.25664',    'operator' => 'div']]],
+                    ['code' => 'SEXTANT',      'labels' => $makeLabels('sextant'),      'symbol' => 'sext', 'convert_from_standard' => [['value' => '1.0472',     'operator' => 'div']]],
+                ],
+            ],
+
         ];
 
         /*
