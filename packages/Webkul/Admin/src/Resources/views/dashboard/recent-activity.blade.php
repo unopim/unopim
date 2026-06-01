@@ -155,19 +155,20 @@
 
                 getEntityBadgeColor(entityType) {
                     const colors = {
-                        'product':          'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400',
-                        'category':         'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400',
-                        'attribute':        'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-                        'attributeFamily':  'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
-                        'attribute_family': 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
-                        'attributeGroup':   'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400',
-                        'attribute_group':  'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400',
-                        'category_field':   'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',
-                        'channel':          'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
-                        'role':             'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
-                        'job_instance':     'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
-                        'webhook_settings': 'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/30 dark:text-fuchsia-400',
-                        'Apikey':           'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+                        'product':            'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400',
+                        'category':           'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400',
+                        'attribute':          'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+                        'attributeFamily':    'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
+                        'attribute_family':   'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
+                        'attributeGroup':     'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400',
+                        'attribute_group':    'bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400',
+                        'category_field':     'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',
+                        'channel':            'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
+                        'role':               'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+                        'job_instance':       'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+                        'webhook_settings':   'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/30 dark:text-fuchsia-400',
+                        'Apikey':             'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+                        'measurement Family': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
                     };
 
                     return colors[entityType] || 'bg-zinc-100 text-zinc-600 dark:bg-cherry-800 dark:text-slate-400';

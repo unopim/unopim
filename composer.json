@@ -82,7 +82,9 @@
             "Webkul\\ElasticSearch\\": "packages/Webkul/ElasticSearch/src",
             "Webkul\\Webhook\\": "packages/Webkul/Webhook/src",
             "Webkul\\Completeness\\": "packages/Webkul/Completeness/src",
-            "Webkul\\AiAgent\\": "packages/Webkul/AiAgent/src"
+            "Webkul\\AiAgent\\": "packages/Webkul/AiAgent/src",
+            "Webkul\\Measurement\\": "packages/Webkul/Measurement/src"
+
         }
     },
     "autoload-dev": {
@@ -98,7 +100,8 @@
             "Webkul\\Category\\Tests\\": "packages/Webkul/Category/tests",
             "Webkul\\Product\\Tests\\": "packages/Webkul/Product/tests",
             "Webkul\\Attribute\\Tests\\": "packages/Webkul/Attribute/tests",
-            "Webkul\\DataTransfer\\Tests\\": "packages/Webkul/DataTransfer/tests"
+            "Webkul\\DataTransfer\\Tests\\": "packages/Webkul/DataTransfer/tests",
+            "Webkul\\Measurement\\Tests\\": "packages/Webkul/Measurement/tests"
         }
     },
     "scripts": {
