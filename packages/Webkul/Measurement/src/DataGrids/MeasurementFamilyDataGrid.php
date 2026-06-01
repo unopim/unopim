@@ -180,33 +180,40 @@ class MeasurementFamilyDataGrid extends DataGrid
 
     public function prepareActions()
     {
-        $this->addAction([
-            'icon'   => 'icon-edit',
-            'index'  => 'edit',
-            'title'  => 'Edit',
-            'method' => 'GET',
-            'url'    => function ($row) {
-                return route('admin.measurement.families.edit', $row->id);
-            },
-        ]);
+        if (bouncer()->hasPermission('catalog.measurements.families.edit')) {
+            $this->addAction([
+                'icon'   => 'icon-edit',
+                'index'  => 'edit',
+                'title'  => 'Edit',
+                'method' => 'GET',
+                'url'    => function ($row) {
+                    return route('admin.measurement.families.edit', $row->id);
+                },
+            ]);
+        }
 
-        $this->addAction([
-            'icon'   => 'icon-delete',
-            'title'  => 'Delete',
-            'method' => 'DELETE',
-            'url'    => function ($row) {
-                return route('admin.measurement.families.delete', $row->id);
-            },
-        ]);
+        if (bouncer()->hasPermission('catalog.measurements.families.delete')) {
+            $this->addAction([
+                'icon'   => 'icon-delete',
+                'index'  => 'delete',
+                'title'  => 'Delete',
+                'method' => 'DELETE',
+                'url'    => function ($row) {
+                    return route('admin.measurement.families.delete', $row->id);
+                },
+            ]);
+        }
     }
 
     public function prepareMassActions()
     {
-        $this->addMassAction([
-            'title'  => 'Delete Selected',
-            'method' => 'POST',
-            'url'    => route('admin.measurement.families.mass_delete'),
-        ]);
+        if (bouncer()->hasPermission('catalog.measurements.families.mass_delete')) {
+            $this->addMassAction([
+                'title'  => 'Delete Selected',
+                'method' => 'POST',
+                'url'    => route('admin.measurement.families.mass_delete'),
+            ]);
+        }
     }
 
     /**

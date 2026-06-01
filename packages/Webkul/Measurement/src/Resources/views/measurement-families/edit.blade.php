@@ -28,9 +28,11 @@
                         @lang('measurement::app.measurement.edit.back')
                     </a>
 
-                    <button class="primary-button">
-                        @lang('measurement::app.measurement.edit.save')
-                    </button>
+                    @if (bouncer()->hasPermission('catalog.measurements.families.edit'))
+                        <button class="primary-button">
+                            @lang('measurement::app.measurement.edit.save')
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -94,7 +96,7 @@
                 </p>
 
                 <div class="flex items-center gap-x-2.5">
-                    @if (bouncer()->hasPermission('settings.locales.create'))
+                    @if (bouncer()->hasPermission('catalog.measurements.units.create'))
                         <button
                             type="button"
                             class="primary-button"
@@ -117,7 +119,7 @@
                 </p>
 
                 <div class="flex items-center gap-x-2.5">
-                    @if (bouncer()->hasPermission('settings.locales.create'))
+                    @if (bouncer()->hasPermission('catalog.measurements.units.create'))
                         <button
                             type="button"
                             class="primary-button"
@@ -130,10 +132,8 @@
             </div>
 
             @php
-                $hasDeletePermission = bouncer()->hasPermission('settings.locales.delete');
-                $hasEditPermission = bouncer()->hasPermission('settings.locales.edit');
-                $hasMassActionPermission = bouncer()->hasPermission('settings.locales.mass_update')
-                    || bouncer()->hasPermission('settings.locales.mass_delete');
+                $hasDeletePermission = bouncer()->hasPermission('catalog.measurements.units.delete');
+                $hasEditPermission = bouncer()->hasPermission('catalog.measurements.units.edit');
             @endphp
 
             <x-admin::datagrid

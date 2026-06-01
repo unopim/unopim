@@ -9,7 +9,9 @@
         </p>
 
         <div class="flex items-center gap-x-2.5">
-            <v-create-family-form />
+            @if (bouncer()->hasPermission('catalog.measurements.families.create'))
+                <v-create-family-form />
+            @endif
         </div>
     </div>
 

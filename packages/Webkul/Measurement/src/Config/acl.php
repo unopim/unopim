@@ -34,6 +34,12 @@ return [
         'route' => 'admin.measurement.families.delete',
         'sort'  => 3,
     ],
+    [
+        'key'   => 'catalog.measurements.families.mass_delete',
+        'name'  => 'Mass Delete',
+        'route' => 'admin.measurement.families.mass_delete',
+        'sort'  => 4,
+    ],
 
     // Measurement Units
     [
