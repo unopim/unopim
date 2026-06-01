@@ -1,641 +1,500 @@
 {{--
-    APP_URL mismatch warning — UnoPim-styled centered modal, fully self-contained.
+    APP_URL mismatch warning — UnoPim "guided steps" modal, fully self-contained.
 
     Rendered by Webkul\AppUrlGuard\Http\Middleware\VerifyAppUrlMatches and
     injected before </body> in debug mode only.
 
-    IMPORTANT: this modal must render correctly even when the page's own assets
-    fail to load (that is the very problem it warns about). So it uses scoped CSS
-    (purge-proof) and INLINE SVG icons — never the icomoon icon font, which 404s
-    on a mismatched APP_URL.
+    IMPORTANT:
+      - Every class is prefixed (unopim-appurl-*) and the CSS variables are
+        scoped to #unopim-appurl-backdrop so nothing collides with the host
+        page's styles.
+      - Icons are inline SVG (never the icomoon font, which 404s on a mismatched
+        APP_URL — the very problem this modal warns about).
+      - Functionality is unchanged: the close (×) button re-validates APP_URL on
+        the server and either reloads (fixed) or shows a toast (still wrong); the
+        copy buttons copy + tick their step; "All done" hard-reloads the page.
 
     Props: $configured (APP_URL in .env), $actual (host the browser is on),
+           $checkUrl (same-origin re-validation endpoint),
            $justLoggedIn (reset the step state right after login).
 --}}
-<div id="unopim-appurl-backdrop" class="unopim-appurl-backdrop" data-just-logged-in="{{ $justLoggedIn ? 'true' : 'false' }}" data-check-url="{{ $checkUrl }}">
-    <div id="unopim-appurl-warning" class="unopim-appurl-card" role="alertdialog" aria-modal="true">
-        <div class="unopim-appurl-header">
-            <svg class="unopim-appurl-header-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
-            </svg>
+<div
+    id="unopim-appurl-backdrop"
+    class="unopim-appurl-backdrop"
+    data-just-logged-in="{{ $justLoggedIn ? 'true' : 'false' }}"
+    data-check-url="{{ $checkUrl }}"
+>
+    <div id="unopim-appurl-warning" class="unopim-appurl-modal" role="alertdialog" aria-modal="true" aria-labelledby="unopim-appurl-title">
+        <div class="unopim-appurl-head">
+            <span class="unopim-appurl-head-icon" aria-hidden="true">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
+                    <path d="M12 9v4" />
+                    <path d="M12 17h.01" />
+                </svg>
+            </span>
 
-            <strong class="unopim-appurl-title">@lang('APP_URL Mismatch Detected')</strong>
+            <h1 class="unopim-appurl-head-title" id="unopim-appurl-title">@lang('APP_URL Mismatch Detected')</h1>
 
-            <div class="unopim-appurl-actions">
-                <button type="button" class="unopim-appurl-icon-btn" title="@lang('Dismiss')" aria-label="@lang('Dismiss')" onclick="unopimAppurlDismiss(event)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18" />
-                    </svg>
-                </button>
-            </div>
+            <button type="button" class="unopim-appurl-head-close" aria-label="@lang('Dismiss')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6 6 18" />
+                    <path d="M6 6l12 12" />
+                </svg>
+            </button>
         </div>
 
         <div class="unopim-appurl-body">
-            <p class="unopim-appurl-desc">
-                @lang('Your frontend assets (CSS, JS) are pinned to the configured APP_URL. Update it to match the host you are using, otherwise the styles and scripts will not load.')
+            <p class="unopim-appurl-lede">
+                @lang('Your frontend assets (CSS, JS) are pinned to the configured')
+                <b>APP_URL</b>.
+                @lang('Update it to match the host you are using, otherwise the styles and scripts will not load.')
             </p>
 
-            <div class="unopim-appurl-grid">
-                <div class="unopim-appurl-compare unopim-appurl-compare--error">
-                    <span class="unopim-appurl-compare-label">@lang('Configured (.env)')</span>
-                    <span class="unopim-appurl-compare-value">{{ $configured }}</span>
+            <div class="unopim-appurl-compare">
+                <div class="unopim-appurl-cmp unopim-appurl-cmp--bad">
+                    <div class="unopim-appurl-cmp-left">
+                        <span class="unopim-appurl-cmp-label">@lang('Configured (.env)')</span>
+                        <span class="unopim-appurl-cmp-tag">@lang('MISMATCH')</span>
+                    </div>
+                    <span class="unopim-appurl-cmp-url">{{ $configured }}</span>
                 </div>
 
-                <div class="unopim-appurl-compare unopim-appurl-compare--success">
-                    <span class="unopim-appurl-compare-label">@lang('Actual (Browser)')</span>
-                    <span class="unopim-appurl-compare-value">{{ $actual }}</span>
+                <div class="unopim-appurl-cmp unopim-appurl-cmp--good">
+                    <div class="unopim-appurl-cmp-left">
+                        <span class="unopim-appurl-cmp-label">@lang('Actual (browser)')</span>
+                        <span class="unopim-appurl-cmp-tag">@lang('IN USE')</span>
+                    </div>
+                    <span class="unopim-appurl-cmp-url">{{ $actual }}</span>
                 </div>
             </div>
 
             <div class="unopim-appurl-steps">
-                <label class="unopim-appurl-step">
-                    <input type="checkbox" id="unopim-appurl-step-1" class="unopim-appurl-check-input" onchange="unopimAppurlStep(1)">
-                    <span class="unopim-appurl-check"></span>
-
-                    <span class="unopim-appurl-step-body">
-                        <span class="unopim-appurl-step-text">@lang('Update :key in your .env file:', ['key' => 'APP_URL'])</span>
-
-                        <span class="unopim-appurl-code">
-                            <span class="unopim-appurl-code-text">APP_URL={{ $actual }}</span>
-
-                            <button type="button" class="unopim-appurl-copy" data-copy="APP_URL={{ $actual }}" onclick="unopimAppurlCopy(this, event)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-                                    <rect x="9" y="9" width="11" height="11" rx="2" />
-                                    <path d="M5 15V5a2 2 0 012-2h10" />
-                                </svg>
+                <div class="unopim-appurl-step" data-unopim-step="1">
+                    <button type="button" class="unopim-appurl-step-badge" aria-label="@lang('Toggle step 1')">
+                        <span class="unopim-appurl-step-n">1</span>
+                        <svg class="unopim-appurl-step-tick" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                    </button>
+                    <div class="unopim-appurl-step-main">
+                        <div class="unopim-appurl-step-title">@lang('Update APP_URL in your .env file')
+                            <span class="unopim-appurl-step-hint">@lang("Open the project's .env and replace the APP_URL line.")</span>
+                        </div>
+                        <div class="unopim-appurl-code">
+                            <code class="unopim-appurl-code-text"><span class="unopim-appurl-tok">APP_URL=</span>{{ $actual }}</code>
+                            <button type="button" class="unopim-appurl-code-copy" data-copy="APP_URL={{ $actual }}">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
                                 <span class="unopim-appurl-copy-label">@lang('Copy')</span>
                             </button>
-                        </span>
-                    </span>
-                </label>
+                        </div>
+                    </div>
+                </div>
 
-                <label class="unopim-appurl-step">
-                    <input type="checkbox" id="unopim-appurl-step-2" class="unopim-appurl-check-input" onchange="unopimAppurlStep(2)">
-                    <span class="unopim-appurl-check"></span>
-
-                    <span class="unopim-appurl-step-body">
-                        <span class="unopim-appurl-step-text">@lang('Clear the application cache:')</span>
-
-                        <span class="unopim-appurl-code">
-                            <span class="unopim-appurl-code-text">php artisan optimize:clear</span>
-
-                            <button type="button" class="unopim-appurl-copy" data-copy="php artisan optimize:clear" onclick="unopimAppurlCopy(this, event)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-                                    <rect x="9" y="9" width="11" height="11" rx="2" />
-                                    <path d="M5 15V5a2 2 0 012-2h10" />
-                                </svg>
+                <div class="unopim-appurl-step" data-unopim-step="2">
+                    <button type="button" class="unopim-appurl-step-badge" aria-label="@lang('Toggle step 2')">
+                        <span class="unopim-appurl-step-n">2</span>
+                        <svg class="unopim-appurl-step-tick" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                    </button>
+                    <div class="unopim-appurl-step-main">
+                        <div class="unopim-appurl-step-title">@lang('Clear the application cache')
+                            <span class="unopim-appurl-step-hint">@lang('Run this in your terminal from the project root.')</span>
+                        </div>
+                        <div class="unopim-appurl-code">
+                            <code class="unopim-appurl-code-text">php artisan optimize:clear</code>
+                            <button type="button" class="unopim-appurl-code-copy" data-copy="php artisan optimize:clear">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
                                 <span class="unopim-appurl-copy-label">@lang('Copy')</span>
                             </button>
-                        </span>
-                    </span>
-                </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <label class="unopim-appurl-step">
-                    <input type="checkbox" id="unopim-appurl-step-3" class="unopim-appurl-check-input" onchange="unopimAppurlStep(3)">
-                    <span class="unopim-appurl-check"></span>
-
-                    <span class="unopim-appurl-step-body">
-                        <span class="unopim-appurl-step-text">@lang('Hard refresh the page:')</span>
-                        <span class="unopim-appurl-kbds">
-                            <kbd class="unopim-appurl-kbd">Ctrl</kbd> + <kbd class="unopim-appurl-kbd">Shift</kbd> + <kbd class="unopim-appurl-kbd">R</kbd>
-                        </span>
+            <div class="unopim-appurl-note">
+                <span class="unopim-appurl-note-ico" aria-hidden="true">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
+                </span>
+                <div class="unopim-appurl-note-body">
+                    <b>@lang('Then hard refresh the page')</b> @lang('so the browser reloads the updated assets.')
+                    <span class="unopim-appurl-combo">
+                        <span class="unopim-appurl-kbd">Ctrl</span><span class="unopim-appurl-plus">+</span><span class="unopim-appurl-kbd">Shift</span><span class="unopim-appurl-plus">+</span><span class="unopim-appurl-kbd">R</span>
                     </span>
-                </label>
+                </div>
             </div>
         </div>
+
+        <div class="unopim-appurl-foot">
+            <div class="unopim-appurl-progress-wrap">
+                <div class="unopim-appurl-progress-label" id="unopim-appurl-progress-label">@lang('0 of 2 steps complete')</div>
+                <div class="unopim-appurl-progress-track"><div class="unopim-appurl-progress-fill" id="unopim-appurl-progress-fill"></div></div>
+            </div>
+            <button type="button" class="unopim-appurl-btn-done" id="unopim-appurl-btn-done" disabled>@lang('All done')</button>
+        </div>
     </div>
+
+    <div class="unopim-appurl-poweredby">
+        @lang('Powered by') <a href="https://unopim.com/" target="_blank" rel="noopener">UnoPim</a>.<br>
+        @lang('An open-source project by') <a href="https://webkul.com/" target="_blank" rel="noopener">Webkul</a>.
+    </div>
+</div>
+
+<div class="unopim-appurl-toast" id="unopim-appurl-toast" role="alert">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+    <span id="unopim-appurl-toast-msg"></span>
 </div>
 
 @verbatim
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
     #unopim-appurl-backdrop {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        box-sizing: border-box;
-    }
+        --brand-600: #6553EB;
+        --brand-700: #5641D9;
+        --brand-50:  #F0EDFC;
+        --brand-100: #E3DEF9;
+        --bg-card:   #FFFFFF;
+        --bg-soft:   #FAF9FE;
+        --bg-strip:  #F8F6FD;
+        --ink-900: #1A1530;
+        --ink-700: #3C3656;
+        --ink-500: #6B6584;
+        --ink-400: #8C87A3;
+        --ink-300: #B6B2C7;
+        --line:    #E8E4F2;
+        --line-2:  #EFECF6;
+        --danger-600: #EF4444;
+        --danger-700: #DC2626;
+        --danger-50:  #FEF2F2;
+        --danger-100: #FEE2E2;
+        --success-700: #15803D;
+        --success-600: #16A34A;
+        --success-50:  #F0FDF4;
+        --success-100: #DCFCE7;
+        --warn-600: #F59E0B;
+        --warn-50:  #FFFBEB;
+        --warn-100: #FEF3C7;
+        --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 18px;
+        --shadow-lg: 0 24px 60px rgba(20, 16, 40, 0.30), 0 6px 20px rgba(20, 16, 40, 0.10);
+        --uafont: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        --uamono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-    #unopim-appurl-backdrop * {
-        box-sizing: border-box;
-    }
-
-    /* Full-screen dim backdrop that hides the page behind the modal. */
-    .unopim-appurl-backdrop {
         display: none;
         position: fixed;
         inset: 0;
         z-index: 2147483647;
-        padding: 16px;
-        background: rgba(15, 23, 42, 0.55);
+        padding: 18px;
+        background: rgba(20, 16, 40, 0.55);
         -webkit-backdrop-filter: blur(3px);
         backdrop-filter: blur(3px);
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+        gap: 14px;
         overflow: auto;
+        font-family: var(--uafont);
+        color: var(--ink-900);
+        -webkit-font-smoothing: antialiased;
     }
 
-    .unopim-appurl-backdrop.is-open {
-        display: flex;
-    }
+    #unopim-appurl-backdrop.is-open { display: flex; }
+    #unopim-appurl-backdrop *,
+    #unopim-appurl-toast * { box-sizing: border-box; }
 
-    .unopim-appurl-card {
-        position: relative;
-        width: 440px;
+    .unopim-appurl-modal {
+        width: 430px;
         max-width: 100%;
-        max-height: calc(100vh - 32px);
+        max-height: calc(100vh - 90px);
         display: flex;
         flex-direction: column;
-        background: #ffffff;
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
+        background: var(--bg-card);
+        border-radius: var(--r-xl);
+        box-shadow: var(--shadow-lg);
         overflow: hidden;
-        box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.35);
-        animation: unopimAppurlIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        animation: unopimAppurlPop .2s cubic-bezier(.2,.7,.3,1);
     }
+    @keyframes unopimAppurlPop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
 
-    html.dark .unopim-appurl-card {
-        background: #26283D;
-        border-color: #28273F;
+    .unopim-appurl-head {
+        display: flex; align-items: center; gap: 10px;
+        flex: 0 0 auto;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line-2);
     }
+    .unopim-appurl-head-icon {
+        width: 30px; height: 30px; border-radius: 8px;
+        background: var(--warn-50); border: 1px solid var(--warn-100);
+        display: flex; align-items: center; justify-content: center;
+        color: var(--warn-600); flex: 0 0 auto;
+    }
+    .unopim-appurl-head-title {
+        font-size: 15px; font-weight: 800; letter-spacing: -0.015em;
+        flex: 1; min-width: 0; margin: 0; color: var(--ink-900);
+    }
+    .unopim-appurl-head-close {
+        width: 30px; height: 30px; border-radius: 8px;
+        border: 1px solid var(--line); background: var(--bg-strip);
+        color: var(--ink-500); cursor: pointer; flex: 0 0 auto;
+        display: flex; align-items: center; justify-content: center;
+        transition: background .12s, color .12s, border-color .12s;
+    }
+    .unopim-appurl-head-close:hover { background: var(--danger-50); color: var(--danger-600); border-color: var(--danger-100); }
+    .unopim-appurl-head-close:disabled { opacity: .5; cursor: progress; }
 
-    @keyframes unopimAppurlIn {
-        from { opacity: 0; transform: translateY(-12px) scale(0.98); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
+    .unopim-appurl-body { padding: 16px 18px 4px; overflow: auto; }
 
-    .unopim-appurl-header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-shrink: 0;
-        padding: 13px 14px 13px 16px;
-        border-bottom: 1px solid #eef0f3;
-    }
-
-    html.dark .unopim-appurl-header {
-        border-bottom-color: #28273F;
-    }
-
-    .unopim-appurl-header-icon {
-        width: 20px;
-        height: 20px;
-        flex-shrink: 0;
-        color: #f59e0b;
-    }
-
-    .unopim-appurl-title {
-        flex: 1;
-        font-size: 14px;
-        font-weight: 600;
-        color: #1f2937;
-    }
-
-    html.dark .unopim-appurl-title {
-        color: #f8fafc;
-    }
-
-    .unopim-appurl-actions {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-shrink: 0;
-    }
-
-    /* Visible button chip so it shows even if no page CSS loads. */
-    .unopim-appurl-icon-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 28px;
-        height: 28px;
-        padding: 0;
-        background: #f1f5f9;
-        border: 1px solid #e2e8f0;
-        border-radius: 7px;
-        cursor: pointer;
-        color: #475569;
-        transition: all 0.15s ease;
-    }
-
-    .unopim-appurl-icon-btn svg {
-        width: 15px;
-        height: 15px;
-    }
-
-    .unopim-appurl-icon-btn:hover {
-        background: #ede9fe;
-        border-color: #ddd6fe;
-        color: #6d28d9;
-    }
-
-    html.dark .unopim-appurl-icon-btn {
-        background: #1F1C30;
-        border-color: #353061;
-        color: #cbd5e1;
-    }
-
-    .unopim-appurl-body {
-        padding: 16px;
-        overflow: auto;
-    }
-
-    .unopim-appurl-desc {
-        margin: 0 0 14px 0;
-        font-size: 13px;
-        line-height: 1.5;
-        color: #4b5563;
-    }
-
-    html.dark .unopim-appurl-desc {
-        color: #cbd5e1;
-    }
-
-    .unopim-appurl-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-bottom: 16px;
-    }
+    .unopim-appurl-lede { font-size: 13px; line-height: 1.55; color: var(--ink-500); margin: 0 0 14px; }
+    .unopim-appurl-lede b { color: var(--ink-700); font-weight: 700; }
 
     .unopim-appurl-compare {
-        padding: 9px 11px;
-        border-radius: 8px;
-        border: 1px solid;
-        min-width: 0;
+        display: flex; flex-direction: column; gap: 8px;
+        margin-bottom: 16px; padding: 10px;
+        background: var(--bg-strip); border: 1px solid var(--line-2); border-radius: var(--r-lg);
     }
-
-    .unopim-appurl-compare--error {
-        background: #fef2f2;
-        border-color: #fee2e2;
+    .unopim-appurl-cmp {
+        background: #fff; border-radius: var(--r-md); padding: 10px 12px;
+        border: 1px solid var(--line);
+        display: flex; flex-direction: column; gap: 6px; min-width: 0;
     }
-
-    .unopim-appurl-compare--success {
-        background: #f0fdf4;
-        border-color: #dcfce7;
+    .unopim-appurl-cmp-left { display: flex; align-items: center; gap: 8px; }
+    .unopim-appurl-cmp-label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-500); }
+    .unopim-appurl-cmp-tag {
+        display: inline-flex; align-items: center; height: 18px; padding: 0 7px;
+        border-radius: 5px; font-size: 9px; font-weight: 800; letter-spacing: 0.05em;
     }
+    .unopim-appurl-cmp--bad .unopim-appurl-cmp-tag { background: var(--danger-50); color: var(--danger-700); border: 1px solid var(--danger-100); }
+    .unopim-appurl-cmp--good .unopim-appurl-cmp-tag { background: var(--success-50); color: var(--success-700); border: 1px solid var(--success-100); }
+    .unopim-appurl-cmp-url { font-family: var(--uamono); font-size: 12px; line-height: 1.5; color: var(--ink-900); word-break: break-all; }
+    .unopim-appurl-cmp--bad .unopim-appurl-cmp-url { color: var(--ink-400); text-decoration: line-through; text-decoration-color: var(--danger-100); }
+    .unopim-appurl-cmp--bad { border-left: 3px solid var(--danger-600); }
+    .unopim-appurl-cmp--good { border-left: 3px solid var(--success-600); }
 
-    html.dark .unopim-appurl-compare--error {
-        background: rgba(239, 68, 68, 0.08);
-        border-color: rgba(239, 68, 68, 0.25);
-    }
-
-    html.dark .unopim-appurl-compare--success {
-        background: rgba(34, 197, 94, 0.08);
-        border-color: rgba(34, 197, 94, 0.25);
-    }
-
-    .unopim-appurl-compare-label {
-        display: block;
-        font-size: 10px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 4px;
-    }
-
-    .unopim-appurl-compare--error .unopim-appurl-compare-label { color: #b91c1c; }
-    .unopim-appurl-compare--success .unopim-appurl-compare-label { color: #15803d; }
-    html.dark .unopim-appurl-compare--error .unopim-appurl-compare-label { color: #fca5a5; }
-    html.dark .unopim-appurl-compare--success .unopim-appurl-compare-label { color: #86efac; }
-
-    .unopim-appurl-compare-value {
-        display: block;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-        font-size: 11.5px;
-        font-weight: 500;
-        word-break: break-all;
-        color: #1f2937;
-    }
-
-    html.dark .unopim-appurl-compare-value {
-        color: #e2e8f0;
-    }
-
-    .unopim-appurl-steps {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-    }
-
+    .unopim-appurl-steps { display: flex; flex-direction: column; gap: 10px; }
     .unopim-appurl-step {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        cursor: pointer;
-        user-select: none;
+        display: grid; grid-template-columns: 28px 1fr; gap: 11px; align-items: start;
+        padding: 11px 13px; border: 1px solid var(--line); border-radius: var(--r-md);
+        background: var(--bg-soft); transition: border-color .14s, background .14s;
     }
-
-    .unopim-appurl-check-input {
-        position: absolute;
-        opacity: 0;
-        width: 0;
-        height: 0;
+    .unopim-appurl-step.is-done { background: var(--bg-strip); border-color: var(--line-2); }
+    .unopim-appurl-step-badge {
+        width: 28px; height: 28px; border-radius: 50%; border: none; cursor: pointer; flex: 0 0 auto;
+        background: var(--brand-50); color: var(--brand-700);
+        font-family: var(--uafont); font-size: 13px; font-weight: 800;
+        display: flex; align-items: center; justify-content: center; position: relative;
+        transition: background .14s, color .14s, transform .08s;
     }
-
-    .unopim-appurl-check {
-        flex-shrink: 0;
-        width: 18px;
-        height: 18px;
-        margin-top: 1px;
-        border: 2px solid #cbd5e1;
-        border-radius: 5px;
-        background: #ffffff;
-        position: relative;
-        transition: all 0.2s ease;
+    .unopim-appurl-step-badge:hover { transform: scale(1.06); }
+    .unopim-appurl-step-n { transition: opacity .14s; }
+    .unopim-appurl-step-tick { position: absolute; opacity: 0; transform: scale(.6); transition: opacity .14s, transform .14s; }
+    .unopim-appurl-step.is-done .unopim-appurl-step-badge { background: var(--brand-600); color: #fff; }
+    .unopim-appurl-step.is-done .unopim-appurl-step-n { opacity: 0; }
+    .unopim-appurl-step.is-done .unopim-appurl-step-tick { opacity: 1; transform: none; }
+    .unopim-appurl-step-main { min-width: 0; }
+    .unopim-appurl-step-title {
+        font-size: 13.5px; font-weight: 700; color: var(--ink-900);
+        margin: 0 0 9px; letter-spacing: -0.01em; line-height: 1.35; padding-top: 3px; cursor: pointer;
     }
-
-    html.dark .unopim-appurl-check {
-        background: #1F1C30;
-        border-color: #353061;
-    }
-
-    .unopim-appurl-check-input:checked + .unopim-appurl-check {
-        background: #7c3aed;
-        border-color: #7c3aed;
-    }
-
-    .unopim-appurl-check-input:checked + .unopim-appurl-check::after {
-        content: '';
-        position: absolute;
-        left: 5px;
-        top: 1px;
-        width: 4px;
-        height: 9px;
-        border: solid #ffffff;
-        border-width: 0 2px 2px 0;
-        transform: rotate(45deg);
-    }
-
-    .unopim-appurl-step-body {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .unopim-appurl-step-text {
-        display: block;
-        font-size: 13px;
-        color: #475569;
-        transition: opacity 0.2s ease;
-    }
-
-    html.dark .unopim-appurl-step-text {
-        color: #cbd5e1;
-    }
-
-    .unopim-appurl-check-input:checked ~ .unopim-appurl-step-body .unopim-appurl-step-text {
-        text-decoration: line-through;
-        opacity: 0.5;
-    }
+    .unopim-appurl-step.is-done .unopim-appurl-step-title { color: var(--ink-400); }
+    .unopim-appurl-step-hint { display: block; font-size: 11.5px; font-weight: 500; color: var(--ink-400); margin-top: 3px; letter-spacing: 0; }
 
     .unopim-appurl-code {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-top: 6px;
-        padding: 5px 6px 5px 10px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 7px;
+        display: flex; align-items: stretch; gap: 0;
+        border: 1px solid var(--line); border-radius: var(--r-md); background: var(--bg-strip); overflow: hidden;
     }
-
-    html.dark .unopim-appurl-code {
-        background: #1F1C30;
-        border-color: #28273F;
-    }
-
     .unopim-appurl-code-text {
-        flex: 1;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-        font-size: 11.5px;
-        color: #0f172a;
-        word-break: break-all;
-        user-select: all;
+        flex: 1; min-width: 0; font-family: var(--uamono); font-size: 12px; line-height: 1.5;
+        color: var(--ink-900); padding: 9px 12px; white-space: nowrap; overflow-x: auto; overflow-y: hidden;
+        display: flex; align-items: center; scrollbar-width: thin; scrollbar-color: var(--line) transparent;
     }
-
-    html.dark .unopim-appurl-code-text {
-        color: #e2e8f0;
+    .unopim-appurl-code-text::-webkit-scrollbar { height: 4px; }
+    .unopim-appurl-code-text::-webkit-scrollbar-track { background: transparent; }
+    .unopim-appurl-code-text::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+    .unopim-appurl-tok { color: var(--brand-700); font-weight: 600; white-space: nowrap; }
+    .unopim-appurl-code-copy {
+        flex: 0 0 auto; align-self: stretch; display: inline-flex; align-items: center; gap: 6px;
+        padding: 0 12px; border: none; border-left: 1px solid var(--line);
+        background: #fff; color: var(--brand-700);
+        font-family: var(--uafont); font-size: 12px; font-weight: 700; cursor: pointer;
+        transition: background .12s, color .12s; white-space: nowrap;
     }
+    .unopim-appurl-code-copy:hover { background: var(--brand-50); }
+    .unopim-appurl-code-copy.is-copied { color: var(--success-600); }
 
-    .unopim-appurl-copy {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        flex-shrink: 0;
-        padding: 4px 9px;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        font-family: inherit;
-        font-size: 11px;
-        font-weight: 600;
-        color: #7c3aed;
-        cursor: pointer;
-        transition: all 0.15s ease;
-    }
-
-    .unopim-appurl-copy svg {
-        width: 13px;
-        height: 13px;
-    }
-
-    .unopim-appurl-copy:hover {
-        background: #f5f3ff;
-        border-color: #ddd6fe;
-    }
-
-    html.dark .unopim-appurl-copy {
-        background: #26283D;
-        border-color: #353061;
-        color: #c4b5fd;
-    }
-
-    .unopim-appurl-copy.is-copied {
-        color: #15803d;
-        border-color: #bbf7d0;
-        background: #f0fdf4;
-    }
-
-    .unopim-appurl-kbds {
-        display: inline-block;
-        margin-top: 6px;
-    }
-
+    .unopim-appurl-note { display: flex; align-items: flex-start; gap: 9px; margin-top: 12px; padding: 0 2px; }
+    .unopim-appurl-note-ico { display: inline-flex; color: var(--ink-400); flex: 0 0 auto; margin-top: 1px; }
+    .unopim-appurl-note-body { font-size: 12.5px; line-height: 1.5; color: var(--ink-500); }
+    .unopim-appurl-note-body b { color: var(--ink-700); font-weight: 700; }
+    .unopim-appurl-combo { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
     .unopim-appurl-kbd {
-        display: inline-block;
-        padding: 2px 6px;
-        font-family: inherit;
-        font-size: 11px;
-        color: #334155;
-        background: #f1f5f9;
-        border: 1px solid #cbd5e1;
-        border-radius: 4px;
-        box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+        display: inline-flex; align-items: center; justify-content: center; min-width: 27px; height: 25px;
+        padding: 0 8px; background: #fff; border: 1px solid var(--line); border-bottom-width: 2px;
+        border-radius: 6px; font-size: 11.5px; font-weight: 700; color: var(--ink-700); font-family: var(--uafont);
     }
+    .unopim-appurl-plus { color: var(--ink-300); font-weight: 700; font-size: 12px; }
 
-    html.dark .unopim-appurl-kbd {
-        color: #e2e8f0;
-        background: #1F1C30;
-        border-color: #353061;
+    .unopim-appurl-foot {
+        display: flex; align-items: center; gap: 14px; flex: 0 0 auto;
+        padding: 12px 18px; margin-top: 14px; border-top: 1px solid var(--line-2); background: var(--bg-strip);
     }
+    .unopim-appurl-progress-wrap { flex: 1; min-width: 0; }
+    .unopim-appurl-progress-label { font-size: 11px; font-weight: 700; color: var(--ink-500); margin-bottom: 5px; }
+    .unopim-appurl-progress-track { height: 6px; border-radius: 999px; background: var(--brand-100); overflow: hidden; }
+    .unopim-appurl-progress-fill { height: 100%; width: 0%; border-radius: 999px; background: var(--brand-600); transition: width .25s cubic-bezier(.2,.7,.3,1); }
+    .unopim-appurl-btn-done {
+        height: 36px; padding: 0 16px; border-radius: 9px; border: none;
+        background: var(--brand-600); color: #fff; font-family: var(--uafont);
+        font-size: 13px; font-weight: 700; cursor: pointer; transition: background .12s, opacity .12s; flex: 0 0 auto;
+    }
+    .unopim-appurl-btn-done:hover { background: var(--brand-700); }
+    .unopim-appurl-btn-done:disabled { opacity: .45; cursor: not-allowed; }
+
+    .unopim-appurl-poweredby {
+        flex: 0 0 auto; text-align: center;
+        font-size: 12px; line-height: 1.6; font-family: var(--uafont);
+        color: rgba(255, 255, 255, 0.78);
+    }
+    .unopim-appurl-poweredby a { color: #C9BEFF; font-weight: 700; text-decoration: none; }
+    .unopim-appurl-poweredby a:hover { text-decoration: underline; }
+
+    .unopim-appurl-toast {
+        position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px);
+        z-index: 2147483647; background: #1A1530; color: #fff;
+        font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        font-size: 13px; font-weight: 600; padding: 10px 16px; border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px;
+        opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+    }
+    .unopim-appurl-toast.is-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .unopim-appurl-toast svg { color: #6EE7A8; flex: 0 0 auto; }
 </style>
 
 <script>
-    function unopimAppurlEls() {
-        return {
-            backdrop: document.getElementById('unopim-appurl-backdrop'),
-        };
-    }
-
-    function unopimAppurlShow() {
-        var els = unopimAppurlEls();
-        if (els.backdrop) els.backdrop.classList.add('is-open');
-    }
-
-    function unopimAppurlHideAll() {
-        var els = unopimAppurlEls();
-        if (els.backdrop) els.backdrop.classList.remove('is-open');
-    }
-
-    function unopimAppurlDismiss(event) {
-        if (event) {
-            event.stopPropagation();
-            event.preventDefault();
-        }
-
-        var els = unopimAppurlEls();
-        var url = els.backdrop ? els.backdrop.dataset.checkUrl : '';
-
-        // No endpoint to validate against: just hide (refresh re-checks server-side).
-        if (! url) {
-            unopimAppurlHideAll();
-            return;
-        }
-
-        var btn = event && event.currentTarget ? event.currentTarget : null;
-        if (btn) btn.disabled = true;
-
-        // Re-validate APP_URL on the server before dismissing.
-        fetch(url, { headers: { 'Accept': 'application/json' }, cache: 'no-store' })
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                if (data && data.matches) {
-                    // APP_URL now matches: reload so the (now correct) assets load
-                    // and the modal is gone for good.
-                    window.location.reload();
-                } else {
-                    if (btn) btn.disabled = false;
-                    unopimAppurlToast('APP_URL still does not match. Update .env and run "php artisan optimize:clear", then try again.');
-                }
-            })
-            .catch(function () {
-                if (btn) btn.disabled = false;
-                unopimAppurlToast('Could not verify APP_URL. Please refresh the page.');
-            });
-    }
-
-    function unopimAppurlToast(message) {
-        var existing = document.getElementById('unopim-appurl-toast');
-        if (existing) existing.parentNode.removeChild(existing);
-
-        var toast = document.createElement('div');
-        toast.id = 'unopim-appurl-toast';
-        toast.setAttribute('role', 'alert');
-        toast.style.cssText = [
-            'position:fixed', 'top:20px', 'left:50%', 'transform:translateX(-50%)',
-            'z-index:2147483647', 'max-width:calc(100vw - 32px)', 'width:380px',
-            'display:flex', 'align-items:flex-start', 'gap:10px',
-            'padding:12px 14px', 'border-radius:10px',
-            'background:#7f1d1d', 'color:#fff',
-            "font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif",
-            'font-size:12.5px', 'line-height:1.45', 'font-weight:500',
-            'box-shadow:0 12px 30px -8px rgba(0,0,0,0.5)',
-            'opacity:0', 'transition:opacity .2s ease, transform .2s ease'
-        ].join(';');
-        toast.innerHTML =
-            '<svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;flex-shrink:0;color:#fca5a5;" aria-hidden="true">'
-            + '<path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" /></svg>'
-            + '<span style="flex:1;">' + message + '</span>';
-
-        document.body.appendChild(toast);
-        // force reflow then animate in
-        void toast.offsetWidth;
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateX(-50%) translateY(0)';
-
-        setTimeout(function () {
-            toast.style.opacity = '0';
-            setTimeout(function () {
-                if (toast.parentNode) toast.parentNode.removeChild(toast);
-            }, 220);
-        }, 4000);
-    }
-
-    function unopimAppurlStep(step) {
-        var checkbox = document.getElementById('unopim-appurl-step-' + step);
-        if (checkbox) {
-            sessionStorage.setItem('unopim-appurl-step-' + step, checkbox.checked ? 'true' : 'false');
-        }
-    }
-
-    function unopimAppurlCopy(btn, event) {
-        if (event) {
-            event.stopPropagation();
-            event.preventDefault();
-        }
-
-        var text = btn.getAttribute('data-copy') || '';
-        var label = btn.querySelector('.unopim-appurl-copy-label');
-        var original = label ? label.innerText : '';
-
-        function done() {
-            btn.classList.add('is-copied');
-            if (label) label.innerText = 'Copied';
-            setTimeout(function () {
-                btn.classList.remove('is-copied');
-                if (label) label.innerText = original;
-            }, 2000);
-        }
-
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text).then(done).catch(function () { unopimAppurlFallbackCopy(text, done); });
-        } else {
-            unopimAppurlFallbackCopy(text, done);
-        }
-    }
-
-    function unopimAppurlFallbackCopy(text, done) {
-        var area = document.createElement('textarea');
-        area.value = text;
-        area.style.position = 'fixed';
-        area.style.opacity = '0';
-        document.body.appendChild(area);
-        area.focus();
-        area.select();
-        try {
-            if (document.execCommand('copy')) done();
-        } catch (e) {}
-        document.body.removeChild(area);
-    }
-
     (function () {
-        var els = unopimAppurlEls();
-        if (! els.backdrop) return;
+        var backdrop = document.getElementById('unopim-appurl-backdrop');
+        if (! backdrop) return;
 
-        if (els.backdrop.dataset.justLoggedIn === 'true') {
-            for (var s = 1; s <= 3; s++) {
-                sessionStorage.removeItem('unopim-appurl-step-' + s);
-            }
+        var modal = document.getElementById('unopim-appurl-warning');
+        var steps = Array.prototype.slice.call(modal.querySelectorAll('[data-unopim-step]'));
+        var fill = document.getElementById('unopim-appurl-progress-fill');
+        var label = document.getElementById('unopim-appurl-progress-label');
+        var btnDone = document.getElementById('unopim-appurl-btn-done');
+        var toast = document.getElementById('unopim-appurl-toast');
+        var toastMsg = document.getElementById('unopim-appurl-toast-msg');
+        var toastTimer;
+
+        function showToast(msg) {
+            toastMsg.textContent = msg;
+            toast.classList.add('is-show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(function () { toast.classList.remove('is-show'); }, 2400);
         }
 
-        // Always open on load: the server only injects this when APP_URL is
-        // mismatched, so refreshing after a fix simply shows nothing.
-        unopimAppurlShow();
-
-        for (var i = 1; i <= 3; i++) {
-            var checkbox = document.getElementById('unopim-appurl-step-' + i);
-            if (checkbox) {
-                checkbox.checked = sessionStorage.getItem('unopim-appurl-step-' + i) === 'true';
-            }
+        function stepKey(step) {
+            return 'unopim-appurl-step-' + step.getAttribute('data-unopim-step');
         }
+
+        function updateProgress() {
+            var done = steps.filter(function (s) { return s.classList.contains('is-done'); }).length;
+            fill.style.width = (steps.length ? (done / steps.length * 100) : 0) + '%';
+            label.textContent = done + ' of ' + steps.length + ' steps complete';
+            btnDone.disabled = done < steps.length;
+        }
+
+        function markStep(step, done) {
+            step.classList.toggle('is-done', done);
+            try { sessionStorage.setItem(stepKey(step), done ? 'true' : 'false'); } catch (e) {}
+            updateProgress();
+        }
+
+        function fallbackCopy(text, apply) {
+            var area = document.createElement('textarea');
+            area.value = text;
+            area.style.position = 'fixed';
+            area.style.opacity = '0';
+            document.body.appendChild(area);
+            area.focus();
+            area.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(area);
+            apply();
+        }
+
+        // Step toggling — badge OR title.
+        steps.forEach(function (step) {
+            var badge = step.querySelector('.unopim-appurl-step-badge');
+            var title = step.querySelector('.unopim-appurl-step-title');
+            function toggle() { markStep(step, ! step.classList.contains('is-done')); }
+            if (badge) badge.addEventListener('click', toggle);
+            if (title) title.addEventListener('click', toggle);
+        });
+
+        // Copy buttons — copy, tick the step, toast.
+        modal.querySelectorAll('.unopim-appurl-code-copy').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var text = btn.getAttribute('data-copy') || '';
+                var labelSpan = btn.querySelector('.unopim-appurl-copy-label');
+                var apply = function () {
+                    btn.classList.add('is-copied');
+                    if (labelSpan) labelSpan.textContent = 'Copied';
+                    showToast('Copied to clipboard');
+                    setTimeout(function () {
+                        btn.classList.remove('is-copied');
+                        if (labelSpan) labelSpan.textContent = 'Copy';
+                    }, 1600);
+                    var step = btn.closest('[data-unopim-step]');
+                    if (step && ! step.classList.contains('is-done')) { markStep(step, true); }
+                };
+                if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).then(apply, function () { fallbackCopy(text, apply); });
+                } else {
+                    fallbackCopy(text, apply);
+                }
+            });
+        });
+
+        // Close (×) — re-validate APP_URL on the server before dismissing.
+        var closeBtn = modal.querySelector('.unopim-appurl-head-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                var url = backdrop.getAttribute('data-check-url');
+                if (! url) { backdrop.classList.remove('is-open'); return; }
+
+                closeBtn.disabled = true;
+                fetch(url, { headers: { 'Accept': 'application/json' }, cache: 'no-store' })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data && data.matches) {
+                            window.location.reload();
+                        } else {
+                            closeBtn.disabled = false;
+                            showToast('APP_URL still does not match. Update .env and run "php artisan optimize:clear".');
+                        }
+                    })
+                    .catch(function () {
+                        closeBtn.disabled = false;
+                        showToast('Could not verify APP_URL. Please refresh the page.');
+                    });
+            });
+        }
+
+        // "All done" — hard reload so the (hopefully fixed) assets are fetched.
+        btnDone.addEventListener('click', function () {
+            if (btnDone.disabled) return;
+            window.location.reload();
+        });
+
+        // Restore / reset step state, then reveal.
+        var justLoggedIn = backdrop.getAttribute('data-just-logged-in') === 'true';
+        steps.forEach(function (step) {
+            try {
+                if (justLoggedIn) {
+                    sessionStorage.removeItem(stepKey(step));
+                } else if (sessionStorage.getItem(stepKey(step)) === 'true') {
+                    step.classList.add('is-done');
+                }
+            } catch (e) {}
+        });
+
+        updateProgress();
+        backdrop.classList.add('is-open');
     })();
 </script>
 @endverbatim
