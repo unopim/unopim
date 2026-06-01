@@ -209,9 +209,10 @@ class MeasurementFamilyDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('catalog.measurements.families.mass_delete')) {
             $this->addMassAction([
-                'title'  => 'Delete Selected',
-                'method' => 'POST',
-                'url'    => route('admin.measurement.families.mass_delete'),
+                'title'   => 'Delete',
+                'method'  => 'POST',
+                'url'     => route('admin.measurement.families.mass_delete'),
+                'options' => ['actionType' => 'delete'],
             ]);
         }
     }
