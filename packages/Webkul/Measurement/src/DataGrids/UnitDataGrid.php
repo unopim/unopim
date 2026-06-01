@@ -26,13 +26,12 @@ class UnitDataGrid extends DataGrid
         $standardUnit = $family->standard_unit ?? null;
 
         if (empty($units)) {
-            $query = DB::table('measurement_families')
-                ->select(
-                    DB::raw('NULL as code'),
-                    DB::raw('NULL as label'),
-                    DB::raw('NULL as symbol'),
-                    DB::raw('0 as is_standard')
+            $query = DB::query()
+                ->fromSub(
+                    DB::query()->selectRaw('NULL as code, NULL as label, NULL as symbol, 0 as is_standard'),
+                    'measurement_units'
                 )
+                ->select('code', 'label', 'symbol', 'is_standard')
                 ->whereRaw('1 = 0');
 
             $this->setQueryBuilder($query);
@@ -44,20 +43,17 @@ class UnitDataGrid extends DataGrid
 
         foreach ($units as $unit) {
 
-            $code = addslashes($unit['code'] ?? '');
-            $label = addslashes($unit['labels']['en_US'] ?? '');
-            $symbol = addslashes($unit['symbol'] ?? '');
+            $code = $unit['code'] ?? '';
+            $label = $this->getLocalizedLabel($unit['labels'] ?? [], $code);
+            $symbol = $unit['symbol'] ?? '';
 
             $isStd = ($code === $standardUnit) ? 1 : 0;
 
-            $queryList[] = DB::table(DB::raw(
-                "(SELECT
-                    '{$code}'   AS code,
-                    '{$label}'  AS label,
-                    '{$symbol}' AS symbol,
-                    {$isStd}    AS is_standard
-                ) temp"
-            ));
+            $queryList[] = DB::query()
+                ->selectRaw(
+                    '? as code, ? as label, ? as symbol, ? as is_standard',
+                    [$code, $label, $symbol, $isStd]
+                );
         }
 
         $finalQuery = array_shift($queryList);
@@ -65,6 +61,10 @@ class UnitDataGrid extends DataGrid
         foreach ($queryList as $q) {
             $finalQuery = $finalQuery->unionAll($q);
         }
+
+        $finalQuery = DB::query()
+            ->fromSub($finalQuery, 'measurement_units')
+            ->select('code', 'label', 'symbol', 'is_standard');
 
         $this->setQueryBuilder($finalQuery);
 
@@ -120,6 +120,58 @@ class UnitDataGrid extends DataGrid
             },
         ]);
 
+    }
+
+    public function processRequestedFilters(array $requestedFilters)
+    {
+        if (DB::connection()->getDriverName() !== 'pgsql') {
+            return parent::processRequestedFilters($requestedFilters);
+        }
+
+        foreach ($requestedFilters as $requestedColumn => $requestedValues) {
+            if ($requestedColumn === 'all') {
+                $this->queryBuilder->where(function ($query) use ($requestedValues) {
+                    foreach ($requestedValues as $value) {
+                        $query
+                            ->orWhere('code', 'ILIKE', '%'.$value.'%')
+                            ->orWhere('label', 'ILIKE', '%'.$value.'%');
+                    }
+                });
+
+                continue;
+            }
+
+            if (in_array($requestedColumn, ['code', 'label'])) {
+                $this->queryBuilder->where(function ($query) use ($requestedColumn, $requestedValues) {
+                    foreach ($requestedValues as $value) {
+                        $query->orWhere($requestedColumn, 'ILIKE', '%'.$value.'%');
+                    }
+                });
+
+                continue;
+            }
+
+            parent::processRequestedFilters([$requestedColumn => $requestedValues]);
+        }
+
+        return $this->queryBuilder;
+    }
+
+    /**
+     * Get localized label.
+     *
+     * @return string
+     */
+    protected function getLocalizedLabel(array $labels, ?string $code)
+    {
+        $locale = app()->getLocale();
+        $label = $labels[$locale] ?? $labels['en_US'] ?? null;
+
+        if (is_string($label) && trim($label) !== '') {
+            return $label;
+        }
+
+        return $code ? '['.$code.']' : '-';
     }
 
     public function prepareActions()

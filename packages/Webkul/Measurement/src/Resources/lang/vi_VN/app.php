@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'Nhãn',
+        'labels'        => 'Tên',
         'code'          => 'Mã',
         'standard_unit' => 'Đơn vị chuẩn',
         'unit_count'    => 'Số lượng đơn vị',

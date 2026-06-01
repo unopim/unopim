@@ -75,7 +75,7 @@ class MeasurementUnitsController extends Controller
             ], 404);
         }
 
-        request()->validate(MeasurementUnitValidator::storeRules());
+        request()->validate(MeasurementUnitValidator::storeRules(), MeasurementUnitValidator::messages());
 
         $units = $family->units ?? [];
 
@@ -190,7 +190,7 @@ class MeasurementUnitsController extends Controller
 
         }
 
-        request()->validate(MeasurementUnitValidator::updateRules());
+        request()->validate(MeasurementUnitValidator::updateRules(), MeasurementUnitValidator::messages());
 
         $units = $family->units ?? [];
 

@@ -49,7 +49,7 @@ class MeasurementUnitApiController extends Controller
             ], 404);
         }
 
-        $request->validate(MeasurementUnitValidator::storeRules());
+        $request->validate(MeasurementUnitValidator::storeRules(), MeasurementUnitValidator::messages());
 
         $units = $family->units ?? [];
 

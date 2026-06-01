@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => '标签',
+        'labels'        => '名称',
         'code'          => '代码',
         'standard_unit' => '标准单位',
         'unit_count'    => '单位数量',

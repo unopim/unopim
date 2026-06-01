@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'Etiquetas',
+        'labels'        => 'Name',
         'code'          => 'Codigo',
         'standard_unit' => 'Unidat estandar',
         'unit_count'    => 'Numero d’unidatz',

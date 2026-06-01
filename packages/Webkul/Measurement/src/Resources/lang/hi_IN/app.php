@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'लेबल',
+        'labels'        => 'नाम',
         'code'          => 'कोड',
         'standard_unit' => 'मानक इकाई',
         'unit_count'    => 'इकाइयों की संख्या',

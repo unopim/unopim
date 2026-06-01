@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'Etiketter',
+        'labels'        => 'Namn',
         'code'          => 'Kod',
         'standard_unit' => 'Standardenhet',
         'unit_count'    => 'Antal enheter',

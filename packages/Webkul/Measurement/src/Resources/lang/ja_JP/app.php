@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'ラベル',
+        'labels'        => '名前',
         'code'          => 'コード',
         'standard_unit' => '標準単位',
         'unit_count'    => '単位数',

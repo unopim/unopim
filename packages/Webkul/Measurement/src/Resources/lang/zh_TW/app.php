@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => '標籤',
+        'labels'        => '名稱',
         'code'          => '代碼',
         'standard_unit' => '標準單位',
         'unit_count'    => '單位數量',

@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'Тэмдэглэгээ',
+        'labels'        => 'Нэр',
         'code'          => 'Код',
         'standard_unit' => 'Стандарт нэгж',
         'unit_count'    => 'Нэгжүүдийн тоо',

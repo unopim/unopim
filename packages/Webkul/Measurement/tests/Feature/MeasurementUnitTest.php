@@ -22,6 +22,25 @@ it('should return units index page', function () {
         ->assertOk();
 });
 
+it('should show code fallback when unit label is missing', function () {
+    $family = familyWithUnits([
+        ['code' => 'fallback-unit', 'labels' => []],
+    ]);
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->get(
+        route('admin.measurement.families.units', $family->id)
+    );
+
+    $response->assertOk();
+
+    $records = collect($response->json('records'));
+
+    expect($records)->toHaveCount(1)
+        ->and($records->first()['label'])->toBe('[fallback-unit]');
+});
+
 it('should create a unit successfully', function () {
     $family = familyWithUnits();
 
@@ -59,6 +78,32 @@ it('should return validation error when unit code missing', function () {
     )
         ->assertStatus(422)
         ->assertJsonValidationErrors(['code']);
+});
+
+it('should reject invalid unit code and labels', function () {
+    $family = familyWithUnits();
+
+    $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+        'Accept'           => 'application/json',
+    ])->post(
+        route('admin.measurement.families.units.store', $family->id),
+        [
+            'code'   => '15222222225155.$%^&**$%#@',
+            'labels' => [
+                'en_US' => 'Meter123$%',
+            ],
+        ]
+    )
+        ->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'code',
+            'labels.en_US',
+        ]);
+
+    $family->refresh();
+
+    expect($family->units)->toBeEmpty();
 });
 
 it('should not allow duplicate unit code', function () {

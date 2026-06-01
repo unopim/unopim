@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'Nimikkeet',
+        'labels'        => 'Nimi',
         'code'          => 'Koodi',
         'standard_unit' => 'Vakioyksikkö',
         'unit_count'    => 'Yksiköiden määrä',

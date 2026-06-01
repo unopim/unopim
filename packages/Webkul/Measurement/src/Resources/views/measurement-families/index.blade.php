@@ -31,7 +31,7 @@
                 </button>
 
                 <x-admin::form
-                    v-slot="{ errors, handleSubmit }"
+                    v-slot="{ errors, handleSubmit, setErrors }"
                     as="div"
                 >
                     <form @submit="handleSubmit($event, save)">
@@ -186,7 +186,7 @@
                 },
 
                 methods: {
-                    save() {
+                    save(params, { setErrors }) {
                         axios.post(
                             "{{ route('admin.measurement.families.store') }}",
                             this.form
@@ -207,7 +207,9 @@
                             }
                         })
                         .catch((error) => {
-                            console.error(error);
+                            if (error.response?.status === 422) {
+                                setErrors(error.response.data.errors);
+                            }
                         });
                     },
                 },

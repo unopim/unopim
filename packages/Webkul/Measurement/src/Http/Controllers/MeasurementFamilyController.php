@@ -44,7 +44,7 @@ class MeasurementFamilyController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(MeasurementFamilyValidator::storeRules());
+        $request->validate(MeasurementFamilyValidator::storeRules(), MeasurementFamilyValidator::messages());
 
         try {
             $familyLabels = $request->input('labels', []);
@@ -140,7 +140,7 @@ class MeasurementFamilyController extends Controller
     {
         $family = $this->measurementFamilyRepository->find($id);
 
-        $request->validate(MeasurementFamilyValidator::updateRules());
+        $request->validate(MeasurementFamilyValidator::updateRules(), MeasurementFamilyValidator::messages());
 
         $oldLabels = $family->labels ?? [];
         $newLabels = $request->input('labels', []);

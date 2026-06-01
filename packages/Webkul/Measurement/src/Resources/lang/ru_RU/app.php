@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'Метки',
+        'labels'        => 'Название',
         'code'          => 'Код',
         'standard_unit' => 'Стандартная единица',
         'unit_count'    => 'Количество единиц',

@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'Oznake',
+        'labels'        => 'Naziv',
         'code'          => 'Kod',
         'standard_unit' => 'Standardna jedinica',
         'unit_count'    => 'Broj jedinica',

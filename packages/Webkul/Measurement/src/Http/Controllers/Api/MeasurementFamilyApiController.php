@@ -32,7 +32,7 @@ class MeasurementFamilyApiController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(MeasurementFamilyValidator::apiStoreRules());
+        $request->validate(MeasurementFamilyValidator::apiStoreRules(), MeasurementFamilyValidator::messages());
 
         $data = $request->all();
 

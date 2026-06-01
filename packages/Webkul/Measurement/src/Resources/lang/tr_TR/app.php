@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'Etiketler',
+        'labels'        => 'Ad',
         'code'          => 'Kod',
         'standard_unit' => 'Standart Birim',
         'unit_count'    => 'Birim Sayısı',

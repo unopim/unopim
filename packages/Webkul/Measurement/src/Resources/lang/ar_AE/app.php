@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'        => 'التسميات',
+        'labels'        => 'الاسم',
         'code'          => 'الرمز',
         'standard_unit' => 'الوحدة القياسية',
         'unit_count'    => 'عدد الوحدات',

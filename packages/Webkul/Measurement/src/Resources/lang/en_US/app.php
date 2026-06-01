@@ -47,7 +47,7 @@ return [
     ],
 
     'datagrid' => [
-        'labels'          => 'Labels',
+        'labels'          => 'Name',
         'code'            => 'Code',
         'standard_unit'   => 'Standard Unit',
         'unit_count'      => 'Number Of Units',
