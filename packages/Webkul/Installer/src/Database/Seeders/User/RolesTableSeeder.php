@@ -16,9 +16,11 @@ class RolesTableSeeder extends Seeder
      */
     public function run($parameters = [])
     {
-        DB::table('admins')->delete();
+        DatabaseSequenceHelper::fixSequence('roles');
 
-        DB::table('roles')->delete();
+        if (DB::table('roles')->where('id', 1)->exists()) {
+            return;
+        }
 
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 

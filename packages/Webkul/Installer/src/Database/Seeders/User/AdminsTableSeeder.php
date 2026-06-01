@@ -4,6 +4,7 @@ namespace Webkul\Installer\Database\Seeders\User;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
@@ -17,18 +18,32 @@ class AdminsTableSeeder extends Seeder
      */
     public function run($parameters = [])
     {
-        DB::table('admins')->delete();
+
+        $adminEmail = ($parameters['admin_email'] ?? '')
+            ?: env('INSTALLER_ADMIN_EMAIL')
+            ?: 'admin@example.com';
+
+        $providedPassword = ($parameters['admin_password'] ?? '')
+            ?: env('INSTALLER_ADMIN_PASSWORD')
+            ?: '';
+
+        $adminPassword = $providedPassword ?: Str::random(20);
+        $generatedRandom = $providedPassword === '';
+
+        DatabaseSequenceHelper::fixSequence('admins');
+
+        if (DB::table('admins')->where('email', $adminEmail)->exists()) {
+            return;
+        }
 
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
-
-        /** Default locale id to be set to user else 58 id of en_US locale is added */
         $defaultLocaleId = DB::table('locales')->where('code', $defaultLocale)->where('status', 1)->first()?->id ?? 58;
 
         DB::table('admins')->insert([
             'id'            => 1,
             'name'          => trans('installer::app.seeders.user.users.name', [], $defaultLocale),
-            'email'         => 'admin@example.com',
-            'password'      => bcrypt('admin123'),
+            'email'         => $adminEmail,
+            'password'      => bcrypt($adminPassword),
             'api_token'     => Str::random(80),
             'created_at'    => date('Y-m-d H:i:s'),
             'updated_at'    => date('Y-m-d H:i:s'),
@@ -39,5 +54,35 @@ class AdminsTableSeeder extends Seeder
         ]);
 
         DatabaseSequenceHelper::fixSequence('admins');
+
+        if ($generatedRandom) {
+            $this->writeGeneratedCredentialsFile($adminEmail, $adminPassword);
+        }
+    }
+
+    /**
+     * Persist a one-time credentials file the operator can read on first boot.
+     */
+    private function writeGeneratedCredentialsFile(string $email, string $password): void
+    {
+        $path = storage_path('app/admin-credentials.txt');
+
+        $body = "UnoPim — initial admin credentials (auto-generated)\n"
+            ."====================================================\n"
+            ."email:    {$email}\n"
+            ."password: {$password}\n\n"
+            ."Log in once, rotate the password, then delete this file.\n";
+
+        @file_put_contents($path, $body);
+        @chmod($path, 0600);
+
+        try {
+            Log::warning(
+                '[unopim:install] Generated random initial admin password. '.
+                'See '.$path.' — rotate and delete after first login.'
+            );
+        } catch (\Throwable) {
+            // Logging is best-effort; never break first-time setup if the log sink is read-only.
+        }
     }
 }
