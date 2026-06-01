@@ -1,5 +1,9 @@
 <?php
 
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Support\Facades\Route;
+use Webkul\AppUrlGuard\Http\Middleware\VerifyAppUrlMatches;
+
 /**
  * Feature cover for the package wiring: the debug-only check endpoint and the
  * middleware-injected modal, exercised through the real HTTP kernel.
@@ -33,6 +37,39 @@ describe('check endpoint', function () {
         config()->set('app.debug', false);
 
         $this->getJson('/app-url-guard/check')->assertNotFound();
+    });
+
+    it('only answers GET (POST is method-not-allowed)', function () {
+        $this->postJson('/app-url-guard/check')->assertStatus(405);
+    });
+
+    it('treats the http default port as a match', function () {
+        config()->set('app.url', 'http://localhost:80');
+
+        $this->getJson('/app-url-guard/check')
+            ->assertOk()
+            ->assertJson(['matches' => true]);
+    });
+
+    it('treats an empty APP_URL as a match (no false positive)', function () {
+        config()->set('app.url', '');
+
+        $this->getJson('/app-url-guard/check')
+            ->assertOk()
+            ->assertJson(['matches' => true]);
+    });
+});
+
+describe('package wiring', function () {
+    it('registers the guard middleware on the global stack in debug mode', function () {
+        $kernel = app(Kernel::class);
+
+        expect($kernel->hasMiddleware(VerifyAppUrlMatches::class))
+            ->toBeTrue();
+    });
+
+    it('exposes the check route only in debug mode', function () {
+        expect(Route::has('app_url_guard.check'))->toBeTrue();
     });
 });
 
@@ -99,6 +136,39 @@ describe('force-logout of an authenticated admin on mismatch', function () {
 
         $this->loginAsAdmin();
 
+        $this->get('/admin/login');
+
+        $this->assertAuthenticated('admin');
+    });
+
+    it('honours a custom admin URL prefix in the logout redirect', function () {
+        config()->set('app.url', 'http://canonical.test');
+
+        $this->loginAsAdmin();
+
+        // The session-backed route stays /admin/login (registered at boot), but
+        // the redirect target is built from the runtime admin_url config.
+        config()->set('app.admin_url', 'backend');
+
+        $this->get('/admin/login')
+            ->assertRedirect('http://localhost/backend/login');
+    });
+
+    it('flashes a warning message explaining the forced logout', function () {
+        config()->set('app.url', 'http://canonical.test');
+
+        $this->loginAsAdmin();
+
+        $this->get('/admin/login')->assertSessionHas('warning');
+    });
+
+    it('does nothing when APP_DEBUG is disabled even if mismatched and logged in', function () {
+        config()->set('app.url', 'http://canonical.test');
+        config()->set('app.debug', false);
+
+        $this->loginAsAdmin();
+
+        // Debug off => guard is inert; the admin is not bounced.
         $this->get('/admin/login');
 
         $this->assertAuthenticated('admin');

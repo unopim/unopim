@@ -4,6 +4,7 @@ namespace Webkul\AppUrlGuard\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Webkul\AppUrlGuard\Concerns\NormalizesUrl;
 
 /**
  * Lightweight, debug-only endpoint used by the warning modal to re-validate
@@ -13,6 +14,8 @@ use Illuminate\Http\Request;
  */
 class AppUrlGuardController
 {
+    use NormalizesUrl;
+
     /**
      * Report whether APP_URL now matches the requesting host.
      */
@@ -28,13 +31,5 @@ class AppUrlGuardController
             'configured' => $configured,
             'actual'     => $actual,
         ]);
-    }
-
-    /**
-     * Normalise a base URL for comparison (lower-case host, no trailing slash).
-     */
-    protected function normalize(string $url): string
-    {
-        return rtrim(strtolower(trim($url)), '/');
     }
 }

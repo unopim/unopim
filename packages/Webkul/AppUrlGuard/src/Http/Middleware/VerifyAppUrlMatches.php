@@ -5,6 +5,7 @@ namespace Webkul\AppUrlGuard\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Webkul\AppUrlGuard\Concerns\NormalizesUrl;
 
 /**
  * Developer guard: warns when the URL the browser is actually using does
@@ -20,6 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class VerifyAppUrlMatches
 {
+    use NormalizesUrl;
+
     /**
      * Handle an incoming request.
      *
@@ -102,14 +105,6 @@ class VerifyAppUrlMatches
         $loginUrl = $base.'/'.trim((string) config('app.admin_url'), '/').'/login';
 
         return redirect($loginUrl)->with('warning', $message);
-    }
-
-    /**
-     * Normalise a base URL for comparison (lower-case host, no trailing slash).
-     */
-    protected function normalize(string $url): string
-    {
-        return rtrim(strtolower(trim($url)), '/');
     }
 
     /**
