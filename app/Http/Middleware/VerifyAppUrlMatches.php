@@ -99,13 +99,13 @@ class VerifyAppUrlMatches
 
         return <<<HTML
             <div id="unopim-appurl-warning" role="alert" style="
-                position:fixed;bottom:24px;right:24px;z-index:2147483647;width:380px;max-width:calc(100vw - 32px);
+                position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2147483647;width:400px;max-width:calc(100vw - 32px);
                 font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
                 background:#ffffff;border:1px solid #fed7aa;border-radius:14px;overflow:hidden;
                 box-shadow:0 18px 50px -12px rgba(15,23,42,.35);animation:unopimSlideIn .35s ease-out;">
 
                 <style>
-                    @keyframes unopimSlideIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+                    @keyframes unopimSlideIn{from{opacity:0;transform:translate(-50%,-18px)}to{opacity:1;transform:translate(-50%,0)}}
                     #unopim-appurl-warning code{background:#f1f5f9;border-radius:5px;padding:2px 6px;
                         font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:#0f172a;word-break:break-all}
                     #unopim-appurl-warning .uw-btn{cursor:pointer;border:0;border-radius:8px;font-weight:600;font-size:12px}
