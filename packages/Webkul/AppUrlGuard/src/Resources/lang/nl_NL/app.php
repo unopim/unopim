@@ -12,7 +12,7 @@ return [
         'in-use-tag'      => 'IN GEBRUIK',
         'toggle-step'     => 'Stap :number in-/uitklappen',
         'step-1-title'    => 'Werk APP_URL bij in uw .env-bestand',
-        'step-1-hint'     => "Open de .env van het project en vervang de APP_URL-regel.",
+        'step-1-hint'     => 'Open de .env van het project en vervang de APP_URL-regel.',
         'step-2-title'    => 'Wis de applicatiecache',
         'step-2-hint'     => 'Voer dit uit in uw terminal vanuit de projectmap.',
         'copy'            => 'Kopiëren',

@@ -12,7 +12,7 @@ return [
         'in-use-tag'      => 'I BRUK',
         'toggle-step'     => 'Veksle trinn :number',
         'step-1-title'    => 'Oppdater APP_URL i .env-filen din',
-        'step-1-hint'     => "Åpne prosjektets .env og erstatt APP_URL-linjen.",
+        'step-1-hint'     => 'Åpne prosjektets .env og erstatt APP_URL-linjen.',
         'step-2-title'    => 'Tøm applikasjonsbufferen',
         'step-2-hint'     => 'Kjør dette i terminalen fra prosjektroten.',
         'copy'            => 'Kopier',

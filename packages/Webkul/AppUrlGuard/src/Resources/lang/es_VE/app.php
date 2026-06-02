@@ -12,7 +12,7 @@ return [
         'in-use-tag'      => 'EN USO',
         'toggle-step'     => 'Alternar paso :number',
         'step-1-title'    => 'Actualiza APP_URL en tu archivo .env',
-        'step-1-hint'     => "Abre el .env del proyecto y reemplaza la línea de APP_URL.",
+        'step-1-hint'     => 'Abre el .env del proyecto y reemplaza la línea de APP_URL.',
         'step-2-title'    => 'Limpia la caché de la aplicación',
         'step-2-hint'     => 'Ejecuta esto en tu terminal desde la raíz del proyecto.',
         'copy'            => 'Copiar',

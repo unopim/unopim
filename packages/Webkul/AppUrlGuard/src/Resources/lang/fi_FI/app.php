@@ -12,7 +12,7 @@ return [
         'in-use-tag'      => 'KÄYTÖSSÄ',
         'toggle-step'     => 'Vaihda vaihe :number',
         'step-1-title'    => 'Päivitä APP_URL .env-tiedostossasi',
-        'step-1-hint'     => "Avaa projektin .env ja korvaa APP_URL-rivi.",
+        'step-1-hint'     => 'Avaa projektin .env ja korvaa APP_URL-rivi.',
         'step-2-title'    => 'Tyhjennä sovelluksen välimuisti',
         'step-2-hint'     => 'Suorita tämä terminaalissa projektin juurikansiosta.',
         'copy'            => 'Kopioi',

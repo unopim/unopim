@@ -12,7 +12,7 @@ return [
         'in-use-tag'      => 'UTILISÉE',
         'toggle-step'     => "Basculer l'étape :number",
         'step-1-title'    => 'Mettez à jour APP_URL dans votre fichier .env',
-        'step-1-hint'     => "Ouvrez le .env du projet et remplacez la ligne APP_URL.",
+        'step-1-hint'     => 'Ouvrez le .env du projet et remplacez la ligne APP_URL.',
         'step-2-title'    => "Videz le cache de l'application",
         'step-2-hint'     => 'Exécutez ceci dans votre terminal depuis la racine du projet.',
         'copy'            => 'Copier',
@@ -25,7 +25,7 @@ return [
         'open-source-by'  => 'Un projet open source de',
         'copied-toast'    => 'Copié dans le presse-papiers',
         'still-mismatch'  => 'APP_URL ne correspond toujours pas. Mettez à jour le .env et exécutez "php artisan optimize:clear".',
-        'verify-failed'   => "Impossible de vérifier APP_URL. Veuillez rafraîchir la page.",
+        'verify-failed'   => 'Impossible de vérifier APP_URL. Veuillez rafraîchir la page.',
         'logged-out'      => "Déconnecté : APP_URL ne correspond pas à l'hôte actuel. Mettez à jour APP_URL dans le .env et exécutez \"php artisan optimize:clear\".",
     ],
 ];

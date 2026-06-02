@@ -12,7 +12,7 @@ return [
         'in-use-tag'      => 'EN ÚS',
         'toggle-step'     => 'Commuta el pas :number',
         'step-1-title'    => 'Actualitzeu APP_URL al vostre fitxer .env',
-        'step-1-hint'     => "Obriu el fitxer .env del projecte i substituïu la línia APP_URL.",
+        'step-1-hint'     => 'Obriu el fitxer .env del projecte i substituïu la línia APP_URL.',
         'step-2-title'    => 'Esborreu la memòria cau de l\'aplicació',
         'step-2-hint'     => 'Executeu això al terminal des de l\'arrel del projecte.',
         'copy'            => 'Copia',

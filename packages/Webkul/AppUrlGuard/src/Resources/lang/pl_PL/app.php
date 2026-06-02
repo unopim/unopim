@@ -12,7 +12,7 @@ return [
         'in-use-tag'      => 'W UŻYCIU',
         'toggle-step'     => 'Przełącz krok :number',
         'step-1-title'    => 'Zaktualizuj APP_URL w pliku .env',
-        'step-1-hint'     => "Otwórz plik .env projektu i zamień wiersz APP_URL.",
+        'step-1-hint'     => 'Otwórz plik .env projektu i zamień wiersz APP_URL.',
         'step-2-title'    => 'Wyczyść pamięć podręczną aplikacji',
         'step-2-hint'     => 'Uruchom to w terminalu z katalogu głównego projektu.',
         'copy'            => 'Kopiuj',
