@@ -120,6 +120,9 @@ jobs:
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
 
       - name: Running UnoPim Installer & Start Server
+        env:
+          INSTALLER_ADMIN_EMAIL: ${{ secrets.ADMIN_USERNAME }}
+          INSTALLER_ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
           chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
