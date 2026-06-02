@@ -44,13 +44,10 @@ jobs:
       GROQ_INVALID_KEY: ${{ secrets.GROQ_INVALID_KEY }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       UNOPIM_URL: ${{ secrets.UNOPIM_URL }}
-      # Pinned to literal test values so CI does not depend on optional repo
-      # secrets being configured. Must match INSTALLER_ADMIN_EMAIL / _PASSWORD
-      # passed to the install step below.
-      ADMIN_USERNAME: admin@example.com
-      ADMIN_PASSWORD: admin123
-      INVALID_ADMIN_EMAIL: bad@example.com
-      INVALID_ADMIN_PASSWORD: badpassword
+      ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+      INVALID_ADMIN_EMAIL: ${{ secrets.INVALID_ADMIN_EMAIL }}
+      INVALID_ADMIN_PASSWORD: ${{ secrets.INVALID_ADMIN_PASSWORD }}
       # E2E only: lets webhook-delivery.spec.js point UnoPim at a localhost
       # catcher (127.0.0.1:<port>). SafeWebhookUrl blocks loopback by default
       # in prod; this flag re-allows loopback ONLY — private / link-local /
@@ -124,8 +121,8 @@ jobs:
 
       - name: Running UnoPim Installer & Start Server
         env:
-          INSTALLER_ADMIN_EMAIL: admin@example.com
-          INSTALLER_ADMIN_PASSWORD: admin123
+          INSTALLER_ADMIN_EMAIL: ${{ secrets.ADMIN_USERNAME }}
+          INSTALLER_ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
           chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key

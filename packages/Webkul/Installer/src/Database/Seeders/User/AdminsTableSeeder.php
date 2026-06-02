@@ -32,7 +32,7 @@ class AdminsTableSeeder extends Seeder
 
         DatabaseSequenceHelper::fixSequence('admins');
 
-        if (DB::table('admins')->where('email', $adminEmail)->exists()) {
+        if (DB::table('admins')->exists()) {
             return;
         }
 
@@ -73,7 +73,13 @@ class AdminsTableSeeder extends Seeder
             ."password: {$password}\n\n"
             ."Log in once, rotate the password, then delete this file.\n";
 
-        @file_put_contents($path, $body);
+        if (file_put_contents($path, $body, LOCK_EX) === false) {
+            throw new \RuntimeException(
+                "Unable to write initial admin credentials to {$path}. ".
+                'Set INSTALLER_ADMIN_PASSWORD and retry installation.'
+            );
+        }
+
         @chmod($path, 0600);
 
         try {
