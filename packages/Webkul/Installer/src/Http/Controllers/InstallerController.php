@@ -42,6 +42,22 @@ class InstallerController extends Controller
     ) {}
 
     /**
+     * Abort with 403 once the application is fully installed.
+     *
+     * Defence in depth for the unauthenticated installer api endpoints: even
+     * if the `CanInstall` middleware were bypassed (e.g. a crafted header or
+     * a future routing change), the state-changing setup steps must never run
+     * again on a live instance. The `storage/installed` marker is written
+     * only by the final SMTP step, so this never blocks a genuine install.
+     *
+     * @return void
+     */
+    protected function abortIfInstalled()
+    {
+        abort_if(file_exists(storage_path('installed')), 403);
+    }
+
+    /**
      * Installer View Root Page
      *
      * @return View
@@ -64,6 +80,8 @@ class InstallerController extends Controller
      */
     public function envFileSetup(Request $request): JsonResponse
     {
+        $this->abortIfInstalled();
+
         $request = $request->all();
 
         if (isset($request['db_prefix'])) {
@@ -100,6 +118,8 @@ class InstallerController extends Controller
      */
     public function runMigration()
     {
+        $this->abortIfInstalled();
+
         try {
             DB::connection()->getPdo();
         } catch (\Exception $e) {
@@ -118,6 +138,8 @@ class InstallerController extends Controller
      */
     public function runSeeder()
     {
+        $this->abortIfInstalled();
+
         $selectedParameters = request()->selectedParameters;
         $allParameters = request()->allParameters;
 
@@ -159,6 +181,8 @@ class InstallerController extends Controller
      */
     public function adminConfigSetup()
     {
+        $this->abortIfInstalled();
+
         $password = password_hash(request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
         $uiLocaleId = DB::table('locales')->where('code', request()->input('locale'))->where('status', 1)->first()?->id ?? 58;
 
@@ -177,7 +201,12 @@ class InstallerController extends Controller
                 ]
             );
         } catch (\Throwable $th) {
-            dd($th);
+            report($th);
+
+            return response()->json([
+                'success' => false,
+                'error'   => $th->getMessage(),
+            ], 500);
         }
     }
 
@@ -190,6 +219,8 @@ class InstallerController extends Controller
      */
     public function seedSampleData(DemoDataInstaller $installer): JsonResponse
     {
+        $this->abortIfInstalled();
+
         $result = $installer->seed();
 
         if (! ($result['success'] ?? false)) {
@@ -207,6 +238,8 @@ class InstallerController extends Controller
      */
     public function smtpConfigSetup()
     {
+        $this->abortIfInstalled();
+
         $this->environmentManager->setEnvConfiguration(request()->input());
 
         $filePath = storage_path('installed');
