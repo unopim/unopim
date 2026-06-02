@@ -298,8 +298,8 @@
                                 <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-bounce" style="animation-delay:.3s"></span>
                             </span>
                         </p>
-                        <p class="flex gap-2 items-center mb-2" v-else>
-                            <i class="icon-cancel h-fit rounded-full bg-red-200 text-2xl text-red-600"></i>
+                        <p class="flex gap-2 items-center mb-2 text-red-800 dark:text-red-300 font-semibold" v-else>
+                            <i class="icon-cancel h-fit rounded-full bg-red-200 dark:bg-red-800 text-2xl text-red-600 dark:text-red-200"></i>
                             @lang('admin::app.settings.data-transfer.imports.import.validation-failed-info')
                         </p>
 
@@ -317,7 +317,7 @@
                                 @{{ importResource.errors_count }}
                             </p>
                             <div class="grid gap-1" v-if="importResource.errors?.length">
-                                <p class="break-all text-sm text-red-600" v-for="error in importResource.errors">@{{ error }}</p>
+                                <p class="break-all text-sm text-red-600 dark:text-red-400" v-for="error in importResource.errors">@{{ error }}</p>
                             </div>
                         </div>
                     </div>
