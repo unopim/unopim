@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AppUrlGuard\Concerns\NormalizesUrl;
+use Webkul\AppUrlGuard\Providers\AppUrlGuardServiceProvider;
 
 /**
  * Developer guard: warns when the URL the browser is actually using does
@@ -32,7 +33,7 @@ class VerifyAppUrlMatches
     {
         $response = $next($request);
 
-        if (! config('app.debug')) {
+        if (! config('app.debug') || ! AppUrlGuardServiceProvider::active()) {
             return $response;
         }
 
@@ -43,8 +44,6 @@ class VerifyAppUrlMatches
             return $response;
         }
 
-        // Log the mismatch only once per session instead of on every request
-        // (page loads, AJAX polling, etc.) so the log is not flooded.
         if (! $request->hasSession() || ! session()->has('unopim_appurl_logged')) {
             $this->logMismatch($configured, $actual);
 
@@ -53,12 +52,6 @@ class VerifyAppUrlMatches
             }
         }
 
-        // Force-logout an authenticated admin on a mismatched host. Using the
-        // panel while APP_URL is wrong loads assets from the wrong origin and
-        // every route()/redirect() points at the unreachable APP_URL host, so we
-        // sign the admin out and bounce them to a guest login page (where the
-        // modal explains the fix). Only the session-based admin guard is touched;
-        // API/Passport tokens are untouched.
         if ($request->hasSession() && auth()->guard('admin')->check()) {
             return $this->logoutMismatchedAdmin($request);
         }
@@ -75,8 +68,6 @@ class VerifyAppUrlMatches
             }
         }
 
-        // Build the re-validation URL from the ACTUAL request host (never APP_URL,
-        // which is exactly what is broken) so the modal can fetch it same-origin.
         $checkUrl = rtrim($request->getSchemeAndHttpHost().$request->getBaseUrl(), '/').'/app-url-guard/check';
 
         return $this->injectBanner($response, $configured, $actual, $checkUrl, $justLoggedIn);

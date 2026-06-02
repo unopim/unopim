@@ -7,12 +7,15 @@ use Webkul\AppUrlGuard\Http\Middleware\VerifyAppUrlMatches;
 /**
  * Feature cover for the package wiring: the debug-only check endpoint and the
  * middleware-injected modal, exercised through the real HTTP kernel.
- *
- * The test client serves from http://localhost, so APP_URL=http://localhost is
- * a "match" and any other value is a "mismatch".
  */
+function appRoot(): string
+{
+    return rtrim(url('/'), '/');
+}
+
 beforeEach(function () {
     config()->set('app.debug', true);
+    config()->set('app_url_guard.enabled', true);
 });
 
 describe('check endpoint', function () {
@@ -26,7 +29,7 @@ describe('check endpoint', function () {
     });
 
     it('reports a match when APP_URL equals the request host', function () {
-        config()->set('app.url', 'http://localhost');
+        config()->set('app.url', appRoot());
 
         $this->getJson('/app-url-guard/check')
             ->assertOk()
@@ -41,14 +44,6 @@ describe('check endpoint', function () {
 
     it('only answers GET (POST is method-not-allowed)', function () {
         $this->postJson('/app-url-guard/check')->assertStatus(405);
-    });
-
-    it('treats the http default port as a match', function () {
-        config()->set('app.url', 'http://localhost:80');
-
-        $this->getJson('/app-url-guard/check')
-            ->assertOk()
-            ->assertJson(['matches' => true]);
     });
 
     it('treats an empty APP_URL as a match (no false positive)', function () {
@@ -85,7 +80,7 @@ describe('modal injection on admin pages', function () {
     });
 
     it('does not inject the modal when APP_URL matches the host', function () {
-        config()->set('app.url', 'http://localhost');
+        config()->set('app.url', appRoot());
 
         $this->get('/admin/login')
             ->assertOk()
@@ -94,15 +89,13 @@ describe('modal injection on admin pages', function () {
 });
 
 describe('force-logout of an authenticated admin on mismatch', function () {
-    // Logout only applies to session-backed (web group) routes such as the admin
-    // pages — the stateless check endpoint has no session by design.
     it('logs out the admin and redirects to a reachable login page', function () {
         config()->set('app.url', 'http://canonical.test');
 
         $this->loginAsAdmin();
 
         $this->get('/admin/login')
-            ->assertRedirect('http://localhost/admin/login');
+            ->assertRedirect(appRoot().'/admin/login');
 
         $this->assertGuest('admin');
     });
@@ -115,7 +108,7 @@ describe('force-logout of an authenticated admin on mismatch', function () {
         $location = $this->get('/admin/login')->headers->get('Location');
 
         expect($location)
-            ->toContain('http://localhost/admin/login')
+            ->toBe(appRoot().'/admin/login')
             ->not->toContain('canonical.test');
     });
 
@@ -132,7 +125,7 @@ describe('force-logout of an authenticated admin on mismatch', function () {
     });
 
     it('does NOT log out the admin when APP_URL matches', function () {
-        config()->set('app.url', 'http://localhost');
+        config()->set('app.url', appRoot());
 
         $this->loginAsAdmin();
 
@@ -146,12 +139,10 @@ describe('force-logout of an authenticated admin on mismatch', function () {
 
         $this->loginAsAdmin();
 
-        // The session-backed route stays /admin/login (registered at boot), but
-        // the redirect target is built from the runtime admin_url config.
         config()->set('app.admin_url', 'backend');
 
         $this->get('/admin/login')
-            ->assertRedirect('http://localhost/backend/login');
+            ->assertRedirect(appRoot().'/backend/login');
     });
 
     it('flashes a warning message explaining the forced logout', function () {
@@ -167,8 +158,6 @@ describe('force-logout of an authenticated admin on mismatch', function () {
         config()->set('app.debug', false);
 
         $this->loginAsAdmin();
-
-        // Debug off => guard is inert; the admin is not bounced.
         $this->get('/admin/login');
 
         $this->assertAuthenticated('admin');

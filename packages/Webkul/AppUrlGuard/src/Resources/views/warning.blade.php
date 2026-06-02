@@ -182,9 +182,7 @@
         inset: 0;
         z-index: 2147483647;
         padding: 18px;
-        background: rgba(20, 16, 40, 0.55);
-        -webkit-backdrop-filter: blur(3px);
-        backdrop-filter: blur(3px);
+        background: #F5F3FF;
         flex-direction: column;
         align-items: center;
         justify-content: center;
@@ -194,6 +192,8 @@
         color: var(--ink-900);
         -webkit-font-smoothing: antialiased;
     }
+
+    html.dark #unopim-appurl-backdrop { background: #1F1C30; }
 
     #unopim-appurl-backdrop.is-open { display: flex; }
     #unopim-appurl-backdrop *,
@@ -348,11 +348,13 @@
 
     .unopim-appurl-poweredby {
         flex: 0 0 auto; text-align: center;
-        font-size: 12px; line-height: 1.6; font-family: var(--uafont);
-        color: rgba(255, 255, 255, 0.78);
+        font-size: 12px; line-height: 1.6; font-family: var(--uafont); font-weight: 500;
+        color: #1F2937;
     }
-    .unopim-appurl-poweredby a { color: #C9BEFF; font-weight: 700; text-decoration: none; }
+    .unopim-appurl-poweredby a { color: #6D28D9; font-weight: 700; text-decoration: none; }
     .unopim-appurl-poweredby a:hover { text-decoration: underline; }
+    html.dark .unopim-appurl-poweredby { color: #FFFFFF; }
+    html.dark .unopim-appurl-poweredby a { color: #C4B5FD; }
 
     .unopim-appurl-toast {
         position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px);

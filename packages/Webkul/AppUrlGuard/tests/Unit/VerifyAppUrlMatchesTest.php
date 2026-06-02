@@ -48,6 +48,7 @@ function apacheSubdirRequest(string $url): Request
 
 beforeEach(function () {
     config()->set('app.debug', true);
+    config()->set('app_url_guard.enabled', true);
 });
 
 describe('mismatch detection', function () {
@@ -162,7 +163,6 @@ describe('security', function () {
     it('ignores a spoofed X-Forwarded-Host from an untrusted proxy', function () {
         config()->set('app.url', 'http://canonical.test');
 
-        // Real Host matches APP_URL; the forwarded header must not override it.
         $request = Request::create('http://canonical.test/admin', 'GET', [], [], [], [
             'HTTP_X_FORWARDED_HOST'  => 'evil.example.com',
             'HTTP_X_FORWARDED_PROTO' => 'http',
@@ -174,7 +174,6 @@ describe('security', function () {
     it('ignores a spoofed X-Forwarded-Proto from an untrusted proxy', function () {
         config()->set('app.url', 'http://canonical.test');
 
-        // Real scheme is http and matches; spoofed https must not flip it.
         $request = Request::create('http://canonical.test/admin', 'GET', [], [], [], [
             'HTTP_X_FORWARDED_PROTO' => 'https',
         ]);
@@ -191,8 +190,6 @@ describe('security', function () {
     });
 
     it('escapes a value that tries to break out of an HTML attribute', function () {
-        // $actual is echoed into data-copy="APP_URL={{ $actual }}" — a raw quote
-        // would let an attacker inject attributes/handlers if unescaped.
         $html = renderWarning(actual: 'http://x" onmouseover="alert(1)');
 
         expect($html)

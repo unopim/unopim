@@ -5,6 +5,7 @@ namespace Webkul\AppUrlGuard\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Webkul\AppUrlGuard\Concerns\NormalizesUrl;
+use Webkul\AppUrlGuard\Providers\AppUrlGuardServiceProvider;
 
 /**
  * Lightweight, debug-only endpoint used by the warning modal to re-validate
@@ -21,7 +22,7 @@ class AppUrlGuardController
      */
     public function check(Request $request): JsonResponse
     {
-        abort_unless(config('app.debug'), 404);
+        abort_unless(config('app.debug') && AppUrlGuardServiceProvider::active(), 404);
 
         $configured = $this->normalize((string) config('app.url'));
         $actual = $this->normalize($request->getSchemeAndHttpHost().$request->getBaseUrl());
