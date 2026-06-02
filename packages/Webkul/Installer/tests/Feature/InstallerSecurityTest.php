@@ -87,3 +87,80 @@ describe('Installer pre-auth admin takeover', function () {
         ]);
     });
 });
+
+/**
+ * Every state-changing installer endpoint must refuse to run on a live
+ * instance, so re-installation / re-seeding cannot be triggered after setup.
+ */
+describe('Installer endpoints sealed once installed', function () {
+    beforeEach(function () {
+        file_put_contents($this->marker, 'installed');
+    });
+
+    it('forbids env-file-setup once installed', function () {
+        $this->withoutMiddleware()
+            ->postJson('/install/api/env-file-setup', ['db_prefix' => 'ab'])
+            ->assertForbidden();
+    });
+
+    it('forbids run-migration once installed', function () {
+        $this->withoutMiddleware()
+            ->postJson('/install/api/run-migration')
+            ->assertForbidden();
+    });
+
+    it('forbids run-seeder once installed', function () {
+        $this->withoutMiddleware()
+            ->postJson('/install/api/run-seeder')
+            ->assertForbidden();
+    });
+
+    it('forbids seed-sample-data once installed', function () {
+        $this->withoutMiddleware()
+            ->postJson('/install/api/seed-sample-data')
+            ->assertForbidden();
+    });
+});
+
+/**
+ * The completion marker must be written at the true end of the UI flow so the
+ * installer seals itself, while still allowing the optional demo-data step
+ * that legitimately runs after the admin is created.
+ */
+describe('Installer completion marker', function () {
+    beforeEach(function () {
+        if (file_exists($this->marker)) {
+            unlink($this->marker);
+        }
+    });
+
+    it('seals the installer after admin setup when no demo data is requested', function () {
+        $this->withoutMiddleware()
+            ->postJson('/install/api/admin-config-setup', [
+                'admin'    => 'Real Admin',
+                'email'    => 'realadmin@example.com',
+                'password' => 'secret123',
+                'timezone' => 'UTC',
+                'locale'   => 'en_US',
+            ])
+            ->assertSuccessful();
+
+        expect(file_exists($this->marker))->toBeTrue();
+    });
+
+    it('defers sealing past admin setup when demo data is requested', function () {
+        $this->withoutMiddleware()
+            ->postJson('/install/api/admin-config-setup', [
+                'admin'            => 'Real Admin',
+                'email'            => 'realadmin@example.com',
+                'password'         => 'secret123',
+                'timezone'         => 'UTC',
+                'locale'           => 'en_US',
+                'seed_sample_data' => true,
+            ])
+            ->assertSuccessful();
+
+        // Not sealed yet — the demo-data step still needs to run.
+        expect(file_exists($this->marker))->toBeFalse();
+    });
+});

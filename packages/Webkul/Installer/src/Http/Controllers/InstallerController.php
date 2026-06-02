@@ -58,6 +58,23 @@ class InstallerController extends Controller
     }
 
     /**
+     * Write the completion marker that seals the installer.
+     *
+     * Once this file exists, `CanInstall` redirects every `/install` request
+     * (including XHR) and {@see abortIfInstalled()} blocks the api endpoints.
+     * It is written at the genuine end of the UI flow — after the admin is
+     * created, and after demo data when the operator opts into it.
+     *
+     * @return void
+     */
+    protected function markInstalled()
+    {
+        File::put(storage_path('installed'), 'Your UnoPim App is Successfully Installed');
+
+        Event::dispatch('unopim.installed');
+    }
+
+    /**
      * Installer View Root Page
      *
      * @return View
@@ -208,6 +225,13 @@ class InstallerController extends Controller
                 'error'   => $th->getMessage(),
             ], 500);
         }
+
+        // Admin is the final mandatory step. Seal the installer now unless the
+        // operator opted into demo data, in which case `seedSampleData()`
+        // (the genuine last call) writes the marker once seeding finishes.
+        if (! request()->boolean('seed_sample_data')) {
+            $this->markInstalled();
+        }
     }
 
     /**
@@ -222,6 +246,11 @@ class InstallerController extends Controller
         $this->abortIfInstalled();
 
         $result = $installer->seed();
+
+        // Demo data is the final, optional step: the admin already exists, so
+        // the instance is installed whether or not seeding succeeded. Seal the
+        // installer either way (the UI advances to "completed" on failure too).
+        $this->markInstalled();
 
         if (! ($result['success'] ?? false)) {
             return new JsonResponse([
