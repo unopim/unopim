@@ -164,6 +164,7 @@ describe('security', function () {
         config()->set('app.url', 'http://canonical.test');
 
         $request = Request::create('http://canonical.test/admin', 'GET', [], [], [], [
+            'REMOTE_ADDR'            => '198.51.100.10',
             'HTTP_X_FORWARDED_HOST'  => 'evil.example.com',
             'HTTP_X_FORWARDED_PROTO' => 'http',
         ]);
@@ -175,6 +176,7 @@ describe('security', function () {
         config()->set('app.url', 'http://canonical.test');
 
         $request = Request::create('http://canonical.test/admin', 'GET', [], [], [], [
+            'REMOTE_ADDR'            => '198.51.100.10',
             'HTTP_X_FORWARDED_PROTO' => 'https',
         ]);
 
