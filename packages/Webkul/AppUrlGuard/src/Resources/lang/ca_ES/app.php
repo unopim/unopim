@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'warning' => [
+        'title'           => 'S\'ha detectat una discrepància a APP_URL',
+        'dismiss'         => 'Descarta',
+        'lede-before'     => 'Els vostres recursos del frontend (CSS, JS) estan fixats al valor configurat',
+        'lede-after'      => 'Actualitzeu-lo perquè coincideixi amb l\'amfitrió que esteu utilitzant; altrament, els estils i els scripts no es carregaran.',
+        'configured-env'  => 'Configurat (.env)',
+        'mismatch-tag'    => 'DISCREPÀNCIA',
+        'actual-browser'  => 'Real (navegador)',
+        'in-use-tag'      => 'EN ÚS',
+        'toggle-step'     => 'Commuta el pas :number',
+        'step-1-title'    => 'Actualitzeu APP_URL al vostre fitxer .env',
+        'step-1-hint'     => 'Obriu el fitxer .env del projecte i substituïu la línia APP_URL.',
+        'step-2-title'    => 'Esborreu la memòria cau de l\'aplicació',
+        'step-2-hint'     => 'Executeu això al terminal des de l\'arrel del projecte.',
+        'copy'            => 'Copia',
+        'copied'          => 'Copiat',
+        'note-bold'       => 'A continuació, recarregueu la pàgina completament',
+        'note-rest'       => 'perquè el navegador torni a carregar els recursos actualitzats.',
+        'progress'        => ':done de :total passos completats',
+        'all-done'        => 'Tot fet',
+        'powered-by'      => 'Funciona amb',
+        'open-source-by'  => 'Un projecte de codi obert de',
+        'copied-toast'    => 'Copiat al porta-retalls',
+        'still-mismatch'  => 'APP_URL encara no coincideix. Actualitzeu .env i executeu "php artisan optimize:clear".',
+        'verify-failed'   => 'No s\'ha pogut verificar APP_URL. Si us plau, recarregueu la pàgina.',
+        'logged-out'      => 'Sessió tancada: APP_URL no coincideix amb l\'amfitrió actual. Actualitzeu APP_URL a .env i executeu "php artisan optimize:clear".',
+    ],
+];

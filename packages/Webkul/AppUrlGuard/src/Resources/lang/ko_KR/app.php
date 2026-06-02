@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'warning' => [
+        'title'           => 'APP_URL 불일치가 감지되었습니다',
+        'dismiss'         => '닫기',
+        'lede-before'     => '프런트엔드 자산(CSS, JS)이 구성된 값에 고정되어 있습니다',
+        'lede-after'      => '사용 중인 호스트와 일치하도록 업데이트하세요. 그렇지 않으면 스타일과 스크립트가 로드되지 않습니다.',
+        'configured-env'  => '구성됨 (.env)',
+        'mismatch-tag'    => '불일치',
+        'actual-browser'  => '실제 (브라우저)',
+        'in-use-tag'      => '사용 중',
+        'toggle-step'     => ':number 단계 전환',
+        'step-1-title'    => '.env 파일에서 APP_URL 업데이트',
+        'step-1-hint'     => '프로젝트의 .env를 열고 APP_URL 줄을 교체하세요.',
+        'step-2-title'    => '애플리케이션 캐시 지우기',
+        'step-2-hint'     => '프로젝트 루트의 터미널에서 이것을 실행하세요.',
+        'copy'            => '복사',
+        'copied'          => '복사됨',
+        'note-bold'       => '그런 다음 페이지를 강력 새로고침하세요',
+        'note-rest'       => '브라우저가 업데이트된 자산을 다시 로드하도록 합니다.',
+        'progress'        => ':total단계 중 :done단계 완료',
+        'all-done'        => '모두 완료',
+        'powered-by'      => '제공',
+        'open-source-by'  => '오픈 소스 프로젝트 제공',
+        'copied-toast'    => '클립보드에 복사되었습니다',
+        'still-mismatch'  => 'APP_URL이 여전히 일치하지 않습니다. .env를 업데이트하고 "php artisan optimize:clear"를 실행하세요.',
+        'verify-failed'   => 'APP_URL을 확인할 수 없습니다. 페이지를 새로고침하세요.',
+        'logged-out'      => '로그아웃됨: APP_URL이 현재 호스트와 일치하지 않습니다. .env에서 APP_URL을 업데이트하고 "php artisan optimize:clear"를 실행하세요.',
+    ],
+];

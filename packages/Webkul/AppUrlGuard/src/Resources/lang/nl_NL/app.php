@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'warning' => [
+        'title'           => 'APP_URL-mismatch gedetecteerd',
+        'dismiss'         => 'Sluiten',
+        'lede-before'     => 'Uw frontend-assets (CSS, JS) zijn vastgepind op de geconfigureerde',
+        'lede-after'      => 'Werk deze bij zodat deze overeenkomt met de host die u gebruikt, anders worden de stijlen en scripts niet geladen.',
+        'configured-env'  => 'Geconfigureerd (.env)',
+        'mismatch-tag'    => 'MISMATCH',
+        'actual-browser'  => 'Werkelijk (browser)',
+        'in-use-tag'      => 'IN GEBRUIK',
+        'toggle-step'     => 'Stap :number in-/uitklappen',
+        'step-1-title'    => 'Werk APP_URL bij in uw .env-bestand',
+        'step-1-hint'     => 'Open de .env van het project en vervang de APP_URL-regel.',
+        'step-2-title'    => 'Wis de applicatiecache',
+        'step-2-hint'     => 'Voer dit uit in uw terminal vanuit de projectmap.',
+        'copy'            => 'Kopiëren',
+        'copied'          => 'Gekopieerd',
+        'note-bold'       => 'Vernieuw daarna de pagina volledig',
+        'note-rest'       => 'zodat de browser de bijgewerkte assets opnieuw laadt.',
+        'progress'        => ':done van :total stappen voltooid',
+        'all-done'        => 'Alles voltooid',
+        'powered-by'      => 'Mogelijk gemaakt door',
+        'open-source-by'  => 'Een open-sourceproject van',
+        'copied-toast'    => 'Gekopieerd naar klembord',
+        'still-mismatch'  => 'APP_URL komt nog steeds niet overeen. Werk .env bij en voer "php artisan optimize:clear" uit.',
+        'verify-failed'   => 'Kon APP_URL niet verifiëren. Vernieuw de pagina.',
+        'logged-out'      => 'Uitgelogd: APP_URL komt niet overeen met de huidige host. Werk APP_URL bij in .env en voer "php artisan optimize:clear" uit.',
+    ],
+];
