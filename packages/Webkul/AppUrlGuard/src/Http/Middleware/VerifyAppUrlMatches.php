@@ -85,8 +85,7 @@ class VerifyAppUrlMatches
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        $message = 'Logged out: APP_URL does not match the current host. '
-            .'Update APP_URL in .env and run "php artisan optimize:clear".';
+        $message = trans('app_url_guard::app.warning.logged-out');
 
         if ($request->expectsJson()) {
             return response()->json(['message' => $message], 401);

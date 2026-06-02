@@ -23,6 +23,12 @@
     class="unopim-appurl-backdrop"
     data-just-logged-in="{{ $justLoggedIn ? 'true' : 'false' }}"
     data-check-url="{{ $checkUrl }}"
+    data-i18n-copy="@lang('app_url_guard::app.warning.copy')"
+    data-i18n-copied="@lang('app_url_guard::app.warning.copied')"
+    data-i18n-copied-toast="@lang('app_url_guard::app.warning.copied-toast')"
+    data-i18n-still-mismatch="@lang('app_url_guard::app.warning.still-mismatch')"
+    data-i18n-verify-failed="@lang('app_url_guard::app.warning.verify-failed')"
+    data-i18n-progress="{{ trans('app_url_guard::app.warning.progress') }}"
 >
     <div id="unopim-appurl-warning" class="unopim-appurl-modal" role="alertdialog" aria-modal="true" aria-labelledby="unopim-appurl-title">
         <div class="unopim-appurl-head">
@@ -34,9 +40,9 @@
                 </svg>
             </span>
 
-            <h1 class="unopim-appurl-head-title" id="unopim-appurl-title">@lang('APP_URL Mismatch Detected')</h1>
+            <h1 class="unopim-appurl-head-title" id="unopim-appurl-title">@lang('app_url_guard::app.warning.title')</h1>
 
-            <button type="button" class="unopim-appurl-head-close" aria-label="@lang('Dismiss')">
+            <button type="button" class="unopim-appurl-head-close" aria-label="@lang('app_url_guard::app.warning.dismiss')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M18 6 6 18" />
                     <path d="M6 6l12 12" />
@@ -46,24 +52,24 @@
 
         <div class="unopim-appurl-body">
             <p class="unopim-appurl-lede">
-                @lang('Your frontend assets (CSS, JS) are pinned to the configured')
+                @lang('app_url_guard::app.warning.lede-before')
                 <b>APP_URL</b>.
-                @lang('Update it to match the host you are using, otherwise the styles and scripts will not load.')
+                @lang('app_url_guard::app.warning.lede-after')
             </p>
 
             <div class="unopim-appurl-compare">
                 <div class="unopim-appurl-cmp unopim-appurl-cmp--bad">
                     <div class="unopim-appurl-cmp-left">
-                        <span class="unopim-appurl-cmp-label">@lang('Configured (.env)')</span>
-                        <span class="unopim-appurl-cmp-tag">@lang('MISMATCH')</span>
+                        <span class="unopim-appurl-cmp-label">@lang('app_url_guard::app.warning.configured-env')</span>
+                        <span class="unopim-appurl-cmp-tag">@lang('app_url_guard::app.warning.mismatch-tag')</span>
                     </div>
                     <span class="unopim-appurl-cmp-url">{{ $configured }}</span>
                 </div>
 
                 <div class="unopim-appurl-cmp unopim-appurl-cmp--good">
                     <div class="unopim-appurl-cmp-left">
-                        <span class="unopim-appurl-cmp-label">@lang('Actual (browser)')</span>
-                        <span class="unopim-appurl-cmp-tag">@lang('IN USE')</span>
+                        <span class="unopim-appurl-cmp-label">@lang('app_url_guard::app.warning.actual-browser')</span>
+                        <span class="unopim-appurl-cmp-tag">@lang('app_url_guard::app.warning.in-use-tag')</span>
                     </div>
                     <span class="unopim-appurl-cmp-url">{{ $actual }}</span>
                 </div>
@@ -71,38 +77,38 @@
 
             <div class="unopim-appurl-steps">
                 <div class="unopim-appurl-step" data-unopim-step="1">
-                    <button type="button" class="unopim-appurl-step-badge" aria-label="@lang('Toggle step 1')">
+                    <button type="button" class="unopim-appurl-step-badge" aria-label="@lang('app_url_guard::app.warning.toggle-step', ['number' => 1])">
                         <span class="unopim-appurl-step-n">1</span>
                         <svg class="unopim-appurl-step-tick" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
                     </button>
                     <div class="unopim-appurl-step-main">
-                        <div class="unopim-appurl-step-title">@lang('Update APP_URL in your .env file')
-                            <span class="unopim-appurl-step-hint">@lang("Open the project's .env and replace the APP_URL line.")</span>
+                        <div class="unopim-appurl-step-title">@lang('app_url_guard::app.warning.step-1-title')
+                            <span class="unopim-appurl-step-hint">@lang('app_url_guard::app.warning.step-1-hint')</span>
                         </div>
                         <div class="unopim-appurl-code">
                             <code class="unopim-appurl-code-text"><span class="unopim-appurl-tok">APP_URL=</span>{{ $actual }}</code>
                             <button type="button" class="unopim-appurl-code-copy" data-copy="APP_URL={{ $actual }}">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
-                                <span class="unopim-appurl-copy-label">@lang('Copy')</span>
+                                <span class="unopim-appurl-copy-label">@lang('app_url_guard::app.warning.copy')</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <div class="unopim-appurl-step" data-unopim-step="2">
-                    <button type="button" class="unopim-appurl-step-badge" aria-label="@lang('Toggle step 2')">
+                    <button type="button" class="unopim-appurl-step-badge" aria-label="@lang('app_url_guard::app.warning.toggle-step', ['number' => 2])">
                         <span class="unopim-appurl-step-n">2</span>
                         <svg class="unopim-appurl-step-tick" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
                     </button>
                     <div class="unopim-appurl-step-main">
-                        <div class="unopim-appurl-step-title">@lang('Clear the application cache')
-                            <span class="unopim-appurl-step-hint">@lang('Run this in your terminal from the project root.')</span>
+                        <div class="unopim-appurl-step-title">@lang('app_url_guard::app.warning.step-2-title')
+                            <span class="unopim-appurl-step-hint">@lang('app_url_guard::app.warning.step-2-hint')</span>
                         </div>
                         <div class="unopim-appurl-code">
                             <code class="unopim-appurl-code-text">php artisan optimize:clear</code>
                             <button type="button" class="unopim-appurl-code-copy" data-copy="php artisan optimize:clear">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
-                                <span class="unopim-appurl-copy-label">@lang('Copy')</span>
+                                <span class="unopim-appurl-copy-label">@lang('app_url_guard::app.warning.copy')</span>
                             </button>
                         </div>
                     </div>
@@ -114,7 +120,7 @@
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
                 </span>
                 <div class="unopim-appurl-note-body">
-                    <b>@lang('Then hard refresh the page')</b> @lang('so the browser reloads the updated assets.')
+                    <b>@lang('app_url_guard::app.warning.note-bold')</b> @lang('app_url_guard::app.warning.note-rest')
                     <span class="unopim-appurl-combo">
                         <span class="unopim-appurl-kbd">Ctrl</span><span class="unopim-appurl-plus">+</span><span class="unopim-appurl-kbd">Shift</span><span class="unopim-appurl-plus">+</span><span class="unopim-appurl-kbd">R</span>
                     </span>
@@ -124,16 +130,16 @@
 
         <div class="unopim-appurl-foot">
             <div class="unopim-appurl-progress-wrap">
-                <div class="unopim-appurl-progress-label" id="unopim-appurl-progress-label">@lang('0 of 2 steps complete')</div>
+                <div class="unopim-appurl-progress-label" id="unopim-appurl-progress-label">@lang('app_url_guard::app.warning.progress', ['done' => 0, 'total' => 2])</div>
                 <div class="unopim-appurl-progress-track"><div class="unopim-appurl-progress-fill" id="unopim-appurl-progress-fill"></div></div>
             </div>
-            <button type="button" class="unopim-appurl-btn-done" id="unopim-appurl-btn-done" disabled>@lang('All done')</button>
+            <button type="button" class="unopim-appurl-btn-done" id="unopim-appurl-btn-done" disabled>@lang('app_url_guard::app.warning.all-done')</button>
         </div>
     </div>
 
     <div class="unopim-appurl-poweredby">
-        @lang('Powered by') <a href="https://unopim.com/" target="_blank" rel="noopener">UnoPim</a>.<br>
-        @lang('An open-source project by') <a href="https://webkul.com/" target="_blank" rel="noopener">Webkul</a>.
+        @lang('app_url_guard::app.warning.powered-by') <a href="https://unopim.com/" target="_blank" rel="noopener">UnoPim</a>.<br>
+        @lang('app_url_guard::app.warning.open-source-by') <a href="https://webkul.com/" target="_blank" rel="noopener">Webkul</a>.
     </div>
 </div>
 
@@ -373,6 +379,17 @@
         var backdrop = document.getElementById('unopim-appurl-backdrop');
         if (! backdrop) return;
 
+        // Translated strings injected by the Blade view (data-i18n-* attributes),
+        // so the JS-built text honours the active UnoPim locale too.
+        var i18n = {
+            copy:          backdrop.getAttribute('data-i18n-copy') || 'Copy',
+            copied:        backdrop.getAttribute('data-i18n-copied') || 'Copied',
+            copiedToast:   backdrop.getAttribute('data-i18n-copied-toast') || 'Copied to clipboard',
+            stillMismatch: backdrop.getAttribute('data-i18n-still-mismatch') || 'APP_URL still does not match.',
+            verifyFailed:  backdrop.getAttribute('data-i18n-verify-failed') || 'Could not verify APP_URL. Please refresh the page.',
+            progress:      backdrop.getAttribute('data-i18n-progress') || ':done of :total steps complete'
+        };
+
         var modal = document.getElementById('unopim-appurl-warning');
         var steps = Array.prototype.slice.call(modal.querySelectorAll('[data-unopim-step]'));
         var fill = document.getElementById('unopim-appurl-progress-fill');
@@ -396,7 +413,9 @@
         function updateProgress() {
             var done = steps.filter(function (s) { return s.classList.contains('is-done'); }).length;
             fill.style.width = (steps.length ? (done / steps.length * 100) : 0) + '%';
-            label.textContent = done + ' of ' + steps.length + ' steps complete';
+            label.textContent = i18n.progress
+                .replace(':done', done)
+                .replace(':total', steps.length);
             btnDone.disabled = done < steps.length;
         }
 
@@ -435,11 +454,11 @@
                 var labelSpan = btn.querySelector('.unopim-appurl-copy-label');
                 var apply = function () {
                     btn.classList.add('is-copied');
-                    if (labelSpan) labelSpan.textContent = 'Copied';
-                    showToast('Copied to clipboard');
+                    if (labelSpan) labelSpan.textContent = i18n.copied;
+                    showToast(i18n.copiedToast);
                     setTimeout(function () {
                         btn.classList.remove('is-copied');
-                        if (labelSpan) labelSpan.textContent = 'Copy';
+                        if (labelSpan) labelSpan.textContent = i18n.copy;
                     }, 1600);
                     var step = btn.closest('[data-unopim-step]');
                     if (step && ! step.classList.contains('is-done')) { markStep(step, true); }
@@ -467,12 +486,12 @@
                             window.location.reload();
                         } else {
                             closeBtn.disabled = false;
-                            showToast('APP_URL still does not match. Update .env and run "php artisan optimize:clear".');
+                            showToast(i18n.stillMismatch);
                         }
                     })
                     .catch(function () {
                         closeBtn.disabled = false;
-                        showToast('Could not verify APP_URL. Please refresh the page.');
+                        showToast(i18n.verifyFailed);
                     });
             });
         }

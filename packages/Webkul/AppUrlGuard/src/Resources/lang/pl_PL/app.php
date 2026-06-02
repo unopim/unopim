@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'warning' => [
+        'title'           => 'Wykryto niezgodność APP_URL',
+        'dismiss'         => 'Zamknij',
+        'lede-before'     => 'Twoje zasoby frontendu (CSS, JS) są przypięte do skonfigurowanego',
+        'lede-after'      => 'Zaktualizuj go, aby pasował do używanego hosta, w przeciwnym razie style i skrypty nie zostaną załadowane.',
+        'configured-env'  => 'Skonfigurowany (.env)',
+        'mismatch-tag'    => 'NIEZGODNOŚĆ',
+        'actual-browser'  => 'Rzeczywisty (przeglądarka)',
+        'in-use-tag'      => 'W UŻYCIU',
+        'toggle-step'     => 'Przełącz krok :number',
+        'step-1-title'    => 'Zaktualizuj APP_URL w pliku .env',
+        'step-1-hint'     => "Otwórz plik .env projektu i zamień wiersz APP_URL.",
+        'step-2-title'    => 'Wyczyść pamięć podręczną aplikacji',
+        'step-2-hint'     => 'Uruchom to w terminalu z katalogu głównego projektu.',
+        'copy'            => 'Kopiuj',
+        'copied'          => 'Skopiowano',
+        'note-bold'       => 'Następnie wykonaj pełne odświeżenie strony',
+        'note-rest'       => 'aby przeglądarka ponownie załadowała zaktualizowane zasoby.',
+        'progress'        => 'Ukończono :done z :total kroków',
+        'all-done'        => 'Wszystko gotowe',
+        'powered-by'      => 'Obsługiwane przez',
+        'open-source-by'  => 'Projekt open-source autorstwa',
+        'copied-toast'    => 'Skopiowano do schowka',
+        'still-mismatch'  => 'APP_URL nadal się nie zgadza. Zaktualizuj .env i uruchom "php artisan optimize:clear".',
+        'verify-failed'   => 'Nie można zweryfikować APP_URL. Odśwież stronę.',
+        'logged-out'      => 'Wylogowano: APP_URL nie pasuje do bieżącego hosta. Zaktualizuj APP_URL w .env i uruchom "php artisan optimize:clear".',
+    ],
+];

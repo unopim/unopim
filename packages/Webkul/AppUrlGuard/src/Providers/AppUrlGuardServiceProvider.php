@@ -27,6 +27,8 @@ class AppUrlGuardServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__.'/../Routes/web.php');
 
+        $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'app_url_guard');
+
         if (! $kernel->hasMiddleware(VerifyAppUrlMatches::class)) {
             $kernel->pushMiddleware(VerifyAppUrlMatches::class);
         }

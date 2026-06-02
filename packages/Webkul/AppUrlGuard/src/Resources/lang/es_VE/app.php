@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'warning' => [
+        'title'           => 'Discrepancia de APP_URL detectada',
+        'dismiss'         => 'Descartar',
+        'lede-before'     => 'Tus recursos de frontend (CSS, JS) están fijados a la',
+        'lede-after'      => 'Actualízala para que coincida con el host que estás usando, de lo contrario los estilos y scripts no se cargarán.',
+        'configured-env'  => 'Configurada (.env)',
+        'mismatch-tag'    => 'DISCREPANCIA',
+        'actual-browser'  => 'Actual (navegador)',
+        'in-use-tag'      => 'EN USO',
+        'toggle-step'     => 'Alternar paso :number',
+        'step-1-title'    => 'Actualiza APP_URL en tu archivo .env',
+        'step-1-hint'     => "Abre el .env del proyecto y reemplaza la línea de APP_URL.",
+        'step-2-title'    => 'Limpia la caché de la aplicación',
+        'step-2-hint'     => 'Ejecuta esto en tu terminal desde la raíz del proyecto.',
+        'copy'            => 'Copiar',
+        'copied'          => 'Copiado',
+        'note-bold'       => 'Luego recarga la página por completo',
+        'note-rest'       => 'para que el navegador vuelva a cargar los recursos actualizados.',
+        'progress'        => ':done de :total pasos completados',
+        'all-done'        => 'Todo listo',
+        'powered-by'      => 'Desarrollado con',
+        'open-source-by'  => 'Un proyecto de código abierto de',
+        'copied-toast'    => 'Copiado al portapapeles',
+        'still-mismatch'  => 'APP_URL aún no coincide. Actualiza el .env y ejecuta "php artisan optimize:clear".',
+        'verify-failed'   => 'No se pudo verificar APP_URL. Por favor recarga la página.',
+        'logged-out'      => 'Sesión cerrada: APP_URL no coincide con el host actual. Actualiza APP_URL en el .env y ejecuta "php artisan optimize:clear".',
+    ],
+];
