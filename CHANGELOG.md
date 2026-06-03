@@ -5,6 +5,10 @@
 ### Improvements
 - Hardened **webhook URL handling** — webhook target URLs are now validated to ensure they resolve to a publicly reachable host before any request is made, applied both when saving the webhook settings and on each product-save dispatch. Outgoing webhook requests connect only to the validated address and no longer follow HTTP redirects ([#448](https://github.com/unopim/unopim/pull/448), [#450](https://github.com/unopim/unopim/pull/450)).
 
+### Security
+- Fixed **insecure default admin password on install** — the installer no longer creates the admin with a known default password. Set `INSTALLER_ADMIN_EMAIL` / `INSTALLER_ADMIN_PASSWORD`, or leave them blank and a random password is generated and written once to `storage/app/admin-credentials.txt` (read it, log in, then delete). Existing admin users are never overwritten on re-install ([#457](https://github.com/unopim/unopim/pull/457)).
+- Fixed **duplicate rows on re-seeding** — admin and role seeders are now idempotent and skip insertion when the record already exists ([#457](https://github.com/unopim/unopim/pull/457)).
+
 ## v2.1.1 - 2026-05-26
 
 ### Security
