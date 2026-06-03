@@ -47,8 +47,9 @@ class InstallerController extends Controller
      * Defence in depth for the unauthenticated installer api endpoints: even
      * if the `CanInstall` middleware were bypassed (e.g. a crafted header or
      * a future routing change), the state-changing setup steps must never run
-     * again on a live instance. The `storage/installed` marker is written
-     * only by the final SMTP step, so this never blocks a genuine install.
+     * again on a live instance. The `storage/installed` marker is written only
+     * at the end of the install flow (after admin creation, and after demo data
+     * when opted in), so this never blocks a genuine install.
      *
      * @return void
      */
@@ -63,12 +64,18 @@ class InstallerController extends Controller
      * Once this file exists, `CanInstall` redirects every `/install` request
      * (including XHR) and {@see abortIfInstalled()} blocks the api endpoints.
      * It is written at the genuine end of the UI flow — after the admin is
-     * created, and after demo data when the operator opts into it.
+     * created, and after demo data when the operator opts into it. Guarded so
+     * the marker is written, and `unopim.installed` dispatched, exactly once
+     * even if two end-of-flow requests race.
      *
      * @return void
      */
     protected function markInstalled()
     {
+        if (file_exists(storage_path('installed'))) {
+            return;
+        }
+
         File::put(storage_path('installed'), 'Your UnoPim App is Successfully Installed');
 
         Event::dispatch('unopim.installed');
@@ -223,12 +230,10 @@ class InstallerController extends Controller
             return response()->json([
                 'success' => false,
                 'error'   => $th->getMessage(),
+                'errors'  => ['admin' => [$th->getMessage()]],
             ], 500);
         }
 
-        // Admin is the final mandatory step. Seal the installer now unless the
-        // operator opted into demo data, in which case `seedSampleData()`
-        // (the genuine last call) writes the marker once seeding finishes.
         if (! request()->boolean('seed_sample_data')) {
             $this->markInstalled();
         }
@@ -247,9 +252,6 @@ class InstallerController extends Controller
 
         $result = $installer->seed();
 
-        // Demo data is the final, optional step: the admin already exists, so
-        // the instance is installed whether or not seeding succeeded. Seal the
-        // installer either way (the UI advances to "completed" on failure too).
         $this->markInstalled();
 
         if (! ($result['success'] ?? false)) {

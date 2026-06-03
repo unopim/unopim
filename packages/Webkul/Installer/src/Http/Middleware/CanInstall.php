@@ -18,14 +18,6 @@ class CanInstall
     public function handle(Request $request, Closure $next)
     {
         if (Str::contains($request->getPathInfo(), '/install')) {
-            // Once installation is *complete*, the installer surface must be
-            // sealed for everyone — including XHR/AJAX requests. A previous
-            // `! $request->ajax()` exception here let an unauthenticated
-            // attacker re-trigger `install/api/admin-config-setup` (which
-            // overwrites admin id 1) simply by sending an
-            // `X-Requested-With: XMLHttpRequest` header. The live installer
-            // UI never trips this branch because the completion marker is
-            // only written by the final SMTP step, after every api call.
             if ($this->isInstallationCompleted()) {
                 return redirect()->route('admin.dashboard.index');
             }
@@ -42,11 +34,12 @@ class CanInstall
      * Installation has been fully completed.
      *
      * Unlike {@see isAlreadyInstalled()}, this relies solely on the
-     * `storage/installed` marker, which is written only by the final
-     * installer step ({@see InstallerController::smtpConfigSetup()}).
-     * A populated `admins` table is not enough: the seeder inserts the
-     * default admin (id 1) *before* the admin-config and SMTP steps run, so
-     * gating on the DB would lock the installer out mid-flow.
+     * `storage/installed` marker, which is written only at the true end of the
+     * install flow ({@see InstallerController::adminConfigSetup()} when no demo
+     * data is requested, otherwise {@see InstallerController::seedSampleData()}).
+     * A populated `admins` table is not enough: the seeder inserts the default
+     * admin (id 1) *before* those steps run, so gating on the DB would lock the
+     * installer out mid-flow.
      */
     public function isInstallationCompleted(): bool
     {
@@ -64,12 +57,6 @@ class CanInstall
             return true;
         }
 
-        // Report installed state without writing the completion marker. The
-        // marker is owned exclusively by the final installer step so that
-        // `isInstallationCompleted()` cannot fire mid-install — the seeder
-        // populates the `admins` table several steps before the install
-        // actually finishes, and a premature marker here used to seal the
-        // installer before the admin-config/SMTP steps could run.
         return app(DatabaseManager::class)->isInstalled();
     }
 }
