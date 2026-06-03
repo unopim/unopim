@@ -121,8 +121,8 @@ jobs:
 
       - name: Running UnoPim Installer & Start Server
         env:
-          INSTALLER_ADMIN_EMAIL: ${{ secrets.ADMIN_USERNAME }}
-          INSTALLER_ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          INSTALLER_ADMIN_EMAIL: ${{ secrets.INSTALLER_ADMIN_EMAIL }}
+          INSTALLER_ADMIN_PASSWORD: ${{ secrets.INSTALLER_ADMIN_PASSWORD }}
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
           chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
