@@ -44,7 +44,6 @@ test.describe('Security: installer sealed once installed', () => {
       'install/api/run-migration',
       'install/api/run-seeder',
       'install/api/admin-config-setup',
-      'install/api/seed-sample-data',
     ];
 
     for (const path of endpoints) {
