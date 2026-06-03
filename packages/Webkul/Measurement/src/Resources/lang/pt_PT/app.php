@@ -37,6 +37,8 @@ return [
             'save'                  => 'Guardar',
             'conversion_operation'  => 'Operação de conversão',
             'add_new_operation'     => 'Adicionar nova operação',
+            'conversion_value'      => 'Valor',
+            'conversion_operator'   => 'Operador',
         ],
     ],
 

@@ -37,6 +37,8 @@ return [
             'save'                  => 'Salvează',
             'conversion_operation'  => 'Operație de conversie',
             'add_new_operation'     => 'Adăugați o nouă operație',
+            'conversion_value'      => 'Valoare',
+            'conversion_operator'   => 'Operator',
         ],
     ],
 

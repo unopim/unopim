@@ -37,6 +37,8 @@ return [
             'save'                  => 'सहेजें',
             'conversion_operation'  => 'रूपांतरण ऑपरेशन',
             'add_new_operation'     => 'नया ऑपरेशन जोड़ें',
+            'conversion_value'      => 'मान',
+            'conversion_operator'   => 'ऑपरेटर',
         ],
     ],
 

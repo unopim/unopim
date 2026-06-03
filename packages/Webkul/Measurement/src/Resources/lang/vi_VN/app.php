@@ -37,6 +37,8 @@ return [
             'save'                  => 'Lưu',
             'conversion_operation'  => 'Hoạt động chuyển đổi',
             'add_new_operation'     => 'Thêm hoạt động mới',
+            'conversion_value'      => 'Giá trị',
+            'conversion_operator'   => 'Toán tử',
         ],
     ],
 

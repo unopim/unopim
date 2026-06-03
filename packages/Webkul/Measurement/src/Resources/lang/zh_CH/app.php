@@ -37,6 +37,8 @@ return [
             'save'                  => '保存',
             'conversion_operation'  => '转换操作',
             'add_new_operation'     => '添加新操作',
+            'conversion_value'      => '值',
+            'conversion_operator'   => '运算符',
         ],
     ],
 

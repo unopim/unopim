@@ -37,6 +37,8 @@ return [
             'save'                  => 'Desar',
             'conversion_operation'  => 'Operació de conversió',
             'add_new_operation'     => 'Afegir nova operació',
+            'conversion_value'      => 'Valor',
+            'conversion_operator'   => 'Operador',
         ],
     ],
 

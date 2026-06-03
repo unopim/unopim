@@ -37,6 +37,8 @@ return [
             'save'                  => 'Spara',
             'conversion_operation'  => 'Konverteringsoperation',
             'add_new_operation'     => 'Lägg till ny operation',
+            'conversion_value'      => 'Värde',
+            'conversion_operator'   => 'Operatör',
         ],
     ],
 

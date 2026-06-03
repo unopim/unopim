@@ -37,11 +37,13 @@ return [
             'save'                  => 'Save',
             'conversion_operation'  => 'Conversion operation',
             'add_new_operation'     => 'Add New Operation',
+            'conversion_value'      => 'Value',
+            'conversion_operator'   => 'Operator',
         ],
     ],
 
     'attribute_type' => [
-        'measurement_families' => 'Measurement Families',
+        'measurement_families' => 'Measurements',
         'measurement_family'   => 'Measurement Family',
         'measurement_unit'     => 'Measurement Unit',
     ],

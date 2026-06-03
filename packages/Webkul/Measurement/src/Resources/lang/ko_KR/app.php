@@ -37,6 +37,8 @@ return [
             'save'                  => '저장',
             'conversion_operation'  => '변환 작업',
             'add_new_operation'     => '새 작업 추가',
+            'conversion_value'      => '값',
+            'conversion_operator'   => '연산자',
         ],
     ],
 

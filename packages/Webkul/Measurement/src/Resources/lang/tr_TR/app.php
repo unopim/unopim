@@ -37,6 +37,8 @@ return [
             'save'                  => 'Kaydet',
             'conversion_operation'  => 'Dönüştürme işlemi',
             'add_new_operation'     => 'Yeni işlem ekle',
+            'conversion_value'      => 'Değer',
+            'conversion_operator'   => 'Operatör',
         ],
     ],
 

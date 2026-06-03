@@ -37,6 +37,8 @@ return [
             'save'                  => 'Хадгалах',
             'conversion_operation'  => 'Хөрвүүлэх үйлдэл',
             'add_new_operation'     => 'Шинэ үйлдэл нэмэх',
+            'conversion_value'      => 'Утга',
+            'conversion_operator'   => 'Оператор',
         ],
     ],
 

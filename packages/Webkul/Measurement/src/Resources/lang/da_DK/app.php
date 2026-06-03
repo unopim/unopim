@@ -37,6 +37,8 @@ return [
             'save'                  => 'Gem',
             'conversion_operation'  => 'Konverteringsoperation',
             'add_new_operation'     => 'Tilføj ny operation',
+            'conversion_value'      => 'Værdi',
+            'conversion_operator'   => 'Operator',
         ],
     ],
 

@@ -272,9 +272,9 @@
                                 <div
                                     v-for="(conversion, index) in locale.conversions"
                                     :key="index"
-                                    class="flex items-center gap-2"
+                                    class="flex items-start gap-2"
                                 >
-                                    <x-admin::form.control-group class="w-1/3">
+                                    <x-admin::form.control-group class="mb-2 w-1/3">
                                         <x-admin::form.control-group.control
                                             type="number"
                                             ::name="'convert_value[' + index + ']'"
@@ -286,12 +286,18 @@
                                             :label="trans('measurement::app.measurement.unit.conversion_value')"
                                         />
 
-                                        <x-admin::form.control-group.error
-                                            ::control-name="'convert_value[' + index + ']'"
-                                        />
+                                        <v-error-message
+                                            :name="'convert_value[' + index + ']'"
+                                            v-slot="{ message }"
+                                        >
+                                            <p
+                                                class="mt-1 text-xs italic text-red-600"
+                                                v-text="message"
+                                            ></p>
+                                        </v-error-message>
                                     </x-admin::form.control-group>
 
-                                    <x-admin::form.control-group class="flex-1">
+                                    <x-admin::form.control-group class="mb-2 flex-1">
                                         <x-admin::form.control-group.control
                                             type="select"
                                             ::name="'convert_from_standard[' + index + ']'"
@@ -304,14 +310,20 @@
                                             :label="trans('measurement::app.measurement.unit.conversion_operator')"
                                         />
 
-                                        <x-admin::form.control-group.error
-                                            ::control-name="'convert_from_standard[' + index + ']'"
-                                        />
+                                        <v-error-message
+                                            :name="'convert_from_standard[' + index + ']'"
+                                            v-slot="{ message }"
+                                        >
+                                            <p
+                                                class="mt-1 text-xs italic text-red-600"
+                                                v-text="message"
+                                            ></p>
+                                        </v-error-message>
                                     </x-admin::form.control-group>
 
                                     <button
                                         type="button"
-                                        class="mb-4 flex items-center justify-center rounded"
+                                        class="mt-1.5 flex items-center justify-center rounded"
                                         @click="removeConversion(index)"
                                         :disabled="locale.conversions.length === 1 || isConversionDisabled"
                                     >
@@ -322,7 +334,7 @@
                                     </button>
                                 </div>
 
-                                <div class="mt-4">
+                                <div class="mt-2">
                                     <button
                                         type="button"
                                         class="secondary-button"

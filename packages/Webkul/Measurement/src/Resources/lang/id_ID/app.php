@@ -37,6 +37,8 @@ return [
             'save'                  => 'Simpan',
             'conversion_operation'  => 'Operasi konversi',
             'add_new_operation'     => 'Tambahkan operasi baru',
+            'conversion_value'      => 'Nilai',
+            'conversion_operator'   => 'Operator',
         ],
     ],
 

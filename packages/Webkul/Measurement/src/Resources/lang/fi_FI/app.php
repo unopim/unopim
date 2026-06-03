@@ -37,6 +37,8 @@ return [
             'save'                  => 'Tallenna',
             'conversion_operation'  => 'Muunnosoperaatio',
             'add_new_operation'     => 'Lisää uusi toiminto',
+            'conversion_value'      => 'Arvo',
+            'conversion_operator'   => 'Operaattori',
         ],
     ],
 

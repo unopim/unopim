@@ -37,6 +37,8 @@ return [
             'save'                  => 'Opslaan',
             'conversion_operation'  => 'Conversieoperatie',
             'add_new_operation'     => 'Nieuwe bewerking toevoegen',
+            'conversion_value'      => 'Waarde',
+            'conversion_operator'   => 'Operator',
         ],
     ],
 

@@ -37,6 +37,8 @@ return [
             'save'                  => 'حفظ',
             'conversion_operation'  => 'عملية التحويل',
             'add_new_operation'     => 'إضافة عملية جديدة',
+            'conversion_value'      => 'القيمة',
+            'conversion_operator'   => 'العامل',
         ],
     ],
 

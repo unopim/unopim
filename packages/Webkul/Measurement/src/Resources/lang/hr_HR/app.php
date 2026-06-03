@@ -37,6 +37,8 @@ return [
             'save'                  => 'Spremi',
             'conversion_operation'  => 'Operacija konverzije',
             'add_new_operation'     => 'Dodaj novu operaciju',
+            'conversion_value'      => 'Vrijednost',
+            'conversion_operator'   => 'Operator',
         ],
     ],
 

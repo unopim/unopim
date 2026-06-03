@@ -37,6 +37,8 @@ return [
             'save'                  => 'Alzar',
             'conversion_operation'  => 'Conversion operation',
             'add_new_operation'     => 'Add New Operation',
+            'conversion_value'      => 'Value',
+            'conversion_operator'   => 'Operator',
         ],
     ],
 
