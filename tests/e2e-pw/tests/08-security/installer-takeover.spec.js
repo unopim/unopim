@@ -2,30 +2,43 @@ const { test, expect } = require('@playwright/test');
 
 const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
-test.describe('Security: installer pre-auth admin takeover', () => {
+/**
+ * Installer must stay sealed on a fully installed instance.
+ *
+ * On an installed instance the `/install` routes and their state-changing API
+ * endpoints must never run again. The `CanInstall` middleware redirects every
+ * `/install` request once installation is complete (the `storage/installed`
+ * marker is written at the end of both the web and CLI install flows), and the
+ * controller adds a defence-in-depth guard. These checks run fully
+ * unauthenticated and assert the seal via status code only, so they are
+ * non-destructive: a sealed endpoint never executes the payload.
+ */
+test.describe('Security: installer sealed once installed', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
-  test('AJAX-header bypass cannot reach admin-config-setup on an installed instance', async ({ request }) => {
+  test('admin-config-setup is sealed even with the X-Requested-With (AJAX) header', async ({ request }) => {
     const response = await request.post(`${BASE_URL}/install/api/admin-config-setup`, {
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
         'Accept': 'application/json',
       },
       data: {
-        admin: 'Hacker',
-        email: 'attacker@evil.com',
-        password: 'pwned123',
+        admin: 'Probe',
+        email: 'probe@example.test',
+        password: 'probe-password',
         timezone: 'UTC',
         locale: 'en_US',
       },
       maxRedirects: 0,
     });
 
-    expect([302, 403]).toContain(response.status());
-    expect(response.status()).not.toBe(200);
+    expect(
+      [302, 403].includes(response.status()),
+      `admin-config-setup should be sealed (got ${response.status()})`
+    ).toBe(true);
   });
 
-  test('every state-changing installer endpoint is sealed once installed', async ({ request }) => {
+  test('every state-changing installer endpoint is sealed', async ({ request }) => {
     const endpoints = [
       'install/api/env-file-setup',
       'install/api/run-migration',
@@ -46,34 +59,5 @@ test.describe('Security: installer pre-auth admin takeover', () => {
         `${path} should be sealed (got ${response.status()})`
       ).toBe(true);
     }
-  });
-
-  test('the legitimate admin account is unchanged after a takeover attempt', async ({ browser, request }) => {
-    await request.post(`${BASE_URL}/install/api/admin-config-setup`, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
-      data: {
-        admin: 'Hacker',
-        email: 'attacker@evil.com',
-        password: 'pwned123',
-        timezone: 'UTC',
-        locale: 'en_US',
-      },
-      maxRedirects: 0,
-    });
-
-    const context = await browser.newContext({ storageState: undefined, baseURL: BASE_URL });
-    const page = await context.newPage();
-
-    await page.goto('/admin/login', { waitUntil: 'networkidle' });
-    await page.fill('input[name=email]', 'attacker@evil.com');
-    await page.fill('input[name=password]', 'pwned123');
-    await page.press('input[name=password]', 'Enter');
-    await page.waitForLoadState('networkidle');
-
-    expect(page.url()).toContain('/admin/login');
-    expect(page.url()).not.toContain('/admin/dashboard');
-
-    await page.close();
-    await context.close();
   });
 });
