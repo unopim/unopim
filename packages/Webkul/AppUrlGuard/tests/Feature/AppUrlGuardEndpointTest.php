@@ -13,6 +13,21 @@ function appRoot(): string
     return rtrim(url('/'), '/');
 }
 
+/**
+ * The app root with its loopback host swapped to the other alias (localhost
+ * <-> 127.0.0.1), keeping scheme, port and path identical. Lets a test assert
+ * that a loopback-only difference is treated as a match regardless of the port
+ * the test server happens to run on.
+ */
+function loopbackAlias(): string
+{
+    $root = appRoot();
+
+    return str_contains($root, '127.0.0.1')
+        ? str_replace('127.0.0.1', 'localhost', $root)
+        : str_replace('localhost', '127.0.0.1', $root);
+}
+
 beforeEach(function () {
     config()->set('app.debug', true);
     config()->set('app_url_guard.enabled', true);
@@ -55,7 +70,7 @@ describe('check endpoint', function () {
     });
 
     it('treats a loopback host difference (127.0.0.1 vs localhost) as a match', function () {
-        config()->set('app.url', 'http://127.0.0.1');
+        config()->set('app.url', loopbackAlias());
 
         $this->getJson('/app-url-guard/check')
             ->assertOk()
@@ -96,7 +111,7 @@ describe('modal injection on admin pages', function () {
     });
 
     it('does not inject the modal when only the loopback host differs', function () {
-        config()->set('app.url', 'http://127.0.0.1');
+        config()->set('app.url', loopbackAlias());
 
         $this->get('/admin/login')
             ->assertOk()
