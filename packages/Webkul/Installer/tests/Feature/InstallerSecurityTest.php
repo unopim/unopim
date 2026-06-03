@@ -34,14 +34,14 @@ describe('Installer pre-auth admin takeover', function () {
         file_put_contents($this->marker, 'installed');
 
         $this->postJson('/install/api/admin-config-setup', [
-            'admin'    => 'Hacker',
-            'email'    => 'attacker@evil.com',
-            'password' => 'pwned123',
+            'admin'    => 'Unauthorized Setup',
+            'email'    => 'unauthorized@example.test',
+            'password' => 'unauthorized-pass',
             'timezone' => 'UTC',
             'locale'   => 'en_US',
         ])->assertRedirect();
 
-        $this->assertDatabaseMissing('admins', ['email' => 'attacker@evil.com']);
+        $this->assertDatabaseMissing('admins', ['email' => 'unauthorized@example.test']);
     });
 
     it('denies admin-config-setup at the controller even if middleware is bypassed', function () {
@@ -51,9 +51,9 @@ describe('Installer pre-auth admin takeover', function () {
 
         $this->withoutMiddleware()
             ->postJson('/install/api/admin-config-setup', [
-                'admin'    => 'Hacker',
-                'email'    => 'attacker@evil.com',
-                'password' => 'pwned123',
+                'admin'    => 'Unauthorized Setup',
+                'email'    => 'unauthorized@example.test',
+                'password' => 'unauthorized-pass',
                 'timezone' => 'UTC',
                 'locale'   => 'en_US',
             ])
