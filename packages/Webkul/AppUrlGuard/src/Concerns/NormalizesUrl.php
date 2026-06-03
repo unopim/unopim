@@ -34,4 +34,31 @@ trait NormalizesUrl
 
         return $url;
     }
+
+    /**
+     * Whether two base URLs refer to the same origin for the guard's purposes.
+     *
+     * Loopback hosts (localhost, 127.0.0.1, [::1]) are interchangeable: assets
+     * pinned to one load fine from another on the same machine, so a
+     * loopback-only difference is NOT the "styles won't load" bug this guard
+     * exists to catch. Scheme, port and path stay significant, so
+     * localhost:8000 vs 127.0.0.1:8090 (different port) is still a mismatch.
+     */
+    protected function matches(string $a, string $b): bool
+    {
+        return $this->canonicalize($this->normalize($a)) === $this->canonicalize($this->normalize($b));
+    }
+
+    /**
+     * Fold loopback host aliases to a single token, leaving scheme, port and
+     * path untouched.
+     */
+    protected function canonicalize(string $url): string
+    {
+        return preg_replace(
+            '#^(\w[\w+.\-]*://)(?:localhost|127\.0\.0\.1|\[::1\])(?=$|[:/])#',
+            '${1}localhost',
+            $url
+        );
+    }
 }

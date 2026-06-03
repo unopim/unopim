@@ -40,7 +40,7 @@ class VerifyAppUrlMatches
         $configured = $this->normalize((string) config('app.url'));
         $actual = $this->normalize($request->getSchemeAndHttpHost().$request->getBaseUrl());
 
-        if ($configured === '' || $configured === $actual) {
+        if ($configured === '' || $this->matches($configured, $actual)) {
             return $response;
         }
 
@@ -96,11 +96,13 @@ class VerifyAppUrlMatches
             return false;
         }
 
-        $target = $this->normalize($this->originOf($location));
-        $actual = $this->normalize($request->getSchemeAndHttpHost());
-        $configured = $this->normalize($this->originOf((string) config('app.url')));
+        $target = $this->originOf($location);
+        $actual = $request->getSchemeAndHttpHost();
+        $configured = $this->originOf((string) config('app.url'));
 
-        return $configured !== '' && $target === $configured && $target !== $actual;
+        return $this->normalize($configured) !== ''
+            && $this->matches($target, $configured)
+            && ! $this->matches($target, $actual);
     }
 
     /**

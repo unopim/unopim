@@ -28,7 +28,7 @@ class AppUrlGuardController
         $actual = $this->normalize($request->getSchemeAndHttpHost().$request->getBaseUrl());
 
         return response()->json([
-            'matches'    => $configured === '' || $configured === $actual,
+            'matches'    => $configured === '' || $this->matches($configured, $actual),
             'configured' => $configured,
             'actual'     => $actual,
         ]);

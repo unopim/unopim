@@ -53,6 +53,14 @@ describe('check endpoint', function () {
             ->assertOk()
             ->assertJson(['matches' => true]);
     });
+
+    it('treats a loopback host difference (127.0.0.1 vs localhost) as a match', function () {
+        config()->set('app.url', 'http://127.0.0.1');
+
+        $this->getJson('/app-url-guard/check')
+            ->assertOk()
+            ->assertJson(['matches' => true]);
+    });
 });
 
 describe('package wiring', function () {
@@ -81,6 +89,14 @@ describe('modal injection on admin pages', function () {
 
     it('does not inject the modal when APP_URL matches the host', function () {
         config()->set('app.url', appRoot());
+
+        $this->get('/admin/login')
+            ->assertOk()
+            ->assertDontSee('unopim-appurl-warning', false);
+    });
+
+    it('does not inject the modal when only the loopback host differs', function () {
+        config()->set('app.url', 'http://127.0.0.1');
 
         $this->get('/admin/login')
             ->assertOk()

@@ -17,6 +17,11 @@ function normalizer(): object
         {
             return $this->normalize($url);
         }
+
+        public function same(string $a, string $b): bool
+        {
+            return $this->matches($a, $b);
+        }
     };
 }
 
@@ -57,4 +62,23 @@ it('returns an empty string for empty / whitespace input', function (string $inp
     'empty'      => [''],
     'spaces'     => ['   '],
     'slash only' => ['/'],
+]);
+
+it('treats loopback hosts as the same origin', function (string $a, string $b) {
+    expect(normalizer()->same($a, $b))->toBeTrue();
+})->with([
+    'localhost vs 127.0.0.1'     => ['http://localhost:8000', 'http://127.0.0.1:8000'],
+    'localhost vs ipv6 loopback' => ['http://localhost', 'http://[::1]'],
+    '127.0.0.1 vs ipv6 loopback' => ['http://127.0.0.1:9000', 'http://[::1]:9000'],
+    'loopback with sub-path'     => ['http://localhost/erp', 'http://127.0.0.1/erp'],
+    'loopback default port'      => ['http://localhost', 'http://127.0.0.1:80'],
+]);
+
+it('keeps loopback hosts distinct when scheme, port or path differ', function (string $a, string $b) {
+    expect(normalizer()->same($a, $b))->toBeFalse();
+})->with([
+    'different port'   => ['http://localhost:8000', 'http://127.0.0.1:8090'],
+    'different scheme' => ['http://localhost:8000', 'https://localhost:8000'],
+    'different path'   => ['http://localhost/erp', 'http://127.0.0.1/crm'],
+    'loopback vs real' => ['http://localhost', 'http://site.test'],
 ]);
