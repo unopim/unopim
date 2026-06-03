@@ -4,6 +4,7 @@ namespace Webkul\Measurement\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Measurement\Listeners\SaveAttributeMeasurementAfterUpdate;
 use Webkul\Measurement\Listeners\ValidateAttributeMeasurementBeforeUpdate;
 
 class MeasurementEventServiceProvider extends ServiceProvider
@@ -34,6 +35,11 @@ class MeasurementEventServiceProvider extends ServiceProvider
         Event::listen(
             'catalog.attribute.update.before',
             ValidateAttributeMeasurementBeforeUpdate::class.'@handle'
+        );
+
+        Event::listen(
+            'catalog.attribute.update.after',
+            SaveAttributeMeasurementAfterUpdate::class.'@handle'
         );
     }
 }

@@ -78,7 +78,6 @@
                                     type="text"
                                     name="labels[{{ $locale->code }}]"
                                     value="{{ old('labels.' . $locale->code, $labels[$locale->code] ?? '') }}"
-                                    placeholder="Enter {{ $locale->name }} label"
                                 />
                             </x-admin::form.control-group>
                         @endforeach
@@ -210,28 +209,28 @@
                                 v-model="locale.id"
                             />
 
-                            <x-admin::form.control-group>
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.settings.locales.index.create.code')
-                                </x-admin::form.control-group.label>
+                            <div class="grid grid-cols-3 gap-4">
+                                <x-admin::form.control-group class="mb-0">
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.settings.locales.index.create.code')
+                                    </x-admin::form.control-group.label>
 
-                                <x-admin::form.control-group.control
-                                    type="text"
-                                    id="code"
-                                    name="code"
-                                    rules="required"
-                                    v-model="locale.code"
-                                    :label="trans('admin::app.settings.locales.index.create.code')"
-                                    :placeholder="trans('admin::app.settings.locales.index.create.code')"
-                                    ::readonly="selectedLocales === 1"
-                                />
+                                    <x-admin::form.control-group.control
+                                        type="text"
+                                        id="code"
+                                        name="code"
+                                        rules="required"
+                                        v-model="locale.code"
+                                        :label="trans('admin::app.settings.locales.index.create.code')"
+                                        :placeholder="trans('admin::app.settings.locales.index.create.code')"
+                                        ::readonly="selectedLocales === 1"
+                                    />
 
-                                <x-admin::form.control-group.error control-name="code" />
-                            </x-admin::form.control-group>
+                                    <x-admin::form.control-group.error control-name="code" />
+                                </x-admin::form.control-group>
 
-                            <div>
                                 @foreach ($locales as $locale)
-                                    <x-admin::form.control-group>
+                                    <x-admin::form.control-group class="mb-0">
                                         <x-admin::form.control-group.label>
                                             {{ $locale->name }}
                                         </x-admin::form.control-group.label>
@@ -241,30 +240,29 @@
                                             id="label"
                                             ::name="`labels[{{ $locale->code }}]`"
                                             v-model="locale.labels['{{ $locale->code }}']"
-                                            placeholder="Enter Labels"
                                         />
                                     </x-admin::form.control-group>
                                 @endforeach
+
+                                <x-admin::form.control-group class="mb-0">
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('measurement::app.measurement.unit.symbol')
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::form.control-group.control
+                                        type="text"
+                                        id="symbol"
+                                        name="symbol"
+                                        rules="required"
+                                        v-model="locale.symbol"
+                                        placeholder="Symbol"
+                                    />
+
+                                    <x-admin::form.control-group.error control-name="symbol" />
+                                </x-admin::form.control-group>
                             </div>
 
-                            <x-admin::form.control-group>
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('measurement::app.measurement.unit.symbol')
-                                </x-admin::form.control-group.label>
-
-                                <x-admin::form.control-group.control
-                                    type="text"
-                                    id="symbol"
-                                    name="symbol"
-                                    rules="required"
-                                    v-model="locale.symbol"
-                                    placeholder="Symbol"
-                                />
-
-                                <x-admin::form.control-group.error control-name="symbol" />
-                            </x-admin::form.control-group>
-
-                            <div>
+                            <div class="mt-4">
                                 <x-admin::form.control-group class="mb-0">
                                     <x-admin::form.control-group.label class="required">
                                         @lang('measurement::app.measurement.unit.conversion_operation')

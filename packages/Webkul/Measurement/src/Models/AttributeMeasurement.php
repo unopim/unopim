@@ -5,9 +5,13 @@ namespace Webkul\Measurement\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\HistoryControl\Contracts\HistoryAuditable;
+use Webkul\HistoryControl\Traits\HistoryTrait;
 
-class AttributeMeasurement extends Model
+class AttributeMeasurement extends Model implements HistoryAuditable
 {
+    use HistoryTrait;
+
     /**
      * Table name associated with the model.
      */
@@ -21,6 +25,31 @@ class AttributeMeasurement extends Model
         'family_code',
         'unit_code',
     ];
+
+    /**
+     * Tag the history under the "attribute" entity so measurement changes
+     * show up on the related attribute's history tab.
+     */
+    protected $historyTags = ['attribute'];
+
+    /**
+     * Only audit the measurement configuration fields.
+     */
+    protected $auditInclude = [
+        'family_code',
+        'unit_code',
+    ];
+
+    /**
+     * Group history versions under the related attribute id instead of this
+     * pivot record's own id.
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return (int) $this->attribute_id;
+    }
 
     /**
      * Get the related attribute.

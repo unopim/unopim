@@ -47,13 +47,10 @@ class MeasurementFamilyController extends Controller
         $request->validate(MeasurementFamilyValidator::storeRules(), MeasurementFamilyValidator::messages());
 
         try {
-            $familyLabels = $request->input('labels', []);
-            $unitLabels = $request->input('unit_labels', []);
-
             $units = [
                 [
                     'code'                  => $request->standard_unit_code,
-                    'labels'                => $unitLabels,
+                    'labels'                => [],
                     'symbol'                => $request->symbol,
                     'convert_from_standard' => [
                         [
@@ -67,7 +64,7 @@ class MeasurementFamilyController extends Controller
             $data = [
                 'code'          => $request->code,
                 'name'          => $request->code,
-                'labels'        => $familyLabels,
+                'labels'        => [],
                 'standard_unit' => $request->standard_unit_code,
                 'units'         => $units,
                 'symbol'        => $request->symbol,

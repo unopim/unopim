@@ -3,27 +3,26 @@
 namespace Webkul\Measurement\Listeners;
 
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Measurement\Models\MeasurementFamily;
-use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 
 class ValidateAttributeMeasurementBeforeUpdate
 {
-    protected $attributeMeasurementRepository;
-
     protected $attributeRepository;
 
     public function __construct(
-        AttributeMeasurementRepository $attributeMeasurementRepository,
         AttributeRepository $attributeRepository
     ) {
-        $this->attributeMeasurementRepository = $attributeMeasurementRepository;
         $this->attributeRepository = $attributeRepository;
     }
 
     /**
-     * Validate and save measurement configuration before attribute update.
+     * Validate the measurement configuration before the attribute is updated.
+     *
+     * The actual save happens in the "after" listener so the measurement audit
+     * can be grouped into the same history version as the attribute update.
      *
      * @param  int|string  $attributeId
      * @return void
@@ -35,6 +34,7 @@ class ValidateAttributeMeasurementBeforeUpdate
         if (! $attribute || $attribute->type !== 'measurement') {
             return;
         }
+
         $familyCode = request('measurement_family');
         $unitCode = request('measurement_unit');
 
@@ -54,9 +54,14 @@ class ValidateAttributeMeasurementBeforeUpdate
             );
         }
 
-        $this->attributeMeasurementRepository->saveAttributeMeasurement($attributeId, [
-            'family_code' => $familyCode,
-            'unit_code'   => $unitCode,
-        ]);
+        /**
+         * Remember the latest audit id before the attribute update runs, so the
+         * after-listener can detect the audit created for the attribute during
+         * this same request and align the measurement audit to its version.
+         */
+        request()->attributes->set(
+            'measurement_audit_baseline',
+            (int) DB::table('audits')->max('id')
+        );
     }
 }

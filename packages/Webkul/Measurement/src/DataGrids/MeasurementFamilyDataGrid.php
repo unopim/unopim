@@ -12,9 +12,10 @@ class MeasurementFamilyDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $driver = DB::connection()->getDriverName();
-        $familyLabelQuery = $this->getFamilyLabelQuery($driver);
-        $standardUnitLabelQuery = $this->getStandardUnitLabelQuery($driver);
-        $standardUnitFilterQuery = $this->getStandardUnitFilterQuery($driver, $standardUnitLabelQuery);
+        $tablePrefix = DB::getTablePrefix();
+        $familyLabelQuery = $this->getFamilyLabelQuery($driver, $tablePrefix);
+        $standardUnitLabelQuery = $this->getStandardUnitLabelQuery($driver, $tablePrefix);
+        $standardUnitFilterQuery = $this->getStandardUnitFilterQuery($driver, $standardUnitLabelQuery, $tablePrefix);
 
         $unitCountQuery = $driver === 'pgsql'
             ? DB::raw('COALESCE(json_array_length(units::json), 0) as unit_count')
@@ -49,22 +50,22 @@ class MeasurementFamilyDataGrid extends DataGrid
      *
      * @return string
      */
-    protected function getFamilyLabelQuery(string $driver)
+    protected function getFamilyLabelQuery(string $driver, string $tablePrefix = '')
     {
         $locale = preg_replace('/[^A-Za-z0-9_]/', '', app()->getLocale());
 
         if ($driver === 'pgsql') {
             return "COALESCE(
-                NULLIF(TRIM(measurement_families.labels::jsonb->>'{$locale}'), ''),
-                NULLIF(TRIM(measurement_families.labels::jsonb->>'en_US'), ''),
-                '[' || measurement_families.code || ']'
+                NULLIF(TRIM({$tablePrefix}measurement_families.labels::jsonb->>'{$locale}'), ''),
+                NULLIF(TRIM({$tablePrefix}measurement_families.labels::jsonb->>'en_US'), ''),
+                '[' || {$tablePrefix}measurement_families.code || ']'
             )";
         }
 
         return "COALESCE(
-            NULLIF(TRIM(JSON_UNQUOTE(JSON_EXTRACT(measurement_families.labels, '$.{$locale}'))), ''),
-            NULLIF(TRIM(JSON_UNQUOTE(JSON_EXTRACT(measurement_families.labels, '$.en_US'))), ''),
-            CONCAT('[', measurement_families.code, ']')
+            NULLIF(TRIM(JSON_UNQUOTE(JSON_EXTRACT({$tablePrefix}measurement_families.labels, '$.{$locale}'))), ''),
+            NULLIF(TRIM(JSON_UNQUOTE(JSON_EXTRACT({$tablePrefix}measurement_families.labels, '$.en_US'))), ''),
+            CONCAT('[', {$tablePrefix}measurement_families.code, ']')
         )";
     }
 
@@ -73,7 +74,7 @@ class MeasurementFamilyDataGrid extends DataGrid
      *
      * @return string
      */
-    protected function getStandardUnitLabelQuery(string $driver)
+    protected function getStandardUnitLabelQuery(string $driver, string $tablePrefix = '')
     {
         $locale = preg_replace('/[^A-Za-z0-9_]/', '', app()->getLocale());
 
@@ -83,10 +84,10 @@ class MeasurementFamilyDataGrid extends DataGrid
                     NULLIF(TRIM(unit->'labels'->>'{$locale}'), ''),
                     NULLIF(TRIM(unit->'labels'->>'en_US'), '')
                 )
-                FROM jsonb_array_elements(COALESCE(measurement_families.units::jsonb, '[]'::jsonb)) AS unit
-                WHERE unit->>'code' = measurement_families.standard_unit
+                FROM jsonb_array_elements(COALESCE({$tablePrefix}measurement_families.units::jsonb, '[]'::jsonb)) AS unit
+                WHERE unit->>'code' = {$tablePrefix}measurement_families.standard_unit
                 LIMIT 1
-            ), '[' || measurement_families.standard_unit || ']')";
+            ), '[' || {$tablePrefix}measurement_families.standard_unit || ']')";
         }
 
         return "COALESCE((
@@ -95,12 +96,12 @@ class MeasurementFamilyDataGrid extends DataGrid
                 NULLIF(TRIM(JSON_UNQUOTE(JSON_EXTRACT(unit.value, '$.labels.en_US'))), '')
             )
             FROM JSON_TABLE(
-                measurement_families.units,
+                {$tablePrefix}measurement_families.units,
                 '$[*]' COLUMNS (value JSON PATH '$')
             ) AS unit
-            WHERE JSON_UNQUOTE(JSON_EXTRACT(unit.value, '$.code')) = measurement_families.standard_unit
+            WHERE JSON_UNQUOTE(JSON_EXTRACT(unit.value, '$.code')) = {$tablePrefix}measurement_families.standard_unit
             LIMIT 1
-        ), CONCAT('[', measurement_families.standard_unit, ']'))";
+        ), CONCAT('[', {$tablePrefix}measurement_families.standard_unit, ']'))";
     }
 
     /**
@@ -108,13 +109,13 @@ class MeasurementFamilyDataGrid extends DataGrid
      *
      * @return string
      */
-    protected function getStandardUnitFilterQuery(string $driver, string $standardUnitLabelQuery)
+    protected function getStandardUnitFilterQuery(string $driver, string $standardUnitLabelQuery, string $tablePrefix = '')
     {
         if ($driver === 'pgsql') {
-            return "({$standardUnitLabelQuery} || ' ' || measurement_families.standard_unit)";
+            return "({$standardUnitLabelQuery} || ' ' || {$tablePrefix}measurement_families.standard_unit)";
         }
 
-        return "CONCAT({$standardUnitLabelQuery}, ' ', measurement_families.standard_unit)";
+        return "CONCAT({$standardUnitLabelQuery}, ' ', {$tablePrefix}measurement_families.standard_unit)";
     }
 
     public function prepareColumns()

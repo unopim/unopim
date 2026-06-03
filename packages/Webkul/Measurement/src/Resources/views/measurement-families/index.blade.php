@@ -64,27 +64,6 @@
                                         <x-admin::form.control-group.error control-name="code" />
                                     </x-admin::form.control-group>
 
-                                    <!-- Family Labels -->
-                                    <div>
-                                        <p class="mb-2 text-sm font-semibold text-gray-800 dark:text-white">
-                                            @lang('admin::app.catalog.attributes.create.label')
-                                        </p>
-                                    </div>
-
-                                    @foreach ($locales as $locale)
-                                        <x-admin::form.control-group>
-                                            <x-admin::form.control-group.label>
-                                                {{ $locale->name }}
-                                            </x-admin::form.control-group.label>
-
-                                            <x-admin::form.control-group.control
-                                                type="text"
-                                                :name="'labels[' . $locale->code . ']'"
-                                                v-model="form.labels['{{ $locale->code }}']"
-                                            />
-                                        </x-admin::form.control-group>
-                                    @endforeach
-
                                     <!-- Standard Unit -->
                                     <div class="mt-4">
                                         <h2 class="text-base font-semibold text-gray-800 dark:text-white">
@@ -108,27 +87,6 @@
 
                                         <x-admin::form.control-group.error control-name="standard_unit_code" />
                                     </x-admin::form.control-group>
-
-                                    <!-- Unit Labels -->
-                                    <div>
-                                        <p class="mb-2 text-sm font-semibold text-gray-800 dark:text-white">
-                                            @lang('admin::app.catalog.attributes.create.label')
-                                        </p>
-                                    </div>
-
-                                    @foreach ($locales as $locale)
-                                        <x-admin::form.control-group>
-                                            <x-admin::form.control-group.label>
-                                                {{ $locale->name }}
-                                            </x-admin::form.control-group.label>
-
-                                            <x-admin::form.control-group.control
-                                                type="text"
-                                                :name="'unit_labels[' . $locale->code . ']'"
-                                                v-model="form.unit_labels['{{ $locale->code }}']"
-                                            />
-                                        </x-admin::form.control-group>
-                                    @endforeach
 
                                     <!-- Symbol -->
                                     <x-admin::form.control-group>
@@ -172,19 +130,8 @@
                             code: '',
                             standard_unit_code: '',
                             symbol: '',
-                            labels: {},
-                            unit_labels: {},
                         },
                     };
-                },
-
-                created() {
-                    const locales = @json($locales);
-
-                    locales.forEach((locale) => {
-                        this.form.labels[locale.code] = '';
-                        this.form.unit_labels[locale.code] = '';
-                    });
                 },
 
                 methods: {
@@ -200,8 +147,6 @@
                                 code: '',
                                 standard_unit_code: '',
                                 symbol: '',
-                                labels: {},
-                                unit_labels: {},
                             };
 
                             if (response.data?.data?.redirect_url) {
