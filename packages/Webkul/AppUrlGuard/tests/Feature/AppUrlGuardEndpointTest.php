@@ -88,6 +88,38 @@ describe('modal injection on admin pages', function () {
     });
 });
 
+describe('redirect to an unreachable APP_URL host', function () {
+    it('serves the standalone warning page instead of bouncing to the mismatched host', function () {
+        config()->set('app.url', 'http://canonical.test');
+
+        Route::middleware('web')->get('app-url-guard-test/bounce', fn () => redirect('http://canonical.test/admin/login'));
+
+        $this->get('/app-url-guard-test/bounce')
+            ->assertOk()
+            ->assertSee('unopim-appurl-warning', false)
+            ->assertSee('APP_URL Mismatch Detected', false)
+            ->assertSee('app-url-guard/check', false);
+    });
+
+    it('leaves a same-origin redirect untouched', function () {
+        config()->set('app.url', 'http://canonical.test');
+
+        Route::middleware('web')->get('app-url-guard-test/local', fn () => redirect(appRoot().'/admin/login'));
+
+        $this->get('/app-url-guard-test/local')
+            ->assertRedirect(appRoot().'/admin/login');
+    });
+
+    it('does not hijack a JSON/XHR redirect into an HTML page', function () {
+        config()->set('app.url', 'http://canonical.test');
+
+        Route::middleware('web')->get('app-url-guard-test/bounce-json', fn () => redirect('http://canonical.test/admin/login'));
+
+        $this->getJson('/app-url-guard-test/bounce-json')
+            ->assertRedirect('http://canonical.test/admin/login');
+    });
+});
+
 describe('force-logout of an authenticated admin on mismatch', function () {
     it('logs out the admin and redirects to a reachable login page', function () {
         config()->set('app.url', 'http://canonical.test');

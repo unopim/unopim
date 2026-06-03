@@ -70,7 +70,68 @@ class VerifyAppUrlMatches
 
         $checkUrl = rtrim($request->getSchemeAndHttpHost().$request->getBaseUrl(), '/').'/app-url-guard/check';
 
+        if ($this->redirectsToUnreachableAppUrl($request, $response)) {
+            return $this->warningPage($configured, $actual, $checkUrl, $justLoggedIn);
+        }
+
         return $this->injectBanner($response, $configured, $actual, $checkUrl, $justLoggedIn);
+    }
+
+    /**
+     * Detect a redirect that URL::forceRootUrl() has pinned to the (unreachable)
+     * APP_URL origin. Because the browser is on a different host/port, following
+     * it would bounce the developer to a host they cannot reach — and a redirect
+     * carries no HTML body, so the banner could never be injected. This is the
+     * "I open the real URL but land on localhost and see nothing" case.
+     */
+    protected function redirectsToUnreachableAppUrl(Request $request, Response $response): bool
+    {
+        if ($request->expectsJson() || ! $response->isRedirect()) {
+            return false;
+        }
+
+        $location = (string) $response->headers->get('Location');
+
+        if ($location === '') {
+            return false;
+        }
+
+        $target = $this->normalize($this->originOf($location));
+        $actual = $this->normalize($request->getSchemeAndHttpHost());
+        $configured = $this->normalize($this->originOf((string) config('app.url')));
+
+        return $configured !== '' && $target === $configured && $target !== $actual;
+    }
+
+    /**
+     * Scheme + host (+ port) of a URL, stripped of any path, query or fragment.
+     */
+    protected function originOf(string $url): string
+    {
+        $parts = parse_url($url);
+
+        if (empty($parts['scheme']) || empty($parts['host'])) {
+            return '';
+        }
+
+        return $parts['scheme'].'://'.$parts['host'].(isset($parts['port']) ? ':'.$parts['port'] : '');
+    }
+
+    /**
+     * Render the warning modal as a standalone HTML page (200), used in place of
+     * a redirect the browser could not have followed back to a visible page.
+     */
+    protected function warningPage(string $configured, string $actual, string $checkUrl, bool $justLoggedIn): Response
+    {
+        $banner = $this->renderBanner($configured, $actual, $checkUrl, $justLoggedIn);
+
+        $title = e(trans('app_url_guard::app.warning.title'));
+
+        $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+            .'<meta name="viewport" content="width=device-width, initial-scale=1">'
+            .'<title>'.$title.'</title></head><body>'.$banner.'</body></html>';
+
+        return response($html, 200, ['Content-Type' => 'text/html; charset=UTF-8']);
     }
 
     /**
@@ -126,15 +187,23 @@ class VerifyAppUrlMatches
             return $response;
         }
 
-        $banner = view()->file(__DIR__.'/../../Resources/views/warning.blade.php', [
+        $banner = $this->renderBanner($configured, $actual, $checkUrl, $justLoggedIn);
+
+        $response->setContent(str_replace('</body>', $banner.'</body>', $content));
+
+        return $response;
+    }
+
+    /**
+     * Render the warning modal markup (the backdrop, styles and script).
+     */
+    protected function renderBanner(string $configured, string $actual, string $checkUrl, bool $justLoggedIn): string
+    {
+        return view()->file(__DIR__.'/../../Resources/views/warning.blade.php', [
             'configured'   => $configured,
             'actual'       => $actual,
             'checkUrl'     => $checkUrl,
             'justLoggedIn' => $justLoggedIn,
         ])->render();
-
-        $response->setContent(str_replace('</body>', $banner.'</body>', $content));
-
-        return $response;
     }
 }
