@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Nu s-a putut verifica APP_URL. Vă rugăm să reîmprospătați pagina.',
         'logged-out'      => 'Deconectat: APP_URL nu corespunde gazdei curente. Actualizați APP_URL în .env și rulați "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'Nepotrivire APP_URL detectată',
+        'hint'     => 'Actualizați APP_URL în .env la URL-ul cererii, apoi rulați: php artisan optimize:clear',
+    ],
 ];

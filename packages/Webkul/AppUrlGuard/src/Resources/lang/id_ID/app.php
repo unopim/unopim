@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Tidak dapat memverifikasi APP_URL. Silakan segarkan halaman.',
         'logged-out'      => 'Keluar: APP_URL tidak cocok dengan host saat ini. Perbarui APP_URL di .env dan jalankan "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'Ketidakcocokan APP_URL Terdeteksi',
+        'hint'     => 'Perbarui APP_URL di .env ke URL permintaan, lalu jalankan: php artisan optimize:clear',
+    ],
 ];

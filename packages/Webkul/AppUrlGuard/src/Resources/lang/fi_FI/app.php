@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'APP_URL:ää ei voitu vahvistaa. Päivitä sivu.',
         'logged-out'      => 'Kirjauduttu ulos: APP_URL ei vastaa nykyistä isäntänimeä. Päivitä APP_URL .env-tiedostossa ja suorita "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'APP_URL-ristiriita havaittu',
+        'hint'     => 'Päivitä APP_URL .env-tiedostossa pyynnön URL-osoitteeksi ja suorita sitten: php artisan optimize:clear',
+    ],
 ];

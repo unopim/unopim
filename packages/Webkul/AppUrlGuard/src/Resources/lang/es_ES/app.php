@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'No se pudo verificar APP_URL. Por favor, recarga la página.',
         'logged-out'      => 'Sesión cerrada: APP_URL no coincide con el host actual. Actualiza APP_URL en .env y ejecuta "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'Se detectó una discrepancia en APP_URL',
+        'hint'     => 'Actualiza APP_URL en .env a la URL de la solicitud y luego ejecuta: php artisan optimize:clear',
+    ],
 ];

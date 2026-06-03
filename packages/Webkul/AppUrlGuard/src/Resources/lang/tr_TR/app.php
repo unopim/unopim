@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'APP_URL doğrulanamadı. Lütfen sayfayı yenileyin.',
         'logged-out'      => 'Oturum kapatıldı: APP_URL geçerli ana bilgisayarla eşleşmiyor. .env dosyasında APP_URL değerini güncelleyin ve "php artisan optimize:clear" komutunu çalıştırın.',
     ],
+
+    'log' => [
+        'mismatch' => 'APP_URL Uyuşmazlığı Tespit Edildi',
+        'hint'     => '.env dosyasındaki APP_URL değerini istek URL\'sine güncelleyin, ardından çalıştırın: php artisan optimize:clear',
+    ],
 ];

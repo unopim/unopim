@@ -102,10 +102,10 @@ class VerifyAppUrlMatches
      */
     protected function logMismatch(string $configured, string $actual): void
     {
-        logger()->warning('APP_URL mismatch detected', [
+        logger()->warning(trans('app_url_guard::app.log.mismatch'), [
             'app_url' => $configured,
             'request' => $actual,
-            'hint'    => 'Update APP_URL in .env to the request URL, then run: php artisan optimize:clear',
+            'hint'    => trans('app_url_guard::app.log.hint'),
         ]);
     }
 

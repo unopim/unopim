@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Không thể xác minh APP_URL. Vui lòng tải lại trang.',
         'logged-out'      => 'Đã đăng xuất: APP_URL không khớp với máy chủ hiện tại. Hãy cập nhật APP_URL trong .env và chạy "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'Đã phát hiện APP_URL không khớp',
+        'hint'     => 'Cập nhật APP_URL trong .env thành URL của yêu cầu, sau đó chạy: php artisan optimize:clear',
+    ],
 ];

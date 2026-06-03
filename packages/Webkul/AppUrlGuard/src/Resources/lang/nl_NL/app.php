@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Kon APP_URL niet verifiëren. Vernieuw de pagina.',
         'logged-out'      => 'Uitgelogd: APP_URL komt niet overeen met de huidige host. Werk APP_URL bij in .env en voer "php artisan optimize:clear" uit.',
     ],
+
+    'log' => [
+        'mismatch' => 'APP_URL-mismatch gedetecteerd',
+        'hint'     => 'Werk APP_URL in .env bij naar de aanvraag-URL en voer vervolgens uit: php artisan optimize:clear',
+    ],
 ];

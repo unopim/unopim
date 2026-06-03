@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'تعذر التحقق من APP_URL. يرجى تحديث الصفحة.',
         'logged-out'      => 'تم تسجيل الخروج: APP_URL لا يطابق المضيف الحالي. قم بتحديث APP_URL في .env وتشغيل "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'تم اكتشاف عدم تطابق في APP_URL',
+        'hint'     => 'قم بتحديث APP_URL في ملف .env ليطابق عنوان URL للطلب، ثم نفّذ: php artisan optimize:clear',
+    ],
 ];

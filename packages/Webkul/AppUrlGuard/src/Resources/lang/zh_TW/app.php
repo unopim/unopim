@@ -28,4 +28,9 @@ return [
         'verify-failed'   => '無法驗證 APP_URL。請重新整理頁面。',
         'logged-out'      => '已登出：APP_URL 與目前的主機不相符。請在 .env 中更新 APP_URL 並執行 "php artisan optimize:clear"。',
     ],
+
+    'log' => [
+        'mismatch' => '偵測到 APP_URL 不相符',
+        'hint'     => '將 .env 中的 APP_URL 更新為請求的 URL，然後執行：php artisan optimize:clear',
+    ],
 ];

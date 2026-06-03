@@ -1,23 +1,3 @@
-{{--
-    APP_URL mismatch warning — UnoPim "guided steps" modal, fully self-contained.
-
-    Rendered by Webkul\AppUrlGuard\Http\Middleware\VerifyAppUrlMatches and
-    injected before </body> in debug mode only.
-
-    IMPORTANT:
-      - Every class is prefixed (unopim-appurl-*) and the CSS variables are
-        scoped to #unopim-appurl-backdrop so nothing collides with the host
-        page's styles.
-      - Icons are inline SVG (never the icomoon font, which 404s on a mismatched
-        APP_URL — the very problem this modal warns about).
-      - Functionality is unchanged: the close (×) button re-validates APP_URL on
-        the server and either reloads (fixed) or shows a toast (still wrong); the
-        copy buttons copy + tick their step; "All done" hard-reloads the page.
-
-    Props: $configured (APP_URL in .env), $actual (host the browser is on),
-           $checkUrl (same-origin re-validation endpoint),
-           $justLoggedIn (reset the step state right after login).
---}}
 <div
     id="unopim-appurl-backdrop"
     class="unopim-appurl-backdrop"
@@ -150,8 +130,6 @@
 
 @verbatim
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
     #unopim-appurl-backdrop {
         --brand-600: #6553EB;
         --brand-700: #5641D9;

@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Kunne ikke verificere APP_URL. Genindlæs venligst siden.',
         'logged-out'      => 'Logget ud: APP_URL matcher ikke den aktuelle vært. Opdater APP_URL i .env, og kør "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'Uoverensstemmelse i APP_URL registreret',
+        'hint'     => 'Opdater APP_URL i .env til anmodningens URL, og kør derefter: php artisan optimize:clear',
+    ],
 ];

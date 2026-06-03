@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'No s\'ha pogut verificar APP_URL. Si us plau, recarregueu la pàgina.',
         'logged-out'      => 'Sessió tancada: APP_URL no coincideix amb l\'amfitrió actual. Actualitzeu APP_URL a .env i executeu "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'S\'ha detectat una discrepància a APP_URL',
+        'hint'     => "Actualitzeu APP_URL al fitxer .env amb l'URL de la sol·licitud i després executeu: php artisan optimize:clear",
+    ],
 ];

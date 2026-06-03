@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'APP_URL सत्यापित नहीं किया जा सका। कृपया पेज को रिफ्रेश करें।',
         'logged-out'      => 'लॉग आउट: APP_URL वर्तमान होस्ट से मेल नहीं खाता। .env में APP_URL अपडेट करें और "php artisan optimize:clear" चलाएं।',
     ],
+
+    'log' => [
+        'mismatch' => 'APP_URL में बेमेल पाया गया',
+        'hint'     => '.env में APP_URL को अनुरोध URL से अपडेट करें, फिर चलाएं: php artisan optimize:clear',
+    ],
 ];

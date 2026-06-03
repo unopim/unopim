@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Impossibile verificare APP_URL. Ricarica la pagina.',
         'logged-out'      => 'Disconnesso: APP_URL non corrisponde all\'host attuale. Aggiorna APP_URL in .env ed esegui "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'Rilevata discrepanza di APP_URL',
+        'hint'     => "Aggiorna APP_URL nel file .env con l'URL della richiesta, quindi esegui: php artisan optimize:clear",
+    ],
 ];

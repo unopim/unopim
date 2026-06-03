@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'APP_URL を確認できませんでした。ページを再読み込みしてください。',
         'logged-out'      => 'ログアウトしました: APP_URL が現在のホストと一致しません。.env の APP_URL を更新して "php artisan optimize:clear" を実行してください。',
     ],
+
+    'log' => [
+        'mismatch' => 'APP_URL の不一致を検出しました',
+        'hint'     => '.env の APP_URL をリクエストの URL に更新し、次を実行してください: php artisan optimize:clear',
+    ],
 ];

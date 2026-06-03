@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Не вдалося перевірити APP_URL. Будь ласка, оновіть сторінку.',
         'logged-out'      => 'Вихід виконано: APP_URL не збігається з поточним хостом. Оновіть APP_URL у .env та виконайте "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'Виявлено невідповідність APP_URL',
+        'hint'     => 'Оновіть APP_URL у .env до URL-адреси запиту, потім виконайте: php artisan optimize:clear',
+    ],
 ];

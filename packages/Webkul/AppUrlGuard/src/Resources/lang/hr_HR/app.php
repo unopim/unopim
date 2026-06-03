@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Nije moguće provjeriti APP_URL. Molimo osvježite stranicu.',
         'logged-out'      => 'Odjavljeni ste: APP_URL se ne podudara s trenutnim domaćinom. Ažurirajte APP_URL u .env i pokrenite "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'Otkriveno nepodudaranje APP_URL-a',
+        'hint'     => 'Ažurirajte APP_URL u .env na URL zahtjeva, zatim pokrenite: php artisan optimize:clear',
+    ],
 ];

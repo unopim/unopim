@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Nie można zweryfikować APP_URL. Odśwież stronę.',
         'logged-out'      => 'Wylogowano: APP_URL nie pasuje do bieżącego hosta. Zaktualizuj APP_URL w .env i uruchom "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'Wykryto niezgodność APP_URL',
+        'hint'     => 'Zaktualizuj APP_URL w pliku .env do adresu URL żądania, a następnie uruchom: php artisan optimize:clear',
+    ],
 ];

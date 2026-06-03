@@ -28,4 +28,9 @@ return [
         'verify-failed'   => '无法验证 APP_URL。请刷新页面。',
         'logged-out'      => '已退出登录：APP_URL 与当前主机不匹配。请在 .env 中更新 APP_URL 并运行 "php artisan optimize:clear"。',
     ],
+
+    'log' => [
+        'mismatch' => '检测到 APP_URL 不匹配',
+        'hint'     => '将 .env 中的 APP_URL 更新为请求的 URL，然后运行：php artisan optimize:clear',
+    ],
 ];

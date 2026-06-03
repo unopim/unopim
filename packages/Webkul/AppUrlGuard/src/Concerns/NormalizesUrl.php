@@ -19,7 +19,15 @@ trait NormalizesUrl
      */
     protected function normalize(string $url): string
     {
-        $url = rtrim(strtolower(trim($url)), '/');
+        $url = trim($url);
+
+        $url = preg_replace_callback(
+            '#^[a-z][a-z0-9+.\-]*://[^/]*#i',
+            fn ($match) => strtolower($match[0]),
+            $url
+        );
+
+        $url = rtrim($url, '/');
 
         $url = preg_replace('#^(http://[^/:]+):80(?=$|/)#', '$1', $url);
         $url = preg_replace('#^(https://[^/:]+):443(?=$|/)#', '$1', $url);

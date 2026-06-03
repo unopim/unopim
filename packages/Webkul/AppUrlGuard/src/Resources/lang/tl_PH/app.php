@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Hindi ma-verify ang APP_URL. Mangyaring i-refresh ang pahina.',
         'logged-out'      => 'Naka-log out: Hindi tumutugma ang APP_URL sa kasalukuyang host. I-update ang APP_URL sa .env at patakbuhin ang "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'May Natuklasang Hindi Pagtutugma sa APP_URL',
+        'hint'     => 'I-update ang APP_URL sa .env sa URL ng request, pagkatapos ay patakbuhin: php artisan optimize:clear',
+    ],
 ];

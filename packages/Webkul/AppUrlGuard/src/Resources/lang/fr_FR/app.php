@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Impossible de vérifier APP_URL. Veuillez rafraîchir la page.',
         'logged-out'      => "Déconnecté : APP_URL ne correspond pas à l'hôte actuel. Mettez à jour APP_URL dans le .env et exécutez \"php artisan optimize:clear\".",
     ],
+
+    'log' => [
+        'mismatch' => "Incohérence d'APP_URL détectée",
+        'hint'     => "Mettez à jour APP_URL dans le .env avec l'URL de la requête, puis exécutez : php artisan optimize:clear",
+    ],
 ];

@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Kunne ikke verifisere APP_URL. Vennligst oppdater siden.',
         'logged-out'      => 'Logget ut: APP_URL samsvarer ikke med gjeldende vert. Oppdater APP_URL i .env og kjør "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'APP_URL-avvik oppdaget',
+        'hint'     => 'Oppdater APP_URL i .env til forespørselens URL, og kjør deretter: php artisan optimize:clear',
+    ],
 ];

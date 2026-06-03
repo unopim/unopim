@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Kunde inte verifiera APP_URL. Vänligen uppdatera sidan.',
         'logged-out'      => 'Utloggad: APP_URL matchar inte den aktuella värden. Uppdatera APP_URL i .env och kör "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'APP_URL-avvikelse upptäckt',
+        'hint'     => 'Uppdatera APP_URL i .env till begärans URL och kör sedan: php artisan optimize:clear',
+    ],
 ];

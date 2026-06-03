@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'Could not verify APP_URL. Please refresh the page.',
         'logged-out'      => 'Logged out: APP_URL does not match the current host. Update APP_URL in .env and run "php artisan optimize:clear".',
     ],
+
+    'log' => [
+        'mismatch' => 'APP_URL mismatch detected',
+        'hint'     => 'Update APP_URL in .env to the request URL, then run: php artisan optimize:clear',
+    ],
 ];

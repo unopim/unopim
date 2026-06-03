@@ -40,6 +40,7 @@ dataset('different urls', [
     'sub-path present vs absent' => ['http://site.test/erp', 'http://site.test'],
     'different sub-path'         => ['http://site.test/erp', 'http://site.test/crm'],
     'http :443 is not default'   => ['http://site.test:443', 'http://site.test'],
+    'case-sensitive sub-path'    => ['http://site.test/ERP', 'http://site.test/erp'],
 ]);
 
 it('treats equal urls as equal', function (string $a, string $b) {

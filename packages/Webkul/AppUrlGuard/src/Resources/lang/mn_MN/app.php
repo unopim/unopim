@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'APP_URL-ийг баталгаажуулж чадсангүй. Хуудсыг сэргээнэ үү.',
         'logged-out'      => 'Гарлаа: APP_URL одоогийн хосттой таарахгүй байна. .env дахь APP_URL-ийг шинэчилж "php artisan optimize:clear"-ийг ажиллуулна уу.',
     ],
+
+    'log' => [
+        'mismatch' => 'APP_URL-ийн зөрчил илрэв',
+        'hint'     => '.env дахь APP_URL-ийг хүсэлтийн URL болгон шинэчилж, дараа нь ажиллуулна уу: php artisan optimize:clear',
+    ],
 ];

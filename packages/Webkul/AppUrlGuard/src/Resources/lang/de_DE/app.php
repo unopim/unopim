@@ -28,4 +28,9 @@ return [
         'verify-failed'   => 'APP_URL konnte nicht überprüft werden. Bitte aktualisieren Sie die Seite.',
         'logged-out'      => 'Abgemeldet: APP_URL stimmt nicht mit dem aktuellen Host überein. Aktualisieren Sie APP_URL in .env und führen Sie "php artisan optimize:clear" aus.',
     ],
+
+    'log' => [
+        'mismatch' => 'APP_URL-Konflikt erkannt',
+        'hint'     => 'Aktualisieren Sie APP_URL in der .env auf die Anfrage-URL und führen Sie dann aus: php artisan optimize:clear',
+    ],
 ];
