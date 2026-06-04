@@ -1,6 +1,6 @@
 # Unopim Connector — Code Review Instructions
 
-Use this checklist when reviewing Laravel 11 + Unopim connector/plugin code.
+Use this checklist when reviewing Laravel 12 + Unopim connector/plugin code.
 Applies to all AI coding agents: Kilo Code, GitHub Copilot, Claude Code, Codex, Cursor.
 
 ---

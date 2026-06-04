@@ -1,14 +1,14 @@
 # GitHub Copilot Workspace Instructions: Unopim Connector Development
 
 This workspace contains agent skills for building **Unopim third-party connector
-modules**. Unopim is a Webkul Laravel 11 PIM — it is NOT Bagisto.
+modules**. Unopim is a Webkul Laravel 12 PIM — it is NOT Bagisto.
 
 ---
 
 ## Framework
 
 - **Platform:** Unopim (not Bagisto, not Magento, not Akeneo)
-- **Language:** PHP 8.1+ / Laravel 11
+- **Language:** PHP 8.3+ / Laravel 12
 - **Module base:** `packages/Webkul/{ModuleName}/src/`
 - **Reference:** `packages/Webkul/WooCommerce/` is the ground-truth connector
 
@@ -16,19 +16,23 @@ modules**. Unopim is a Webkul Laravel 11 PIM — it is NOT Bagisto.
 
 ## Non-negotiable Conventions
 
-### 1. Table names always start with `wk_`
+### 1. Table names use unprefixed names; Laravel adds the `DB_PREFIX`
+Unopim models declare `$table` **without** the `wk_` prefix. The framework prepends the configured `DB_PREFIX` (default `wk_`) automatically, so hardcoding it produces `wk_wk_*` tables in production.
 ```php
 // Correct
+protected $table = 'woocommerce_credentials';
+DB::table('shopify_products')
+
+// Wrong — do not hardcode the prefix
 protected $table = 'wk_woocommerce_credentials';
 DB::table('wk_shopify_products')
-
-// Wrong
-protected $table = 'woocommerce_credentials';
 ```
+This matches the reference connectors (`packages/Webkul/Core/src/Models/Channel.php` uses `channels`, `CoreConfig.php` uses `core_config`) and is the convention enforced by `AGENTS.md`.
 
 ### 2. Migration folder: `Database/Migration/` (no 's')
 ```
-Database/Migration/2025_01_01_000000_wk_module_credentials.php
+Database/Migration/2025_01_01_000000_module_credentials.php
+```
 ```
 
 ### 3. ServiceProvider: routes via `Route::middleware('web')->group()`
@@ -116,7 +120,7 @@ class CredentialDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()     // no PHP return type hint
     {
-        return DB::table('wk_module_credentials')->select(...);
+        return DB::table('module_credentials')->select(...);
     }
 
     public function prepareColumns()
