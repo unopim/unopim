@@ -16,14 +16,15 @@ modules**. Unopim is a Webkul Laravel 11 PIM — it is NOT Bagisto.
 
 ## Non-negotiable Conventions
 
-### 1. Table names always start with `wk_`
+### 1. Table names and DB connection prefix
+When a database connection `prefix` is configured (for example `wk_`), Query Builder/Eloquent applies it automatically; hardcoding `wk_` in table names can cause double-prefixing.
 ```php
 // Correct
-protected $table = 'wk_woocommerce_credentials';
-DB::table('wk_shopify_products')
+protected $table = 'woocommerce_credentials';
+DB::table('shopify_products')
 
 // Wrong
-protected $table = 'woocommerce_credentials';
+protected $table = 'wk_woocommerce_credentials';
 ```
 
 ### 2. Migration folder: `Database/Migration/` (no 's')
