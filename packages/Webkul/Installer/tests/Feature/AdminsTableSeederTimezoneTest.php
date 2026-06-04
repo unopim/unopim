@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\DB;
 use Webkul\Installer\Database\Seeders\User\AdminsTableSeeder;
 
+beforeEach(function () {
+    DB::table('admins')->where('email', 'admin@example.com')->delete();
+});
+
 describe('AdminsTableSeeder honours APP_TIMEZONE (issue #846)', function () {
     it('sets the seeded admin timezone to config(app.timezone) instead of always defaulting to UTC', function () {
         config(['app.timezone' => 'Asia/Kolkata']);
