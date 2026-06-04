@@ -1,5 +1,15 @@
 # v2.0.x
 
+## v2.0.3 - 2026-06-04
+
+### Security
+- Sealed the installer once setup completes — the `CanInstall` middleware now blocks every `/install` request after a `storage/installed` marker exists, and defense-in-depth `abortIfInstalled()` guards were added to each state-changing install endpoint (env-file-setup, run-migration, run-seeder, admin-config-setup, seed-sample-data, smtp-config-setup). The completion marker is written only at the very end of the flow, closing a pre-auth admin-takeover vector on already-installed instances ([#459](https://github.com/unopim/unopim/pull/459)).
+- Enforced ACL permission checks on state-changing admin routes that were absent from `acl.php` — including integration management, product bulk-edit, and family-completeness/configuration actions. The `Bouncer` middleware only enforced permissions for mapped routes, so unmapped write routes were reachable by any authenticated admin; restricted users now receive a 403 ([#467](https://github.com/unopim/unopim/pull/467)).
+- Removed the hardcoded default admin credentials from the installer — credentials are now driven by `INSTALLER_ADMIN_EMAIL` / `INSTALLER_ADMIN_PASSWORD`, or a random password is generated and written once to `storage/app/admin-credentials.txt`. Admin and role seeders are now idempotent so operator-rotated passwords survive re-seeding and container restarts, and Docker entrypoints wait for database readiness before seeding ([#457](https://github.com/unopim/unopim/pull/457)).
+
+### Improvements
+- Added a debug-only **`AppUrlGuard`** package — detects when the browser host does not match the configured `APP_URL` (a common cause of broken CSS/JS), shows a guided fix modal, and forces admin logout on a mismatched host. It stays completely inert when `APP_DEBUG=false` and ships translations for 33 locales ([#456](https://github.com/unopim/unopim/pull/456)).
+
 ## v2.0.2 - 2026-05-29
 
 ### Improvements
