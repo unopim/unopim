@@ -116,6 +116,12 @@ else
     fi
 fi
 
+# ─── Seal the installer ─────────────────────────────────────────────
+INSTALLED_MARKER="/var/www/html/storage/installed"
+if [ ! -f "$INSTALLED_MARKER" ]; then
+    echo "Your UnoPim App is Successfully Installed" > "$INSTALLED_MARKER"
+fi
+
 # Ensure storage directories are writable
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
