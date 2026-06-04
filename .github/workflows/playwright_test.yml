@@ -120,6 +120,14 @@ jobs:
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
 
       - name: Running UnoPim Installer & Start Server
+        env:
+          # Fall back to the same literal creds login.js defaults to, so the
+          # seeded admin always matches the test login even when these repo
+          # secrets are unset (e.g. fork PRs, where secrets are unavailable).
+          # Without a fallback the seeder generates a RANDOM password and every
+          # login — and thus every E2E test — fails.
+          INSTALLER_ADMIN_EMAIL: ${{ secrets.INSTALLER_ADMIN_EMAIL || 'admin@example.com' }}
+          INSTALLER_ADMIN_PASSWORD: ${{ secrets.INSTALLER_ADMIN_PASSWORD || 'admin123' }}
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
           chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
