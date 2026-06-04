@@ -5,10 +5,13 @@ namespace Webkul\Measurement\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
+use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Measurement\Database\Factories\MeasurementFamilyFactory;
+use Webkul\Measurement\Presenters\LabelsPresenter;
+use Webkul\Measurement\Presenters\UnitsPresenter;
 
-class MeasurementFamily extends Model implements HistoryAuditable
+class MeasurementFamily extends Model implements HistoryAuditable, PresentableHistoryInterface
 {
     use HasFactory, HistoryTrait;
 
@@ -61,5 +64,17 @@ class MeasurementFamily extends Model implements HistoryAuditable
     public function getUnitsArrayAttribute()
     {
         return $this->units ?? [];
+    }
+
+    /**
+     * Define custom presenters used when displaying history for JSON columns,
+     * so that "labels" and "units" render as readable rows instead of raw arrays.
+     */
+    public static function getPresenters(): array
+    {
+        return [
+            'labels' => LabelsPresenter::class,
+            'units'  => UnitsPresenter::class,
+        ];
     }
 }
