@@ -48,7 +48,7 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
           INPUT_TAG: ${{ github.event.inputs.tag }}
         run: |
-          # Pick raw tag from env (not inline ${{ }}) to avoid shell injection
+          # Pick raw tag from env (not inline GitHub expressions) to avoid shell injection
           # via a tag name containing shell metacharacters.
           if [ "$EVENT_NAME" = "release" ]; then
             RAW_TAG="$RELEASE_TAG"
