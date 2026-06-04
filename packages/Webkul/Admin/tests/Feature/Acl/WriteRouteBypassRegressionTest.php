@@ -153,3 +153,81 @@ it('denies data_transfer.exports.update without export.edit permission', functio
     $this->put(route('admin.settings.data_transfer.exports.update', ['id' => 1]), [])
         ->assertStatus(401);
 });
+
+/**
+ * Integration / OAuth API key write routes. These create and issue credentials
+ * for a chosen admin account, so a restricted user must not be able to reach
+ * them by posting directly to the write verb. (Reported privilege escalation.)
+ */
+it('denies configuration.integrations.store without integrations.create permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->post(route('admin.configuration.integrations.store'), [])
+        ->assertStatus(401);
+});
+
+it('denies configuration.integrations.update without integrations.edit permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->put(route('admin.configuration.integrations.update', ['id' => 1]), [])
+        ->assertStatus(401);
+});
+
+it('denies configuration.integrations.generate_key without integrations.edit permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->post(route('admin.configuration.integrations.generate_key'), [])
+        ->assertStatus(401);
+});
+
+it('denies configuration.integrations.re_generate_secret_key without integrations.edit permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->post(route('admin.configuration.integrations.re_generate_secret_key'), [])
+        ->assertStatus(401);
+});
+
+/**
+ * Product bulk-edit save routes modify products and must require product edit.
+ */
+it('denies catalog.products.bulk-edit.save without products.edit permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->post(route('admin.catalog.products.bulk-edit.save'), [])
+        ->assertStatus(401);
+});
+
+it('denies catalog.products.bulk-edit.save-media without products.edit permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->post(route('admin.catalog.products.bulk-edit.save-media'), [])
+        ->assertStatus(401);
+});
+
+/**
+ * Family completeness settings write routes must require family edit.
+ */
+it('denies catalog.families.completeness.update without families.edit permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->post(route('admin.catalog.families.completeness.update'), [])
+        ->assertStatus(401);
+});
+
+it('denies catalog.families.completeness.mass_update without families.edit permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->post(route('admin.catalog.families.completeness.mass_update'), [])
+        ->assertStatus(401);
+});
+
+/**
+ * Core configuration save must require the configuration permission so a
+ * restricted admin cannot persist global system settings.
+ */
+it('denies configuration.store without configuration permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'general']), [])
+        ->assertStatus(401);
+});
