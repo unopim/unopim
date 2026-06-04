@@ -71,6 +71,41 @@ return [
         'route' => 'admin.catalog.products.mass_delete',
         'sort'  => 6,
     ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.bulk-edit.save',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.bulk-edit.save-media',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.bulkedit',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.bulkedit.attributes.fetch-all',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.bulkedit.filters',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.check-variant',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.categories.tree',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.categories',
         'name'  => 'admin::app.acl.categories',
         'route' => 'admin.catalog.categories.index',
@@ -265,6 +300,21 @@ return [
         'name'  => 'admin::app.acl.copy',
         'route' => 'admin.catalog.families.copy',
         'sort'  => 4,
+    ], [
+        'key'   => 'catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.completeness.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.completeness.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.completeness.mass_update',
+        'sort'  => 2,
     ], [
         'key'   => 'history',
         'name'  => 'admin::app.acl.history',
@@ -584,6 +634,16 @@ return [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.integrations.index',
+        'sort'   => 9,
+    ], [
+        'key'    => 'configuration',
+        'name'   => 'admin::app.acl.configuration',
+        'route'  => 'admin.configuration.store',
+        'sort'   => 9,
+    ], [
+        'key'    => 'configuration',
+        'name'   => 'admin::app.acl.configuration',
+        'route'  => 'admin.configuration.download',
         'sort'   => 9,
     ], [
         'key'   => 'configuration.integrations',
