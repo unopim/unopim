@@ -20,8 +20,8 @@
 
                 <x-admin::form.control-group.control
                     type="select"
-                    name="measurement_family"
-                    id="measurement_family"
+                    name="measurement family"
+                    id="measurement family"
                     ::options="familyOptions"
                     v-model="oldFamily"
                     ::value="oldFamily"
@@ -32,7 +32,7 @@
                     ::disabled="isSavedFamily"
                 />
 
-                <x-admin::form.control-group.error control-name="measurement_family" />
+                <x-admin::form.control-group.error control-name="measurement family" />
             </x-admin::form.control-group>
 
             <x-admin::form.control-group
@@ -45,8 +45,8 @@
 
                 <x-admin::form.control-group.control
                     type="select"
-                    name="measurement_unit"
-                    id="measurement_unit"
+                    name="measurement unit"
+                    id="measurement unit"
                     ::options="unitsList"
                     v-model="oldUnit"
                     ::value="oldUnit"
@@ -56,7 +56,7 @@
                     placeholder="Select Unit"
                 />
 
-                <x-admin::form.control-group.error control-name="measurement_unit" />
+                <x-admin::form.control-group.error control-name="measurement unit" />
             </x-admin::form.control-group>
         </div>
     </script>

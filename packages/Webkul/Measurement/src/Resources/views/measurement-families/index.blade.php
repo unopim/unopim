@@ -66,12 +66,7 @@
                                     </x-admin::form.control-group>
 
                                     <!-- Standard Unit -->
-                                    <div class="mt-4">
-                                        <h2 class="text-base font-semibold text-gray-800 dark:text-white">
-                                            Create Standard Unit
-                                        </h2>
-                                    </div>
-
+                                    
                                     <x-admin::form.control-group class="mt-2">
                                         <x-admin::form.control-group.label class="required">
                                             @lang('measurement::app.measurement.index.standard')

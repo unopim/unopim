@@ -4,7 +4,7 @@ namespace Webkul\Measurement\Validation;
 
 class MeasurementFamilyValidator
 {
-    private const CODE_REGEX = 'regex:/^(?=.*[\pL])[A-Za-z0-9_]+$/u';
+    private const CODE_REGEX = 'regex:/^[A-Za-z0-9_]+$/u';
 
     private const LABEL_REGEX = 'regex:/^(?=.*[\pL])[\pL\pN\s_]+$/u';
 
@@ -18,9 +18,9 @@ class MeasurementFamilyValidator
             'code'               => ['required', 'string', 'max:191', self::CODE_REGEX, 'unique:measurement_families,code'],
             'standard_unit_code' => ['required', 'string', 'max:191', self::CODE_REGEX],
             'labels'             => ['nullable', 'array'],
-            'labels.*'           => ['nullable', 'string', 'max:191', self::LABEL_REGEX],
+            'labels.*'           => ['nullable', 'string'],
             'unit_labels'        => ['nullable', 'array'],
-            'unit_labels.*'      => ['nullable', 'string', 'max:191', self::LABEL_REGEX],
+            'unit_labels.*'      => ['nullable', 'string'],
             'symbol'             => ['nullable', 'string', 'max:50'],
         ];
     }
@@ -29,7 +29,7 @@ class MeasurementFamilyValidator
     {
         return [
             'labels'   => ['nullable', 'array'],
-            'labels.*' => ['nullable', 'string', 'max:191', self::LABEL_REGEX],
+            'labels.*' => ['nullable', 'string'],
         ];
     }
 
@@ -39,8 +39,8 @@ class MeasurementFamilyValidator
             'code'           => ['required', 'string', 'max:191', self::CODE_REGEX],
             'name'           => ['required', 'string', 'max:191', self::LABEL_REGEX],
             'labels'         => ['required', 'array'],
-            'labels.en_US'   => ['required', 'string', 'max:191', self::LABEL_REGEX],
-            'labels.*'       => ['nullable', 'string', 'max:191', self::LABEL_REGEX],
+            'labels.en_US'   => ['required', 'string'],
+            'labels.*'       => ['nullable', 'string'],
             'standard_unit'  => ['required', 'string', 'max:191', self::CODE_REGEX],
             'units'          => ['required', 'array', 'min:1'],
             'units.*.code'   => ['required', 'string', 'max:191', self::CODE_REGEX],
@@ -55,12 +55,9 @@ class MeasurementFamilyValidator
         return [
             'code.regex'               => self::CODE_MESSAGE,
             'standard_unit_code.regex' => self::CODE_MESSAGE,
-            'labels.*.regex'           => self::LABEL_MESSAGE,
-            'unit_labels.*.regex'      => self::LABEL_MESSAGE,
             'name.regex'               => self::LABEL_MESSAGE,
             'standard_unit.regex'      => self::CODE_MESSAGE,
             'units.*.code.regex'       => self::CODE_MESSAGE,
-            'labels.en_US.regex'       => self::LABEL_MESSAGE,
         ];
     }
 }
