@@ -180,6 +180,7 @@
                 </template>
             </x-admin::datagrid>
 
+            @if (bouncer()->hasPermission('catalog.measurements.units.create') || bouncer()->hasPermission('catalog.measurements.units.edit'))
             <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
                 as="div"
@@ -360,6 +361,7 @@
                     </x-admin::modal>
                 </form>
             </x-admin::form>
+            @endif
         </script>
 
         <script type="module">
@@ -449,6 +451,20 @@
                         .catch((error) => {
                             if (error.response?.status === 422) {
                                 setErrors(error.response.data.errors);
+                            } else if (error.response?.status === 403) {
+                                this.$refs.localeUpdateOrCreateModal.close();
+
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response.data?.message
+                                        || "@lang('measurement::app.acl.unauthorized')",
+                                });
+                            } else {
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response?.data?.message
+                                        || "@lang('measurement::app.acl.unauthorized')",
+                                });
                             }
                         });
                     },

@@ -2,6 +2,9 @@
 
 return [
 
+    'acl' => [
+        'unauthorized' => 'この操作を実行する権限がありません。',
+    ],
     'attribute' => [
         'measurement' => '測定',
     ],

@@ -2,6 +2,9 @@
 
 return [
 
+    'acl' => [
+        'unauthorized' => '您沒有執行此操作的權限。',
+    ],
     'attribute' => [
         'measurement' => '計量',
     ],

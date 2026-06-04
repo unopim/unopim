@@ -22,6 +22,7 @@
     </x-admin::datagrid>
 
     @pushOnce('scripts')
+        @if (bouncer()->hasPermission('catalog.measurements.families.create'))
         <script type="text/x-template" id="v-create-family-form-template">
             <div>
                 <button
@@ -156,11 +157,26 @@
                         .catch((error) => {
                             if (error.response?.status === 422) {
                                 setErrors(error.response.data.errors);
+                            } else if (error.response?.status === 403) {
+                                this.$refs.familyCreateModal.close();
+
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response.data?.message
+                                        || "@lang('measurement::app.acl.unauthorized')",
+                                });
+                            } else {
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response?.data?.message
+                                        || "@lang('measurement::app.acl.unauthorized')",
+                                });
                             }
                         });
                     },
                 },
             });
         </script>
+        @endif
     @endPushOnce
 </x-admin::layouts>

@@ -2,6 +2,10 @@
 
 return [
 
+    'acl' => [
+        'unauthorized' => 'You do not have permission to perform this action.',
+    ],
+
     'attribute' => [
         'measurement' => 'Measurement',
     ],
@@ -19,7 +23,7 @@ return [
         ],
 
         'edit' => [
-            'measurement_edit'      => 'Edit Measurement Family',
+            'measurement_edit'      => 'Edit Measurement',
             'back'                  => 'Back',
             'save'                  => 'Save',
             'conversion_operation'  => 'Conversion operation',

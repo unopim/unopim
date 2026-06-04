@@ -82,6 +82,9 @@ class MeasurementUnitsController extends Controller
         if (collect($units)->contains('code', request('code'))) {
             return response()->json([
                 'message' => trans('measurement::app.messages.unit.already_exists'),
+                'errors'  => [
+                    'code' => [trans('measurement::app.messages.unit.already_exists')],
+                ],
             ], 422);
         }
 

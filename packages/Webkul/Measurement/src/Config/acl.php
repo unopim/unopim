@@ -23,9 +23,21 @@ return [
         'sort'  => 1,
     ],
     [
+        'key'   => 'catalog.measurements.families.create',
+        'name'  => 'Create',
+        'route' => 'admin.measurement.families.store',
+        'sort'  => 1,
+    ],
+    [
         'key'   => 'catalog.measurements.families.edit',
         'name'  => 'Edit',
         'route' => 'admin.measurement.families.edit',
+        'sort'  => 2,
+    ],
+    [
+        'key'   => 'catalog.measurements.families.edit',
+        'name'  => 'Edit',
+        'route' => 'admin.measurement.families.update',
         'sort'  => 2,
     ],
     [
@@ -58,6 +70,12 @@ return [
         'key'   => 'catalog.measurements.units.edit',
         'name'  => 'Edit',
         'route' => 'admin.measurement.families.units.edit',
+        'sort'  => 2,
+    ],
+    [
+        'key'   => 'catalog.measurements.units.edit',
+        'name'  => 'Edit',
+        'route' => 'admin.measurement.families.units.update',
         'sort'  => 2,
     ],
     [

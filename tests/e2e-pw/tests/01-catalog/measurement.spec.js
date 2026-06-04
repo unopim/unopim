@@ -255,7 +255,7 @@ test.describe('UnoPim Measurement Feature', () => {
         test('TC01 - Verify measurement families list page loads', async ({ adminPage }) => {
             await goToFamilies(adminPage);
 
-            await expect(adminPage.getByText('Measurement Families', { exact: false })).toBeVisible({ timeout: 10000 });
+            await expect(adminPage.getByText('Measurements', { exact: false })).toBeVisible({ timeout: 10000 });
             await expect(adminPage.getByRole('button', { name: /Create Measurements/i })).toBeVisible({ timeout: 10000 });
         });
 

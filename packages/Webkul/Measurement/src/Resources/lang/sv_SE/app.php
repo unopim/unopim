@@ -2,6 +2,9 @@
 
 return [
 
+    'acl' => [
+        'unauthorized' => 'Du har inte behörighet att utföra denna åtgärd.',
+    ],
     'attribute' => [
         'measurement' => 'Mätning',
     ],
