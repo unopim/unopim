@@ -15,10 +15,7 @@ class MeasurementEventServiceProvider extends ServiceProvider
             'unopim.admin.catalog.attributes.edit.card.label.after',
             function ($viewRenderEventManager, $attribute = null) {
                 $viewRenderEventManager->addTemplate(
-                    'measurement::catalog.attributes.edit',
-                    [
-                        'attribute' => $attribute,
-                    ]
+                    'measurement::catalog.attributes.edit'
                 );
             }
         );

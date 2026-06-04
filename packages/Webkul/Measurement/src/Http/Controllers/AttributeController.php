@@ -5,22 +5,13 @@ namespace Webkul\Measurement\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\Measurement\Repository\AttributeMeasurementRepository;
-use Webkul\Measurement\Repository\MeasurementFamilyRepository;
+use Webkul\Measurement\Services\AttributeMeasurementService;
 
 class AttributeController extends Controller
 {
-    protected $familyRepository;
-
-    protected $attributeMeasurementRepository;
-
     public function __construct(
-        MeasurementFamilyRepository $familyRepository,
-        AttributeMeasurementRepository $attributeMeasurementRepository
-    ) {
-        $this->familyRepository = $familyRepository;
-        $this->attributeMeasurementRepository = $attributeMeasurementRepository;
-    }
+        protected AttributeMeasurementService $attributeMeasurementService
+    ) {}
 
     /**
      * Get measurement configuration for the given attribute.
@@ -40,44 +31,9 @@ class AttributeController extends Controller
                 ], 400);
             }
 
-            $currentLocale = app()->getLocale();
-            $currentLang = strtok($currentLocale, '_');
-
-            $families = $this->familyRepository->all();
-
-            $familyOptions = $families->map(function ($f) use ($currentLocale, $currentLang) {
-                return [
-                    'id'    => $f->code,
-                    'label' => $f->code,
-                    'units' => collect($f->units ?? [])->map(function ($u) use ($currentLocale, $currentLang) {
-
-                        $labels = $u['labels'] ?? [];
-
-                        if (isset($labels[$currentLocale])) {
-                            $label = $labels[$currentLocale];
-                        } elseif ($firstLangMatch = collect($labels)
-                            ->first(fn ($_, $key) => str_starts_with($key, $currentLang))) {
-                            $label = $firstLangMatch;
-                        } else {
-                            $label = $u['code'];
-                        }
-
-                        return [
-                            'id'    => $u['code'],
-                            'label' => $label,
-                        ];
-                    })->values()->toArray(),
-                ];
-            })->values()->toArray();
-
-            $measurement = $this->attributeMeasurementRepository
-                ->getByAttributeId($attributeId);
-
-            return response()->json([
-                'familyOptions' => $familyOptions,
-                'oldFamily'     => $measurement->family_code ?? '',
-                'oldUnit'       => $measurement->unit_code ?? '',
-            ]);
+            return response()->json(
+                $this->attributeMeasurementService->buildPayload($attributeId)
+            );
 
         } catch (\Throwable $e) {
 

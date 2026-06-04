@@ -1,7 +1,13 @@
 @if ($attribute && $attribute->type === 'measurement')
+    @php
+        $measurementData = app(\Webkul\Measurement\Services\AttributeMeasurementService::class)
+            ->buildPayload($attribute->id);
+    @endphp
+
     <v-measurement
         :attribute-id="{{ $attribute->id }}"
         measurement-url="{{ route('measurement.attribute', ['attributeId' => $attribute->id]) }}"
+        :initial-data='@json($measurementData)'
     >
     </v-measurement>
 @endif
@@ -68,6 +74,7 @@
             props: [
                 'attributeId',
                 'measurementUrl',
+                'initialData',
             ],
 
             data() {
@@ -83,12 +90,30 @@
                 };
             },
 
+            created() {
+                if (this.initialData) {
+                    this.applyData(this.initialData);
+                }
+            },
+
             async mounted() {
+                // Data is rendered inline with the page (initialData). Only fall
+                // back to the AJAX request if it was not provided for some reason.
+                if (this.familyOptions !== null) {
+                    return;
+                }
+
                 try {
                     const response = await axios.get(this.measurementUrl);
 
-                    const data = response.data;
+                    this.applyData(response.data);
+                } catch (error) {
+                    console.error('Error loading measurement data:', error);
+                }
+            },
 
+            methods: {
+                applyData(data) {
                     this.familyOptions = data.familyOptions || [];
                     this.oldFamily = data.oldFamily;
                     this.oldUnit = data.oldUnit;
@@ -123,10 +148,7 @@
                     }
 
                     this.isInitialLoad = false;
-
-                } catch (error) {
-                    console.error('Error loading measurement data:', error);
-                }
+                },
             },
 
             watch: {
