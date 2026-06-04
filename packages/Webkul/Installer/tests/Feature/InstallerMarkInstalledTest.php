@@ -3,14 +3,6 @@
 use Illuminate\Support\Facades\Event;
 use Webkul\Installer\Console\Commands\Installer;
 
-/**
- * The `unopim:install` command must seal the installer (write the
- * `storage/installed` marker) at the end of every install path — including
- * headless installs run with `--skip-admin-creation`, which skip the
- * admin-creation step that otherwise writes the marker. Without the marker the
- * `CanInstall` middleware never engages and the installer api endpoints stay
- * reachable on a fully installed instance.
- */
 beforeEach(function () {
     $this->marker = storage_path('installed');
     $this->markerExisted = file_exists($this->marker);
@@ -25,10 +17,6 @@ afterEach(function () {
     }
 });
 
-/**
- * Exposes the protected sealing method so the regression can be asserted
- * without running the full (migrate:fresh + seeders) install pipeline.
- */
 function invokeMarkInstalled(): void
 {
     $command = app(Installer::class);

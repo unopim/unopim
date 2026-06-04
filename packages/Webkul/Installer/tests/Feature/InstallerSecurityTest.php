@@ -21,14 +21,6 @@ afterEach(function () {
     }
 });
 
-/**
- * Pre-authentication administrative takeover via the installer.
- *
- * An unauthenticated attacker used to overwrite admin id 1 by POSTing to
- * `install/api/admin-config-setup` with an `X-Requested-With: XMLHttpRequest`
- * header (bypassing the CanInstall redirect). These tests lock both layers:
- * the CanInstall middleware seal and the controller defence-in-depth guard.
- */
 describe('Installer pre-auth admin takeover', function () {
     it('seals the installer routes against the AJAX-header bypass once installed', function () {
         file_put_contents($this->marker, 'installed');
@@ -88,10 +80,6 @@ describe('Installer pre-auth admin takeover', function () {
     });
 });
 
-/**
- * Every state-changing installer endpoint must refuse to run on a live
- * instance, so re-installation / re-seeding cannot be triggered after setup.
- */
 describe('Installer endpoints sealed once installed', function () {
     beforeEach(function () {
         file_put_contents($this->marker, 'installed');
@@ -116,11 +104,6 @@ describe('Installer endpoints sealed once installed', function () {
     });
 });
 
-/**
- * The completion marker must be written at the true end of the install flow so
- * the installer seals itself. On this branch admin creation is the final step,
- * so the marker is written as soon as the admin is configured.
- */
 describe('Installer completion marker', function () {
     beforeEach(function () {
         if (file_exists($this->marker)) {

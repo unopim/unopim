@@ -2,17 +2,6 @@ const { test, expect } = require('@playwright/test');
 
 const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
-/**
- * Installer must stay sealed on a fully installed instance.
- *
- * On an installed instance the `/install` routes and their state-changing API
- * endpoints must never run again. The `CanInstall` middleware redirects every
- * `/install` request once installation is complete (the `storage/installed`
- * marker is written at the end of both the web and CLI install flows), and the
- * controller adds a defence-in-depth guard. These checks run fully
- * unauthenticated and assert the seal via status code only, so they are
- * non-destructive: a sealed endpoint never executes the payload.
- */
 test.describe('Security: installer sealed once installed', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 

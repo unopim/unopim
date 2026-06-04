@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Webkul\Installer\Helpers\DatabaseManager;
-use Webkul\Installer\Http\Controllers\InstallerController;
 
 class CanInstall
 {
@@ -18,11 +17,6 @@ class CanInstall
     public function handle(Request $request, Closure $next)
     {
         if (Str::contains($request->getPathInfo(), '/install')) {
-            // Once installation is complete, seal the installer for everyone —
-            // including XHR/AJAX requests. The previous `! $request->ajax()`
-            // exception let an unauthenticated attacker re-trigger
-            // `install/api/admin-config-setup` (which overwrites admin id 1)
-            // by sending an `X-Requested-With: XMLHttpRequest` header.
             if ($this->isInstallationCompleted()) {
                 if (file_exists(realpath(__DIR__.'/../../../../../../public/install.php'))) {
                     unlink(realpath(__DIR__.'/../../../../../../public/install.php'));
@@ -41,14 +35,6 @@ class CanInstall
 
     /**
      * Installation has been fully completed.
-     *
-     * Unlike {@see isAlreadyInstalled()}, this relies solely on the
-     * `storage/installed` marker, which is written only at the true end of the
-     * install flow ({@see InstallerController::adminConfigSetup()} when no demo
-     * data is requested, otherwise {@see InstallerController::seedSampleData()}).
-     * A populated `admins` table is not enough: the seeder inserts the default
-     * admin (id 1) *before* those steps run, so gating on the DB would lock the
-     * installer out mid-flow.
      */
     public function isInstallationCompleted(): bool
     {

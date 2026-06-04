@@ -152,11 +152,6 @@ class Installer extends Command
             $this->createAdminCredentials();
         }
 
-        // Seal the installer at the true end of the CLI flow. The admin-creation
-        // step writes this marker too, but headless installs (e.g.
-        // `--skip-admin-creation`) skip that step — without this the
-        // `storage/installed` marker would never be written and the installer
-        // endpoints would stay reachable on a fully installed instance.
         $this->markInstalled();
 
         ComposerEvents::postCreateProject();
@@ -164,11 +159,6 @@ class Installer extends Command
 
     /**
      * Write the completion marker that seals the installer.
-     *
-     * Once `storage/installed` exists, the `CanInstall` middleware redirects
-     * every `/install` request and the installer controller's guard blocks the
-     * api endpoints. Guarded so the marker is written — and `unopim.installed`
-     * dispatched — exactly once, no matter which install steps ran.
      */
     protected function markInstalled(): void
     {

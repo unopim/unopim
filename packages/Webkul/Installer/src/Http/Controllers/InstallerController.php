@@ -43,13 +43,6 @@ class InstallerController extends Controller
     /**
      * Abort with 403 once the application is fully installed.
      *
-     * Defence in depth for the unauthenticated installer api endpoints: even
-     * if the `CanInstall` middleware were bypassed (e.g. a crafted header or
-     * a future routing change), the state-changing setup steps must never run
-     * again on a live instance. The `storage/installed` marker is written only
-     * at the end of the install flow (after admin creation, and after demo data
-     * when opted in), so this never blocks a genuine install.
-     *
      * @return void
      */
     protected function abortIfInstalled()
@@ -59,13 +52,6 @@ class InstallerController extends Controller
 
     /**
      * Write the completion marker that seals the installer.
-     *
-     * Once this file exists, `CanInstall` redirects every `/install` request
-     * (including XHR) and {@see abortIfInstalled()} blocks the api endpoints.
-     * It is written at the genuine end of the UI flow — after the admin is
-     * created, and after demo data when the operator opts into it. Guarded so
-     * the marker is written, and `unopim.installed` dispatched, exactly once
-     * even if two end-of-flow requests race.
      *
      * @return void
      */
@@ -223,8 +209,6 @@ class InstallerController extends Controller
             ], 500);
         }
 
-        // Admin is the final installer step on this branch (no demo-data flow),
-        // so seal the installer here.
         $this->markInstalled();
     }
 
