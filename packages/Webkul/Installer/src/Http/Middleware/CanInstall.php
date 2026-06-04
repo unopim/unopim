@@ -4,7 +4,6 @@ namespace Webkul\Installer\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Webkul\Installer\Helpers\DatabaseManager;
 
@@ -18,7 +17,7 @@ class CanInstall
     public function handle(Request $request, Closure $next)
     {
         if (Str::contains($request->getPathInfo(), '/install')) {
-            if ($this->isAlreadyInstalled() && ! $request->ajax()) {
+            if ($this->isInstallationCompleted()) {
                 if (file_exists(realpath(__DIR__.'/../../../../../../public/install.php'))) {
                     unlink(realpath(__DIR__.'/../../../../../../public/install.php'));
                 }
@@ -35,6 +34,14 @@ class CanInstall
     }
 
     /**
+     * Installation has been fully completed.
+     */
+    public function isInstallationCompleted(): bool
+    {
+        return file_exists(storage_path('installed'));
+    }
+
+    /**
      * Application Already Installed.
      *
      * @return bool
@@ -45,14 +52,6 @@ class CanInstall
             return true;
         }
 
-        if (app(DatabaseManager::class)->isInstalled()) {
-            touch(storage_path('installed'));
-
-            Event::dispatch('unopim.installed');
-
-            return true;
-        }
-
-        return false;
+        return app(DatabaseManager::class)->isInstalled();
     }
 }

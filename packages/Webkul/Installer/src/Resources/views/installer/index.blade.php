@@ -1381,7 +1381,10 @@
                         },
 
                         saveAdmin(params, setErrors) {
-                            this.$axios.post("{{ route('installer.admin_config_setup') }}", params)
+                            this.$axios.post("{{ route('installer.admin_config_setup') }}", {
+                                ...params,
+                                seed_sample_data: this.seedSampleData,
+                            })
                                 .then((response) => {
                                     this.currentStep = 'installationCompleted';
                                 })

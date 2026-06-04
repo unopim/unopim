@@ -152,7 +152,23 @@ class Installer extends Command
             $this->createAdminCredentials();
         }
 
+        $this->markInstalled();
+
         ComposerEvents::postCreateProject();
+    }
+
+    /**
+     * Write the completion marker that seals the installer.
+     */
+    protected function markInstalled(): void
+    {
+        if (file_exists(storage_path('installed'))) {
+            return;
+        }
+
+        File::put(storage_path('installed'), 'UnoPim installation completed successfully');
+
+        Event::dispatch('unopim.installed');
     }
 
     /**

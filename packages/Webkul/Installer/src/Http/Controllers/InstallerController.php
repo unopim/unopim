@@ -41,6 +41,32 @@ class InstallerController extends Controller
     ) {}
 
     /**
+     * Abort with 403 once the application is fully installed.
+     *
+     * @return void
+     */
+    protected function abortIfInstalled()
+    {
+        abort_if(file_exists(storage_path('installed')), 403);
+    }
+
+    /**
+     * Write the completion marker that seals the installer.
+     *
+     * @return void
+     */
+    protected function markInstalled()
+    {
+        if (file_exists(storage_path('installed'))) {
+            return;
+        }
+
+        File::put(storage_path('installed'), 'Your UnoPim App is Successfully Installed');
+
+        Event::dispatch('unopim.installed');
+    }
+
+    /**
      * Installer View Root Page
      *
      * @return View
@@ -63,6 +89,8 @@ class InstallerController extends Controller
      */
     public function envFileSetup(Request $request): JsonResponse
     {
+        $this->abortIfInstalled();
+
         $rules = [
             'db_prefix' => 'not_regex:/[^A-Za-z0-9_]/',
         ];
@@ -89,6 +117,8 @@ class InstallerController extends Controller
      */
     public function runMigration()
     {
+        $this->abortIfInstalled();
+
         try {
             DB::connection()->getPdo();
         } catch (\Exception $e) {
@@ -107,6 +137,8 @@ class InstallerController extends Controller
      */
     public function runSeeder()
     {
+        $this->abortIfInstalled();
+
         $selectedParameters = request()->selectedParameters;
         $allParameters = request()->allParameters;
 
@@ -148,6 +180,8 @@ class InstallerController extends Controller
      */
     public function adminConfigSetup()
     {
+        $this->abortIfInstalled();
+
         $password = password_hash(request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
         $uiLocaleId = DB::table('locales')->where('code', request()->input('locale'))->where('status', 1)->first()?->id ?? 58;
 
@@ -166,8 +200,16 @@ class InstallerController extends Controller
                 ]
             );
         } catch (\Throwable $th) {
-            dd($th);
+            report($th);
+
+            return response()->json([
+                'success' => false,
+                'error'   => $th->getMessage(),
+                'errors'  => ['admin' => [$th->getMessage()]],
+            ], 500);
         }
+
+        $this->markInstalled();
     }
 
     /**
@@ -175,6 +217,8 @@ class InstallerController extends Controller
      */
     public function smtpConfigSetup()
     {
+        $this->abortIfInstalled();
+
         $this->environmentManager->setEnvConfiguration(request()->input());
 
         $filePath = storage_path('installed');
