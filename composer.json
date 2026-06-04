@@ -82,7 +82,8 @@
             "Webkul\\ElasticSearch\\": "packages/Webkul/ElasticSearch/src",
             "Webkul\\Webhook\\": "packages/Webkul/Webhook/src",
             "Webkul\\Completeness\\": "packages/Webkul/Completeness/src",
-            "Webkul\\AiAgent\\": "packages/Webkul/AiAgent/src"
+            "Webkul\\AiAgent\\": "packages/Webkul/AiAgent/src",
+            "Webkul\\AppUrlGuard\\": "packages/Webkul/AppUrlGuard/src"
         }
     },
     "autoload-dev": {
