@@ -596,9 +596,29 @@ return [
         'route' => 'admin.configuration.integrations.create',
         'sort'  => 1,
     ], [
+        'key'   => 'configuration.integrations.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.configuration.integrations.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'configuration.integrations.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.configuration.integrations.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.integrations.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.configuration.integrations.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.integrations.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.configuration.integrations.generate_key',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.integrations.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.configuration.integrations.re_generate_secret_key',
         'sort'  => 2,
     ], [
         'key'   => 'configuration.integrations.delete',
