@@ -1,0 +1,36 @@
+<?php
+
+return [
+    'warning' => [
+        'title'           => '检测到 APP_URL 不匹配',
+        'dismiss'         => '关闭',
+        'lede-before'     => '您的前端资源（CSS、JS）已绑定到所配置的',
+        'lede-after'      => '请将其更新为您正在使用的主机，否则样式和脚本将无法加载。',
+        'configured-env'  => '已配置（.env）',
+        'mismatch-tag'    => '不匹配',
+        'actual-browser'  => '实际（浏览器）',
+        'in-use-tag'      => '使用中',
+        'toggle-step'     => '切换步骤 :number',
+        'step-1-title'    => '在您的 .env 文件中更新 APP_URL',
+        'step-1-hint'     => '打开项目的 .env 文件并替换 APP_URL 行。',
+        'step-2-title'    => '清除应用缓存',
+        'step-2-hint'     => '在项目根目录的终端中运行此命令。',
+        'copy'            => '复制',
+        'copied'          => '已复制',
+        'note-bold'       => '然后强制刷新页面',
+        'note-rest'       => '以便浏览器重新加载更新后的资源。',
+        'progress'        => '已完成 :done / :total 个步骤',
+        'all-done'        => '全部完成',
+        'powered-by'      => '技术支持',
+        'open-source-by'  => '一个开源项目，来自',
+        'copied-toast'    => '已复制到剪贴板',
+        'still-mismatch'  => 'APP_URL 仍然不匹配。请更新 .env 并运行 "php artisan optimize:clear"。',
+        'verify-failed'   => '无法验证 APP_URL。请刷新页面。',
+        'logged-out'      => '已退出登录：APP_URL 与当前主机不匹配。请在 .env 中更新 APP_URL 并运行 "php artisan optimize:clear"。',
+    ],
+
+    'log' => [
+        'mismatch' => '检测到 APP_URL 不匹配',
+        'hint'     => '将 .env 中的 APP_URL 更新为请求的 URL，然后运行：php artisan optimize:clear',
+    ],
+];
