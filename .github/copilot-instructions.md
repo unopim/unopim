@@ -16,16 +16,15 @@ modules**. Unopim is a Webkul Laravel 12 PIM — it is NOT Bagisto.
 
 ## Non-negotiable Conventions
 
-### 1. Table names use unprefixed names; Laravel adds the `DB_PREFIX`
-Unopim models declare `$table` **without** the `wk_` prefix. The framework prepends the configured `DB_PREFIX` (default `wk_`) automatically, so hardcoding it produces `wk_wk_*` tables in production.
+### 1. Table names and DB connection prefix
+When a database connection `prefix` is configured (for example `wk_`), Query Builder/Eloquent applies it automatically; hardcoding `wk_` in table names can cause double-prefixing.
 ```php
 // Correct
 protected $table = 'woocommerce_credentials';
 DB::table('shopify_products')
 
-// Wrong — do not hardcode the prefix
+// Wrong
 protected $table = 'wk_woocommerce_credentials';
-DB::table('wk_shopify_products')
 ```
 This matches the reference connectors (`packages/Webkul/Core/src/Models/Channel.php` uses `channels`, `CoreConfig.php` uses `core_config`) and is the convention enforced by `AGENTS.md`.
 
