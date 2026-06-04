@@ -71,6 +71,41 @@ return [
         'route' => 'admin.catalog.products.mass_delete',
         'sort'  => 6,
     ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.bulk-edit.save',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.bulk-edit.save-media',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.bulkedit',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.bulkedit.attributes.fetch-all',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.bulkedit.filters',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.check-variant',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.categories.tree',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.categories',
         'name'  => 'admin::app.acl.categories',
         'route' => 'admin.catalog.categories.index',
@@ -265,6 +300,21 @@ return [
         'name'  => 'admin::app.acl.copy',
         'route' => 'admin.catalog.families.copy',
         'sort'  => 4,
+    ], [
+        'key'   => 'catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.completeness.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.completeness.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.completeness.mass_update',
+        'sort'  => 2,
     ], [
         'key'   => 'history',
         'name'  => 'admin::app.acl.history',
@@ -566,6 +616,16 @@ return [
         'route'  => 'admin.configuration.integrations.index',
         'sort'   => 9,
     ], [
+        'key'    => 'configuration',
+        'name'   => 'admin::app.acl.configuration',
+        'route'  => 'admin.configuration.store',
+        'sort'   => 9,
+    ], [
+        'key'    => 'configuration',
+        'name'   => 'admin::app.acl.configuration',
+        'route'  => 'admin.configuration.download',
+        'sort'   => 9,
+    ], [
         'key'   => 'configuration.integrations',
         'name'  => 'admin::app.acl.integrations',
         'route' => 'admin.configuration.integrations.index',
@@ -576,9 +636,29 @@ return [
         'route' => 'admin.configuration.integrations.create',
         'sort'  => 1,
     ], [
+        'key'   => 'configuration.integrations.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.configuration.integrations.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'configuration.integrations.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.configuration.integrations.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.integrations.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.configuration.integrations.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.integrations.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.configuration.integrations.generate_key',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.integrations.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.configuration.integrations.re_generate_secret_key',
         'sort'  => 2,
     ], [
         'key'   => 'configuration.integrations.delete',
