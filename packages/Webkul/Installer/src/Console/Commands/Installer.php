@@ -162,11 +162,11 @@ class Installer extends Command
      */
     protected function markInstalled(): void
     {
-        if (file_exists(storage_path('installed'))) {
+        if (file_exists((config('installer.installed_marker') ?? storage_path('installed')))) {
             return;
         }
 
-        File::put(storage_path('installed'), 'UnoPim installation completed successfully');
+        File::put((config('installer.installed_marker') ?? storage_path('installed')), 'UnoPim installation completed successfully');
 
         Event::dispatch('unopim.installed');
     }
@@ -466,7 +466,7 @@ class Installer extends Command
                 $this->seedSampleProducts();
             }
 
-            $filePath = storage_path('installed');
+            $filePath = (config('installer.installed_marker') ?? storage_path('installed'));
 
             File::put($filePath, 'UnoPim installation completed successfully');
 

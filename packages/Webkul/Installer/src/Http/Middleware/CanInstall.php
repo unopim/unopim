@@ -38,7 +38,7 @@ class CanInstall
      */
     public function isInstallationCompleted(): bool
     {
-        return file_exists(storage_path('installed'));
+        return file_exists((config('installer.installed_marker') ?? storage_path('installed')));
     }
 
     /**
@@ -48,7 +48,7 @@ class CanInstall
      */
     public function isAlreadyInstalled()
     {
-        if (file_exists(storage_path('installed'))) {
+        if (file_exists((config('installer.installed_marker') ?? storage_path('installed')))) {
             return true;
         }
 

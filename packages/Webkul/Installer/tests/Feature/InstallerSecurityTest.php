@@ -8,16 +8,16 @@ beforeEach(function () {
     config(['app.url' => 'http://localhost']);
     URL::forceRootUrl('http://localhost');
 
-    $this->marker = storage_path('installed');
-    $this->markerExisted = file_exists($this->marker);
-    $this->markerContents = $this->markerExisted ? file_get_contents($this->marker) : null;
+    $this->marker = tempnam(sys_get_temp_dir(), 'unopim_installed_');
+
+    @unlink($this->marker);
+
+    config(['installer.installed_marker' => $this->marker]);
 });
 
 afterEach(function () {
-    if ($this->markerExisted) {
-        file_put_contents($this->marker, $this->markerContents);
-    } elseif (file_exists($this->marker)) {
-        unlink($this->marker);
+    if (file_exists($this->marker)) {
+        @unlink($this->marker);
     }
 });
 
