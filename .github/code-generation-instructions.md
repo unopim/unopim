@@ -1,13 +1,13 @@
 # Unopim Connector — Code Generation Instructions
 
-Follow these guidelines when generating code for **Laravel 11 + Unopim** connector and plugin packages.
+Follow these guidelines when generating code for **Laravel 12 + Unopim** connector and plugin packages.
 Applies to all AI coding agents: Kilo Code, GitHub Copilot, Claude Code, Codex, Cursor.
 
 
 
 ## 1. Documentation Standards
 
-- Use Laravel 11 PHPDoc block comments (`/** */`) — not inline `//` comments
+- Use Laravel 12 PHPDoc block comments (`/** */`) — not inline `//` comments
 - Document method **intent** only; skip obvious implementation details
 - Remove unnecessary comments and dead code
 - Use `@return`, `@param` in PHPDoc when types are complex or non-obvious

@@ -9,7 +9,7 @@ Copilot, Claude, Kilo Code, Cursor, etc.).
 
 ## Framework Context
 
-- **Platform:** Unopim (Webkul) — Laravel 11 modular PIM system
+- **Platform:** Unopim (Webkul) — Laravel 12 modular PIM system
 - **Not Bagisto** — Unopim and Bagisto are different products. Do NOT use Bagisto patterns.
 - **Package location:** `packages/Webkul/{ModuleName}/src/`
 - **Reference implementation:** `packages/Webkul/WooCommerce/` (production reference)
