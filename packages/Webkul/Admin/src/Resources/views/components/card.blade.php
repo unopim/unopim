@@ -10,11 +10,12 @@
 <a
     href="{{ $url }}"
     target="{{ $target }}"
-    @if ($external) rel="noopener" @endif
+    @if ($external || $target === '_blank') rel="noopener noreferrer" @endif
     {{ $attributes->merge(['class' => 'group flex flex-col bg-white dark:bg-cherry-800 border border-gray-200 dark:border-cherry-700 rounded-xl p-5 no-underline text-current transition-all hover:border-violet-200 dark:hover:border-violet-500 hover:shadow-lg hover:-translate-y-0.5']) }}
 >
     <div class="flex items-start justify-between mb-4">
         <span class="flex items-center justify-center w-11 h-11 rounded-xl bg-violet-50 dark:bg-cherry-900 text-violet-600 transition-all group-hover:bg-violet-600 group-hover:text-white">
+            {{-- $icon is sourced from trusted server-side config, never user input; raw output is safe. --}}
             @if (str_starts_with(trim($icon), '<svg'))
                 {!! $icon !!}
             @else

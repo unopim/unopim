@@ -18,7 +18,7 @@ it('card component renders title, link, slot description and external badge', fu
         ->toContain('Managed hosting')
         ->toContain('unopim.com/cloud-hosting')
         ->toContain('<svg id="my-svg">')
-        ->toContain('rel="noopener"');
+        ->toContain('rel="noopener noreferrer"');
 });
 
 it('card component renders icon-font class when icon is not svg', function () {
