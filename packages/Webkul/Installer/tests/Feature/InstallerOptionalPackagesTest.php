@@ -28,6 +28,54 @@ it('resolves valid --with-packages keys', function () {
         ->assertExitCode(0);
 });
 
+it('accepts --modules as an alias for --with-packages', function () {
+    $this->app->extend(Installer::class, fn () => new class extends Installer
+    {
+        public function handle()
+        {
+            $this->line('RESOLVED:'.implode(',', $this->resolveSelectedPackages()));
+
+            return self::SUCCESS;
+        }
+    });
+
+    $this->artisan('unopim:install', [
+        '--modules'             => 'bagisto,dam',
+        '--skip-admin-creation' => true,
+    ])
+        ->expectsOutputToContain('RESOLVED:bagisto,dam')
+        ->assertExitCode(0);
+});
+
+it('treats --sampledata=yes as a demo-data flag', function () {
+    $this->app->extend(Installer::class, fn () => new class extends Installer
+    {
+        public function handle()
+        {
+            $this->line('SEED:'.($this->shouldSeedDemoData() ? 'yes' : 'no'));
+            $this->line('FLAG:'.($this->demoDataFlagProvided() ? 'yes' : 'no'));
+
+            return self::SUCCESS;
+        }
+    });
+
+    $this->artisan('unopim:install', [
+        '--sampledata'          => 'yes',
+        '--skip-admin-creation' => true,
+    ])
+        ->expectsOutputToContain('SEED:yes')
+        ->expectsOutputToContain('FLAG:yes')
+        ->assertExitCode(0);
+
+    $this->artisan('unopim:install', [
+        '--sampledata'          => 'no',
+        '--skip-admin-creation' => true,
+    ])
+        ->expectsOutputToContain('SEED:no')
+        ->expectsOutputToContain('FLAG:yes')
+        ->assertExitCode(0);
+});
+
 it('skips unknown packages passed to --with-packages', function () {
     $this->app->extend(Installer::class, fn () => new class extends Installer
     {
