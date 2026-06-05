@@ -2236,6 +2236,22 @@ return [
             'sub'    => 'Praat met het UnoPim-team over hosting, maatwerkontwikkeling of iets anders.',
             'button' => 'Neem contact op',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Cloudhosting',
+                'message' => 'Lanceer UnoPim op volledig beheerde cloudhosting — <b>snelle, veilige en voordelige abonnementen.</b>',
+                'cta'     => 'Bekijk abonnementen',
+            ],
+            'upgrade' => [
+                'tag'     => 'Update beschikbaar',
+                'message' => 'U gebruikt <b>UnoPim v:version.</b> Er is een nieuwere versie beschikbaar — upgrade voor de nieuwste functies &amp; verbeteringen.',
+                'cta'     => 'Kies upgradeservice',
+            ],
+
+            'dont-show-again' => 'Niet meer tonen',
+            'dismissed'       => 'Voorkeur opgeslagen.',
+        ],
     ],
 
     'acl' => [

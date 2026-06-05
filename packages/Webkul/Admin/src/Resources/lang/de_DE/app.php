@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Sprechen Sie mit dem UnoPim-Team über Hosting, individuelle Entwicklung oder alles andere.',
             'button' => 'Kontaktieren Sie uns',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Cloud-Hosting',
+                'message' => 'Starten Sie UnoPim mit vollständig verwaltetem Cloud-Hosting — <b>schnelle, sichere und kostengünstige Tarife.</b>',
+                'cta'     => 'Tarife ansehen',
+            ],
+            'upgrade' => [
+                'tag'     => 'Update verfügbar',
+                'message' => 'Sie verwenden <b>UnoPim v:version.</b> Eine neuere Version ist verfügbar — aktualisieren Sie für die neuesten Funktionen &amp; Fehlerbehebungen.',
+                'cta'     => 'Upgrade-Service wählen',
+            ],
+
+            'dont-show-again' => 'Nicht mehr anzeigen',
+            'dismissed'       => 'Einstellung gespeichert.',
+        ],
     ],
 
     'acl' => [

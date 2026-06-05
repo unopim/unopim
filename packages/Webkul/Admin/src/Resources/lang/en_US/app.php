@@ -2401,14 +2401,17 @@ return [
         'banners' => [
             'cloud' => [
                 'tag'     => 'Cloud Hosting',
-                'message' => 'Launch UnoPim on managed, scalable cloud hosting in minutes.',
-                'cta'     => 'Learn more',
+                'message' => 'Launch UnoPim on fully-managed cloud hosting — <b>fast, secure and cost-effective plans.</b>',
+                'cta'     => 'View plans',
             ],
             'upgrade' => [
-                'tag'     => 'Update Available',
-                'message' => 'You are running UnoPim :version. A newer version is available.',
-                'cta'     => 'Upgrade now',
+                'tag'     => 'Update available',
+                'message' => 'You\'re running <b>UnoPim v:version.</b> A newer version is available — upgrade for the latest features &amp; fixes.',
+                'cta'     => 'Choose upgrade service',
             ],
+
+            'dont-show-again' => 'Don\'t show again',
+            'dismissed'       => 'Preference saved.',
         ],
     ],
 

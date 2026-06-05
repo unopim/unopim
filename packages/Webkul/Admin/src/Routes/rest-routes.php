@@ -32,6 +32,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
      */
     Route::controller(HelpController::class)->prefix('help')->group(function () {
         Route::get('', 'index')->name('admin.help.index');
+
+        Route::post('promo/dismiss', 'dismissPromo')->name('admin.help.promo.dismiss');
     });
 
     /**

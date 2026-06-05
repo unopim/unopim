@@ -2238,6 +2238,22 @@ return [
             'sub'    => '就託管、客製開發或其他任何問題，與 UnoPim 團隊聯繫。',
             'button' => '聯絡我們',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => '雲端託管',
+                'message' => '在全託管的雲端主機上啟動 UnoPim——<b>快速、安全且經濟實惠的方案。</b>',
+                'cta'     => '查看方案',
+            ],
+            'upgrade' => [
+                'tag'     => '有可用更新',
+                'message' => '您目前執行的是 <b>UnoPim v:version。</b> 已有新版本推出——立即升級以取得最新功能 &amp; 修正。',
+                'cta'     => '選擇升級服務',
+            ],
+
+            'dont-show-again' => '不再顯示',
+            'dismissed'       => '偏好設定已儲存。',
+        ],
     ],
     'acl' => [
         'addresses'                => '地址',

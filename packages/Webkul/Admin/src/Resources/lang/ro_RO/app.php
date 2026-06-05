@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Discută cu echipa UnoPim despre găzduire, dezvoltare personalizată sau orice altceva.',
             'button' => 'Contactează-ne',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Găzduire în cloud',
+                'message' => 'Lansează UnoPim pe găzduire în cloud complet administrată — <b>planuri rapide, sigure și eficiente din punct de vedere al costurilor.</b>',
+                'cta'     => 'Vezi planurile',
+            ],
+            'upgrade' => [
+                'tag'     => 'Actualizare disponibilă',
+                'message' => 'Folosești <b>UnoPim v:version.</b> Este disponibilă o versiune mai nouă — actualizează pentru cele mai recente funcționalități &amp; remedieri.',
+                'cta'     => 'Alege serviciul de actualizare',
+            ],
+
+            'dont-show-again' => 'Nu mai afișa',
+            'dismissed'       => 'Preferința a fost salvată.',
+        ],
     ],
     'acl' => [
         'addresses'                => 'Adrese',

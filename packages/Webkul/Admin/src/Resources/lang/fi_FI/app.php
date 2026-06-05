@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Keskustele UnoPim-tiimin kanssa hostingista, räätälöidystä kehityksestä tai mistä tahansa muusta.',
             'button' => 'Ota yhteyttä',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Pilvihosting',
+                'message' => 'Julkaise UnoPim täysin hallinnoidussa pilvihostingissa — <b>nopeat, turvalliset ja kustannustehokkaat paketit.</b>',
+                'cta'     => 'Näytä paketit',
+            ],
+            'upgrade' => [
+                'tag'     => 'Päivitys saatavilla',
+                'message' => 'Käytössäsi on <b>UnoPim v:version.</b> Uudempi versio on saatavilla — päivitä saadaksesi uusimmat ominaisuudet &amp; korjaukset.',
+                'cta'     => 'Valitse päivityspalvelu',
+            ],
+
+            'dont-show-again' => 'Älä näytä uudelleen',
+            'dismissed'       => 'Asetus tallennettu.',
+        ],
     ],
     'acl' => [
         'addresses'                => 'Osoitteet',

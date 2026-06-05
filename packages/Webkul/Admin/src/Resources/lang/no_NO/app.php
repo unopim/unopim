@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Snakk med UnoPim-teamet om hosting, skreddersydd utvikling eller noe annet.',
             'button' => 'Kontakt oss',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Skyhosting',
+                'message' => 'Lanser UnoPim på fullt administrert skyhosting — <b>raske, sikre og rimelige planer.</b>',
+                'cta'     => 'Se planer',
+            ],
+            'upgrade' => [
+                'tag'     => 'Oppdatering tilgjengelig',
+                'message' => 'Du kjører <b>UnoPim v:version.</b> En nyere versjon er tilgjengelig — oppgrader for de nyeste funksjonene &amp; rettelsene.',
+                'cta'     => 'Velg oppgraderingstjeneste',
+            ],
+
+            'dont-show-again' => 'Ikke vis igjen',
+            'dismissed'       => 'Innstilling lagret.',
+        ],
     ],
 
     'acl' => [

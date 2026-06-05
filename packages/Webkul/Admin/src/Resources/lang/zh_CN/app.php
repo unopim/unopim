@@ -2238,6 +2238,22 @@ return [
             'sub'    => '就托管、定制开发或其他任何问题，与 UnoPim 团队沟通。',
             'button' => '联系我们',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => '云托管',
+                'message' => '在全托管的云主机上启动 UnoPim——<b>快速、安全且经济实惠的方案。</b>',
+                'cta'     => '查看方案',
+            ],
+            'upgrade' => [
+                'tag'     => '有可用更新',
+                'message' => '您当前运行的是 <b>UnoPim v:version。</b> 已有新版本发布——立即升级以获取最新功能 &amp; 修复。',
+                'cta'     => '选择升级服务',
+            ],
+
+            'dont-show-again' => '不再显示',
+            'dismissed'       => '偏好已保存。',
+        ],
     ],
     'acl' => [
         'addresses'                => '地址',

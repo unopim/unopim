@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Razgovarajte s UnoPim timom o hostingu, prilagođenom razvoju ili bilo čemu drugom.',
             'button' => 'Kontaktirajte nas',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Cloud hosting',
+                'message' => 'Pokrenite UnoPim na potpuno upravljanom cloud hostingu — <b>brzi, sigurni i isplativi planovi.</b>',
+                'cta'     => 'Pogledaj planove',
+            ],
+            'upgrade' => [
+                'tag'     => 'Dostupno ažuriranje',
+                'message' => 'Koristite <b>UnoPim v:version.</b> Dostupna je novija verzija — nadogradite za najnovije značajke &amp; ispravke.',
+                'cta'     => 'Odaberi uslugu nadogradnje',
+            ],
+
+            'dont-show-again' => 'Ne prikazuj ponovno',
+            'dismissed'       => 'Postavka spremljena.',
+        ],
     ],
     'acl' => [
         'addresses'                => 'Adrese',

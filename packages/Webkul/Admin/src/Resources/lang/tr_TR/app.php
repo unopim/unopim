@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Barındırma, özel geliştirme veya başka herhangi bir konu hakkında UnoPim ekibiyle konuşun.',
             'button' => 'Bize ulaşın',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Bulut Barındırma',
+                'message' => 'UnoPim\'i tamamen yönetilen bulut barındırmada başlatın — <b>hızlı, güvenli ve uygun maliyetli planlar.</b>',
+                'cta'     => 'Planları görüntüle',
+            ],
+            'upgrade' => [
+                'tag'     => 'Güncelleme mevcut',
+                'message' => '<b>UnoPim v:version</b> sürümünü kullanıyorsunuz. Daha yeni bir sürüm mevcut — en son özellikler &amp; düzeltmeler için yükseltin.',
+                'cta'     => 'Yükseltme hizmetini seçin',
+            ],
+
+            'dont-show-again' => 'Tekrar gösterme',
+            'dismissed'       => 'Tercih kaydedildi.',
+        ],
     ],
     'acl' => [
         'help'                     => 'Yardım',

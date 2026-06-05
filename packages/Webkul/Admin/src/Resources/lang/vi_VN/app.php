@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Trao đổi với đội ngũ UnoPim về lưu trữ, phát triển tùy chỉnh hoặc bất kỳ điều gì khác.',
             'button' => 'Liên hệ với chúng tôi',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Lưu trữ đám mây',
+                'message' => 'Khởi chạy UnoPim trên dịch vụ lưu trữ đám mây được quản lý hoàn toàn — <b>các gói nhanh, an toàn và tiết kiệm chi phí.</b>',
+                'cta'     => 'Xem các gói',
+            ],
+            'upgrade' => [
+                'tag'     => 'Có bản cập nhật',
+                'message' => 'Bạn đang chạy <b>UnoPim v:version.</b> Đã có phiên bản mới hơn — hãy nâng cấp để có các tính năng &amp; bản sửa lỗi mới nhất.',
+                'cta'     => 'Chọn dịch vụ nâng cấp',
+            ],
+
+            'dont-show-again' => 'Không hiển thị lại',
+            'dismissed'       => 'Đã lưu tùy chọn.',
+        ],
     ],
     'acl' => [
         'help'                     => 'Trợ giúp',

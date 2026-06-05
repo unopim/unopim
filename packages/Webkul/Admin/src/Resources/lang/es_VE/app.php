@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Conversa con el equipo de UnoPim sobre alojamiento, desarrollo personalizado o cualquier otra cosa.',
             'button' => 'Contáctanos',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Hospedaje en la nube',
+                'message' => 'Pon en marcha UnoPim en un hospedaje en la nube totalmente administrado — <b>planes rápidos, seguros y económicos.</b>',
+                'cta'     => 'Ver planes',
+            ],
+            'upgrade' => [
+                'tag'     => 'Actualización disponible',
+                'message' => 'Estás usando <b>UnoPim v:version.</b> Ya hay una versión más reciente disponible — actualiza para obtener las funciones más recientes &amp; correcciones.',
+                'cta'     => 'Elegir servicio de actualización',
+            ],
+
+            'dont-show-again' => 'No mostrar de nuevo',
+            'dismissed'       => 'Preferencia guardada.',
+        ],
     ],
     'acl' => [
         'addresses'                => 'Direcciones',

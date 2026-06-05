@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Hubungi tim UnoPim tentang hosting, pengembangan khusus, atau hal lainnya.',
             'button' => 'Hubungi kami',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Cloud Hosting',
+                'message' => 'Luncurkan UnoPim di cloud hosting yang dikelola penuh — <b>paket yang cepat, aman, dan hemat biaya.</b>',
+                'cta'     => 'Lihat paket',
+            ],
+            'upgrade' => [
+                'tag'     => 'Pembaruan tersedia',
+                'message' => 'Anda menjalankan <b>UnoPim v:version.</b> Versi yang lebih baru tersedia — tingkatkan untuk mendapatkan fitur &amp; perbaikan terbaru.',
+                'cta'     => 'Pilih layanan peningkatan',
+            ],
+
+            'dont-show-again' => 'Jangan tampilkan lagi',
+            'dismissed'       => 'Preferensi disimpan.',
+        ],
     ],
     'acl' => [
         'help'                     => 'Bantuan',

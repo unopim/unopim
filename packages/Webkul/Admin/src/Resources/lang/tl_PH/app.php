@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Makipag-usap sa team ng UnoPim tungkol sa hosting, custom na development o anupaman.',
             'button' => 'Makipag-ugnayan sa amin',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Cloud Hosting',
+                'message' => 'Ilunsad ang UnoPim sa ganap na pinamamahalaang cloud hosting — <b>mabilis, secure at matipid na mga plano.</b>',
+                'cta'     => 'Tingnan ang mga plano',
+            ],
+            'upgrade' => [
+                'tag'     => 'May available na update',
+                'message' => 'Gumagamit ka ng <b>UnoPim v:version.</b> May mas bagong bersyon na available — mag-upgrade para sa pinakabagong mga tampok &amp; pag-aayos.',
+                'cta'     => 'Piliin ang serbisyo ng pag-upgrade',
+            ],
+
+            'dont-show-again' => 'Huwag nang ipakita muli',
+            'dismissed'       => 'Na-save ang kagustuhan.',
+        ],
     ],
 
     'acl' => [

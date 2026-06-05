@@ -2238,6 +2238,22 @@ return [
             'sub'    => 'Talk to the UnoPim team about hosting, custom development or anything else.',
             'button' => 'Contact us',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Cloud Hosting',
+                'message' => 'Launch UnoPim on fully-managed cloud hosting — <b>fast, secure and cost-effective plans.</b>',
+                'cta'     => 'View plans',
+            ],
+            'upgrade' => [
+                'tag'     => 'Update available',
+                'message' => 'You\'re running <b>UnoPim v:version.</b> A newer version is available — upgrade for the latest features &amp; fixes.',
+                'cta'     => 'Choose upgrade service',
+            ],
+
+            'dont-show-again' => 'Don\'t show again',
+            'dismissed'       => 'Preference saved.',
+        ],
     ],
     'acl' => [
         'addresses'                => 'Addresses',
