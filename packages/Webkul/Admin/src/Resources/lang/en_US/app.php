@@ -2397,6 +2397,19 @@ return [
             'sub'    => 'Talk to the UnoPim team about hosting, custom development or anything else.',
             'button' => 'Contact us',
         ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Cloud Hosting',
+                'message' => 'Launch UnoPim on managed, scalable cloud hosting in minutes.',
+                'cta'     => 'Learn more',
+            ],
+            'upgrade' => [
+                'tag'     => 'Update Available',
+                'message' => 'You are running UnoPim :version. A newer version is available.',
+                'cta'     => 'Upgrade now',
+            ],
+        ],
     ],
 
     'acl' => [

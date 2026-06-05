@@ -69,4 +69,30 @@ return [
         'url'   => 'https://unopim.com/contacts/',
         'label' => 'admin::app.help.cta.button',
     ],
+
+    'version_check' => [
+        'packagist'       => 'https://repo.packagist.org/p2/unopim/unopim.json',
+        'cache_hours'     => 12,
+        'fallback_latest' => null,
+    ],
+
+    'banners' => [
+        'cloud' => [
+            'key'     => 'cloud',
+            'icon'    => '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.2 9.1 4 4 0 0 0 6.5 19z"></path></svg>',
+            'tag'     => 'admin::app.help.banners.cloud.tag',
+            'message' => 'admin::app.help.banners.cloud.message',
+            'cta'     => 'admin::app.help.banners.cloud.cta',
+            'url'     => 'https://unopim.com/cloud-hosting/',
+        ],
+        'upgrade' => [
+            'key'               => 'upgrade',
+            'icon'              => '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16V8 M8.5 11.5 12 8l3.5 3.5"></path></svg>',
+            'tag'               => 'admin::app.help.banners.upgrade.tag',
+            'message'           => 'admin::app.help.banners.upgrade.message',
+            'cta'               => 'admin::app.help.banners.upgrade.cta',
+            'url'               => 'https://unopim.com/pim-migration-services/',
+            'requires_outdated' => true,
+        ],
+    ],
 ];
