@@ -47,7 +47,7 @@ class CategoryFieldFactory extends Factory
 
         return [
             'name'             => $this->faker->word,
-            'code'             => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'code'             => $this->faker->unique()->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
             'type'             => array_rand($types),
             'validation'       => '',
             'position'         => $this->faker->randomDigit,

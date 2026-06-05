@@ -1,4 +1,15 @@
 const { test, expect } = require('../../utils/fixtures');
+const fs = require('fs');
+const path = require('path');
+
+// Read the canonical app version from Webkul\Core::VERSION so this test never
+// goes stale on a release bump (the displayed version is derived from it).
+const EXPECTED_VERSION = (() => {
+  const corePath = path.resolve(__dirname, '../../../../packages/Webkul/Core/src/Core.php');
+  const match = fs.readFileSync(corePath, 'utf8').match(/const\s+VERSION\s*=\s*'([^']+)'/);
+  if (! match) throw new Error(`Could not read Core::VERSION from ${corePath}`);
+  return match[1];
+})();
 
 test.describe('UnoPim Version Check', () => {
 
@@ -31,11 +42,13 @@ test('1.3 - Profile dropdown shows version string in format "Version : vX.X.X"',
   expect(versionText).toMatch(/Version\s*:\s*v\d+\.\d+\.\d+/);
 });
 
-test('1.4 - Version displays v2.0.2', async ({ adminPage }) => {
+test(`1.4 - Version displays v${EXPECTED_VERSION}`, async ({ adminPage }) => {
   const profileBtn = adminPage.locator('header').getByRole('button').last();
   await profileBtn.click();
 
-  await expect(adminPage.locator('#app').getByText(/Version\s*:\s*v2\.0\.2/)).toBeVisible();
+  const escapedVersion = EXPECTED_VERSION.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const versionPattern = new RegExp(`Version\\s*:\\s*v${escapedVersion}`);
+  await expect(adminPage.locator('#app').getByText(versionPattern)).toBeVisible();
 });
 
 test('1.5 - Profile dropdown shows UnoPim logo icon next to version', async ({ adminPage }) => {

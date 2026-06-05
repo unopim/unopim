@@ -112,6 +112,11 @@ jobs:
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          # Pin the seeded admin to deterministic credentials for E2E login.
+          # Production keeps the secure default (random password when these are
+          # unset); the seeder only honours INSTALLER_ADMIN_* when provided.
+          sed -i "s|^\(INSTALLER_ADMIN_EMAIL=\s*\).*$|\1admin@example.com|" .env
+          sed -i "s|^\(INSTALLER_ADMIN_PASSWORD=\s*\).*$|\1admin123|" .env
 
       - name: Running UnoPim Installer & Start Server
         run: |

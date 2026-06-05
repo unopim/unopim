@@ -47,7 +47,7 @@ class InstallerController extends Controller
      */
     protected function abortIfInstalled()
     {
-        abort_if(file_exists(storage_path('installed')), 403);
+        abort_if(file_exists((config('installer.installed_marker') ?? storage_path('installed'))), 403);
     }
 
     /**
@@ -57,11 +57,11 @@ class InstallerController extends Controller
      */
     protected function markInstalled()
     {
-        if (file_exists(storage_path('installed'))) {
+        if (file_exists((config('installer.installed_marker') ?? storage_path('installed')))) {
             return;
         }
 
-        File::put(storage_path('installed'), 'Your UnoPim App is Successfully Installed');
+        File::put((config('installer.installed_marker') ?? storage_path('installed')), 'Your UnoPim App is Successfully Installed');
 
         Event::dispatch('unopim.installed');
     }
@@ -221,7 +221,7 @@ class InstallerController extends Controller
 
         $this->environmentManager->setEnvConfiguration(request()->input());
 
-        $filePath = storage_path('installed');
+        $filePath = (config('installer.installed_marker') ?? storage_path('installed'));
 
         File::put($filePath, 'Your UnoPim App is Successfully Installed');
 

@@ -20,7 +20,7 @@ class CategoryFieldOptionFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'         => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'code'         => $this->faker->unique()->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
             'sort_order'   => $this->faker->randomDigit(),
         ];
     }
