@@ -208,9 +208,9 @@ class Installer extends Command
      * Resolve which optional packages to install.
      *
      * Priority: the `--with-packages` option (comma-separated) when provided,
-     * otherwise an interactive multiselect prompt. In a non-interactive run
-     * with no option, nothing is installed — this keeps headless/CI installs
-     * (e.g. `--skip-admin-creation`) from blocking on a prompt.
+     * otherwise an interactive multiselect prompt. With no option in a
+     * non-interactive run nothing is installed — this keeps headless/CI
+     * installs (e.g. `--skip-admin-creation`) from blocking on a prompt.
      *
      * @return array<int, string>
      */
@@ -220,7 +220,7 @@ class Installer extends Command
 
         if ($option !== null && $option !== '') {
             $keys = array_filter(array_map('trim', explode(',', $option)));
-        } elseif ($this->input->isInteractive()) {
+        } elseif ($this->hasInteractiveTerminal()) {
             $keys = multiselect(
                 label: 'Select optional packages to install',
                 options: array_map(fn ($package) => $package['label'], $this->optionalPackages),
@@ -241,6 +241,22 @@ class Installer extends Command
         }
 
         return array_values(array_unique($selected));
+    }
+
+    /**
+     * Whether the command is attached to a real interactive terminal.
+     *
+     * `$this->input->isInteractive()` is unreliable on some CI runners (it can
+     * report true with no STDIN attached), so a prompt shown on its basis
+     * aborts when reading hits EOF. Checking STDIN for a TTY is order- and
+     * runner-independent, so headless installs never block on the prompt.
+     */
+    protected function hasInteractiveTerminal(): bool
+    {
+        return $this->input->isInteractive()
+            && defined('STDIN')
+            && function_exists('stream_isatty')
+            && @stream_isatty(STDIN);
     }
 
     /**
@@ -745,7 +761,7 @@ class Installer extends Command
              */
             if (
                 ! $this->option('with-demo-data')
-                && $this->input->isInteractive()
+                && $this->hasInteractiveTerminal()
                 && select(
                     label: 'Do you want sample products?',
                     options: ['yes', 'no'],
