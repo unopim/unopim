@@ -22,53 +22,62 @@ class UnitDataGrid extends DataGrid
             ->where('id', $this->familyId)
             ->first();
 
-        $units = json_decode($family->units ?? '[]', true);
         $standardUnit = $family->standard_unit ?? null;
 
-        if (empty($units)) {
-            $query = DB::query()
-                ->fromSub(
-                    DB::query()->selectRaw('NULL as code, NULL as label, NULL as symbol, 0 as is_standard'),
-                    'measurement_units'
-                )
-                ->select('code', 'label', 'symbol', 'is_standard')
-                ->whereRaw('1 = 0');
+        $driver = DB::connection()->getDriverName();
+        $tablePrefix = DB::getTablePrefix();
+        $locale = app()->getLocale();
 
-            $this->setQueryBuilder($query);
+        $labelExpression = $this->getUnitLabelExpression($driver, $tablePrefix);
 
-            return $query;
-        }
+        $isStandardExpression = "CASE WHEN {$tablePrefix}measurement_units.code = ? THEN 1 ELSE 0 END";
 
-        $queryList = [];
+        $inner = DB::table('measurement_units')
+            ->leftJoin('measurement_unit_translations as u_loc', function ($join) use ($locale) {
+                $join->on('u_loc.measurement_unit_id', '=', 'measurement_units.id')
+                    ->where('u_loc.locale', '=', $locale);
+            })
+            ->leftJoin('measurement_unit_translations as u_en', function ($join) {
+                $join->on('u_en.measurement_unit_id', '=', 'measurement_units.id')
+                    ->where('u_en.locale', '=', 'en_US');
+            })
+            ->where('measurement_units.measurement_family_id', $this->familyId)
+            ->selectRaw(
+                "{$tablePrefix}measurement_units.code as code, "
+                ."{$labelExpression} as label, "
+                ."{$tablePrefix}measurement_units.symbol as symbol, "
+                ."{$isStandardExpression} as is_standard",
+                [$standardUnit]
+            );
 
-        foreach ($units as $unit) {
-
-            $code = $unit['code'] ?? '';
-            $label = $this->getLocalizedLabel($unit['labels'] ?? [], $code);
-            $symbol = $unit['symbol'] ?? '';
-
-            $isStd = ($code === $standardUnit) ? 1 : 0;
-
-            $queryList[] = DB::query()
-                ->selectRaw(
-                    '? as code, ? as label, ? as symbol, ? as is_standard',
-                    [$code, $label, $symbol, $isStd]
-                );
-        }
-
-        $finalQuery = array_shift($queryList);
-
-        foreach ($queryList as $q) {
-            $finalQuery = $finalQuery->unionAll($q);
-        }
-
-        $finalQuery = DB::query()
-            ->fromSub($finalQuery, 'measurement_units')
+        $query = DB::query()
+            ->fromSub($inner, 'measurement_units')
             ->select('code', 'label', 'symbol', 'is_standard');
 
-        $this->setQueryBuilder($finalQuery);
+        $this->setQueryBuilder($query);
 
-        return $finalQuery;
+        return $query;
+    }
+
+    /**
+     * Build the localized unit-label SQL expression, falling back to the
+     * en_US translation and finally to the bracketed unit code.
+     */
+    protected function getUnitLabelExpression(string $driver, string $tablePrefix = ''): string
+    {
+        if ($driver === 'pgsql') {
+            return "COALESCE(
+                NULLIF(TRIM({$tablePrefix}u_loc.label), ''),
+                NULLIF(TRIM({$tablePrefix}u_en.label), ''),
+                '[' || {$tablePrefix}measurement_units.code || ']'
+            )";
+        }
+
+        return "COALESCE(
+            NULLIF(TRIM({$tablePrefix}u_loc.label), ''),
+            NULLIF(TRIM({$tablePrefix}u_en.label), ''),
+            CONCAT('[', {$tablePrefix}measurement_units.code, ']')
+        )";
     }
 
     public function prepareColumns()
@@ -155,23 +164,6 @@ class UnitDataGrid extends DataGrid
         }
 
         return $this->queryBuilder;
-    }
-
-    /**
-     * Get localized label.
-     *
-     * @return string
-     */
-    protected function getLocalizedLabel(array $labels, ?string $code)
-    {
-        $locale = app()->getLocale();
-        $label = $labels[$locale] ?? $labels['en_US'] ?? null;
-
-        if (is_string($label) && trim($label) !== '') {
-            return $label;
-        }
-
-        return $code ? '['.$code.']' : '-';
     }
 
     public function prepareActions()

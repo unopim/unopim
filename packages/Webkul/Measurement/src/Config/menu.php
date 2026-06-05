@@ -3,7 +3,7 @@
 return [
     [
         'key'     => 'catalog.measurements',
-        'name'    => 'Measurements',
+        'name'    => 'measurement::app.attribute.measurement',
         'route'   => 'admin.measurement.families.index',
         'sort'    => 7,
         'icon'    => '',

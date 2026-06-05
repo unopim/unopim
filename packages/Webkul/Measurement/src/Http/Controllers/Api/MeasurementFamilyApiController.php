@@ -16,7 +16,14 @@ class MeasurementFamilyApiController extends Controller
 
     public function index()
     {
-        $data = $this->repository->all();
+        $families = $this->repository->all();
+
+        $data = $families->map(function ($family) {
+            return array_merge($family->toArray(), [
+                'labels' => $family->labels,
+                'units'  => $family->units,
+            ]);
+        });
 
         return response()->json([
             'success' => true,

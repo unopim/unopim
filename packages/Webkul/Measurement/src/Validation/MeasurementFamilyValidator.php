@@ -6,7 +6,7 @@ class MeasurementFamilyValidator
 {
     private const CODE_REGEX = 'regex:/^[A-Za-z0-9_]+$/u';
 
-    private const LABEL_REGEX = 'regex:/^(?=.*[\pL])[\pL\pN\s_]+$/u';
+    private const LABEL_REGEX = 'regex:/^(?=.*[\pL])[\pL\pN\pM\s_]+$/u';
 
     private const CODE_MESSAGE = 'This field can only contain letters, numbers, and underscores.';
 
@@ -18,9 +18,9 @@ class MeasurementFamilyValidator
             'code'               => ['required', 'string', 'max:191', self::CODE_REGEX, 'unique:measurement_families,code'],
             'standard_unit_code' => ['required', 'string', 'max:191', self::CODE_REGEX],
             'labels'             => ['nullable', 'array'],
-            'labels.*'           => ['nullable', 'string'],
+            'labels.*'           => ['nullable', 'string', self::LABEL_REGEX],
             'unit_labels'        => ['nullable', 'array'],
-            'unit_labels.*'      => ['nullable', 'string'],
+            'unit_labels.*'      => ['nullable', 'string', self::LABEL_REGEX],
             'symbol'             => ['nullable', 'string', 'max:50'],
         ];
     }
@@ -58,6 +58,8 @@ class MeasurementFamilyValidator
             'name.regex'               => self::LABEL_MESSAGE,
             'standard_unit.regex'      => self::CODE_MESSAGE,
             'units.*.code.regex'       => self::CODE_MESSAGE,
+            'labels.*.regex'           => self::LABEL_MESSAGE,
+            'unit_labels.*.regex'      => self::LABEL_MESSAGE,
         ];
     }
 }

@@ -3,7 +3,8 @@
 namespace Webkul\Measurement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Webkul\Measurement\Models\MeasurementFamily;
+use Webkul\Measurement\Repository\MeasurementFamilyRepository;
 
 class MeasurementFamilySeeder extends Seeder
 {
@@ -554,39 +555,31 @@ class MeasurementFamilySeeder extends Seeder
 
         /*
         |----------------------------------------------------------------------
-        | Insert all families using raw DB queries (no model)
+        | Persist all families into the normalized tables (family + units +
+        | translations + conversions) via the repository. Existing families
+        | (matched by code) are removed first so a re-seed stays idempotent;
+        | cascading foreign keys clean up their units/translations/conversions.
         |----------------------------------------------------------------------
         */
-        foreach ($families as $family) {
-            $now = now();
+        $repository = app(MeasurementFamilyRepository::class);
 
-            $existing = DB::table('measurement_families')
-                ->where('code', $family['code'])
-                ->first();
+        /*
+        |----------------------------------------------------------------------
+        | Seeding runs at install/console time, so it must NOT generate any
+        | history. Auditing is disabled globally for the whole seed; admin
+        | create/update actions through the web still record history normally.
+        |----------------------------------------------------------------------
+        */
+        MeasurementFamily::withoutAuditing(function () use ($repository, $families) {
+            foreach ($families as $family) {
+                $existing = $repository->findOneWhere(['code' => $family['code']]);
 
-            if ($existing) {
-                DB::table('measurement_families')
-                    ->where('code', $family['code'])
-                    ->update([
-                        'name'          => $family['name'],
-                        'labels'        => json_encode($family['labels']),
-                        'standard_unit' => $family['standard_unit'],
-                        'symbol'        => $family['symbol'],
-                        'units'         => json_encode($family['units']),
-                        'updated_at'    => $now,
-                    ]);
-            } else {
-                DB::table('measurement_families')->insert([
-                    'code'          => $family['code'],
-                    'name'          => $family['name'],
-                    'labels'        => json_encode($family['labels']),
-                    'standard_unit' => $family['standard_unit'],
-                    'symbol'        => $family['symbol'],
-                    'units'         => json_encode($family['units']),
-                    'created_at'    => $now,
-                    'updated_at'    => $now,
-                ]);
+                if ($existing) {
+                    $repository->delete($existing->id);
+                }
+
+                $repository->createFamily($family);
             }
-        }
+        }, globally: true);
     }
 }

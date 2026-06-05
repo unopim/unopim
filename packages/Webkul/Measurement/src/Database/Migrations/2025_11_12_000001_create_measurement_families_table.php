@@ -11,10 +11,8 @@ return new class extends Migration
         Schema::create('measurement_families', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
-            $table->string('name')->unique();
-            $table->json('labels')->nullable();
+            $table->string('name')->nullable();
             $table->string('standard_unit')->nullable();
-            $table->json('units')->nullable();
             $table->string('symbol')->nullable();
             $table->timestamps();
         });

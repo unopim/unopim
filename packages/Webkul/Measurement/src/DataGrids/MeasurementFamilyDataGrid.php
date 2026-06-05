@@ -13,26 +13,31 @@ class MeasurementFamilyDataGrid extends DataGrid
     {
         $driver = DB::connection()->getDriverName();
         $tablePrefix = DB::getTablePrefix();
+        $locale = app()->getLocale();
+
         $familyLabelQuery = $this->getFamilyLabelQuery($driver, $tablePrefix);
         $standardUnitLabelQuery = $this->getStandardUnitLabelQuery($driver, $tablePrefix);
         $standardUnitFilterQuery = $this->getStandardUnitFilterQuery($driver, $standardUnitLabelQuery, $tablePrefix);
-
-        $unitCountQuery = $driver === 'pgsql'
-            ? DB::raw('COALESCE(json_array_length(units::json), 0) as unit_count')
-            : DB::raw('COALESCE(JSON_LENGTH(units), 0) as unit_count');
+        $unitCountQuery = $this->getUnitCountQuery($tablePrefix);
 
         $queryBuilder = DB::table('measurement_families')
+            ->leftJoin('measurement_family_translations as mft_loc', function ($join) use ($locale) {
+                $join->on('mft_loc.measurement_family_id', '=', 'measurement_families.id')
+                    ->where('mft_loc.locale', '=', $locale);
+            })
+            ->leftJoin('measurement_family_translations as mft_en', function ($join) {
+                $join->on('mft_en.measurement_family_id', '=', 'measurement_families.id')
+                    ->where('mft_en.locale', '=', 'en_US');
+            })
             ->addSelect(
                 'measurement_families.id',
-                'measurement_families.labels',
                 'measurement_families.code',
                 'measurement_families.standard_unit',
-                'measurement_families.units',
                 'measurement_families.created_at',
                 'measurement_families.updated_at',
                 DB::raw($familyLabelQuery.' as family_label'),
                 DB::raw($standardUnitLabelQuery.' as standard_unit_label'),
-                $unitCountQuery
+                DB::raw($unitCountQuery.' as unit_count')
             );
 
         $this->addFilter('id', 'measurement_families.id');
@@ -46,31 +51,30 @@ class MeasurementFamilyDataGrid extends DataGrid
     }
 
     /**
-     * Get family label query.
+     * Localized family-label expression (translation -> en_US -> [code]).
      *
      * @return string
      */
     protected function getFamilyLabelQuery(string $driver, string $tablePrefix = '')
     {
-        $locale = preg_replace('/[^A-Za-z0-9_]/', '', app()->getLocale());
-
         if ($driver === 'pgsql') {
             return "COALESCE(
-                NULLIF(TRIM({$tablePrefix}measurement_families.labels::jsonb->>'{$locale}'), ''),
-                NULLIF(TRIM({$tablePrefix}measurement_families.labels::jsonb->>'en_US'), ''),
+                NULLIF(TRIM({$tablePrefix}mft_loc.label), ''),
+                NULLIF(TRIM({$tablePrefix}mft_en.label), ''),
                 '[' || {$tablePrefix}measurement_families.code || ']'
             )";
         }
 
         return "COALESCE(
-            NULLIF(TRIM(JSON_UNQUOTE(JSON_EXTRACT({$tablePrefix}measurement_families.labels, '$.{$locale}'))), ''),
-            NULLIF(TRIM(JSON_UNQUOTE(JSON_EXTRACT({$tablePrefix}measurement_families.labels, '$.en_US'))), ''),
+            NULLIF(TRIM({$tablePrefix}mft_loc.label), ''),
+            NULLIF(TRIM({$tablePrefix}mft_en.label), ''),
             CONCAT('[', {$tablePrefix}measurement_families.code, ']')
         )";
     }
 
     /**
-     * Get standard unit label query.
+     * Localized standard-unit label expression via correlated subquery
+     * (translation -> en_US -> [standard_unit]).
      *
      * @return string
      */
@@ -78,34 +82,28 @@ class MeasurementFamilyDataGrid extends DataGrid
     {
         $locale = preg_replace('/[^A-Za-z0-9_]/', '', app()->getLocale());
 
-        if ($driver === 'pgsql') {
-            return "COALESCE((
-                SELECT COALESCE(
-                    NULLIF(TRIM(unit->'labels'->>'{$locale}'), ''),
-                    NULLIF(TRIM(unit->'labels'->>'en_US'), '')
-                )
-                FROM jsonb_array_elements(COALESCE({$tablePrefix}measurement_families.units::jsonb, '[]'::jsonb)) AS unit
-                WHERE unit->>'code' = {$tablePrefix}measurement_families.standard_unit
-                LIMIT 1
-            ), '[' || {$tablePrefix}measurement_families.standard_unit || ']')";
-        }
+        $fallback = $driver === 'pgsql'
+            ? "'[' || {$tablePrefix}measurement_families.standard_unit || ']'"
+            : "CONCAT('[', {$tablePrefix}measurement_families.standard_unit, ']')";
 
         return "COALESCE((
             SELECT COALESCE(
-                NULLIF(TRIM(JSON_UNQUOTE(JSON_EXTRACT(unit.value, '$.labels.{$locale}'))), ''),
-                NULLIF(TRIM(JSON_UNQUOTE(JSON_EXTRACT(unit.value, '$.labels.en_US'))), '')
+                NULLIF(TRIM(su_loc.label), ''),
+                NULLIF(TRIM(su_en.label), '')
             )
-            FROM JSON_TABLE(
-                {$tablePrefix}measurement_families.units,
-                '$[*]' COLUMNS (value JSON PATH '$')
-            ) AS unit
-            WHERE JSON_UNQUOTE(JSON_EXTRACT(unit.value, '$.code')) = {$tablePrefix}measurement_families.standard_unit
+            FROM {$tablePrefix}measurement_units su
+            LEFT JOIN {$tablePrefix}measurement_unit_translations su_loc
+                ON su_loc.measurement_unit_id = su.id AND su_loc.locale = '{$locale}'
+            LEFT JOIN {$tablePrefix}measurement_unit_translations su_en
+                ON su_en.measurement_unit_id = su.id AND su_en.locale = 'en_US'
+            WHERE su.measurement_family_id = {$tablePrefix}measurement_families.id
+                AND su.code = {$tablePrefix}measurement_families.standard_unit
             LIMIT 1
-        ), CONCAT('[', {$tablePrefix}measurement_families.standard_unit, ']'))";
+        ), {$fallback})";
     }
 
     /**
-     * Get standard unit filter query.
+     * Standard-unit filter expression (label + raw code), for searching.
      *
      * @return string
      */
@@ -118,6 +116,20 @@ class MeasurementFamilyDataGrid extends DataGrid
         return "CONCAT({$standardUnitLabelQuery}, ' ', {$tablePrefix}measurement_families.standard_unit)";
     }
 
+    /**
+     * Count of units belonging to the family via correlated subquery.
+     *
+     * @return string
+     */
+    protected function getUnitCountQuery(string $tablePrefix = '')
+    {
+        return "(
+            SELECT COUNT(*)
+            FROM {$tablePrefix}measurement_units uc
+            WHERE uc.measurement_family_id = {$tablePrefix}measurement_families.id
+        )";
+    }
+
     public function prepareColumns()
     {
         $this->addColumn([
@@ -128,9 +140,7 @@ class MeasurementFamilyDataGrid extends DataGrid
             'sortable'   => true,
             'filterable' => true,
             'closure'    => function ($row) {
-                $labels = json_decode($row->labels ?? '{}', true);
-
-                return $this->getLocalizedLabel($labels, $row->code);
+                return $row->family_label;
             },
         ]);
 
@@ -151,20 +161,7 @@ class MeasurementFamilyDataGrid extends DataGrid
             'sortable'   => false,
             'filterable' => true,
             'closure'    => function ($row) {
-
-                $units = json_decode($row->units ?? '[]', true);
-                $standardUnitCode = $row->standard_unit;
-
-                if (! empty($units)) {
-                    foreach ($units as $unit) {
-                        if (($unit['code'] ?? null) === $standardUnitCode) {
-
-                            return $this->getLocalizedLabel($unit['labels'] ?? [], $standardUnitCode);
-                        }
-                    }
-                }
-
-                return $standardUnitCode ? '['.$standardUnitCode.']' : '-';
+                return $row->standard_unit_label;
             },
         ]);
 
@@ -216,22 +213,5 @@ class MeasurementFamilyDataGrid extends DataGrid
                 'options' => ['actionType' => 'delete'],
             ]);
         }
-    }
-
-    /**
-     * Get localized label.
-     *
-     * @return string
-     */
-    protected function getLocalizedLabel(array $labels, ?string $code)
-    {
-        $locale = app()->getLocale();
-        $label = $labels[$locale] ?? $labels['en_US'] ?? null;
-
-        if (is_string($label) && trim($label) !== '') {
-            return $label;
-        }
-
-        return $code ? '['.$code.']' : '-';
     }
 }

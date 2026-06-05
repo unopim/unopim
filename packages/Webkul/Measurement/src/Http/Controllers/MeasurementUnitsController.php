@@ -110,7 +110,7 @@ class MeasurementUnitsController extends Controller
             'code'                  => request('code'),
             'labels'                => request('labels'),
             'symbol'                => request('symbol'),
-            'convert_from_standard' => array_slice($conversionRows, 0, 4),
+            'convert_from_standard' => array_slice($conversionRows, 0, 5),
         ];
 
         $units[] = $newUnit;
@@ -249,7 +249,7 @@ class MeasurementUnitsController extends Controller
                 $unit['convert_from_standard'] = array_slice(
                     $conversionRows,
                     0,
-                    4
+                    5
                 );
             }
 

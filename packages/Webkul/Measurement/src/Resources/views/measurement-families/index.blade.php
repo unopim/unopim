@@ -59,7 +59,7 @@
                                             v-model="form.code"
                                             rules="required"
                                             label="Code"
-                                            placeholder="Enter family code"
+                                            placeholder="Enter Code"
                                         />
 
                                         <x-admin::form.control-group.error control-name="code" />
@@ -78,7 +78,7 @@
                                             v-model="form.standard_unit_code"
                                             rules="required"
                                             label="Standard Unit Code"
-                                            placeholder="Enter standard unit code"
+                                            placeholder="Enter Standard Unit Code"
                                         />
 
                                         <x-admin::form.control-group.error control-name="standard_unit_code" />

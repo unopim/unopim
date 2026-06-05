@@ -340,7 +340,7 @@
                                         type="button"
                                         class="secondary-button"
                                         @click="addConversion"
-                                        :disabled="locale.conversions.length >= 4 || isConversionDisabled"
+                                        :disabled="locale.conversions.length >= 5 || isConversionDisabled"
                                     >
                                         @lang('measurement::app.measurement.unit.add_new_operation')
                                     </button>
@@ -509,7 +509,7 @@
                     },
 
                     addConversion() {
-                        if (this.locale.conversions.length >= 4) {
+                        if (this.locale.conversions.length >= 5) {
                             return;
                         }
 

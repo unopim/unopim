@@ -82,7 +82,7 @@ class MeasurementUnitApiController extends Controller
             'code'                  => $request->code,
             'labels'                => $request->labels,
             'symbol'                => $request->symbol,
-            'convert_from_standard' => array_slice($conversionRows, 0, 4),
+            'convert_from_standard' => array_slice($conversionRows, 0, 5),
         ];
 
         $this->repository->update(['units' => $units], $familyId);
@@ -140,7 +140,7 @@ class MeasurementUnitApiController extends Controller
                         ];
                     }
 
-                    $unit['convert_from_standard'] = array_slice($conversionRows, 0, 4);
+                    $unit['convert_from_standard'] = array_slice($conversionRows, 0, 5);
                 }
 
                 $updated = true;
