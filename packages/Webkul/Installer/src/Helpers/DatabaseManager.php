@@ -64,6 +64,56 @@ class DatabaseManager
     }
 
     /**
+     * Create the configured database if it does not already exist.
+     *
+     * `migrate:fresh` will not create the schema itself, so connect to the
+     * server without a selected database and create it first. The database
+     * name is validated against a strict pattern before being interpolated
+     * into the statement to avoid SQL injection from the .env value.
+     */
+    public function createDatabaseIfNotExists(): void
+    {
+        $connection = config('database.default');
+
+        $database = config("database.connections.{$connection}.database");
+
+        if (! $database) {
+            return;
+        }
+
+        if (! preg_match('/^[A-Za-z0-9_]+$/', (string) $database)) {
+            throw new Exception("The database name '{$database}' is invalid. Use only letters, numbers, and underscores.");
+        }
+
+        /**
+         * Connect to the server without the target database. MySQL allows a
+         * null database; PostgreSQL requires connecting to an existing
+         * maintenance database ("postgres") to issue CREATE DATABASE.
+         */
+        config(["database.connections.{$connection}.database" => $connection === 'pgsql' ? 'postgres' : null]);
+
+        DB::purge($connection);
+
+        try {
+            if ($connection === 'pgsql') {
+                $exists = DB::connection($connection)->select('SELECT 1 FROM pg_database WHERE datname = ?', [$database]);
+
+                if (empty($exists)) {
+                    // CREATE DATABASE cannot run inside a transaction on PostgreSQL.
+                    DB::connection($connection)->getPdo()->exec("CREATE DATABASE \"{$database}\" ENCODING 'UTF8'");
+                }
+            } else {
+                DB::connection($connection)->statement("CREATE DATABASE IF NOT EXISTS `{$database}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            }
+        } finally {
+            // Restore the database selection for the subsequent migration.
+            config(["database.connections.{$connection}.database" => $database]);
+
+            DB::purge($connection);
+        }
+    }
+
+    /**
      * Seed the database.
      *
      * @return void|string

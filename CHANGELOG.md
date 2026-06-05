@@ -1,5 +1,14 @@
 # v2.1.x
 
+## v2.1.4 - 2026-06-06
+
+### Features
+- Added a **Help & Resources** admin page and sidebar menu.
+- Added **dismissible cloud-hosting and version-upgrade promo banners** in the admin.
+
+### Improvements
+- Revamped the **web installer** — admin-themed UI, a live terminal view of the install, optional add-on packages (DAM, Shopify, Bagisto) and Elasticsearch setup, database auto-create, and shared/FTP-only hosting support.
+
 ## v2.1.3 - 2026-06-04
 
 ### Security

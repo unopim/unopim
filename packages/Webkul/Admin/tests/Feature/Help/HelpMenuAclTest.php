@@ -5,7 +5,7 @@ it('registers the help menu item at the bottom', function () {
 
     expect($help)->not->toBeNull();
     expect($help['route'])->toBe('admin.help.index');
-    expect($help['sort'])->toBe(10);
+    expect($help['sort'])->toBe(99999);
 });
 
 it('registers the help acl entry', function () {

@@ -699,6 +699,6 @@ return [
         'key'   => 'help',
         'name'  => 'admin::app.acl.help',
         'route' => 'admin.help.index',
-        'sort'  => 10,
+        'sort'  => 99999,
     ],
 ];
