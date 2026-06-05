@@ -1958,6 +1958,7 @@ return [
                 'visit-shop'    => 'Thăm cửa hàng',
             ],
             'sidebar' => [
+                'help'               => 'Trợ giúp',
                 'attribute-families' => 'Nhóm thuộc tính',
                 'attribute-groups'   => 'Nhóm thuộc tính',
                 'attributes'         => 'Thuộc tính',
@@ -2197,7 +2198,49 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Trợ giúp & Tài nguyên',
+            'subtitle'  => 'Mọi thứ bạn cần để tận dụng tối đa UnoPim — lưu trữ, hỗ trợ và dịch vụ chuyên nghiệp, cùng với các tiện ích mở rộng và tài liệu dành cho nhà phát triển.',
+            'services'  => 'Dịch vụ',
+            'resources' => 'Tài nguyên & Tài liệu',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Lưu trữ đám mây',
+                'description' => 'Dịch vụ lưu trữ đám mây được quản lý với chi phí hợp lý — dùng thử và khởi chạy UnoPim trên đám mây chỉ trong vài phút, được tối ưu hóa hoàn toàn và có khả năng mở rộng.',
+            ],
+            'support' => [
+                'title'       => 'Hỗ trợ & Bảo trì',
+                'description' => 'Hỗ trợ kỹ thuật chuyên biệt và các gói bảo trì liên tục để giữ cho PIM của bạn an toàn, được cập nhật và hoạt động trơn tru.',
+            ],
+            'services' => [
+                'title'       => 'Dịch vụ trả phí',
+                'description' => 'Trợ giúp chuyên môn cho việc tích hợp mô-đun, tùy chỉnh, di chuyển dữ liệu, nâng cấp phiên bản và phát triển theo yêu cầu.',
+            ],
+            'extensions' => [
+                'title'       => 'Tiện ích mở rộng',
+                'description' => 'Duyệt các tiện ích bổ sung chính thức và từ cộng đồng để mở rộng UnoPim với các trình kết nối, kênh và tính năng mới.',
+            ],
+            'user-guide' => [
+                'title'       => 'Hướng dẫn sử dụng',
+                'description' => 'Hướng dẫn dành cho nhà phát triển, bài hướng dẫn và các bài viết mới nhất giúp bạn xây dựng, cấu hình và luôn cập nhật.',
+            ],
+            'api-docs' => [
+                'title'       => 'Tài liệu API',
+                'description' => 'Tài liệu tham khảo REST API đầy đủ với các điểm cuối, xác thực và ví dụ để tích hợp UnoPim với hệ thống của bạn.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Vẫn cần trợ giúp?',
+            'sub'    => 'Trao đổi với đội ngũ UnoPim về lưu trữ, phát triển tùy chỉnh hoặc bất kỳ điều gì khác.',
+            'button' => 'Liên hệ với chúng tôi',
+        ],
+    ],
     'acl' => [
+        'help'                     => 'Trợ giúp',
         'addresses'                => 'Địa chỉ',
         'attribute-families'       => 'Nhóm thuộc tính',
         'attribute-groups'         => 'Nhóm thuộc tính',

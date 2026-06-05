@@ -1988,6 +1988,7 @@ return [
                 'integrations'       => 'Integracije',
                 'prompt'             => 'Upit',
                 'general-tab'        => 'Konfiguracija',
+                'help'               => 'Pomoć',
             ],
         ],
         'datagrid' => [
@@ -2197,6 +2198,47 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Pomoć i resursi',
+            'subtitle'  => 'Sve što vam je potrebno da izvučete najviše iz UnoPima — hosting, podrška i profesionalne usluge, uz proširenja i razvojnu dokumentaciju.',
+            'services'  => 'Usluge',
+            'resources' => 'Resursi i dokumentacija',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Hosting u oblaku',
+                'description' => 'Isplativ, upravljani hosting u oblaku — isprobajte i pokrenite UnoPim u oblaku u nekoliko minuta, potpuno optimiziran i skalabilan.',
+            ],
+            'support' => [
+                'title'       => 'Podrška i održavanje',
+                'description' => 'Posvećena tehnička podrška i planovi stalnog održavanja kako bi vaš PIM ostao siguran, ažuriran i besprijekorno radio.',
+            ],
+            'services' => [
+                'title'       => 'Plaćene usluge',
+                'description' => 'Stručna pomoć za integraciju modula, prilagodbu, migraciju podataka, nadogradnju verzija i razvoj po mjeri.',
+            ],
+            'extensions' => [
+                'title'       => 'Proširenja',
+                'description' => 'Pregledajte službene i dodatke zajednice kako biste proširili UnoPim novim konektorima, kanalima i značajkama.',
+            ],
+            'user-guide' => [
+                'title'       => 'Korisnički vodič',
+                'description' => 'Vodiči za razvojne programere, tutorijali i najnoviji članci koji vam pomažu graditi, konfigurirati i ostati u tijeku.',
+            ],
+            'api-docs' => [
+                'title'       => 'API dokumentacija',
+                'description' => 'Potpuna REST API referenca s krajnjim točkama, autentifikacijom i primjerima za integraciju UnoPima s vašim sustavom.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Još uvijek vam treba pomoć?',
+            'sub'    => 'Razgovarajte s UnoPim timom o hostingu, prilagođenom razvoju ili bilo čemu drugom.',
+            'button' => 'Kontaktirajte nas',
+        ],
+    ],
     'acl' => [
         'addresses'                => 'Adrese',
         'attribute-families'       => 'Attributne obitelji',
@@ -2218,6 +2260,7 @@ return [
         'email-templates'          => 'Predlošci e-pošte',
         'events'                   => 'Događaji',
         'groups'                   => 'Grupacije',
+        'help'                     => 'Pomoć',
         'import'                   => 'Uvoz',
         'imports'                  => 'Uvozi',
         'invoices'                 => 'Fakture',

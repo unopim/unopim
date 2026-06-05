@@ -1988,6 +1988,7 @@ return [
                 'integrations'       => '集成',
                 'prompt'             => '提示',
                 'general-tab'        => '配置',
+                'help'               => '帮助',
             ],
         ],
         'datagrid' => [
@@ -2197,6 +2198,47 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => '帮助与资源',
+            'subtitle'  => '充分发挥 UnoPim 价值所需的一切——托管、支持与专业服务，以及扩展和开发者文档。',
+            'services'  => '服务',
+            'resources' => '资源与文档',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => '云托管',
+                'description' => '高性价比的托管式云服务——几分钟内即可在云端试用并上线 UnoPim，全面优化且可弹性扩展。',
+            ],
+            'support' => [
+                'title'       => '支持与维护',
+                'description' => '专属技术支持和持续维护计划，让您的 PIM 始终安全、保持更新并平稳运行。',
+            ],
+            'services' => [
+                'title'       => '付费服务',
+                'description' => '为模块集成、定制化、数据迁移、版本升级以及定制开发提供专家级帮助。',
+            ],
+            'extensions' => [
+                'title'       => '扩展',
+                'description' => '浏览官方及社区插件，通过新的连接器、渠道和功能扩展 UnoPim。',
+            ],
+            'user-guide' => [
+                'title'       => '用户指南',
+                'description' => '开发者指南、教程及最新文章，助您构建、配置并保持同步更新。',
+            ],
+            'api-docs' => [
+                'title'       => 'API 文档',
+                'description' => '完整的 REST API 参考，包含端点、身份验证和示例，助您将 UnoPim 集成到您的技术栈中。',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => '仍需帮助？',
+            'sub'    => '就托管、定制开发或其他任何问题，与 UnoPim 团队沟通。',
+            'button' => '联系我们',
+        ],
+    ],
     'acl' => [
         'addresses'                => '地址',
         'attribute-families'       => '属性家庭',
@@ -2255,6 +2297,7 @@ return [
         'view'                     => '看法',
         'execute'                  => '作业执行',
         'history'                  => '历史',
+        'help'                     => '帮助',
         'restore'                  => '恢复',
         'integrations'             => '集成',
         'api'                      => '应用程序编程接口',

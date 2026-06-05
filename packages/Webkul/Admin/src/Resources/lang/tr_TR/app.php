@@ -1958,6 +1958,7 @@ return [
                 'visit-shop'    => 'Mağazayı Ziyaret Et',
             ],
             'sidebar' => [
+                'help'               => 'Yardım',
                 'attribute-families' => 'Öznitelik Aileleri',
                 'attribute-groups'   => 'Öznitelik Grupları',
                 'attributes'         => 'Öznitelikler',
@@ -2197,7 +2198,49 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Yardım ve Kaynaklar',
+            'subtitle'  => 'UnoPim\'den en iyi şekilde yararlanmak için ihtiyacınız olan her şey — barındırma, destek ve profesyonel hizmetler, ayrıca uzantılar ve geliştirici dokümantasyonu.',
+            'services'  => 'Hizmetler',
+            'resources' => 'Kaynaklar ve Dokümantasyon',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Bulut Barındırma',
+                'description' => 'Uygun maliyetli, yönetilen bulut barındırma — UnoPim\'i dakikalar içinde bulutta deneyin ve başlatın, tamamen optimize edilmiş ve ölçeklenebilir.',
+            ],
+            'support' => [
+                'title'       => 'Destek ve Bakım',
+                'description' => 'PIM\'inizi güvenli, güncel ve sorunsuz çalışır tutmak için özel teknik destek ve sürekli bakım planları.',
+            ],
+            'services' => [
+                'title'       => 'Ücretli Hizmetler',
+                'description' => 'Modül entegrasyonu, özelleştirme, veri taşıma, sürüm yükseltmeleri ve özel geliştirme için uzman yardımı.',
+            ],
+            'extensions' => [
+                'title'       => 'Uzantılar',
+                'description' => 'UnoPim\'i yeni konektörler, kanallar ve özelliklerle genişletmek için resmi ve topluluk eklentilerine göz atın.',
+            ],
+            'user-guide' => [
+                'title'       => 'Kullanıcı Kılavuzu',
+                'description' => 'Oluşturmanıza, yapılandırmanıza ve güncel kalmanıza yardımcı olacak geliştirici kılavuzları, eğitimler ve en son makaleler.',
+            ],
+            'api-docs' => [
+                'title'       => 'API Dokümanları',
+                'description' => 'UnoPim\'i yığınınıza entegre etmek için uç noktalar, kimlik doğrulama ve örneklerle tam REST API referansı.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Hâlâ yardıma mı ihtiyacınız var?',
+            'sub'    => 'Barındırma, özel geliştirme veya başka herhangi bir konu hakkında UnoPim ekibiyle konuşun.',
+            'button' => 'Bize ulaşın',
+        ],
+    ],
     'acl' => [
+        'help'                     => 'Yardım',
         'addresses'                => 'Adresler',
         'attribute-families'       => 'Özellik Aileleri',
         'attribute-groups'         => 'Özellik Grupları',
