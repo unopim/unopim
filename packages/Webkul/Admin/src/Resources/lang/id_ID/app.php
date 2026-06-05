@@ -1949,6 +1949,7 @@ return [
                 'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
+                'help'               => 'Bantuan',
                 'attribute-families' => 'Keluarga atribut',
                 'attribute-groups'   => 'Grup atribut',
                 'attributes'         => 'Atribut',
@@ -2191,7 +2192,49 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Bantuan & Sumber Daya',
+            'subtitle'  => 'Semua yang Anda butuhkan untuk memaksimalkan UnoPim — hosting, dukungan, dan layanan profesional, ditambah ekstensi dan dokumentasi pengembang.',
+            'services'  => 'Layanan',
+            'resources' => 'Sumber Daya & Dokumentasi',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Cloud Hosting',
+                'description' => 'Cloud hosting terkelola yang hemat biaya — coba dan luncurkan UnoPim di cloud dalam hitungan menit, sepenuhnya dioptimalkan dan dapat diskalakan.',
+            ],
+            'support' => [
+                'title'       => 'Dukungan & Pemeliharaan',
+                'description' => 'Dukungan teknis khusus dan paket pemeliharaan berkelanjutan untuk menjaga PIM Anda tetap aman, terbarui, dan berjalan lancar.',
+            ],
+            'services' => [
+                'title'       => 'Layanan Berbayar',
+                'description' => 'Bantuan ahli untuk integrasi modul, kustomisasi, migrasi data, peningkatan versi, dan pengembangan khusus.',
+            ],
+            'extensions' => [
+                'title'       => 'Ekstensi',
+                'description' => 'Telusuri add-on resmi dan komunitas untuk memperluas UnoPim dengan konektor, saluran, dan fitur baru.',
+            ],
+            'user-guide' => [
+                'title'       => 'Panduan Pengguna',
+                'description' => 'Panduan pengembang, tutorial, dan artikel terbaru untuk membantu Anda membangun, mengonfigurasi, dan tetap mengikuti perkembangan.',
+            ],
+            'api-docs' => [
+                'title'       => 'Dokumentasi API',
+                'description' => 'Referensi REST API lengkap dengan endpoint, autentikasi, dan contoh untuk mengintegrasikan UnoPim dengan stack Anda.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Masih butuh bantuan?',
+            'sub'    => 'Hubungi tim UnoPim tentang hosting, pengembangan khusus, atau hal lainnya.',
+            'button' => 'Hubungi kami',
+        ],
+    ],
     'acl' => [
+        'help'                     => 'Bantuan',
         'addresses'                => 'Alamat',
         'attribute-families'       => 'Keluarga atribut',
         'attribute-groups'         => 'Grup atribut',
