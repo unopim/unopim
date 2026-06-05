@@ -55,6 +55,13 @@
             {!! core()->getConfigData('general.content.custom_scripts.custom_css') !!}
         </style>
 
+        {{-- When the promo bar is present, offset the fixed header/sidebar by its height so the left menu is not cut. --}}
+        <style>
+            body:has(#unopim-promo-bar) .unopim-header { top: 3rem; }
+            body:has(#unopim-promo-bar) #unopim-sidebar { top: 6.5rem; }
+            body:has(#unopim-promo-bar) #unopim-sidebar-scroll { height: calc(100vh - 148px); }
+        </style>
+
         {!! view_render_event('unopim.admin.layout.head') !!}
     </head>
 
