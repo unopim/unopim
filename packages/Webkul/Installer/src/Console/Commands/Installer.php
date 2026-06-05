@@ -178,6 +178,14 @@ class Installer extends Command
         $this->warn('Step: Clearing cached bootstrap files...');
         $this->call('optimize:clear');
 
+        /**
+         * Resolve the optional-package selection up front, while the console is
+         * still interactive. Demo-data seeding runs Artisan::call() internally,
+         * which flips the input to non-interactive, so prompting afterwards
+         * would silently skip the multiselect.
+         */
+        $selectedPackages = $this->resolveSelectedPackages();
+
         if (! $this->option('skip-admin-creation')) {
             $this->warn('Step: Create admin credentials...');
             $this->createAdminCredentials();
@@ -187,7 +195,7 @@ class Installer extends Command
             $this->seedSampleProducts();
         }
 
-        $this->installOptionalPackages($this->resolveSelectedPackages());
+        $this->installOptionalPackages($selectedPackages);
 
         $this->markInstalled();
 
