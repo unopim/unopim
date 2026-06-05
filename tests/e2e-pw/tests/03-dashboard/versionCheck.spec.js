@@ -46,7 +46,8 @@ test(`1.4 - Version displays v${EXPECTED_VERSION}`, async ({ adminPage }) => {
   const profileBtn = adminPage.locator('header').getByRole('button').last();
   await profileBtn.click();
 
-  const versionPattern = new RegExp(`Version\\s*:\\s*v${EXPECTED_VERSION.replace(/\./g, '\\.')}`);
+  const escapedVersion = EXPECTED_VERSION.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const versionPattern = new RegExp(`Version\\s*:\\s*v${escapedVersion}`);
   await expect(adminPage.locator('#app').getByText(versionPattern)).toBeVisible();
 });
 

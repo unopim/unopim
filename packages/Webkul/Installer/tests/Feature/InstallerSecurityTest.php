@@ -10,14 +10,16 @@ beforeEach(function () {
 
     $this->marker = tempnam(sys_get_temp_dir(), 'unopim_installed_');
 
-    @unlink($this->marker);
+    expect($this->marker)->not->toBeFalse();
+
+    unlink($this->marker);
 
     config(['installer.installed_marker' => $this->marker]);
 });
 
 afterEach(function () {
     if (file_exists($this->marker)) {
-        @unlink($this->marker);
+        unlink($this->marker);
     }
 });
 
