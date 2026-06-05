@@ -29,9 +29,7 @@ class Installer extends Command
         { --skip-env-check : Skip env check. }
         { --skip-admin-creation : Skip admin creation. }
         { --with-demo-data : Seed sample products and demo data. }
-        { --sampledata= : Seed sample data without prompting (yes/no); alias for --with-demo-data. }
-        { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }
-        { --modules= : Alias for --with-packages (dam, shopify, bagisto). }';
+        { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }';
 
     /**
      * The console command description.
@@ -193,7 +191,7 @@ class Installer extends Command
             $this->createAdminCredentials();
         }
 
-        if ($this->shouldSeedDemoData()) {
+        if ($this->option('with-demo-data')) {
             $this->seedSampleProducts();
         }
 
@@ -218,7 +216,7 @@ class Installer extends Command
      */
     protected function resolveSelectedPackages(): array
     {
-        $option = $this->option('modules') ?? $this->option('with-packages');
+        $option = $this->option('with-packages');
 
         if ($option !== null && $option !== '') {
             $keys = array_filter(array_map('trim', explode(',', $option)));
@@ -243,32 +241,6 @@ class Installer extends Command
         }
 
         return array_values(array_unique($selected));
-    }
-
-    /**
-     * Whether a demo-data flag was explicitly passed (--with-demo-data or
-     * --sampledata=...), regardless of its value. Used to suppress the
-     * interactive "sample products?" prompt during scripted installs.
-     */
-    protected function demoDataFlagProvided(): bool
-    {
-        return $this->option('with-demo-data') || $this->option('sampledata') !== null;
-    }
-
-    /**
-     * Whether sample/demo data should be seeded based on the passed flags.
-     * --with-demo-data implies yes; --sampledata accepts yes/true/1.
-     */
-    protected function shouldSeedDemoData(): bool
-    {
-        if ($this->option('with-demo-data')) {
-            return true;
-        }
-
-        $sampleData = $this->option('sampledata');
-
-        return $sampleData !== null
-            && in_array(strtolower(trim($sampleData)), ['yes', 'true', '1'], true);
     }
 
     /**
@@ -767,12 +739,12 @@ class Installer extends Command
             );
 
             /**
-             * Only prompt when no demo-data flag was given; when a flag is
-             * present the seeding is handled (once) by handle(), so asking here
-             * too would double-seed or block a scripted install.
+             * Skip the prompt when --with-demo-data was passed (handle() seeds
+             * once) or when running non-interactively, so a scripted install
+             * never blocks here or double-seeds.
              */
             if (
-                ! $this->demoDataFlagProvided()
+                ! $this->option('with-demo-data')
                 && $this->input->isInteractive()
                 && select(
                     label: 'Do you want sample products?',
