@@ -76,6 +76,11 @@ class AdminServiceProvider extends ServiceProvider
             dirname(__DIR__).'/Config/system.php',
             'core'
         );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/help.php',
+            'help'
+        );
     }
 
     /**
