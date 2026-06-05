@@ -138,4 +138,15 @@ return [
         'sort'   => 9,
         'icon'   => 'icon-configuration',
     ],
+
+    /**
+     * Help.
+     */
+    [
+        'key'   => 'help',
+        'name'  => 'admin::app.components.layouts.sidebar.help',
+        'route' => 'admin.help.index',
+        'sort'  => 10,
+        'icon'  => 'icon-information',
+    ],
 ];
