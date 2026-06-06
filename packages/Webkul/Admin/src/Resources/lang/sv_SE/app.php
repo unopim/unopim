@@ -1988,6 +1988,7 @@ return [
                 'integrations'       => 'Integrationer',
                 'prompt'             => 'Prompt',
                 'general-tab'        => 'Konfiguration',
+                'help'               => 'Hjälp',
             ],
         ],
         'datagrid' => [
@@ -2197,6 +2198,63 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Hjälp & Resurser',
+            'subtitle'  => 'Allt du behöver för att få ut mesta möjliga av UnoPim — hosting, support och professionella tjänster, plus tillägg och utvecklardokumentation.',
+            'services'  => 'Tjänster',
+            'resources' => 'Resurser & Dokumentation',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Molnhosting',
+                'description' => 'Kostnadseffektiv, hanterad molnhosting — testa och lansera UnoPim i molnet på några minuter, fullt optimerad och skalbar.',
+            ],
+            'support' => [
+                'title'       => 'Support & Underhåll',
+                'description' => 'Dedikerad teknisk support och löpande underhållsplaner för att hålla din PIM säker, uppdaterad och i smidig drift.',
+            ],
+            'services' => [
+                'title'       => 'Betaltjänster',
+                'description' => 'Expertstöd för modulintegration, anpassning, datamigrering, versionsuppgraderingar och skräddarsydd utveckling.',
+            ],
+            'extensions' => [
+                'title'       => 'Tillägg',
+                'description' => 'Bläddra bland officiella och community-tillägg för att utöka UnoPim med nya kopplingar, kanaler och funktioner.',
+            ],
+            'user-guide' => [
+                'title'       => 'Användarguide',
+                'description' => 'Utvecklarguider, handledningar och de senaste artiklarna som hjälper dig att bygga, konfigurera och hålla dig uppdaterad.',
+            ],
+            'api-docs' => [
+                'title'       => 'API-dokumentation',
+                'description' => 'Fullständig REST API-referens med endpoints, autentisering och exempel för att integrera UnoPim med din miljö.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Behöver du fortfarande hjälp?',
+            'sub'    => 'Prata med UnoPim-teamet om hosting, anpassad utveckling eller något annat.',
+            'button' => 'Kontakta oss',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Molnhosting',
+                'message' => 'Lansera UnoPim på fullt hanterad molnhosting — <b>snabba, säkra och kostnadseffektiva planer.</b>',
+                'cta'     => 'Visa planer',
+            ],
+            'upgrade' => [
+                'tag'     => 'Uppdatering tillgänglig',
+                'message' => 'Du kör <b>UnoPim v:version.</b> En nyare version är tillgänglig — uppgradera för de senaste funktionerna &amp; korrigeringarna.',
+                'cta'     => 'Välj uppgraderingstjänst',
+            ],
+
+            'dont-show-again' => 'Visa inte igen',
+            'dismissed'       => 'Inställningen sparad.',
+        ],
+    ],
     'acl' => [
         'addresses'                => 'Adresser',
         'attribute-families'       => 'Attributfamiljer',
@@ -2218,6 +2276,7 @@ return [
         'email-templates'          => 'E-postmallar',
         'events'                   => 'Händelser',
         'groups'                   => 'Grupper',
+        'help'                     => 'Hjälp',
         'import'                   => 'Importera',
         'imports'                  => 'Importer',
         'invoices'                 => 'Fakturor',

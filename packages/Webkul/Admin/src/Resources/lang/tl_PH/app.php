@@ -1958,6 +1958,7 @@ return [
                 'visit-shop'    => 'Bumisita sa Tindahan',
             ],
             'sidebar' => [
+                'help'               => 'Tulong',
                 'attribute-families' => 'Pamilya ng Katangian',
                 'attribute-groups'   => 'Mga Grupo ng Katangian',
                 'attributes'         => 'Mga Katangian',
@@ -2197,7 +2198,66 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Tulong at mga Mapagkukunan',
+            'subtitle'  => 'Lahat ng kailangan mo upang masulit ang UnoPim — hosting, suporta at propesyonal na serbisyo, kasama ang mga extension at dokumentasyon para sa developer.',
+            'services'  => 'Mga Serbisyo',
+            'resources' => 'Mga Mapagkukunan at Dokumentasyon',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Cloud Hosting',
+                'description' => 'Matipid at pinamamahalaang cloud hosting — subukan at ilunsad ang UnoPim sa cloud sa loob ng ilang minuto, ganap na na-optimize at scalable.',
+            ],
+            'support' => [
+                'title'       => 'Suporta at Pagpapanatili',
+                'description' => 'Nakalaang teknikal na suporta at tuluy-tuloy na mga plano sa pagpapanatili upang manatiling secure, napapanahon at maayos na tumatakbo ang iyong PIM.',
+            ],
+            'services' => [
+                'title'       => 'Mga Bayad na Serbisyo',
+                'description' => 'Eksperto na tulong para sa pagsasama ng module, pag-customize, paglilipat ng data, pag-upgrade ng bersyon at espesyal na pag-develop.',
+            ],
+            'extensions' => [
+                'title'       => 'Mga Extension',
+                'description' => 'Mag-browse ng mga opisyal at add-on ng komunidad upang palawakin ang UnoPim gamit ang mga bagong connector, channel at tampok.',
+            ],
+            'user-guide' => [
+                'title'       => 'Gabay ng Gumagamit',
+                'description' => 'Mga gabay para sa developer, tutorial at pinakabagong mga artikulo upang matulungan kang bumuo, mag-configure at manatiling napapanahon.',
+            ],
+            'api-docs' => [
+                'title'       => 'API Docs',
+                'description' => 'Buong sanggunian ng REST API na may mga endpoint, authentication at mga halimbawa upang isama ang UnoPim sa iyong stack.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Kailangan mo pa ng tulong?',
+            'sub'    => 'Makipag-usap sa team ng UnoPim tungkol sa hosting, custom na development o anupaman.',
+            'button' => 'Makipag-ugnayan sa amin',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Cloud Hosting',
+                'message' => 'Ilunsad ang UnoPim sa ganap na pinamamahalaang cloud hosting — <b>mabilis, secure at matipid na mga plano.</b>',
+                'cta'     => 'Tingnan ang mga plano',
+            ],
+            'upgrade' => [
+                'tag'     => 'May available na update',
+                'message' => 'Gumagamit ka ng <b>UnoPim v:version.</b> May mas bagong bersyon na available — mag-upgrade para sa pinakabagong mga tampok &amp; pag-aayos.',
+                'cta'     => 'Piliin ang serbisyo ng pag-upgrade',
+            ],
+
+            'dont-show-again' => 'Huwag nang ipakita muli',
+            'dismissed'       => 'Na-save ang kagustuhan.',
+        ],
+    ],
+
     'acl' => [
+        'help'                     => 'Tulong',
         'addresses'                => 'Mga Address',
         'attribute-families'       => 'Mga Pamilya ng Katangian',
         'attribute-groups'         => 'Mga Grupo ng Katangian',

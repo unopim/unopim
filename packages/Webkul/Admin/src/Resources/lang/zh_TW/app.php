@@ -1988,6 +1988,7 @@ return [
                 'integrations'       => '集成',
                 'prompt'             => '提示',
                 'general-tab'        => '配置',
+                'help'               => '說明',
             ],
         ],
         'datagrid' => [
@@ -2197,6 +2198,63 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => '說明與資源',
+            'subtitle'  => '充分發揮 UnoPim 價值所需的一切——託管、支援與專業服務，以及擴充功能和開發者文件。',
+            'services'  => '服務',
+            'resources' => '資源與文件',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => '雲端託管',
+                'description' => '高性價比的託管式雲端服務——幾分鐘內即可在雲端試用並上線 UnoPim，全面最佳化且可彈性擴充。',
+            ],
+            'support' => [
+                'title'       => '支援與維護',
+                'description' => '專屬技術支援和持續維護方案，讓您的 PIM 始終安全、保持更新並順暢運作。',
+            ],
+            'services' => [
+                'title'       => '付費服務',
+                'description' => '為模組整合、客製化、資料遷移、版本升級以及客製開發提供專家級協助。',
+            ],
+            'extensions' => [
+                'title'       => '擴充功能',
+                'description' => '瀏覽官方及社群外掛，透過全新的連接器、通路和功能擴充 UnoPim。',
+            ],
+            'user-guide' => [
+                'title'       => '使用者指南',
+                'description' => '開發者指南、教學及最新文章，協助您建置、設定並隨時保持更新。',
+            ],
+            'api-docs' => [
+                'title'       => 'API 文件',
+                'description' => '完整的 REST API 參考，包含端點、身分驗證和範例，協助您將 UnoPim 整合至您的技術堆疊中。',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => '仍需協助嗎？',
+            'sub'    => '就託管、客製開發或其他任何問題，與 UnoPim 團隊聯繫。',
+            'button' => '聯絡我們',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => '雲端託管',
+                'message' => '在全託管的雲端主機上啟動 UnoPim——<b>快速、安全且經濟實惠的方案。</b>',
+                'cta'     => '查看方案',
+            ],
+            'upgrade' => [
+                'tag'     => '有可用更新',
+                'message' => '您目前執行的是 <b>UnoPim v:version。</b> 已有新版本推出——立即升級以取得最新功能 &amp; 修正。',
+                'cta'     => '選擇升級服務',
+            ],
+
+            'dont-show-again' => '不再顯示',
+            'dismissed'       => '偏好設定已儲存。',
+        ],
+    ],
     'acl' => [
         'addresses'                => '地址',
         'attribute-families'       => '屬性家庭',
@@ -2255,6 +2313,7 @@ return [
         'view'                     => '查看',
         'execute'                  => '執行',
         'history'                  => '歷史記錄',
+        'help'                     => '說明',
         'restore'                  => '恢復',
         'integrations'             => '集成',
         'api'                      => 'API',

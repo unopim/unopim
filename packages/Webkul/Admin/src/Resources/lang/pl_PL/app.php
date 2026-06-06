@@ -1988,6 +1988,7 @@ return [
                 'integrations'       => 'Integracje',
                 'prompt'             => 'Komunikat',
                 'general-tab'        => 'Konfiguracja',
+                'help'               => 'Pomoc',
             ],
         ],
         'datagrid' => [
@@ -2197,6 +2198,63 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Pomoc i zasoby',
+            'subtitle'  => 'Wszystko, czego potrzebujesz, aby w pełni wykorzystać UnoPim — hosting, wsparcie i usługi profesjonalne, a także rozszerzenia i dokumentacja dla deweloperów.',
+            'services'  => 'Usługi',
+            'resources' => 'Zasoby i dokumentacja',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Hosting w chmurze',
+                'description' => 'Ekonomiczny, zarządzany hosting w chmurze — wypróbuj i uruchom UnoPim w chmurze w kilka minut, w pełni zoptymalizowany i skalowalny.',
+            ],
+            'support' => [
+                'title'       => 'Wsparcie i konserwacja',
+                'description' => 'Dedykowane wsparcie techniczne i plany bieżącej konserwacji, aby Twój PIM był bezpieczny, aktualny i działał płynnie.',
+            ],
+            'services' => [
+                'title'       => 'Usługi płatne',
+                'description' => 'Pomoc ekspertów w zakresie integracji modułów, personalizacji, migracji danych, aktualizacji wersji i rozwoju na zamówienie.',
+            ],
+            'extensions' => [
+                'title'       => 'Rozszerzenia',
+                'description' => 'Przeglądaj oficjalne i społecznościowe dodatki, aby rozszerzyć UnoPim o nowe konektory, kanały i funkcje.',
+            ],
+            'user-guide' => [
+                'title'       => 'Przewodnik użytkownika',
+                'description' => 'Przewodniki dla deweloperów, samouczki i najnowsze artykuły, które pomogą Ci tworzyć, konfigurować i być na bieżąco.',
+            ],
+            'api-docs' => [
+                'title'       => 'Dokumentacja API',
+                'description' => 'Pełna dokumentacja REST API z punktami końcowymi, uwierzytelnianiem i przykładami integracji UnoPim z Twoim stosem technologicznym.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Nadal potrzebujesz pomocy?',
+            'sub'    => 'Porozmawiaj z zespołem UnoPim o hostingu, niestandardowym rozwoju lub czymkolwiek innym.',
+            'button' => 'Skontaktuj się z nami',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Hosting w chmurze',
+                'message' => 'Uruchom UnoPim w pełni zarządzanym hostingu w chmurze — <b>szybkie, bezpieczne i ekonomiczne plany.</b>',
+                'cta'     => 'Zobacz plany',
+            ],
+            'upgrade' => [
+                'tag'     => 'Dostępna aktualizacja',
+                'message' => 'Korzystasz z <b>UnoPim v:version.</b> Dostępna jest nowsza wersja — zaktualizuj, aby uzyskać najnowsze funkcje &amp; poprawki.',
+                'cta'     => 'Wybierz usługę aktualizacji',
+            ],
+
+            'dont-show-again' => 'Nie pokazuj ponownie',
+            'dismissed'       => 'Preferencja zapisana.',
+        ],
+    ],
     'acl' => [
         'addresses'                => 'Adresy',
         'attribute-families'       => 'Rodziny atrybutów',
@@ -2218,6 +2276,7 @@ return [
         'email-templates'          => 'Szablony e-mail',
         'events'                   => 'Wydarzenia',
         'groups'                   => 'Grupy',
+        'help'                     => 'Pomoc',
         'import'                   => 'Importuj',
         'imports'                  => 'Importy',
         'invoices'                 => 'Faktury',
