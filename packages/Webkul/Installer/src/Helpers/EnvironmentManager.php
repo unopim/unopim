@@ -112,9 +112,9 @@ class EnvironmentManager
                 $value = '"'.$value.'"';
             }
 
-            // Update the key in place when present, otherwise append it.
+            // Use a callback so "$" in values (e.g. passwords) is not read as a backreference.
             if (preg_match("/^{$key}=.*/m", $data)) {
-                $data = preg_replace("/^{$key}=.*/m", "{$key}={$value}", $data);
+                $data = preg_replace_callback("/^{$key}=.*/m", fn () => "{$key}={$value}", $data);
             } else {
                 $data = rtrim($data, "\r\n").PHP_EOL."{$key}={$value}".PHP_EOL;
             }
