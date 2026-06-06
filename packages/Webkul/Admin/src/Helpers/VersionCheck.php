@@ -65,6 +65,10 @@ class VersionCheck
 
             $data = json_decode($response, true);
 
+            if (! is_array($data)) {
+                return config('help.version_check.fallback_latest');
+            }
+
             $versions = $data['packages']['unopim/unopim'] ?? [];
 
             $latest = null;

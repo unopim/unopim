@@ -146,7 +146,7 @@
 
             mounted() {
                 if (this.list.length > 1) {
-                    this.timer = setInterval(this.next, 6000);
+                    this.timer = setInterval(() => this.next(), 6000);
                 }
             },
 

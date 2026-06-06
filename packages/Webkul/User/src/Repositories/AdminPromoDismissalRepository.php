@@ -21,17 +21,10 @@ class AdminPromoDismissalRepository extends Repository
      */
     public function dismiss(int $adminId, string $banner, string $version = ''): void
     {
-        $existing = $this->findWhere([
-            'admin_id' => $adminId,
-            'banner'   => $banner,
-            'version'  => $version,
-        ]);
-
-        if ($existing->isNotEmpty()) {
-            return;
-        }
-
-        $this->create([
+        // firstOrCreate keeps this idempotent without the check-then-insert race
+        // that the unique (admin_id, banner, version) index would otherwise turn
+        // into a duplicate-key error under concurrent requests.
+        $this->firstOrCreate([
             'admin_id' => $adminId,
             'banner'   => $banner,
             'version'  => $version,
