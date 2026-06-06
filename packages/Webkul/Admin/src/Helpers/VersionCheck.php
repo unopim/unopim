@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Helpers;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class VersionCheck
 {
@@ -38,32 +39,22 @@ class VersionCheck
     }
 
     /**
-     * Fetch the latest stable version from Packagist via native cURL.
+     * Fetch the latest stable version from Packagist.
      * Fail-silent: returns the configured fallback (may be null) on any error.
      */
     protected function fetchLatest(): ?string
     {
         try {
-            $ch = curl_init(config('help.version_check.packagist'));
+            $response = Http::acceptJson()
+                ->connectTimeout(3)
+                ->timeout(3)
+                ->get(config('help.version_check.packagist'));
 
-            curl_setopt_array($ch, [
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT        => 3,
-                CURLOPT_CONNECTTIMEOUT => 3,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTPHEADER     => ['Accept: application/json'],
-            ]);
-
-            $response = curl_exec($ch);
-            $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-            curl_close($ch);
-
-            if ($response === false || $status < 200 || $status >= 300) {
+            if ($response->failed()) {
                 return config('help.version_check.fallback_latest');
             }
 
-            $data = json_decode($response, true);
+            $data = $response->json();
 
             if (! is_array($data)) {
                 return config('help.version_check.fallback_latest');
