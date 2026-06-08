@@ -398,9 +398,9 @@ test.describe('UnoPim Measurement Feature', () => {
                 await createBtn.click();
                 await adminPage.waitForTimeout(500);
 
-                await adminPage.locator('input[placeholder="Enter family code"]').fill('');
-                await adminPage.locator('input[placeholder="Enter standard unit code"]').fill('std_unit');
-                await adminPage.locator('input[placeholder="e.g. km, m"]').fill('EM');
+                await adminPage.locator('input[name="code"]').first().fill('');
+                await adminPage.locator('input[name="standard_unit_code"]').first().fill('std_unit');
+                await adminPage.locator('input[name="symbol"]').first().fill('EM');
 
                 await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
                 await adminPage.waitForTimeout(1000);
@@ -414,9 +414,9 @@ test.describe('UnoPim Measurement Feature', () => {
                 await createBtn.click();
                 await adminPage.waitForTimeout(500);
 
-                await adminPage.locator('input[placeholder="Enter family code"]').fill(`fam_${Date.now()}`);
-                await adminPage.locator('input[placeholder="Enter standard unit code"]').fill('');
-                await adminPage.locator('input[placeholder="e.g. km, m"]').fill('EM');
+                await adminPage.locator('input[name="code"]').first().fill(`fam_${Date.now()}`);
+                await adminPage.locator('input[name="standard_unit_code"]').first().fill('');
+                await adminPage.locator('input[name="symbol"]').first().fill('EM');
 
                 await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
                 await adminPage.waitForTimeout(1000);
@@ -430,9 +430,9 @@ test.describe('UnoPim Measurement Feature', () => {
                 await createBtn.click();
                 await adminPage.waitForTimeout(500);
 
-                await adminPage.locator('input[placeholder="Enter family code"]').fill(`fam_${Date.now()}`);
-                await adminPage.locator('input[placeholder="Enter standard unit code"]').fill('std_unit');
-                await adminPage.locator('input[placeholder="e.g. km, m"]').fill('');
+                await adminPage.locator('input[name="code"]').first().fill(`fam_${Date.now()}`);
+                await adminPage.locator('input[name="standard_unit_code"]').first().fill('std_unit');
+                await adminPage.locator('input[name="symbol"]').first().fill('');
 
                 await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
                 await adminPage.waitForTimeout(1000);
@@ -446,9 +446,9 @@ test.describe('UnoPim Measurement Feature', () => {
                 await createBtn.click();
                 await adminPage.waitForTimeout(500);
 
-                await adminPage.locator('input[placeholder="Enter family code"]').fill('');
-                await adminPage.locator('input[placeholder="Enter standard unit code"]').fill('');
-                await adminPage.locator('input[placeholder="e.g. km, m"]').fill('');
+                await adminPage.locator('input[name="code"]').first().fill('');
+                await adminPage.locator('input[name="standard_unit_code"]').first().fill('');
+                await adminPage.locator('input[name="symbol"]').first().fill('');
 
                 await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
                 await adminPage.waitForTimeout(1000);
@@ -469,9 +469,9 @@ test.describe('UnoPim Measurement Feature', () => {
                 await createBtn.click();
                 await adminPage.waitForTimeout(500);
 
-                await adminPage.locator('input[placeholder="Enter family code"]').fill(familyCode);
-                await adminPage.locator('input[placeholder="Enter standard unit code"]').fill('unit2');
-                await adminPage.locator('input[placeholder="e.g. km, m"]').fill('U2');
+                await adminPage.locator('input[name="code"]').first().fill(familyCode);
+                await adminPage.locator('input[name="standard_unit_code"]').first().fill('unit2');
+                await adminPage.locator('input[name="symbol"]').first().fill('U2');
 
                 await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
                 await adminPage.waitForTimeout(1500);
@@ -485,9 +485,9 @@ test.describe('UnoPim Measurement Feature', () => {
                 await createBtn.click();
                 await adminPage.waitForTimeout(500);
 
-                await adminPage.locator('input[placeholder="Enter family code"]').fill('fam@#$%^&');
-                await adminPage.locator('input[placeholder="Enter standard unit code"]').fill('std_unit');
-                await adminPage.locator('input[placeholder="e.g. km, m"]').fill('EM');
+                await adminPage.locator('input[name="code"]').first().fill('fam@#$%^&');
+                await adminPage.locator('input[name="standard_unit_code"]').first().fill('std_unit');
+                await adminPage.locator('input[name="symbol"]').first().fill('EM');
 
                 await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
                 await adminPage.waitForTimeout(1000);
@@ -584,9 +584,9 @@ test.describe('UnoPim Measurement Feature', () => {
                 await createBtn.click();
                 await adminPage.waitForTimeout(500);
 
-                await adminPage.locator('input[placeholder="Enter family code"]').fill(longCode);
-                await adminPage.locator('input[placeholder="Enter standard unit code"]').fill('std_unit');
-                await adminPage.locator('input[placeholder="e.g. km, m"]').fill('EM');
+                await adminPage.locator('input[name="code"]').first().fill(longCode);
+                await adminPage.locator('input[name="standard_unit_code"]').first().fill('std_unit');
+                await adminPage.locator('input[name="symbol"]').first().fill('EM');
 
                 await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
                 await adminPage.waitForTimeout(1500);
@@ -605,7 +605,7 @@ test.describe('UnoPim Measurement Feature', () => {
             await createMeasurementFamily(adminPage, familyCode, 'std_unit', 'UF');
             await adminPage.waitForTimeout(1000);
 
-            const codeInput = adminPage.locator('input[placeholder="Enter family code"], input[name*="code"]').first();
+            const codeInput = adminPage.locator('input[name="code"], input[name*="code"]').first();
             if (await codeInput.isVisible()) {
                 const currentValue = await codeInput.inputValue();
                 expect(currentValue).toBeTruthy();

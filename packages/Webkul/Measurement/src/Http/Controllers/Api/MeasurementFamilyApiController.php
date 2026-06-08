@@ -14,6 +14,11 @@ class MeasurementFamilyApiController extends Controller
         protected MeasurementFamilyRepository $repository
     ) {}
 
+    /**
+     * List all measurement families with their labels and units.
+     *
+     * @return JsonResponse
+     */
     public function index()
     {
         $families = $this->repository->all();
@@ -29,6 +34,32 @@ class MeasurementFamilyApiController extends Controller
             'success' => true,
             'count'   => $data->count(),
             'data'    => $data,
+        ]);
+    }
+
+    /**
+     * Show a single measurement family with its labels and units.
+     *
+     * @param  int  $id
+     * @return JsonResponse
+     */
+    public function show($id)
+    {
+        $family = $this->repository->find($id);
+
+        if (! $family) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Measurement family not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => array_merge($family->toArray(), [
+                'labels' => $family->labels,
+                'units'  => $family->units,
+            ]),
         ]);
     }
 
@@ -53,13 +84,19 @@ class MeasurementFamilyApiController extends Controller
             }
         }
 
-        $family = $this->repository->create($data);
+        try {
+            $this->repository->create($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Measurement Family saved successfully',
-
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Measurement Family saved successfully',
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -79,12 +116,21 @@ class MeasurementFamilyApiController extends Controller
             ], 404);
         }
 
-        $this->repository->update($request->all(), $id);
+        $request->validate(MeasurementFamilyValidator::apiUpdateRules($id), MeasurementFamilyValidator::messages());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Measurement family updated successfully',
-        ]);
+        try {
+            $this->repository->update($request->all(), $id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Measurement family updated successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -95,11 +141,27 @@ class MeasurementFamilyApiController extends Controller
      */
     public function destroy($id)
     {
-        $this->repository->delete($id);
+        $family = $this->repository->find($id);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Measurement family deleted successfully',
-        ]);
+        if (! $family) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Measurement family not found',
+            ], 404);
+        }
+
+        try {
+            $this->repository->delete($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Measurement family deleted successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

@@ -36,7 +36,7 @@ class MeasurementFamilyValidator
     public static function apiStoreRules(): array
     {
         return [
-            'code'           => ['required', 'string', 'max:191', self::CODE_REGEX],
+            'code'           => ['required', 'string', 'max:191', self::CODE_REGEX, 'unique:measurement_families,code'],
             'name'           => ['required', 'string', 'max:191', self::LABEL_REGEX],
             'labels'         => ['required', 'array'],
             'labels.en_US'   => ['required', 'string'],
@@ -45,6 +45,26 @@ class MeasurementFamilyValidator
             'units'          => ['required', 'array', 'min:1'],
             'units.*.code'   => ['required', 'string', 'max:191', self::CODE_REGEX],
             'units.*.labels' => ['required', 'array'],
+            'units.*.symbol' => ['nullable', 'string', 'max:50'],
+            'symbol'         => ['nullable', 'string', 'max:50'],
+        ];
+    }
+
+    /**
+     * Partial-update rules for the API. Every field is optional, but when present
+     * it must still be valid; `code` stays unique while ignoring the current row.
+     */
+    public static function apiUpdateRules($id): array
+    {
+        return [
+            'code'           => ['sometimes', 'required', 'string', 'max:191', self::CODE_REGEX, 'unique:measurement_families,code,'.$id],
+            'name'           => ['sometimes', 'required', 'string', 'max:191', self::LABEL_REGEX],
+            'standard_unit'  => ['sometimes', 'required', 'string', 'max:191', self::CODE_REGEX],
+            'labels'         => ['sometimes', 'array'],
+            'labels.*'       => ['nullable', 'string', self::LABEL_REGEX],
+            'units'          => ['sometimes', 'array', 'min:1'],
+            'units.*.code'   => ['required_with:units', 'string', 'max:191', self::CODE_REGEX],
+            'units.*.labels' => ['sometimes', 'array'],
             'units.*.symbol' => ['nullable', 'string', 'max:50'],
             'symbol'         => ['nullable', 'string', 'max:50'],
         ];

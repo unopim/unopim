@@ -33,6 +33,39 @@ class MeasurementUnitApiController extends Controller
     }
 
     /**
+     * Show a single unit of the given measurement family (API).
+     *
+     * @param  int  $familyId
+     * @param  string  $code
+     * @return JsonResponse
+     */
+    public function show($familyId, $code)
+    {
+        $family = $this->repository->find($familyId);
+
+        if (! $family) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Measurement family not found',
+            ], 404);
+        }
+
+        $unit = collect($family->units ?? [])->firstWhere('code', $code);
+
+        if (! $unit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unit not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => $unit,
+        ]);
+    }
+
+    /**
      * Store a new unit for the given measurement family (API).
      *
      * @param  int  $familyId
@@ -85,12 +118,19 @@ class MeasurementUnitApiController extends Controller
             'convert_from_standard' => array_slice($conversionRows, 0, 5),
         ];
 
-        $this->repository->update(['units' => $units], $familyId);
+        try {
+            $this->repository->update(['units' => $units], $familyId);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Unit created successfully',
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Unit created successfully',
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -155,12 +195,19 @@ class MeasurementUnitApiController extends Controller
             ], 404);
         }
 
-        $this->repository->update(['units' => $units], $familyId);
+        try {
+            $this->repository->update(['units' => $units], $familyId);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Unit updated successfully',
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Unit updated successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -183,15 +230,36 @@ class MeasurementUnitApiController extends Controller
 
         $units = $family->units ?? [];
 
+        if (! collect($units)->contains('code', $code)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unit not found',
+            ], 404);
+        }
+
+        if ($code === $family->standard_unit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The standard unit cannot be deleted',
+            ], 422);
+        }
+
         $filtered = array_filter($units, fn ($u) => $u['code'] !== $code);
 
-        $this->repository->update([
-            'units' => array_values($filtered),
-        ], $familyId);
+        try {
+            $this->repository->update([
+                'units' => array_values($filtered),
+            ], $familyId);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Unit deleted successfully',
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Unit deleted successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

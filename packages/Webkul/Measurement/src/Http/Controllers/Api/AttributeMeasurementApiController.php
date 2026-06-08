@@ -45,6 +45,29 @@ class AttributeMeasurementApiController extends Controller
     }
 
     /**
+     * Get the measurement configuration saved for an attribute.
+     *
+     * @param  int|string  $attributeId
+     * @return JsonResponse
+     */
+    public function show($attributeId)
+    {
+        $config = $this->attributeRepository->getByAttributeId($attributeId);
+
+        if (! $config) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No measurement configuration found for this attribute',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => $config,
+        ]);
+    }
+
+    /**
      * Store attribute measurement configuration.
      *
      * @param  int|string  $attributeId
@@ -52,15 +75,7 @@ class AttributeMeasurementApiController extends Controller
      */
     public function store($attributeId)
     {
-        $this->attributeRepository->saveAttributeMeasurement($attributeId, [
-            'family_code' => request('family_code'),
-            'unit_code'   => request('unit_code'),
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Attribute measurement stored successfully',
-        ]);
+        return $this->save($attributeId, 'stored');
     }
 
     /**
@@ -71,14 +86,54 @@ class AttributeMeasurementApiController extends Controller
      */
     public function update($attributeId)
     {
-        $this->attributeRepository->saveAttributeMeasurement($attributeId, [
-            'family_code' => request('family_code'),
-            'unit_code'   => request('unit_code'),
+        return $this->save($attributeId, 'updated');
+    }
+
+    /**
+     * Validate and persist the attribute measurement configuration.
+     *
+     * @param  int|string  $attributeId
+     * @param  string  $action
+     * @return JsonResponse
+     */
+    protected function save($attributeId, $action)
+    {
+        $data = request()->validate([
+            'family_code' => ['required', 'string'],
+            'unit_code'   => ['required', 'string'],
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Attribute measurement updated successfully',
-        ]);
+        $family = $this->familyRepository->findOneWhere(['code' => $data['family_code']]);
+
+        if (! $family) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Measurement family not found',
+            ], 404);
+        }
+
+        if (! collect($family->units ?? [])->contains('code', $data['unit_code'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unit code does not belong to the given measurement family',
+            ], 422);
+        }
+
+        try {
+            $this->attributeRepository->saveAttributeMeasurement($attributeId, [
+                'family_code' => $data['family_code'],
+                'unit_code'   => $data['unit_code'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Attribute measurement {$action} successfully",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
