@@ -1953,6 +1953,7 @@ return [
                 'attribute-groups'   => 'Grupos de atributos',
                 'attributes'         => 'Atributos',
                 'history'            => 'Historia',
+                'help'               => 'Ayuda',
                 'edit-section'       => 'Datos',
                 'general'            => 'General',
                 'catalog'            => 'Catalogar',
@@ -2191,8 +2192,66 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Ayuda y recursos',
+            'subtitle'  => 'Todo lo que necesitas para sacar el máximo partido a UnoPim: alojamiento, soporte y servicios profesionales, además de extensiones y documentación para desarrolladores.',
+            'services'  => 'Servicios',
+            'resources' => 'Recursos y documentación',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Alojamiento en la nube',
+                'description' => 'Alojamiento en la nube gestionado y rentable: prueba y pon en marcha UnoPim en la nube en minutos, totalmente optimizado y escalable.',
+            ],
+            'support' => [
+                'title'       => 'Soporte y mantenimiento',
+                'description' => 'Soporte técnico dedicado y planes de mantenimiento continuo para mantener tu PIM seguro, actualizado y funcionando sin problemas.',
+            ],
+            'services' => [
+                'title'       => 'Servicios de pago',
+                'description' => 'Ayuda experta para la integración de módulos, la personalización, la migración de datos, las actualizaciones de versión y el desarrollo a medida.',
+            ],
+            'extensions' => [
+                'title'       => 'Extensiones',
+                'description' => 'Explora los complementos oficiales y de la comunidad para ampliar UnoPim con nuevos conectores, canales y funciones.',
+            ],
+            'user-guide' => [
+                'title'       => 'Guía del usuario',
+                'description' => 'Guías para desarrolladores, tutoriales y los últimos artículos para ayudarte a crear, configurar y mantenerte al día.',
+            ],
+            'api-docs' => [
+                'title'       => 'Documentación de la API',
+                'description' => 'Referencia completa de la API REST con endpoints, autenticación y ejemplos para integrar UnoPim con tu stack.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => '¿Todavía necesitas ayuda?',
+            'sub'    => 'Habla con el equipo de UnoPim sobre alojamiento, desarrollo personalizado o cualquier otra cosa.',
+            'button' => 'Contáctanos',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Alojamiento en la nube',
+                'message' => 'Lanza UnoPim en un alojamiento en la nube totalmente gestionado — <b>planes rápidos, seguros y económicos.</b>',
+                'cta'     => 'Ver planes',
+            ],
+            'upgrade' => [
+                'tag'     => 'Actualización disponible',
+                'message' => 'Estás utilizando <b>UnoPim v:version.</b> Hay una versión más reciente disponible — actualiza para obtener las últimas funciones &amp; correcciones.',
+                'cta'     => 'Elegir servicio de actualización',
+            ],
+
+            'dont-show-again' => 'No volver a mostrar',
+            'dismissed'       => 'Preferencia guardada.',
+        ],
+    ],
     'acl' => [
         'addresses'                => 'Direcciones',
+        'help'                     => 'Ayuda',
         'attribute-families'       => 'Familias de atributos',
         'attribute-groups'         => 'Grupos de atributos',
         'attributes'               => 'Atributos',

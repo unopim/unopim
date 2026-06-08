@@ -6,8 +6,8 @@
       "_vue-DTtfvt6A.js"
     ]
   },
-  "_vendor-DWZvXXZS.js": {
-    "file": "assets/vendor-DWZvXXZS.js",
+  "_vendor-pO_w9VZ8.js": {
+    "file": "assets/vendor-pO_w9VZ8.js",
     "name": "vendor"
   },
   "_vue-DTtfvt6A.js": {
@@ -15,7 +15,7 @@
     "name": "vue"
   },
   "src/Resources/assets/css/app.css": {
-    "file": "assets/app-CSaMsjvf.css",
+    "file": "assets/app-DY907O_9.css",
     "src": "src/Resources/assets/css/app.css",
     "isEntry": true
   },
@@ -32,7 +32,7 @@
     "src": "src/Resources/assets/images/error.svg"
   },
   "src/Resources/assets/images/favicon.svg": {
-    "file": "assets/favicon-DHu1xHDR.svg",
+    "file": "assets/favicon-BLnu31-p.svg",
     "src": "src/Resources/assets/images/favicon.svg"
   },
   "src/Resources/assets/images/icon-add-product.svg": {
@@ -108,17 +108,17 @@
     "src": "src/Resources/assets/images/spinner.svg"
   },
   "src/Resources/assets/images/square-logo.svg": {
-    "file": "assets/favicon-DHu1xHDR.svg",
+    "file": "assets/favicon-BLnu31-p.svg",
     "src": "src/Resources/assets/images/favicon.svg"
   },
   "src/Resources/assets/js/app.js": {
-    "file": "assets/app-BKZ8tkMb.js",
+    "file": "assets/app-CyJAuqfJ.js",
     "name": "app",
     "src": "src/Resources/assets/js/app.js",
     "isEntry": true,
     "imports": [
       "_vue-DTtfvt6A.js",
-      "_vendor-DWZvXXZS.js",
+      "_vendor-pO_w9VZ8.js",
       "_veeValidate-B6Pyz0CZ.js"
     ],
     "css": [

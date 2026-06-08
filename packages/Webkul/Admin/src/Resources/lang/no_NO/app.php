@@ -1952,6 +1952,7 @@ return [
                 'attribute-families' => 'Egenskapsfamilier',
                 'attribute-groups'   => 'Egenskapsgrupper',
                 'attributes'         => 'Egenskaper',
+                'help'               => 'Hjelp',
                 'history'            => 'Historie',
                 'edit-section'       => 'Data',
                 'general'            => 'Generelt',
@@ -2191,6 +2192,64 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Hjelp & ressurser',
+            'subtitle'  => 'Alt du trenger for å få mest mulig ut av UnoPim — hosting, støtte og profesjonelle tjenester, samt utvidelser og utviklerdokumentasjon.',
+            'services'  => 'Tjenester',
+            'resources' => 'Ressurser & dokumentasjon',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Skyhosting',
+                'description' => 'Kostnadseffektiv, administrert skyhosting — prøv og lanser UnoPim i skyen på få minutter, fullt optimalisert og skalerbart.',
+            ],
+            'support' => [
+                'title'       => 'Støtte & vedlikehold',
+                'description' => 'Dedikert teknisk støtte og løpende vedlikeholdsplaner for å holde PIM-en din sikker, oppdatert og i jevn drift.',
+            ],
+            'services' => [
+                'title'       => 'Betalte tjenester',
+                'description' => 'Eksperthjelp til modulintegrasjon, tilpasning, datamigrering, versjonsoppgraderinger og skreddersydd utvikling.',
+            ],
+            'extensions' => [
+                'title'       => 'Utvidelser',
+                'description' => 'Bla gjennom offisielle og fellesskapets tillegg for å utvide UnoPim med nye koblinger, kanaler og funksjoner.',
+            ],
+            'user-guide' => [
+                'title'       => 'Brukerveiledning',
+                'description' => 'Utviklerveiledninger, opplæringer og de nyeste artiklene som hjelper deg å bygge, konfigurere og holde deg oppdatert.',
+            ],
+            'api-docs' => [
+                'title'       => 'API-dokumentasjon',
+                'description' => 'Fullstendig REST API-referanse med endepunkter, autentisering og eksempler for å integrere UnoPim med din stakk.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Trenger du fortsatt hjelp?',
+            'sub'    => 'Snakk med UnoPim-teamet om hosting, skreddersydd utvikling eller noe annet.',
+            'button' => 'Kontakt oss',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Skyhosting',
+                'message' => 'Lanser UnoPim på fullt administrert skyhosting — <b>raske, sikre og rimelige planer.</b>',
+                'cta'     => 'Se planer',
+            ],
+            'upgrade' => [
+                'tag'     => 'Oppdatering tilgjengelig',
+                'message' => 'Du kjører <b>UnoPim v:version.</b> En nyere versjon er tilgjengelig — oppgrader for de nyeste funksjonene &amp; rettelsene.',
+                'cta'     => 'Velg oppgraderingstjeneste',
+            ],
+
+            'dont-show-again' => 'Ikke vis igjen',
+            'dismissed'       => 'Innstilling lagret.',
+        ],
+    ],
+
     'acl' => [
         'addresses'                => 'Adresser',
         'attribute-families'       => 'Attributfamilier',
@@ -2212,6 +2271,7 @@ return [
         'email-templates'          => 'E-postmaler',
         'events'                   => 'Hendelser',
         'groups'                   => 'Grupper',
+        'help'                     => 'Hjelp',
         'import'                   => 'Importer',
         'imports'                  => 'Importer',
         'invoices'                 => 'Fakturaer',

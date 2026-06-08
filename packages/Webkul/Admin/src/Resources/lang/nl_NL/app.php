@@ -1952,6 +1952,7 @@ return [
                 'attribute-families' => 'Attribuutsets',
                 'attribute-groups'   => 'Attribuutgroepen',
                 'attributes'         => 'Attributen',
+                'help'               => 'Help',
                 'history'            => 'Geschiedenis',
                 'edit-section'       => 'Gegevens',
                 'general'            => 'Algemeen',
@@ -2191,6 +2192,64 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Help & bronnen',
+            'subtitle'  => 'Alles wat u nodig hebt om het meeste uit UnoPim te halen — hosting, ondersteuning en professionele diensten, plus extensies en ontwikkelaarsdocumentatie.',
+            'services'  => 'Diensten',
+            'resources' => 'Bronnen & documentatie',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Cloudhosting',
+                'description' => 'Voordelige, beheerde cloudhosting — probeer en lanceer UnoPim binnen enkele minuten in de cloud, volledig geoptimaliseerd en schaalbaar.',
+            ],
+            'support' => [
+                'title'       => 'Ondersteuning & onderhoud',
+                'description' => 'Toegewijde technische ondersteuning en doorlopende onderhoudsplannen om uw PIM veilig, up-to-date en soepel draaiend te houden.',
+            ],
+            'services' => [
+                'title'       => 'Betaalde diensten',
+                'description' => 'Deskundige hulp bij module-integratie, aanpassing, datamigratie, versie-upgrades en maatwerkontwikkeling.',
+            ],
+            'extensions' => [
+                'title'       => 'Extensies',
+                'description' => 'Blader door officiële en community-add-ons om UnoPim uit te breiden met nieuwe connectoren, kanalen en functies.',
+            ],
+            'user-guide' => [
+                'title'       => 'Gebruikershandleiding',
+                'description' => 'Ontwikkelaarsgidsen, tutorials en de nieuwste artikelen om u te helpen bouwen, configureren en up-to-date te blijven.',
+            ],
+            'api-docs' => [
+                'title'       => 'API-documentatie',
+                'description' => 'Volledige REST API-referentie met endpoints, authenticatie en voorbeelden om UnoPim met uw stack te integreren.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Nog hulp nodig?',
+            'sub'    => 'Praat met het UnoPim-team over hosting, maatwerkontwikkeling of iets anders.',
+            'button' => 'Neem contact op',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Cloudhosting',
+                'message' => 'Lanceer UnoPim op volledig beheerde cloudhosting — <b>snelle, veilige en voordelige abonnementen.</b>',
+                'cta'     => 'Bekijk abonnementen',
+            ],
+            'upgrade' => [
+                'tag'     => 'Update beschikbaar',
+                'message' => 'U gebruikt <b>UnoPim v:version.</b> Er is een nieuwere versie beschikbaar — upgrade voor de nieuwste functies &amp; verbeteringen.',
+                'cta'     => 'Kies upgradeservice',
+            ],
+
+            'dont-show-again' => 'Niet meer tonen',
+            'dismissed'       => 'Voorkeur opgeslagen.',
+        ],
+    ],
+
     'acl' => [
         'addresses'                => 'Adressen',
         'attribute-families'       => 'Attribuutsets',
@@ -2212,6 +2271,7 @@ return [
         'email-templates'          => 'E-mailsjablonen',
         'events'                   => 'Evenementen',
         'groups'                   => 'Groepen',
+        'help'                     => 'Help',
         'import'                   => 'Importeren',
         'imports'                  => 'Importeren',
         'invoices'                 => 'Facturen',
