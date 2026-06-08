@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Позначити як стандартну одиницю',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Одиниця ":unit" не є дійсною одиницею для атрибута вимірювання ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Сім’ю вимірювань успішно створено.',

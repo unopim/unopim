@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Стандарт нэгжээр тэмдэглэх',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => '":unit" нэгж нь ":attribute" хэмжих шинж чанарын хувьд хүчинтэй нэгж биш байна.',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Хэмжилтийн бүлэг амжилттай үүсгэгдлээ.',

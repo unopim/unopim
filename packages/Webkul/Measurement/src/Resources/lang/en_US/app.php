@@ -60,6 +60,14 @@ return [
         'is_standard'     => 'Mark Standard Unit',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'The unit ":unit" is not a valid unit for the ":attribute" measurement attribute.',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Measurement family created successfully.',

@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Markera som standardenhet',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Enheten ":unit" är inte en giltig enhet för mätattributet ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Mätfamiljen har skapats framgångsrikt.',

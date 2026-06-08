@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'تحديد كوحدة قياسية',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'الوحدة ":unit" ليست وحدة صالحة لسمة القياس ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'تم إنشاء عائلة القياس بنجاح.',

@@ -64,8 +64,8 @@ class Importer extends CoreImporter
                 }
 
                 $rules[$attributeCode.'_value'] = $this->getMeasurementValueValidationRules($validations);
-                $rules[$attributeCode.'(unit)'] = $this->getMeasurementUnitValidationRules($attributeCode);
-                $rules[$attributeCode.'_unit'] = $this->getMeasurementUnitValidationRules($attributeCode);
+                $rules[$attributeCode.'(unit)'] = $this->getMeasurementUnitValidationRules($attributeCode, $attribute);
+                $rules[$attributeCode.'_unit'] = $this->getMeasurementUnitValidationRules($attributeCode, $attribute);
             }
         }
 
@@ -90,10 +90,28 @@ class Importer extends CoreImporter
 
     /**
      * Returns validation rules for measurement unit columns.
+     *
+     * The closure rejects any unit that does not belong to the attribute's
+     * measurement family, so an unknown/foreign unit fails the row with a message.
      */
-    protected function getMeasurementUnitValidationRules(string $attributeCode): array
+    protected function getMeasurementUnitValidationRules(string $attributeCode, $attribute): array
     {
-        return ['nullable', "required_with:{$attributeCode}_value"];
+        return [
+            'nullable',
+            "required_with:{$attributeCode}_value",
+            function ($column, $value, $fail) use ($attribute) {
+                if ($value === null || $value === '') {
+                    return;
+                }
+
+                if (! app(MeasurementHelper::class)->isValidUnit($value, $attribute)) {
+                    $fail(trans('measurement::app.importers.products.validation.invalid-unit', [
+                        'unit'      => $value,
+                        'attribute' => $attribute->code,
+                    ]));
+                }
+            },
+        ];
     }
 
     /**

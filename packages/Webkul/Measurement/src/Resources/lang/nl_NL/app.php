@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Markeer als standaardeenheid',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'De eenheid ":unit" is geen geldige eenheid voor het meetkenmerk ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Meetfamilie is succesvol aangemaakt.',

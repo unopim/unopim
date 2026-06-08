@@ -59,6 +59,14 @@ return [
         'is_standard'   => '标记为标准单位',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => '单位 ":unit" 不是测量属性 ":attribute" 的有效单位。',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => '测量系列已成功创建。',

@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Marchează ca Unitate Standard',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Unitatea ":unit" nu este o unitate validă pentru atributul de măsură ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Familia de măsurători a fost creată cu succes.',

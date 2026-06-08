@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Standart Birim Olarak İşaretle',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => '":unit" birimi, ":attribute" ölçüm özelliği için geçerli bir birim değil.',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Ölçüm ailesi başarıyla oluşturuldu.',

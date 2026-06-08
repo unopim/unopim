@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Als Standardeinheit markieren',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Die Einheit ":unit" ist keine gültige Einheit für das Maßattribut ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Messfamilie wurde erfolgreich erstellt.',

@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Marcar como unidat estandar',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'The unit ":unit" is not a valid unit for the ":attribute" measurement attribute.',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Measurement family created successfully.',

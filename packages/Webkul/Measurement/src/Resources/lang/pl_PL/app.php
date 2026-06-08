@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Oznacz jako jednostkę standardową',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Jednostka ":unit" nie jest prawidłową jednostką dla atrybutu pomiaru ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Rodzina pomiarów została pomyślnie utworzona.',

@@ -105,55 +105,6 @@ class ProductObserver
      *
      * @return void
      */
-    // protected function processScope(array &$scopedValues)
-    // {
-    //     foreach ($scopedValues as $attributeCode => $value) {
-
-    //         $attribute = app(AttributeRepository::class)
-    //             ->findOneByField('code', $attributeCode);
-
-    //         if ($attribute && $attribute->type === 'measurement' && is_array($value)) {
-
-    //             // Skip if already in full format (has amount key from helper)
-    //             if (isset($value['amount'])) {
-    //                 continue;
-    //             }
-
-    //             // Skip if already in locale/channel format (has <all_channels> structure)
-    //             if (isset($value['<all_channels>'])) {
-    //                 continue;
-    //             }
-
-    //             if (! isset($value['value']) || $value['value'] === '' || $value['value'] === null) {
-    //                 unset($scopedValues[$attributeCode]);
-
-    //                 continue;
-    //             }
-
-    //             $measurement = $this->attributeMeasurementRepository->getByAttributeId($attribute->id);
-
-    //             if ($measurement && $measurement->family) {
-    //                 $family = $measurement->family;
-    //                 $baseUnit = $family->standard_unit;
-
-    //                 $baseData = $this->calculateBaseData(
-    //                     $value['value'],
-    //                     $value['unit'] ?? null,
-    //                     $family
-    //                 );
-
-    //                 $scopedValues[$attributeCode] = [
-    //                     'unit'      => $value['unit'] ?? null,
-    //                     'amount'    => number_format((float) $value['value'], 4, '.', ''),
-    //                     'family'    => $family->code,
-    //                     'base_data' => number_format((float) $baseData, 6, '.', ''),
-    //                     'base_unit' => $baseUnit,
-    //                 ];
-    //             }
-    //         }
-    //     }
-    // }
-
     protected function processScope(array &$scopedValues)
     {
         // 1. Preload all attributes in one go
@@ -195,7 +146,10 @@ class ProductObserver
 
                 $family = $measurement->family;
 
-                $baseData = $this->calculateBaseData(
+                // Reuse the shared helper so the unit -> base conversion is done in
+                // ONE place (reverse + invert of convert_from_standard). This avoids
+                // the previous forward-direction bug that stored wrong base_data.
+                $baseData = $this->helper->calculateBaseValue(
                     $value['value'],
                     $value['unit'] ?? null,
                     $family
@@ -210,58 +164,5 @@ class ProductObserver
                 ];
             }
         }
-    }
-
-    /**
-     * Convert measurement value into base unit value.
-     *
-     * @param  mixed  $value
-     * @param  string|null  $unit
-     * @param  mixed  $family
-     * @return float|int
-     */
-    protected function calculateBaseData($value, $unit, $family)
-    {
-        if (! $unit) {
-            return $value;
-        }
-
-        $units = collect($family->units);
-        $unitData = $units->firstWhere('code', $unit);
-
-        if (! $unitData) {
-            return $value;
-        }
-
-        $conversions = $unitData['convert_from_standard'] ?? [];
-        $baseValue = (float) $value;
-
-        foreach ($conversions as $conversion) {
-            $op = $conversion['operator'] ?? null;
-            $val = $conversion['value'] ?? null;
-
-            if (! is_numeric($val)) {
-                continue;
-            }
-
-            switch ($op) {
-                case 'mul':
-                    $baseValue *= $val;
-                    break;
-                case 'div':
-                    if ($val != 0) {
-                        $baseValue /= $val;
-                    }
-                    break;
-                case 'add':
-                    $baseValue += $val;
-                    break;
-                case 'sub':
-                    $baseValue -= $val;
-                    break;
-            }
-        }
-
-        return $baseValue;
     }
 }

@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Označi kao standardnu jedinicu',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Jedinica ":unit" nije valjana jedinica za mjerni atribut ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Obitelj mjernih jedinica uspješno je kreirana.',

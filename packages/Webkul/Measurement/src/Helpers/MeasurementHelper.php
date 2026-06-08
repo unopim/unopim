@@ -109,6 +109,27 @@ class MeasurementHelper
         return $this->getLabelFromUnit($unit, $locale) ?? $unitCode;
     }
 
+    /**
+     * Check whether the given unit value (code, symbol or label) resolves to a
+     * real unit belonging to the attribute's measurement family.
+     *
+     * @param  mixed  $unitValue
+     * @param  mixed  $attribute
+     */
+    public function isValidUnit($unitValue, $attribute, ?string $locale = null): bool
+    {
+        $attributeMeasurement = $this->attributeMeasurementRepository->getByAttributeId($attribute->id);
+
+        if (! $attributeMeasurement || ! $attributeMeasurement->family || $unitValue === null || $unitValue === '') {
+            return false;
+        }
+
+        $resolved = $this->resolveUnitCode($unitValue, $attribute, $locale);
+
+        return collect($attributeMeasurement->family->units ?? [])
+            ->contains(fn ($unit) => ($unit['code'] ?? null) === $resolved);
+    }
+
     public function resolveUnitCode($unitValue, $attribute, ?string $locale = null)
     {
         $attributeMeasurement = $this->attributeMeasurementRepository->getByAttributeId($attribute->id);

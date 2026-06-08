@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Tandai sebagai Unit Standar',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Satuan ":unit" bukan satuan yang valid untuk atribut pengukuran ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Keluarga pengukuran berhasil dibuat.',

@@ -59,6 +59,14 @@ return [
         'is_standard'   => '표준 단위로 표시',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => '":unit" 단위는 ":attribute" 측정 속성에 유효한 단위가 아닙니다.',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => '측정 패밀리가 성공적으로 생성되었습니다.',

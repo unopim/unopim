@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Đánh dấu là đơn vị chuẩn',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Đơn vị ":unit" không phải là đơn vị hợp lệ cho thuộc tính đo lường ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Nhóm đo lường đã được tạo thành công.',

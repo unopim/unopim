@@ -59,6 +59,14 @@ return [
         'is_standard'   => '標準単位としてマーク',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => '単位「:unit」は測定属性「:attribute」の有効な単位ではありません。',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => '測定ファミリーが正常に作成されました。',

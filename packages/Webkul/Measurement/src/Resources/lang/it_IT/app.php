@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Contrassegna come unità standard',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'L\'unità ":unit" non è un\'unità valida per l\'attributo di misura ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'La famiglia di misurazione è stata creata con successo.',

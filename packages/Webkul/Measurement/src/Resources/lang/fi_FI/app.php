@@ -59,6 +59,14 @@ return [
         'is_standard'   => 'Merkitse vakioyksiköksi',
     ],
 
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Yksikkö ":unit" ei ole kelvollinen yksikkö mittausmääritteelle ":attribute".',
+            ],
+        ],
+    ],
+
     'messages' => [
         'family' => [
             'created'      => 'Mittausperhe luotiin onnistuneesti.',
