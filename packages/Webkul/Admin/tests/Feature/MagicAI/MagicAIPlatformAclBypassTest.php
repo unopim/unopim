@@ -3,7 +3,7 @@
 use Webkul\MagicAI\Models\MagicAIPlatform;
 
 /**
- * Regression coverage for the MagicAI platform authorization bypass (audit finding #4).
+ * Regression coverage for the MagicAI platform authorization bypass.
  *
  * `admin.magic_ai.platform.update` (PUT) and `admin.magic_ai.platform.set_default`
  * (POST) were registered but absent from AiAgent/Config/acl.php, so the fail-open
