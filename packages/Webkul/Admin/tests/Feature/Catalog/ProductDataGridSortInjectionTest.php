@@ -3,13 +3,6 @@
 use Illuminate\Support\Facades\DB;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 
-/**
- * Regression coverage for the ORDER BY SQL injection in the product grid.
- *
- * `processRequestedSorting()` concatenated the request-supplied sort direction straight
- * into orderByRaw(). The fix allowlists the direction to asc/desc, so a malicious
- * `sort[order]` can never inject SQL into the ORDER BY clause.
- */
 function sortedProductSql(array $sort): string
 {
     $grid = app(ProductDataGrid::class);

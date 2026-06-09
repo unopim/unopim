@@ -1,11 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
 
-/**
- * Security regression (audit finding #5): ORDER BY SQL injection via sort[order]
- * in the Product DataGrid. After the fix, a malicious sort direction is coerced to
- * a safe keyword, so the grid endpoint answers 200 with valid JSON (no 500 SQL
- * error, no injection).
- */
 test.describe('Product grid sort - SQL injection hardening', () => {
   const gridRequest = (adminPage, order) =>
     adminPage.request.get(
