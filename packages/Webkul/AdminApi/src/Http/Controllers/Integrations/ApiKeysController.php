@@ -156,21 +156,16 @@ class ApiKeysController extends Controller
     {
         $admin = auth()->guard('admin')->user();
 
-        // A full-access admin (super admin) may grant any authority.
         if ($admin?->role?->permission_type === 'all') {
             return;
         }
 
-        // A non-full admin may never mint an all-access key.
         if ($permissionType === 'all') {
             throw ValidationException::withMessages([
                 'permission_type' => trans('admin::app.configuration.integrations.permission-exceeds-role'),
             ]);
         }
 
-        // Every requested permission must be one the creating admin actually holds.
-        // API permission keys mirror the web ACL keys with an `api.` prefix
-        // (e.g. `api.catalog.products.create` ⇒ `catalog.products.create`).
         foreach ($permissions as $permission) {
             $webPermission = preg_replace('/^api\./', '', (string) $permission);
 
