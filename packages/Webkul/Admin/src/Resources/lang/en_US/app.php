@@ -1903,6 +1903,7 @@ return [
             'generate-key-success'           => 'API key is generated successfully',
             're-generate-secret-key-success' => 'API secret key is regenerated successfully',
             'client-not-found'               => 'Client Not Found',
+            'permission-exceeds-role'        => 'You cannot grant an API key more permissions than your own role allows.',
         ],
 
         'prompt' => [

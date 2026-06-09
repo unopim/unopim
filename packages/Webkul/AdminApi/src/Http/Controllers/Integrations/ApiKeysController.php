@@ -67,8 +67,15 @@ class ApiKeysController extends Controller
         $this->validate(request(), [
             'name'            => 'required',
             'admin_id'        => ['required', Rule::unique('api_keys')->where(fn (Builder $query) => $query->where('revoked', 0))],
-            'permission_type' => 'required',
+            'permission_type' => 'required|in:all,custom',
+            'permissions'     => 'array',
+            'permissions.*'   => 'string',
         ]);
+
+        $this->capRequestedPermissions(
+            request('permission_type'),
+            (array) request('permissions', [])
+        );
 
         Event::dispatch('user.api_integration.create.before');
 
@@ -109,7 +116,14 @@ class ApiKeysController extends Controller
         $this->validate(request(), [
             'name'            => 'required',
             'permission_type' => 'required|in:all,custom',
+            'permissions'     => 'array',
+            'permissions.*'   => 'string',
         ]);
+
+        $this->capRequestedPermissions(
+            request('permission_type'),
+            (array) request('permissions', [])
+        );
 
         $data = array_merge(request()->only([
             'name',
@@ -127,6 +141,45 @@ class ApiKeysController extends Controller
         session()->flash('success', trans('admin::app.configuration.integrations.update-success'));
 
         return redirect()->route('admin.configuration.integrations.edit', $id);
+    }
+
+    /**
+     * Ensure the requested API-key authority does not exceed the creating admin's
+     * own effective ACL. Without this, a low-privilege admin who only has the
+     * Integrations permission could mint a key with `permission_type = all` (or
+     * arbitrary `api.*` permissions) and use the resulting token to perform
+     * catalog/settings actions their own role forbids — a privilege escalation.
+     *
+     * @throws ValidationException
+     */
+    protected function capRequestedPermissions(?string $permissionType, array $permissions): void
+    {
+        $admin = auth()->guard('admin')->user();
+
+        // A full-access admin (super admin) may grant any authority.
+        if ($admin?->role?->permission_type === 'all') {
+            return;
+        }
+
+        // A non-full admin may never mint an all-access key.
+        if ($permissionType === 'all') {
+            throw ValidationException::withMessages([
+                'permission_type' => trans('admin::app.configuration.integrations.permission-exceeds-role'),
+            ]);
+        }
+
+        // Every requested permission must be one the creating admin actually holds.
+        // API permission keys mirror the web ACL keys with an `api.` prefix
+        // (e.g. `api.catalog.products.create` ⇒ `catalog.products.create`).
+        foreach ($permissions as $permission) {
+            $webPermission = preg_replace('/^api\./', '', (string) $permission);
+
+            if (! $admin || ! $admin->hasPermission($webPermission)) {
+                throw ValidationException::withMessages([
+                    'permissions' => trans('admin::app.configuration.integrations.permission-exceeds-role'),
+                ]);
+            }
+        }
     }
 
     /**
