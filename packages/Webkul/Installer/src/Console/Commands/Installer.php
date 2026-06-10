@@ -13,8 +13,10 @@ use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
+use function Laravel\Prompts\multisearch;
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\password;
+use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -895,10 +897,11 @@ class Installer extends Command
      */
     protected function updateEnvChoice(string $key, string $question, array $choices)
     {
-        $choice = select(
+        $choice = search(
             label: $question,
-            options: $choices,
-            default: env($key)
+            options: fn (string $value) => $this->filterChoices($choices, $value),
+            placeholder: 'Type to search...',
+            scroll: 10,
         );
 
         $this->envUpdate($key, $choice);
@@ -911,23 +914,45 @@ class Installer extends Command
      */
     protected function allowedChoice(string $question, array $choices)
     {
-        $selectedValues = multiselect(
+        $selectedKeys = multisearch(
             label: $question,
-            options: array_values($choices),
+            options: fn (string $value) => $this->filterChoices($choices, $value),
+            placeholder: 'Type to search...',
+            scroll: 10,
+            hint: 'Use the space bar to select options.',
         );
 
         $selectedChoices = [];
 
-        foreach ($selectedValues as $selectedValue) {
-            foreach ($choices as $key => $value) {
-                if ($selectedValue === $value) {
-                    $selectedChoices[$key] = $value;
-                    break;
-                }
+        foreach ($selectedKeys as $selectedKey) {
+            if (isset($choices[$selectedKey])) {
+                $selectedChoices[$selectedKey] = $choices[$selectedKey];
             }
         }
 
         return $selectedChoices;
+    }
+
+    /**
+     * Filter the given choices by the user's search query.
+     *
+     * Matches against both the option key (e.g. "en_US", "USD") and the
+     * human-readable label (e.g. "English (United States)", "US Dollar").
+     */
+    protected function filterChoices(array $choices, string $value): array
+    {
+        $value = strtolower(trim($value));
+
+        if ($value === '') {
+            return $choices;
+        }
+
+        return array_filter(
+            $choices,
+            fn (string $label, string $key) => str_contains(strtolower($label), $value)
+                || str_contains(strtolower($key), $value),
+            ARRAY_FILTER_USE_BOTH
+        );
     }
 
     /**

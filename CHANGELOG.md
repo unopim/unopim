@@ -7,6 +7,7 @@
 - Added **dismissible cloud-hosting and version-upgrade promo banners** in the admin.
 
 ### Improvements
+- Added **type-to-search locale & currency prompts** to the `php artisan unopim:install` CLI wizard — default/allowed locale and currency selectors now filter as you type (by code or name) instead of scrolling long static lists.
 - Revamped the **web installer** — admin-themed UI, a live terminal view of the install, optional add-on packages (DAM, Shopify, Bagisto) and Elasticsearch setup, database auto-create, and shared/FTP-only hosting support.
 
 ## v2.1.3 - 2026-06-04
