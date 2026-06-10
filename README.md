@@ -160,12 +160,6 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 
 Full [Installation Guide](https://devdocs.unopim.com/2.0.x/introduction/installation.html) on devdocs — or pick a quick path below.
 
-### ☁️ Cloud Hosting (Managed — no setup)
-
-Skip the server setup entirely. Run UnoPim on fast, secure, cost-effective **managed cloud hosting** that scales on demand and launches in minutes — no infrastructure to provision or maintain.
-
-[**Get UnoPim Cloud Hosting →**](https://unopim.com/cloud-hosting/)
-
 ### Composer
 
 ```bash
@@ -204,11 +198,19 @@ docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
 
 > **Port conflicts?** If you already have MySQL, Redis, or Elasticsearch running locally, edit the `FORWARD_*` ports in `.env` and restart. See `.env.docker` for details.
 
+### ☁️ Cloud Hosting (Managed — no setup)
+<p>
+  <a href="https://unopim.com/cloud-hosting">
+    <img src="https://raw.githubusercontent.com/unopim/temp-media/main/cloud-hosting-banner.png" alt="Deploy UnoPim on cost-effective cloud hosting" width="720">
+  </a>
+</p>
+
 ### ☁️ AWS Marketplace
-
-Deploy UnoPim on a pre-configured Amazon Machine Image (AMI) without any manual setup — ideal for scalable production or testing environments.
-
-[**Launch UnoPim on AWS**](https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw)
+<p>
+  <a href="https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw">
+    <img src="https://raw.githubusercontent.com/unopim/temp-media/main/aws-marketplace-banner.png" alt="Launch UnoPim on AWS Marketplace" width="720">
+  </a>
+</p>
 
 ## 🤝 Contributing
 
