@@ -29,6 +29,16 @@ return [
         'name'   => 'ai-agent::app.acl.delete',
         'route'  => 'admin.magic_ai.platform.delete',
         'sort'   => 3,
+    ], [
+        'key'    => 'ai-agent.platform.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.platform.update',
+        'sort'   => 2,
+    ], [
+        'key'    => 'ai-agent.platform.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.platform.set_default',
+        'sort'   => 2,
     ],
     [
         'key'    => 'ai-agent.general',
