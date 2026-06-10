@@ -1,10 +1,15 @@
 <?php
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Webkul\Installer\Database\Seeders\User\AdminsTableSeeder;
 
+uses(DatabaseTransactions::class);
+
 beforeEach(function () {
-    DB::table('admins')->where('email', 'admin@example.com')->delete();
+    // The seeder only inserts into an empty admins table; clear it so the
+    // insert path runs regardless of leftover rows (rolled back afterwards).
+    DB::table('admins')->delete();
 });
 
 describe('AdminsTableSeeder honours APP_TIMEZONE (issue #846)', function () {
