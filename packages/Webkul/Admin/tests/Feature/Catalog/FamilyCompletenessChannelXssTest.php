@@ -10,7 +10,6 @@ it('escapes a malicious channel name on the family completeness page', function 
 
     $payload = "'><img src=x onerror=alert(document.domain)>";
 
-    // Set the payload for every locale so it renders regardless of the admin's UI locale.
     foreach ($channel->translations as $translation) {
         $translation->name = $payload;
         $translation->save();
