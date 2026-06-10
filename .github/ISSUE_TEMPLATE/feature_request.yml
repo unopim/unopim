@@ -1,8 +1,17 @@
 name: 💡 Feature request
 description: Have a new idea/feature? Share it with our team!
-labels: ['Feature Request']
+title: '[Feature]: '
+labels: ['Feature request']
 
 body:
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Pre-submission checklist
+      options:
+        - label: I have searched the [existing issues](https://github.com/unopim/unopim/issues?q=) and this feature has not already been requested.
+          required: true
+
   - type: textarea
     id: description
     attributes:
