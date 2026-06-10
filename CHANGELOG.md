@@ -1,5 +1,22 @@
 # v2.1.x
 
+## v2.1.5 (Unreleased)
+
+### Bug Fixes
+- Fixed **`upgrade.sh` backup excluding user data** — the automated upgrade backup now includes the `storage/` folder (uploaded media, import/export files) and skips only dependencies, regenerable framework caches, logs, and debugbar output; previously a restore from the script's backup lost all product media.
+- Fixed **`upgrade.sh` dropping hidden files** — new-release dotfiles (`.env.example`, `.gitignore`, `.htaccess`) are now copied during the upgrade.
+- Fixed **`upgrade.sh` `.env` parsing** — database credentials containing `=`, quotes, or matching multiple keys (e.g. commented lines) no longer break the database dump; passwords are passed via environment variables instead of the command line.
+- Fixed **broken HTML comments in the pull request template** and a missing code-fence close in `UPGRADE.md`.
+
+### Improvements
+- Added **PostgreSQL support to `upgrade.sh`** — the backup step now detects `DB_CONNECTION` and uses `pg_dump` for PostgreSQL installations.
+- Improved **GitHub issue templates** — single bug-report form with a required environment checklist, duplicate-search confirmation, title prefixes, and corrected labels; the issue chooser now also links Community Discussions and the documentation.
+- Updated **`CONTRIBUTING.md`** — fixed issue-template links, documented Conventional Commits, target-branch selection, the security disclosure policy, and the local test/lint checks CI runs.
+
+### DevOps
+- Cleaned up **dead files** — removed the empty `public/forge`, the orphan `patches.lock.json` (composer-patches was never installed), config files for uninstalled packages (`config/horizon.php`, `config/sitemap.php`), a placeholder DataGrid test, and the broken `bin/codecept` symlink. Added a root `public/favicon.ico` (browsers request it unconditionally) and ignored nested `node_modules/` directories.
+- Moved **AI agent skills to a dedicated repository** — [unopim/agent-skills](https://github.com/unopim/agent-skills). The in-repo `.github/skills/` directory, the `.ai`/`.claude`/`.codex`/`.cursor`/`.kilocode` symlinks, the connector code-generation/code-review instruction files, and the skills-consistency workflow were removed; install skills locally with `npx skills add unopim/agent-skills` and set up Laravel Boost with `php artisan boost:install`.
+
 ## v2.1.4 - 2026-06-06
 
 ### Features
