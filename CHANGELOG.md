@@ -1,5 +1,12 @@
 # v2.1.x
 
+### Security
+- Hardened file uploads in the rich-text (TinyMCE) editor — uploads are now limited to an approved set of image types and saved under randomised filenames ([#476](https://github.com/unopim/unopim/pull/476)).
+- Tightened API permission enforcement on the configurable-product endpoints so every request requires the correct access scope ([#477](https://github.com/unopim/unopim/pull/477)).
+- Added the required permission checks to the Magic AI platform **update** and **set-default** actions ([#479](https://github.com/unopim/unopim/pull/479)).
+- Hardened product-grid sorting to safely handle all sort input ([#488](https://github.com/unopim/unopim/pull/488)).
+- Improved how channel names are rendered on the attribute-family **Completeness** screen ([#489](https://github.com/unopim/unopim/pull/489)).
+
 ## v2.1.4 - 2026-06-06
 
 ### Features
