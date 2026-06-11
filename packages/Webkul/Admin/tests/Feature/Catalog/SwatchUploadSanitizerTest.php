@@ -6,11 +6,6 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeOption;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 
-/**
- * Regression coverage for the swatch-image upload sanitizer bypass (audit finding #6).
- * Swatch uploads now go through FileStorer (SVG sanitized) and are validated against a
- * real-extension image allowlist (HTML / non-image files rejected).
- */
 beforeEach(fn () => $this->loginAsAdmin());
 
 it('rejects a non-image (HTML) file uploaded as a swatch image', function () {
