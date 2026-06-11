@@ -114,6 +114,12 @@ return [
         'sort'  => 5,
     ],
     [
+        'key'   => 'ai-agent.generate',
+        'name'  => 'ai-agent::app.acl.generate',
+        'route' => 'ai-agent.generate.process',
+        'sort'  => 5,
+    ],
+    [
         'key'   => 'ai-agent.execute',
         'name'  => 'ai-agent::app.acl.execute',
         'route' => 'ai-agent.execute',

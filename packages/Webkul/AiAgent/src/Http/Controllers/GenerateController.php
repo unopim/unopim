@@ -14,15 +14,7 @@ class GenerateController extends Controller
     public function __construct(
         protected CredentialRepository $credentialRepository,
         protected ImageToProductService $imageToProductService,
-    ) {
-        $this->middleware(function ($request, $next) {
-            if (! bouncer()->hasPermission('ai-agent.generate')) {
-                abort(403, trans('ai-agent::app.common.unauthorized'));
-            }
-
-            return $next($request);
-        });
-    }
+    ) {}
 
     /**
      * Show the Generate page.
