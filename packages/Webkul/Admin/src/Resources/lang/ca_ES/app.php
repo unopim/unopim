@@ -2287,6 +2287,11 @@ return [
             'description' => 'Vaja! El mètode de la sol·licitud no està permès per a aquesta URL. Si us plau, utilitzeu el mètode correcte o torneu a la pàgina anterior.',
             'title'       => '405 Mètode No Permès',
         ],
+        '429' => [
+            'description' => 'Ui! Massa intents. Espereu un minut i torneu-ho a provar.',
+            'title'       => '429 Massa sol·licituds',
+        ],
+
         '500' => [
             'description' => 'Oops! Alguna cosa ha sortit malament. Sembla que tenim problemes carregant la pàgina que busques.',
             'title'       => '500 Error de servidor intern',
