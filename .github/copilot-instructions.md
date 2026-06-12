@@ -147,18 +147,21 @@ class CredentialDataGrid extends DataGrid
 
 ## Skills Reference
 
-When working on a connector, load the appropriate skill file from
-`.kilocode/skills-code/` for complete implementation templates:
+UnoPim AI development skills live in a dedicated repository:
+[unopim/agent-skills](https://github.com/unopim/agent-skills).
 
-| Task | Skill file |
-|---|---|
-| Create connector from scratch | `unopim-connector-quickstart/SKILL.md` |
-| Module boilerplate | `unopim-package/SKILL.md` |
-| Credential management | `unopim-credential-management/SKILL.md` |
-| HTTP/API client | `unopim-http-client/SKILL.md` |
-| Export/import jobs | `unopim-export-workflow/SKILL.md` |
-| DataGrid listing | `unopim-datagrid/SKILL.md` |
-| module mapping | `unopim-connector-export-mapping/SKILL.md` |
+Install them locally for your coding agent (Claude Code, Cursor, Copilot, Codex, and more):
+
+```bash
+npx skills add unopim/agent-skills
+```
+
+Laravel Boost is already a dev dependency — set it up with:
+
+```bash
+php artisan boost:install   # one-time setup (MCP server + AI guidelines)
+php artisan boost:update    # refresh guidelines & skills to latest
+```
 
 ---
 
