@@ -73,7 +73,7 @@ UnoPim is an open-source Product Information Management (PIM) system built on La
   </tr>
 </table>
 
-> Upgrading from v1.0.0? See the [Upgrade Guide](UPGRADE-1.0.0-2.0.0.md) and [CHANGELOG](CHANGELOG.md) for full release notes.
+> Upgrading from an older version? See the [Upgrade Guide](UPGRADE.md) and [CHANGELOG](CHANGELOG.md) for full release notes.
 
 ## ⚙️ Scalability
 

@@ -12,7 +12,7 @@
 Homestead.json
 Homestead.yaml
 /ignorables/*
-/node_modules
+node_modules/
 npm-debug.log
 package-lock.json
 /public/css
@@ -30,9 +30,17 @@ yarn.lock
 yarn-error.log
 .phpunit.cache/
 .playwright-mcp/
-.claude/settings.json
-.claude/scheduled_tasks.lock
-.claude/settings.local.json
+
+# AI agent skills are managed via https://github.com/unopim/agent-skills
+# (npx skills add unopim/agent-skills) — keep local installs out of the repo
+/.ai/
+/.claude/
+/.codex/
+/.cursor/
+/.kilocode/
+/.opencode/
+/.agents/
+/.github/skills/
 tests/e2e-pw/.state/
 tests/e2e-pw/playwright-report/
 tests/e2e-pw/test-results/

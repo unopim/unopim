@@ -1,11 +1,28 @@
 # v2.1.x
 
+## v2.1.5
+
 ### Security
 - Hardened file uploads in the rich-text (TinyMCE) editor — uploads are now limited to an approved set of image types and saved under randomised filenames ([#476](https://github.com/unopim/unopim/pull/476)).
 - Tightened API permission enforcement on the configurable-product endpoints so every request requires the correct access scope ([#477](https://github.com/unopim/unopim/pull/477)).
 - Added the required permission checks to the Magic AI platform **update** and **set-default** actions ([#479](https://github.com/unopim/unopim/pull/479)).
 - Hardened product-grid sorting to safely handle all sort input ([#488](https://github.com/unopim/unopim/pull/488)).
 - Improved how channel names are rendered on the attribute-family **Completeness** screen ([#489](https://github.com/unopim/unopim/pull/489)).
+
+### Bug Fixes
+- Fixed **`upgrade.sh` backup excluding user data** — the automated upgrade backup now includes the `storage/` folder (uploaded media, import/export files) and skips only dependencies, regenerable framework caches, logs, and debugbar output; previously a restore from the script's backup lost all product media.
+- Fixed **`upgrade.sh` dropping hidden files** — new-release dotfiles (`.env.example`, `.gitignore`, `.htaccess`) are now copied during the upgrade.
+- Fixed **`upgrade.sh` `.env` parsing** — database credentials containing `=`, quotes, or matching multiple keys (e.g. commented lines) no longer break the database dump; passwords are passed via environment variables instead of the command line.
+- Fixed **broken HTML comments in the pull request template** and a missing code-fence close in `UPGRADE.md`.
+
+### Improvements
+- Added **PostgreSQL support to `upgrade.sh`** — the backup step now detects `DB_CONNECTION` and uses `pg_dump` for PostgreSQL installations.
+- Improved **GitHub issue templates** — single bug-report form with a required environment checklist, duplicate-search confirmation, title prefixes, and corrected labels; the issue chooser now also links Community Discussions and the documentation.
+- Updated **`CONTRIBUTING.md`** — fixed issue-template links, documented Conventional Commits, target-branch selection, the security disclosure policy, and the local test/lint checks CI runs.
+
+### DevOps
+- Cleaned up **dead files** — removed the empty `public/forge`, the orphan `patches.lock.json` (composer-patches was never installed), config files for uninstalled packages (`config/horizon.php`, `config/sitemap.php`), a placeholder DataGrid test, and the broken `bin/codecept` symlink. Added a root `public/favicon.ico` (browsers request it unconditionally) and ignored nested `node_modules/` directories.
+- Moved **AI agent skills to a dedicated repository** — [unopim/agent-skills](https://github.com/unopim/agent-skills). The in-repo `.github/skills/` directory, the `.ai`/`.claude`/`.codex`/`.cursor`/`.kilocode` symlinks, the connector code-generation/code-review instruction files, and the skills-consistency workflow were removed; install skills locally with `npx skills add unopim/agent-skills` and set up Laravel Boost with `php artisan boost:install`.
 
 ## v2.1.4 - 2026-06-06
 
@@ -14,6 +31,7 @@
 - Added **dismissible cloud-hosting and version-upgrade promo banners** in the admin.
 
 ### Improvements
+- Added **type-to-search locale & currency prompts** to the `php artisan unopim:install` CLI wizard — default/allowed locale and currency selectors now filter as you type (by code or name) instead of scrolling long static lists.
 - Revamped the **web installer** — admin-themed UI, a live terminal view of the install, optional add-on packages (DAM, Shopify, Bagisto) and Elasticsearch setup, database auto-create, and shared/FTP-only hosting support.
 
 ## v2.1.3 - 2026-06-04
