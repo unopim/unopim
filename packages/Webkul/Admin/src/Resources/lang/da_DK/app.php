@@ -2353,6 +2353,11 @@ return [
             'description' => 'Ups! Anmodningsmetoden er ikke tilladt for denne URL. Brug venligst den korrekte metode eller vend tilbage til den forrige side.',
             'title'       => '405 Metode Ikke Tilladt',
         ],
+        '429' => [
+            'description' => 'Ups! For mange forsøg. Vent venligst et minut, og prøv igen.',
+            'title'       => '429 For mange anmodninger',
+        ],
+
         '500' => [
             'description' => 'Ups! Noget gik galt. Vi har problemer med at indlæse den side, du leder efter.',
             'title'       => '500 Intern serverfejl',
