@@ -15,6 +15,19 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Passport Guard
+    |--------------------------------------------------------------------------
+    |
+    | Passport defaults to the "web" guard, which Unopim does not define.
+    | Admin sessions live on the "admin" guard, so the OAuth authorize
+    | flow must check that guard to recognize logged-in admins.
+    |
+    */
+
+    'guard' => 'admin',
+
     'private_key' => env('PASSPORT_PRIVATE_KEY'),
 
     'public_key' => env('PASSPORT_PUBLIC_KEY'),
