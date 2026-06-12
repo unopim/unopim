@@ -2352,6 +2352,11 @@ return [
             'description' => 'Rất tiếc! Phương thức yêu cầu không được phép cho URL này. Vui lòng sử dụng phương thức chính xác hoặc quay lại trang trước.',
             'title'       => '405 Phương Thức Không Được Phép',
         ],
+        '429' => [
+            'description' => 'Rất tiếc! Quá nhiều lần thử. Vui lòng đợi một phút rồi thử lại.',
+            'title'       => '429 Quá nhiều yêu cầu',
+        ],
+
         '500' => [
             'description' => 'Oops! Có gì đó không đúng. Có vẻ như chúng tôi gặp sự cố khi tải trang bạn đang tìm kiếm.',
             'title'       => '500 Lỗi máy chủ nội bộ',
