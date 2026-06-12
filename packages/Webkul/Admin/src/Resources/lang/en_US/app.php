@@ -2521,6 +2521,11 @@ return [
             'title'       => '405 Method Not Allowed',
         ],
 
+        '429' => [
+            'description' => 'Oops! Too many attempts. Please wait a minute and then try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oops! Something went wrong. It seems we\'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Internal Server Error',
