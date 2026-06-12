@@ -59,6 +59,18 @@ return [
         'sort'   => 1,
     ],
     [
+        'key'    => 'ai-agent.prompt.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.prompt.store',
+        'sort'   => 1,
+    ],
+    [
+        'key'    => 'ai-agent.prompt.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.prompt.update',
+        'sort'   => 1,
+    ],
+    [
         'key'    => 'ai-agent.prompt.delete',
         'name'   => 'ai-agent::app.acl.delete',
         'route'  => 'admin.magic_ai.prompt.delete',
@@ -77,6 +89,18 @@ return [
         'sort'   => 1,
     ],
     [
+        'key'    => 'ai-agent.system-prompt.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.system_prompt.store',
+        'sort'   => 1,
+    ],
+    [
+        'key'    => 'ai-agent.system-prompt.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.system_prompt.update',
+        'sort'   => 1,
+    ],
+    [
         'key'    => 'ai-agent.system-prompt.delete',
         'name'   => 'ai-agent::app.acl.delete',
         'route'  => 'admin.magic_ai.system_prompt.delete',
@@ -87,6 +111,12 @@ return [
         'key'   => 'ai-agent.generate',
         'name'  => 'ai-agent::app.acl.generate',
         'route' => 'ai-agent.generate.index',
+        'sort'  => 5,
+    ],
+    [
+        'key'   => 'ai-agent.generate',
+        'name'  => 'ai-agent::app.acl.generate',
+        'route' => 'ai-agent.generate.process',
         'sort'  => 5,
     ],
     [
