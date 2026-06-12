@@ -2287,6 +2287,11 @@ return [
             'description' => 'Hups! Pyyntömenetelmä ei ole sallittu tälle URL-osoitteelle. Käytä oikeaa menetelmää tai palaa edelliselle sivulle.',
             'title'       => '405 Menetelmä Ei Sallittu',
         ],
+        '429' => [
+            'description' => 'Hups! Liian monta yritystä. Odota hetki ja yritä uudelleen.',
+            'title'       => '429 Liian monta pyyntöä',
+        ],
+
         '500' => [
             'description' => 'Voi ei! Jotain meni pieleen. Meillä on vaikeuksia ladata etsimääsi sivua.',
             'title'       => '500 Sisäinen palvelinvirhe',

@@ -2287,6 +2287,11 @@ return [
             'description' => '¡Vaya! El método de solicitud no está permitido para esta URL. Por favor, utilice el método correcto o vuelva a la página anterior.',
             'title'       => '405 Método No Permitido',
         ],
+        '429' => [
+            'description' => '¡Ups! Demasiados intentos. Espere un minuto y vuelva a intentarlo.',
+            'title'       => '429 Demasiadas solicitudes',
+        ],
+
         '500' => [
             'description' => '¡Ups!Algo salió mal.Parece que nosotros \'re having trouble loading the page you\'re looking for.',
             'title'       => 'Error interno de servidor 500',
