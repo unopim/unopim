@@ -1,6 +1,13 @@
 # v2.1.x
 
-## v2.1.5 (Unreleased)
+## v2.1.5
+
+### Security
+- Hardened file uploads in the rich-text (TinyMCE) editor — uploads are now limited to an approved set of image types and saved under randomised filenames ([#476](https://github.com/unopim/unopim/pull/476)).
+- Tightened API permission enforcement on the configurable-product endpoints so every request requires the correct access scope ([#477](https://github.com/unopim/unopim/pull/477)).
+- Added the required permission checks to the Magic AI platform **update** and **set-default** actions ([#479](https://github.com/unopim/unopim/pull/479)).
+- Hardened product-grid sorting to safely handle all sort input ([#488](https://github.com/unopim/unopim/pull/488)).
+- Improved how channel names are rendered on the attribute-family **Completeness** screen ([#489](https://github.com/unopim/unopim/pull/489)).
 
 ### Bug Fixes
 - Fixed **`upgrade.sh` backup excluding user data** — the automated upgrade backup now includes the `storage/` folder (uploaded media, import/export files) and skips only dependencies, regenerable framework caches, logs, and debugbar output; previously a restore from the script's backup lost all product media.
