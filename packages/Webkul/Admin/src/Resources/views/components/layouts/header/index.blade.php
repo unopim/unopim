@@ -326,7 +326,7 @@
 
             data() {
                 return {
-                    isDarkMode: {{ request()->cookie('dark_mode') ?? 0 }},
+                    isDarkMode: {{ (int) request()->cookie('dark_mode') }},
 
                     logo: "{{ unopim_asset('images/logo.svg') }}",
 
