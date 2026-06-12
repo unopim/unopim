@@ -32,14 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => '货币',
+        'channels' => [
+            'title'      => '渠道',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => '货币代码“%s”已在此批次中导入。',
-                    'code-not-found-to-delete'    => '系统中未找到代码为“%s”的货币。',
-                    'invalid-status'              => '状态必须为0或1（或留空以默认启用）。',
-                    'channel-related-locale-root' => '无法删除与渠道关联的代码为:code的区域设置。',
+                    'code-not-found-to-delete' => '未找到代码为 :code 的渠道，无法删除。',
+                    'locale-not-found'         => '一个或多个语言不存在。',
+                    'root-category-not-found'  => '根分类不存在。',
+                    'currency-not-found'       => '一个或多个货币不存在。',
+                    'invalid-locale'           => '语言不存在。',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -60,8 +91,22 @@ return [
         'categories' => [
             'title' => '类别',
         ],
+        'channels' => [
+            'title' => '渠道',
+        ],
         'currencies' => [
-            'title' => '货币',
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
     'validation' => [

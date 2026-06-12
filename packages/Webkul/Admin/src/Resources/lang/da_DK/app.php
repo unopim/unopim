@@ -1944,6 +1944,9 @@ return [
                 'my-account'    => 'Min konto',
                 'notifications' => 'Notifikationer',
                 'visit-shop'    => 'Besøg butik',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Attributfamilier',

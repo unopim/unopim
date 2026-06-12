@@ -32,14 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Valute',
+        'channels' => [
+            'title'      => 'Canali',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Il codice valuta \'%s\' è già stato importato in questo lotto.',
-                    'code-not-found-to-delete'    => 'Valuta con codice \'%s\' non trovata nel sistema.',
-                    'invalid-status'              => 'Lo stato deve essere 0 o 1 (o vuoto per abilitato di default).',
-                    'channel-related-locale-root' => 'Non puoi eliminare la locale con codice :code che è associata a un canale.',
+                    'code-not-found-to-delete' => 'Canale con codice :code non trovato per l\'eliminazione.',
+                    'locale-not-found'         => 'Una o più lingue non esistono.',
+                    'root-category-not-found'  => 'La categoria principale non esiste.',
+                    'currency-not-found'       => 'Una o più valute non esistono.',
+                    'invalid-locale'           => 'La lingua non esiste.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -60,8 +91,22 @@ return [
         'categories' => [
             'title' => 'Categorie',
         ],
+        'channels' => [
+            'title' => 'Canali',
+        ],
         'currencies' => [
-            'title' => 'Valute',
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
     'validation' => [

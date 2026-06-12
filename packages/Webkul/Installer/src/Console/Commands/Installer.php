@@ -157,7 +157,28 @@ class Installer extends Command
             $this->seedSampleProducts();
         }
 
+        $this->markInstalled();
+
         ComposerEvents::postCreateProject();
+    }
+
+    /**
+     * Write the completion marker that seals the installer.
+     *
+     * Once `storage/installed` exists, the `CanInstall` middleware redirects
+     * every `/install` request and the installer controller's guard blocks the
+     * api endpoints. Guarded so the marker is written — and `unopim.installed`
+     * dispatched — exactly once, no matter which install steps ran.
+     */
+    protected function markInstalled(): void
+    {
+        if (file_exists(storage_path('installed'))) {
+            return;
+        }
+
+        File::put(storage_path('installed'), 'UnoPim installation completed successfully');
+
+        Event::dispatch('unopim.installed');
     }
 
     /**

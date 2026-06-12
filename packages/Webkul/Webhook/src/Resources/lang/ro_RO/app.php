@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'URL-ul Webhook trebuie să înceapă cu http:// sau https://.',
                         'connection_failed' => 'URL-ul Webhook nu a putut fi accesat. Verificați URL-ul.',
                         'unreachable'       => 'URL-ul Webhook nu este valid (HTTP :code).',
+                        'unsafe'            => 'URL-ul webhook indică o adresă privată, loopback sau internă și nu este permis.',
                     ],
                     'success'    => 'Setările Webhook au fost salvate cu succes',
                     'logs-title' => 'Jurnale',

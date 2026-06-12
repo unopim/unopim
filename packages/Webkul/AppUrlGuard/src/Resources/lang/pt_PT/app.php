@@ -1,0 +1,36 @@
+<?php
+
+return [
+    'warning' => [
+        'title'           => 'Incompatibilidade de APP_URL detetada',
+        'dismiss'         => 'Dispensar',
+        'lede-before'     => 'Os seus recursos de frontend (CSS, JS) estão fixados no valor configurado',
+        'lede-after'      => 'Atualize-o para corresponder ao anfitrião que está a utilizar, caso contrário os estilos e scripts não serão carregados.',
+        'configured-env'  => 'Configurado (.env)',
+        'mismatch-tag'    => 'INCOMPATÍVEL',
+        'actual-browser'  => 'Real (navegador)',
+        'in-use-tag'      => 'EM UTILIZAÇÃO',
+        'toggle-step'     => 'Alternar passo :number',
+        'step-1-title'    => 'Atualize APP_URL no seu ficheiro .env',
+        'step-1-hint'     => 'Abra o .env do projeto e substitua a linha APP_URL.',
+        'step-2-title'    => 'Limpe a cache da aplicação',
+        'step-2-hint'     => 'Execute isto no seu terminal a partir da raiz do projeto.',
+        'copy'            => 'Copiar',
+        'copied'          => 'Copiado',
+        'note-bold'       => 'De seguida, recarregue a página totalmente',
+        'note-rest'       => 'para que o navegador recarregue os recursos atualizados.',
+        'progress'        => ':done de :total passos concluídos',
+        'all-done'        => 'Tudo concluído',
+        'powered-by'      => 'Desenvolvido por',
+        'open-source-by'  => 'Um projeto de código aberto da',
+        'copied-toast'    => 'Copiado para a área de transferência',
+        'still-mismatch'  => 'APP_URL continua a não corresponder. Atualize o .env e execute "php artisan optimize:clear".',
+        'verify-failed'   => 'Não foi possível verificar APP_URL. Atualize a página.',
+        'logged-out'      => 'Sessão terminada: APP_URL não corresponde ao anfitrião atual. Atualize APP_URL no .env e execute "php artisan optimize:clear".',
+    ],
+
+    'log' => [
+        'mismatch' => 'Incompatibilidade de APP_URL detetada',
+        'hint'     => 'Atualize APP_URL no .env para o URL do pedido e, em seguida, execute: php artisan optimize:clear',
+    ],
+];

@@ -1944,6 +1944,9 @@ return [
                 'my-account'    => 'マイアカウント',
                 'notifications' => '通知',
                 'visit-shop'    => 'ショップを訪問',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => '属性ファミリー',

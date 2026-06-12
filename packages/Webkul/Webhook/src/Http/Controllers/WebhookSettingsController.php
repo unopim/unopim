@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 use Webkul\Webhook\Models\WebhookSetting;
 use Webkul\Webhook\Repositories\SettingsRepository;
+use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 class WebhookSettingsController
 {
@@ -50,10 +51,28 @@ class WebhookSettingsController
             'webhook_url.regex'       => trans('webhook::app.configuration.webhook.settings.index.webhook_url.scheme'),
         ]);
 
-        $active = (int) $request->input('webhook_active', '0');
+        // Cast 'true'/'false' strings + 0/1 alike — (int) 'true' === 0 would
+        // silently disarm the activation path and skip the SSRF probe below.
+        $active = filter_var($request->input('webhook_active', false), FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
         $url = $request->filled('webhook_url') ? $request->webhook_url : null;
 
         if ($active === 1 && ! empty($url)) {
+            // SSRF guard (CWE-918): reject URLs that resolve to loopback,
+            // private, link-local, multicast or otherwise reserved address
+            // space — including cloud metadata 169.254.169.254 — BEFORE the
+            // synchronous test POST is fired against the supplied host.
+            $safety = SafeWebhookUrl::validate($url);
+
+            if (! $safety['valid']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => trans('webhook::app.configuration.webhook.settings.index.webhook_url.unsafe'),
+                    'errors'  => [
+                        'webhook_url' => [trans('webhook::app.configuration.webhook.settings.index.webhook_url.unsafe')],
+                    ],
+                ], 422);
+            }
+
             $testResult = $this->testWebhookUrl($url);
 
             if (! $testResult['success']) {
@@ -117,13 +136,16 @@ class WebhookSettingsController
         ];
 
         try {
-            $response = Http::timeout(self::TEST_REQUEST_TIMEOUT)->post($url, $payload);
+            // Pin the request to the validated IP (CURLOPT_RESOLVE) and
+            // disable redirect-following — closes the DNS-rebinding TOCTOU
+            // gap and the redirect-chain bypass.
+            $response = Http::withOptions(SafeWebhookUrl::httpOptions($url))
+                ->timeout(self::TEST_REQUEST_TIMEOUT)
+                ->post($url, $payload);
         } catch (\Throwable $e) {
             return [
                 'success' => false,
-                'message' => trans('webhook::app.configuration.webhook.settings.index.webhook_url.connection_failed', [
-                    'error' => $e->getMessage(),
-                ]),
+                'message' => trans('webhook::app.configuration.webhook.settings.index.webhook_url.connection_failed'),
             ];
         }
 

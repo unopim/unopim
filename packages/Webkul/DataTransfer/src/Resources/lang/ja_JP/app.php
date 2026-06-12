@@ -32,14 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => '通貨',
+        'channels' => [
+            'title'      => 'チャネル',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => '通貨コード「%s」はこのバッチですでにインポートされています。',
-                    'code-not-found-to-delete'    => 'コード「%s」の通貨がシステムに見つかりません。',
-                    'invalid-status'              => 'ステータスは0または1である必要があります（デフォルトで有効の場合は空でも可）。',
-                    'channel-related-locale-root' => 'チャネルに関連付けられているコード :code のロケールは削除できません。',
+                    'code-not-found-to-delete' => 'コード :code のチャネルは削除対象として見つかりません。',
+                    'locale-not-found'         => '1つ以上のロケールが存在しません。',
+                    'root-category-not-found'  => 'ルートカテゴリが存在しません。',
+                    'currency-not-found'       => '1つ以上の通貨が存在しません。',
+                    'invalid-locale'           => 'ロケールが存在しません。',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -60,8 +91,22 @@ return [
         'categories' => [
             'title' => 'カテゴリー',
         ],
+        'channels' => [
+            'title' => 'チャネル',
+        ],
         'currencies' => [
-            'title' => '通貨',
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
     'validation' => [

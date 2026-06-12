@@ -32,14 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => '통화',
+        'channels' => [
+            'title'      => '채널',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => '통화 코드 \'%s\'이(가) 이미 이 배치에서 가져왔습니다.',
-                    'code-not-found-to-delete'    => '코드 \'%s\'에 해당하는 통화를 시스템에서 찾을 수 없습니다.',
-                    'invalid-status'              => '상태는 0 또는 1이어야 합니다(또는 기본 활성화의 경우 비어 있음).',
-                    'channel-related-locale-root' => '채널에 연결된 :code 코드의 로케일은 삭제할 수 없습니다.',
+                    'code-not-found-to-delete' => '코드 :code 인 채널을 삭제할 수 없습니다.',
+                    'locale-not-found'         => '하나 이상의 로케일이 존재하지 않습니다.',
+                    'root-category-not-found'  => '루트 카테고리가 존재하지 않습니다.',
+                    'currency-not-found'       => '하나 이상의 통화가 존재하지 않습니다.',
+                    'invalid-locale'           => '로케일이 존재하지 않습니다.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -60,8 +91,22 @@ return [
         'categories' => [
             'title' => '카테고리',
         ],
+        'channels' => [
+            'title' => '채널',
+        ],
         'currencies' => [
-            'title' => '통화',
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
     'validation' => [

@@ -32,14 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Valute',
+        'channels' => [
+            'title'      => 'Kanali',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Kod valute \'%s\' je već uvezen u ovoj seriji.',
-                    'code-not-found-to-delete'    => 'Valuta s kodom \'%s\' nije pronađena u sustavu.',
-                    'invalid-status'              => 'Status mora biti 0 ili 1 (ili prazno za zadano omogućeno).',
-                    'channel-related-locale-root' => 'Ne možete izbrisati regionalne postavke s kodom :code koje su povezane s kanalom.',
+                    'code-not-found-to-delete' => 'Kanal s kodom :code nije pronađen za brisanje.',
+                    'locale-not-found'         => 'Jedan ili više jezika ne postoje.',
+                    'root-category-not-found'  => 'Glavna kategorija ne postoji.',
+                    'currency-not-found'       => 'Jedna ili više valuta ne postoje.',
+                    'invalid-locale'           => 'Jezik ne postoji.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -60,8 +91,22 @@ return [
         'categories' => [
             'title' => 'Kategorije',
         ],
+        'channels' => [
+            'title' => 'Kanali',
+        ],
         'currencies' => [
-            'title' => 'Valute',
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
     'validation' => [

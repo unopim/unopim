@@ -22,6 +22,24 @@ beforeEach(function () {
             return true;
         }
     });
+
+    // env-file-setup now aborts(403) once installation is complete; simulate
+    // an in-progress install by removing the marker and restoring it after.
+    $this->marker = storage_path('installed');
+    $this->markerExisted = file_exists($this->marker);
+    $this->markerContents = $this->markerExisted ? file_get_contents($this->marker) : null;
+
+    if ($this->markerExisted) {
+        unlink($this->marker);
+    }
+});
+
+afterEach(function () {
+    if ($this->markerExisted) {
+        file_put_contents($this->marker, $this->markerContents);
+    } elseif (file_exists($this->marker)) {
+        unlink($this->marker);
+    }
 });
 
 describe('UI installer env-file-setup retries do not rotate APP_KEY', function () {

@@ -1944,6 +1944,9 @@ return [
                 'my-account'    => 'Akun saya',
                 'notifications' => 'Pemberitahuan',
                 'visit-shop'    => 'Kunjungi toko',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Keluarga atribut',

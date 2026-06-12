@@ -1944,6 +1944,9 @@ return [
                 'my-account'    => 'Мій обліковий запис',
                 'notifications' => 'Сповіщення',
                 'visit-shop'    => 'Відвідувати магазин',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Сім\'ї атрибутів',

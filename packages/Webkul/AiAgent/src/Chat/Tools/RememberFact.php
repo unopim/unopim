@@ -2,8 +2,10 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
@@ -11,14 +13,34 @@ class RememberFact implements PimTool
 {
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('remember_fact')
-            ->for('Save an observation or fact for future reference. Use this to remember catalog patterns, user preferences, naming conventions, or important decisions.')
-            ->withStringParameter('key', 'Short key/label for this fact (e.g. "naming_convention", "preferred_category_structure")')
-            ->withStringParameter('value', 'The fact or observation to remember')
-            ->withEnumParameter('scope', 'Scope of this memory', ['user', 'catalog', 'global'])
-            ->using(function (string $key, string $value, string $scope = 'catalog') use ($context): string {
-                $userId = $scope === 'user' ? $context->user?->id : null;
+        return new class($context) extends ContextualTool
+        {
+            public function name(): string
+            {
+                return 'remember_fact';
+            }
+
+            public function description(): string
+            {
+                return 'Save an observation or fact for future reference. Use this to remember catalog patterns, user preferences, naming conventions, or important decisions.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'key'   => $schema->string()->description('Short key/label for this fact (e.g. "naming_convention", "preferred_category_structure")'),
+                    'value' => $schema->string()->description('The fact or observation to remember'),
+                    'scope' => $schema->string()->enum(['user', 'catalog', 'global'])->description('Scope of this memory'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                $key = $request->string('key')->toString();
+                $value = $request->string('value')->toString();
+                $scope = $request->string('scope')->toString() ?: 'catalog';
+
+                $userId = $scope === 'user' ? $this->context->user?->id : null;
 
                 $existing = DB::table('ai_agent_memories')
                     ->where('scope', $scope)
@@ -43,6 +65,7 @@ class RememberFact implements PimTool
                 }
 
                 return json_encode(['result' => ['remembered' => true, 'key' => $key, 'scope' => $scope]]);
-            });
+            }
+        };
     }
 }

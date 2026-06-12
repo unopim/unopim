@@ -32,14 +32,45 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Mata Uang',
+        'channels' => [
+            'title'      => 'Saluran',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Kode mata uang \'%s\' sudah diimpor dalam batch ini.',
-                    'code-not-found-to-delete'    => 'Mata uang dengan kode \'%s\' tidak ditemukan di sistem.',
-                    'invalid-status'              => 'Status harus 0 atau 1 (atau kosong untuk aktif secara default).',
-                    'channel-related-locale-root' => 'Anda tidak dapat menghapus lokal dengan kode :code yang terkait dengan saluran.',
+                    'code-not-found-to-delete' => 'Saluran dengan kode :code tidak ditemukan untuk dihapus.',
+                    'locale-not-found'         => 'Satu atau lebih bahasa tidak ada.',
+                    'root-category-not-found'  => 'Kategori utama tidak ada.',
+                    'currency-not-found'       => 'Satu atau lebih mata uang tidak ada.',
+                    'invalid-locale'           => 'Bahasa tidak ada.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
@@ -60,8 +91,22 @@ return [
         'categories' => [
             'title' => 'Kategori',
         ],
+        'channels' => [
+            'title' => 'Saluran',
+        ],
         'currencies' => [
-            'title' => 'Mata Uang',
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
     'validation' => [

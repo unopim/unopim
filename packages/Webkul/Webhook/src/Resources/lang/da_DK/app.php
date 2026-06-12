@@ -47,6 +47,7 @@ return [
                         'scheme'            => 'Webhook-URL\'en skal starte med http:// eller https://.',
                         'connection_failed' => 'Webhook-URL\'en kunne ikke nås. Tjek venligst URL\'en.',
                         'unreachable'       => 'Webhook-URL\'en er ikke gyldig (HTTP :code).',
+                        'unsafe'            => 'Webhook-URL\'en peger på en privat, loopback eller intern adresse og er ikke tilladt.',
                     ],
                     'success'    => 'Webhook-indstillinger blev gemt',
                     'logs-title' => 'Logfiler',

@@ -1944,6 +1944,9 @@ return [
                 'my-account'    => '我的帳戶',
                 'notifications' => '通知',
                 'visit-shop'    => '訪問商店',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => '屬性族群',

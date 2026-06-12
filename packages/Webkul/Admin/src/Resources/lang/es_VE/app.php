@@ -1944,6 +1944,9 @@ return [
                 'my-account'    => 'Mi cuenta',
                 'notifications' => 'Notificaciones',
                 'visit-shop'    => 'Visitar tienda',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Familias de atributos',
