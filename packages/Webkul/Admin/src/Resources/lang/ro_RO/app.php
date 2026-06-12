@@ -2287,6 +2287,11 @@ return [
             'description' => 'Ups! Metoda solicitării nu este permisă pentru această adresă URL. Vă rugăm să utilizați metoda corectă sau să reveniți la pagina anterioară.',
             'title'       => '405 Metodă Nepermisă',
         ],
+        '429' => [
+            'description' => 'Ups! Prea multe încercări. Așteptați un minut și încercați din nou.',
+            'title'       => '429 Prea multe solicitări',
+        ],
+
         '500' => [
             'description' => 'Oops! Ceva nu a mers bine. Se pare că avem probleme în încărcarea paginii pe care o cauți.',
             'title'       => '500 Eroare internă a serverului',

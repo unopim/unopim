@@ -2287,6 +2287,11 @@ return [
             'description' => 'Ups! Metoda zahtjeva nije dopuštena za ovaj URL. Molimo koristite ispravnu metodu ili se vratite na prethodnu stranicu.',
             'title'       => '405 Metoda Nije Dopuštena',
         ],
+        '429' => [
+            'description' => 'Ups! Previše pokušaja. Pričekajte minutu i pokušajte ponovno.',
+            'title'       => '429 Previše zahtjeva',
+        ],
+
         '500' => [
             'description' => 'Ups! Nešto nije u redu. Čini se da imamo problema s učitavanjem tražene stranice.',
             'title'       => '500 Unutarnja greška poslužitelja',
