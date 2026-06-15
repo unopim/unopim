@@ -119,17 +119,23 @@ class DemoDataInstaller
     }
 
     /**
-     * Returns true when demo data is already present in the database.
+     * Returns true when demo data — or any operator-created catalog data —
+     * is already present in the database.
      *
-     * Probes for any non-root category — the base installer only
-     * creates the root row, while CategoryDemoTableSeeder inserts the
-     * full demo tree under it. A child category therefore proves the
-     * demo pipeline has already run.
+     * The seeders delete products, the demo category tree, and the full
+     * demo_extras table set (channels, attributes, families, core config),
+     * so the guard probes every signal that proves the DB is no longer a
+     * bare base install: a product, a non-root category, or an attribute
+     * family / channel beyond the single `default` row the base installer
+     * ships. Any of these means re-seeding would destroy real data.
      */
     public function isAlreadySeeded(): bool
     {
         try {
-            return DB::table('categories')->whereNotNull('parent_id')->exists();
+            return DB::table('products')->exists()
+                || DB::table('categories')->whereNotNull('parent_id')->exists()
+                || DB::table('attribute_families')->where('code', '!=', 'default')->exists()
+                || DB::table('channels')->where('code', '!=', 'default')->exists();
         } catch (Throwable) {
             // Table missing / DB not migrated yet → treat as not seeded
             // so the caller can decide how to handle the failure mode.

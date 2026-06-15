@@ -3,7 +3,6 @@
 namespace Webkul\Installer\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\ConfirmableTrait;
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
 /**
@@ -16,15 +15,13 @@ use Webkul\Installer\Helpers\DemoDataInstaller;
  */
 class SeedDemoData extends Command
 {
-    use ConfirmableTrait;
-
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'unopim:install:demo-data
-        { --force : Skip confirmation and re-seed even when demo data is already present (use for CI / Docker). }';
+        { --force : Re-seed even when demo data is already present (production still requires confirmation). }';
 
     /**
      * The console command description.
@@ -38,23 +35,41 @@ class SeedDemoData extends Command
      */
     public function handle(DemoDataInstaller $installer): int
     {
-        if (! $this->getLaravel()->environment('production')) {
-            $this->components->warn('Your existing data will be removed and replaced with demo data.');
+        $force = (bool) $this->option('force');
+
+        if (! $force && $installer->isAlreadySeeded()) {
+            $this->info('Demo data is already seeded — nothing to do. Re-run with --force to re-seed.');
+
+            return self::SUCCESS;
         }
 
-        if (! $this->confirmToProceed()) {
-            return self::FAILURE;
+        $this->components->warn('This deletes existing products, categories, channels, attributes, families and core config, then loads demo data.');
+
+        if ($this->getLaravel()->environment('production')) {
+            $this->components->alert('Application In Production');
+
+            if (! $this->components->confirm('Are you sure you want to run this command?', false)) {
+                $this->components->warn('Command cancelled.');
+
+                return self::FAILURE;
+            }
         }
 
         $result = $installer->seed(
             fn (string $message) => $this->warn('Step: '.$message),
-            true,
+            $force,
         );
 
         if (! ($result['success'] ?? false)) {
             $this->error("Failed to seed sample data: {$result['error']}");
 
             return self::FAILURE;
+        }
+
+        if ($result['skipped'] ?? false) {
+            $this->info('Demo data is already seeded — nothing to do. Re-run with --force to re-seed.');
+
+            return self::SUCCESS;
         }
 
         $this->info('Sample products seeded successfully.');
