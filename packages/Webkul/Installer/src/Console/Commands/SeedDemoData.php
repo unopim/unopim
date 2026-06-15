@@ -21,7 +21,7 @@ class SeedDemoData extends Command
      * @var string
      */
     protected $signature = 'unopim:install:demo-data
-        { --force : Re-seed even when demo data is already present. }';
+        { --force : Re-seed even when demo data is already present (production still requires confirmation). }';
 
     /**
      * The console command description.
@@ -35,9 +35,29 @@ class SeedDemoData extends Command
      */
     public function handle(DemoDataInstaller $installer): int
     {
+        $force = (bool) $this->option('force');
+
+        if (! $force && $installer->isAlreadySeeded()) {
+            $this->info('Demo data is already seeded — nothing to do. Re-run with --force to re-seed.');
+
+            return self::SUCCESS;
+        }
+
+        $this->components->warn('This deletes existing products, categories, channels, attributes, families and core config, then loads demo data.');
+
+        if ($this->getLaravel()->environment('production')) {
+            $this->components->alert('Application In Production');
+
+            if (! $this->components->confirm('Are you sure you want to run this command?', false)) {
+                $this->components->warn('Command cancelled.');
+
+                return self::FAILURE;
+            }
+        }
+
         $result = $installer->seed(
             fn (string $message) => $this->warn('Step: '.$message),
-            (bool) $this->option('force'),
+            $force,
         );
 
         if (! ($result['success'] ?? false)) {
