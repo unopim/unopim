@@ -2,71 +2,101 @@
 
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
-describe('unopim:install:demo-data (issue #794)', function () {
-    it('exits 0 and surfaces every step message when seeding succeeds', function () {
-        app()->instance(DemoDataInstaller::class, new class extends DemoDataInstaller
+/**
+ * Stubs DemoDataInstaller so the command can be exercised without a real
+ * database. $seedCalled / $forceSeen let a test assert whether (and how)
+ * seeding was invoked, which is how we prove the confirmation gate blocks
+ * a destructive re-seed when the operator declines.
+ */
+function fakeDemoInstaller(array $result, bool &$seedCalled, bool &$forceSeen): void
+{
+    app()->instance(DemoDataInstaller::class, new class($result, $seedCalled, $forceSeen) extends DemoDataInstaller
+    {
+        public function __construct(
+            private array $result,
+            private bool &$seedCalled,
+            private bool &$forceSeen,
+        ) {}
+
+        public function seed(?Closure $reporter = null, bool $force = false): array
         {
-            public function seed(?Closure $reporter = null, bool $force = false): array
-            {
-                ($reporter ?? static fn () => null)('Seeding demo extras...');
-                ($reporter ?? static fn () => null)('Seeding demo categories...');
+            $this->seedCalled = true;
+            $this->forceSeen = $force;
 
-                return ['success' => true];
-            }
-        });
+            ($reporter ?? static fn () => null)('Seeding demo extras...');
+            ($reporter ?? static fn () => null)('Seeding demo categories...');
 
-        $this->artisan('unopim:install:demo-data')
+            return $this->result;
+        }
+    });
+}
+
+describe('unopim:install:demo-data (issue #975 — destructive re-seed guard)', function () {
+    it('seeds and exits 0 when --force is passed', function () {
+        $seedCalled = false;
+        $forceSeen = false;
+        fakeDemoInstaller(['success' => true], $seedCalled, $forceSeen);
+
+        $this->artisan('unopim:install:demo-data', ['--force' => true])
             ->expectsOutputToContain('Seeding demo extras...')
             ->expectsOutputToContain('Seeding demo categories...')
             ->expectsOutputToContain('Sample products seeded successfully.')
             ->assertExitCode(0);
+
+        expect($seedCalled)->toBeTrue()
+            ->and($forceSeen)->toBeTrue();
     });
 
     it('exits non-zero and prints the seeder error when seeding fails', function () {
-        app()->instance(DemoDataInstaller::class, new class extends DemoDataInstaller
-        {
-            public function seed(?Closure $reporter = null, bool $force = false): array
-            {
-                return ['success' => false, 'error' => 'JSON missing'];
-            }
-        });
+        $seedCalled = false;
+        $forceSeen = false;
+        fakeDemoInstaller(['success' => false, 'error' => 'JSON missing'], $seedCalled, $forceSeen);
 
-        $this->artisan('unopim:install:demo-data')
+        $this->artisan('unopim:install:demo-data', ['--force' => true])
             ->expectsOutputToContain('Failed to seed sample data: JSON missing')
             ->assertExitCode(1);
     });
 
-    it('exits 0 with the "already seeded" message and skips work when demo data is present', function () {
-        app()->instance(DemoDataInstaller::class, new class extends DemoDataInstaller
-        {
-            public function seed(?Closure $reporter = null, bool $force = false): array
-            {
-                return ['success' => true, 'skipped' => true];
-            }
-        });
+    it('warns but proceeds without confirmation in local env', function () {
+        app()['env'] = 'local';
+
+        $seedCalled = false;
+        $forceSeen = false;
+        fakeDemoInstaller(['success' => true], $seedCalled, $forceSeen);
 
         $this->artisan('unopim:install:demo-data')
-            ->expectsOutputToContain('Demo data is already seeded')
+            ->expectsOutputToContain('Your existing data will be removed')
+            ->expectsOutputToContain('Sample products seeded successfully.')
             ->assertExitCode(0);
+
+        expect($seedCalled)->toBeTrue()
+            ->and($forceSeen)->toBeTrue();
     });
 
-    it('forwards --force to the installer so a re-seed runs', function () {
+    it('blocks seeding in production without --force', function () {
+        app()['env'] = 'production';
+
+        $seedCalled = false;
         $forceSeen = false;
-        app()->instance(DemoDataInstaller::class, new class($forceSeen) extends DemoDataInstaller
-        {
-            public function __construct(private bool &$forceSeen) {}
+        fakeDemoInstaller(['success' => true], $seedCalled, $forceSeen);
 
-            public function seed(?Closure $reporter = null, bool $force = false): array
-            {
-                $this->forceSeen = $force;
+        $this->artisan('unopim:install:demo-data')
+            ->assertExitCode(1);
 
-                return ['success' => true];
-            }
-        });
+        expect($seedCalled)->toBeFalse();
+    });
+
+    it('bypasses the production confirmation with --force', function () {
+        app()['env'] = 'production';
+
+        $seedCalled = false;
+        $forceSeen = false;
+        fakeDemoInstaller(['success' => true], $seedCalled, $forceSeen);
 
         $this->artisan('unopim:install:demo-data', ['--force' => true])
+            ->expectsOutputToContain('Sample products seeded successfully.')
             ->assertExitCode(0);
 
-        expect($forceSeen)->toBeTrue();
+        expect($seedCalled)->toBeTrue();
     });
 });

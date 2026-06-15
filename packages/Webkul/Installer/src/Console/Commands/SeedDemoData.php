@@ -3,6 +3,7 @@
 namespace Webkul\Installer\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Console\ConfirmableTrait;
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
 /**
@@ -15,13 +16,15 @@ use Webkul\Installer\Helpers\DemoDataInstaller;
  */
 class SeedDemoData extends Command
 {
+    use ConfirmableTrait;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'unopim:install:demo-data
-        { --force : Re-seed even when demo data is already present. }';
+        { --force : Skip confirmation and re-seed even when demo data is already present (use for CI / Docker). }';
 
     /**
      * The console command description.
@@ -35,21 +38,23 @@ class SeedDemoData extends Command
      */
     public function handle(DemoDataInstaller $installer): int
     {
+        if (! $this->getLaravel()->environment('production')) {
+            $this->components->warn('Your existing data will be removed and replaced with demo data.');
+        }
+
+        if (! $this->confirmToProceed()) {
+            return self::FAILURE;
+        }
+
         $result = $installer->seed(
             fn (string $message) => $this->warn('Step: '.$message),
-            (bool) $this->option('force'),
+            true,
         );
 
         if (! ($result['success'] ?? false)) {
             $this->error("Failed to seed sample data: {$result['error']}");
 
             return self::FAILURE;
-        }
-
-        if ($result['skipped'] ?? false) {
-            $this->info('Demo data is already seeded — nothing to do. Re-run with --force to re-seed.');
-
-            return self::SUCCESS;
         }
 
         $this->info('Sample products seeded successfully.');
