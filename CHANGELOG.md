@@ -3,26 +3,26 @@
 ## v2.1.5
 
 ### Security
-- Hardened file uploads in the rich-text (TinyMCE) editor — uploads are now limited to an approved set of image types and saved under randomised filenames ([#476](https://github.com/unopim/unopim/pull/476)).
-- Tightened API permission enforcement on the configurable-product endpoints so every request requires the correct access scope ([#477](https://github.com/unopim/unopim/pull/477)).
-- Added the required permission checks to the Magic AI platform **update** and **set-default** actions ([#479](https://github.com/unopim/unopim/pull/479)).
-- Hardened product-grid sorting to safely handle all sort input ([#488](https://github.com/unopim/unopim/pull/488)).
-- Improved how channel names are rendered on the attribute-family **Completeness** screen ([#489](https://github.com/unopim/unopim/pull/489)).
+
+* Hardened file uploads in the rich-text (TinyMCE) editor — uploads are now limited to an approved set of image types and saved under randomised filenames ([#476](https://github.com/unopim/unopim/pull/476)).
+* Tightened API permission enforcement on the configurable-product endpoints so every request requires the correct access scope ([#477](https://github.com/unopim/unopim/pull/477)).
+* Added the required permission checks to the Magic AI platform **update** and **set-default** actions ([#479](https://github.com/unopim/unopim/pull/479)).
+* Hardened product-grid sorting to safely handle all sort input ([#488](https://github.com/unopim/unopim/pull/488)).
+* Improved how channel names are rendered on the attribute-family **Completeness** screen ([#489](https://github.com/unopim/unopim/pull/489)).
 
 ### Bug Fixes
-- Fixed **`upgrade.sh` backup excluding user data** — the automated upgrade backup now includes the `storage/` folder (uploaded media, import/export files) and skips only dependencies, regenerable framework caches, logs, and debugbar output; previously a restore from the script's backup lost all product media.
-- Fixed **`upgrade.sh` dropping hidden files** — new-release dotfiles (`.env.example`, `.gitignore`, `.htaccess`) are now copied during the upgrade.
-- Fixed **`upgrade.sh` `.env` parsing** — database credentials containing `=`, quotes, or matching multiple keys (e.g. commented lines) no longer break the database dump; passwords are passed via environment variables instead of the command line.
-- Fixed **broken HTML comments in the pull request template** and a missing code-fence close in `UPGRADE.md`.
 
-### Improvements
-- Added **PostgreSQL support to `upgrade.sh`** — the backup step now detects `DB_CONNECTION` and uses `pg_dump` for PostgreSQL installations.
-- Improved **GitHub issue templates** — single bug-report form with a required environment checklist, duplicate-search confirmation, title prefixes, and corrected labels; the issue chooser now also links Community Discussions and the documentation.
-- Updated **`CONTRIBUTING.md`** — fixed issue-template links, documented Conventional Commits, target-branch selection, the security disclosure policy, and the local test/lint checks CI runs.
+* Fixed **`upgrade.sh` backup excluding user data** — the automated upgrade backup now includes the `storage/` folder (uploaded media, import/export files) and skips only dependencies, regenerable framework caches, logs, and debugbar output; previously a restore from the script's backup lost all product media.
+* Fixed **`upgrade.sh` dropping hidden files** — new-release dotfiles (`.env.example`, `.gitignore`, `.htaccess`) are now copied during the upgrade.
+* Fixed **`upgrade.sh` `.env` parsing** — database credentials containing `=`, quotes, or matching multiple keys (e.g. commented lines) no longer break the database dump; passwords are passed via environment variables instead of the command line.
+* Fixed **`upgrade.sh` PostgreSQL compatibility** — the backup process now detects `DB_CONNECTION` and uses `pg_dump` for PostgreSQL installations.
+* Fixed **GitHub issue templates** — corrected labels, issue-template links, issue-chooser navigation, and related template inconsistencies; added a consolidated bug-report form with environment validation and duplicate-report checks.
+* Fixed **repository documentation** — corrected broken HTML comments in the pull request template, added a missing code-fence close in `UPGRADE.md`, and updated contribution guidelines to reflect the current development workflow.
 
 ### DevOps
-- Cleaned up **dead files** — removed the empty `public/forge`, the orphan `patches.lock.json` (composer-patches was never installed), config files for uninstalled packages (`config/horizon.php`, `config/sitemap.php`), a placeholder DataGrid test, and the broken `bin/codecept` symlink. Added a root `public/favicon.ico` (browsers request it unconditionally) and ignored nested `node_modules/` directories.
-- Moved **AI agent skills to a dedicated repository** — [unopim/agent-skills](https://github.com/unopim/agent-skills). The in-repo `.github/skills/` directory, the `.ai`/`.claude`/`.codex`/`.cursor`/`.kilocode` symlinks, the connector code-generation/code-review instruction files, and the skills-consistency workflow were removed; install skills locally with `npx skills add unopim/agent-skills` and set up Laravel Boost with `php artisan boost:install`.
+
+* Cleaned up **dead files** — removed the empty `public/forge`, the orphan `patches.lock.json` (composer-patches was never installed), config files for uninstalled packages (`config/horizon.php`, `config/sitemap.php`), a placeholder DataGrid test, and the broken `bin/codecept` symlink. Added a root `public/favicon.ico` (browsers request it unconditionally) and ignored nested `node_modules/` directories.
+* Moved **AI agent skills to a dedicated repository** — [unopim/agent-skills](https://github.com/unopim/agent-skills). The in-repo `.github/skills/` directory, the `.ai`/`.claude`/`.codex`/`.cursor`/`.kilocode` symlinks, the connector code-generation/code-review instruction files, and the skills-consistency workflow were removed; install skills locally with `npx skills add unopim/agent-skills` and set up Laravel Boost with `php artisan boost:install`.
 
 ## v2.1.4 - 2026-06-06
 
