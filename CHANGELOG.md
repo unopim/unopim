@@ -1,5 +1,18 @@
 # v2.0.x
 
+## v2.0.4 - 2026-06-16
+
+### Security
+- Hardened **editor image uploads** — TinyMCE uploads are validated against an image allowlist (jpeg/png/jpg/gif/webp) with matching MIME/extension checks and stored under randomised filenames ([#498](https://github.com/unopim/unopim/pull/498)).
+- Validated **attribute swatch uploads** — swatch images are now checked and processed through `FileStorer` on save ([#498](https://github.com/unopim/unopim/pull/498)).
+- Hardened **product datagrid sorting** — the sort direction is normalised to an `asc`/`desc` allowlist on both the database and Elasticsearch paths ([#498](https://github.com/unopim/unopim/pull/498)).
+- Escaped **channel options on the attribute-family Completeness screen**, closing a stored-XSS vector ([#498](https://github.com/unopim/unopim/pull/498)).
+- Closed **ACL gaps** — MagicAI prompt / system-prompt `store`/`update`, AiAgent `generate.process`, and platform `update`/`set_default` routes are now mapped to their permissions so they honour role ACLs ([#498](https://github.com/unopim/unopim/pull/498)).
+- Hardened the **API `ScopeMiddleware`** — unmapped state-changing (POST/PUT/PATCH/DELETE) routes are now rejected by default instead of passing through ([#498](https://github.com/unopim/unopim/pull/498)).
+
+### Bug Fixes
+- Fixed a **504 timeout when creating attributes** on instances with a large `audits` table — added a composite index on `audits(tags, history_id)` so the `audit_before_insert` version trigger uses index lookups instead of full table scans, and stopped auditing empty locale translations (one audit row per blank locale). Attribute creation that previously timed out now completes in well under a second ([#507](https://github.com/unopim/unopim/pull/507)).
+
 ## v2.0.3 - 2026-06-04
 
 ### Security
