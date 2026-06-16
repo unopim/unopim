@@ -1,27 +1,23 @@
 # v2.0.x
 
-## v2.0.4 - 2026-06-16
+# v2.0.3 - 2026-06-16
 
-### Security
-- Hardened **editor image uploads** — TinyMCE uploads are validated against an image allowlist (jpeg/png/jpg/gif/webp) with matching MIME/extension checks and stored under randomised filenames ([#498](https://github.com/unopim/unopim/pull/498)).
-- Validated **attribute swatch uploads** — swatch images are now checked and processed through `FileStorer` on save ([#498](https://github.com/unopim/unopim/pull/498)).
-- Hardened **product datagrid sorting** — the sort direction is normalised to an `asc`/`desc` allowlist on both the database and Elasticsearch paths ([#498](https://github.com/unopim/unopim/pull/498)).
-- Escaped **channel options on the attribute-family Completeness screen**, closing a stored-XSS vector ([#498](https://github.com/unopim/unopim/pull/498)).
-- Closed **ACL gaps** — MagicAI prompt / system-prompt `store`/`update`, AiAgent `generate.process`, and platform `update`/`set_default` routes are now mapped to their permissions so they honour role ACLs ([#498](https://github.com/unopim/unopim/pull/498)).
-- Hardened the **API `ScopeMiddleware`** — unmapped state-changing (POST/PUT/PATCH/DELETE) routes are now rejected by default instead of passing through ([#498](https://github.com/unopim/unopim/pull/498)).
+## Security
 
-### Bug Fixes
-- Fixed a **504 timeout when creating attributes** on instances with a large `audits` table — added a composite index on `audits(tags, history_id)` so the `audit_before_insert` version trigger uses index lookups instead of full table scans, and stopped auditing empty locale translations (one audit row per blank locale). Attribute creation that previously timed out now completes in well under a second ([#507](https://github.com/unopim/unopim/pull/507)).
+* Hardened **editor image uploads**. TinyMCE uploads are now validated against an image allowlist (`jpeg`, `jpg`, `png`, `gif`, `webp`) with matching MIME-type and extension verification, and are stored using randomized filenames. (#498)
+* Added validation for **attribute swatch uploads**. Swatch images are now verified and processed through `FileStorer` before being saved. (#498)
+* Hardened **product datagrid sorting** by normalizing sort directions to an allowlist of `asc` and `desc` for both database and Elasticsearch queries. (#498)
+* Escaped **channel option values** on the Attribute Family Completeness screen, preventing a stored XSS vulnerability. (#498)
+* Closed multiple **ACL enforcement gaps**. MagicAI prompt and system-prompt `store`/`update`, AiAgent `generate.process`, and platform `update`/`set_default` routes are now properly mapped to ACL permissions. (#498)
+* Hardened the **API ScopeMiddleware**. Unmapped state-changing requests (`POST`, `PUT`, `PATCH`, `DELETE`) are now denied by default instead of being allowed through. (#498)
+* Secured the **installer workflow** after installation. The `CanInstall` middleware now blocks all `/install` requests once the `storage/installed` marker exists, and additional guards were added to all state-changing installer endpoints. This prevents unauthorized reconfiguration and closes a potential pre-authentication admin takeover vector. (#459)
+* Enforced **ACL permission checks** on previously unmapped administrative actions, including integration management, product bulk edit, and family completeness/configuration operations. Restricted users now correctly receive a `403 Forbidden` response. (#467)
+* Removed **hardcoded default administrator credentials** from the installer. Credentials are now sourced from `INSTALLER_ADMIN_EMAIL` and `INSTALLER_ADMIN_PASSWORD`, or a secure random password is generated and stored in `storage/app/admin-credentials.txt`. Seeder operations are now idempotent, preserving manually updated credentials across reseeding and container restarts. (#457)
 
-## v2.0.3 - 2026-06-04
+## Bug Fixes
 
-### Security
-- Sealed the installer once setup completes — the `CanInstall` middleware now blocks every `/install` request after a `storage/installed` marker exists, and defense-in-depth `abortIfInstalled()` guards were added to each state-changing install endpoint (env-file-setup, run-migration, run-seeder, admin-config-setup, seed-sample-data, smtp-config-setup). The completion marker is written only at the very end of the flow, closing a pre-auth admin-takeover vector on already-installed instances ([#459](https://github.com/unopim/unopim/pull/459)).
-- Enforced ACL permission checks on state-changing admin routes that were absent from `acl.php` — including integration management, product bulk-edit, and family-completeness/configuration actions. The `Bouncer` middleware only enforced permissions for mapped routes, so unmapped write routes were reachable by any authenticated admin; restricted users now receive a 403 ([#467](https://github.com/unopim/unopim/pull/467)).
-- Removed the hardcoded default admin credentials from the installer — credentials are now driven by `INSTALLER_ADMIN_EMAIL` / `INSTALLER_ADMIN_PASSWORD`, or a random password is generated and written once to `storage/app/admin-credentials.txt`. Admin and role seeders are now idempotent so operator-rotated passwords survive re-seeding and container restarts, and Docker entrypoints wait for database readiness before seeding ([#457](https://github.com/unopim/unopim/pull/457)).
-
-### Improvements
-- Added a debug-only **`AppUrlGuard`** package — detects when the browser host does not match the configured `APP_URL` (a common cause of broken CSS/JS), shows a guided fix modal, and forces admin logout on a mismatched host. It stays completely inert when `APP_DEBUG=false` and ships translations for 33 locales ([#456](https://github.com/unopim/unopim/pull/456)).
+* Fixed a **504 timeout during attribute creation** on instances with large `audits` tables. Added a composite index on `audits(tags, history_id)` to optimize the `audit_before_insert` trigger and stopped generating audit records for empty locale translations. Attribute creation now completes significantly faster. (#507)
+* Added the debug-only **AppUrlGuard** package. It detects mismatches between the browser host and configured `APP_URL`, displays guided troubleshooting instructions, and forces administrator logout when a mismatch is detected. The package remains inactive when `APP_DEBUG=false` and includes translations for 33 locales. (#456)
 
 ## v2.0.2 - 2026-05-29
 
