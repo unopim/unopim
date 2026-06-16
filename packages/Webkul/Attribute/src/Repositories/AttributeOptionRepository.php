@@ -5,10 +5,8 @@ namespace Webkul\Attribute\Repositories;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
 use Webkul\Attribute\Contracts\AttributeOption;
 use Webkul\Core\Eloquent\Repository;
-use Webkul\Core\Filesystem\FileStorer;
 
 class AttributeOptionRepository extends Repository
 {
@@ -106,12 +104,8 @@ class AttributeOptionRepository extends Repository
         }
 
         if ($data['swatch_value'] instanceof UploadedFile) {
-            $file = $data['swatch_value'];
-
-            $name = Str::random(40).'.'.($file->guessExtension() ?: $file->getClientOriginalExtension());
-
             parent::update([
-                'swatch_value' => app(FileStorer::class)->storeAs('attribute_option', $name, $file),
+                'swatch_value' => $data['swatch_value']->store('attribute_option'),
             ], $optionId);
         }
     }

@@ -71,7 +71,6 @@ class Handler extends ExceptionHandler
                 JsonResponse::HTTP_UNAUTHORIZED,
                 JsonResponse::HTTP_FORBIDDEN,
                 JsonResponse::HTTP_NOT_FOUND,
-                JsonResponse::HTTP_TOO_MANY_REQUESTS,
                 JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
                 JsonResponse::HTTP_SERVICE_UNAVAILABLE,
             ]) ? $exception->getStatusCode() : JsonResponse::HTTP_INTERNAL_SERVER_ERROR;

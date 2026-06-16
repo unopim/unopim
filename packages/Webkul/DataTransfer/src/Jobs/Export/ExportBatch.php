@@ -17,6 +17,10 @@ class ExportBatch implements ShouldQueue
 
     public $tries = 3;
 
+    /**
+     * Per-batch timeout in seconds. Scaled with the batch size (with the previous fixed 600s as a
+     * floor) so media-heavy or very large batches are not killed mid-write on big exports.
+     */
     public $timeout = 600;
 
     /**
@@ -30,7 +34,11 @@ class ExportBatch implements ShouldQueue
         protected $filePath,
         protected $jobTrackId,
         protected $exportBuffer
-    ) {}
+    ) {
+        $count = is_countable($exportBatch->data ?? null) ? count($exportBatch->data) : 0;
+
+        $this->timeout = max(600, $count * 3);
+    }
 
     /**
      * Execute the job.

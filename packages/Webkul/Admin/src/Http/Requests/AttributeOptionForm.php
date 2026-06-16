@@ -5,7 +5,6 @@ namespace Webkul\Admin\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Webkul\Core\Rules\Code;
-use Webkul\Core\Rules\FileOrImageValidValue;
 
 class AttributeOptionForm extends FormRequest
 {
@@ -16,7 +15,7 @@ class AttributeOptionForm extends FormRequest
     {
         $attributeId = $this->route('attribute_id');
 
-        $rules = [
+        return [
             'code' => [
                 'required',
                 Rule::unique('attribute_options', 'code')->where(function ($query) use ($attributeId) {
@@ -26,11 +25,5 @@ class AttributeOptionForm extends FormRequest
             ],
             'locales.*.label' => 'nullable|string',
         ];
-
-        if ($this->hasFile('swatch_value')) {
-            $rules['swatch_value'] = [new FileOrImageValidValue(isImage: true)];
-        }
-
-        return $rules;
     }
 }

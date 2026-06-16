@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Exporters;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Psr\Log\LoggerInterface;
@@ -219,12 +220,25 @@ abstract class AbstractExporter
 
     public function getExportParameter(): array
     {
+        $filters = $this->getFilters();
+
         return [
             'fieldDelimiter' => $this->export->jobInstance['field_separator'] ?? ',',
             'filedEnclosure' => '"',
             'shouldAddBOM'   => false,
-            'type'           => $this->filters['file_format'] ?? SpoutWriterFactory::CSV,
+            'type'           => $filters['file_format'] ?? SpoutWriterFactory::CSV,
+            'writeHeaders'   => ($filters['header_row'] ?? '1') !== '0',
+            'headerLabels'   => $this->getHeaderLabels(),
         ];
+    }
+
+    /**
+     * Map of `columnKey => readable label` used to write labelled column headers when the
+     * "use_labels" option is on. Empty by default; exporters that support labels override this.
+     */
+    protected function getHeaderLabels(): array
+    {
+        return [];
     }
 
     /**
@@ -298,16 +312,55 @@ abstract class AbstractExporter
     /**
      * Get filename for generate data
      */
-    protected function getFileName(): string
+    public function getFileName(): string
     {
-        $fileName = sprintf(
-            '%s-%s.%s',
-            $this->export->jobInstance->code,
-            $this->export->jobInstance->entity_type,
-            strtolower($this->filters['file_format'] ?? SpoutWriterFactory::CSV),
-        );
+        $filters = $this->getFilters();
 
-        return $fileName;
+        $extension = strtolower($filters['file_format'] ?? SpoutWriterFactory::CSV);
+
+        $base = $this->resolveFileNamePattern($filters['file_path'] ?? null);
+
+        if ($base === '') {
+            $base = sprintf('%s-%s', $this->export->jobInstance->code, $this->export->jobInstance->entity_type);
+        }
+
+        return sprintf('%s.%s', $base, $extension);
+    }
+
+    /**
+     * Expand the user supplied file name pattern tokens and sanitize the result to a safe,
+     * traversal-proof file name (no path separators, no dots). Both [token] and {token} styles
+     * are accepted, and a trailing export extension the user may have typed (e.g. ".csv") is
+     * dropped since the real extension is always appended by getFileName(). Returns '' when the
+     * pattern is empty or yields no usable characters so the caller can fall back to the default.
+     */
+    protected function resolveFileNamePattern(?string $pattern): string
+    {
+        if (empty($pattern)) {
+            return '';
+        }
+
+        $now = Carbon::now();
+
+        $tokens = [
+            'code'        => (string) $this->export->jobInstance->code,
+            'entity_type' => (string) $this->export->jobInstance->entity_type,
+            'date'        => $now->format('Y-m-d'),
+            'time'        => $now->format('His'),
+        ];
+
+        $replacements = [];
+
+        foreach ($tokens as $key => $value) {
+            $replacements['['.$key.']'] = $value;
+            $replacements['{'.$key.'}'] = $value;
+        }
+
+        $expanded = strtr($pattern, $replacements);
+
+        $expanded = preg_replace('/\.(csv|xls|xlsx)$/i', '', $expanded);
+
+        return preg_replace('/[^A-Za-z0-9_-]/', '', $expanded) ?? '';
     }
 
     public function initializeFileBuffer()
