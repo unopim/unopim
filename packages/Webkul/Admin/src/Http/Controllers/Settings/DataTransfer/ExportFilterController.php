@@ -101,13 +101,6 @@ class ExportFilterController extends Controller
         return $this->respondWithOptions($options);
     }
 
-    /**
-     * Dynamic list of attributes available as an export scope, with search and
-     * pagination pushed to the database so only the requested page (and its
-     * translations) loads per request. The id and type let the custom attribute
-     * filter render the matching value input, and an optional "exclude" query
-     * param drops codes (e.g. the SKU attribute, which has its own input).
-     */
     public function attributes(): JsonResponse
     {
         $this->ensureExportPermission();
