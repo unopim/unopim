@@ -2320,6 +2320,11 @@ return [
             'description' => 'Hoppsan! Begäranmetoden är inte tillåten för denna URL. Använd rätt metod eller återgå till föregående sida.',
             'title'       => '405 Metod Ej Tillåten',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oops! Något gick fel. Det verkar som att vi har problem med att ladda den sida du söker.',
             'title'       => '500 Intern serverfel',

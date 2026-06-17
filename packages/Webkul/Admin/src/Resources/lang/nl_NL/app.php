@@ -2320,6 +2320,11 @@ return [
             'description' => 'Oeps! De aanvraagmethode is niet toegestaan voor deze URL. Gebruik de juiste methode of ga terug naar de vorige pagina.',
             'title'       => '405 Methode Niet Toegestaan',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oeps! Er is iets misgegaan. We hebben problemen met het laden van de pagina die je zoekt.',
             'title'       => '500 Interne serverfout',

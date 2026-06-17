@@ -2320,6 +2320,11 @@ return [
             'description' => 'Ups! Metode permintaan tidak diizinkan untuk URL ini. Silakan gunakan metode yang benar atau kembali ke halaman sebelumnya.',
             'title'       => '405 Metode Tidak Diizinkan',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Ups!Ada yang salah.Sepertinya kami \'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Kesalahan Server Internal',

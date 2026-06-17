@@ -2320,6 +2320,11 @@ return [
             'description' => 'Naku! Hindi pinapayagan ang paraan ng kahilingan para sa URL na ito. Mangyaring gamitin ang tamang paraan o bumalik sa nakaraang pahina.',
             'title'       => '405 Hindi Pinapayagan ang Pamamaraan',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oops! May nangyaring mali. Mukhang may problema kami sa pag-load ng pahinang hinahanap mo.',
             'title'       => '500 Error ng Server',

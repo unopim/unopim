@@ -626,16 +626,17 @@ return [
                 'ai-translate'          => 'AI Translate',
 
                 'option' => [
-                    'save-btn'            => 'Save Option',
-                    'create-success'      => 'Attribute Option Created Successfully',
-                    'update-success'      => 'Attribute Option Updated Successfully',
-                    'sort-update-success' => 'Sort Order Updated Successfully',
-                    'sort-update-failure' => 'Failed to Update Sort Order',
-                    'delete-success'      => 'Attribute Option Deleted Successfully',
-                    'color'               => 'Color Swatch',
-                    'dropdown'            => 'Dropdown',
-                    'image'               => 'Image Swatch',
-                    'text'                => 'Text Swatch',
+                    'save-btn'             => 'Save Option',
+                    'create-success'       => 'Attribute Option Created Successfully',
+                    'update-success'       => 'Attribute Option Updated Successfully',
+                    'sort-update-success'  => 'Sort Order Updated Successfully',
+                    'sort-update-failure'  => 'Failed to Update Sort Order',
+                    'delete-success'       => 'Attribute Option Deleted Successfully',
+                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'color'                => 'Color Swatch',
+                    'dropdown'             => 'Dropdown',
+                    'image'                => 'Image Swatch',
+                    'text'                 => 'Text Swatch',
                 ],
             ],
 
@@ -2500,6 +2501,11 @@ return [
         '405' => [
             'description' => 'Oops! The request method is not allowed for this URL. Please use the correct method or return to the previous page.',
             'title'       => '405 Method Not Allowed',
+        ],
+
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
         ],
 
         '500' => [

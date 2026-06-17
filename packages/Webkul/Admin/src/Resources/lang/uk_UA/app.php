@@ -2320,6 +2320,11 @@ return [
             'description' => 'Упс! Метод запиту не дозволено для цієї URL-адреси. Будь ласка, використовуйте правильний метод або поверніться на попередню сторінку.',
             'title'       => '405 Метод не дозволено',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Ой! Щось пішло не так. Схоже, у нас проблема з завантаженням сторінки, яку ви шукаєте.',
             'title'       => '500 Внутрішня помилка сервера',

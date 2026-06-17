@@ -2320,6 +2320,11 @@ return [
             'description' => '죄송합니다! 이 URL에 대해 요청 메서드가 허용되지 않습니다. 올바른 메서드를 사용하거나 이전 페이지로 돌아가십시오.',
             'title'       => '405 허용되지 않은 메서드',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => '앗! 무언가 잘못되었습니다. 찾고 있는 페이지를 로드하는 데 문제가 발생했습니다.',
             'title'       => '500 내부 서버 오류',

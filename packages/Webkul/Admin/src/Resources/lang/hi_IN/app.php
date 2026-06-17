@@ -2320,6 +2320,11 @@ return [
             'description' => 'उफ़! इस URL के लिए अनुरोध विधि की अनुमति नहीं है। कृपया सही विधि का उपयोग करें या पिछले पृष्ठ पर वापस जाएँ।',
             'title'       => '405 विधि की अनुमति नहीं है',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'ओह! कुछ गड़बड़ हो गई। ऐसा लगता है कि हमें वह पेज लोड करने में परेशानी हो रही है जिसे आप खोज रहे हैं।',
             'title'       => '500 आंतरिक सर्वर त्रुटि',

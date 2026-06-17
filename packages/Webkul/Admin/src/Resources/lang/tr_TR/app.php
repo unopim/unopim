@@ -2320,6 +2320,11 @@ return [
             'description' => 'Hata! Bu URL için istek yöntemine izin verilmiyor. Lütfen doğru yöntemi kullanın veya önceki sayfaya geri dönün.',
             'title'       => '405 Yöntem İzinli Değil',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oops! Bir şeyler ters gitti. Görünüşe göre aradığınız sayfayı yüklemede sorun yaşıyoruz.',
             'title'       => '500 İç Sunucu Hatası',

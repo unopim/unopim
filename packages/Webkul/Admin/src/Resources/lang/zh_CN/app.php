@@ -2320,6 +2320,11 @@ return [
             'description' => '哎呀！此 URL 不允许使用该请求方法。请使用正确的方法或返回上一页。',
             'title'       => '405 方法不允许',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => '哎呀！出了些问题。我们似乎无法加载您正在查找的页面。',
             'title'       => '500内部服务器错误',

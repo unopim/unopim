@@ -2320,6 +2320,11 @@ return [
             'description' => 'Ups! O método de pedido não é permitido para este URL. Por favor, utilize o método correto ou regresse à página anterior.',
             'title'       => '405 Método Não Permitido',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Ops! Algo deu errado. Parece que estamos tendo dificuldades em carregar a página que você está procurando.',
             'title'       => '500 Erro interno do servidor',

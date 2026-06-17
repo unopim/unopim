@@ -3,11 +3,21 @@
 namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Rules\Code;
 
 class AttributeOptionForm extends FormRequest
 {
+    /**
+     * Mime types which are allowed to be used as a sanitizable SVG swatch image.
+     */
+    public const SVG_MIME_TYPES = [
+        'image/svg',
+        'image/svg+xml',
+    ];
+
     /**
      * Get the validation rules that apply to the request.
      */
@@ -15,7 +25,7 @@ class AttributeOptionForm extends FormRequest
     {
         $attributeId = $this->route('attribute_id');
 
-        return [
+        $rules = [
             'code' => [
                 'required',
                 Rule::unique('attribute_options', 'code')->where(function ($query) use ($attributeId) {
@@ -25,5 +35,57 @@ class AttributeOptionForm extends FormRequest
             ],
             'locales.*.label' => 'nullable|string',
         ];
+
+        if ($this->isImageSwatch($attributeId)) {
+            $rules['swatch_value'] = [
+                'nullable',
+                'image',
+                'mimes:jpeg,jpg,png,gif,webp,bmp,svg',
+                'mimetypes:image/jpeg,image/png,image/gif,image/webp,image/bmp,image/svg,image/svg+xml',
+            ];
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Add custom validation after the default rules have run.
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $swatchValue = $this->file('swatch_value');
+
+            if (! $swatchValue instanceof UploadedFile) {
+                return;
+            }
+
+            if (! in_array($swatchValue->getMimeType(), self::SVG_MIME_TYPES, true)) {
+                return;
+            }
+
+            $contents = (string) file_get_contents($swatchValue->getRealPath());
+
+            if (preg_match('/<script\b/i', $contents) || preg_match('/\son\w+\s*=/i', $contents)) {
+                $validator->errors()->add(
+                    'swatch_value',
+                    trans('admin::app.catalog.attributes.edit.option.invalid-swatch-image')
+                );
+            }
+        });
+    }
+
+    /**
+     * Determine whether the attribute is configured to use an image swatch.
+     */
+    protected function isImageSwatch($attributeId): bool
+    {
+        if (blank($attributeId)) {
+            return false;
+        }
+
+        $attribute = app(AttributeRepository::class)->find($attributeId);
+
+        return $attribute && $attribute->swatch_type === 'image';
     }
 }

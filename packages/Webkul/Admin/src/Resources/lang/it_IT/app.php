@@ -2320,6 +2320,11 @@ return [
             'description' => 'Oops! Il metodo di richiesta non è consentito per questo URL. Si prega di utilizzare il metodo corretto o tornare alla pagina precedente.',
             'title'       => '405 Metodo Non Consentito',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Ops! Qualcosa è andato storto. Sembrava che avessimo problemi a caricare la pagina che stavi cercando.',
             'title'       => '500 Errore interno del server',

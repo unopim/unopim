@@ -2320,6 +2320,11 @@ return [
             'description' => 'Ups! Metoda solicitării nu este permisă pentru această adresă URL. Vă rugăm să utilizați metoda corectă sau să reveniți la pagina anterioară.',
             'title'       => '405 Metodă Nepermisă',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oops! Ceva nu a mers bine. Se pare că avem probleme în încărcarea paginii pe care o cauți.',
             'title'       => '500 Eroare internă a serverului',

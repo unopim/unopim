@@ -2320,6 +2320,11 @@ return [
             'description' => 'Vaja! El mètode de la sol·licitud no està permès per a aquesta URL. Si us plau, utilitzeu el mètode correcte o torneu a la pàgina anterior.',
             'title'       => '405 Mètode No Permès',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oops! Alguna cosa ha sortit malament. Sembla que tenim problemes carregant la pàgina que busques.',
             'title'       => '500 Error de servidor intern',

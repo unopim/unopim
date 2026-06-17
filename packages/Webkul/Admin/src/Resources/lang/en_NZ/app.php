@@ -2320,6 +2320,11 @@ return [
             'description' => 'Oops! The request method is not allowed for this URL. Please use the correct method or return to the previous page.',
             'title'       => '405 Method Not Allowed',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oops! Something went wrong. We\'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Internal Server Error',

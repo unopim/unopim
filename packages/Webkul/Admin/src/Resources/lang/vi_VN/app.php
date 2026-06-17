@@ -2320,6 +2320,11 @@ return [
             'description' => 'Rất tiếc! Phương thức yêu cầu không được phép cho URL này. Vui lòng sử dụng phương thức chính xác hoặc quay lại trang trước.',
             'title'       => '405 Phương Thức Không Được Phép',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oops! Có gì đó không đúng. Có vẻ như chúng tôi gặp sự cố khi tải trang bạn đang tìm kiếm.',
             'title'       => '500 Lỗi máy chủ nội bộ',

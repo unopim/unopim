@@ -7,9 +7,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Contracts\AttributeOption;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Core\Traits\Sanitizer;
 
 class AttributeOptionRepository extends Repository
 {
+    use Sanitizer;
+
     /**
      * Specify Model class name
      */
@@ -104,8 +107,14 @@ class AttributeOptionRepository extends Repository
         }
 
         if ($data['swatch_value'] instanceof UploadedFile) {
+            $mimeType = $data['swatch_value']->getMimeType();
+
+            $path = $data['swatch_value']->store('attribute_option');
+
+            $this->sanitizeSVG($path, $mimeType);
+
             parent::update([
-                'swatch_value' => $data['swatch_value']->store('attribute_option'),
+                'swatch_value' => $path,
             ], $optionId);
         }
     }

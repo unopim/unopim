@@ -2320,6 +2320,11 @@ return [
             'description' => 'Oups ! La méthode de requête n\'est pas autorisée pour cette URL. Veuillez utiliser la méthode correcte ou retourner à la page précédente.',
             'title'       => '405 Méthode Non Autorisée',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oops ! Quelque chose s\'est mal passé. Nous avons des difficultés à générer la ressource.',
             'title'       => '500 Erreur interne',

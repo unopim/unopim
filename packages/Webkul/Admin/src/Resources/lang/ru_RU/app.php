@@ -2320,6 +2320,11 @@ return [
             'description' => 'Упс! Метод запроса не разрешён для этого URL. Пожалуйста, используйте правильный метод или вернитесь на предыдущую страницу.',
             'title'       => '405 Метод не разрешён',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Уп!Что-то пошло не так.Кажется, мы \'re having trouble loading the page you\'re looking for.',
             'title'       => '500 - внутренняя ошибка сервера',

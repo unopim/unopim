@@ -2320,6 +2320,11 @@ return [
             'description' => '申し訳ありません！このURLではリクエストメソッドが許可されていません。正しいメソッドを使用するか、前のページに戻ってください。',
             'title'       => '405 メソッドが許可されていません',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => '申し訳ありません。問題が発生しました。探しているページを読み込む際に問題が発生しているようです。',
             'title'       => '500 内部サーバー エラー',

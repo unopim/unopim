@@ -2320,6 +2320,11 @@ return [
             'description' => 'Ups! Anmodningsmetoden er ikke tilladt for denne URL. Brug venligst den korrekte metode eller vend tilbage til den forrige side.',
             'title'       => '405 Metode Ikke Tilladt',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Ups! Noget gik galt. Vi har problemer med at indlæse den side, du leder efter.',
             'title'       => '500 Intern serverfejl',

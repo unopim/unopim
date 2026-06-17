@@ -542,6 +542,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $sortColumn = $requestedSort['column'] ?? $this->sortColumn ?? $this->primaryColumn;
         $sortOrder = $requestedSort['order'] ?? $this->sortOrder;
 
+        $sortOrder = strtolower(trim((string) $sortOrder)) === 'asc' ? 'asc' : 'desc';
+
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             $attribute = $this->attributeService->findAttributeByCode($sortColumn) ?? 'text';
 

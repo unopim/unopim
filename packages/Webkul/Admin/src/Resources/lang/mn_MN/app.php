@@ -2320,6 +2320,11 @@ return [
             'description' => 'Уучлаарай! Энэ URL-д хүсэлтийн арга зөвшөөрөгдөөгүй байна. Зөв аргыг ашиглах эсвэл өмнөх хуудас руу буцна уу.',
             'title'       => '405 Арга Зөвшөөрөгдөөгүй',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Өө!Ямар нэгэн зүйл буруугаар эргэсэн.Бид тийм санагдаж байна\'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Дотоод серверийн алдаа',

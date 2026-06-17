@@ -2320,6 +2320,11 @@ return [
             'description' => 'عفوًا! طريقة الطلب غير مسموح بها لهذا الرابط. يُرجى استخدام الطريقة الصحيحة أو العودة إلى الصفحة السابقة.',
             'title'       => '405 الطريقة غير مسموح بها',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'أُووبس! هناك خطأ ما. يبدو أننا نواجه مشكلة في تحميل الصفحة التي تبحث عنها.',
             'title'       => '500 خطأ داخلي في الخادم',

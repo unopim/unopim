@@ -2320,6 +2320,11 @@ return [
             'description' => 'Hoppla! Die Anfragemethode ist für diese URL nicht erlaubt. Bitte verwenden Sie die korrekte Methode oder kehren Sie zur vorherigen Seite zurück.',
             'title'       => '405 Methode nicht erlaubt',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Hoppla! Da ist etwas schiefgelaufen. Es scheint, als hätten wir Probleme beim Laden der gesuchten Seite.',
             'title'       => '500 Interner Serverfehler',

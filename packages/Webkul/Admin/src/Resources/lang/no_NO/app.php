@@ -2320,6 +2320,11 @@ return [
             'description' => 'Oi! Forespørselsmetoden er ikke tillatt for denne URL-en. Vennligst bruk riktig metode eller gå tilbake til forrige side.',
             'title'       => '405 Metode Ikke Tillatt',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Ups! Noe gikk galt. Det ser ut som vi har problemer med å laste den siden du leter etter.',
             'title'       => '500 Intern serverfeil',

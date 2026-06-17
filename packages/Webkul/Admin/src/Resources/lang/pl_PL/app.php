@@ -2320,6 +2320,11 @@ return [
             'description' => 'Ups! Metoda żądania jest niedozwolona dla tego adresu URL. Proszę użyć poprawnej metody lub wrócić do poprzedniej strony.',
             'title'       => '405 Metoda Niedozwolona',
         ],
+        '429' => [
+            'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Ups! Coś poszło nie tak. Wygląda na to, że mamy problem z ładowaniem strony, której szukasz.',
             'title'       => '500 Wewnętrzny błąd serwera',
