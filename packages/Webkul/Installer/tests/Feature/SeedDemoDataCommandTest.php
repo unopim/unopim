@@ -3,11 +3,7 @@
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
 /**
- * Stubs DemoDataInstaller so the command can be exercised without a real
- * database. $seedCalled / $forceSeen let a test assert whether (and how)
- * seeding was invoked, which is how we prove the confirmation gate blocks
- * a destructive re-seed when the operator declines. $alreadySeeded drives
- * the idempotency short-circuit.
+ * Stub DemoDataInstaller so the command can be tested without a database.
  */
 function fakeDemoInstaller(array $result, bool &$seedCalled, bool &$forceSeen, bool $alreadySeeded = false): void
 {
