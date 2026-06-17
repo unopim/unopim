@@ -201,6 +201,31 @@ class CategoryRepository extends Repository
         return $query->get()->toTree();
     }
 
+    public function getChildCategoriesPaginated(int $parentId, int $categoryId = 0, int $page = 1, int $limit = 100): array
+    {
+        $page = max($page, 1);
+        $limit = max($limit, 1);
+
+        $query = $this->getModel()->where('parent_id', $parentId);
+
+        if ($categoryId) {
+            $query->where('id', '!=', $categoryId);
+        }
+
+        $total = (clone $query)->count();
+
+        $children = $query->defaultOrder()
+            ->forPage($page, $limit)
+            ->get();
+
+        return [
+            'data'     => $children->toArray(),
+            'page'     => $page,
+            'has_more' => ($page * $limit) < $total,
+            'total'    => $total,
+        ];
+    }
+
     /**
      * get visible category tree.
      *

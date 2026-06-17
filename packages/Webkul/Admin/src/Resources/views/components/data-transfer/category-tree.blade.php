@@ -1,6 +1,7 @@
 @props([
-    'name'  => 'filters[categories]',
-    'value' => [],
+    'name'     => 'filters[categories]',
+    'value'    => [],
+    'pageSize' => 100,
 ])
 
 @php
@@ -43,6 +44,7 @@
                     name-field="{{ $name }}"
                     id-field="code"
                     value-field="code"
+                    children-page-size="{{ $pageSize }}"
                     ::items="categories"
                     ::value="selectedJson"
                     ::expanded-branch="selectedCategoryTree"

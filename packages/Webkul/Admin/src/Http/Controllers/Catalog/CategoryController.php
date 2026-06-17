@@ -320,9 +320,20 @@ class CategoryController extends Controller
     {
         $id = (int) request()->input('id');
 
-        $categoryId = request()->input('category') ?? 0;
+        $categoryId = (int) (request()->input('category') ?? 0);
 
         $this->categoryRepository->findOrFail($id);
+
+        if (request()->filled('page')) {
+            return new JsonResponse(
+                $this->categoryRepository->getChildCategoriesPaginated(
+                    $id,
+                    $categoryId,
+                    (int) request()->input('page'),
+                    (int) request()->input('limit', 100),
+                )
+            );
+        }
 
         $childCategories = $this->categoryRepository->getChildCategories($id, $categoryId);
 
