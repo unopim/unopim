@@ -591,6 +591,7 @@ return [
                     'sort-update-success' => 'Urutan sortir berhasil diperbarui',
                     'sort-update-failure' => 'Gagal memperbarui urutan sortir',
                     'delete-success'      => 'Opsi atribut berhasil dihapus',
+                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
                     'color'               => 'Swatch Warna',
                     'dropdown'            => 'Dropdown',
                     'image'               => 'Gambar gambar',
