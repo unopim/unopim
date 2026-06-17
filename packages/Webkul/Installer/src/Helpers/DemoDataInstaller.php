@@ -104,17 +104,15 @@ class DemoDataInstaller
     }
 
     /**
-     * Returns true when demo data is already present in the database.
-     *
-     * Probes for any non-root category — the base installer only
-     * creates the root row, while CategoryDemoTableSeeder inserts the
-     * full demo tree under it. A child category therefore proves the
-     * demo pipeline has already run.
+     * Check if demo or operator-created catalog data already exists.
      */
     public function isAlreadySeeded(): bool
     {
         try {
-            return DB::table('categories')->whereNotNull('parent_id')->exists();
+            return DB::table('products')->exists()
+                || DB::table('categories')->whereNotNull('parent_id')->exists()
+                || DB::table('attribute_families')->where('code', '!=', 'default')->exists()
+                || DB::table('channels')->where('code', '!=', 'default')->exists();
         } catch (Throwable) {
             // Table missing / DB not migrated yet → treat as not seeded
             // so the caller can decide how to handle the failure mode.
@@ -123,10 +121,7 @@ class DemoDataInstaller
     }
 
     /**
-     * Recalculate product completeness synchronously. The
-     * `unopim:completeness:recalculate` command dispatches queue jobs,
-     * so the sync driver is forced while it runs to guarantee work
-     * lands before the installer finishes.
+     * Recalculate product completeness synchronously.
      */
     protected function recalculateCompleteness(): void
     {
