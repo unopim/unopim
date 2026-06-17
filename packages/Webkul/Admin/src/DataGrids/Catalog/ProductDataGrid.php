@@ -309,12 +309,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->addColumn($this->buildColumnDefinition($attribute));
     }
 
-    /**
-     * Add filterable attributes that are not already in the visible columns
-     * so they appear in the filter panel without being shown in the grid.
-     */
     protected function addFilterableAttributes(): void
     {
+        $requestedCodes = $this->getRequestedFilterAttributeCodes();
+
+        if (empty($requestedCodes)) {
+            return;
+        }
+
         $existingCodes = array_merge(
             $this->defaultColumns,
             array_keys($this->attributeColumns)
@@ -322,6 +324,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $filterableAttributes = app(AttributeRepository::class)
             ->where('is_filterable', true)
+            ->whereIn('code', $requestedCodes)
             ->whereNotIn('code', $existingCodes)
             ->get();
 
@@ -333,6 +336,20 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             $this->addColumn($columnDefinition);
         }
+    }
+
+    protected function getRequestedFilterAttributeCodes(): array
+    {
+        $filters = request()->input('filters', []);
+
+        if (! is_array($filters)) {
+            return [];
+        }
+
+        return array_values(array_diff(
+            array_keys($filters),
+            ['all', 'indices', 'channel', 'locale']
+        ));
     }
 
     /**
