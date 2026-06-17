@@ -340,19 +340,35 @@ class CategoryController extends Controller
         return new JsonResponse($childCategories->toArray());
     }
 
-    /**
-     * Result of search customer.
-     */
     public function search(): JsonResponse
     {
-        $results = [];
+        $locale = preg_replace('/[^A-Za-z_]/', '', (string) (request('locale') ?: core()->getRequestedLocaleCode()));
 
-        $categories = $this->categoryRepository->scopeQuery(function ($query) {
-            return $query
-                ->select('categories.*')
-                ->orderBy('created_at', 'desc');
-        })->paginate(10);
+        $searchQuery = trim((string) request('query', ''));
 
-        return response()->json($categories);
+        $query = $this->categoryRepository->getModel()->newQuery();
+
+        if ($searchQuery !== '') {
+            $query->where(function ($builder) use ($searchQuery, $locale) {
+                $builder->where('additional_data->locale_specific->'.$locale.'->name', 'LIKE', '%'.$searchQuery.'%')
+                    ->orWhere('code', 'LIKE', '%'.$searchQuery.'%');
+            });
+        }
+
+        $page = max(1, (int) request('page', 1));
+
+        $paginator = $query->defaultOrder()->paginate(50, ['*'], 'page', $page);
+
+        $results = $paginator->getCollection()->map(fn ($category) => [
+            'id'    => $category->id,
+            'code'  => $category->code,
+            'label' => $category->additional_data['locale_specific'][$locale]['name'] ?? '['.$category->code.']',
+        ])->values();
+
+        return new JsonResponse([
+            'data'     => $results,
+            'page'     => $paginator->currentPage(),
+            'lastPage' => $paginator->lastPage(),
+        ]);
     }
 }
