@@ -21,7 +21,7 @@ class SeedDemoData extends Command
      * @var string
      */
     protected $signature = 'unopim:install:demo-data
-        { --force : Re-seed even when demo data is already present (production still requires confirmation). }';
+        { --force : Re-seed even when demo data is already present. }';
 
     /**
      * The console command description.

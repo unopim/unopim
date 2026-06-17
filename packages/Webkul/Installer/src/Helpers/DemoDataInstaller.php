@@ -104,15 +104,7 @@ class DemoDataInstaller
     }
 
     /**
-     * Returns true when demo data — or any operator-created catalog data —
-     * is already present in the database.
-     *
-     * The seeders delete products, the demo category tree, and the full
-     * demo_extras table set (channels, attributes, families, core config),
-     * so the guard probes every signal that proves the DB is no longer a
-     * bare base install: a product, a non-root category, or an attribute
-     * family / channel beyond the single `default` row the base installer
-     * ships. Any of these means re-seeding would destroy real data.
+     * Check if demo or operator-created catalog data already exists.
      */
     public function isAlreadySeeded(): bool
     {
@@ -129,10 +121,7 @@ class DemoDataInstaller
     }
 
     /**
-     * Recalculate product completeness synchronously. The
-     * `unopim:completeness:recalculate` command dispatches queue jobs,
-     * so the sync driver is forced while it runs to guarantee work
-     * lands before the installer finishes.
+     * Recalculate product completeness synchronously.
      */
     protected function recalculateCompleteness(): void
     {
