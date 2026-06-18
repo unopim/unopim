@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Webkul\Core\ElasticSearch;
+use Webkul\Installer\Console\Prompts\PreselectedSearchPrompt;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
 use function Laravel\Prompts\multisearch;
 use function Laravel\Prompts\password;
-use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -645,16 +645,39 @@ class Installer extends Command
      */
     protected function updateEnvChoice(string $key, string $question, array $choices)
     {
-        $choice = search(
+        $default = $this->getEnvChoiceDefault($key, $choices);
+
+        $choice = (new PreselectedSearchPrompt(
             label: $question,
             options: fn (string $value) => $this->filterChoices($choices, $value),
             placeholder: 'Type to search...',
             scroll: 10,
-        );
+            hint: $default !== null
+                ? 'Press Enter to keep the current value, or Backspace to clear it and search.'
+                : '',
+            defaultValue: $default,
+        ))->prompt();
 
         $this->envUpdate($key, $choice);
 
         return $choice;
+    }
+
+    /**
+     * Get the current `.env` value to pre-select, or null when it is missing or
+     * no longer one of the available options.
+     */
+    protected function getEnvChoiceDefault(string $key, array $choices): ?string
+    {
+        $current = $this->getEnvAtRuntime($key);
+
+        if (! is_string($current) || $current === '') {
+            return null;
+        }
+
+        $current = trim($current, "\"'");
+
+        return array_key_exists($current, $choices) ? $current : null;
     }
 
     /**
