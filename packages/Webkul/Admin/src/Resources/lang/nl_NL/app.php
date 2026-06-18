@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Sorteervolgorde succesvol bijgewerkt.',
                     'sort-update-failure'  => 'Sorteervolgorde bijwerken mislukt.',
                     'delete-success'       => 'Attribuutoptie succesvol verwijderd.',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'De staalafbeelding is ongeldig of bevat onveilige inhoud.',
                     'color'                => 'Kleurstaal',
                     'dropdown'             => 'Keuzelijst',
                     'image'                => 'Afbeeldingsstaal',

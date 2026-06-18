@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Порядок сортировки успешно обновлён',
                     'sort-update-failure'  => 'Не удалось обновить порядок сортировки',
                     'delete-success'       => 'Параметр атрибута успешно удалён',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Изображение образца недействительно или содержит небезопасное содержимое.',
                     'color'                => 'Образец цвета',
                     'dropdown'             => 'Падать',
                     'image'                => 'Образец изображения',

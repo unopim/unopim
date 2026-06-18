@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => 'Denne eksporten er for stor til å kjøre: anslåtte :rows rader × :columns kolonner (~:estimated) overskrider tilgjengelig plass (~:available). Begrens eksporten ved å velge færre kanaler/språk (og attributter), og prøv igjen.',
+        'fields'           => [
             'file-format'         => 'Filformat',
             'with-media'          => 'Med medier',
             'header-row'          => 'Header Row',

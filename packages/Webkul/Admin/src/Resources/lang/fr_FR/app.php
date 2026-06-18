@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Tri mis à jour avec succès',
                     'sort-update-failure'  => 'Échec de la mise à jour du tri',
                     'delete-success'       => 'Option de champ de catégorie supprimée avec succès',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'L\'image de l\'échantillon n\'est pas valide ou contient un contenu non sécurisé.',
                     'color'                => 'Couleur',
                     'dropdown'             => 'Dérouler',
                     'image'                => 'Échantillon d\'image',

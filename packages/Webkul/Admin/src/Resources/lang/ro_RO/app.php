@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Ordinea de sortare a fost actualizată cu succes',
                     'sort-update-failure'  => 'Actualizarea ordinii de sortare a eșuat',
                     'delete-success'       => 'Opțiunea atributului a fost ștearsă cu succes',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Imaginea mostrei este invalidă sau conține conținut nesigur.',
                     'color'                => 'Eșantion de culoare',
                     'dropdown'             => 'Meniu derulant',
                     'image'                => 'Eșantion imagine',

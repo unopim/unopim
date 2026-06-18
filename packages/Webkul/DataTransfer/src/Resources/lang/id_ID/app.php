@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => 'Ekspor ini terlalu besar untuk dijalankan: perkiraan :rows baris × :columns kolom (~:estimated) melebihi ruang yang tersedia (~:available). Persempit ekspor dengan memilih lebih sedikit saluran/lokal (dan atribut) lalu coba lagi.',
+        'fields'           => [
             'file-format'         => 'Format file',
             'with-media'          => 'Dengan media',
             'header-row'          => 'Header Row',

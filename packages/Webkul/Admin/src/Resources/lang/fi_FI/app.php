@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Järjestys päivitetty onnistuneesti',
                     'sort-update-failure'  => 'Järjestyksen päivitys epäonnistui',
                     'delete-success'       => 'Attribuuttivaihtoehto poistettiin onnistuneesti',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Mallikuva on virheellinen tai sisältää turvatonta sisältöä.',
                     'color'                => 'Väri',
                     'dropdown'             => 'Pudotusvalikko',
                     'image'                => 'Kuvanäyte',

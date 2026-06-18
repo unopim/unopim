@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => 'यह निर्यात चलाने के लिए बहुत बड़ा है: अनुमानित :rows पंक्तियाँ × :columns स्तंभ (~:estimated) उपलब्ध स्थान (~:available) से अधिक हैं। कम चैनल/लोकेल (और विशेषताएँ) चुनकर निर्यात को सीमित करें और पुनः प्रयास करें।',
+        'fields'           => [
             'file-format'         => 'फ़ाइल प्रारूप',
             'with-media'          => 'मीडिया के साथ',
             'header-row'          => 'Header Row',

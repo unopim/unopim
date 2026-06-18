@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => 'このエクスポートは大きすぎて実行できません：推定 :rows 行 × :columns 列（~:estimated）が利用可能な容量（~:available）を超えています。チャネル／ロケール（および属性）を絞り込んでから再試行してください。',
+        'fields'           => [
             'file-format'         => 'ファイル形式',
             'with-media'          => 'メディアを含む',
             'header-row'          => 'Header Row',

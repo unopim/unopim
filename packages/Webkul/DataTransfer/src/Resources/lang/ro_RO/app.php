@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => 'Acest export este prea mare pentru a fi rulat: aproximativ :rows rânduri × :columns coloane (~:estimated) depășesc spațiul disponibil (~:available). Restrângeți exportul selectând mai puține canale/limbi (și atribute) și încercați din nou.',
+        'fields'           => [
             'file-format'         => 'Format fișier',
             'with-media'          => 'Cu media',
             'header-row'          => 'Header Row',

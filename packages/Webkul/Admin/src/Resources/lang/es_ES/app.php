@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Orden actualizado correctamente',
                     'sort-update-failure'  => 'No se pudo actualizar el orden',
                     'delete-success'       => 'Opción de atributo eliminada correctamente',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'La imagen de la muestra no es válida o contiene contenido no seguro.',
                     'color'                => 'Muestra de color',
                     'dropdown'             => 'Desplegable',
                     'image'                => 'Muestra de imagen',

@@ -78,6 +78,8 @@ return [
     ],
 
     'exporters' => [
+        'export-too-large' => 'This export is too large to run: an estimated :rows rows × :columns columns (~:estimated) exceeds the available space (~:available). Narrow the export by selecting fewer channels/locales (and attributes) and try again.',
+
         'fields' => [
             'file-format'         => 'File Format',
             'with-media'          => 'With Media',

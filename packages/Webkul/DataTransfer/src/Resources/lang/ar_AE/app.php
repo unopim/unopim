@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => 'هذا التصدير كبير جدًا بحيث لا يمكن تشغيله: العدد التقديري :rows صف × :columns عمود (~:estimated) يتجاوز المساحة المتاحة (~:available). قلّص نطاق التصدير باختيار عدد أقل من القنوات/اللغات (والسمات) ثم حاول مرة أخرى.',
+        'fields'           => [
             'file-format'         => 'تنسيق الملف',
             'with-media'          => 'مع الوسائط',
             'header-row'          => 'Header Row',

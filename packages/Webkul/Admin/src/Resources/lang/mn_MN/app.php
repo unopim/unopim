@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Эрэмбэлэлтийн дараалал амжилттай шинэчлэгдсэн',
                     'sort-update-failure'  => 'Эрэмбэлэлтийн дарааллыг шинэчлэхэд амжилтгүй боллоо',
                     'delete-success'       => 'Аттрибутын сонголт амжилттай устгагдсан',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Загварын зураг буруу эсвэл аюулгүй бус агуулгатай байна.',
                     'color'                => 'Өнгөт сэлгэлт',
                     'dropdown'             => 'Дусах',
                     'image'                => 'Зургийн залгуур',

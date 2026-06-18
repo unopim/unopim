@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => '排序更新成功',
                     'sort-update-failure'  => '排序更新失败',
                     'delete-success'       => '属性选项删除成功',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => '色板图片无效或包含不安全的内容。',
                     'color'                => '色板',
                     'dropdown'             => '落下',
                     'image'                => '图像色板',

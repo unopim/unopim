@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Ordinamento aggiornato con successo',
                     'sort-update-failure'  => 'Aggiornamento dell\'ordinamento non riuscito',
                     'delete-success'       => 'Opzione attributo eliminata con successo',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'L\'immagine del campione non è valida o contiene contenuti non sicuri.',
                     'color'                => 'Colore campione',
                     'dropdown'             => 'Menu a discesa',
                     'image'                => 'Immagine campione',

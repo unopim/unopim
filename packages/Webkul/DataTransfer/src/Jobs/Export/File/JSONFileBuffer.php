@@ -86,6 +86,25 @@ class JSONFileBuffer implements \Iterator
         return $this->filename;
     }
 
+    /**
+     * Remove the backing temp file once the buffer has been fully consumed (i.e. after the final
+     * flush in the Completed job). Must NOT be called between queued batch jobs: the filename is the
+     * only serialized state, so deleting early would break the next job that reopens the file.
+     *
+     * Without this the per-export temp buffer — which for a wide catalog reaches tens of GB — is
+     * left in the system temp dir forever, slowly filling the disk.
+     */
+    public function delete(): void
+    {
+        unset($this->file);
+
+        if ($this->filename && is_file($this->filename)) {
+            @unlink($this->filename);
+        }
+
+        $this->filename = '';
+    }
+
     public function __sleep(): array
     {
         return ['filename'];

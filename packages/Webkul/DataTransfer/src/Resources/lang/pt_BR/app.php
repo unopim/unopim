@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => 'Esta exportação é muito grande para ser executada: cerca de :rows linhas × :columns colunas (~:estimated) excedem o espaço disponível (~:available). Reduza a exportação selecionando menos canais/locais (e atributos) e tente novamente.',
+        'fields'           => [
             'file-format'         => 'Formato de arquivo',
             'with-media'          => 'Com mídia',
             'header-row'          => 'Header Row',

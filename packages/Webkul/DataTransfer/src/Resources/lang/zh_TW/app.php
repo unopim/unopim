@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => '此匯出過大，無法執行：預計 :rows 列 × :columns 欄（~:estimated）超出可用空間（~:available）。請選擇較少的渠道/語系（與屬性）以縮小匯出範圍，然後重試。',
+        'fields'           => [
             'file-format'         => '檔案格式',
             'with-media'          => '包含媒體',
             'header-row'          => 'Header Row',

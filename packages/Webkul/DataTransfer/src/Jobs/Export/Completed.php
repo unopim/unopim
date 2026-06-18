@@ -48,6 +48,12 @@ class Completed implements ShouldQueue
             ->flush($this->exportBuffer)
             ->completed();
 
+        // The intermediate JSON buffer has been written to the final file — drop its temp file so
+        // it does not linger in the system temp dir (tens of GB for a wide catalog).
+        if ($this->exportBuffer && method_exists($this->exportBuffer, 'delete')) {
+            $this->exportBuffer->delete();
+        }
+
         Cache::forget('export_init_'.$this->export->id);
     }
 

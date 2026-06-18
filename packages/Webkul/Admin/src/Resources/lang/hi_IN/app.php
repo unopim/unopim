@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'क्रम सफलतापूर्वक अपडेट किया गया',
                     'sort-update-failure'  => 'क्रम अपडेट करने में विफल',
                     'delete-success'       => 'विशेषता विकल्प सफलतापूर्वक हटाया गया',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'स्वैच छवि अमान्य है या इसमें असुरक्षित सामग्री है।',
                     'color'                => 'रंग आदर्श',
                     'dropdown'             => 'ड्रॉप डाउन',
                     'image'                => 'छवि नमूना',

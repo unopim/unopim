@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => '이 내보내기는 너무 커서 실행할 수 없습니다: 예상 :rows 행 × :columns 열(~:estimated)이 사용 가능한 공간(~:available)을 초과합니다. 채널/로케일(및 속성)을 줄여 범위를 좁힌 후 다시 시도하세요.',
+        'fields'           => [
             'file-format'         => '파일 형식',
             'with-media'          => '미디어 포함',
             'header-row'          => 'Header Row',

@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Matagumpay na na-update ang pagkakasunod-sunod',
                     'sort-update-failure'  => 'Nabigong i-update ang pagkakasunod-sunod',
                     'delete-success'       => 'Matagumpay na natanggal ang Opsyon ng Katangian',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Ang larawan ng swatch ay hindi wasto o naglalaman ng hindi ligtas na nilalaman.',
                     'color'                => 'Color Swatch',
                     'dropdown'             => 'Dropdown',
                     'image'                => 'Image Swatch',

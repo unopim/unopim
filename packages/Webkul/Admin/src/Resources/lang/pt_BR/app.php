@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Ordem de classificação atualizada com sucesso',
                     'sort-update-failure'  => 'Falha ao atualizar a ordem de classificação',
                     'delete-success'       => 'Opção de atributo excluída com sucesso',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'A imagem da amostra é inválida ou contém conteúdo não seguro.',
                     'color'                => 'Amostra de cor',
                     'dropdown'             => 'Menu suspenso',
                     'image'                => 'Amostra de imagem',

@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Sorteringsordningen uppdaterades',
                     'sort-update-failure'  => 'Det gick inte att uppdatera sorteringsordningen',
                     'delete-success'       => 'Attributalternativ raderades',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Provbilden är ogiltig eller innehåller osäkert innehåll.',
                     'color'                => 'Färgväljare',
                     'dropdown'             => 'Rullgardinsmeny',
                     'image'                => 'Bildprov',

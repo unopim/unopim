@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Порядок сортування успішно оновлено',
                     'sort-update-failure'  => 'Не вдалося оновити порядок сортування',
                     'delete-success'       => 'Опцію атрибута успішно видалено',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Зображення зразка недійсне або містить небезпечний вміст.',
                     'color'                => 'Колір шаблону',
                     'dropdown'             => 'Випадаючий список',
                     'image'                => 'Шаблон зображення',

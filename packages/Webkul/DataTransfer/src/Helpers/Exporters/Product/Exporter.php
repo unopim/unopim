@@ -53,6 +53,17 @@ class Exporter extends AbstractExporter
     protected $attributes = [];
 
     /**
+     * Lightweight per-attribute metadata (code + type, with a model reference kept for the rare
+     * label/date formatting paths). Precomputed once per worker so the innermost export loop in
+     * setAttributesValues() reads plain array keys instead of triggering Astrotomic Translatable's
+     * getAttribute(), which calls config() on every property read (~110µs each, tens of millions of
+     * times on a large catalog — the original cause of multi-minute, effectively hung exports).
+     *
+     * @var array<int, array{code: string, type: string, attribute: mixed}>
+     */
+    protected array $attributeMeta = [];
+
+    /**
      * Attribute codes selected in the export profile. When empty every
      * attribute value is exported.
      *
@@ -106,11 +117,14 @@ class Exporter extends AbstractExporter
                 $channelCurrencies[$channel->code] = $channelCurrencyCodes;
             }
 
+            $attributes = $this->attributeRepository->all();
+
             self::$staticInitCache = [
                 'channelsAndLocales' => $channelsAndLocales,
                 'channelCurrencies'  => $channelCurrencies,
                 'currencies'         => array_values($currencies),
-                'attributes'         => $this->attributeRepository->all(),
+                'attributes'         => $attributes,
+                'attributeMeta'      => $this->buildAttributeMeta($attributes),
             ];
         }
 
@@ -118,8 +132,30 @@ class Exporter extends AbstractExporter
         $this->channelCurrencies = self::$staticInitCache['channelCurrencies'];
         $this->currencies = self::$staticInitCache['currencies'];
         $this->attributes = self::$staticInitCache['attributes'];
+        $this->attributeMeta = self::$staticInitCache['attributeMeta'];
 
         $this->applyScopeFilters();
+    }
+
+    /**
+     * Flattens the attribute models into plain arrays so the export's innermost loop reads `code`
+     * and `type` as array keys rather than Eloquent magic properties. This pays the Translatable
+     * read cost exactly once per attribute (per worker) instead of once per attribute per product
+     * per channel per locale.
+     */
+    protected function buildAttributeMeta($attributes): array
+    {
+        $meta = [];
+
+        foreach ($attributes as $attribute) {
+            $meta[] = [
+                'code'      => $attribute->code,
+                'type'      => $attribute->type,
+                'attribute' => $attribute,
+            ];
+        }
+
+        return $meta;
     }
 
     /**
@@ -214,6 +250,56 @@ class Exporter extends AbstractExporter
     }
 
     /**
+     * Pre-flight feasibility guard. A product export emits one row per channel-locale pair and one
+     * column per attribute, so the output is productCount × pairs × attributes — which explodes on a
+     * wide catalog ("export everything" with no filters). Estimate that here and reject the export
+     * up front (clear message) rather than letting it fill the disk and block the queue for hours.
+     */
+    protected function assertExportIsFeasible($results): void
+    {
+        $productCount = method_exists($results, 'count') ? (int) $results->count() : 0;
+
+        if ($productCount <= 0) {
+            return;
+        }
+
+        $rows = $productCount * max(1, $this->countChannelLocalePairs());
+        $columns = max(1, $this->attributeRepository->count());
+
+        $this->guardAgainstOversizedExport($rows, $columns);
+    }
+
+    /**
+     * Counts the channel-locale pairs each product expands into, honouring the profile's channel and
+     * locale filters. Reads only channels (a small set) — never the full attribute list — so it stays
+     * cheap during batch creation.
+     */
+    protected function countChannelLocalePairs(): int
+    {
+        $filters = $this->getFilters();
+        $channelCodes = ScopeFilterValue::toCodes($filters[ProductExportScope::CHANNELS->value] ?? null);
+        $localeCodes = ScopeFilterValue::toCodes($filters[ProductExportScope::LOCALES->value] ?? null);
+
+        $pairs = 0;
+
+        foreach ($this->channelRepository->with(['locales'])->all() as $channel) {
+            if (! empty($channelCodes) && ! in_array($channel->code, $channelCodes, true)) {
+                continue;
+            }
+
+            foreach ($channel->locales as $locale) {
+                if (! empty($localeCodes) && ! in_array($locale->code, $localeCodes, true)) {
+                    continue;
+                }
+
+                $pairs++;
+            }
+        }
+
+        return $pairs;
+    }
+
+    /**
      * Start the import process
      */
     public function exportBatch(JobTrackBatchContract $batch, $filePath): bool
@@ -222,9 +308,7 @@ class Exporter extends AbstractExporter
 
         $this->initilize();
 
-        $products = $this->prepareProducts($batch, $filePath);
-
-        $this->exportBuffer->write($products);
+        $this->prepareProducts($batch, $filePath);
 
         /**
          * Update export batch process state summary
@@ -351,11 +435,14 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Prepare products from current batch
+     * Prepare products from the current batch and stream each expanded row to the export buffer.
+     *
+     * Rows are written one at a time as they are built rather than collected and returned, so peak
+     * memory stays bounded to a single row regardless of BATCH_SIZE, attribute count, or the number
+     * of channel-locale pairs.
      */
     public function prepareProducts(JobTrackBatchContract $batch, $filePath)
     {
-        $products = [];
         $flatIds = array_column($batch->data, 'id');
 
         $productsByIds = $this->getItemsFromIds($flatIds);
@@ -410,7 +497,7 @@ class Exporter extends AbstractExporter
 
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 
-                    $products[] = array_merge([
+                    $row = array_merge([
                         'channel'                 => $channel,
                         'locale'                  => $locale,
                         'sku'                     => $sku,
@@ -424,13 +511,20 @@ class Exporter extends AbstractExporter
                         'cross_sells'             => $crossSells,
                         'related_products'        => $relatedProducts,
                     ], $values);
+
+                    /**
+                     * Stream the row immediately. The buffer keeps its "one line = array of rows"
+                     * contract (consumed by flush()/FlatItemBuffer::addData()), so the row is wrapped
+                     * in a single-element array. Writing here — rather than accumulating into a batch
+                     * array and writing once — is what keeps a wide catalog from building a multi-GB
+                     * structure and OOM-killing the export worker.
+                     */
+                    $this->exportBuffer->write([$row]);
                 }
             }
 
             $this->createdItemsCount++;
         }
-
-        return $products;
     }
 
     public function getSuperAttributes($data)
@@ -603,15 +697,26 @@ class Exporter extends AbstractExporter
         $filters = $this->getFilters();
         $withMedia = (bool) ($filters['with_media'] ?? false);
 
-        foreach ($this->attributes as $attribute) {
-            $code = $attribute->code;
+        /**
+         * Output formatting (readable labels / custom date format) is opt-in and rarely enabled.
+         * Resolving it once here lets the hot loop skip the per-cell applyOutputFormatting() call —
+         * and the Eloquent model access it performs — whenever neither option is on.
+         */
+        $formatOutput = ($filters['use_labels'] ?? '0') !== '0'
+            || ! empty($filters['date_format'] ?? null);
 
-            if (in_array($code, ['sku', 'status'])) {
+        foreach ($this->attributeMeta as $meta) {
+            $code = $meta['code'];
+            $type = $meta['type'];
+
+            if ($code === 'sku' || $code === 'status') {
                 continue;
             }
 
+            $isPrice = $type === AttributeTypes::PRICE_ATTRIBUTE_TYPE;
+
             if (! $this->isAttributeValueExported($code)) {
-                if ($attribute->type === AttributeTypes::PRICE_ATTRIBUTE_TYPE) {
+                if ($isPrice) {
                     foreach ($this->currencies as $currency) {
                         $attributeValues["{$code} ({$currency})"] = null;
                     }
@@ -627,12 +732,10 @@ class Exporter extends AbstractExporter
             $rawValue = $values[$code] ?? null;
 
             if (
-                $withMedia &&
-                in_array($attribute->type, [
-                    AttributeTypes::FILE_ATTRIBUTE_TYPE,
-                    AttributeTypes::IMAGE_ATTRIBUTE_TYPE,
-                    AttributeTypes::GALLERY_ATTRIBUTE_TYPE,
-                ])
+                $withMedia
+                && ($type === AttributeTypes::FILE_ATTRIBUTE_TYPE
+                    || $type === AttributeTypes::IMAGE_ATTRIBUTE_TYPE
+                    || $type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE)
             ) {
                 $mediaPaths = (array) $rawValue;
                 foreach ($mediaPaths as $path) {
@@ -646,7 +749,7 @@ class Exporter extends AbstractExporter
                 continue;
             }
 
-            if ($attribute->type === AttributeTypes::PRICE_ATTRIBUTE_TYPE) {
+            if ($isPrice) {
                 $priceData = is_array($rawValue) ? $rawValue : [];
 
                 foreach ($this->currencies as $currency) {
@@ -656,7 +759,9 @@ class Exporter extends AbstractExporter
                 continue;
             }
 
-            $rawValue = $this->applyOutputFormatting($attribute, $rawValue, $locale);
+            if ($formatOutput) {
+                $rawValue = $this->applyOutputFormatting($meta['attribute'], $rawValue, $locale);
+            }
 
             if (is_array($rawValue)) {
                 $rawValue = implode(', ', $rawValue);

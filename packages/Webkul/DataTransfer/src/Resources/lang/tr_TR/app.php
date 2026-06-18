@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => 'Bu dışa aktarma çalıştırılamayacak kadar büyük: tahmini :rows satır × :columns sütun (~:estimated) kullanılabilir alanı (~:available) aşıyor. Daha az kanal/yerel (ve öznitelik) seçerek dışa aktarmayı daraltın ve tekrar deneyin.',
+        'fields'           => [
             'file-format'         => 'Dosya biçimi',
             'with-media'          => 'Medya ile',
             'header-row'          => 'Header Row',

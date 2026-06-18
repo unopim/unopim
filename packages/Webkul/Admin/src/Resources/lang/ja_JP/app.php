@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => '並び順が正常に更新されました',
                     'sort-update-failure'  => '並び順の更新に失敗しました',
                     'delete-success'       => '属性オプションが正常に削除されました',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'スウォッチ画像が無効であるか、安全でないコンテンツが含まれています。',
                     'color'                => 'カラー スウォッチ',
                     'dropdown'             => 'ドロップダウン',
                     'image'                => '画像スウォッチ',

@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Sortierreihenfolge erfolgreich aktualisiert',
                     'sort-update-failure'  => 'Sortierreihenfolge konnte nicht aktualisiert werden',
                     'delete-success'       => 'Attributoption erfolgreich gelöscht',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Das Farbmuster-Bild ist ungültig oder enthält unsicheren Inhalt.',
                     'color'                => 'Farbfeld',
                     'dropdown'             => 'Dropdown',
                     'image'                => 'Bildfeld',

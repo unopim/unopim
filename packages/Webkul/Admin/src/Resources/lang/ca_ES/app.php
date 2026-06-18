@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Ordre de classificació actualitzat amb èxit',
                     'sort-update-failure'  => 'No s\'ha pogut actualitzar l\'ordre de classificació',
                     'delete-success'       => 'Opció d\'atribut eliminada amb èxit',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'La imatge de la mostra no és vàlida o conté contingut no segur.',
                     'color'                => 'Mostra de color',
                     'dropdown'             => 'Desplegable',
                     'image'                => 'Mostra d\'imatge',

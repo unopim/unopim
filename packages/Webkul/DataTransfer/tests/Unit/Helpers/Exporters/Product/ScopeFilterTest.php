@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Cache;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Currency;
 use Webkul\Core\Models\Locale;
@@ -9,6 +10,8 @@ use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
 use Webkul\DataTransfer\Helpers\Formatters\ScopeFilterValue;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
+use Webkul\DataTransfer\Models\JobTrackBatch;
+use Webkul\Product\Models\Product;
 
 /**
  * Resets the Product exporter's static init cache so each test rebuilds the
@@ -172,6 +175,112 @@ it('keeps every attribute when none is selected', function () {
     expect($codes)->toContain('scoped_attr');
     expect(count($codes))->toBeGreaterThan(1);
     expect(readExporterProperty($exporter, 'selectedAttributeCodes'))->toBe([]);
+});
+
+it('streams each product row to the export buffer separately to bound memory', function () {
+    seedProductScopeChannels();
+
+    $family = AttributeFamily::factory()->create(['code' => 'stream_fam']);
+
+    $skus = ['STREAM-1', 'STREAM-2'];
+    $ids = [];
+
+    foreach ($skus as $sku) {
+        $product = Product::create([
+            'sku'                 => $sku,
+            'type'                => 'simple',
+            'status'              => 1,
+            'attribute_family_id' => $family->id,
+        ]);
+
+        $product->values = ['common' => ['sku' => $sku]];
+        $product->save();
+
+        $ids[] = $product->id;
+    }
+
+    Cache::flush();
+
+    // Scope to the seeded 'web' channel so the channel-locale expansion is deterministic rather
+    // than picking up every channel already present in the database.
+    $exporter = makeInitializedProductExporter(['channels' => ['web']]);
+
+    // Isolate the streaming behaviour from the catalog's attribute volume: with no attribute
+    // columns each row stays tiny, so the assertions measure flush granularity, not row width
+    // (and the test never approaches the memory limit the way the unbounded export did).
+    $meta = new ReflectionProperty($exporter, 'attributeMeta');
+    $meta->setAccessible(true);
+    $meta->setValue($exporter, []);
+
+    // One row is produced per product per channel-locale pair.
+    $channelsAndLocales = readExporterProperty($exporter, 'channelsAndLocales');
+    $pairCount = collect($channelsAndLocales)->sum(fn ($locales) => count($locales));
+    $expectedRows = count($skus) * $pairCount;
+
+    // A buffer spy that records the rows passed to each write() call so we can prove the
+    // exporter streams one row at a time rather than buffering the whole batch in memory.
+    $buffer = new class
+    {
+        public array $writes = [];
+
+        public function write($item, array $options = [])
+        {
+            $this->writes[] = $item;
+        }
+    };
+
+    $exporter->setExportBuffer($buffer);
+
+    $batch = new JobTrackBatch([
+        'data' => array_map(fn ($id) => ['id' => $id], $ids),
+    ]);
+
+    $exporter->prepareProducts($batch, null);
+
+    // Each product × channel-locale row is streamed in its own write() call, so peak memory
+    // never holds more than a single row — not the whole batch.
+    expect($buffer->writes)->toHaveCount($expectedRows);
+
+    foreach ($buffer->writes as $write) {
+        // Each write carries exactly one row, wrapped to keep the buffer's array-of-rows contract.
+        expect($write)->toHaveCount(1);
+    }
+
+    // Every row is still produced — streaming changes when rows flush, not which rows.
+    $allRows = collect($buffer->writes)->flatten(1);
+
+    expect($allRows)->toHaveCount($expectedRows);
+    expect($allRows->pluck('sku')->unique()->values()->all())
+        ->toEqualCanonicalizing($skus);
+});
+
+it('flags an export whose estimated buffer exceeds the disk budget', function () {
+    $exporter = app(Exporter::class);
+    $method = new ReflectionMethod($exporter, 'exportExceedsDiskBudget');
+    $method->setAccessible(true);
+
+    $free = 1_000_000_000; // 1 GB free → budget = 0.8 GB; bytes/cell = 32
+
+    // 30M cells × 32 = 960 MB > 800 MB budget → blocked
+    expect($method->invoke($exporter, 30_000_000, 1, $free))->toBeTrue();
+
+    // 10M cells × 32 = 320 MB < 800 MB budget → allowed
+    expect($method->invoke($exporter, 10_000_000, 1, $free))->toBeFalse();
+});
+
+it('counts channel-locale pairs honouring the channel and locale filters', function () {
+    seedProductScopeChannels();
+
+    $webOnly = makeInitializedProductExporter(['channels' => ['web']]);
+    $method = new ReflectionMethod($webOnly, 'countChannelLocalePairs');
+    $method->setAccessible(true);
+
+    // web is seeded with en_US + fr_FR
+    expect($method->invoke($webOnly))->toBe(2);
+
+    $webEnOnly = makeInitializedProductExporter(['channels' => ['web'], 'locales' => ['en_US']]);
+
+    expect($method->invoke($webEnOnly))->toBe(1);
 });
 
 it('parses every stored multiselect shape into codes', function () {

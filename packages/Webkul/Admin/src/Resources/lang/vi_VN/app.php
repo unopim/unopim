@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Cập nhật thứ tự sắp xếp thành công',
                     'sort-update-failure'  => 'Cập nhật thứ tự sắp xếp thất bại',
                     'delete-success'       => 'Tùy chọn thuộc tính đã bị xóa thành công',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Hình ảnh mẫu không hợp lệ hoặc chứa nội dung không an toàn.',
                     'color'                => 'Mẫu màu sắc',
                     'dropdown'             => 'Danh sách thả xuống',
                     'image'                => 'Mẫu hình ảnh',

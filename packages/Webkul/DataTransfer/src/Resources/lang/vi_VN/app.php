@@ -76,7 +76,8 @@ return [
         ],
     ],
     'exporters' => [
-        'fields' => [
+        'export-too-large' => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
+        'fields'           => [
             'file-format'         => 'Định dạng tệp',
             'with-media'          => 'Kèm phương tiện',
             'header-row'          => 'Header Row',

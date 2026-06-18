@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Kolejność sortowania została zaktualizowana',
                     'sort-update-failure'  => 'Nie udało się zaktualizować kolejności sortowania',
                     'delete-success'       => 'Opcja atrybutu została pomyślnie usunięta',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Obraz próbki jest nieprawidłowy lub zawiera niebezpieczną zawartość.',
                     'color'                => 'Kolor próbki',
                     'dropdown'             => 'Menu rozwijane',
                     'image'                => 'Obraz próbki',

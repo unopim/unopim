@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Sıralama Başarıyla Güncellendi',
                     'sort-update-failure'  => 'Sıralama Güncellenemedi',
                     'delete-success'       => 'Öznitelik Seçeneği Başarıyla Silindi',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Numune görseli geçersiz veya güvenli olmayan içerik barındırıyor.',
                     'color'                => 'Renk Örneği',
                     'dropdown'             => 'Açılır Menü',
                     'image'                => 'Resim Örneği',

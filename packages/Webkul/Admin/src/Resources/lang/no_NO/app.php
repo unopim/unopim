@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Sorteringsrekkefølge oppdatert',
                     'sort-update-failure'  => 'Kunne ikke oppdatere sorteringsrekkefølge',
                     'delete-success'       => 'Attributtalternativ slettet',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Prøvebildet er ugyldig eller inneholder usikkert innhold.',
                     'color'                => 'Fargeprøve',
                     'dropdown'             => 'Nedtrekksmeny',
                     'image'                => 'Bildeprøve',

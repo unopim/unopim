@@ -71,6 +71,19 @@ abstract class AbstractExporter
     public const BATCH_SIZE = 1000;
 
     /**
+     * Rough bytes-per-cell used to estimate the on-disk size of an export before it runs. Derived
+     * from observed output (a ~20k-column product row ≈ 620 KB in the JSON buffer ⇒ ~31 bytes/cell);
+     * rounded up to stay conservative. Only used by the pre-flight size guard, never for real sizing.
+     */
+    protected const ESTIMATED_BYTES_PER_CELL = 32;
+
+    /**
+     * Fraction of free temp-dir space an export's estimated buffer may occupy before it is rejected
+     * up front. Keeps a runaway "export everything" job from filling the disk and wedging the queue.
+     */
+    protected const MAX_DISK_USAGE_RATIO = 0.8;
+
+    /**
      * Is linking required
      */
     protected bool $linkingRequired = false;
@@ -438,6 +451,10 @@ abstract class AbstractExporter
     {
         $results = $this->getResults();
 
+        // Reject impractically large exports up front (clear message) instead of letting them fill
+        // the disk and head-of-line-block the queue for hours.
+        $this->assertExportIsFeasible($results);
+
         $batchRows = [];
 
         $results->rewind();
@@ -485,6 +502,65 @@ abstract class AbstractExporter
         $this->updateSummary($summaryData);
 
         return $this;
+    }
+
+    /**
+     * Pre-flight guard against an export whose estimated output would not fit on disk. The base
+     * implementation is a no-op; exporters that explode rows (e.g. products × channel-locale pairs)
+     * override this to estimate row/column counts and call guardAgainstOversizedExport().
+     */
+    protected function assertExportIsFeasible($results): void
+    {
+        // No-op by default — small/bounded exporters (currencies, roles, channels…) never overflow.
+    }
+
+    /**
+     * Throws when the estimated buffer for the given row/column counts would exceed the allowed
+     * share of free temp-dir space. Extracted from the disk check so the decision is unit-testable.
+     */
+    protected function guardAgainstOversizedExport(int $rows, int $columns): void
+    {
+        $freeBytes = @disk_free_space(sys_get_temp_dir());
+
+        // Can't determine free space — don't block the export on a guess.
+        if ($freeBytes === false || $freeBytes <= 0) {
+            return;
+        }
+
+        if (! $this->exportExceedsDiskBudget($rows, $columns, (int) $freeBytes)) {
+            return;
+        }
+
+        $estimatedBytes = (float) $rows * $columns * static::ESTIMATED_BYTES_PER_CELL;
+
+        throw new \RuntimeException(trans('data_transfer::app.exporters.export-too-large', [
+            'rows'      => number_format($rows),
+            'columns'   => number_format($columns),
+            'estimated' => $this->formatBytes($estimatedBytes),
+            'available' => $this->formatBytes($freeBytes * static::MAX_DISK_USAGE_RATIO),
+        ]));
+    }
+
+    /**
+     * Pure decision: would an export of $rows × $columns cells overflow the allowed share of the
+     * given free space? Kept side-effect-free so it can be tested without touching the filesystem.
+     */
+    protected function exportExceedsDiskBudget(int $rows, int $columns, int $freeBytes): bool
+    {
+        $estimatedBytes = (float) $rows * $columns * static::ESTIMATED_BYTES_PER_CELL;
+
+        return $estimatedBytes > $freeBytes * static::MAX_DISK_USAGE_RATIO;
+    }
+
+    /**
+     * Human-readable byte size for guard messages (e.g. "1.2 TB").
+     */
+    protected function formatBytes(float $bytes): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        $power = $bytes > 0 ? (int) min(floor(log($bytes, 1024)), count($units) - 1) : 0;
+
+        return round($bytes / (1024 ** $power), 1).' '.$units[$power];
     }
 
     /**

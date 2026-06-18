@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'تم تحديث ترتيب الفرز بنجاح',
                     'sort-update-failure'  => 'فشل في تحديث ترتيب الفرز',
                     'delete-success'       => 'تم حذف خيار السمة بنجاح',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'صورة العينة غير صالحة أو تحتوي على محتوى غير آمن.',
                     'color'                => 'تغيير الالوان',
                     'dropdown'             => 'اسقاط',
                     'image'                => 'حوامل الصورة',

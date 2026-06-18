@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => 'Redoslijed sortiranja uspješno ažuriran',
                     'sort-update-failure'  => 'Neuspjelo ažuriranje redoslijeda sortiranja',
                     'delete-success'       => 'Opcija atributa uspješno izbrisana',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => 'Slika uzorka nije valjana ili sadrži nesiguran sadržaj.',
                     'color'                => 'Boja uzorka',
                     'dropdown'             => 'Padajući izbornik',
                     'image'                => 'Slika uzorka',

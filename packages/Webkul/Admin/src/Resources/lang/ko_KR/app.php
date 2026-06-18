@@ -591,7 +591,7 @@ return [
                     'sort-update-success'  => '정렬 순서가 성공적으로 업데이트되었습니다.',
                     'sort-update-failure'  => '정렬 순서를 업데이트하지 못했습니다.',
                     'delete-success'       => '속성 옵션이 성공적으로 삭제되었습니다.',
-                    'invalid-swatch-image' => 'The swatch image is invalid or contains unsafe content.',
+                    'invalid-swatch-image' => '스와치 이미지가 유효하지 않거나 안전하지 않은 콘텐츠가 포함되어 있습니다.',
                     'color'                => '샘플 색상',
                     'dropdown'             => '드롭다운',
                     'image'                => '샘플 이미지',
