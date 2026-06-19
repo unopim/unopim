@@ -51,6 +51,11 @@ class AttributeHistoryPresenter implements HistoryPresenterInterface
 
     protected static function formatValue(string $fieldName, mixed $value): mixed
     {
+
+        if (is_array($value)) {
+            return '';
+        }
+
         if (in_array($fieldName, static::$booleanFields)) {
             return $value
                 ? trans('admin::app.catalog.attributes.create.yes')
