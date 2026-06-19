@@ -94,7 +94,7 @@ class FileOrImageValidValue implements ValidationRule
     {
         $extension = $value instanceof UploadedFile ? $value->getClientOriginalExtension() : $value->getExtension();
 
-        if ($this->allowedExtensions && ! in_array($extension, $this->allowedExtensions, true)) {
+        if ($this->allowedExtensions && ! in_array(strtolower($extension), $this->allowedExtensions, true)) {
             $fail('validation.extensions')->translate(['values' => implode(', ', $this->allowedExtensions)]);
 
             return false;
