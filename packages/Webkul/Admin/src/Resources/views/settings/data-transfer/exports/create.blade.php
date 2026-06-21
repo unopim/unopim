@@ -157,8 +157,43 @@
                             </x-slot>
 
                             <x-slot:content>                        
-                                <!-- Filter Fields -->
                                 {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.filters.fields.before') !!}
+
+                                <x-admin::form.control-group v-if="!isCategory()">
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.settings.channels.create.channels')
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::form.control-group.control
+                                        type="multiselect"
+                                        name="filters[channel][]"
+                                        v-model="filters.channel"
+                                        ::options="JSON.stringify(channels)"         
+                                        track-by="id"
+                                        label-by="label"
+                                        rules="required"
+                                        label="Channel"
+                                    />
+                                    <x-admin::form.control-group.error control-name="filters[channel][]" />
+                                </x-admin::form.control-group>
+
+                                <x-admin::form.control-group class="mt-4">
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.settings.channels.edit.locales')
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::form.control-group.control
+                                        type="multiselect"
+                                        name="filters[locale][]"
+                                        v-model="filters.locale"
+                                        ::options="JSON.stringify(locales)"
+                                        track-by="id"
+                                        label-by="label"
+                                        rules="required"
+                                        label="Locale"
+                                    />
+                                    <x-admin::form.control-group.error control-name="filters[locale][]" />
+                                </x-admin::form.control-group>
 
                                 <x-admin::data-transfer.filter-fields
                                     ::entity-type="entityType"
@@ -188,6 +223,21 @@
                         entityType: "{{ old('entity_type') ?? 'categories' }}",
                         exporterConfig: @json($exporterConfig), 
                         filterFields: @json($exporterConfig['categories']['filters']['fields']),
+
+                        filters: {
+                            channel: [],
+                            locale: []
+                        },
+
+                        channels: @json($channels).map(c => ({
+                            id: c.code,
+                            label: c.name
+                        })),
+
+                        locales: @json($locales).map(l => ({
+                            id: l.code,
+                            label: l.name
+                        })),
                     };
                 },
 
@@ -197,17 +247,21 @@
 
                 watch: {
                     fileFormat(value) {
-                        this.selectedFileFormat = JSON.parse(value).value;
+                        let parsed = this.parseValue(value);
+                        this.selectedFileFormat = parsed?.value || parsed;
                     },
 
                     entityType(value) {
-                        let configKey = this.parseValue(value)?.id;
+                        let parsed = this.parseValue(value);
+                        let configKey = (parsed && typeof parsed === 'object') ? parsed.id : parsed;
 
                         if (! configKey) {
                             return;
                         }
 
-                        this.filterFields = this.exporterConfig[configKey]['filters']['fields'];
+                        if (this.exporterConfig[configKey]) {
+                            this.filterFields = this.exporterConfig[configKey]['filters']['fields'];
+                        }
 
                         if (this.filterFields.filter(field => field.name == 'file_format').length == 0) {
                             this.selectedFileFormat = '';
@@ -218,21 +272,39 @@
                         let formValues = this.$refs.exportCreateForm.values;
 
                         let resetState = {
-                            values: {code: formValues.code},
+                            values: {
+                                code: formValues.code,
+                                entity_type: value 
+                            },
                             errors: this.$refs.exportCreateForm.errors
                         };
 
-                        /** Resets other field values except for errors and code */
                         this.$refs.exportCreateForm.resetForm(resetState);
                     },
                 },
+
                 methods: {
                     parseValue(value) {  
+                        if (!value) return null;
                         try {
-                            return value ? JSON.parse(value) : null;
+                            return (typeof value === 'string' && value.startsWith('{')) 
+                                ? JSON.parse(value) 
+                                : value;
                         } catch (error) {
                             return value;
                         }
+                    },
+
+                    isCategory() {
+                        let val = this.parseValue(this.entityType);
+                        let id = (val && typeof val === 'object') ? val.id : val;
+                        return id === 'categories';
+                    },
+
+                    isProduct() {
+                        let val = this.parseValue(this.entityType);
+                        let id = (val && typeof val === 'object') ? val.id : val;
+                        return id === 'products';
                     },
 
                     handleFilterValues(changed) {

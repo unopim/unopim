@@ -141,12 +141,22 @@ class Exporter extends AbstractExporter
     /**
      * Prepare products from current batch
      */
+   
     public function prepareProducts(JobTrackBatchContract $batch, $filePath)
     {
         $products = [];
         $flatIds = array_column($batch->data, 'id');
 
         $productsByIds = $this->getItemsFromIds($flatIds);
+
+        $filters = $this->getFilters();
+        $selectedChannels = (isset($filters['channel']) && is_array($filters['channel'])) 
+        ? $filters['channel'] 
+        : [];
+
+        $selectedLocales = (isset($filters['locale']) && is_array($filters['locale'])) 
+        ? $filters['locale'] 
+        : [];
 
         foreach ($productsByIds as $product) {
             // Build rowData directly from model properties instead of calling toArray().
@@ -174,6 +184,7 @@ class Exporter extends AbstractExporter
             $sku = $product->sku;
             $type = $product->type;
             $status = $product->status ? 'true' : 'false';
+
             $configurableAttributes = $this->getSuperAttributes($rowData);
             $categories = $this->getCategories($rowData);
             $upSells = $this->getAssociations($rowData, 'up_sells');
@@ -184,7 +195,17 @@ class Exporter extends AbstractExporter
             unset($commonFields['sku']);
 
             foreach ($this->channelsAndLocales as $channel => $locales) {
+
+                if (! empty($selectedChannels) && ! in_array($channel, $selectedChannels)) {
+                    continue;
+                }
+
                 foreach ($locales as $locale) {
+                    
+                if (! empty($selectedLocales) && ! in_array($locale, $selectedLocales)) {
+                    continue;
+                }
+
                     $localeSpecificFields = $this->getLocaleSpecificFields($rowData, $locale);
                     $channelSpecificFields = $this->getChannelSpecificFields($rowData, $channel);
                     $channelLocaleSpecificFields = $this->getChannelLocaleSpecificFields($rowData, $channel, $locale);

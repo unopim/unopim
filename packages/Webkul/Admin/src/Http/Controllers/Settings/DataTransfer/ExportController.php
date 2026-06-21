@@ -16,6 +16,8 @@ use Webkul\DataTransfer\Jobs\Export\ExportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Rules\SeparatorTypes;
+use Webkul\Core\Repositories\LocaleRepository;
+use Webkul\Core\Repositories\ChannelRepository;
 
 class ExportController extends Controller
 {
@@ -29,15 +31,17 @@ class ExportController extends Controller
     public function __construct(
         protected JobInstancesRepository $jobInstancesRepository,
         protected JobTrackRepository $jobTrackRepository,
-        protected Export $jobHelper
+        protected Export $jobHelper,
+        protected LocaleRepository $localeRepository,
+        protected ChannelRepository $channelRepository
     ) {}
 
     /**
      * Display a listing of the resource.
      *
-     * @return View
+     * @return \Illuminate\View\View
      */
-    public function index(): View|JsonResponse
+    public function index()
     {
         if (request()->ajax()) {
             return app(ExportDataGrid::class)->toJson();
@@ -48,18 +52,24 @@ class ExportController extends Controller
 
     /**
      * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\View\View
      */
-    public function create(): View
+    public function create()
     {
         $exporterConfig = config('exporters');
-
-        return view('admin::settings.data-transfer.exports.create', compact('exporterConfig'));
+        $locales = $this->localeRepository->getActiveLocales();
+        $channels = $this->channelRepository->all();
+    
+        return view('admin::settings.data-transfer.exports.create', compact('exporterConfig','locales', 'channels'));
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function store(): RedirectResponse
+    public function store()
     {
         $exporterConfig = config('exporters');
 
@@ -80,6 +90,26 @@ class ExportController extends Controller
             'field_separator',
             'filters',
         ]);
+
+        if (isset($data['filters'])) {
+            foreach (['channel', 'locale'] as $field) {
+                if (isset($data['filters'][$field])) {
+                    $rawData = $data['filters'][$field];
+
+                    if (is_array($rawData)) {
+                        $combined = implode(',', $rawData);
+                        $values = explode(',', $combined);
+                    } else {
+                        $values = explode(',', $rawData);
+                    }
+
+                    $cleaned = array_filter(array_map('trim', $values));
+
+                    $data['filters'][$field] = array_values($cleaned);
+                }
+            }
+        }
+
 
         Event::dispatch('data_transfer.exports.create.validate.before');
 
@@ -111,23 +141,30 @@ class ExportController extends Controller
 
     /**
      * Show the form for editing a new resource.
+     *
+     * @return \Illuminate\View\View
      */
-    public function edit(int $id): View
+    public function edit(int $id)
     {
         $exporterConfig = config('exporters');
 
         $export = $this->jobInstancesRepository->findOrFail($id);
+       
+        $locales  = $this->localeRepository->getActiveLocales();
+        $channels = $this->channelRepository->all();
 
-        return view('admin::settings.data-transfer.exports.edit', compact('export', 'exporterConfig'));
+        return view('admin::settings.data-transfer.exports.edit', compact('export','locales','channels', 'exporterConfig'));
     }
 
     /**
      * Update a resource in storage.
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function update(int $id): RedirectResponse
+
+    public function update(int $id)
     {
         $exporterConfig = config('exporters');
-
         $exporters = array_keys($exporterConfig);
 
         $export = $this->jobInstancesRepository->findOrFail($id);
@@ -138,20 +175,35 @@ class ExportController extends Controller
             'filters'             => 'array',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
         ]);
-
+        
         Event::dispatch('data_transfer.exports.update.before');
 
+        $requestedData = request()->only([
+            'entity_type',
+            'field_separator',
+            'filters',
+        ]);
+
+        if (isset($requestedData['filters'])) {
+            foreach (['channel', 'locale'] as $field) {
+                if (isset($requestedData['filters'][$field])) {
+                    $rawData = $requestedData['filters'][$field];
+
+                    $combined = is_array($rawData) ? implode(',', $rawData) : $rawData;
+                    $values = explode(',', $combined);
+
+                    $cleaned = array_filter(array_map('trim', $values));
+
+                    $requestedData['filters'][$field] = array_values($cleaned);
+                }
+            }
+        }
+        
         $data = array_merge(
-            request()->only([
-                'entity_type',
-                'field_separator',
-                'filters',
-            ]),
+            $requestedData,
             [
                 'action'               => 'fetch',
                 'validation_strategy'  => '',
-                'validation_strategy'  => '',
-                'allowed_errors'       => '',
                 'state'                => 'pending',
                 'processed_rows_count' => 0,
                 'invalid_rows_count'   => 0,
@@ -190,8 +242,9 @@ class ExportController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id): JsonResponse
+    public function destroy($id)
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
 
@@ -219,13 +272,15 @@ class ExportController extends Controller
 
         return response()->json([
             'message' => trans('admin::app.settings.data-transfer.exports.delete-failed'),
-        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        ], 500);
     }
 
     /**
      * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\View\View
      */
-    public function exportView(int $id): View
+    public function exportView(int $id)
     {
         if (! bouncer()->hasPermission('data_transfer.export')) {
             abort(403, 'This action is unauthorized');
@@ -241,7 +296,7 @@ class ExportController extends Controller
     /**
      * exportNow function dispatch the job asynchronously
      */
-    public function exportNow(int $id): RedirectResponse
+    public function exportNow(int $id)
     {
         try {
             // Retrieve the export instance or fail with a 404
@@ -309,7 +364,7 @@ class ExportController extends Controller
         if (! $export->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.nothing-to-export'),
-            ], JsonResponse::HTTP_BAD_REQUEST);
+            ], 400);
         }
 
         $this->jobHelper->setExport($export);
@@ -317,7 +372,7 @@ class ExportController extends Controller
         if (! $this->jobHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.not-valid'),
-            ], JsonResponse::HTTP_BAD_REQUEST);
+            ], 400);
         }
 
         /**
@@ -341,7 +396,7 @@ class ExportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], JsonResponse::HTTP_BAD_REQUEST);
+                ], 400);
             }
         } else {
             if ($this->jobHelper->isLinkingRequired()) {
@@ -369,7 +424,7 @@ class ExportController extends Controller
         if (! $export->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.nothing-to-export'),
-            ], JsonResponse::HTTP_BAD_REQUEST);
+            ], 400);
         }
 
         $this->jobHelper->setExport($export);
@@ -377,7 +432,7 @@ class ExportController extends Controller
         if (! $this->jobHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.not-valid'),
-            ], JsonResponse::HTTP_BAD_REQUEST);
+            ], 400);
         }
 
         /**
@@ -404,7 +459,7 @@ class ExportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], JsonResponse::HTTP_BAD_REQUEST);
+                ], 400);
             }
         } else {
             if ($this->jobHelper->isIndexingRequired()) {
@@ -430,7 +485,7 @@ class ExportController extends Controller
         if (! $export->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.nothing-to-export'),
-            ], JsonResponse::HTTP_BAD_REQUEST);
+            ], 400);
         }
 
         $this->jobHelper->setExport($export);
@@ -438,7 +493,7 @@ class ExportController extends Controller
         if (! $this->jobHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.not-valid'),
-            ], JsonResponse::HTTP_BAD_REQUEST);
+            ], 400);
         }
 
         /**
@@ -465,7 +520,7 @@ class ExportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], JsonResponse::HTTP_BAD_REQUEST);
+                ], 400);
             }
         } else {
             /**
