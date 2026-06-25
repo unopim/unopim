@@ -96,6 +96,26 @@
                         </button>
                     </div>
                 </x-admin::form>
+
+                @if ($isMicrosoftSsoConfigured ?? false)
+                    <div class="px-4 pb-4">
+                        <div class="relative my-2">
+                            <div class="absolute inset-0 flex items-center">
+                                <span class="w-full border-t dark:border-gray-700"></span>
+                            </div>
+                            <div class="relative flex justify-center text-xs uppercase">
+                                <span class="bg-white dark:bg-cherry-800 px-2 text-gray-500">@lang('admin::app.users.sessions.sso-divider')</span>
+                            </div>
+                        </div>
+
+                        <a
+                            href="{{ route('admin.session.microsoft.redirect') }}"
+                            class="flex justify-center items-center w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-cherry-700"
+                        >
+                            @lang('admin::app.users.sessions.sso-sign-in-with-microsoft')
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <!-- Powered By -->

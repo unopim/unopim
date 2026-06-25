@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Alamat email',
-            'forget-password-link'   => 'Lupa Password ?',
-            'password'               => 'Kata sandi',
-            'submit-btn'             => 'Masuk',
-            'title'                  => 'Masuk',
-            'powered-by'             => 'Didukung oleh :unopim,',
-            'open-source-project-by' => 'Proyek open-source oleh :webkul.',
+            'email'                      => 'Alamat email',
+            'forget-password-link'       => 'Lupa Password ?',
+            'password'                   => 'Kata sandi',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Masuk',
+            'title'                      => 'Masuk',
+            'powered-by'                 => 'Didukung oleh :unopim,',
+            'open-source-project-by'     => 'Proyek open-source oleh :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Silakan masukkan URL yang valid.',
                     'regex'                      => 'Nilai tidak sesuai dengan pola yang diperlukan.',
                     'invalid-pattern'            => 'Pola khusus tidak valid.',
-
                     'numeric'                    => 'Nilai untuk atribut numerik ":attribute" harus berupa angka yang valid.',
                     'select-attribute-or-family' => 'Silakan pilih setidaknya satu atribut atau satu keluarga atribut.',
                     'failed'                     => 'Validasi gagal.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Sunting massal berhasil.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Tidak ada perubahan untuk disimpan.',
-
-                'invalid-datetime'            => 'Masukkan tanggal dan waktu yang valid.',
-
-                'resize-column'               => 'Seret untuk mengubah lebar kolom',
-                'success'                     => 'Pekerjaan berhasil dijalankan.',
-                'fetch-failed'                => 'Gagal mengambil data.',
-                'action'                      => 'Edit Massal',
-                'description'                 => 'Edit beberapa produk sekaligus. Perubahan diproses di latar belakang.',
-                'gallery-preview'             => 'Pratinjau Galeri',
-                'img-preview'                 => 'Pratinjau Gambar',
-                'no-image'                    => 'Tidak Ada Gambar',
-                'img-fail'                    => 'Unggah gambar gagal',
-                'no-option'                   => 'Tidak Ada Opsi',
-                'keyboard-shortcuts'          => 'Pintasan Keyboard',
-                'shortcuts-navigation'        => 'Navigasi',
-                'shortcuts-editing'           => 'Pengeditan',
-                'shortcuts-selection'         => 'Pemilihan',
-                'shortcuts-clipboard'         => 'Papan Klip & Isi',
-                'shortcuts-move-cell'         => 'Berpindah antar sel',
-                'shortcuts-move-down'         => 'Turun / konfirmasi edit',
-                'shortcuts-move-up'           => 'Naik',
-                'shortcuts-move-right-left'   => 'Kanan / kiri',
-                'shortcuts-home-end'          => 'Kolom pertama / terakhir dalam baris',
-                'shortcuts-ctrl-home-end'     => 'Sel pertama / terakhir dalam kisi',
-                'shortcuts-extend-selection'  => 'Perluas pilihan',
-                'shortcuts-select-all'        => 'Pilih semua sel',
-                'shortcuts-enter-edit'        => 'Masuk mode edit',
-                'shortcuts-confirm-move-down' => 'Konfirmasi + turun',
-                'shortcuts-confirm-move-right'=> 'Konfirmasi + ke kanan',
-                'shortcuts-escape-revert'     => 'Kembalikan nilai + keluar dari edit',
-                'shortcuts-clear-cell'        => 'Hapus sel',
-                'shortcuts-copy'              => 'Salin',
-                'shortcuts-cut'               => 'Potong',
-                'shortcuts-paste'             => 'Tempel',
-                'shortcuts-fill-down'         => 'Isi ke bawah',
-                'shortcuts-fill-right'        => 'Isi ke kanan',
-                'shortcuts-undo'              => 'Urungkan',
-                'shortcuts-redo'              => 'Ulangi',
-                'shortcuts-help'              => 'Tampilkan/sembunyikan pintasan keyboard',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Tidak ada perubahan untuk disimpan.',
+                'invalid-datetime'             => 'Masukkan tanggal dan waktu yang valid.',
+                'resize-column'                => 'Seret untuk mengubah lebar kolom',
+                'success'                      => 'Pekerjaan berhasil dijalankan.',
+                'fetch-failed'                 => 'Gagal mengambil data.',
+                'action'                       => 'Edit Massal',
+                'description'                  => 'Edit beberapa produk sekaligus. Perubahan diproses di latar belakang.',
+                'gallery-preview'              => 'Pratinjau Galeri',
+                'img-preview'                  => 'Pratinjau Gambar',
+                'no-image'                     => 'Tidak Ada Gambar',
+                'img-fail'                     => 'Unggah gambar gagal',
+                'no-option'                    => 'Tidak Ada Opsi',
+                'keyboard-shortcuts'           => 'Pintasan Keyboard',
+                'shortcuts-navigation'         => 'Navigasi',
+                'shortcuts-editing'            => 'Pengeditan',
+                'shortcuts-selection'          => 'Pemilihan',
+                'shortcuts-clipboard'          => 'Papan Klip & Isi',
+                'shortcuts-move-cell'          => 'Berpindah antar sel',
+                'shortcuts-move-down'          => 'Turun / konfirmasi edit',
+                'shortcuts-move-up'            => 'Naik',
+                'shortcuts-move-right-left'    => 'Kanan / kiri',
+                'shortcuts-home-end'           => 'Kolom pertama / terakhir dalam baris',
+                'shortcuts-ctrl-home-end'      => 'Sel pertama / terakhir dalam kisi',
+                'shortcuts-extend-selection'   => 'Perluas pilihan',
+                'shortcuts-select-all'         => 'Pilih semua sel',
+                'shortcuts-enter-edit'         => 'Masuk mode edit',
+                'shortcuts-confirm-move-down'  => 'Konfirmasi + turun',
+                'shortcuts-confirm-move-right' => 'Konfirmasi + ke kanan',
+                'shortcuts-escape-revert'      => 'Kembalikan nilai + keluar dari edit',
+                'shortcuts-clear-cell'         => 'Hapus sel',
+                'shortcuts-copy'               => 'Salin',
+                'shortcuts-cut'                => 'Potong',
+                'shortcuts-paste'              => 'Tempel',
+                'shortcuts-fill-down'          => 'Isi ke bawah',
+                'shortcuts-fill-right'         => 'Isi ke kanan',
+                'shortcuts-undo'               => 'Urungkan',
+                'shortcuts-redo'               => 'Ulangi',
+                'shortcuts-help'               => 'Tampilkan/sembunyikan pintasan keyboard',
             ],
             'create-success'          => 'Produk berhasil dibuat',
             'delete-failed'           => 'Produk dihapus gagal',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Dapat difilter',
                 'ai-translate'          => 'AI Terjemahan',
                 'invalid-swatch-type'   => 'Atribut :attribute tidak diperbolehkan untuk tipe atribut :type dengan tipe swatch :swatch_type.',
-
                 'single-object-only'    => 'Setiap permintaan pembuatan harus mengirim satu objek atribut.',
                 'option'                => [
                     'color'    => 'Swatch Warna',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Atribut berhasil dihapus',
             'update-success'    => 'Atribut berhasil diperbarui',
             'user-define-error' => 'Tidak dapat menghapus atribut sistem',
-
             'immutable-fields'  => 'Field berikut tidak dapat diubah: :fields.',
             'not-found'         => 'Atribut dengan kode ":code" tidak dapat ditemukan',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Bidang kategori berhasil diperbarui',
             'user-define-error' => 'Tidak dapat menghapus bidang kategori sistem',
             'not-found'         => 'Bidang kategori dengan kode ":code" tidak dapat ditemukan',
-
             'immutable-fields'  => 'Field berikut tidak dapat diubah: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Tidak dapat memperbarui opsi yang dapat dikonfigurasi karena keluarga ini sudah memiliki produk varian.',
         ],
         'history' => [
-            'view' => 'Lihat Detail Versi',
-
+            'view'  => 'Lihat Detail Versi',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versi',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Dijeda',
                         'cancelled'            => 'Dibatalkan',
                         'failed'               => 'Gagal',
-
-                        'view'       => 'Lihat',
+                        'view'                 => 'Lihat',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompt',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Judul',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Pembuatan Teks',
                 'image-generation'    => 'Pembuatan Gambar',
                 'select-purpose'      => 'Pilih tujuan',
-                'select-model'        => '-- Pilih Model --',
+                'select-model'        => 'Pilih Model',
                 'loading-models'      => 'Memuat model...',
                 'no-models-available' => 'Tidak ada model yang tersedia. Pilih platform atau konfigurasikan di tab Platform.',
                 'type'                => 'Tipe',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'System Prompt',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Judul',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Label',
                 'provider'                 => 'Penyedia',
-                'select-provider'          => '-- Pilih Penyedia --',
+                'select-provider'          => 'Pilih Penyedia',
                 'api-url'                  => 'URL API',
                 'api-url-hint'             => 'Sudah diisi dengan endpoint default. Edit hanya jika menggunakan proxy atau deployment kustom.',
                 'api-key'                  => 'Kunci API',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'Versi API',
                 'is-default'               => 'Atur sebagai Default',
                 'status'                   => 'Status',
-                'use-default'              => '-- Gunakan Platform Default --',
+                'use-default'              => 'Gunakan Platform Default',
                 'use-default-hint'         => 'Biarkan kosong untuk menggunakan platform yang ditandai sebagai default. Platform yang ditandai dengan * adalah default.',
                 'no-image-platform'        => 'Tidak ada platform berkemampuan gambar yang dikonfigurasi. Tambahkan platform OpenAI, Gemini, atau xAI terlebih dahulu.',
                 'image-platform-hint'      => 'Hanya platform yang mendukung pembuatan gambar yang ditampilkan (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Akun saya',
                 'notifications' => 'Pemberitahuan',
                 'visit-shop'    => 'Kunjungi toko',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Keluarga atribut',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Tidak ada catatan yang dipilih.',
                 'must-select-a-mass-action-option' => 'Anda harus memilih tindakan massa \'s option.',
                 'must-select-a-mass-action'        => 'Anda harus memilih tindakan massa.',
+                'link-copied'                      => 'Tautan disalin ke papan klip.',
+                'copy-failed'                      => 'Penyalinan gagal. Silakan salin tautan secara manual.',
             ],
             'toolbar' => [
                 'length-of'    => ':length dari',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Saring',
                 ],
                 'search_by' => [
-                    'code'       => 'Cari dengan kode',
-                    'code_or_id' => 'Cari dengan kode atau ID',
+                    'code'        => 'Cari dengan kode',
+                    'code_or_id'  => 'Cari dengan kode atau ID',
+                    'sku_or_user' => 'Cari dengan SKU atau pengguna',
                 ],
                 'search' => [
                     'title' => 'Mencari',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'Lava',
                 'default-prompt'         => 'Permintaan default',
-                'select-prompt-template' => '-- Pilih templat prompt --',
+                'select-prompt-template' => 'Pilih templat prompt',
             ],
         ],
     ],
@@ -2289,6 +2283,15 @@ return [
             'description' => 'Ups!Sesi Anda telah berakhir.Harap segarkan halaman dan masuk lagi untuk melanjutkan.',
             'title'       => '419 sesi telah kedaluwarsa',
         ],
+        '405' => [
+            'description' => 'Ups! Metode permintaan tidak diizinkan untuk URL ini. Silakan gunakan metode yang benar atau kembali ke halaman sebelumnya.',
+            'title'       => '405 Metode Tidak Diizinkan',
+        ],
+        '429' => [
+            'description' => 'Ups! Terlalu banyak percobaan. Harap tunggu satu menit, lalu coba lagi.',
+            'title'       => '429 Terlalu Banyak Permintaan',
+        ],
+
         '500' => [
             'description' => 'Ups!Ada yang salah.Sepertinya kami \'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Kesalahan Server Internal',
@@ -2331,13 +2334,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Ya',
-        'no'             => 'TIDAK',
-        'true'           => 'BENAR',
-        'false'          => 'PALSU',
-        'enable'         => 'Diaktifkan',
-        'disable'        => 'Dengan disabilitas',
-        'no-match-found' => 'Tidak ditemukan kecocokan!',
+        'yes'               => 'Ya',
+        'no'                => 'TIDAK',
+        'true'              => 'BENAR',
+        'false'             => 'PALSU',
+        'enable'            => 'Diaktifkan',
+        'disable'           => 'Dengan disabilitas',
+        'no-match-found'    => 'Tidak ditemukan kecocokan!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

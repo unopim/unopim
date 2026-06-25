@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => '行政',
-                'unopim'           => '乌诺皮姆',
-                'confirm-password' => '确认密码',
-                'email-address'    => 'admin@example.com',
-                'email'            => '电子邮件',
-                'password'         => '密码',
-                'title'            => '创建管理员',
+                'admin'                   => '行政',
+                'unopim'                  => '乌诺皮姆',
+                'confirm-password'        => '确认密码',
+                'email-address'           => 'admin@example.com',
+                'email'                   => '电子邮件',
+                'password'                => '密码',
+                'title'                   => '创建管理员',
+                'seed-sample-data'        => '安装示例产品和演示数据',
+                'seeding-sample-data'     => '正在生成示例产品和演示数据，这可能需要几分钟...',
+                'seed-sample-data-failed' => '无法生成示例数据。您可以稍后通过 `php artisan unopim:install:demo-data` 安装。',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => '允许的货币',

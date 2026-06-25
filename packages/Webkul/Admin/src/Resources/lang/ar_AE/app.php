@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'عنوان البريد الإلكتروني',
-            'forget-password-link'   => 'نسيان كلمة المرور؟',
-            'password'               => 'كلمة المرور',
-            'submit-btn'             => 'تسجيل الدخول',
-            'title'                  => 'تسجيل الدخول',
-            'powered-by'             => 'مدعوم من :unopim,',
-            'open-source-project-by' => 'مشروع مفتوح المصدر بواسطة :webkul.',
+            'email'                      => 'عنوان البريد الإلكتروني',
+            'forget-password-link'       => 'نسيان كلمة المرور؟',
+            'password'                   => 'كلمة المرور',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'تسجيل الدخول',
+            'title'                      => 'تسجيل الدخول',
+            'powered-by'                 => 'مدعوم من :unopim,',
+            'open-source-project-by'     => 'مشروع مفتوح المصدر بواسطة :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'يرجى إدخال عنوان URL صالح.',
                     'regex'                      => 'القيمة لا تطابق النمط المطلوب.',
                     'invalid-pattern'            => 'تم تقديم نمط مخصص غير صالح.',
-
                     'numeric'                    => 'يجب أن تكون القيمة المدخلة في السمة الرقمية ":attribute" رقماً صالحاً.',
                     'select-attribute-or-family' => 'يرجى اختيار سمة واحدة على الأقل أو عائلة سمات.',
                     'failed'                     => 'فشلت عملية التحقق.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'تم التحرير الجماعي بنجاح.',
                 ],
-                'id'                          => 'المعرف',
-                'no-changes'                  => 'لا توجد تغييرات للحفظ.',
-
-                'invalid-datetime'            => 'يرجى إدخال تاريخ ووقت صالح.',
-
-                'resize-column'               => 'اسحب لتغيير عرض العمود',
-                'success'                     => 'تم تنفيذ العملية بنجاح.',
-                'fetch-failed'                => 'فشل في الجلب.',
-                'action'                      => 'تحرير جماعي',
-                'description'                 => 'تحرير منتجات متعددة دفعة واحدة. تتم معالجة التغييرات في الخلفية.',
-                'gallery-preview'             => 'معاينة المعرض',
-                'img-preview'                 => 'معاينة الصورة',
-                'no-image'                    => 'لا توجد صورة',
-                'img-fail'                    => 'فشل تحميل الصورة.',
-                'no-option'                   => 'لا توجد خيارات',
-                'keyboard-shortcuts'          => 'اختصارات لوحة المفاتيح',
-                'shortcuts-navigation'        => 'التنقل',
-                'shortcuts-editing'           => 'التحرير',
-                'shortcuts-selection'         => 'التحديد',
-                'shortcuts-clipboard'         => 'الحافظة والتعبئة',
-                'shortcuts-move-cell'         => 'التنقل بين الخلايا',
-                'shortcuts-move-down'         => 'التنقل للأسفل / تأكيد التعديل',
-                'shortcuts-move-up'           => 'التنقل للأعلى',
-                'shortcuts-move-right-left'   => 'التنقل يميناً / يساراً',
-                'shortcuts-home-end'          => 'أول / آخر عمود في الصف',
-                'shortcuts-ctrl-home-end'     => 'أول / آخر خلية في الشبكة',
-                'shortcuts-extend-selection'  => 'توسيع التحديد',
-                'shortcuts-select-all'        => 'تحديد كل الخلايا',
-                'shortcuts-enter-edit'        => 'الدخول إلى وضع التحرير',
-                'shortcuts-confirm-move-down' => 'تأكيد + التنقل للأسفل',
-                'shortcuts-confirm-move-right'=> 'تأكيد + التنقل يميناً',
-                'shortcuts-escape-revert'     => 'استعادة القيمة + الخروج من التحرير',
-                'shortcuts-clear-cell'        => 'مسح الخلية',
-                'shortcuts-copy'              => 'نسخ',
-                'shortcuts-cut'               => 'قص',
-                'shortcuts-paste'             => 'لصق',
-                'shortcuts-fill-down'         => 'تعبئة للأسفل',
-                'shortcuts-fill-right'        => 'تعبئة لليمين',
-                'shortcuts-undo'              => 'تراجع',
-                'shortcuts-redo'              => 'إعادة',
-                'shortcuts-help'              => 'تبديل اختصارات لوحة المفاتيح',
+                'id'                           => 'المعرف',
+                'no-changes'                   => 'لا توجد تغييرات للحفظ.',
+                'invalid-datetime'             => 'يرجى إدخال تاريخ ووقت صالح.',
+                'resize-column'                => 'اسحب لتغيير عرض العمود',
+                'success'                      => 'تم تنفيذ العملية بنجاح.',
+                'fetch-failed'                 => 'فشل في الجلب.',
+                'action'                       => 'تحرير جماعي',
+                'description'                  => 'تحرير منتجات متعددة دفعة واحدة. تتم معالجة التغييرات في الخلفية.',
+                'gallery-preview'              => 'معاينة المعرض',
+                'img-preview'                  => 'معاينة الصورة',
+                'no-image'                     => 'لا توجد صورة',
+                'img-fail'                     => 'فشل تحميل الصورة.',
+                'no-option'                    => 'لا توجد خيارات',
+                'keyboard-shortcuts'           => 'اختصارات لوحة المفاتيح',
+                'shortcuts-navigation'         => 'التنقل',
+                'shortcuts-editing'            => 'التحرير',
+                'shortcuts-selection'          => 'التحديد',
+                'shortcuts-clipboard'          => 'الحافظة والتعبئة',
+                'shortcuts-move-cell'          => 'التنقل بين الخلايا',
+                'shortcuts-move-down'          => 'التنقل للأسفل / تأكيد التعديل',
+                'shortcuts-move-up'            => 'التنقل للأعلى',
+                'shortcuts-move-right-left'    => 'التنقل يميناً / يساراً',
+                'shortcuts-home-end'           => 'أول / آخر عمود في الصف',
+                'shortcuts-ctrl-home-end'      => 'أول / آخر خلية في الشبكة',
+                'shortcuts-extend-selection'   => 'توسيع التحديد',
+                'shortcuts-select-all'         => 'تحديد كل الخلايا',
+                'shortcuts-enter-edit'         => 'الدخول إلى وضع التحرير',
+                'shortcuts-confirm-move-down'  => 'تأكيد + التنقل للأسفل',
+                'shortcuts-confirm-move-right' => 'تأكيد + التنقل يميناً',
+                'shortcuts-escape-revert'      => 'استعادة القيمة + الخروج من التحرير',
+                'shortcuts-clear-cell'         => 'مسح الخلية',
+                'shortcuts-copy'               => 'نسخ',
+                'shortcuts-cut'                => 'قص',
+                'shortcuts-paste'              => 'لصق',
+                'shortcuts-fill-down'          => 'تعبئة للأسفل',
+                'shortcuts-fill-right'         => 'تعبئة لليمين',
+                'shortcuts-undo'               => 'تراجع',
+                'shortcuts-redo'               => 'إعادة',
+                'shortcuts-help'               => 'تبديل اختصارات لوحة المفاتيح',
             ],
             'create-success'          => 'تم إنشاء المنتج بنجاح',
             'delete-failed'           => 'فشل حذف المنتج',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'قابل للتصفية',
                 'ai-translate'          => 'ترجمة الذكاء الاصطناعي',
                 'invalid-swatch-type'   => 'ال:attribute غير مسموح به لنوع السمة :type مع نوع العينة :swatch_type.',
-
                 'single-object-only'    => 'يجب إرسال كائن سمة واحد فقط لكل طلب إنشاء.',
                 'option'                => [
                     'color'    => 'تغيير الالوان',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'تم حذف السمة بنجاح',
             'update-success'    => 'سمة تحديث بنجاح',
             'user-define-error' => 'لا يمكن حذف سمة النظام',
-
             'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
             'not-found'         => 'لم يتم العثور على السمة برمز ":code"',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'تحديث حقل الفئة بنجاح',
             'user-define-error' => 'لا يمكن حذف حقل فئة النظام',
             'not-found'         => 'لم يتم العثور على عائلة السمات برمز ":code"',
-
             'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'لا يمكن تحديث الخيارات القابلة للتكوين لأن هذه العائلة لديها بالفعل منتجات متغيرة.',
         ],
         'history' => [
-            'view' => 'عرض تفاصيل الإصدار',
-
+            'view'  => 'عرض تفاصيل الإصدار',
             'index' => [
                 'datagrid' => [
                     'version'   => 'إصدار',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'متوقف مؤقتاً',
                         'cancelled'            => 'ملغي',
                         'failed'               => 'فشل',
-
-                        'view'       => 'عرض',
+                        'view'                 => 'عرض',
                     ],
                 ],
                 'import' => [
@@ -1602,18 +1596,18 @@ return [
                 'status'           => 'حالة',
                 'title'            => 'تحرير العضو',
             ],
-            'activate-warning'           => 'لم يتم تنشيط حسابك بعد ، يرجى الاتصال بالمسؤول.',
-            'cannot-change'              => 'لا يمكن تغيير المستخدم',
-            'cannot-escalate-role'       => 'ليس لديك إذن لتعيين دور بصلاحيات كاملة.',
-            'create-success'             => 'تم إنشاء المستخدم بنجاح.',
-            'delete-failed'              => 'فشل حذف المستخدم.',
-            'delete-success'             => 'تم حذف المستخدم بنجاح.',
-            'delete-warning'             => 'هل أنت متأكد من أنك تريد تنفيذ هذا الإجراء؟',
-            'incorrect-password'         => 'كلمة سر خاطئة',
-            'last-delete-error'          => 'فشل آخر حذف المستخدم',
-            'login-error'                => 'يرجى التحقق من بيانات الاعتماد الخاصة بك والمحاولة مرة أخرى.',
-            'update-success'             => 'تم تحديث المستخدم بنجاح.',
-            'current-user-delete-error'  => 'لا يمكن حذف المستخدم الذي قام بتسجيل الدخول',
+            'activate-warning'          => 'لم يتم تنشيط حسابك بعد ، يرجى الاتصال بالمسؤول.',
+            'cannot-change'             => 'لا يمكن تغيير المستخدم',
+            'cannot-escalate-role'      => 'ليس لديك إذن لتعيين دور بصلاحيات كاملة.',
+            'create-success'            => 'تم إنشاء المستخدم بنجاح.',
+            'delete-failed'             => 'فشل حذف المستخدم.',
+            'delete-success'            => 'تم حذف المستخدم بنجاح.',
+            'delete-warning'            => 'هل أنت متأكد من أنك تريد تنفيذ هذا الإجراء؟',
+            'incorrect-password'        => 'كلمة سر خاطئة',
+            'last-delete-error'         => 'فشل آخر حذف المستخدم',
+            'login-error'               => 'يرجى التحقق من بيانات الاعتماد الخاصة بك والمحاولة مرة أخرى.',
+            'update-success'            => 'تم تحديث المستخدم بنجاح.',
+            'current-user-delete-error' => 'لا يمكن حذف المستخدم الذي قام بتسجيل الدخول',
         ],
         'roles' => [
             'index' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'المحفزات',
-
             ],
-
             'datagrid' => [
                 'id'               => 'المعرف',
                 'title'            => 'العنوان',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'توليد النصوص',
                 'image-generation'    => 'توليد الصور',
                 'select-purpose'      => 'اختر الغرض',
-                'select-model'        => '-- اختر النموذج --',
+                'select-model'        => 'اختر النموذج',
                 'loading-models'      => 'جارٍ تحميل النماذج...',
                 'no-models-available' => 'لا توجد نماذج متاحة. اختر منصة أو قم بإعدادها في علامة تبويب المنصات.',
                 'type'                => 'النوع',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'محفزات النظام',
-
             ],
-
             'datagrid' => [
                 'id'          => 'المعرف',
                 'title'       => 'العنوان',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'التسمية',
                 'provider'                 => 'المزود',
-                'select-provider'          => '-- اختر المزود --',
+                'select-provider'          => 'اختر المزود',
                 'api-url'                  => 'رابط API',
                 'api-url-hint'             => 'مملوء مسبقاً بنقطة النهاية الافتراضية. عدّل فقط عند استخدام وكيل أو نشر مخصص.',
                 'api-key'                  => 'مفتاح API',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'إصدار API',
                 'is-default'               => 'تعيين كافتراضي',
                 'status'                   => 'الحالة',
-                'use-default'              => '-- استخدام المنصة الافتراضية --',
+                'use-default'              => 'استخدام المنصة الافتراضية',
                 'use-default-hint'         => 'اتركه فارغاً لاستخدام المنصة المحددة كافتراضية. المنصات المميزة بعلامة * هي الافتراضية.',
                 'no-image-platform'        => 'لم يتم تكوين منصة قادرة على الصور. أضف منصة OpenAI أو Gemini أو xAI أولاً.',
                 'image-platform-hint'      => 'يتم عرض المنصات الداعمة لتوليد الصور فقط (OpenAI، Gemini، xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'حسابي',
                 'notifications' => 'إشعارات',
                 'visit-shop'    => 'زيارة متجر',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'عائلات السمات',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'لم يتم اختيار سجلات.',
                 'must-select-a-mass-action-option' => 'يجب عليك تحديد خيار لإجراء جماعي.',
                 'must-select-a-mass-action'        => 'يجب عليك تحديد إجراء جماعي.',
+                'link-copied'                      => 'تم نسخ الرابط إلى الحافظة.',
+                'copy-failed'                      => 'فشل النسخ. يرجى نسخ الرابط يدويًا.',
             ],
             'toolbar' => [
                 'length-of'    => ':length من',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'منقي',
                 ],
                 'search_by' => [
-                    'code'       => 'البحث حسب الرمز',
-                    'code_or_id' => 'ابحث حسب الرمز أو الهوية',
+                    'code'        => 'البحث حسب الرمز',
+                    'code_or_id'  => 'ابحث حسب الرمز أو الهوية',
+                    'sku_or_user' => 'البحث حسب SKU أو المستخدم',
                 ],
                 'search' => [
                     'title' => 'يبحث',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'فيكونا',
                 'llava'                  => 'لافا',
                 'default-prompt'         => 'الطلب الافتراضي',
-                'select-prompt-template' => '-- اختر قالب طلب --',
+                'select-prompt-template' => 'اختر قالب طلب',
             ],
         ],
     ],
@@ -2289,6 +2283,15 @@ return [
             'description' => 'أُووبس! انتهت صلاحية جلسة العمل الخاصة بك. يرجى تحديث الصفحة وتسجيل الدخول مرة أخرى للمتابعة.',
             'title'       => '419 انتهت صلاحية الجلسة',
         ],
+        '405' => [
+            'description' => 'عفوًا! طريقة الطلب غير مسموح بها لهذا الرابط. يُرجى استخدام الطريقة الصحيحة أو العودة إلى الصفحة السابقة.',
+            'title'       => '405 الطريقة غير مسموح بها',
+        ],
+        '429' => [
+            'description' => 'أُووبس! عدد كبير جدًا من المحاولات. يرجى الانتظار دقيقة ثم المحاولة مرة أخرى.',
+            'title'       => '429 طلبات كثيرة جدًا',
+        ],
+
         '500' => [
             'description' => 'أُووبس! هناك خطأ ما. يبدو أننا نواجه مشكلة في تحميل الصفحة التي تبحث عنها.',
             'title'       => '500 خطأ داخلي في الخادم',
@@ -2331,13 +2334,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'نعم',
-        'no'             => 'لا',
-        'true'           => 'حقيقي',
-        'false'          => 'خطأ شنيع',
-        'enable'         => 'ممكّن',
-        'disable'        => 'عاجز',
-        'no-match-found' => 'لم يتم العثور على تطابق!',
+        'yes'               => 'نعم',
+        'no'                => 'لا',
+        'true'              => 'حقيقي',
+        'false'             => 'خطأ شنيع',
+        'enable'            => 'ممكّن',
+        'disable'           => 'عاجز',
+        'no-match-found'    => 'لم يتم العثور على تطابق!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

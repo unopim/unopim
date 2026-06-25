@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => '管理者',
-                'unopim'           => 'ウノピム',
-                'confirm-password' => 'パスワードを認証する',
-                'email-address'    => 'admin@example.com',
-                'email'            => '電子メール',
-                'password'         => 'パスワード',
-                'title'            => '管理者の作成',
+                'admin'                   => '管理者',
+                'unopim'                  => 'ウノピム',
+                'confirm-password'        => 'パスワードを認証する',
+                'email-address'           => 'admin@example.com',
+                'email'                   => '電子メール',
+                'password'                => 'パスワード',
+                'title'                   => '管理者の作成',
+                'seed-sample-data'        => 'サンプル商品とデモデータをインストール',
+                'seeding-sample-data'     => 'サンプル商品とデモデータを生成しています。数分かかる場合があります…',
+                'seed-sample-data-failed' => 'サンプルデータを生成できませんでした。後で `php artisan unopim:install:demo-data` を実行してインストールできます。',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => '使用できる通貨',

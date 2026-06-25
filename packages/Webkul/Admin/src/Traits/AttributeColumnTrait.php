@@ -16,9 +16,11 @@ trait AttributeColumnTrait
     {
         $attributeArray = $attribute->toArray();
 
+        $label = $attribute->getTranslatedValueWithFallback('name');
+
         $column = [
             'index'      => $attributeArray['code'],
-            'label'      => $attributeArray['name'] ?: '['.$attributeArray['code'].']',
+            'label'      => ! empty($label) ? $label : '['.$attributeArray['code'].']',
             'type'       => $attribute->getFilterType(),
             'searchable' => false,
             'filterable' => $attributeArray['is_filterable'] ?? false,

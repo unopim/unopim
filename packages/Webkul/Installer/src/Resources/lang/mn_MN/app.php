@@ -101,13 +101,16 @@ return [
     'installer' => [
         'index' => [
             'create-administrator' => [
-                'admin'            => 'Админ',
-                'unopim'           => 'UnoPim',
-                'confirm-password' => 'Нууц үг баталгаажуулах',
-                'email-address'    => 'admin@example.com',
-                'email'            => 'Имэйл',
-                'password'         => 'Нууц үг',
-                'title'            => 'Администратор үүсгэх',
+                'admin'                   => 'Админ',
+                'unopim'                  => 'UnoPim',
+                'confirm-password'        => 'Нууц үг баталгаажуулах',
+                'email-address'           => 'admin@example.com',
+                'email'                   => 'Имэйл',
+                'password'                => 'Нууц үг',
+                'title'                   => 'Администратор үүсгэх',
+                'seed-sample-data'        => 'Жишээ бүтээгдэхүүн ба демо өгөгдлийг суулгах',
+                'seeding-sample-data'     => 'Жишээ бүтээгдэхүүн ба демо өгөгдөл үүсгэж байна, энэ хэдэн минут үргэлжилж болно...',
+                'seed-sample-data-failed' => 'Жишээ өгөгдлийг үүсгэж чадсангүй. Та `php artisan unopim:install:demo-data` тушаалаар дараа суулгаж болно.',
             ],
             'environment-configuration' => [
                 'allowed-currencies'  => 'Зөвшөөрөгдсөн валютууд',

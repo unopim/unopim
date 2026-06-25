@@ -20,8 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard-index: [1, 2, 3, 4]
-        shard-total: [4]
+        shard-index: [1,2,3,4,5,6,7,8]
+        shard-total: [8]
 
     services:
       mysql:
@@ -48,6 +48,11 @@ jobs:
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
       INVALID_ADMIN_EMAIL: ${{ secrets.INVALID_ADMIN_EMAIL }}
       INVALID_ADMIN_PASSWORD: ${{ secrets.INVALID_ADMIN_PASSWORD }}
+      # E2E only: lets webhook-delivery.spec.js point UnoPim at a localhost
+      # catcher (127.0.0.1:<port>). SafeWebhookUrl blocks loopback by default
+      # in prod; this flag re-allows loopback ONLY — private / link-local /
+      # multicast / reserved IP ranges stay blocked.
+      WEBHOOK_ALLOW_LOOPBACK: 'true'
 
     steps:
       - name: Checkout
@@ -115,10 +120,19 @@ jobs:
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
 
       - name: Running UnoPim Installer & Start Server
+        env:
+          # Fall back to the same literal creds login.js defaults to, so the
+          # seeded admin always matches the test login even when these repo
+          # secrets are unset (e.g. fork PRs, where secrets are unavailable).
+          # Without a fallback the seeder generates a RANDOM password and every
+          # login — and thus every E2E test — fails.
+          INSTALLER_ADMIN_EMAIL: ${{ secrets.INSTALLER_ADMIN_EMAIL || 'admin@example.com' }}
+          INSTALLER_ADMIN_PASSWORD: ${{ secrets.INSTALLER_ADMIN_PASSWORD || 'admin123' }}
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+          chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
           php artisan serve --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
-          php artisan queue:work --queue=default,system,completeness > /tmp/queue.log 2>&1 &
+          php artisan queue:work --queue=webhooks,default,system,completeness > /tmp/queue.log 2>&1 &
           echo "Waiting for server..."
           timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (cat /tmp/server.log && exit 1)
 
@@ -129,7 +143,7 @@ jobs:
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
           path: |

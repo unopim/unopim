@@ -43,6 +43,48 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Mga Channel',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Hindi nahanap ang channel na may code :code para tanggalin.',
+                    'locale-not-found'         => 'Isa o higit pang wika ay hindi umiiral.',
+                    'root-category-not-found'  => 'Ang root na kategorya ay hindi umiiral.',
+                    'currency-not-found'       => 'Isa o higit pang currency ay hindi umiiral.',
+                    'invalid-locale'           => 'Ang wika ay hindi umiiral.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +104,23 @@ return [
         ],
         'locales' => [
             'title' => 'Mga Wika',
+        ],
+        'channels' => [
+            'title' => 'Mga Channel',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
     'validation' => [

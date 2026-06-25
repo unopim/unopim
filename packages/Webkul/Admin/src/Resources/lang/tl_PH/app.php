@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Email Address',
-            'forget-password-link'   => 'Nakalimutan ang password?',
-            'password'               => 'Password',
-            'submit-btn'             => 'Mag-sign In',
-            'title'                  => 'Mag-sign In',
-            'powered-by'             => 'Pinapatakbo ng :unopim,',
-            'open-source-project-by' => 'Isang open-source na proyekto ng :webkul.',
+            'email'                      => 'Email Address',
+            'forget-password-link'       => 'Nakalimutan ang password?',
+            'password'                   => 'Password',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Mag-sign In',
+            'title'                      => 'Mag-sign In',
+            'powered-by'                 => 'Pinapatakbo ng :unopim,',
+            'open-source-project-by'     => 'Isang open-source na proyekto ng :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Pakilagay ng wastong URL.',
                     'regex'                      => 'Hindi tumutugma ang halaga sa kinakailangang pattern.',
                     'invalid-pattern'            => 'Di-wastong pasadyang pattern ang ibinigay.',
-
                     'numeric'                    => 'Ang halaga ng numerikong attribute na ":attribute" ay dapat maging wastong numero.',
                     'select-attribute-or-family' => 'Mangyaring pumili ng kahit isang attribute o isang pamilya ng attribute.',
                     'failed'                     => 'Nabigo ang pagpapatunay.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Matagumpay ang bulk edit.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Walang pagbabago para i-save.',
-
-                'invalid-datetime'            => 'Maglagay ng wastong petsa at oras.',
-
-                'resize-column'               => 'I-drag upang baguhin ang lapad ng column',
-                'success'                     => 'Matagumpay na naisagawa ang gawain.',
-                'fetch-failed'                => 'Hindi nakuha ang datos.',
-                'action'                      => 'Maramihang Pag-edit',
-                'description'                 => 'I-edit ang maraming produkto nang sabay-sabay. Ang mga pagbabago ay pinoproseso sa background.',
-                'gallery-preview'             => 'Preview ng Gallery',
-                'img-preview'                 => 'Preview ng Imahe',
-                'no-image'                    => 'Walang Imahe',
-                'img-fail'                    => 'Nabigo ang pag-upload ng imahe',
-                'no-option'                   => 'Walang Pagpipilian',
-                'keyboard-shortcuts'          => 'Mga Shortcut sa Keyboard',
-                'shortcuts-navigation'        => 'Nabigasyon',
-                'shortcuts-editing'           => 'Pag-edit',
-                'shortcuts-selection'         => 'Pagpili',
-                'shortcuts-clipboard'         => 'Clipboard at Punan',
-                'shortcuts-move-cell'         => 'Lumipat sa pagitan ng mga cell',
-                'shortcuts-move-down'         => 'Bumaba / kumpirmahin ang pag-edit',
-                'shortcuts-move-up'           => 'Umakyat',
-                'shortcuts-move-right-left'   => 'Pumunta sa kanan / kaliwa',
-                'shortcuts-home-end'          => 'Una / huling kolumna sa hilera',
-                'shortcuts-ctrl-home-end'     => 'Una / huling cell sa grid',
-                'shortcuts-extend-selection'  => 'Palawakin ang pagpili',
-                'shortcuts-select-all'        => 'Piliin ang lahat ng cell',
-                'shortcuts-enter-edit'        => 'Pumasok sa edit mode',
-                'shortcuts-confirm-move-down' => 'Kumpirmahin + bumaba',
-                'shortcuts-confirm-move-right'=> 'Kumpirmahin + pumunta sa kanan',
-                'shortcuts-escape-revert'     => 'Ibalik ang halaga + lumabas sa pag-edit',
-                'shortcuts-clear-cell'        => 'Linisin ang cell',
-                'shortcuts-copy'              => 'Kopyahin',
-                'shortcuts-cut'               => 'I-cut',
-                'shortcuts-paste'             => 'I-paste',
-                'shortcuts-fill-down'         => 'Punan pababa',
-                'shortcuts-fill-right'        => 'Punan pakanan',
-                'shortcuts-undo'              => 'I-undo',
-                'shortcuts-redo'              => 'I-redo',
-                'shortcuts-help'              => 'Ipakita/itago ang mga shortcut sa keyboard',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Walang pagbabago para i-save.',
+                'invalid-datetime'             => 'Maglagay ng wastong petsa at oras.',
+                'resize-column'                => 'I-drag upang baguhin ang lapad ng column',
+                'success'                      => 'Matagumpay na naisagawa ang gawain.',
+                'fetch-failed'                 => 'Hindi nakuha ang datos.',
+                'action'                       => 'Maramihang Pag-edit',
+                'description'                  => 'I-edit ang maraming produkto nang sabay-sabay. Ang mga pagbabago ay pinoproseso sa background.',
+                'gallery-preview'              => 'Preview ng Gallery',
+                'img-preview'                  => 'Preview ng Imahe',
+                'no-image'                     => 'Walang Imahe',
+                'img-fail'                     => 'Nabigo ang pag-upload ng imahe',
+                'no-option'                    => 'Walang Pagpipilian',
+                'keyboard-shortcuts'           => 'Mga Shortcut sa Keyboard',
+                'shortcuts-navigation'         => 'Nabigasyon',
+                'shortcuts-editing'            => 'Pag-edit',
+                'shortcuts-selection'          => 'Pagpili',
+                'shortcuts-clipboard'          => 'Clipboard at Punan',
+                'shortcuts-move-cell'          => 'Lumipat sa pagitan ng mga cell',
+                'shortcuts-move-down'          => 'Bumaba / kumpirmahin ang pag-edit',
+                'shortcuts-move-up'            => 'Umakyat',
+                'shortcuts-move-right-left'    => 'Pumunta sa kanan / kaliwa',
+                'shortcuts-home-end'           => 'Una / huling kolumna sa hilera',
+                'shortcuts-ctrl-home-end'      => 'Una / huling cell sa grid',
+                'shortcuts-extend-selection'   => 'Palawakin ang pagpili',
+                'shortcuts-select-all'         => 'Piliin ang lahat ng cell',
+                'shortcuts-enter-edit'         => 'Pumasok sa edit mode',
+                'shortcuts-confirm-move-down'  => 'Kumpirmahin + bumaba',
+                'shortcuts-confirm-move-right' => 'Kumpirmahin + pumunta sa kanan',
+                'shortcuts-escape-revert'      => 'Ibalik ang halaga + lumabas sa pag-edit',
+                'shortcuts-clear-cell'         => 'Linisin ang cell',
+                'shortcuts-copy'               => 'Kopyahin',
+                'shortcuts-cut'                => 'I-cut',
+                'shortcuts-paste'              => 'I-paste',
+                'shortcuts-fill-down'          => 'Punan pababa',
+                'shortcuts-fill-right'         => 'Punan pakanan',
+                'shortcuts-undo'               => 'I-undo',
+                'shortcuts-redo'               => 'I-redo',
+                'shortcuts-help'               => 'Ipakita/itago ang mga shortcut sa keyboard',
             ],
             'create-success'          => 'Matagumpay na nalikha ang produkto',
             'delete-failed'           => 'Nabigong tanggalin ang produkto',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Nafifilter',
                 'ai-translate'          => 'AI Pagsasalin',
                 'invalid-swatch-type'   => 'Ang :attribute ay hindi pinapayagan para sa uri ng katangian :type na may uri ng swatch :swatch_type.',
-
                 'single-object-only'    => 'Ang bawat create request ay dapat magpadala ng iisang attribute object.',
                 'option'                => [
                     'color'    => 'Color Swatch',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Katangian natanggal',
             'update-success'    => 'Katangian na-update',
             'user-define-error' => 'Hindi ma-delete ang system attribute',
-
             'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
             'not-found'         => 'Ang katangian na may code ":code" ay hindi natagpuan',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Matagumpay na na-update ang field ng kategorya',
             'user-define-error' => 'Hindi maaaring tanggalin ang field ng kategorya ng sistema',
             'not-found'         => 'Hindi natagpuan ang field ng kategorya na may code ":code"',
-
             'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Hindi ma-update ang mga opsyon ng configuration dahil mayroon nang mga produkto ng variant sa pamilya.',
         ],
         'history' => [
-            'view' => 'Tingnan ang Mga Detalye ng Bersyon',
-
+            'view'  => 'Tingnan ang Mga Detalye ng Bersyon',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Bersyon',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Naka-pause',
                         'cancelled'            => 'Na-cancel',
                         'failed'               => 'Nabigo',
-
-                        'view'       => 'Tingnan',
+                        'view'                 => 'Tingnan',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Mga Prompt',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Pamagat',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Paglikha ng Teksto',
                 'image-generation'    => 'Paglikha ng Larawan',
                 'select-purpose'      => 'Pumili ng layunin',
-                'select-model'        => '-- Pumili ng Modelo --',
+                'select-model'        => 'Pumili ng Modelo',
                 'loading-models'      => 'Naglo-load ng mga modelo...',
                 'no-models-available' => 'Walang mga modelo na magagamit. Pumili ng platform o mag-configure ng isa sa tab na Mga Platform.',
                 'type'                => 'Uri',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Mga System Prompt',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Pamagat',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Label',
                 'provider'                 => 'Provider',
-                'select-provider'          => '-- Pumili ng Provider --',
+                'select-provider'          => 'Pumili ng Provider',
                 'api-url'                  => 'API URL',
                 'api-url-hint'             => 'Paunang napunan ng default na endpoint. I-edit lamang kung gumagamit ng proxy o custom na deployment.',
                 'api-key'                  => 'API Key',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'Bersyon ng API',
                 'is-default'               => 'Itakda bilang Default',
                 'status'                   => 'Katayuan',
-                'use-default'              => '-- Gamitin ang Default na Platform --',
+                'use-default'              => 'Gamitin ang Default na Platform',
                 'use-default-hint'         => 'Iwanang walang laman upang gamitin ang platform na minarkahan bilang default. Ang mga platform na may markang * ay default.',
                 'no-image-platform'        => 'Walang naka-configure na platform na may kakayahan sa larawan. Magdagdag muna ng OpenAI, Gemini, o xAI platform.',
                 'image-platform-hint'      => 'Ang mga platform lamang na sumusuporta sa paglikha ng larawan ang nakalista (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Aking Account',
                 'notifications' => 'Mga Abiso',
                 'visit-shop'    => 'Bumisita sa Tindahan',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Pamilya ng Katangian',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Walang napiling tala.',
                 'must-select-a-mass-action-option' => 'Dapat kang pumili ng opsyon para sa mass action.',
                 'must-select-a-mass-action'        => 'Dapat kang pumili ng mass action.',
+                'link-copied'                      => 'Nakopya na ang link sa clipboard.',
+                'copy-failed'                      => 'Nabigo ang pagkopya. Mangyaring kopyahin ang link nang manu-mano.',
             ],
             'toolbar' => [
                 'length-of'    => ':length ng',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Salain',
                 ],
                 'search_by' => [
-                    'code'       => 'Maghanap ayon sa code',
-                    'code_or_id' => 'Maghanap ayon sa code o id',
+                    'code'        => 'Maghanap ayon sa code',
+                    'code_or_id'  => 'Maghanap ayon sa code o id',
+                    'sku_or_user' => 'Maghanap ayon sa SKU o user',
                 ],
                 'search' => [
                     'title' => 'Maghanap',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Varsayılan istem',
-                'select-prompt-template' => '-- Pumili ng template ng prompt --',
+                'select-prompt-template' => 'Pumili ng template ng prompt',
             ],
         ],
     ],
@@ -2289,6 +2283,15 @@ return [
             'description' => 'Oops! Nag-expire ang iyong session. Mangyaring i-refresh ang pahina at mag-login muli para magpatuloy.',
             'title'       => '419 Nag-expire na Sesyon',
         ],
+        '405' => [
+            'description' => 'Naku! Hindi pinapayagan ang paraan ng kahilingan para sa URL na ito. Mangyaring gamitin ang tamang paraan o bumalik sa nakaraang pahina.',
+            'title'       => '405 Hindi Pinapayagan ang Pamamaraan',
+        ],
+        '429' => [
+            'description' => 'Naku! Masyadong maraming pagsubok. Maghintay ng isang minuto at subukang muli.',
+            'title'       => '429 Masyadong Maraming Kahilingan',
+        ],
+
         '500' => [
             'description' => 'Oops! May nangyaring mali. Mukhang may problema kami sa pag-load ng pahinang hinahanap mo.',
             'title'       => '500 Error ng Server',
@@ -2331,13 +2334,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Oo',
-        'no'             => 'Hindi',
-        'true'           => 'Totoo',
-        'false'          => 'Hindi Totoo',
-        'enable'         => 'Pinagana',
-        'disable'        => 'Walang Bisa',
-        'no-match-found' => 'Walang nahanap na tugma!',
+        'yes'               => 'Oo',
+        'no'                => 'Hindi',
+        'true'              => 'Totoo',
+        'false'             => 'Hindi Totoo',
+        'enable'            => 'Pinagana',
+        'disable'           => 'Walang Bisa',
+        'no-match-found'    => 'Walang nahanap na tugma!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

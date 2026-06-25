@@ -1,7 +1,5 @@
 <?php
 
-// ACL — flat array, no nested children
-
 return [
     [
         'key'   => 'ai-agent',
@@ -29,6 +27,16 @@ return [
         'name'   => 'ai-agent::app.acl.delete',
         'route'  => 'admin.magic_ai.platform.delete',
         'sort'   => 3,
+    ], [
+        'key'    => 'ai-agent.platform.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.platform.update',
+        'sort'   => 2,
+    ], [
+        'key'    => 'ai-agent.platform.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.platform.set_default',
+        'sort'   => 2,
     ],
     [
         'key'    => 'ai-agent.general',
@@ -46,6 +54,18 @@ return [
         'key'    => 'ai-agent.prompt.edit',
         'name'   => 'ai-agent::app.acl.edit',
         'route'  => 'admin.magic_ai.prompt.edit',
+        'sort'   => 1,
+    ],
+    [
+        'key'    => 'ai-agent.prompt.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.prompt.store',
+        'sort'   => 1,
+    ],
+    [
+        'key'    => 'ai-agent.prompt.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.prompt.update',
         'sort'   => 1,
     ],
     [
@@ -67,6 +87,18 @@ return [
         'sort'   => 1,
     ],
     [
+        'key'    => 'ai-agent.system-prompt.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.system_prompt.store',
+        'sort'   => 1,
+    ],
+    [
+        'key'    => 'ai-agent.system-prompt.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.system_prompt.update',
+        'sort'   => 1,
+    ],
+    [
         'key'    => 'ai-agent.system-prompt.delete',
         'name'   => 'ai-agent::app.acl.delete',
         'route'  => 'admin.magic_ai.system_prompt.delete',
@@ -77,6 +109,12 @@ return [
         'key'   => 'ai-agent.generate',
         'name'  => 'ai-agent::app.acl.generate',
         'route' => 'ai-agent.generate.index',
+        'sort'  => 5,
+    ],
+    [
+        'key'   => 'ai-agent.generate',
+        'name'  => 'ai-agent::app.acl.generate',
+        'route' => 'ai-agent.generate.process',
         'sort'  => 5,
     ],
     [

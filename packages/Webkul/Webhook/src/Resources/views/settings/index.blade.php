@@ -184,8 +184,8 @@
                                             message: error.response.data.message
                                         });
 
-                                        if (error.status == 400) {
-                                            setErrors(error.response.data.errors);
+                                        if (error.response?.status === 400 || error.response?.status === 422) {
+                                            setErrors(error.response.data.errors || {});
                                         }
                                     }).finally(() => this.isLoading = false);
                             },

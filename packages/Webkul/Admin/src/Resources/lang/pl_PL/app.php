@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Adres e-mail',
-            'forget-password-link'   => 'Zapomniałeś hasła?',
-            'password'               => 'Hasło',
-            'submit-btn'             => 'Zaloguj się',
-            'title'                  => 'Zaloguj się',
-            'powered-by'             => 'Zasilane przez :unopim,',
-            'open-source-project-by' => 'Projekt open-source autorstwa :webkul.',
+            'email'                      => 'Adres e-mail',
+            'forget-password-link'       => 'Zapomniałeś hasła?',
+            'password'                   => 'Hasło',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Zaloguj się',
+            'title'                      => 'Zaloguj się',
+            'powered-by'                 => 'Zasilane przez :unopim,',
+            'open-source-project-by'     => 'Projekt open-source autorstwa :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Wprowadź poprawny adres URL.',
                     'regex'                      => 'Wartość nie pasuje do wymaganego wzoru.',
                     'invalid-pattern'            => 'Podano nieprawidłowy własny wzorzec.',
-
                     'numeric'                    => 'Wartość numerycznego atrybutu „:attribute” musi być prawidłową liczbą.',
                     'select-attribute-or-family' => 'Proszę wybrać co najmniej jeden atrybut lub rodzinę atrybutów.',
                     'failed'                     => 'Walidacja nie powiodła się.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Edycja zbiorcza zakończona sukcesem.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Brak zmian do zapisania.',
-
-                'invalid-datetime'            => 'Wprowadź prawidłową datę i godzinę.',
-
-                'resize-column'               => 'Przeciągnij, aby zmienić szerokość kolumny',
-                'success'                     => 'Zadanie zostało pomyślnie wykonane.',
-                'fetch-failed'                => 'Nie udało się pobrać.',
-                'action'                      => 'Edycja zbiorcza',
-                'description'                 => 'Edytuj wiele produktów jednocześnie. Zmiany są przetwarzane w tle.',
-                'gallery-preview'             => 'Podgląd galerii',
-                'img-preview'                 => 'Podgląd obrazu',
-                'no-image'                    => 'Brak obrazu',
-                'img-fail'                    => 'Przesyłanie obrazu nie powiodło się',
-                'no-option'                   => 'Brak opcji',
-                'keyboard-shortcuts'          => 'Skróty klawiszowe',
-                'shortcuts-navigation'        => 'Nawigacja',
-                'shortcuts-editing'           => 'Edycja',
-                'shortcuts-selection'         => 'Zaznaczenie',
-                'shortcuts-clipboard'         => 'Schowek i wypełnianie',
-                'shortcuts-move-cell'         => 'Poruszanie się między komórkami',
-                'shortcuts-move-down'         => 'Przesuń w dół / potwierdź edycję',
-                'shortcuts-move-up'           => 'Przesuń w górę',
-                'shortcuts-move-right-left'   => 'Przesuń w prawo / w lewo',
-                'shortcuts-home-end'          => 'Pierwsza / ostatnia kolumna w wierszu',
-                'shortcuts-ctrl-home-end'     => 'Pierwsza / ostatnia komórka w siatce',
-                'shortcuts-extend-selection'  => 'Rozszerz zaznaczenie',
-                'shortcuts-select-all'        => 'Zaznacz wszystkie komórki',
-                'shortcuts-enter-edit'        => 'Wejdź w tryb edycji',
-                'shortcuts-confirm-move-down' => 'Potwierdź + przesuń w dół',
-                'shortcuts-confirm-move-right'=> 'Potwierdź + przesuń w prawo',
-                'shortcuts-escape-revert'     => 'Przywróć wartość + wyjdź z edycji',
-                'shortcuts-clear-cell'        => 'Wyczyść komórkę',
-                'shortcuts-copy'              => 'Kopiuj',
-                'shortcuts-cut'               => 'Wytnij',
-                'shortcuts-paste'             => 'Wklej',
-                'shortcuts-fill-down'         => 'Wypełnij w dół',
-                'shortcuts-fill-right'        => 'Wypełnij w prawo',
-                'shortcuts-undo'              => 'Cofnij',
-                'shortcuts-redo'              => 'Ponów',
-                'shortcuts-help'              => 'Pokaż/ukryj skróty klawiszowe',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Brak zmian do zapisania.',
+                'invalid-datetime'             => 'Wprowadź prawidłową datę i godzinę.',
+                'resize-column'                => 'Przeciągnij, aby zmienić szerokość kolumny',
+                'success'                      => 'Zadanie zostało pomyślnie wykonane.',
+                'fetch-failed'                 => 'Nie udało się pobrać.',
+                'action'                       => 'Edycja zbiorcza',
+                'description'                  => 'Edytuj wiele produktów jednocześnie. Zmiany są przetwarzane w tle.',
+                'gallery-preview'              => 'Podgląd galerii',
+                'img-preview'                  => 'Podgląd obrazu',
+                'no-image'                     => 'Brak obrazu',
+                'img-fail'                     => 'Przesyłanie obrazu nie powiodło się',
+                'no-option'                    => 'Brak opcji',
+                'keyboard-shortcuts'           => 'Skróty klawiszowe',
+                'shortcuts-navigation'         => 'Nawigacja',
+                'shortcuts-editing'            => 'Edycja',
+                'shortcuts-selection'          => 'Zaznaczenie',
+                'shortcuts-clipboard'          => 'Schowek i wypełnianie',
+                'shortcuts-move-cell'          => 'Poruszanie się między komórkami',
+                'shortcuts-move-down'          => 'Przesuń w dół / potwierdź edycję',
+                'shortcuts-move-up'            => 'Przesuń w górę',
+                'shortcuts-move-right-left'    => 'Przesuń w prawo / w lewo',
+                'shortcuts-home-end'           => 'Pierwsza / ostatnia kolumna w wierszu',
+                'shortcuts-ctrl-home-end'      => 'Pierwsza / ostatnia komórka w siatce',
+                'shortcuts-extend-selection'   => 'Rozszerz zaznaczenie',
+                'shortcuts-select-all'         => 'Zaznacz wszystkie komórki',
+                'shortcuts-enter-edit'         => 'Wejdź w tryb edycji',
+                'shortcuts-confirm-move-down'  => 'Potwierdź + przesuń w dół',
+                'shortcuts-confirm-move-right' => 'Potwierdź + przesuń w prawo',
+                'shortcuts-escape-revert'      => 'Przywróć wartość + wyjdź z edycji',
+                'shortcuts-clear-cell'         => 'Wyczyść komórkę',
+                'shortcuts-copy'               => 'Kopiuj',
+                'shortcuts-cut'                => 'Wytnij',
+                'shortcuts-paste'              => 'Wklej',
+                'shortcuts-fill-down'          => 'Wypełnij w dół',
+                'shortcuts-fill-right'         => 'Wypełnij w prawo',
+                'shortcuts-undo'               => 'Cofnij',
+                'shortcuts-redo'               => 'Ponów',
+                'shortcuts-help'               => 'Pokaż/ukryj skróty klawiszowe',
             ],
             'create-success'          => 'Produkt został pomyślnie utworzony',
             'delete-failed'           => 'Usuwanie produktu nie powiodło się',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Jest filtrowalne',
                 'ai-translate'          => 'Tłumaczenie SI',
                 'invalid-swatch-type'   => 'Atrybut :attribute nie jest dozwolony dla typu atrybutu :type z typem próbki :swatch_type.',
-
                 'single-object-only'    => 'Każde żądanie tworzenia musi zawierać tylko jeden obiekt atrybutu.',
                 'option'                => [
                     'color'    => 'Kolor próbki',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Atrybut usunięty',
             'update-success'    => 'Atrybut zaktualizowany',
             'user-define-error' => 'Nie można usunąć atrybutu systemowego',
-
             'immutable-fields'  => 'Następujących pól nie można zmodyfikować: :fields.',
             'not-found'         => 'Nie znaleziono atrybutu o kodzie ":code"',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Pole kategorii zostało zaktualizowane',
             'user-define-error' => 'Nie można usunąć systemowego pola kategorii',
             'not-found'         => 'Nie znaleziono pola kategorii o kodzie ":code"',
-
             'immutable-fields'  => 'Następujących pól nie można zmodyfikować: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Nie można zaktualizować opcji konfiguracji, ponieważ ta rodzina ma już warianty produktów.',
         ],
         'history' => [
-            'view' => 'Wyświetl szczegóły wersji',
-
+            'view'  => 'Wyświetl szczegóły wersji',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Wersja',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Wstrzymano',
                         'cancelled'            => 'Anulowano',
                         'failed'               => 'Niepowodzenie',
-
-                        'view'       => 'Zobacz',
+                        'view'                 => 'Zobacz',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Prompty',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Tytuł',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Generowanie tekstu',
                 'image-generation'    => 'Generowanie obrazów',
                 'select-purpose'      => 'Wybierz cel',
-                'select-model'        => '-- Wybierz model --',
+                'select-model'        => 'Wybierz model',
                 'loading-models'      => 'Ładowanie modeli...',
                 'no-models-available' => 'Brak dostępnych modeli. Wybierz platformę lub skonfiguruj ją w zakładce Platformy.',
                 'type'                => 'Typ',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Prompty systemowe',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Tytuł',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Etykieta',
                 'provider'                 => 'Dostawca',
-                'select-provider'          => '-- Wybierz dostawcę --',
+                'select-provider'          => 'Wybierz dostawcę',
                 'api-url'                  => 'URL API',
                 'api-url-hint'             => 'Wstępnie wypełnione domyślnym punktem końcowym. Edytuj tylko w przypadku użycia proxy lub niestandardowego wdrożenia.',
                 'api-key'                  => 'Klucz API',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'Wersja API',
                 'is-default'               => 'Ustaw jako domyślną',
                 'status'                   => 'Status',
-                'use-default'              => '-- Użyj domyślnej platformy --',
+                'use-default'              => 'Użyj domyślnej platformy',
                 'use-default-hint'         => 'Pozostaw puste, aby użyć platformy oznaczonej jako domyślna. Platformy oznaczone * są domyślne.',
                 'no-image-platform'        => 'Nie skonfigurowano platformy obsługującej obrazy. Najpierw dodaj platformę OpenAI, Gemini lub xAI.',
                 'image-platform-hint'      => 'Wyświetlane są tylko platformy obsługujące generowanie obrazów (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Moje Konto',
                 'notifications' => 'Powiadomienia',
                 'visit-shop'    => 'Odwiedź Sklep',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Rodziny Atrybutów',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Nie wybrano żadnych rekordów.',
                 'must-select-a-mass-action-option' => 'Musisz wybrać opcję masowej akcji.',
                 'must-select-a-mass-action'        => 'Musisz wybrać akcję masową.',
+                'link-copied'                      => 'Link skopiowany do schowka.',
+                'copy-failed'                      => 'Kopiowanie nie powiodło się. Skopiuj link ręcznie.',
             ],
             'toolbar' => [
                 'length-of'    => ':length z',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Filtr',
                 ],
                 'search_by' => [
-                    'code'       => 'Szukaj po kodzie',
-                    'code_or_id' => 'Szukaj po kodzie lub ID',
+                    'code'        => 'Szukaj po kodzie',
+                    'code_or_id'  => 'Szukaj po kodzie lub ID',
+                    'sku_or_user' => 'Szukaj po SKU lub użytkowniku',
                 ],
                 'search' => [
                     'title' => 'Szukaj',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Domyślny prompt',
-                'select-prompt-template' => '-- Wybierz szablon promptu --',
+                'select-prompt-template' => 'Wybierz szablon promptu',
             ],
         ],
     ],
@@ -2289,6 +2283,15 @@ return [
             'description' => 'Ups! Twoja sesja wygasła. Odśwież stronę i zaloguj się ponownie, aby kontynuować.',
             'title'       => '419 Sesja wygasła',
         ],
+        '405' => [
+            'description' => 'Ups! Metoda żądania jest niedozwolona dla tego adresu URL. Proszę użyć poprawnej metody lub wrócić do poprzedniej strony.',
+            'title'       => '405 Metoda Niedozwolona',
+        ],
+        '429' => [
+            'description' => 'Ups! Zbyt wiele prób. Poczekaj minutę i spróbuj ponownie.',
+            'title'       => '429 Zbyt wiele żądań',
+        ],
+
         '500' => [
             'description' => 'Ups! Coś poszło nie tak. Wygląda na to, że mamy problem z ładowaniem strony, której szukasz.',
             'title'       => '500 Wewnętrzny błąd serwera',
@@ -2331,13 +2334,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Tak',
-        'no'             => 'Nie',
-        'true'           => 'Prawda',
-        'false'          => 'Fałsz',
-        'enable'         => 'Włączony',
-        'disable'        => 'Wyłączony',
-        'no-match-found' => 'Nie znaleziono dopasowania!',
+        'yes'               => 'Tak',
+        'no'                => 'Nie',
+        'true'              => 'Prawda',
+        'false'             => 'Fałsz',
+        'enable'            => 'Włączony',
+        'disable'           => 'Wyłączony',
+        'no-match-found'    => 'Nie znaleziono dopasowania!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

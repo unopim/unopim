@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Email Address',
-            'forget-password-link'   => 'Forget Password ?',
-            'password'               => 'Password',
-            'submit-btn'             => 'Sign In',
-            'title'                  => 'Sign In',
-            'powered-by'             => 'Powered by :unopim,',
-            'open-source-project-by' => 'An open-source project by :webkul.',
+            'email'                      => 'Email Address',
+            'forget-password-link'       => 'Forget Password ?',
+            'password'                   => 'Password',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Sign In',
+            'title'                      => 'Sign In',
+            'powered-by'                 => 'Powered by :unopim,',
+            'open-source-project-by'     => 'An open-source project by :webkul.',
         ],
 
         'forget-password' => [
@@ -2087,6 +2089,9 @@ return [
                 'my-account'    => 'My Account',
                 'notifications' => 'Notifications',
                 'visit-shop'    => 'Visit Shop',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
 
             'sidebar' => [
@@ -2128,6 +2133,8 @@ return [
                 'no-records-selected'              => 'No records have been selected.',
                 'must-select-a-mass-action-option' => 'You must select a mass action\'s option.',
                 'must-select-a-mass-action'        => 'You must select a mass action.',
+                'link-copied'                      => 'Link copied to clipboard.',
+                'copy-failed'                      => 'Copy failed. Please copy the link manually.',
             ],
 
             'toolbar' => [
@@ -2148,8 +2155,9 @@ return [
                 ],
 
                 'search_by' => [
-                    'code'       => 'Search by code',
-                    'code_or_id' => 'Search by code or id',
+                    'code'        => 'Search by code',
+                    'code_or_id'  => 'Search by code or id',
+                    'sku_or_user' => 'Search by SKU or user',
                 ],
 
                 'search' => [
@@ -2456,6 +2464,16 @@ return [
             'title'       => '419 Session Has Expired',
         ],
 
+        '405' => [
+            'description' => 'Oops! The request method is not allowed for this URL. Please use the correct method or return to the previous page.',
+            'title'       => '405 Method Not Allowed',
+        ],
+
+        '429' => [
+            'description' => 'Oops! Too many attempts. Please wait a minute and then try again.',
+            'title'       => '429 Too Many Requests',
+        ],
+
         '500' => [
             'description' => 'Oops! Something went wrong. It seems we\'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Internal Server Error',
@@ -2505,13 +2523,15 @@ return [
     ],
 
     'common' => [
-        'yes'            => 'Yes',
-        'no'             => 'No',
-        'true'           => 'True',
-        'false'          => 'False',
-        'enable'         => 'Enabled',
-        'disable'        => 'Disabled',
-        'no-match-found' => 'No Match Found!',
+        'yes'               => 'Yes',
+        'no'                => 'No',
+        'true'              => 'True',
+        'false'             => 'False',
+        'enable'            => 'Enabled',
+        'disable'           => 'Disabled',
+        'no-match-found'    => 'No Match Found!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
 
     'default-prompt' => [

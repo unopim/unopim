@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Webkul\Installer\Helpers\DatabaseManager;
+use Webkul\Installer\Helpers\DemoDataInstaller;
 use Webkul\Installer\Helpers\EnvironmentManager;
 use Webkul\Installer\Helpers\ServerRequirements;
 
@@ -41,6 +42,46 @@ class InstallerController extends Controller
     ) {}
 
     /**
+     * Abort with 403 once the application is fully installed.
+     *
+     * Defence in depth for the unauthenticated installer api endpoints: even
+     * if the `CanInstall` middleware were bypassed (e.g. a crafted header or
+     * a future routing change), the state-changing setup steps must never run
+     * again on a live instance. The `storage/installed` marker is written only
+     * at the end of the install flow (after admin creation, and after demo data
+     * when opted in), so this never blocks a genuine install.
+     *
+     * @return void
+     */
+    protected function abortIfInstalled()
+    {
+        abort_if(file_exists(storage_path('installed')), 403);
+    }
+
+    /**
+     * Write the completion marker that seals the installer.
+     *
+     * Once this file exists, `CanInstall` redirects every `/install` request
+     * (including XHR) and {@see abortIfInstalled()} blocks the api endpoints.
+     * It is written at the genuine end of the UI flow — after the admin is
+     * created, and after demo data when the operator opts into it. Guarded so
+     * the marker is written, and `unopim.installed` dispatched, exactly once
+     * even if two end-of-flow requests race.
+     *
+     * @return void
+     */
+    protected function markInstalled()
+    {
+        if (file_exists(storage_path('installed'))) {
+            return;
+        }
+
+        File::put(storage_path('installed'), 'Your UnoPim App is Successfully Installed');
+
+        Event::dispatch('unopim.installed');
+    }
+
+    /**
      * Installer View Root Page
      *
      * @return View
@@ -63,20 +104,32 @@ class InstallerController extends Controller
      */
     public function envFileSetup(Request $request): JsonResponse
     {
-        $rules = [
-            'db_prefix' => 'not_regex:/[^A-Za-z0-9_]/',
-        ];
+        $this->abortIfInstalled();
 
         $request = $request->all();
 
+        if (isset($request['db_prefix'])) {
+            $request['db_prefix'] = trim((string) $request['db_prefix']);
+        }
+
         $request = array_map(function ($input) {
-            return strip_tags($input);
+            return strip_tags((string) $input);
         }, $request);
 
-        $validator = Validator::make($request, $rules);
+        // Match the CLI installer's prefix validation 1:1 so both install
+        // paths surface the same migration-blocking errors up-front.
+        $validator = Validator::make($request, [
+            'db_prefix' => ['nullable', 'string', 'max:4', 'regex:/^[A-Za-z0-9_]*$/'],
+        ], [
+            'db_prefix.max'   => 'The database prefix should not exceed 4 characters.',
+            'db_prefix.regex' => 'The database prefix can only contain letters, numbers, and underscores.',
+        ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => 'Failed to parse dotenv file due to some invalid values'], 422);
+            return response()->json([
+                'error'  => $validator->errors()->first('db_prefix') ?: 'Failed to parse dotenv file due to some invalid values',
+                'errors' => $validator->errors()->toArray(),
+            ], 422);
         }
 
         $message = $this->environmentManager->generateEnv($request);
@@ -89,6 +142,8 @@ class InstallerController extends Controller
      */
     public function runMigration()
     {
+        $this->abortIfInstalled();
+
         try {
             DB::connection()->getPdo();
         } catch (\Exception $e) {
@@ -107,6 +162,8 @@ class InstallerController extends Controller
      */
     public function runSeeder()
     {
+        $this->abortIfInstalled();
+
         $selectedParameters = request()->selectedParameters;
         $allParameters = request()->allParameters;
 
@@ -148,6 +205,8 @@ class InstallerController extends Controller
      */
     public function adminConfigSetup()
     {
+        $this->abortIfInstalled();
+
         $password = password_hash(request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
         $uiLocaleId = DB::table('locales')->where('code', request()->input('locale'))->where('status', 1)->first()?->id ?? 58;
 
@@ -166,8 +225,43 @@ class InstallerController extends Controller
                 ]
             );
         } catch (\Throwable $th) {
-            dd($th);
+            report($th);
+
+            return response()->json([
+                'success' => false,
+                'error'   => $th->getMessage(),
+                'errors'  => ['admin' => [$th->getMessage()]],
+            ], 500);
         }
+
+        if (! request()->boolean('seed_sample_data')) {
+            $this->markInstalled();
+        }
+    }
+
+    /**
+     * Run the demo extras, demo categories, and sample product seeders.
+     *
+     * Invoked from the UI installer when the operator opts into sample
+     * data on the create-admin step. Returns 200 with `success: true`
+     * on success, 500 with the seeder error message otherwise.
+     */
+    public function seedSampleData(DemoDataInstaller $installer): JsonResponse
+    {
+        $this->abortIfInstalled();
+
+        $result = $installer->seed();
+
+        $this->markInstalled();
+
+        if (! ($result['success'] ?? false)) {
+            return new JsonResponse([
+                'success' => false,
+                'error'   => $result['error'] ?? 'Failed to seed sample data.',
+            ], 500);
+        }
+
+        return new JsonResponse(['success' => true]);
     }
 
     /**
@@ -175,6 +269,8 @@ class InstallerController extends Controller
      */
     public function smtpConfigSetup()
     {
+        $this->abortIfInstalled();
+
         $this->environmentManager->setEnvConfiguration(request()->input());
 
         $filePath = storage_path('installed');

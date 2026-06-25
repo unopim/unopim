@@ -530,6 +530,7 @@
                                         type="text"
                                         name="db_prefix"
                                         ::value="envData.db_prefix"
+                                        rules="max:4"
                                         :label="trans('installer::app.installer.index.environment-configuration.database-prefix')"
                                         :placeholder="trans('installer::app.installer.index.environment-configuration.database-prefix')"
                                     />
@@ -1107,6 +1108,33 @@
 
                                         <x-installer::form.control-group.error control-name="locale" />
                                     </x-installer::form.control-group>
+
+                                <!-- Seed sample data -->
+                                <x-installer::form.control-group class="w-full flex items-center gap-2.5 !mb-0 py-1.5 cursor-pointer select-none">
+                                    <x-installer::form.control-group.control
+                                        type="checkbox"
+                                        id="seed_sample_data"
+                                        name="seed_sample_data"
+                                        for="seed_sample_data"
+                                        value="1"
+                                        ::checked="seedSampleData"
+                                        @change="seedSampleData = $event.target.checked"
+                                    />
+
+                                    <x-installer::form.control-group.label
+                                        for="seed_sample_data"
+                                        class="!text-[14px] !font-semibold cursor-pointer"
+                                    >
+                                        @lang('installer::app.installer.index.create-administrator.seed-sample-data')
+                                    </x-installer::form.control-group.label>
+                                </x-installer::form.control-group>
+
+                                <p
+                                    class="text-[12px] text-gray-600 -mt-1"
+                                    v-if="seedSampleDataMessage"
+                                >
+                                    @{{ seedSampleDataMessage }}
+                                </p>
                             </div>
 
                             <div class="flex px-4 py-2.5 justify-end items-center">
@@ -1184,6 +1212,10 @@
                             currentStep: 'start',
 
                             envData: {},
+
+                            seedSampleData: false,
+
+                            seedSampleDataMessage: '',
 
                             locales: {
                                 allowed: [],
@@ -1381,12 +1413,35 @@
                         },
 
                         saveAdmin(params, setErrors) {
-                            this.$axios.post("{{ route('installer.admin_config_setup') }}", params)
+                            this.$axios.post("{{ route('installer.admin_config_setup') }}", {
+                                ...params,
+                                seed_sample_data: this.seedSampleData,
+                            })
                                 .then((response) => {
-                                    this.currentStep = 'installationCompleted';
+                                    if (this.seedSampleData) {
+                                        this.runSampleDataSeeder();
+                                    } else {
+                                        this.currentStep = 'installationCompleted';
+                                    }
                                 })
                                 .catch(error => {
                                     setErrors(error.response.data.errors);
+                                });
+                        },
+
+                        runSampleDataSeeder() {
+                            this.seedSampleDataMessage = "@lang('installer::app.installer.index.create-administrator.seeding-sample-data')";
+
+                            this.$axios.post("{{ route('installer.seed_sample_data') }}")
+                                .then(() => {
+                                    this.seedSampleDataMessage = '';
+                                    this.currentStep = 'installationCompleted';
+                                })
+                                .catch(error => {
+                                    this.seedSampleDataMessage = (error.response && error.response.data && error.response.data.error)
+                                        ? error.response.data.error
+                                        : "@lang('installer::app.installer.index.create-administrator.seed-sample-data-failed')";
+                                    this.currentStep = 'installationCompleted';
                                 });
                         },
 

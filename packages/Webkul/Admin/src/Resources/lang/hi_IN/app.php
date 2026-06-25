@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'मेल पता',
-            'forget-password-link'   => 'पासवर्ड भूल गए ?',
-            'password'               => 'पासवर्ड',
-            'submit-btn'             => 'दाखिल करना',
-            'title'                  => 'दाखिल करना',
-            'powered-by'             => ':unopim द्वारा संचालित,',
-            'open-source-project-by' => ':webkul द्वारा एक ओपन-सोर्स प्रोजेक्ट.',
+            'email'                      => 'मेल पता',
+            'forget-password-link'       => 'पासवर्ड भूल गए ?',
+            'password'                   => 'पासवर्ड',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'दाखिल करना',
+            'title'                      => 'दाखिल करना',
+            'powered-by'                 => ':unopim द्वारा संचालित,',
+            'open-source-project-by'     => ':webkul द्वारा एक ओपन-सोर्स प्रोजेक्ट.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'कृपया एक मान्य URL दर्ज करें।',
                     'regex'                      => 'मान आवश्यक पैटर्न से मेल नहीं खाता।',
                     'invalid-pattern'            => 'अवैध कस्टम पैटर्न प्रदान किया गया।',
-
                     'numeric'                    => 'संख्यात्मक विशेषता ":attribute" का मान एक मान्य संख्या होना चाहिए।',
                     'select-attribute-or-family' => 'कृपया कम से कम एक विशेषता या विशेषता परिवार का चयन करें।',
                     'failed'                     => 'सत्यापन विफल हुआ।',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'बल्क संपादन सफल रहा।',
                 ],
-                'id'                          => 'आईडी',
-                'no-changes'                  => 'सहेजने के लिए कोई परिवर्तन नहीं है।',
-
-                'invalid-datetime'            => 'कृपया मान्य दिनांक और समय दर्ज करें।',
-
-                'resize-column'               => 'कॉलम का आकार बदलने के लिए खींचें',
-                'success'                     => 'ऑपरेशन सफलतापूर्वक पूरा हुआ।',
-                'fetch-failed'                => 'डेटा प्राप्त करने में विफल।',
-                'action'                      => 'बल्क संपादन',
-                'description'                 => 'एक साथ कई उत्पादों को संपादित करें। परिवर्तन पृष्ठभूमि में संसाधित किए जाते हैं।',
-                'gallery-preview'             => 'गैलरी पूर्वावलोकन',
-                'img-preview'                 => 'छवि पूर्वावलोकन',
-                'no-image'                    => 'कोई छवि नहीं',
-                'img-fail'                    => 'छवि अपलोड विफल रहा।',
-                'no-option'                   => 'कोई विकल्प नहीं',
-                'keyboard-shortcuts'          => 'कीबोर्ड शॉर्टकट',
-                'shortcuts-navigation'        => 'नेविगेशन',
-                'shortcuts-editing'           => 'संपादन',
-                'shortcuts-selection'         => 'चयन',
-                'shortcuts-clipboard'         => 'क्लिपबोर्ड और भरना',
-                'shortcuts-move-cell'         => 'सेल के बीच जाएँ',
-                'shortcuts-move-down'         => 'नीचे जाएँ / संपादन की पुष्टि करें',
-                'shortcuts-move-up'           => 'ऊपर जाएँ',
-                'shortcuts-move-right-left'   => 'दाएँ / बाएँ जाएँ',
-                'shortcuts-home-end'          => 'पंक्ति का पहला / अंतिम स्तंभ',
-                'shortcuts-ctrl-home-end'     => 'ग्रिड का पहला / अंतिम सेल',
-                'shortcuts-extend-selection'  => 'चयन बढ़ाएँ',
-                'shortcuts-select-all'        => 'सभी सेल चुनें',
-                'shortcuts-enter-edit'        => 'संपादन मोड में जाएँ',
-                'shortcuts-confirm-move-down' => 'पुष्टि करें + नीचे जाएँ',
-                'shortcuts-confirm-move-right'=> 'पुष्टि करें + दाएँ जाएँ',
-                'shortcuts-escape-revert'     => 'मान पुनर्स्थापित करें + संपादन से बाहर निकलें',
-                'shortcuts-clear-cell'        => 'सेल साफ़ करें',
-                'shortcuts-copy'              => 'कॉपी करें',
-                'shortcuts-cut'               => 'काटें',
-                'shortcuts-paste'             => 'पेस्ट करें',
-                'shortcuts-fill-down'         => 'नीचे भरें',
-                'shortcuts-fill-right'        => 'दाएँ भरें',
-                'shortcuts-undo'              => 'पूर्ववत करें',
-                'shortcuts-redo'              => 'फिर से करें',
-                'shortcuts-help'              => 'कीबोर्ड शॉर्टकट दिखाएँ/छुपाएँ',
+                'id'                           => 'आईडी',
+                'no-changes'                   => 'सहेजने के लिए कोई परिवर्तन नहीं है।',
+                'invalid-datetime'             => 'कृपया मान्य दिनांक और समय दर्ज करें।',
+                'resize-column'                => 'कॉलम का आकार बदलने के लिए खींचें',
+                'success'                      => 'ऑपरेशन सफलतापूर्वक पूरा हुआ।',
+                'fetch-failed'                 => 'डेटा प्राप्त करने में विफल।',
+                'action'                       => 'बल्क संपादन',
+                'description'                  => 'एक साथ कई उत्पादों को संपादित करें। परिवर्तन पृष्ठभूमि में संसाधित किए जाते हैं।',
+                'gallery-preview'              => 'गैलरी पूर्वावलोकन',
+                'img-preview'                  => 'छवि पूर्वावलोकन',
+                'no-image'                     => 'कोई छवि नहीं',
+                'img-fail'                     => 'छवि अपलोड विफल रहा।',
+                'no-option'                    => 'कोई विकल्प नहीं',
+                'keyboard-shortcuts'           => 'कीबोर्ड शॉर्टकट',
+                'shortcuts-navigation'         => 'नेविगेशन',
+                'shortcuts-editing'            => 'संपादन',
+                'shortcuts-selection'          => 'चयन',
+                'shortcuts-clipboard'          => 'क्लिपबोर्ड और भरना',
+                'shortcuts-move-cell'          => 'सेल के बीच जाएँ',
+                'shortcuts-move-down'          => 'नीचे जाएँ / संपादन की पुष्टि करें',
+                'shortcuts-move-up'            => 'ऊपर जाएँ',
+                'shortcuts-move-right-left'    => 'दाएँ / बाएँ जाएँ',
+                'shortcuts-home-end'           => 'पंक्ति का पहला / अंतिम स्तंभ',
+                'shortcuts-ctrl-home-end'      => 'ग्रिड का पहला / अंतिम सेल',
+                'shortcuts-extend-selection'   => 'चयन बढ़ाएँ',
+                'shortcuts-select-all'         => 'सभी सेल चुनें',
+                'shortcuts-enter-edit'         => 'संपादन मोड में जाएँ',
+                'shortcuts-confirm-move-down'  => 'पुष्टि करें + नीचे जाएँ',
+                'shortcuts-confirm-move-right' => 'पुष्टि करें + दाएँ जाएँ',
+                'shortcuts-escape-revert'      => 'मान पुनर्स्थापित करें + संपादन से बाहर निकलें',
+                'shortcuts-clear-cell'         => 'सेल साफ़ करें',
+                'shortcuts-copy'               => 'कॉपी करें',
+                'shortcuts-cut'                => 'काटें',
+                'shortcuts-paste'              => 'पेस्ट करें',
+                'shortcuts-fill-down'          => 'नीचे भरें',
+                'shortcuts-fill-right'         => 'दाएँ भरें',
+                'shortcuts-undo'               => 'पूर्ववत करें',
+                'shortcuts-redo'               => 'फिर से करें',
+                'shortcuts-help'               => 'कीबोर्ड शॉर्टकट दिखाएँ/छुपाएँ',
             ],
             'create-success'          => 'उत्पाद सफलतापूर्वक बनाया गया',
             'delete-failed'           => 'उत्पाद हटाए गए विफल',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'फ़िल्टर योग्य है',
                 'ai-translate'          => 'एआई अनुवाद',
                 'invalid-swatch-type'   => ':attribute के लिए :type के साथ :swatch_type स्वैच प्रकार की अनुमति नहीं है।',
-
                 'single-object-only'    => 'प्रत्येक क्रिएट अनुरोध में केवल एक विशेषता ऑब्जेक्ट भेजा जाना चाहिए।',
                 'option'                => [
                     'color'    => 'रंग आदर्श',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'विशेषता सफलतापूर्वक हटा दी गई',
             'update-success'    => 'ATTRIBURE को सफलतापूर्वक अपडेट किया गया',
             'user-define-error' => 'सिस्टम विशेषता को हटा नहीं सकते',
-
             'immutable-fields'  => 'निम्न फ़ील्ड्स संशोधित नहीं की जा सकतीं: :fields.',
             'not-found'         => 'कोड के साथ विशेषता ":code" नहीं मिल सकता है',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'श्रेणी फ़ील्ड सफलतापूर्वक अपडेट किया गया',
             'user-define-error' => 'सिस्टम श्रेणी फ़ील्ड को हटा नहीं सकते',
             'not-found'         => 'कोड के साथ श्रेणी फ़ील्ड ":code" नहीं मिला',
-
             'immutable-fields'  => 'निम्न फ़ील्ड्स संशोधित नहीं की जा सकतीं: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'कॉन्फ़िगर करने योग्य विकल्पों को अपडेट नहीं कर सकते क्योंकि इस परिवार में पहले से ही वैरिएंट उत्पाद हैं।',
         ],
         'history' => [
-            'view' => 'संस्करण विवरण देखें',
-
+            'view'  => 'संस्करण विवरण देखें',
             'index' => [
                 'datagrid' => [
                     'version'   => 'संस्करण',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'रुका हुआ',
                         'cancelled'            => 'रद्द किया गया',
                         'failed'               => 'असफल',
-
-                        'view'       => 'देखें',
+                        'view'                 => 'देखें',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'प्रॉम्प्ट्स',
-
             ],
-
             'datagrid' => [
                 'id'               => 'आईडी',
                 'title'            => 'शीर्षक',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'टेक्स्ट जनरेशन',
                 'image-generation'    => 'इमेज जनरेशन',
                 'select-purpose'      => 'उद्देश्य चुनें',
-                'select-model'        => '-- मॉडल चुनें --',
+                'select-model'        => 'मॉडल चुनें',
                 'loading-models'      => 'मॉडल लोड हो रहे हैं...',
                 'no-models-available' => 'कोई मॉडल उपलब्ध नहीं है। एक प्लेटफ़ॉर्म चुनें या प्लेटफ़ॉर्म टैब में कॉन्फ़िगर करें।',
                 'type'                => 'प्रकार',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'सिस्टम प्रॉम्प्ट्स',
-
             ],
-
             'datagrid' => [
                 'id'          => 'आईडी',
                 'title'       => 'शीर्षक',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'लेबल',
                 'provider'                 => 'प्रदाता',
-                'select-provider'          => '-- प्रदाता चुनें --',
+                'select-provider'          => 'प्रदाता चुनें',
                 'api-url'                  => 'एपीआई यूआरएल',
                 'api-url-hint'             => 'डिफ़ॉल्ट एंडपॉइंट से पहले से भरा हुआ। प्रॉक्सी या कस्टम डिप्लॉयमेंट का उपयोग करने पर ही संपादित करें।',
                 'api-key'                  => 'API कुंजी',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'API संस्करण',
                 'is-default'               => 'डिफ़ॉल्ट के रूप में सेट करें',
                 'status'                   => 'स्थिति',
-                'use-default'              => '-- डिफ़ॉल्ट प्लेटफ़ॉर्म का उपयोग करें --',
+                'use-default'              => 'डिफ़ॉल्ट प्लेटफ़ॉर्म का उपयोग करें',
                 'use-default-hint'         => 'डिफ़ॉल्ट के रूप में चिह्नित प्लेटफ़ॉर्म का उपयोग करने के लिए खाली छोड़ दें। * से चिह्नित प्लेटफ़ॉर्म डिफ़ॉल्ट हैं।',
                 'no-image-platform'        => 'कोई छवि-सक्षम प्लेटफ़ॉर्म कॉन्फ़िगर नहीं है। पहले OpenAI, Gemini, या xAI प्लेटफ़ॉर्म जोड़ें।',
                 'image-platform-hint'      => 'केवल छवि निर्माण का समर्थन करने वाले प्लेटफ़ॉर्म सूचीबद्ध हैं (OpenAI, Gemini, xAI)।',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'मेरा खाता',
                 'notifications' => 'अधिसूचना',
                 'visit-shop'    => 'यात्रा दुकान',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'विशेषण परिवार',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'कोई रिकॉर्ड नहीं चुना गया है।',
                 'must-select-a-mass-action-option' => 'आपको एक मास एक्शन का चयन करना होगा \ _\'s option.',
                 'must-select-a-mass-action'        => 'आपको एक मास एक्शन का चयन करना होगा।',
+                'link-copied'                      => 'लिंक क्लिपबोर्ड पर कॉपी किया गया।',
+                'copy-failed'                      => 'कॉपी विफल। कृपया लिंक मैन्युअल रूप से कॉपी करें।',
             ],
             'toolbar' => [
                 'length-of'    => ':length का',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'फ़िल्टर',
                 ],
                 'search_by' => [
-                    'code'       => 'कोड द्वारा खोजें',
-                    'code_or_id' => 'कोड या आईडी द्वारा खोजें',
+                    'code'        => 'कोड द्वारा खोजें',
+                    'code_or_id'  => 'कोड या आईडी द्वारा खोजें',
+                    'sku_or_user' => 'SKU या उपयोगकर्ता द्वारा खोजें',
                 ],
                 'search' => [
                     'title' => 'खोज',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'विकग्ना',
                 'llava'                  => 'लावा',
                 'default-prompt'         => 'डिफ़ॉल्ट प्रॉम्प्ट',
-                'select-prompt-template' => '-- प्रॉम्प्ट टेम्पलेट चुनें --',
+                'select-prompt-template' => 'प्रॉम्प्ट टेम्पलेट चुनें',
             ],
         ],
     ],
@@ -2289,6 +2283,15 @@ return [
             'description' => 'उफ़!आपका सत्र समाप्त हो गया है।कृपया पृष्ठ को ताज़ा करें और जारी रखने के लिए फिर से लॉग इन करें।',
             'title'       => '419 सत्र समाप्त हो गया है',
         ],
+        '405' => [
+            'description' => 'उफ़! इस URL के लिए अनुरोध विधि की अनुमति नहीं है। कृपया सही विधि का उपयोग करें या पिछले पृष्ठ पर वापस जाएँ।',
+            'title'       => '405 विधि की अनुमति नहीं है',
+        ],
+        '429' => [
+            'description' => 'ओह! बहुत अधिक प्रयास। कृपया एक मिनट प्रतीक्षा करें और फिर पुनः प्रयास करें।',
+            'title'       => '429 बहुत अधिक अनुरोध',
+        ],
+
         '500' => [
             'description' => 'ओह! कुछ गड़बड़ हो गई। ऐसा लगता है कि हमें वह पेज लोड करने में परेशानी हो रही है जिसे आप खोज रहे हैं।',
             'title'       => '500 आंतरिक सर्वर त्रुटि',
@@ -2331,13 +2334,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'हाँ',
-        'no'             => 'नहीं',
-        'true'           => 'सत्य',
-        'false'          => 'असत्य',
-        'enable'         => 'सक्रिय',
-        'disable'        => 'अक्षम',
-        'no-match-found' => 'कोई मिलान नहीं मिला!',
+        'yes'               => 'हाँ',
+        'no'                => 'नहीं',
+        'true'              => 'सत्य',
+        'false'             => 'असत्य',
+        'enable'            => 'सक्रिय',
+        'disable'           => 'अक्षम',
+        'no-match-found'    => 'कोई मिलान नहीं मिला!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

@@ -496,11 +496,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ]
             );
         } catch (\Exception $e) {
-            if (str_contains($e->getMessage(), 'index_not_found_exception')) {
-                Log::error('Elasticsearch index not found. Please create an index first.');
-            }
+            Log::error('Elasticsearch unavailable, falling back to database query: '.$e->getMessage());
+            parent::processRequest();
 
-            throw $e;
+            return;
         }
     }
 
@@ -524,7 +523,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function processRequestedSorting($requestedSort)
     {
         $sortColumn = $requestedSort['column'] ?? $this->sortColumn ?? $this->primaryColumn;
-        $sortOrder = $requestedSort['order'] ?? $this->sortOrder;
+        $sortOrder = strtolower($requestedSort['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             $attribute = $this->attributeService->findAttributeByCode($sortColumn) ?? 'text';
@@ -664,9 +663,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sort = $sortMapping[$sort] ?? $this->getAttributePathForSort($sort, 'elasticsearch');
 
+        $sortOrder = strtolower($params['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
+
         ElasticSearchQuery::orderBy([
             $sort => [
-                'order'         => $params['order'] ?? $this->sortOrder,
+                'order'         => $sortOrder,
                 'missing'       => '_last',
                 'unmapped_type' => 'keyword',
             ],

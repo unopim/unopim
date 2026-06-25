@@ -3,13 +3,15 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                  => 'Adresa e-pošte',
-            'forget-password-link'   => 'Zaboravili ste lozinku?',
-            'password'               => 'Lozinka',
-            'submit-btn'             => 'Prijavite se',
-            'title'                  => 'Prijavite se',
-            'powered-by'             => 'Pokreće :unopim,',
-            'open-source-project-by' => 'Projekt otvorenog koda od :webkul.',
+            'email'                      => 'Adresa e-pošte',
+            'forget-password-link'       => 'Zaboravili ste lozinku?',
+            'password'                   => 'Lozinka',
+            'sso-divider'                => 'or',
+            'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'submit-btn'                 => 'Prijavite se',
+            'title'                      => 'Prijavite se',
+            'powered-by'                 => 'Pokreće :unopim,',
+            'open-source-project-by'     => 'Projekt otvorenog koda od :webkul.',
         ],
         'forget-password' => [
             'create' => [
@@ -364,7 +366,6 @@ return [
                     'url'                        => 'Unesite valjani URL.',
                     'regex'                      => 'Vrijednost ne odgovara traženom obrascu.',
                     'invalid-pattern'            => 'Unesen je nevažeći prilagođeni obrazac.',
-
                     'numeric'                    => 'Vrijednost numeričkog atributa „:attribute“ mora biti valjani broj.',
                     'select-attribute-or-family' => 'Molimo odaberite barem jedan atribut ili obitelj atributa.',
                     'failed'                     => 'Provjera valjanosti nije uspjela.',
@@ -385,47 +386,45 @@ return [
                 'handle-save' => [
                     'edit-success' => 'Grupno uređivanje je uspješno.',
                 ],
-                'id'                          => 'ID',
-                'no-changes'                  => 'Nema promjena za spremiti.',
-
-                'invalid-datetime'            => 'Unesite valjani datum i vrijeme.',
-
-                'resize-column'               => 'Povucite za promjenu širine stupca',
-                'success'                     => 'Operacija uspješno izvršena.',
-                'fetch-failed'                => 'Preuzimanje nije uspjelo.',
-                'action'                      => 'Grupno uređivanje',
-                'description'                 => 'Uredite više proizvoda odjednom. Promjene se obrađuju u pozadini.',
-                'gallery-preview'             => 'Pregled galerije',
-                'img-preview'                 => 'Pregled slike',
-                'no-image'                    => 'Nema slike',
-                'img-fail'                    => 'Neuspješno učitavanje slike.',
-                'no-option'                   => 'Nema opcija',
-                'keyboard-shortcuts'          => 'Tipkovnički prečaci',
-                'shortcuts-navigation'        => 'Navigacija',
-                'shortcuts-editing'           => 'Uređivanje',
-                'shortcuts-selection'         => 'Odabir',
-                'shortcuts-clipboard'         => 'Međuspremnik i ispuna',
-                'shortcuts-move-cell'         => 'Premještanje između ćelija',
-                'shortcuts-move-down'         => 'Premjesti dolje / potvrdi uređivanje',
-                'shortcuts-move-up'           => 'Premjesti gore',
-                'shortcuts-move-right-left'   => 'Premjesti desno / lijevo',
-                'shortcuts-home-end'          => 'Prvi / zadnji stupac u retku',
-                'shortcuts-ctrl-home-end'     => 'Prva / zadnja ćelija u mreži',
-                'shortcuts-extend-selection'  => 'Proširi odabir',
-                'shortcuts-select-all'        => 'Odaberi sve ćelije',
-                'shortcuts-enter-edit'        => 'Uđi u način uređivanja',
-                'shortcuts-confirm-move-down' => 'Potvrdi + premjesti dolje',
-                'shortcuts-confirm-move-right'=> 'Potvrdi + premjesti desno',
-                'shortcuts-escape-revert'     => 'Vrati vrijednost + izađi iz uređivanja',
-                'shortcuts-clear-cell'        => 'Očisti ćeliju',
-                'shortcuts-copy'              => 'Kopiraj',
-                'shortcuts-cut'               => 'Izreži',
-                'shortcuts-paste'             => 'Zalijepi',
-                'shortcuts-fill-down'         => 'Ispuni prema dolje',
-                'shortcuts-fill-right'        => 'Ispuni prema desno',
-                'shortcuts-undo'              => 'Poništi',
-                'shortcuts-redo'              => 'Ponovi',
-                'shortcuts-help'              => 'Uključi/isključi tipkovničke prečace',
+                'id'                           => 'ID',
+                'no-changes'                   => 'Nema promjena za spremiti.',
+                'invalid-datetime'             => 'Unesite valjani datum i vrijeme.',
+                'resize-column'                => 'Povucite za promjenu širine stupca',
+                'success'                      => 'Operacija uspješno izvršena.',
+                'fetch-failed'                 => 'Preuzimanje nije uspjelo.',
+                'action'                       => 'Grupno uređivanje',
+                'description'                  => 'Uredite više proizvoda odjednom. Promjene se obrađuju u pozadini.',
+                'gallery-preview'              => 'Pregled galerije',
+                'img-preview'                  => 'Pregled slike',
+                'no-image'                     => 'Nema slike',
+                'img-fail'                     => 'Neuspješno učitavanje slike.',
+                'no-option'                    => 'Nema opcija',
+                'keyboard-shortcuts'           => 'Tipkovnički prečaci',
+                'shortcuts-navigation'         => 'Navigacija',
+                'shortcuts-editing'            => 'Uređivanje',
+                'shortcuts-selection'          => 'Odabir',
+                'shortcuts-clipboard'          => 'Međuspremnik i ispuna',
+                'shortcuts-move-cell'          => 'Premještanje između ćelija',
+                'shortcuts-move-down'          => 'Premjesti dolje / potvrdi uređivanje',
+                'shortcuts-move-up'            => 'Premjesti gore',
+                'shortcuts-move-right-left'    => 'Premjesti desno / lijevo',
+                'shortcuts-home-end'           => 'Prvi / zadnji stupac u retku',
+                'shortcuts-ctrl-home-end'      => 'Prva / zadnja ćelija u mreži',
+                'shortcuts-extend-selection'   => 'Proširi odabir',
+                'shortcuts-select-all'         => 'Odaberi sve ćelije',
+                'shortcuts-enter-edit'         => 'Uđi u način uređivanja',
+                'shortcuts-confirm-move-down'  => 'Potvrdi + premjesti dolje',
+                'shortcuts-confirm-move-right' => 'Potvrdi + premjesti desno',
+                'shortcuts-escape-revert'      => 'Vrati vrijednost + izađi iz uređivanja',
+                'shortcuts-clear-cell'         => 'Očisti ćeliju',
+                'shortcuts-copy'               => 'Kopiraj',
+                'shortcuts-cut'                => 'Izreži',
+                'shortcuts-paste'              => 'Zalijepi',
+                'shortcuts-fill-down'          => 'Ispuni prema dolje',
+                'shortcuts-fill-right'         => 'Ispuni prema desno',
+                'shortcuts-undo'               => 'Poništi',
+                'shortcuts-redo'               => 'Ponovi',
+                'shortcuts-help'               => 'Uključi/isključi tipkovničke prečace',
             ],
             'create-success'          => 'Proizvod uspješno stvoren',
             'delete-failed'           => 'Brisanje proizvoda nije uspjelo',
@@ -520,7 +519,6 @@ return [
                 'is-filterable'         => 'Je filtrabilno',
                 'ai-translate'          => 'AI Prevod',
                 'invalid-swatch-type'   => ':attribute nije dozvoljen za tip atributa :type s tipom uzorka :swatch_type.',
-
                 'single-object-only'    => 'Svaki zahtjev za stvaranje mora sadržavati samo jedan objekt atributa.',
                 'option'                => [
                     'color'    => 'Boja uzorka',
@@ -604,7 +602,6 @@ return [
             'delete-success'    => 'Atribut uspješno izbrisan',
             'update-success'    => 'Atribut uspješno ažuriran',
             'user-define-error' => 'Ne možete obrisati sistemski atribut',
-
             'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
             'not-found'         => 'Atribut s kodom ":code" nije pronađen',
         ],
@@ -887,7 +884,6 @@ return [
             'update-success'    => 'Polje Kategorije Ažurirano Uspješno',
             'user-define-error' => 'Ne možete obrisati sistemsko Polje Kategorije',
             'not-found'         => 'Polje Kategorije s kodom ":code" nije pronađeno',
-
             'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
         ],
         'category-fields-options' => [
@@ -989,8 +985,7 @@ return [
             'can-not-update-variant-options' => 'Ne možete ažurirati opcije konfiguracije jer ova obitelj već ima varijante proizvoda.',
         ],
         'history' => [
-            'view' => 'Pogledaj detalje verzije',
-
+            'view'  => 'Pogledaj detalje verzije',
             'index' => [
                 'datagrid' => [
                     'version'   => 'Verzija',
@@ -1124,8 +1119,7 @@ return [
                         'paused'               => 'Pauzirano',
                         'cancelled'            => 'Otkazano',
                         'failed'               => 'Neuspješno',
-
-                        'view'       => 'Pregled',
+                        'view'                 => 'Pregled',
                     ],
                 ],
                 'import' => [
@@ -1783,11 +1777,8 @@ return [
         ],
         'prompt' => [
             'index' => [
-
                 'title' => 'Promptovi',
-
             ],
-
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Naslov',
@@ -1815,7 +1806,7 @@ return [
                 'text-generation'     => 'Generiranje teksta',
                 'image-generation'    => 'Generiranje slika',
                 'select-purpose'      => 'Odaberite svrhu',
-                'select-model'        => '-- Odaberite model --',
+                'select-model'        => 'Odaberite model',
                 'loading-models'      => 'Učitavanje modela...',
                 'no-models-available' => 'Nema dostupnih modela. Odaberite platformu ili konfigurirajte jednu na kartici Platforme.',
                 'type'                => 'Tip',
@@ -1831,11 +1822,8 @@ return [
         ],
         'system-prompt' => [
             'index' => [
-
                 'title' => 'Sustavni promptovi',
-
             ],
-
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Naslov',
@@ -1907,7 +1895,7 @@ return [
             'fields' => [
                 'label'                    => 'Oznaka',
                 'provider'                 => 'Pružatelj',
-                'select-provider'          => '-- Odaberite pružatelja --',
+                'select-provider'          => 'Odaberite pružatelja',
                 'api-url'                  => 'API URL',
                 'api-url-hint'             => 'Unaprijed popunjeno zadanom krajnjom točkom. Uredite samo ako koristite proxy ili prilagođeno postavljanje.',
                 'api-key'                  => 'API ključ',
@@ -1921,7 +1909,7 @@ return [
                 'azure-api-version'        => 'Verzija API-ja',
                 'is-default'               => 'Postavi kao zadano',
                 'status'                   => 'Status',
-                'use-default'              => '-- Koristi zadanu platformu --',
+                'use-default'              => 'Koristi zadanu platformu',
                 'use-default-hint'         => 'Ostavite prazno za korištenje platforme označene kao zadana. Platforme označene s * su zadane.',
                 'no-image-platform'        => 'Nije konfigurirana platforma s podrškom za slike. Prvo dodajte platformu OpenAI, Gemini ili xAI.',
                 'image-platform-hint'      => 'Prikazane su samo platforme koje podržavaju generiranje slika (OpenAI, Gemini, xAI).',
@@ -1956,6 +1944,9 @@ return [
                 'my-account'    => 'Moj račun',
                 'notifications' => 'Obavijesti',
                 'visit-shop'    => 'Posjetite trgovinu',
+                'theme-auto'    => 'Theme: Auto',
+                'theme-dark'    => 'Theme: Dark',
+                'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
                 'attribute-families' => 'Grupe atributa',
@@ -1995,6 +1986,8 @@ return [
                 'no-records-selected'              => 'Nijedna stavka nije odabrana.',
                 'must-select-a-mass-action-option' => 'Morate odabrati opciju masovne akcije.',
                 'must-select-a-mass-action'        => 'Morate odabrati masovnu akciju.',
+                'link-copied'                      => 'Veza je kopirana u međuspremnik.',
+                'copy-failed'                      => 'Kopiranje nije uspjelo. Molimo kopirajte vezu ručno.',
             ],
             'toolbar' => [
                 'length-of'    => ':length od',
@@ -2011,8 +2004,9 @@ return [
                     'title' => 'Filtriraj',
                 ],
                 'search_by' => [
-                    'code'       => 'Pretraži prema kodu',
-                    'code_or_id' => 'Pretraži prema kodu ili ID-u',
+                    'code'        => 'Pretraži prema kodu',
+                    'code_or_id'  => 'Pretraži prema kodu ili ID-u',
+                    'sku_or_user' => 'Pretraži prema SKU ili korisniku',
                 ],
                 'search' => [
                     'title' => 'Pretraži',
@@ -2193,7 +2187,7 @@ return [
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
                 'default-prompt'         => 'Zadani upit',
-                'select-prompt-template' => '-- Odaberite predložak upita --',
+                'select-prompt-template' => 'Odaberite predložak upita',
             ],
         ],
     ],
@@ -2289,6 +2283,15 @@ return [
             'description' => 'Ups! Vaša sesija je istekla. Molimo osvježite stranicu i prijavite se ponovno kako biste nastavili.',
             'title'       => '419 Sesija je istekla',
         ],
+        '405' => [
+            'description' => 'Ups! Metoda zahtjeva nije dopuštena za ovaj URL. Molimo koristite ispravnu metodu ili se vratite na prethodnu stranicu.',
+            'title'       => '405 Metoda Nije Dopuštena',
+        ],
+        '429' => [
+            'description' => 'Ups! Previše pokušaja. Pričekajte minutu i pokušajte ponovno.',
+            'title'       => '429 Previše zahtjeva',
+        ],
+
         '500' => [
             'description' => 'Ups! Nešto nije u redu. Čini se da imamo problema s učitavanjem tražene stranice.',
             'title'       => '500 Unutarnja greška poslužitelja',
@@ -2331,13 +2334,15 @@ return [
         ],
     ],
     'common' => [
-        'yes'            => 'Da',
-        'no'             => 'Ne',
-        'true'           => 'Ispravno',
-        'false'          => 'Neispravno',
-        'enable'         => 'Omogućeno',
-        'disable'        => 'Onemogućeno',
-        'no-match-found' => 'Nije pronađeno podudaranje!',
+        'yes'               => 'Da',
+        'no'                => 'Ne',
+        'true'              => 'Ispravno',
+        'false'             => 'Neispravno',
+        'enable'            => 'Omogućeno',
+        'disable'           => 'Onemogućeno',
+        'no-match-found'    => 'Nije pronađeno podudaranje!',
+        'unauthorized'      => 'You do not have permission to perform this action.',
+        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
     ],
     'default-prompt' => [
         'detailed' => [

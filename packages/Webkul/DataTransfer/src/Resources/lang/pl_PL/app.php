@@ -43,6 +43,48 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kanały',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Kanał o kodzie :code nie został znaleziony do usunięcia.',
+                    'locale-not-found'         => 'Jeden lub więcej języków nie istnieje.',
+                    'root-category-not-found'  => 'Kategoria główna nie istnieje.',
+                    'currency-not-found'       => 'Jedna lub więcej walut nie istnieje.',
+                    'invalid-locale'           => 'Język nie istnieje.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'products' => [
@@ -62,6 +104,23 @@ return [
         ],
         'locales' => [
             'title' => 'Języki',
+        ],
+        'channels' => [
+            'title' => 'Kanały',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
     'validation' => [
