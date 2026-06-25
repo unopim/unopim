@@ -43,7 +43,12 @@ return [
                         'label' => 'Идэвхтэй Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Вебхуудын URL',
+                        'label'             => 'Вебхуудын URL',
+                        'required'          => 'Webhook идэвхтэй үед Webhook URL шаардлагатай.',
+                        'scheme'            => 'Webhook URL нь http:// эсвэл https:// гэж эхэлсэн байх ёстой.',
+                        'connection_failed' => 'Webhook URL-д хүрэх боломжгүй байна. URL-аа шалгана уу.',
+                        'unreachable'       => 'Webhook URL хүчингүй байна (HTTP :code).',
+                        'unsafe'            => 'Webhook URL хувийн, эргэлтийн буюу дотоод хаяг руу зааж байгаа тул зөвшөөрөгдөөгүй.',
                     ],
                     'success'    => 'Webhook тохиргоо амжилттай хадгалагдлаа',
                     'logs-title' => 'Логууд',

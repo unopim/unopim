@@ -43,7 +43,12 @@ return [
                         'label' => 'Webhook aktiv',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook-URL',
+                        'label'             => 'Webhook-URL',
+                        'required'          => 'Eine Webhook-URL ist erforderlich, wenn der Webhook aktiv ist.',
+                        'scheme'            => 'Die Webhook-URL muss mit http:// oder https:// beginnen.',
+                        'connection_failed' => 'Die Webhook-URL konnte nicht erreicht werden. Bitte überprüfen Sie die URL.',
+                        'unreachable'       => 'Die Webhook-URL ist ungültig (HTTP :code).',
+                        'unsafe'            => 'Die Webhook-URL verweist auf eine private, Loopback- oder interne Adresse und ist nicht erlaubt.',
                     ],
                     'success'    => 'Webhook-Einstellungen erfolgreich gespeichert',
                     'logs-title' => 'Protokolle',

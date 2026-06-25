@@ -43,7 +43,12 @@ return [
                         'label' => '启用 Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => '网络钩子 URL',
+                        'label'             => '网络钩子 URL',
+                        'required'          => '当 Webhook 处于激活状态时，必须提供 Webhook URL。',
+                        'scheme'            => 'Webhook URL 必须以 http:// 或 https:// 开头。',
+                        'connection_failed' => '无法访问 Webhook URL。请检查 URL。',
+                        'unreachable'       => 'Webhook URL 无效 (HTTP :code)。',
+                        'unsafe'            => 'Webhook URL 指向私有、回环或内部地址,不被允许。',
                     ],
                     'success'    => 'Webhook 设置已成功保存',
                     'logs-title' => '日志',

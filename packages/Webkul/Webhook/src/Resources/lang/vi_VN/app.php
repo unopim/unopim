@@ -43,7 +43,12 @@ return [
                         'label' => 'Webhook đang hoạt động',
                     ],
                     'webhook_url' => [
-                        'label' => 'URL Webhook',
+                        'label'             => 'URL Webhook',
+                        'required'          => 'URL Webhook là bắt buộc khi Webhook đang hoạt động.',
+                        'scheme'            => 'URL Webhook phải bắt đầu bằng http:// hoặc https://.',
+                        'connection_failed' => 'Không thể truy cập URL Webhook. Vui lòng kiểm tra URL.',
+                        'unreachable'       => 'URL Webhook không hợp lệ (HTTP :code).',
+                        'unsafe'            => 'URL Webhook trỏ đến địa chỉ riêng tư, loopback hoặc nội bộ và không được phép.',
                     ],
                     'success'    => 'Cài đặt Webhook đã được lưu thành công',
                     'logs-title' => 'Nhật ký',

@@ -43,7 +43,12 @@ return [
                         'label' => '啟用 Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => '網路鉤子 URL',
+                        'label'             => '網路鉤子 URL',
+                        'required'          => '當 Webhook 啟用時，必須提供 Webhook URL。',
+                        'scheme'            => 'Webhook URL 必須以 http:// 或 https:// 開頭。',
+                        'connection_failed' => '無法存取 Webhook URL。請檢查 URL。',
+                        'unreachable'       => 'Webhook URL 無效 (HTTP :code)。',
+                        'unsafe'            => 'Webhook URL 指向私有、回環或內部地址,不被允許。',
                     ],
                     'success'    => 'Webhook 設定已成功儲存',
                     'logs-title' => '日誌',

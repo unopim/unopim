@@ -43,7 +43,12 @@ return [
                         'label' => 'Webhook نشط',
                     ],
                     'webhook_url' => [
-                        'label' => 'رابط Webhook',
+                        'label'             => 'رابط Webhook',
+                        'required'          => 'يجب إدخال رابط Webhook عندما يكون Webhook مفعّلاً.',
+                        'scheme'            => 'يجب أن يبدأ رابط Webhook بـ http:// أو https://.',
+                        'connection_failed' => 'لا يمكن الوصول إلى رابط Webhook. يرجى التحقق من الرابط.',
+                        'unreachable'       => 'رابط Webhook غير صالح (HTTP :code).',
+                        'unsafe'            => 'يشير رابط Webhook إلى عنوان خاص أو محلي أو داخلي وغير مسموح به.',
                     ],
                     'success'    => 'تم حفظ إعدادات Webhook بنجاح',
                     'logs-title' => 'السجلات',

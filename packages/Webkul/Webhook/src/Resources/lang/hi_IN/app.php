@@ -43,7 +43,12 @@ return [
                         'label' => 'सक्रिय Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'वेबहुक URL',
+                        'label'             => 'वेबहुक URL',
+                        'required'          => 'जब Webhook सक्रिय हो तो Webhook URL आवश्यक है।',
+                        'scheme'            => 'Webhook URL http:// या https:// से शुरू होना चाहिए।',
+                        'connection_failed' => 'Webhook URL तक नहीं पहुँचा जा सका। कृपया URL जाँचें।',
+                        'unreachable'       => 'Webhook URL मान्य नहीं है (HTTP :code)।',
+                        'unsafe'            => 'Webhook URL एक प्राइवेट, लूपबैक या आंतरिक पते की ओर इशारा करता है और इसकी अनुमति नहीं है।',
                     ],
                     'success'    => 'Webhook सेटिंग्स सफलतापूर्वक सहेजी गईं',
                     'logs-title' => 'लॉग',

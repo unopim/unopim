@@ -43,7 +43,12 @@ return [
                         'label' => 'Webhook activo',
                     ],
                     'webhook_url' => [
-                        'label' => 'URL del Webhook',
+                        'label'             => 'URL del Webhook',
+                        'required'          => 'Se requiere una URL del Webhook cuando el Webhook está activo.',
+                        'scheme'            => 'La URL del Webhook debe comenzar con http:// o https://.',
+                        'connection_failed' => 'No se pudo acceder a la URL del Webhook. Verifique la URL.',
+                        'unreachable'       => 'La URL del Webhook no es válida (HTTP :code).',
+                        'unsafe'            => 'La URL del webhook apunta a una dirección privada, de loopback o interna y no está permitida.',
                     ],
                     'success'    => 'Configuración del Webhook guardada correctamente',
                     'logs-title' => 'Registros',

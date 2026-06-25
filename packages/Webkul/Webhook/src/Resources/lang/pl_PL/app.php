@@ -43,7 +43,12 @@ return [
                         'label' => 'Aktywny Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'URL Webhooka',
+                        'label'             => 'URL Webhooka',
+                        'required'          => 'Adres URL Webhooka jest wymagany, gdy Webhook jest aktywny.',
+                        'scheme'            => 'Adres URL Webhooka musi zaczynać się od http:// lub https://.',
+                        'connection_failed' => 'Nie można połączyć się z adresem URL Webhooka. Sprawdź adres URL.',
+                        'unreachable'       => 'Adres URL Webhooka jest nieprawidłowy (HTTP :code).',
+                        'unsafe'            => 'Adres URL webhooka wskazuje na adres prywatny, loopback lub wewnętrzny i nie jest dozwolony.',
                     ],
                     'success'    => 'Ustawienia Webhooka zostały pomyślnie zapisane',
                     'logs-title' => 'Logi',

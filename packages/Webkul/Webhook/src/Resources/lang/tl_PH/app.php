@@ -43,7 +43,12 @@ return [
                         'label' => 'Aktibong Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'URL ng Webhook',
+                        'label'             => 'URL ng Webhook',
+                        'required'          => 'Kinakailangan ang Webhook URL kapag aktibo ang Webhook.',
+                        'scheme'            => 'Ang Webhook URL ay dapat magsimula sa http:// o https://.',
+                        'connection_failed' => 'Hindi maabot ang Webhook URL. Pakisuri ang URL.',
+                        'unreachable'       => 'Hindi wasto ang Webhook URL (HTTP :code).',
+                        'unsafe'            => 'Ang Webhook URL ay tumuturo sa pribado, loopback, o panloob na address at hindi pinapayagan.',
                     ],
                     'success'    => 'Matagumpay na na-save ang mga setting ng Webhook',
                     'logs-title' => 'Mga Log',

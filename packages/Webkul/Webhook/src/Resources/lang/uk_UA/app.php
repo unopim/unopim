@@ -43,7 +43,12 @@ return [
                         'label' => 'Активний Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'URL Webhook',
+                        'label'             => 'URL Webhook',
+                        'required'          => 'URL Webhook є обов’язковим, коли Webhook активний.',
+                        'scheme'            => 'URL Webhook повинен починатися з http:// або https://.',
+                        'connection_failed' => 'Не вдалося підключитися до URL Webhook. Будь ласка, перевірте URL.',
+                        'unreachable'       => 'URL Webhook недійсний (HTTP :code).',
+                        'unsafe'            => 'URL вебхука вказує на приватну, петлеву або внутрішню адресу і не дозволений.',
                     ],
                     'success'    => 'Налаштування Webhook успішно збережено',
                     'logs-title' => 'Журнали',

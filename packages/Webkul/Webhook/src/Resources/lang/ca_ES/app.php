@@ -43,7 +43,12 @@ return [
                         'label' => 'Webhook actiu',
                     ],
                     'webhook_url' => [
-                        'label' => 'URL del Webhook',
+                        'label'             => 'URL del Webhook',
+                        'required'          => 'Es requereix una URL del Webhook quan el Webhook està actiu.',
+                        'scheme'            => 'L\'URL del Webhook ha de començar amb http:// o https://.',
+                        'connection_failed' => 'No s\'ha pogut accedir a l\'URL del Webhook. Verifiqueu l\'URL.',
+                        'unreachable'       => 'L\'URL del Webhook no és vàlid (HTTP :code).',
+                        'unsafe'            => 'L\'URL del webhook apunta a una adreça privada, de loopback o interna i no està permès.',
                     ],
                     'success'    => 'La configuració del Webhook s\'ha desat correctament',
                     'logs-title' => 'Registres',

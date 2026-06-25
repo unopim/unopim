@@ -43,7 +43,12 @@ return [
                         'label' => 'Aktiv Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook-URL',
+                        'label'             => 'Webhook-URL',
+                        'required'          => 'En Webhook-URL krävs när webhooken är aktiv.',
+                        'scheme'            => 'Webhook-URL:en måste börja med http:// eller https://.',
+                        'connection_failed' => 'Webhook-URL:en kunde inte nås. Kontrollera URL:en.',
+                        'unreachable'       => 'Webhook-URL:en är inte giltig (HTTP :code).',
+                        'unsafe'            => 'Webhook-URL:en pekar på en privat, loopback- eller intern adress och är inte tillåten.',
                     ],
                     'success'    => 'Webhook-inställningar sparades framgångsrikt',
                     'logs-title' => 'Loggar',
