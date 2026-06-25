@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -26,6 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Registres',
+            'view'        => 'View',
             'delete'      => 'Eliminar',
             'mass-delete' => 'Eliminació massiva',
         ],
@@ -42,12 +43,7 @@ return [
                         'label' => 'Webhook actiu',
                     ],
                     'webhook_url' => [
-                        'label'             => 'URL del Webhook',
-                        'required'          => 'Es requereix una URL del Webhook quan el Webhook està actiu.',
-                        'scheme'            => 'L\'URL del Webhook ha de començar amb http:// o https://.',
-                        'connection_failed' => 'No s\'ha pogut accedir a l\'URL del Webhook. Verifiqueu l\'URL.',
-                        'unreachable'       => 'L\'URL del Webhook no és vàlid (HTTP :code).',
-                        'unsafe'            => 'L\'URL del webhook apunta a una adreça privada, de loopback o interna i no està permès.',
+                        'label' => 'URL del Webhook',
                     ],
                     'success'    => 'La configuració del Webhook s\'ha desat correctament',
                     'logs-title' => 'Registres',
@@ -56,18 +52,22 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Data/Hora',
-                        'user'             => 'Usuari',
-                        'status'           => 'Estat',
-                        'success'          => 'Èxit',
-                        'failed'           => 'Fallat',
-                        'server_error'     => 'Error del servidor',
-                        'timeout_or_error' => 'Temps d\'espera/Error',
-                        'delete'           => 'Eliminar',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Data/Hora',
+                        'user'       => 'Usuari',
+                        'status'     => 'Estat',
+                        'success'    => 'Èxit',
+                        'failed'     => 'Fallat',
+                        'delete'     => 'Eliminar',
+                        'view'       => 'View',
                     ],
                     'title'          => 'Registres del Webhook',
+                    'show-title'     => 'Detalls del registre del Webhook',
+                    'sent-payload'   => 'Càrrega enviada',
+                    'response'       => 'Resposta',
+                    'back'           => 'Back to Logs',
+                    'no-payload'     => 'No s\'ha registrat cap càrrega per a aquest registre.',
                     'delete-success' => 'Els registres del Webhook s\'han eliminat correctament',
                     'delete-failed'  => 'L\'eliminació dels registres del Webhook ha fallat inesperadament',
                 ],

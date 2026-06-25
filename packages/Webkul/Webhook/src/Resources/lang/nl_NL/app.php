@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -26,6 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Logboeken',
+            'view'        => 'View',
             'delete'      => 'Verwijderen',
             'mass-delete' => 'Massaal verwijderen',
         ],
@@ -42,12 +43,7 @@ return [
                         'label' => 'Actieve webhook',
                     ],
                     'webhook_url' => [
-                        'label'             => 'Webhook-URL',
-                        'required'          => 'Een Webhook-URL is vereist wanneer de webhook actief is.',
-                        'scheme'            => 'De Webhook-URL moet beginnen met http:// of https://.',
-                        'connection_failed' => 'De Webhook-URL kon niet worden bereikt. Controleer de URL.',
-                        'unreachable'       => 'De Webhook-URL is niet geldig (HTTP :code).',
-                        'unsafe'            => 'De Webhook-URL verwijst naar een privé-, loopback- of intern adres en is niet toegestaan.',
+                        'label' => 'Webhook-URL',
                     ],
                     'success'    => 'Webhook-instellingen succesvol opgeslagen.',
                     'logs-title' => 'Logboeken',
@@ -56,18 +52,22 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Datum/Tijd',
-                        'user'             => 'Gebruiker',
-                        'status'           => 'Status',
-                        'success'          => 'Geslaagd',
-                        'failed'           => 'Mislukt',
-                        'server_error'     => 'Serverfout',
-                        'timeout_or_error' => 'Time-out/Fout',
-                        'delete'           => 'Verwijderen',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Datum/Tijd',
+                        'user'       => 'Gebruiker',
+                        'status'     => 'Status',
+                        'success'    => 'Geslaagd',
+                        'failed'     => 'Mislukt',
+                        'delete'     => 'Verwijderen',
+                        'view'       => 'View',
                     ],
                     'title'          => 'Webhook-logboeken',
+                    'show-title'     => 'Webhook Log Details',
+                    'sent-payload'   => 'Verzonden payload',
+                    'response'       => 'Reactie',
+                    'back'           => 'Back to Logs',
+                    'no-payload'     => 'Geen payload opgenomen voor dit logboek.',
                     'delete-success' => 'Webhook-logboeken succesvol verwijderd.',
                     'delete-failed'  => 'Het verwijderen van webhook-logboeken is onverwacht mislukt.',
                 ],

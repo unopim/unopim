@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -26,6 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Logger',
+            'view'        => 'View',
             'delete'      => 'Slett',
             'mass-delete' => 'Massesletting',
         ],
@@ -42,12 +43,7 @@ return [
                         'label' => 'Aktiv Webhook',
                     ],
                     'webhook_url' => [
-                        'label'             => 'Webhook-URL',
-                        'required'          => 'En Webhook-URL er påkrevd når webhooken er aktiv.',
-                        'scheme'            => 'Webhook-URL-en må begynne med http:// eller https://.',
-                        'connection_failed' => 'Webhook-URL-en kunne ikke nås. Sjekk URL-en.',
-                        'unreachable'       => 'Webhook-URL-en er ikke gyldig (HTTP :code).',
-                        'unsafe'            => 'Webhook-URL-en peker til en privat, loopback- eller intern adresse og er ikke tillatt.',
+                        'label' => 'Webhook-URL',
                     ],
                     'success'    => 'Webhook-innstillinger lagret',
                     'logs-title' => 'Logger',
@@ -56,18 +52,22 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Dato/Tid',
-                        'user'             => 'Bruker',
-                        'status'           => 'Status',
-                        'success'          => 'Vellykket',
-                        'failed'           => 'Mislyktes',
-                        'server_error'     => 'Serverfeil',
-                        'timeout_or_error' => 'Tidsavbrudd/Feil',
-                        'delete'           => 'Slett',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Dato/Tid',
+                        'user'       => 'Bruker',
+                        'status'     => 'Status',
+                        'success'    => 'Vellykket',
+                        'failed'     => 'Mislyktes',
+                        'delete'     => 'Slett',
+                        'view'       => 'View',
                     ],
                     'title'          => 'Webhook-logger',
+                    'show-title'     => 'Webhook Log Detaljer',
+                    'sent-payload'   => 'Sendt nyttelast',
+                    'response'       => 'Svar',
+                    'back'           => 'Back to Logs',
+                    'no-payload'     => 'Ingen nyttelast registrert for denne loggen.',
                     'delete-success' => 'Webhook-logger slettet',
                     'delete-failed'  => 'Sletting av Webhook-logger mislyktes uventet',
                 ],

@@ -33,6 +33,28 @@ class WebhookLogsController
     }
 
     /**
+     * Return the specified log entry as JSON for the view modal.
+     */
+    public function show(int $id): JsonResponse
+    {
+        if (! bouncer()->hasPermission('configuration.webhook.logs.view')) {
+            abort(403, 'This action is unauthorized');
+        }
+
+        $log = $this->logsRepository->findOrFail($id);
+
+        return new JsonResponse([
+            'id'         => $log->id,
+            'sku'        => $log->sku,
+            'user'       => $log->user,
+            'status'     => (bool) $log->status,
+            'created_at' => $log->created_at?->toDateTimeString(),
+            'payload'    => ($log->extra ?? [])['payload'] ?? null,
+            'response'   => ($log->extra ?? [])['response'] ?? null,
+        ]);
+    }
+
+    /**
      * Remove the specified resource.
      */
     public function destroy(int $id): JsonResponse

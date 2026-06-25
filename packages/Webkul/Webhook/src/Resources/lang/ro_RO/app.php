@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -26,6 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Jurnale',
+            'view'        => 'View',
             'delete'      => 'Ștergere',
             'mass-delete' => 'Ștergere în masă',
         ],
@@ -42,12 +43,7 @@ return [
                         'label' => 'Webhook activ',
                     ],
                     'webhook_url' => [
-                        'label'             => 'URL Webhook',
-                        'required'          => 'Un URL Webhook este obligatoriu când Webhook-ul este activ.',
-                        'scheme'            => 'URL-ul Webhook trebuie să înceapă cu http:// sau https://.',
-                        'connection_failed' => 'URL-ul Webhook nu a putut fi accesat. Verificați URL-ul.',
-                        'unreachable'       => 'URL-ul Webhook nu este valid (HTTP :code).',
-                        'unsafe'            => 'URL-ul webhook indică o adresă privată, loopback sau internă și nu este permis.',
+                        'label' => 'URL Webhook',
                     ],
                     'success'    => 'Setările Webhook au fost salvate cu succes',
                     'logs-title' => 'Jurnale',
@@ -56,18 +52,22 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Data/Ora',
-                        'user'             => 'Utilizator',
-                        'status'           => 'Stare',
-                        'success'          => 'Succes',
-                        'failed'           => 'Eșuat',
-                        'server_error'     => 'Eroare server',
-                        'timeout_or_error' => 'Expirare/Eroare',
-                        'delete'           => 'Ștergere',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Data/Ora',
+                        'user'       => 'Utilizator',
+                        'status'     => 'Stare',
+                        'success'    => 'Succes',
+                        'failed'     => 'Eșuat',
+                        'delete'     => 'Ștergere',
+                        'view'       => 'View',
                     ],
                     'title'          => 'Jurnale Webhook',
+                    'show-title'     => 'Detalii jurnal Webhook',
+                    'sent-payload'   => 'Payload trimis',
+                    'response'       => 'Răspuns',
+                    'back'           => 'Back to Logs',
+                    'no-payload'     => 'Niciun payload înregistrat pentru acest jurnal.',
                     'delete-success' => 'Jurnalele Webhook au fost șterse cu succes',
                     'delete-failed'  => 'Ștergerea jurnalelor Webhook a eșuat în mod neașteptat',
                 ],

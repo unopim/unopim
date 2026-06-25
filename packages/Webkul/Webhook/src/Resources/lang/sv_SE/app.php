@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -26,6 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Loggar',
+            'view'        => 'View',
             'delete'      => 'Radera',
             'mass-delete' => 'Massradering',
         ],
@@ -42,12 +43,7 @@ return [
                         'label' => 'Aktiv Webhook',
                     ],
                     'webhook_url' => [
-                        'label'             => 'Webhook-URL',
-                        'required'          => 'En Webhook-URL krävs när webhooken är aktiv.',
-                        'scheme'            => 'Webhook-URL:en måste börja med http:// eller https://.',
-                        'connection_failed' => 'Webhook-URL:en kunde inte nås. Kontrollera URL:en.',
-                        'unreachable'       => 'Webhook-URL:en är inte giltig (HTTP :code).',
-                        'unsafe'            => 'Webhook-URL:en pekar på en privat, loopback- eller intern adress och är inte tillåten.',
+                        'label' => 'Webhook-URL',
                     ],
                     'success'    => 'Webhook-inställningar sparades framgångsrikt',
                     'logs-title' => 'Loggar',
@@ -56,18 +52,22 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Datum/Tid',
-                        'user'             => 'Användare',
-                        'status'           => 'Status',
-                        'success'          => 'Lyckades',
-                        'failed'           => 'Misslyckades',
-                        'server_error'     => 'Serverfel',
-                        'timeout_or_error' => 'Tidsgräns/Fel',
-                        'delete'           => 'Radera',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Datum/Tid',
+                        'user'       => 'Användare',
+                        'status'     => 'Status',
+                        'success'    => 'Lyckades',
+                        'failed'     => 'Misslyckades',
+                        'delete'     => 'Radera',
+                        'view'       => 'View',
                     ],
                     'title'          => 'Webhook-loggar',
+                    'show-title'     => 'Webhook-loggdetaljer',
+                    'sent-payload'   => 'Skickad nyttolast',
+                    'response'       => 'Svar',
+                    'back'           => 'Back to Logs',
+                    'no-payload'     => 'Ingen nyttolast registrerad för den här loggen.',
                     'delete-success' => 'Webhook-loggar raderades framgångsrikt',
                     'delete-failed'  => 'Radering av Webhook-loggar misslyckades oväntat',
                 ],

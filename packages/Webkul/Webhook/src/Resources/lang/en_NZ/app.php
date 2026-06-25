@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -26,6 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Logs',
+            'view'        => 'View',
             'delete'      => 'Delete',
             'mass-delete' => 'Mass Delete',
         ],
@@ -42,12 +43,7 @@ return [
                         'label' => 'Active Webhook',
                     ],
                     'webhook_url' => [
-                        'label'             => 'Webhook URL',
-                        'required'          => 'A Webhook URL is required when the webhook is active.',
-                        'scheme'            => 'The Webhook URL must start with http:// or https://.',
-                        'connection_failed' => 'The Webhook URL could not be reached. Please check the URL.',
-                        'unreachable'       => 'The Webhook URL is not valid (HTTP :code).',
-                        'unsafe'            => 'The Webhook URL points at a private, loopback or internal address and is not allowed.',
+                        'label' => 'Webhook URL',
                     ],
                     'success'    => 'Webhook settings saved successfully',
                     'logs-title' => 'Logs',
@@ -56,18 +52,22 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Date/Time',
-                        'user'             => 'User',
-                        'status'           => 'Status',
-                        'success'          => 'Success',
-                        'failed'           => 'Failed',
-                        'server_error'     => 'Server Error',
-                        'timeout_or_error' => 'Timeout/Error',
-                        'delete'           => 'Delete',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Date/Time',
+                        'user'       => 'User',
+                        'status'     => 'Status',
+                        'success'    => 'Success',
+                        'failed'     => 'Failed',
+                        'delete'     => 'Delete',
+                        'view'       => 'View',
                     ],
                     'title'          => 'Webhook Logs',
+                    'show-title'     => 'Webhook Log Details',
+                    'sent-payload'   => 'Sent Payload',
+                    'response'       => 'Response',
+                    'back'           => 'Back to Logs',
+                    'no-payload'     => 'No payload recorded for this log.',
                     'delete-success' => 'Webhook logs deleted successfully',
                     'delete-failed'  => 'Webhook logs deletion failed unexpectedly',
                 ],

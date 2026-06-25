@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -26,6 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Journaux',
+            'view'        => 'View',
             'delete'      => 'Supprimer',
             'mass-delete' => 'Suppression en masse',
         ],
@@ -42,12 +43,7 @@ return [
                         'label' => 'Webhook actif',
                     ],
                     'webhook_url' => [
-                        'label'             => 'URL du Webhook',
-                        'required'          => 'Une URL de Webhook est requise lorsque le Webhook est actif.',
-                        'scheme'            => 'L\'URL du Webhook doit commencer par http:// ou https://.',
-                        'connection_failed' => 'L\'URL du Webhook n\'a pas pu être atteinte. Veuillez vérifier l\'URL.',
-                        'unreachable'       => 'L\'URL du Webhook n\'est pas valide (HTTP :code).',
-                        'unsafe'            => 'L\'URL du webhook pointe vers une adresse privée, loopback ou interne et n\'est pas autorisée.',
+                        'label' => 'URL du Webhook',
                     ],
                     'success'    => 'Paramètres du Webhook enregistrés avec succès',
                     'logs-title' => 'Journaux',
@@ -56,18 +52,22 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'               => 'ID',
-                        'sku'              => 'SKU',
-                        'created_at'       => 'Date/Heure',
-                        'user'             => 'Utilisateur',
-                        'status'           => 'Statut',
-                        'success'          => 'Succès',
-                        'failed'           => 'Échoué',
-                        'server_error'     => 'Erreur du serveur',
-                        'timeout_or_error' => 'Délai dépassé/Erreur',
-                        'delete'           => 'Supprimer',
+                        'id'         => 'ID',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Date/Heure',
+                        'user'       => 'Utilisateur',
+                        'status'     => 'Statut',
+                        'success'    => 'Succès',
+                        'failed'     => 'Échoué',
+                        'delete'     => 'Supprimer',
+                        'view'       => 'View',
                     ],
                     'title'          => 'Journaux du Webhook',
+                    'show-title'     => 'Détails du journal Webhook',
+                    'sent-payload'   => 'Charge utile envoyée',
+                    'response'       => 'Réponse',
+                    'back'           => 'Back to Logs',
+                    'no-payload'     => 'Aucune charge utile enregistrée pour ce journal.',
                     'delete-success' => 'Journaux du Webhook supprimés avec succès',
                     'delete-failed'  => 'La suppression des journaux du Webhook a échoué de manière inattendue',
                 ],

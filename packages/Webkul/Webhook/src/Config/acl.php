@@ -22,6 +22,11 @@ return [
         'route' => 'webhook.logs.index',
         'sort'  => 2,
     ], [
+        'key'   => 'configuration.webhook.logs.view',
+        'name'  => 'webhook::app.acl.logs.view',
+        'route' => 'webhook.logs.show',
+        'sort'  => 0,
+    ], [
         'key'   => 'configuration.webhook.logs.delete',
         'name'  => 'webhook::app.acl.logs.delete',
         'route' => 'webhook.logs.delete',
