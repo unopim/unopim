@@ -11,6 +11,8 @@ class LocalesTableSeeder extends Seeder
     /** Default Local codes */
     const DEFAULT_LOCALES = [
         'en_US',
+        'fr_CA',
+        'en_CA',
     ];
 
     /**
