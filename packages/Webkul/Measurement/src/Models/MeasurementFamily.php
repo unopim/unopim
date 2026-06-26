@@ -29,7 +29,7 @@ class MeasurementFamily extends Model implements HistoryAuditable
         'units',
     ];
 
-    protected $historyTags = ['Measurement Family'];
+    protected $historyTags = ['Measurement'];
 
     protected $historyColumns = [
         'code',

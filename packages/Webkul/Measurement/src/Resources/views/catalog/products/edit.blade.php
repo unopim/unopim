@@ -46,6 +46,8 @@
         <x-admin::form.control-group.control
             type="text"
             name="{{ $fieldName }}[value]"
+            :label="$field->name ?: $field->code"
+            ::rules="{{ $field->getValidationsField() }}"
             :value="$currentValue"
             placeholder="Enter value"
             oninput="
@@ -54,6 +56,8 @@
                     .replace(/(\..*?)\..*/g, '$1');
             "
         />
+
+        <x-admin::form.control-group.error :control-name="$fieldName.'[value]'" />
     </div>
 
     <!-- Unit Field -->

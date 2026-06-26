@@ -168,7 +168,7 @@
                         'job_instance':       'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
                         'webhook_settings':   'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/30 dark:text-fuchsia-400',
                         'Apikey':             'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-                        'measurement Family': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+                        'Measurement': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
                     };
 
                     return colors[entityType] || 'bg-zinc-100 text-zinc-600 dark:bg-cherry-800 dark:text-slate-400';

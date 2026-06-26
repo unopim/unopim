@@ -74,6 +74,15 @@ class MeasurementFamilyApiController extends Controller
 
         $data = $request->all();
 
+        $unitCodes = array_column($data['units'], 'code');
+
+        if (! in_array($data['standard_unit'], $unitCodes, true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The standard unit must be one of the provided units.',
+            ], 422);
+        }
+
         // Add default conversion for the standard unit
         foreach ($data['units'] as &$unit) {
             if ($unit['code'] === $data['standard_unit']) {
@@ -118,8 +127,27 @@ class MeasurementFamilyApiController extends Controller
 
         $request->validate(MeasurementFamilyValidator::apiUpdateRules($id), MeasurementFamilyValidator::messages());
 
+        $data = $request->all();
+
+        // When the units and/or the standard unit are being changed, the standard
+        // unit must still be one of the family's units, otherwise conversions break.
+        if (array_key_exists('standard_unit', $data) || array_key_exists('units', $data)) {
+            $standardUnit = $data['standard_unit'] ?? $family->standard_unit;
+
+            $unitCodes = array_key_exists('units', $data)
+                ? array_column($data['units'], 'code')
+                : collect($family->units ?? [])->pluck('code')->all();
+
+            if (! in_array($standardUnit, $unitCodes, true)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The standard unit must be one of the provided units.',
+                ], 422);
+            }
+        }
+
         try {
-            $this->repository->update($request->all(), $id);
+            $this->repository->update($data, $id);
 
             return response()->json([
                 'success' => true,

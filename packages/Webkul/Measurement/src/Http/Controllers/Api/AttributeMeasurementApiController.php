@@ -4,6 +4,7 @@ namespace Webkul\Measurement\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 use Webkul\Measurement\Repository\MeasurementFamilyRepository;
 
@@ -19,12 +20,19 @@ class AttributeMeasurementApiController extends Controller
      */
     protected $familyRepository;
 
+    /**
+     * Attribute repository instance.
+     */
+    protected $attributeMasterRepository;
+
     public function __construct(
         AttributeMeasurementRepository $attributeRepository,
-        MeasurementFamilyRepository $familyRepository
+        MeasurementFamilyRepository $familyRepository,
+        AttributeRepository $attributeMasterRepository
     ) {
         $this->attributeRepository = $attributeRepository;
         $this->familyRepository = $familyRepository;
+        $this->attributeMasterRepository = $attributeMasterRepository;
     }
 
     /**
@@ -102,6 +110,22 @@ class AttributeMeasurementApiController extends Controller
             'family_code' => ['required', 'string'],
             'unit_code'   => ['required', 'string'],
         ]);
+
+        $attribute = $this->attributeMasterRepository->find($attributeId);
+
+        if (! $attribute) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Attribute not found',
+            ], 404);
+        }
+
+        if ($attribute->type !== 'measurement') {
+            return response()->json([
+                'success' => false,
+                'message' => 'The given attribute is not a measurement type attribute',
+            ], 422);
+        }
 
         $family = $this->familyRepository->findOneWhere(['code' => $data['family_code']]);
 

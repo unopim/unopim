@@ -1,6 +1,7 @@
 <?php
 
 use Webkul\AdminApi\Tests\Traits\ApiHelperTrait;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Measurement\Models\MeasurementFamily;
 
 uses(ApiHelperTrait::class);
@@ -194,9 +195,11 @@ it('rejects attribute config for a missing family (404) and a foreign unit (422)
         ],
     ]);
 
+    $attribute = Attribute::factory()->create(['type' => 'measurement']);
+
     // family not found
     $this->withHeaders($this->headers)
-        ->postJson(route('admin.api.attribute-measurement.store', 1), [
+        ->postJson(route('admin.api.attribute-measurement.store', $attribute->id), [
             'family_code' => 'does_not_exist',
             'unit_code'   => 'meter',
         ])
@@ -204,7 +207,7 @@ it('rejects attribute config for a missing family (404) and a foreign unit (422)
 
     // unit not in family
     $this->withHeaders($this->headers)
-        ->postJson(route('admin.api.attribute-measurement.store', 1), [
+        ->postJson(route('admin.api.attribute-measurement.store', $attribute->id), [
             'family_code' => $family->code,
             'unit_code'   => 'lightyear',
         ])

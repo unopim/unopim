@@ -33,7 +33,7 @@ class MeasurementUnitTranslation extends Model implements HistoryAuditable
     /**
      * Group unit-label history under the parent measurement family entity.
      */
-    protected $historyTags = ['Measurement Family'];
+    protected $historyTags = ['Measurement'];
 
     /**
      * Only audit the translated label.

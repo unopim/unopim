@@ -34,7 +34,7 @@ class MeasurementUnitConversion extends Model implements HistoryAuditable
     /**
      * Group conversion history under the parent measurement family entity.
      */
-    protected $historyTags = ['Measurement Family'];
+    protected $historyTags = ['Measurement'];
 
     /**
      * Only audit the meaningful conversion fields (not the ordering position).

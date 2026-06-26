@@ -30,7 +30,7 @@ class MeasurementUnit extends Model implements HistoryAuditable
     /**
      * Group unit history under the parent measurement family entity.
      */
-    protected $historyTags = ['Measurement Family'];
+    protected $historyTags = ['Measurement'];
 
     /**
      * Only audit the meaningful unit fields (not the ordering position).
