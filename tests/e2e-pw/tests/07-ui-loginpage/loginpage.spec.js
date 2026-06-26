@@ -14,15 +14,16 @@ const invalidPassword = 'admintest';
  */
 async function goToLoginPage(adminPage) {
   await adminPage.goto('/admin/login', { waitUntil: 'domcontentloaded' });
-  // If we're already on the login page (session expired), we're done
+  // If we're already on the login page (session expired or no permitted routes), we're done
   if (adminPage.url().includes('/admin/login')) {
     await adminPage.waitForLoadState('networkidle');
     return;
   }
-  // Otherwise log out
+  // Otherwise log out via the header dropdown
   await adminPage.click('button.rounded-full');
   await adminPage.getByRole('link', { name: 'Logout' }).click();
-  await expect(adminPage).toHaveURL(UNOPIM_URL);
+  // Use a path-only regex so APP_URL hostname differences don't cause failures
+  await expect(adminPage).toHaveURL(/\/admin\/login/);
 }
 
 
@@ -32,7 +33,8 @@ test('Logout Check', async ({ adminPage }) => {
   await adminPage.goto('/admin/dashboard', { waitUntil: 'load', timeout: 30000 });
   await adminPage.click('button.rounded-full');
   await adminPage.getByRole('link', { name: 'Logout' }).click();
-  await expect(adminPage).toHaveURL(UNOPIM_URL);
+  // Use a path-only regex so APP_URL hostname differences (localhost vs 127.0.0.1) don't cause failures
+  await expect(adminPage).toHaveURL(/\/admin\/login/);
 });
 
 test('Error for invalid email and password', async ({ adminPage }) => {

@@ -97,16 +97,31 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     // Find a multiselect with "Select option" (no channel yet) and assign Default
     const unassignedSelect = adminPage.locator('.multiselect__tags', { hasText: 'Select option' }).first();
     if (await unassignedSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await unassignedSelect.click();
-      await adminPage.getByRole('option', { name: 'Default' }).first().click();
+      // Wait for the POST response so the toast is guaranteed to come from THIS action
+      await Promise.all([
+        adminPage.waitForResponse(r => r.url().includes('completeness-settings/update') && r.status() === 200),
+        (async () => {
+          await unassignedSelect.click();
+          await adminPage.getByRole('option', { name: 'Default' }).first().click();
+        })(),
+      ]);
     } else {
       // All already assigned — toggle one by removing and re-adding
-      await adminPage.locator('.multiselect__tag-icon').first().click();
+      await Promise.all([
+        adminPage.waitForResponse(r => r.url().includes('completeness-settings/update') && r.status() === 200),
+        adminPage.locator('.multiselect__tag-icon').first().click(),
+      ]);
       await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
       // Wait for Vue to re-render the multiselect placeholder after tag removal
       await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().waitFor({ state: 'visible', timeout: 10000 });
-      await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().click();
-      await adminPage.getByRole('option', { name: 'Default' }).first().click();
+      // Wait for the re-assignment POST response before asserting the success toast
+      await Promise.all([
+        adminPage.waitForResponse(r => r.url().includes('completeness-settings/update') && r.status() === 200),
+        (async () => {
+          await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().click();
+          await adminPage.getByRole('option', { name: 'Default' }).first().click();
+        })(),
+      ]);
     }
     await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
   });
