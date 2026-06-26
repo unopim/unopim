@@ -50,12 +50,14 @@ class Installer extends Command
         'da_DK' => 'Danish (Denmark)',
         'de_DE' => 'German (Germany)',
         'en_AU' => 'English (Australia)',
+        'en_CA' => 'English (Canada)',
         'en_GB' => 'English (United Kingdom)',
         'en_NZ' => 'English (New Zealand)',
         'en_US' => 'English (United States)',
         'es_ES' => 'Spanish (Spain)',
         'es_VE' => 'Spanish (Venezuela)',
         'fi_FI' => 'Finnish (Finland)',
+        'fr_CA' => 'French (Canada)',
         'fr_FR' => 'French (France)',
         'hi_IN' => 'Hindi (India)',
         'hr_HR' => 'Croatian (Croatia)',
@@ -84,6 +86,7 @@ class Installer extends Command
      * @var array
      */
     protected $currencies = [
+        'CAD' => 'Canadian Dollar',
         'CNY' => 'Chinese Yuan',
         'AED' => 'Dirham',
         'EUR' => 'Euro',
