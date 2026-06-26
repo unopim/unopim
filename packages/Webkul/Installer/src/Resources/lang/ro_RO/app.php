@@ -75,6 +75,7 @@ return [
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Afgan',
+                'CAD' => 'Dolar canadian',
                 'CNY' => 'Yuan chinezesc',
                 'EUR' => 'Euro',
                 'GBP' => 'Liră sterlină',
@@ -148,6 +149,7 @@ return [
                 'application-name'    => 'Nume Aplicație',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Yuan Chinez (CNY)',
+                'dollar'              => 'Dolar canadian (CAD)',
                 'database-connection' => 'Conexiune Bază de Date',
                 'database-hostname'   => 'Nume Gazdă Bază de Date',
                 'database-name'       => 'Nume Bază de Date',

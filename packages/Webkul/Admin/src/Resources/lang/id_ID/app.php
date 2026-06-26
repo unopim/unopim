@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Kondisi atribut',
                     'attribute-conditions-info'     => 'Hanya produk yang memenuhi semua kondisi yang diekspor.',
                     'no-categories'                 => 'Tidak ada kategori tersedia.',
+                    'search-categories'             => 'Cari kategori berdasarkan nama atau kode',
                     'add-condition'                 => 'Tambahkan kondisi atribut lain',
                     'operator-select'               => 'Kondisi',
                     'no-value-needed'               => 'Tidak perlu nilai',

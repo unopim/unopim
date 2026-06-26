@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Шинж чанарын нөхцөл',
                     'attribute-conditions-info'     => 'Зөвхөн бүх нөхцөлийг хангасан бүтээгдэхүүн экспортлогдоно.',
                     'no-categories'                 => 'Боломжтой ангилал алга.',
+                    'search-categories'             => 'Ангиллыг нэр эсвэл кодоор хайх',
                     'add-condition'                 => 'Өөр шинж чанарын нөхцөл нэмэх',
                     'operator-select'               => 'Нөхцөл',
                     'no-value-needed'               => 'Утга шаардлагагүй',

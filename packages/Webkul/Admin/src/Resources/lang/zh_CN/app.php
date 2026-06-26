@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => '属性条件',
                     'attribute-conditions-info'     => '仅导出满足所有条件的产品。',
                     'no-categories'                 => '没有可用的类别。',
+                    'search-categories'             => '按名称或代码搜索分类',
                     'add-condition'                 => '添加另一个属性条件',
                     'operator-select'               => '条件',
                     'no-value-needed'               => '无需值',

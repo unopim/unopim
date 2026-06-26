@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Condicions d\'atribut',
                     'attribute-conditions-info'     => 'Només s\'exporten els productes que compleixen totes les condicions.',
                     'no-categories'                 => 'No hi ha categories disponibles.',
+                    'search-categories'             => 'Cerca categories per nom o codi',
                     'add-condition'                 => 'Afegeix una altra condició d\'atribut',
                     'operator-select'               => 'Condició',
                     'no-value-needed'               => 'No cal cap valor',

@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Attributvillkor',
                     'attribute-conditions-info'     => 'Endast produkter som uppfyller alla villkor exporteras.',
                     'no-categories'                 => 'Inga kategorier tillgängliga.',
+                    'search-categories'             => 'Sök kategorier efter namn eller kod',
                     'add-condition'                 => 'Lägg till ytterligare ett attributvillkor',
                     'operator-select'               => 'Villkor',
                     'no-value-needed'               => 'Inget värde behövs',

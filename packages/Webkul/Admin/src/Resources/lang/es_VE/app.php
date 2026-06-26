@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Condiciones de atributo',
                     'attribute-conditions-info'     => 'Solo se exportan los productos que cumplen todas las condiciones.',
                     'no-categories'                 => 'No hay categorías disponibles.',
+                    'search-categories'             => 'Buscar categorías por nombre o código',
                     'add-condition'                 => 'Añadir otra condición de atributo',
                     'operator-select'               => 'Condición',
                     'no-value-needed'               => 'No se necesita valor',

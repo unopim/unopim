@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'विशेषता शर्तें',
                     'attribute-conditions-info'     => 'केवल वे उत्पाद निर्यात किए जाते हैं जो सभी शर्तों को पूरा करते हैं।',
                     'no-categories'                 => 'कोई श्रेणी उपलब्ध नहीं है।',
+                    'search-categories'             => 'नाम या कोड द्वारा श्रेणियाँ खोजें',
                     'add-condition'                 => 'एक और विशेषता शर्त जोड़ें',
                     'operator-select'               => 'शर्त',
                     'no-value-needed'               => 'किसी मान की आवश्यकता नहीं',

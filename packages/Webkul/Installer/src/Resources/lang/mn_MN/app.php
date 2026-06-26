@@ -75,6 +75,7 @@ return [
             'currencies' => [
                 'AED' => 'Дирхам',
                 'AFN' => 'Израилийн шекель',
+                'CAD' => 'Канад доллар',
                 'CNY' => 'Хятадын юань',
                 'EUR' => 'ЕВРО',
                 'GBP' => 'Фунт стерлинг',
@@ -147,6 +148,7 @@ return [
                 'application-name'    => 'Програмын нэр',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Хятадын юань (CNY)',
+                'dollar'              => 'Канад доллар (CAD)',
                 'database-connection' => 'Мэдээллийн сангийн холболт',
                 'database-hostname'   => 'Мэдээллийн сангийн хост нэр',
                 'database-name'       => 'Мэдээллийн сангийн нэр',

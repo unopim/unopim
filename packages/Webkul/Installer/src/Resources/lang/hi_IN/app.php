@@ -75,6 +75,7 @@ return [
             'currencies' => [
                 'AED' => 'दिर्हाम',
                 'AFN' => 'इज़राइली शेकेल',
+                'CAD' => 'कनाडाई डॉलर',
                 'CNY' => 'चीनी युवान',
                 'EUR' => 'यूरो',
                 'GBP' => 'पौंड स्टर्लिंग',
@@ -148,6 +149,7 @@ return [
                 'application-name'    => 'आवेदन का नाम',
                 'unopim'              => 'यूनोपिम',
                 'chinese-yuan'        => 'चीनी युआन (CNY)',
+                'dollar'              => 'कनाडाई डॉलर (CAD)',
                 'database-connection' => 'डेटाबेस कनेक्शन',
                 'database-hostname'   => 'डेटाबेस होस्टनाम',
                 'database-name'       => 'डेटाबेस का नाम',

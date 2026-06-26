@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => '属性条件',
                     'attribute-conditions-info'     => 'すべての条件に一致する商品のみがエクスポートされます。',
                     'no-categories'                 => '利用可能なカテゴリーがありません。',
+                    'search-categories'             => '名前またはコードでカテゴリを検索',
                     'add-condition'                 => '別の属性条件を追加',
                     'operator-select'               => '条件',
                     'no-value-needed'               => '値は不要です',

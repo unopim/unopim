@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Mga kundisyon ng attribute',
                     'attribute-conditions-info'     => 'Ang mga produktong tumutugma sa lahat ng kundisyon lang ang ie-export.',
                     'no-categories'                 => 'Walang available na kategorya.',
+                    'search-categories'             => 'Maghanap ng mga kategorya ayon sa pangalan o code',
                     'add-condition'                 => 'Magdagdag ng isa pang kundisyon ng attribute',
                     'operator-select'               => 'Kundisyon',
                     'no-value-needed'               => 'Walang kailangang halaga',

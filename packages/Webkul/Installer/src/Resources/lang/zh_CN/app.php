@@ -75,6 +75,7 @@ return [
             'currencies' => [
                 'AED' => '迪拉姆',
                 'AFN' => '以色列谢克尔',
+                'CAD' => '加拿大元',
                 'CNY' => '人民币',
                 'EUR' => '欧元',
                 'GBP' => '英镑',
@@ -147,6 +148,7 @@ return [
                 'application-name'    => '应用名称',
                 'unopim'              => '乌诺皮姆',
                 'chinese-yuan'        => '人民币 (CNY)',
+                'dollar'              => '加拿大元 (CAD)',
                 'database-connection' => '数据库连接',
                 'database-hostname'   => '数据库主机名',
                 'database-name'       => '数据库名称',
