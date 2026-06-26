@@ -9,7 +9,7 @@ use Laravel\Prompts\SearchPrompt;
  * A searchable prompt that pre-selects an existing value so the user can keep
  * it by pressing Enter, while the normal search still works on any key press.
  */
-class PreselectedSearchPrompt extends SearchPrompt
+class PreselectedSearchValue extends SearchPrompt
 {
     public function __construct(
         string $label,

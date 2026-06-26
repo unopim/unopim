@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Webkul\Core\ElasticSearch;
-use Webkul\Installer\Console\Prompts\PreselectedSearchPrompt;
+use Webkul\Installer\Console\Prompts\PreselectedSearchValue;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 use Webkul\Installer\Helpers\DemoDataInstaller;
@@ -899,7 +899,7 @@ class Installer extends Command
     {
         $default = $this->getEnvChoiceDefault($key, $choices);
 
-        $choice = (new PreselectedSearchPrompt(
+        $choice = (new PreselectedSearchValue(
             label: $question,
             options: fn (string $value) => $this->filterChoices($choices, $value),
             placeholder: 'Type to search...',
