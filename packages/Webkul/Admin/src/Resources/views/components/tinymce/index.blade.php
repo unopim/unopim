@@ -297,7 +297,7 @@
                     isLoading: false,
 
                     ai: {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') }}"),
+                        enabled: @json(!! core()->getConfigData('general.magic_ai.settings.enabled') && bouncer()->hasPermission('ai-agent')),
                         platform_id: null,
                         model: null,
                         prompt: null,
@@ -350,7 +350,7 @@
                                 relative_urls: false,
                                 menubar: false,
                                 remove_script_host: false,
-                                document_base_url: '{{ asset('/') }}',
+                                document_base_url: '{{ rtrim(config('app.url'), '/') }}/',
                                 uploadRoute: '{{ route('admin.tinymce.upload') }}',
                                 csrfToken: '{{ csrf_token() }}',
                                 ...extraConfiguration,
@@ -481,7 +481,7 @@
                                 });
                             }
 
-                            editor.on('keyup', () => {
+                            editor.on('keyup change input', () => {
                                 this.field.onInput(editor.getContent());
                             });
                         },

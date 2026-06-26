@@ -10,11 +10,8 @@ class ClientRepository extends BaseClientRepository
 {
     /**
      * Get a client by the given ID.
-     *
-     * @param  int|string  $id
-     * @return Client|null
      */
-    public function find($id)
+    public function find(string|int $id): ?Client
     {
         $client = Passport::client();
 
@@ -33,11 +30,8 @@ class ClientRepository extends BaseClientRepository
 
     /**
      * Get an active client by the given ID.
-     *
-     * @param  int|string  $id
-     * @return Client|null
      */
-    public function findActive($id)
+    public function findActive(string|int $id): ?Client
     {
         $client = $this->find($id);
 

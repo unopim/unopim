@@ -32,10 +32,113 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kanavat',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Kanavaa koodilla :code ei löytynyt poistettavaksi.',
+                    'locale-not-found'         => 'Yksi tai useampi kieli ei ole olemassa.',
+                    'root-category-not-found'  => 'Juuriluokkaa ei ole olemassa.',
+                    'currency-not-found'       => 'Yksi tai useampi valuutta ei ole olemassa.',
+                    'invalid-locale'           => 'Kieli ei ole olemassa.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
+        'export-too-large' => 'Tämä vienti on liian suuri suoritettavaksi: arvioidut :rows riviä × :columns saraketta (~:estimated) ylittävät käytettävissä olevan tilan (~:available). Rajaa vientiä valitsemalla vähemmän kanavia/kieliä (ja attribuutteja) ja yritä uudelleen.',
+        'fields'           => [
+            'file-format'         => 'Tiedostomuoto',
+            'with-media'          => 'Median kanssa',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Tila',
+            'enable'         => 'Käytössä',
+            'all'            => 'Kaikki',
+        ],
         'products' => [
-            'title'      => 'Tuotteet',
+            'title'              => 'Tuotteet',
+            'invalid-locales'    => 'Kaikki valitut kielet eivät ole käytettävissä valituilla kanavilla.',
+            'invalid-currencies' => 'Kaikki valitut valuutat eivät ole käytettävissä valituilla kanavilla.',
+            'filters'            => [
+                'channels'             => 'Kanavat',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Valuutat',
+                'currencies-info'      => 'Hinta-attribuutit viedään kullekin valitulle valuutalle. Jätä tyhjäksi viedäksesi kaikki kanavan valuutat.',
+                'locales'              => 'Kielet',
+                'locales-info'         => 'Lokalisoitavat attribuutit viedään kerran kutakin valittua kieltä kohden. Jätä tyhjäksi viedäksesi kaikki kanavan kielet.',
+                'attributes'           => 'Attribuutit',
+                'attributes-info'      => 'Vain valitut attribuutit viedään. Jätä tyhjäksi viedäksesi perheen kaikki attribuutit.',
+                'attribute-families'   => 'Attribuuttiperheet',
+                'categories'           => 'Kategoriat',
+                'completeness'         => 'Täydellisyys',
+                'completeness-options' => [
+                    'none'         => 'Ei täydellisyysehtoa',
+                    'at-least-one' => 'Täydellinen vähintään yhdessä valitussa kielessä',
+                    'all'          => 'Täydellinen kaikissa valituissa kielissä',
+                ],
+                'time-condition' => 'Aikaehto',
+                'time-options'   => [
+                    'none'              => 'Ei päivämääräehtoa',
+                    'last-n-days'       => 'Viimeisten N päivän aikana päivitetyt tuotteet',
+                    'between-dates'     => 'Kahden päivämäärän välillä päivitetyt tuotteet',
+                    'since-last-export' => 'Viimeisimmän viennin jälkeen päivitetyt tuotteet',
+                ],
+                'time-value'     => 'Päivien lukumäärä',
+                'time-date'      => 'Aloituspäivä',
+                'time-date-end'  => 'Lopetuspäivä',
+                'status'         => 'Tila',
+                'status-options' => [
+                    'enable'  => 'Käytössä',
+                    'disable' => 'Pois käytöstä',
+                    'all'     => 'Kaikki',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Tunnisteet',
+                'identifiers-info' => 'Liitä yksi SKU / tunniste riviä kohden viedäksesi vain kyseiset tuotteet. Jätä tyhjäksi viedäksesi kaikki tuotteet.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-avain: \'%s\' on jo luotu tuotteelle, jonka SKU on: \'%s\'.',
@@ -48,6 +151,23 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriat',
+        ],
+        'channels' => [
+            'title' => 'Kanavat',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Tila',
+                'active' => 'Active',
+                'all'    => 'Kaikki',
+            ],
         ],
     ],
     'validation' => [

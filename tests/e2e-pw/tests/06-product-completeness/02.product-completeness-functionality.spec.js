@@ -103,7 +103,9 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
       // All already assigned — toggle one by removing and re-adding
       await adminPage.locator('.multiselect__tag-icon').first().click();
       await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
-      await adminPage.locator('.multiselect__tags', { hasText: 'Select option' }).first().click();
+      // Wait for Vue to re-render the multiselect placeholder after tag removal
+      await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().waitFor({ state: 'visible', timeout: 10000 });
+      await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
     }
     await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();

@@ -175,11 +175,11 @@
                     <x-admin::datagrid.filters />
 
                     <!-- Add Filter -->
-                    <div class="mb-4" v-if="getInactiveFilterColumns().length">
+                    <div class="mb-4" v-if="getInactiveFilterColumns().length || filterAttributesSrc">
                         <button
                             type="button"
                             class="flex items-center gap-1.5 w-full justify-center rounded-md border border-dashed border-gray-300 dark:border-cherry-800 px-3 py-2 text-sm font-medium text-violet-700 dark:text-violet-400 transition-all hover:border-violet-400 hover:bg-violet-50 dark:hover:border-violet-400 dark:hover:bg-cherry-800"
-                            @click="showFilterPicker = !showFilterPicker; filterPickerSearch = ''"
+                            @click="toggleFilterPicker()"
                         >
                             <span class="icon-add text-lg"></span>
 
@@ -204,16 +204,24 @@
                                 </div>
                             </div>
 
-                            <div class="max-h-48 overflow-auto">
+                            <div class="max-h-48 overflow-auto" @scroll="onFilterPickerScroll">
                                 <p
-                                    v-for="column in getInactiveFilterColumns().filter(c => !filterPickerSearch || c.label.toLowerCase().includes(filterPickerSearch.toLowerCase()))"
+                                    v-for="column in filterPickerList()"
+                                    :key="column.index"
                                     class="cursor-pointer px-3 py-2 text-sm text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-900"
                                     v-text="column.label"
-                                    @click="addActiveFilter(column.index); showFilterPicker = false"
+                                    @click="selectFilterAttribute(column)"
                                 ></p>
 
                                 <p
-                                    v-if="getInactiveFilterColumns().filter(c => !filterPickerSearch || c.label.toLowerCase().includes(filterPickerSearch.toLowerCase())).length === 0"
+                                    v-if="filterPickerLoading"
+                                    class="flex justify-center px-3 py-2"
+                                >
+                                    <span class="inline-block w-3 h-3 border-2 border-gray-300 dark:border-gray-500 border-t-transparent rounded-full animate-spin"></span>
+                                </p>
+
+                                <p
+                                    v-if="! filterPickerLoading && filterPickerList().length === 0"
                                     class="px-3 py-2 text-sm text-gray-400 dark:text-gray-500 text-center"
                                 >
                                     @lang('admin::app.components.datagrid.filters.dropdown.searchable.no-results')

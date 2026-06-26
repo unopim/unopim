@@ -172,6 +172,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('search', 'search')->name('admin.catalog.products.search');
 
+            Route::get('filterable-attributes', 'filterableAttributes')->name('admin.catalog.products.filterable_attributes');
+
             Route::post('check-variant', 'checkVariantUniqueness')->name('admin.catalog.products.check-variant');
 
             Route::get('get/locale', 'getLocale')->name('admin.catalog.product.get_locale');

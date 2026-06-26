@@ -2,10 +2,8 @@
 
 return [
     'importers' => [
-
         'products' => [
-            'title' => 'उत्पादों',
-
+            'title'      => 'उत्पादों',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'यूआरएल कुंजी: \'%s\' SKU: \'%s\' वाले आइटम के लिए पहले से ही जेनरेट किया गया था।',
@@ -34,13 +32,113 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'चैनल',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'कोड :code वाला चैनल हटाने के लिए नहीं मिला।',
+                    'locale-not-found'         => 'एक या अधिक भाषाएँ मौजूद नहीं हैं।',
+                    'root-category-not-found'  => 'मूल श्रेणी मौजूद नहीं है।',
+                    'currency-not-found'       => 'एक या अधिक मुद्राएँ मौजूद नहीं हैं।',
+                    'invalid-locale'           => 'यह भाषा मौजूद नहीं है।',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
+        'export-too-large' => 'यह निर्यात चलाने के लिए बहुत बड़ा है: अनुमानित :rows पंक्तियाँ × :columns स्तंभ (~:estimated) उपलब्ध स्थान (~:available) से अधिक हैं। कम चैनल/लोकेल (और विशेषताएँ) चुनकर निर्यात को सीमित करें और पुनः प्रयास करें।',
+        'fields'           => [
+            'file-format'         => 'फ़ाइल प्रारूप',
+            'with-media'          => 'मीडिया के साथ',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'स्थिति',
+            'enable'         => 'सक्षम',
+            'all'            => 'सभी',
+        ],
         'products' => [
-            'title' => 'उत्पादों',
-
+            'title'              => 'उत्पादों',
+            'invalid-locales'    => 'चयनित सभी लोकेल चयनित चैनलों के लिए उपलब्ध नहीं हैं।',
+            'invalid-currencies' => 'चयनित सभी मुद्राएँ चयनित चैनलों के लिए उपलब्ध नहीं हैं।',
+            'filters'            => [
+                'channels'             => 'चैनल',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'मुद्राएँ',
+                'currencies-info'      => 'मूल्य विशेषताएँ प्रत्येक चयनित मुद्रा के लिए निर्यात की जाती हैं। सभी चैनल मुद्राएँ निर्यात करने के लिए खाली छोड़ें।',
+                'locales'              => 'लोकेल',
+                'locales-info'         => 'स्थानीयकरण योग्य विशेषताएँ प्रत्येक चयनित लोकेल के लिए एक बार निर्यात की जाती हैं। सभी चैनल लोकेल निर्यात करने के लिए खाली छोड़ें।',
+                'attributes'           => 'विशेषताएँ',
+                'attributes-info'      => 'केवल चयनित विशेषताएँ निर्यात की जाती हैं। परिवार की सभी विशेषताएँ निर्यात करने के लिए खाली छोड़ें।',
+                'attribute-families'   => 'विशेषता परिवार',
+                'categories'           => 'श्रेणियाँ',
+                'completeness'         => 'पूर्णता',
+                'completeness-options' => [
+                    'none'         => 'पूर्णता पर कोई शर्त नहीं',
+                    'at-least-one' => 'कम से कम एक चयनित लोकेल में पूर्ण',
+                    'all'          => 'सभी चयनित लोकेल में पूर्ण',
+                ],
+                'time-condition' => 'समय शर्त',
+                'time-options'   => [
+                    'none'              => 'कोई दिनांक शर्त नहीं',
+                    'last-n-days'       => 'पिछले N दिनों में अपडेट किए गए उत्पाद',
+                    'between-dates'     => 'दो तिथियों के बीच अपडेट किए गए उत्पाद',
+                    'since-last-export' => 'पिछले निर्यात के बाद से अपडेट किए गए उत्पाद',
+                ],
+                'time-value'     => 'दिनों की संख्या',
+                'time-date'      => 'प्रारंभ तिथि',
+                'time-date-end'  => 'समाप्ति तिथि',
+                'status'         => 'स्थिति',
+                'status-options' => [
+                    'enable'  => 'सक्षम',
+                    'disable' => 'अक्षम',
+                    'all'     => 'सभी',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'पहचानकर्ता',
+                'identifiers-info' => 'केवल उन उत्पादों को निर्यात करने के लिए प्रति पंक्ति एक SKU / पहचानकर्ता पेस्ट करें। सभी उत्पादों को निर्यात करने के लिए खाली छोड़ें।',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL कुंजी: \'%s\' SKU: \'%s\' वाले आइटम के लिए पहले से ही जेनरेट किया गया था।',
@@ -54,8 +152,24 @@ return [
         'categories' => [
             'title' => 'श्रेणियाँ',
         ],
+        'channels' => [
+            'title' => 'चैनल',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'स्थिति',
+                'active' => 'Active',
+                'all'    => 'सभी',
+            ],
+        ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'कॉलम संख्या "%s" में खाली हेडर हैं।',
@@ -68,7 +182,6 @@ return [
             'file-empty'           => 'फ़ाइल खाली है या इसमें शीर्षक पंक्ति नहीं है। कृपया डेटा वाली एक वैध फ़ाइल अपलोड करें।',
         ],
     ],
-
     'job' => [
         'started'   => 'कार्य निष्पादन प्रारंभ हुआ',
         'completed' => 'कार्य निष्पादन पूरा हुआ',

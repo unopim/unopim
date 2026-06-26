@@ -160,13 +160,15 @@ class AjaxOptionsController extends Controller
     }
 
     /**
-     * Get translated label for the entity
+     * Get translated label for the entity, falling back to any available locale when
+     * the requested locale translation is missing.
      */
     protected function getTranslatedLabel(string $currentLocaleCode, TranslatableModel $option, string $entityName): ?string
     {
-        $translation = $option->translate($currentLocaleCode);
-
-        return $translation?->{$this->getTranslationColumnName($entityName)};
+        return $option->getTranslatedValueWithFallback(
+            $this->getTranslationColumnName($entityName),
+            $currentLocaleCode
+        );
     }
 
     /**

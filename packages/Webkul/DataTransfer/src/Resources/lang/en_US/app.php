@@ -2,7 +2,6 @@
 
 return [
     'importers' => [
-
         'products' => [
             'title' => 'Products',
 
@@ -34,12 +33,118 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Channels',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Channel with code :code not found to delete.',
+                    'locale-not-found'         => 'One or more locales do not exist.',
+                    'root-category-not-found'  => 'Root category does not exist.',
+                    'currency-not-found'       => 'One or more currencies do not exist.',
+                    'invalid-locale'           => 'The locale does not exist.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
 
     'exporters' => [
+        'export-too-large' => 'This export is too large to run: an estimated :rows rows × :columns columns (~:estimated) exceeds the available space (~:available). Narrow the export by selecting fewer channels/locales (and attributes) and try again.',
+
+        'fields' => [
+            'file-format'         => 'File Format',
+            'with-media'          => 'With Media',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Status',
+            'enable'         => 'Enable',
+            'all'            => 'All',
+        ],
 
         'products' => [
             'title' => 'Products',
+
+            'invalid-locales'    => 'The selected locales are not all available for the selected channels.',
+            'invalid-currencies' => 'The selected currencies are not all available for the selected channels.',
+
+            'filters' => [
+                'channels'             => 'Channels',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Currencies',
+                'currencies-info'      => 'Price attributes are exported per selected currency. Leave empty to export every channel currency.',
+                'locales'              => 'Locales',
+                'locales-info'         => 'Localizable attributes are exported once per selected locale. Leave empty to export every channel locale.',
+                'attributes'           => 'Attributes',
+                'attributes-info'      => 'Only the selected attributes are exported. Leave empty to export every attribute in the family.',
+                'attribute-families'   => 'Attribute Families',
+                'categories'           => 'Categories',
+                'completeness'         => 'Completeness',
+                'completeness-options' => [
+                    'none'         => 'No condition on completeness',
+                    'at-least-one' => 'Complete on at least one selected locale',
+                    'all'          => 'Complete on all selected locales',
+                ],
+                'time-condition' => 'Time Condition',
+                'time-options'   => [
+                    'none'              => 'No date condition',
+                    'last-n-days'       => 'Updated products over the last N days',
+                    'between-dates'     => 'Updated products between two dates',
+                    'since-last-export' => 'Updated products since last export',
+                ],
+                'time-value'     => 'Number of days',
+                'time-date'      => 'Start date',
+                'time-date-end'  => 'End date',
+                'status'         => 'Status',
+                'status-options' => [
+                    'enable'  => 'Enable',
+                    'disable' => 'Disable',
+                    'all'     => 'All',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma or space separated SKUs to export, e.g. SKU001, SKU002 SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Identifiers',
+                'identifiers-info' => 'Paste one SKU / identifier per line to export only those products. Leave empty to export every product.',
+            ],
 
             'validation' => [
                 'errors' => [
@@ -53,6 +158,24 @@ return [
         ],
         'categories' => [
             'title' => 'Categories',
+        ],
+        'channels' => [
+            'title' => 'Channels',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
         ],
     ],
 

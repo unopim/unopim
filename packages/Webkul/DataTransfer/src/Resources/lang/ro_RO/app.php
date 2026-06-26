@@ -32,10 +32,113 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Canale',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Canalul cu codul :code nu a fost găsit pentru ștergere.',
+                    'locale-not-found'         => 'Una sau mai multe limbi nu există.',
+                    'root-category-not-found'  => 'Categoria rădăcină nu există.',
+                    'currency-not-found'       => 'Una sau mai multe valute nu există.',
+                    'invalid-locale'           => 'Limba nu există.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
+        'export-too-large' => 'Acest export este prea mare pentru a fi rulat: aproximativ :rows rânduri × :columns coloane (~:estimated) depășesc spațiul disponibil (~:available). Restrângeți exportul selectând mai puține canale/limbi (și atribute) și încercați din nou.',
+        'fields'           => [
+            'file-format'         => 'Format fișier',
+            'with-media'          => 'Cu media',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Stare',
+            'enable'         => 'Activat',
+            'all'            => 'Toate',
+        ],
         'products' => [
-            'title'      => 'Produse',
+            'title'              => 'Produse',
+            'invalid-locales'    => 'Nu toate limbile selectate sunt disponibile pentru canalele selectate.',
+            'invalid-currencies' => 'Nu toate monedele selectate sunt disponibile pentru canalele selectate.',
+            'filters'            => [
+                'channels'             => 'Canale',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Monede',
+                'currencies-info'      => 'Atributele de preț sunt exportate pentru fiecare monedă selectată. Lăsați gol pentru a exporta toate monedele canalului.',
+                'locales'              => 'Localizări',
+                'locales-info'         => 'Atributele localizabile sunt exportate o dată pentru fiecare limbă selectată. Lăsați gol pentru a exporta toate limbile canalului.',
+                'attributes'           => 'Atribute',
+                'attributes-info'      => 'Sunt exportate doar atributele selectate. Lăsați gol pentru a exporta toate atributele din familie.',
+                'attribute-families'   => 'Familii de atribute',
+                'categories'           => 'Categorii',
+                'completeness'         => 'Completitudine',
+                'completeness-options' => [
+                    'none'         => 'Fără condiție de completitudine',
+                    'at-least-one' => 'Complet în cel puțin o limbă selectată',
+                    'all'          => 'Complet în toate limbile selectate',
+                ],
+                'time-condition' => 'Condiție de timp',
+                'time-options'   => [
+                    'none'              => 'Fără condiție de dată',
+                    'last-n-days'       => 'Produse actualizate în ultimele N zile',
+                    'between-dates'     => 'Produse actualizate între două date',
+                    'since-last-export' => 'Produse actualizate de la ultimul export',
+                ],
+                'time-value'     => 'Număr de zile',
+                'time-date'      => 'Data de început',
+                'time-date-end'  => 'Data de sfârșit',
+                'status'         => 'Stare',
+                'status-options' => [
+                    'enable'  => 'Activat',
+                    'disable' => 'Dezactivat',
+                    'all'     => 'Toate',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Identificatori',
+                'identifiers-info' => 'Lipiți câte un SKU / identificator pe linie pentru a exporta doar acele produse. Lăsați gol pentru a exporta toate produsele.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Cheie URL: \'%s\' a fost deja generată pentru un articol cu SKU: \'%s\'.',
@@ -48,6 +151,23 @@ return [
         ],
         'categories' => [
             'title' => 'Categorii',
+        ],
+        'channels' => [
+            'title' => 'Canale',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Stare',
+                'active' => 'Active',
+                'all'    => 'Toate',
+            ],
         ],
     ],
     'validation' => [

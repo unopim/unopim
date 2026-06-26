@@ -51,6 +51,11 @@ return [
         'route' => 'admin.catalog.products.edit',
         'sort'  => 3,
     ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.update',
+        'sort'  => 3,
+    ], [
         'key'   => 'catalog.products.delete',
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.catalog.products.delete',
@@ -66,6 +71,41 @@ return [
         'route' => 'admin.catalog.products.mass_delete',
         'sort'  => 6,
     ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.bulk-edit.save',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.bulk-edit.save-media',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.bulkedit',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.bulkedit.attributes.fetch-all',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.bulkedit.filters',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.check-variant',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.categories.tree',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.categories',
         'name'  => 'admin::app.acl.categories',
         'route' => 'admin.catalog.categories.index',
@@ -76,9 +116,19 @@ return [
         'route' => 'admin.catalog.categories.create',
         'sort'  => 1,
     ], [
+        'key'   => 'catalog.categories.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.catalog.categories.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.categories.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.catalog.categories.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.categories.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.categories.update',
         'sort'  => 2,
     ], [
         'key'   => 'catalog.categories.delete',
@@ -101,9 +151,19 @@ return [
         'route' => 'admin.catalog.category_fields.create',
         'sort'  => 1,
     ], [
+        'key'   => 'catalog.category_fields.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.catalog.category_fields.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.category_fields.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.catalog.category_fields.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.category_fields.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.category_fields.update',
         'sort'  => 2,
     ], [
         'key'   => 'catalog.category_fields.delete',
@@ -131,9 +191,39 @@ return [
         'route' => 'admin.catalog.attributes.create',
         'sort'  => 1,
     ], [
+        'key'   => 'catalog.attributes.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.catalog.attributes.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.attributes.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.catalog.attributes.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.attributes.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.attributes.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.attributes.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.attributes.options.store',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.attributes.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.attributes.options.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.attributes.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.attributes.options.delete',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.attributes.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.attributes.options.update_sort',
         'sort'  => 2,
     ], [
         'key'   => 'catalog.attributes.delete',
@@ -156,9 +246,19 @@ return [
         'route' => 'admin.catalog.attribute.groups.create',
         'sort'  => 1,
     ], [
+        'key'   => 'catalog.attribute_groups.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.catalog.attribute.groups.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.attribute_groups.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.catalog.attribute.groups.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.attribute_groups.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.attribute.groups.update',
         'sort'  => 2,
     ], [
         'key'   => 'catalog.attribute_groups.delete',
@@ -176,9 +276,19 @@ return [
         'route' => 'admin.catalog.families.create',
         'sort'  => 1,
     ], [
+        'key'   => 'catalog.families.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.catalog.families.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.families.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.catalog.families.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.update',
         'sort'  => 2,
     ], [
         'key'   => 'catalog.families.delete',
@@ -190,6 +300,21 @@ return [
         'name'  => 'admin::app.acl.copy',
         'route' => 'admin.catalog.families.copy',
         'sort'  => 4,
+    ], [
+        'key'   => 'catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.completeness.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.completeness.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.completeness.mass_update',
+        'sort'  => 2,
     ], [
         'key'   => 'history',
         'name'  => 'admin::app.acl.history',
@@ -231,10 +356,40 @@ return [
         'route' => 'admin.settings.data_transfer.imports.create',
         'sort'  => 1,
     ], [
+        'key'   => 'data_transfer.imports.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.settings.data_transfer.imports.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'data_transfer.imports.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.settings.data_transfer.imports.edit',
         'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.data_transfer.imports.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.data_transfer.imports.upload_images_zip',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'admin.settings.data_transfer.imports.cancel',
+        'sort'  => 4,
+    ], [
+        'key'   => 'data_transfer.imports.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'admin.settings.data_transfer.imports.pause',
+        'sort'  => 4,
+    ], [
+        'key'   => 'data_transfer.imports.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'admin.settings.data_transfer.imports.resume',
+        'sort'  => 4,
     ], [
         'key'   => 'data_transfer.imports.delete',
         'name'  => 'admin::app.acl.delete',
@@ -256,9 +411,19 @@ return [
         'route' => 'admin.settings.data_transfer.exports.create',
         'sort'  => 1,
     ], [
+        'key'   => 'data_transfer.export.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.settings.data_transfer.exports.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'data_transfer.export.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.settings.data_transfer.exports.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.export.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.data_transfer.exports.update',
         'sort'  => 2,
     ], [
         'key'   => 'data_transfer.export.delete',
@@ -286,10 +451,20 @@ return [
         'route' => 'admin.settings.users.index',
         'sort'  => 8,
     ], [
+        'key'   => 'settings.appearance',
+        'name'  => 'admin::app.acl.appearance',
+        'route' => 'admin.settings.appearance.index',
+        'sort'  => 1,
+    ], [
+        'key'   => 'settings.appearance.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.appearance.update',
+        'sort'  => 1,
+    ], [
         'key'   => 'settings.locales',
         'name'  => 'admin::app.acl.locales',
         'route' => 'admin.settings.locales.index',
-        'sort'  => 1,
+        'sort'  => 2,
     ], [
         'key'   => 'settings.locales.create',
         'name'  => 'admin::app.acl.create',
@@ -299,6 +474,11 @@ return [
         'key'   => 'settings.locales.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.settings.locales.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'settings.locales.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.locales.update',
         'sort'  => 2,
     ], [
         'key'   => 'settings.locales.delete',
@@ -326,9 +506,19 @@ return [
         'route' => 'admin.settings.currencies.create',
         'sort'  => 1,
     ], [
+        'key'   => 'settings.currencies.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.settings.currencies.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'settings.currencies.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.settings.currencies.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'settings.currencies.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.currencies.update',
         'sort'  => 2,
     ], [
         'key'   => 'settings.currencies.delete',
@@ -356,9 +546,19 @@ return [
         'route' => 'admin.settings.channels.create',
         'sort'  => 1,
     ], [
+        'key'   => 'settings.channels.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.settings.channels.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'settings.channels.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.settings.channels.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'settings.channels.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.channels.update',
         'sort'  => 2,
     ], [
         'key'   => 'settings.channels.delete',
@@ -411,9 +611,19 @@ return [
         'route' => 'admin.settings.roles.create',
         'sort'  => 1,
     ], [
+        'key'   => 'settings.roles.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.settings.roles.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'settings.roles.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.settings.roles.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'settings.roles.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.roles.update',
         'sort'  => 2,
     ], [
         'key'   => 'settings.roles.delete',
@@ -436,6 +646,16 @@ return [
         'route'  => 'admin.configuration.integrations.index',
         'sort'   => 9,
     ], [
+        'key'    => 'configuration',
+        'name'   => 'admin::app.acl.configuration',
+        'route'  => 'admin.configuration.store',
+        'sort'   => 9,
+    ], [
+        'key'    => 'configuration',
+        'name'   => 'admin::app.acl.configuration',
+        'route'  => 'admin.configuration.download',
+        'sort'   => 9,
+    ], [
         'key'   => 'configuration.integrations',
         'name'  => 'admin::app.acl.integrations',
         'route' => 'admin.configuration.integrations.index',
@@ -446,14 +666,49 @@ return [
         'route' => 'admin.configuration.integrations.create',
         'sort'  => 1,
     ], [
+        'key'   => 'configuration.integrations.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.configuration.integrations.store',
+        'sort'  => 1,
+    ], [
         'key'   => 'configuration.integrations.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.configuration.integrations.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.integrations.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.configuration.integrations.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.integrations.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.configuration.integrations.generate_key',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.integrations.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.configuration.integrations.re_generate_secret_key',
         'sort'  => 2,
     ], [
         'key'   => 'configuration.integrations.delete',
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.configuration.integrations.delete',
         'sort'  => 3,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Help
+    |--------------------------------------------------------------------------
+    |
+    | ACL related to the help & resources page.
+    |
+    */
+    [
+        'key'   => 'help',
+        'name'  => 'admin::app.acl.help',
+        'route' => 'admin.help.index',
+        'sort'  => 99999,
     ],
 ];

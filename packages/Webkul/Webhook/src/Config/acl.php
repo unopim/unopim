@@ -22,14 +22,19 @@ return [
         'route' => 'webhook.logs.index',
         'sort'  => 2,
     ], [
+        'key'   => 'configuration.webhook.logs.view',
+        'name'  => 'webhook::app.acl.logs.view',
+        'route' => 'webhook.logs.show',
+        'sort'  => 1,
+    ], [
         'key'   => 'configuration.webhook.logs.delete',
         'name'  => 'webhook::app.acl.logs.delete',
         'route' => 'webhook.logs.delete',
-        'sort'  => 1,
+        'sort'  => 2,
     ], [
         'key'   => 'configuration.webhook.logs.mass_delete',
         'name'  => 'webhook::app.acl.logs.mass-delete',
         'route' => 'webhook.logs.mass_delete',
-        'sort'  => 2,
+        'sort'  => 3,
     ],
 ];

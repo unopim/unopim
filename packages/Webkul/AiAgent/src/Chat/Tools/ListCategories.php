@@ -2,38 +2,63 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 
 class ListCategories implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('list_categories')
-            ->for('List categories by code or name.')
-            ->withStringParameter('search', 'Search term to filter categories by code or name')
-            ->withNumberParameter('limit', 'Maximum results (default 20)')
-            ->using(function (?string $search = null, int $limit = 20) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.categories')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'list_categories';
+            }
+
+            public function description(): string
+            {
+                return 'List categories by code or name.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'search' => $schema->string()->description('Search term to filter categories by code or name'),
+                    'limit'  => $schema->integer()->description('Maximum results (default 20)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.categories')) {
                     return $denied;
                 }
 
+                $search = $request->string('search')->toString() ?: null;
+                $limit = $request->has('limit') ? (int) $request->get('limit') : 20;
+
                 $limit = min(max($limit, 1), 100);
+
+                $context = $this->context;
+                $grammar = GrammarQueryManager::getGrammar();
 
                 $qb = DB::table('categories')
                     ->select('id', 'code', 'parent_id', 'additional_data');
 
                 if ($search) {
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $search);
-                    $qb->where(function ($q) use ($escaped, $context) {
+                    $qb->where(function ($q) use ($escaped, $context, $grammar) {
                         $q->where('code', 'like', "%{$escaped}%")
-                            ->orWhereRaw("JSON_EXTRACT(additional_data, '$.locale_specific.{$context->locale}.name') LIKE ?", ["%{$escaped}%"]);
+                            ->orWhereRaw($grammar->jsonExtract('additional_data', 'locale_specific', $context->locale, 'name').' LIKE ?', ["%{$escaped}%"]);
                     });
                 }
 
@@ -55,6 +80,7 @@ class ListCategories implements PimTool
                     'total'      => $results->count(),
                     'categories' => $results->toArray(),
                 ]);
-            });
+            }
+        };
     }
 }

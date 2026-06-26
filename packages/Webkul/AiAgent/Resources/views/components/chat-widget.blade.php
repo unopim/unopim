@@ -18,6 +18,29 @@
 
 <v-agenting-pim></v-agenting-pim>
 
+<script>
+// Apply #app margin before Vue paints to avoid content-jump flash on refresh.
+(function () {
+    var openByDefault = @json($openByDefault);
+    var open = openByDefault;
+    try {
+        var raw = sessionStorage.getItem('agenting_pim_state');
+        if (raw) {
+            var s = JSON.parse(raw);
+            if (typeof s.isOpen === 'boolean') open = s.isOpen;
+        }
+    } catch (e) {}
+    if (!open) return;
+    var apply = function () {
+        var app = document.getElementById('app');
+        if (app) app.style.marginRight = '420px';
+        if (document.body) document.body.style.overflowX = 'hidden';
+    };
+    if (document.getElementById('app')) apply();
+    else document.addEventListener('DOMContentLoaded', apply);
+})();
+</script>
+
 @pushOnce('scripts')
 <script type="text/x-template" id="v-agenting-pim-template">
     <div class="ap-shell">
@@ -777,7 +800,13 @@ app.component('v-agenting-pim', {
         };
 
         return {
-            isOpen: @json($openByDefault),
+            isOpen: (() => {
+                try {
+                    const s = JSON.parse(sessionStorage.getItem('agenting_pim_state') || 'null');
+                    if (s && typeof s.isOpen === 'boolean') return s.isOpen;
+                } catch (e) {}
+                return @json($openByDefault);
+            })(),
             activeTab: 'capabilities',
             activeCapability: null,
             messages: [],
@@ -1665,14 +1694,7 @@ app.component('v-agenting-pim', {
                 }
                 if (s.activeSessionId) this.activeSessionId = s.activeSessionId;
                 if (Array.isArray(s.messages) && s.messages.length > 0) this.messages = s.messages.filter(m => !m.isRedirect);
-                // When the default is open-on-load, a user who manually closed the
-                // panel must stay closed on subsequent navigations in the same tab.
-                // Honor the explicit stored false; otherwise the config-driven
-                // default (set in data()) is preserved. mounted() runs the DOM
-                // side effects for whatever state we end up in.
-                if (typeof s.isOpen === 'boolean') {
-                    this.isOpen = s.isOpen;
-                }
+                // isOpen restored synchronously in data() to avoid first-paint flicker.
             } catch (e) {}
         },
     },

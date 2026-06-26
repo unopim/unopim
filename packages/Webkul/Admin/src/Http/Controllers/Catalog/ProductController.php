@@ -14,6 +14,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Admin\Http\Requests\ProductForm;
+use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -25,6 +26,8 @@ use Webkul\Product\Validator\ProductValuesValidator;
 
 class ProductController extends Controller
 {
+    use AttributeColumnTrait;
+
     /*
     * Using const variable for status
     */
@@ -166,7 +169,7 @@ class ProductController extends Controller
         foreach (($product?->parent?->super_attributes ?? []) as $attr) {
             $attrCode = $attr->code;
 
-            $configurableValues[$attrCode] = $data['values']['common'][$attrCode];
+            $configurableValues[$attrCode] = $data['values']['common'][$attrCode] ?? null;
         }
 
         if (! empty($configurableValues) && $product->parent_id) {
@@ -205,7 +208,16 @@ class ProductController extends Controller
             throw $e;
         }
 
-        $product = $this->productRepository->update($data, $id);
+        try {
+            $product = $this->productRepository->update($data, $id);
+        } catch (ValidationException $e) {
+            $errors = $e->errors();
+            $firstMessage = ! empty($errors) ? (array_values($errors)[0][0] ?? $e->getMessage()) : $e->getMessage();
+
+            session()->flash('error', $firstMessage);
+
+            return back()->withInput();
+        }
 
         Event::dispatch('catalog.product.update.after', $product);
 
@@ -349,6 +361,42 @@ class ProductController extends Controller
         $products->setCollection(collect($results));
 
         return response()->json($products);
+    }
+
+    public function filterableAttributes(): JsonResponse
+    {
+        $query = $this->attributeRepository->getModel()->newQuery()
+            ->where('is_filterable', true)
+            ->with('translations');
+
+        $search = trim((string) request('query', ''));
+
+        if ($search !== '') {
+            $query->where(function ($builder) use ($search) {
+                $builder->whereTranslationLike('name', '%'.$search.'%')
+                    ->orWhere('code', 'LIKE', '%'.$search.'%');
+            });
+        }
+
+        $page = max(1, (int) request('page', 1));
+
+        $paginator = $query->orderBy('id')->paginate(20, ['*'], 'page', $page);
+
+        $options = $paginator->getCollection()->map(function ($attribute) {
+            $column = $this->buildColumnDefinition($attribute);
+
+            unset($column['closure']);
+
+            $column['visible'] = false;
+
+            return $column;
+        })->values();
+
+        return new JsonResponse([
+            'options'  => $options,
+            'page'     => $paginator->currentPage(),
+            'lastPage' => $paginator->lastPage(),
+        ]);
     }
 
     /**

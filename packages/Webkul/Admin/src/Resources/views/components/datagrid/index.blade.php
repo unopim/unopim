@@ -59,7 +59,7 @@
         app.component('v-datagrid', {
             template: '#v-datagrid-template',
 
-            props: ['src'],
+            props: ['src', 'filterAttributesSrc'],
 
             data() {
                 return {
@@ -80,6 +80,18 @@
                     showFilterPicker: false,
 
                     filterPickerSearch: '',
+
+                    pickerOptions: [],
+
+                    addedFilterColumns: {},
+
+                    filterPickerPage: 1,
+
+                    filterPickerLastPage: 1,
+
+                    filterPickerLoading: false,
+
+                    filterPickerSearchTimer: null,
 
                     available: {
                         id: null,
@@ -134,6 +146,15 @@
 
             mounted() {
                 this.boot();
+
+                this._onShareLinkChanged = () => this.get();
+                this.$emitter.on('share-link-changed', this._onShareLinkChanged);
+            },
+
+            beforeUnmount() {
+                if (this._onShareLinkChanged) {
+                    this.$emitter.off('share-link-changed', this._onShareLinkChanged);
+                }
             },
 
             watch: {
@@ -143,6 +164,16 @@
                     },
 
                     deep: true,
+                },
+
+                filterPickerSearch() {
+                    if (! this.filterAttributesSrc) {
+                        return;
+                    }
+
+                    clearTimeout(this.filterPickerSearchTimer);
+
+                    this.filterPickerSearchTimer = setTimeout(() => this.loadFilterAttributes(true), 300);
                 },
             },
 
@@ -258,6 +289,14 @@
                             this.available.id = id;
 
                             this.available.columns = columns;
+
+                            if (this.filterAttributesSrc) {
+                                Object.values(this.addedFilterColumns).forEach(col => {
+                                    if (this.activeFilterIndices.includes(col.index) && ! this.available.columns.some(c => c.index === col.index)) {
+                                        this.available.columns.push(col);
+                                    }
+                                });
+                            }
 
                             this.available.actions = actions;
 
@@ -979,10 +1018,10 @@
                         return;
                     }
 
-                    this.performAction(record.actions.find(action => action.index === 'edit'));
+                    this.performAction(record.actions.find(action => action.index === 'edit'), record);
                 },
 
-                performAction(action) {
+                performAction(action, record) {
                     if (!action) {
                         return;
                     }
@@ -992,6 +1031,19 @@
                     switch (method) {
                         case 'get':
                             window.location.href = action.url;
+
+                            break;
+
+                        case 'copy':
+                            this.copyToClipboard(action.url);
+
+                            break;
+
+                        case 'edit-share':
+                            this.$emitter.emit('open-share-edit-modal', {
+                                url:    action.url,
+                                record: record,
+                            });
 
                             break;
 
@@ -1028,6 +1080,33 @@
                     }
                 },
 
+                copyToClipboard(text) {
+                    const success = () => this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.components.datagrid.index.link-copied')" });
+                    const failure = () => this.$emitter.emit('add-flash', { type: 'error', message: "@lang('admin::app.components.datagrid.index.copy-failed')" });
+
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(text).then(success).catch(failure);
+
+                        return;
+                    }
+
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+
+                    try {
+                        document.execCommand('copy') ? success() : failure();
+                    } catch (e) {
+                        failure();
+                    }
+
+                    document.body.removeChild(textarea);
+                },
+
                 getActiveFilterColumns() {
                     return this.available.columns.filter(
                         col => col.filterable && this.activeFilterIndices.includes(col.index)
@@ -1046,6 +1125,95 @@
                     }
 
                     this.updateDatagrids();
+                },
+
+                filterPickerList() {
+                    if (this.filterAttributesSrc) {
+                        return this.pickerOptions.filter(col => ! this.activeFilterIndices.includes(col.index));
+                    }
+
+                    const search = this.filterPickerSearch.toLowerCase();
+
+                    return this.getInactiveFilterColumns().filter(col => ! search || col.label.toLowerCase().includes(search));
+                },
+
+                toggleFilterPicker() {
+                    this.showFilterPicker = ! this.showFilterPicker;
+                    this.filterPickerSearch = '';
+
+                    if (this.showFilterPicker && this.filterAttributesSrc) {
+                        this.loadFilterAttributes(true);
+                    }
+                },
+
+                onFilterPickerScroll(event) {
+                    if (! this.filterAttributesSrc) {
+                        return;
+                    }
+
+                    const el = event.target;
+
+                    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 48) {
+                        this.loadFilterAttributes(false);
+                    }
+                },
+
+                selectFilterAttribute(column) {
+                    if (! this.available.columns.some(c => c.index === column.index)) {
+                        this.available.columns.push(column);
+                    }
+
+                    this.addedFilterColumns[column.index] = column;
+
+                    this.showFilterPicker = false;
+
+                    this.addActiveFilter(column.index);
+                },
+
+                loadFilterAttributes(reset = false) {
+                    if (! this.filterAttributesSrc || this.filterPickerLoading) {
+                        return;
+                    }
+
+                    if (reset) {
+                        this.filterPickerPage = 1;
+                    } else {
+                        if (this.filterPickerPage >= this.filterPickerLastPage) {
+                            return;
+                        }
+
+                        this.filterPickerPage += 1;
+                    }
+
+                    this.filterPickerLoading = true;
+
+                    this.$axios.get(this.filterAttributesSrc, {
+                        params: {
+                            query: this.filterPickerSearch,
+                            page: this.filterPickerPage,
+                        },
+                    })
+                        .then(response => {
+                            const options = response.data.options || [];
+
+                            if (reset) {
+                                this.pickerOptions = options;
+                            } else {
+                                const seen = new Set(this.pickerOptions.map(c => c.index));
+
+                                options.forEach(col => {
+                                    if (! seen.has(col.index)) {
+                                        this.pickerOptions.push(col);
+                                    }
+                                });
+                            }
+
+                            this.filterPickerLastPage = response.data.lastPage || 1;
+                            this.filterPickerLoading = false;
+                        })
+                        .catch(() => {
+                            this.filterPickerLoading = false;
+                        });
                 },
 
                 removeActiveFilter(columnIndex) {

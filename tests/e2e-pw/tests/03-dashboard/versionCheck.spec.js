@@ -54,7 +54,7 @@ test('1.4 - Regression: version never displays redundant v prefix', async ({ adm
   const versionEl = adminPage.locator('#app').getByText(/Version\s*:/);
   await expect(versionEl).toBeVisible();
   const text = await versionEl.innerText();
-  // Version label already says "Version", so the value must be plain semver (e.g. "2.0.1"), never "v2.0.1"
+  // Version label already says "Version", so the value must be plain semver (e.g. "2.1.0"), never "v2.1.0"
   expect(text).not.toMatch(/:\s*v\d/);
   expect(text).toMatch(/:\s*\d+\.\d+\.\d+/);
 });

@@ -2,30 +2,54 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class ManageAssociations implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('manage_associations')
-            ->for('Add product associations (related, up-sell, cross-sell). Defaults to append mode which keeps existing associations.')
-            ->withStringParameter('sku', 'The product SKU to update associations for')
-            ->withStringParameter('related', 'Comma-separated SKUs for related products (leave empty to skip)')
-            ->withStringParameter('up_sells', 'Comma-separated SKUs for up-sell products (leave empty to skip)')
-            ->withStringParameter('cross_sells', 'Comma-separated SKUs for cross-sell products (leave empty to skip)')
-            ->withEnumParameter('mode', 'append (default) keeps existing and adds new; replace removes all existing first. Use append unless user explicitly asks to replace.', ['append', 'replace'])
-            ->using(function (string $sku, ?string $related = null, ?string $up_sells = null, ?string $cross_sells = null, string $mode = 'append') use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products.edit')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'manage_associations';
+            }
+
+            public function description(): string
+            {
+                return 'Add product associations (related, up-sell, cross-sell). Defaults to append mode which keeps existing associations.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'sku'         => $schema->string()->description('The product SKU to update associations for'),
+                    'related'     => $schema->string()->description('Comma-separated SKUs for related products (leave empty to skip)'),
+                    'up_sells'    => $schema->string()->description('Comma-separated SKUs for up-sell products (leave empty to skip)'),
+                    'cross_sells' => $schema->string()->description('Comma-separated SKUs for cross-sell products (leave empty to skip)'),
+                    'mode'        => $schema->string()->enum(['append', 'replace'])->description('append (default) keeps existing and adds new; replace removes all existing first. Use append unless user explicitly asks to replace.'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.edit')) {
                     return $denied;
                 }
+
+                $sku = $request->string('sku')->toString();
+                $related = $request->string('related')->toString() ?: null;
+                $up_sells = $request->string('up_sells')->toString() ?: null;
+                $cross_sells = $request->string('cross_sells')->toString() ?: null;
+                $mode = $request->string('mode')->toString() ?: 'append';
 
                 $productRepo = app('Webkul\Product\Repositories\ProductRepository');
                 $product = $productRepo->findOneByField('sku', $sku);
@@ -104,6 +128,7 @@ class ManageAssociations implements PimTool
                         'errors'       => empty($errors) ? null : $errors,
                     ],
                 ]);
-            });
+            }
+        };
     }
 }

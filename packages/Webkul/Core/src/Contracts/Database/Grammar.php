@@ -20,6 +20,8 @@ interface Grammar
 
     public function jsonExtract(string $column, string ...$pathSegments): string;
 
+    public function jsonContains(string $column, array $pathSegments, string $value): string;
+
     public function orderByField(string $column, array $ids, string $type = ''): string;
 
     public function getRegexOperator(): string;

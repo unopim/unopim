@@ -32,10 +32,113 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kanali',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Kanal s kodom :code nije pronađen za brisanje.',
+                    'locale-not-found'         => 'Jedan ili više jezika ne postoje.',
+                    'root-category-not-found'  => 'Glavna kategorija ne postoji.',
+                    'currency-not-found'       => 'Jedna ili više valuta ne postoje.',
+                    'invalid-locale'           => 'Jezik ne postoji.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
+        'export-too-large' => 'Ovaj izvoz je prevelik za pokretanje: procijenjeno :rows redaka × :columns stupaca (~:estimated) premašuje dostupan prostor (~:available). Suzite izvoz odabirom manje kanala/jezika (i atributa) i pokušajte ponovno.',
+        'fields'           => [
+            'file-format'         => 'Format datoteke',
+            'with-media'          => 'S medijima',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Status',
+            'enable'         => 'Omogućeno',
+            'all'            => 'Sve',
+        ],
         'products' => [
-            'title'      => 'Proizvodi',
+            'title'              => 'Proizvodi',
+            'invalid-locales'    => 'Nisu sve odabrane lokalizacije dostupne za odabrane kanale.',
+            'invalid-currencies' => 'Nisu sve odabrane valute dostupne za odabrane kanale.',
+            'filters'            => [
+                'channels'             => 'Kanali',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Valute',
+                'currencies-info'      => 'Atributi cijena izvoze se po odabranoj valuti. Ostavite prazno za izvoz svih valuta kanala.',
+                'locales'              => 'Lokalizacije',
+                'locales-info'         => 'Lokalizirani atributi izvoze se jednom po odabranoj lokalizaciji. Ostavite prazno za izvoz svih lokalizacija kanala.',
+                'attributes'           => 'Atributi',
+                'attributes-info'      => 'Izvoze se samo odabrani atributi. Ostavite prazno za izvoz svih atributa obitelji.',
+                'attribute-families'   => 'Obitelji atributa',
+                'categories'           => 'Kategorije',
+                'completeness'         => 'Potpunost',
+                'completeness-options' => [
+                    'none'         => 'Bez uvjeta potpunosti',
+                    'at-least-one' => 'Potpun u barem jednoj odabranoj lokalizaciji',
+                    'all'          => 'Potpun u svim odabranim lokalizacijama',
+                ],
+                'time-condition' => 'Vremenski uvjet',
+                'time-options'   => [
+                    'none'              => 'Bez uvjeta datuma',
+                    'last-n-days'       => 'Proizvodi ažurirani u posljednjih N dana',
+                    'between-dates'     => 'Proizvodi ažurirani između dva datuma',
+                    'since-last-export' => 'Proizvodi ažurirani od posljednjeg izvoza',
+                ],
+                'time-value'     => 'Broj dana',
+                'time-date'      => 'Datum početka',
+                'time-date-end'  => 'Datum završetka',
+                'status'         => 'Status',
+                'status-options' => [
+                    'enable'  => 'Omogućeno',
+                    'disable' => 'Onemogućeno',
+                    'all'     => 'Sve',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Identifikatori',
+                'identifiers-info' => 'Zalijepite jedan SKU / identifikator po retku za izvoz samo tih proizvoda. Ostavite prazno za izvoz svih proizvoda.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL ključ: \'%s\' već je generiran za stavku sa SKU: \'%s\'.',
@@ -48,6 +151,23 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorije',
+        ],
+        'channels' => [
+            'title' => 'Kanali',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'Sve',
+            ],
         ],
     ],
     'validation' => [

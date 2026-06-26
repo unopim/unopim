@@ -32,10 +32,113 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => 'Kanaler',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Kanal med kod :code hittades inte för borttagning.',
+                    'locale-not-found'         => 'Ett eller flera språk finns inte.',
+                    'root-category-not-found'  => 'Rotkategori finns inte.',
+                    'currency-not-found'       => 'En eller flera valutor finns inte.',
+                    'invalid-locale'           => 'Språket finns inte.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
+        'export-too-large' => 'Den här exporten är för stor för att köras: uppskattade :rows rader × :columns kolumner (~:estimated) överskrider det tillgängliga utrymmet (~:available). Begränsa exporten genom att välja färre kanaler/språk (och attribut) och försök igen.',
+        'fields'           => [
+            'file-format'         => 'Filformat',
+            'with-media'          => 'Med media',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Status',
+            'enable'         => 'Aktiverad',
+            'all'            => 'Alla',
+        ],
         'products' => [
-            'title'      => 'Produkter',
+            'title'              => 'Produkter',
+            'invalid-locales'    => 'Alla valda språk är inte tillgängliga för de valda kanalerna.',
+            'invalid-currencies' => 'Alla valda valutor är inte tillgängliga för de valda kanalerna.',
+            'filters'            => [
+                'channels'             => 'Kanaler',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Valutor',
+                'currencies-info'      => 'Prisattribut exporteras per vald valuta. Lämna tomt för att exportera alla kanalvalutor.',
+                'locales'              => 'Språk',
+                'locales-info'         => 'Lokaliserbara attribut exporteras en gång per valt språk. Lämna tomt för att exportera alla kanalspråk.',
+                'attributes'           => 'Attribut',
+                'attributes-info'      => 'Endast de valda attributen exporteras. Lämna tomt för att exportera alla attribut i familjen.',
+                'attribute-families'   => 'Attributfamiljer',
+                'categories'           => 'Kategorier',
+                'completeness'         => 'Fullständighet',
+                'completeness-options' => [
+                    'none'         => 'Inget villkor för fullständighet',
+                    'at-least-one' => 'Komplett på minst ett valt språk',
+                    'all'          => 'Komplett på alla valda språk',
+                ],
+                'time-condition' => 'Tidsvillkor',
+                'time-options'   => [
+                    'none'              => 'Inget datumvillkor',
+                    'last-n-days'       => 'Produkter uppdaterade de senaste N dagarna',
+                    'between-dates'     => 'Produkter uppdaterade mellan två datum',
+                    'since-last-export' => 'Produkter uppdaterade sedan senaste exporten',
+                ],
+                'time-value'     => 'Antal dagar',
+                'time-date'      => 'Startdatum',
+                'time-date-end'  => 'Slutdatum',
+                'status'         => 'Status',
+                'status-options' => [
+                    'enable'  => 'Aktiverad',
+                    'disable' => 'Inaktiverad',
+                    'all'     => 'Alla',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Identifierare',
+                'identifiers-info' => 'Klistra in ett SKU / en identifierare per rad för att endast exportera dessa produkter. Lämna tomt för att exportera alla produkter.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-suffix: \'%s\' har redan skapats för en artikel med SKU: \'%s\'.',
@@ -48,6 +151,23 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorier',
+        ],
+        'channels' => [
+            'title' => 'Kanaler',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'Alla',
+            ],
         ],
     ],
     'validation' => [

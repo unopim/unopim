@@ -89,6 +89,34 @@ return [
     [
         'key'   => 'api.catalog.products',
         'name'  => 'admin::app.acl.products',
+        'route' => 'admin.api.configurable_products.index',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.products.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.configurable_products.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.configurable_products.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.configurable_products.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.products.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.configurable_products.delete',
+        'sort'  => 3,
+    ],
+
+    // Legacy "configrable_products" (typo) prefix — kept for backward compatibility.
+    [
+        'key'   => 'api.catalog.products',
+        'name'  => 'admin::app.acl.products',
         'route' => 'admin.api.configrable_products.index',
         'sort'  => 1,
     ], [
@@ -106,6 +134,11 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.configrable_products.patch',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.products.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.configrable_products.delete',
+        'sort'  => 3,
     ],
 
     // Product media uploads — require edit permission

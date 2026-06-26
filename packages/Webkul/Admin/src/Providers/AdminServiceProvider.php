@@ -5,6 +5,7 @@ namespace Webkul\Admin\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -37,6 +38,12 @@ class AdminServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
 
         ProductProxy::observe(ProductObserver::class);
+
+        Event::listen('unopim.admin.layout.content.before', function ($viewRenderEventManager) {
+            if (auth()->guard('admin')->check()) {
+                $viewRenderEventManager->addTemplate('admin::promo.bar');
+            }
+        });
 
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -76,6 +83,11 @@ class AdminServiceProvider extends ServiceProvider
             dirname(__DIR__).'/Config/system.php',
             'core'
         );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/help.php',
+            'help'
+        );
     }
 
     /**
@@ -103,7 +115,17 @@ class AdminServiceProvider extends ServiceProvider
             $tree->items = core()->sortItems($tree->items);
             $tree->items = $tree->removeUnauthorizedUrls();
 
+            $landingUrl = null;
+
+            foreach ($tree->items as $item) {
+                if (! empty($item['url'])) {
+                    $landingUrl = $item['url'];
+                    break;
+                }
+            }
+
             $view->with('menu', $tree);
+            $view->with('adminLandingUrl', $landingUrl ?? route('admin.session.create'));
         });
 
         view()->composer([
@@ -165,6 +187,13 @@ class AdminServiceProvider extends ServiceProvider
             $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
 
             return Limit::perMinute(5)->by($key);
+        });
+
+        RateLimiter::for('admin-sso', function (Request $request) {
+            $sessionId = optional($request->session())->getId() ?: 'guest';
+            $key = $sessionId.'|'.$request->ip();
+
+            return Limit::perMinute(20)->by($key);
         });
     }
 }

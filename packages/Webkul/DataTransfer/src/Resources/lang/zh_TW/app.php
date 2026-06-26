@@ -32,10 +32,113 @@ return [
                 ],
             ],
         ],
+        'channels' => [
+            'title'      => '渠道',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => '未找到代碼為 :code 的渠道，無法刪除。',
+                    'locale-not-found'         => '一個或多個語言不存在。',
+                    'root-category-not-found'  => '根分類不存在。',
+                    'currency-not-found'       => '一個或多個貨幣不存在。',
+                    'invalid-locale'           => '語言不存在。',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
+        'export-too-large' => '此匯出過大，無法執行：預計 :rows 列 × :columns 欄（~:estimated）超出可用空間（~:available）。請選擇較少的渠道/語系（與屬性）以縮小匯出範圍，然後重試。',
+        'fields'           => [
+            'file-format'         => '檔案格式',
+            'with-media'          => '包含媒體',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => '狀態',
+            'enable'         => '啟用',
+            'all'            => '全部',
+        ],
         'products' => [
-            'title'      => '產品',
+            'title'              => '產品',
+            'invalid-locales'    => '並非所有所選語言環境都適用於所選管道。',
+            'invalid-currencies' => '並非所有所選貨幣都適用於所選管道。',
+            'filters'            => [
+                'channels'             => '管道',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => '貨幣',
+                'currencies-info'      => '價格屬性會依每個所選貨幣匯出。留空則匯出所有管道貨幣。',
+                'locales'              => '語言環境',
+                'locales-info'         => '可在地化屬性會依每個所選語言環境匯出一次。留空則匯出所有管道語言環境。',
+                'attributes'           => '屬性',
+                'attributes-info'      => '僅匯出所選屬性。留空則匯出該屬性族中的所有屬性。',
+                'attribute-families'   => '屬性族',
+                'categories'           => '類別',
+                'completeness'         => '完整度',
+                'completeness-options' => [
+                    'none'         => '無完整度條件',
+                    'at-least-one' => '在至少一個所選語言環境中完整',
+                    'all'          => '在所有所選語言環境中完整',
+                ],
+                'time-condition' => '時間條件',
+                'time-options'   => [
+                    'none'              => '無日期條件',
+                    'last-n-days'       => '過去 N 天內更新的產品',
+                    'between-dates'     => '在兩個日期之間更新的產品',
+                    'since-last-export' => '自上次匯出以來更新的產品',
+                ],
+                'time-value'     => '天數',
+                'time-date'      => '開始日期',
+                'time-date-end'  => '結束日期',
+                'status'         => '狀態',
+                'status-options' => [
+                    'enable'  => '啟用',
+                    'disable' => '停用',
+                    'all'     => '全部',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => '識別碼',
+                'identifiers-info' => '每行貼上一個 SKU / 識別碼，僅匯出這些產品。留空則匯出所有產品。',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL 鍵: \'%s\' 已經為 SKU: \'%s\' 的項目生成。',
@@ -48,6 +151,23 @@ return [
         ],
         'categories' => [
             'title' => '分類',
+        ],
+        'channels' => [
+            'title' => '渠道',
+        ],
+        'currencies' => [
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => '狀態',
+                'active' => 'Active',
+                'all'    => '全部',
+            ],
         ],
     ],
     'validation' => [

@@ -4,11 +4,13 @@ namespace Webkul\Webhook\Services;
 
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Webkul\Product\Contracts\Product;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Webhook\Helpers\ProductComparer;
 use Webkul\Webhook\Repositories\LogsRepository;
 use Webkul\Webhook\Repositories\SettingsRepository;
+use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 /**
  * Service responsible for sending product data to an external webhook and storing logs.
@@ -53,14 +55,24 @@ class WebhookService
         ];
 
         try {
-            $response = Http::post($webhookUrl, $webhookData);
+            $safety = SafeWebhookUrl::validate($webhookUrl);
+            if (! $safety['valid']) {
+                Log::warning('Webhook dispatch blocked — unsafe URL', [
+                    'reason' => $safety['reason'],
+                    'ip'     => $safety['ip'] ?? null,
+                ]);
+
+                return null;
+            }
+
+            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhookUrl))->post($webhookUrl, $webhookData);
         } catch (\Exception $e) {
             $response = null;
 
             report($e);
         }
 
-        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e));
+        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e), $webhookData);
 
         return $response;
     }
@@ -99,14 +111,24 @@ class WebhookService
         ];
 
         try {
-            $response = Http::post($webhookUrl, $webhookData);
+            $safety = SafeWebhookUrl::validate($webhookUrl);
+            if (! $safety['valid']) {
+                Log::warning('Webhook dispatch blocked — unsafe URL', [
+                    'reason' => $safety['reason'],
+                    'ip'     => $safety['ip'] ?? null,
+                ]);
+
+                return null;
+            }
+
+            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhookUrl))->post($webhookUrl, $webhookData);
         } catch (\Exception $e) {
             $response = null;
 
             report($e);
         }
 
-        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e));
+        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e), $webhookData);
 
         return $response;
     }
@@ -183,7 +205,17 @@ class WebhookService
         ];
 
         try {
-            $response = Http::post($webhookUrl, $normalized);
+            $safety = SafeWebhookUrl::validate($webhookUrl);
+            if (! $safety['valid']) {
+                Log::warning('Webhook dispatch blocked — unsafe URL', [
+                    'reason' => $safety['reason'],
+                    'ip'     => $safety['ip'] ?? null,
+                ]);
+
+                return null;
+            }
+
+            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhookUrl))->post($webhookUrl, $normalized, $webhookData);
         } catch (\Exception $e) {
             $response = null;
 
@@ -192,12 +224,12 @@ class WebhookService
 
         $status = $response?->successful() ? 1 : 0;
 
-        $this->storeBatchLogs($products, $status, $this->normalizeResponseForLog($response ?? $e));
+        $this->storeBatchLogs($products, $status, $this->normalizeResponseForLog($response ?? $e), $webhookData);
 
         return $response;
     }
 
-    protected function storeLogs(string $code, int $status, $response = null): void
+    protected function storeLogs(string $code, int $status, $response = null, array $payload = []): void
     {
         $admin = auth('admin')->user()
             ?? auth('api')->user()
@@ -214,13 +246,13 @@ class WebhookService
             'user'   => $adminName,
             'sku'    => $code,
             'status' => $status,
-            'extra'  => ['response' => $response],
+            'extra'  => ['payload' => $payload, 'response' => $response],
         ];
 
         $this->logsRepository->create($data);
     }
 
-    protected function storeBatchLogs($products, int $status, $response = null): void
+    protected function storeBatchLogs($products, int $status, $response = null, array $payload = []): void
     {
         $admin = auth('admin')->user()
             ?? auth('api')->user()
@@ -234,7 +266,7 @@ class WebhookService
                 'user'   => $adminName ?? null,
                 'sku'    => $product->sku ?? ($product['sku'] ?? null),
                 'status' => $status,
-                'extra'  => ['response' => $response],
+                'extra'  => ['payload' => $payload, 'response' => $response],
             ];
 
             $this->logsRepository->create($data);
@@ -308,6 +340,16 @@ class WebhookService
         $newRaw = $latestChanges->new_values ?? [];
 
         $diff = ProductComparer::compare($oldRaw, $newRaw);
+
+        if ($latestChanges->event === 'created') {
+            $product->refresh();
+
+            $diff['added']['sku'] = $product->sku;
+            $diff['added']['type'] = $product->type;
+            $diff['added']['status'] = (bool) $product->status;
+
+            return $diff;
+        }
 
         if (! empty($diff['added']) || ! empty($diff['removed']) || ! empty($diff['changed'])) {
             return $diff;

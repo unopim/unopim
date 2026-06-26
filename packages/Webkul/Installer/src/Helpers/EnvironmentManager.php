@@ -73,14 +73,51 @@ class EnvironmentManager
             $envDBParams['APP_TIMEZONE'] = $request['app_timezone'];
         }
 
+        /**
+         * Elasticsearch — mirror the CLI installer: only persist the connection
+         * details when enabled, and only the keys relevant to the chosen type.
+         */
+        if (isset($request['elasticsearch_enabled'])) {
+            $esEnabled = $request['elasticsearch_enabled'] === 'yes';
+
+            $envDBParams['ELASTICSEARCH_ENABLED'] = $esEnabled ? 'true' : 'false';
+
+            if ($esEnabled) {
+                $connection = $request['elasticsearch_connection'] ?? 'default';
+
+                $envDBParams['ELASTICSEARCH_CONNECTION'] = $connection;
+
+                if ($connection === 'cloud') {
+                    $envDBParams['ELASTICSEARCH_CLOUD_ID'] = $request['elasticsearch_cloud_id'] ?? '';
+                } else {
+                    $envDBParams['ELASTICSEARCH_HOST'] = $request['elasticsearch_host'] ?? '';
+                    $envDBParams['ELASTICSEARCH_USER'] = $request['elasticsearch_user'] ?? '';
+                    $envDBParams['ELASTICSEARCH_PASS'] = $request['elasticsearch_pass'] ?? '';
+
+                    if ($connection === 'api') {
+                        $envDBParams['ELASTICSEARCH_API_KEY'] = $request['elasticsearch_api_key'] ?? '';
+                    }
+                }
+
+                $envDBParams['ELASTICSEARCH_INDEX_PREFIX'] = $request['elasticsearch_index_prefix'] ?? '';
+            }
+        }
+
         $data = file_get_contents(base_path('.env'));
 
         foreach ($envDBParams as $key => $value) {
+            $value = (string) $value;
+
             if (preg_match('/\s/', $value)) {
                 $value = '"'.$value.'"';
             }
 
-            $data = preg_replace("/$key=(.*)/", "$key=$value", $data);
+            // Use a callback so "$" in values (e.g. passwords) is not read as a backreference.
+            if (preg_match("/^{$key}=.*/m", $data)) {
+                $data = preg_replace_callback("/^{$key}=.*/m", fn () => "{$key}={$value}", $data);
+            } else {
+                $data = rtrim($data, "\r\n").PHP_EOL."{$key}={$value}".PHP_EOL;
+            }
         }
 
         try {

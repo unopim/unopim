@@ -6,14 +6,15 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 use Webkul\Core\ElasticSearch;
-use Webkul\Installer\Database\Seeders\CategoryDemoTableSeeder;
+use Webkul\Installer\Console\Prompts\PreselectedSearchValue;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
-use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
-use Webkul\Installer\Database\Seeders\ProductTableSeeder;
 use Webkul\Installer\Events\ComposerEvents;
+use Webkul\Installer\Helpers\DemoDataInstaller;
 
-use function Laravel\Prompts\multiselect;
+use function Laravel\Prompts\multisearch;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
@@ -28,7 +29,8 @@ class Installer extends Command
     protected $signature = 'unopim:install
         { --skip-env-check : Skip env check. }
         { --skip-admin-creation : Skip admin creation. }
-        { --with-demo-data : Seed sample products and demo data. }';
+        { --with-demo-data : Seed sample products and demo data. }
+        { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }';
 
     /**
      * The console command description.
@@ -48,12 +50,14 @@ class Installer extends Command
         'da_DK' => 'Danish (Denmark)',
         'de_DE' => 'German (Germany)',
         'en_AU' => 'English (Australia)',
+        'en_CA' => 'English (Canada)',
         'en_GB' => 'English (United Kingdom)',
         'en_NZ' => 'English (New Zealand)',
         'en_US' => 'English (United States)',
         'es_ES' => 'Spanish (Spain)',
         'es_VE' => 'Spanish (Venezuela)',
         'fi_FI' => 'Finnish (Finland)',
+        'fr_CA' => 'French (Canada)',
         'fr_FR' => 'French (France)',
         'hi_IN' => 'Hindi (India)',
         'hr_HR' => 'Croatian (Croatia)',
@@ -82,6 +86,7 @@ class Installer extends Command
      * @var array
      */
     protected $currencies = [
+        'CAD' => 'Canadian Dollar',
         'CNY' => 'Chinese Yuan',
         'AED' => 'Dirham',
         'EUR' => 'Euro',
@@ -95,6 +100,33 @@ class Installer extends Command
         'TRY' => 'Turkish Lira',
         'USD' => 'US Dollar',
         'UAH' => 'Ukrainian Hryvnia',
+    ];
+
+    /**
+     * Optional open-source add-on packages the installer can pull in.
+     *
+     * Each entry maps a short key to its Composer package name, a human label
+     * for the selection prompt, and the artisan command that performs the
+     * package's own setup (migrations, config publish, etc.).
+     *
+     * @var array<string, array{composer: string, label: string, install: string}>
+     */
+    protected $optionalPackages = [
+        'dam' => [
+            'composer' => 'unopim/dam',
+            'label'    => 'Digital Asset Management (DAM)',
+            'install'  => 'dam-package:install',
+        ],
+        'shopify' => [
+            'composer' => 'unopim/shopify-connector',
+            'label'    => 'Shopify Connector',
+            'install'  => 'shopify-package:install',
+        ],
+        'bagisto' => [
+            'composer' => 'unopim/bagisto-connector',
+            'label'    => 'Bagisto Connector',
+            'install'  => 'bagisto-package:install',
+        ],
     ];
 
     /**
@@ -150,6 +182,14 @@ class Installer extends Command
         $this->warn('Step: Clearing cached bootstrap files...');
         $this->call('optimize:clear');
 
+        /**
+         * Resolve the optional-package selection up front, while the console is
+         * still interactive. Demo-data seeding runs Artisan::call() internally,
+         * which flips the input to non-interactive, so prompting afterwards
+         * would silently skip the multiselect.
+         */
+        $selectedPackages = $this->resolveSelectedPackages();
+
         if (! $this->option('skip-admin-creation')) {
             $this->warn('Step: Create admin credentials...');
             $this->createAdminCredentials();
@@ -159,7 +199,232 @@ class Installer extends Command
             $this->seedSampleProducts();
         }
 
+        $this->installOptionalPackages($selectedPackages);
+
+        $this->markInstalled();
+
         ComposerEvents::postCreateProject();
+
+        $this->renderCloudHostingBanner();
+    }
+
+    /**
+     * Resolve which optional packages to install.
+     *
+     * Priority: the `--with-packages` option (comma-separated) when provided,
+     * otherwise an interactive multiselect prompt. With no option in a
+     * non-interactive run nothing is installed — this keeps headless/CI
+     * installs (e.g. `--skip-admin-creation`) from blocking on a prompt.
+     *
+     * @return array<int, string>
+     */
+    protected function resolveSelectedPackages(): array
+    {
+        $option = $this->option('with-packages');
+
+        if ($option !== null && $option !== '') {
+            $keys = array_filter(array_map('trim', explode(',', $option)));
+        } elseif ($this->hasInteractiveTerminal()) {
+            $keys = multiselect(
+                label: 'Select optional packages to install',
+                options: array_map(fn ($package) => $package['label'], $this->optionalPackages),
+                hint: 'Use the space bar to toggle, enter to confirm. Leave empty to skip.',
+            );
+        } else {
+            $keys = [];
+        }
+
+        $selected = [];
+
+        foreach ($keys as $key) {
+            if (isset($this->optionalPackages[$key])) {
+                $selected[] = $key;
+            } else {
+                $this->warn("Skipping unknown package: {$key}");
+            }
+        }
+
+        return array_values(array_unique($selected));
+    }
+
+    /**
+     * Whether the command is attached to a real interactive terminal.
+     *
+     * `$this->input->isInteractive()` is unreliable on some CI runners (it can
+     * report true with no STDIN attached), so a prompt shown on its basis
+     * aborts when reading hits EOF. Checking STDIN for a TTY is order- and
+     * runner-independent, so headless installs never block on the prompt.
+     */
+    protected function hasInteractiveTerminal(): bool
+    {
+        return $this->input->isInteractive()
+            && defined('STDIN')
+            && function_exists('stream_isatty')
+            && @stream_isatty(STDIN);
+    }
+
+    /**
+     * Install the selected optional packages.
+     *
+     * Each package is pulled in with `composer require` and then set up by its
+     * own artisan installer, spawned as a fresh process so the newly required
+     * service provider is discovered (a same-process call would not see it).
+     * A failure for one package is reported with manual instructions and never
+     * aborts the core install.
+     *
+     * @param  array<int, string>  $keys
+     */
+    protected function installOptionalPackages(array $keys): void
+    {
+        if (empty($keys)) {
+            return;
+        }
+
+        $artisan = [PHP_BINARY, base_path('artisan')];
+
+        /**
+         * The spawned artisan processes inherit this shell's environment, where
+         * stray DB_* vars (e.g. a test runner's unopim_test creds) would shadow
+         * the .env and break the package's migrations. Pin the child processes
+         * to the database connection the installer already resolved.
+         */
+        $dbEnv = $this->resolvedDatabaseEnv();
+
+        foreach ($keys as $key) {
+            $package = $this->optionalPackages[$key];
+
+            $this->warn("Step: Installing optional package [{$package['label']}]...");
+
+            try {
+                $this->runProcess(['composer', 'require', $package['composer']], $dbEnv);
+
+                /**
+                 * Clear cached config/providers so the freshly required package
+                 * is discovered before — and after its setup is registered —
+                 * the install command runs in this fresh process.
+                 */
+                $this->runProcess([...$artisan, 'optimize:clear'], $dbEnv);
+
+                $this->runProcess([...$artisan, $package['install'], '--no-interaction'], $dbEnv);
+
+                $this->runProcess([...$artisan, 'optimize:clear'], $dbEnv);
+
+                /**
+                 * Signal running queue workers to restart so they boot with the
+                 * newly installed package's code and jobs instead of the stale
+                 * worker image that predates the package.
+                 */
+                $this->runProcess([...$artisan, 'queue:restart'], $dbEnv);
+
+                $this->info("{$package['label']} installed successfully.");
+            } catch (\Throwable $e) {
+                $this->error("Failed to install {$package['label']}: {$e->getMessage()}");
+                $this->warn('You can install it manually later by running:');
+                $this->line("  composer require {$package['composer']}");
+                $this->line("  php artisan {$package['install']}");
+                $this->line('  php artisan optimize:clear');
+                $this->line('  php artisan queue:restart');
+            }
+        }
+    }
+
+    /**
+     * Build the database environment the spawned processes must use, taken from
+     * the connection the installer already resolved (config), so they never
+     * fall back to stray DB_* vars present in the parent shell.
+     *
+     * @return array<string, string>
+     */
+    protected function resolvedDatabaseEnv(): array
+    {
+        $connection = config('database.default');
+
+        return [
+            'DB_CONNECTION' => (string) $connection,
+            'DB_HOST'       => (string) config("database.connections.{$connection}.host"),
+            'DB_PORT'       => (string) config("database.connections.{$connection}.port"),
+            'DB_DATABASE'   => (string) config("database.connections.{$connection}.database"),
+            'DB_USERNAME'   => (string) config("database.connections.{$connection}.username"),
+            'DB_PASSWORD'   => (string) config("database.connections.{$connection}.password"),
+            'DB_PREFIX'     => (string) config("database.connections.{$connection}.prefix"),
+        ];
+    }
+
+    /**
+     * Run a shell command from the project root and stream its output.
+     *
+     * @param  array<int, string>  $command
+     * @param  array<string, string>  $env  Environment overrides merged onto the inherited shell env.
+     *
+     * @throws ProcessFailedException
+     */
+    protected function runProcess(array $command, array $env = []): void
+    {
+        $process = new Process($command, base_path(), $env ?: null);
+
+        $process->setTimeout(null);
+
+        $process->run(function ($type, $buffer) {
+            $this->output->write($buffer);
+        });
+
+        if (! $process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+    }
+
+    /**
+     * Print the UnoPim cloud hosting promotional banner.
+     */
+    protected function renderCloudHostingBanner(): void
+    {
+        $url = 'https://unopim.com/cloud-hosting/';
+
+        $width = 72;
+
+        /**
+         * Render one full-width line as a solid colored block so the banner
+         * stands out from the surrounding monochrome install log. Padding is
+         * measured with mb_strlen so multibyte glyphs stay aligned.
+         */
+        $row = function (string $text, string $style) use ($width): void {
+            $body = '  '.$text.str_repeat(' ', max(1, $width - 2 - mb_strlen($text)));
+
+            $this->line('  <'.$style.'>'.$body.'</>');
+        };
+
+        $base = 'bg=blue;fg=white';
+
+        $this->newLine();
+        $row('', $base);
+        $row('★  UNOPIM CLOUD HOSTING', 'bg=blue;fg=bright-yellow;options=bold');
+        $row('', $base);
+        $row('Skip the server setup — run UnoPim on fast, secure,', $base);
+        $row('cost-effective managed hosting that scales on demand.', $base);
+        $row('Launch in minutes, without the infrastructure overhead.', $base);
+        $row('', $base);
+        $row('→  '.$url, 'bg=blue;fg=bright-cyan;options=bold');
+        $row('', $base);
+        $this->newLine();
+    }
+
+    /**
+     * Write the completion marker that seals the installer.
+     *
+     * Once `storage/installed` exists, the `CanInstall` middleware redirects
+     * every `/install` request and the installer controller's guard blocks the
+     * api endpoints. Guarded so the marker is written — and `unopim.installed`
+     * dispatched — exactly once, no matter which install steps ran.
+     */
+    protected function markInstalled(): void
+    {
+        if (file_exists(storage_path('installed'))) {
+            return;
+        }
+
+        File::put(storage_path('installed'), 'UnoPim installation completed successfully');
+
+        Event::dispatch('unopim.installed');
     }
 
     /**
@@ -281,36 +546,64 @@ class Installer extends Command
             'DB_HOST'       => text(
                 label: 'Please enter the database host',
                 default: env('DB_HOST') ?? '127.0.0.1',
-                required: true
+                required: true,
+                validate: fn (string $value) => preg_match('/\s/', trim($value))
+                    ? 'The database host cannot contain whitespace.'
+                    : null,
+                transform: trim(...),
             ),
 
             'DB_PORT'       => text(
                 label: 'Please enter the database port',
                 default: env('DB_PORT') ?? '3306',
-                required: true
+                required: true,
+                validate: fn (string $value) => ctype_digit(trim($value))
+                    ? null
+                    : 'The database port must be numeric.',
+                transform: trim(...),
             ),
 
             'DB_DATABASE' => text(
                 label: 'Please enter the database name',
                 default: env('DB_DATABASE') ?? '',
-                required: true
+                required: true,
+                validate: function (string $value): ?string {
+                    $trimmed = trim($value);
+
+                    return match (true) {
+                        $trimmed === ''                                 => 'The database name is required.',
+                        (bool) preg_match('/[^A-Za-z0-9_]/', $trimmed)  => 'The database name can only contain letters, numbers, and underscores. Characters like dots, dashes, and spaces are not allowed because they break SQL identifier quoting.',
+                        default                                         => null,
+                    };
+                },
+                transform: trim(...),
             ),
 
             'DB_PREFIX' => text(
                 label: 'Please enter the database prefix',
                 default: env('DB_PREFIX') ?? '',
-                validate: fn (string $value) => match (true) {
-                    strlen($value) > 4                     => 'The database prefix should not exceed 4 characters.',
-                    preg_match('/[^a-zA-Z0-9_]/', $value)  => 'The database prefix can only contain letters, numbers, and underscores.',
-                    default                                => null
+                validate: function (string $value): ?string {
+                    $trimmed = trim($value);
+
+                    return match (true) {
+                        (bool) preg_match('/\s/', $trimmed)             => 'The database prefix cannot contain spaces.',
+                        strlen($trimmed) > 4                            => 'The database prefix should not exceed 4 characters.',
+                        (bool) preg_match('/[^a-zA-Z0-9_]/', $trimmed)  => 'The database prefix can only contain letters, numbers, and underscores.',
+                        default                                         => null,
+                    };
                 },
-                hint: 'or press enter to continue'
+                transform: trim(...),
+                hint: 'or press enter to continue (leave empty to clear)'
             ),
 
             'DB_USERNAME' => text(
                 label: 'Please enter your database username',
                 default: env('DB_USERNAME') ?? '',
-                required: true
+                required: true,
+                validate: fn (string $value) => preg_match('/\s/', trim($value))
+                    ? 'The database username cannot contain whitespace.'
+                    : null,
+                transform: trim(...),
             ),
 
             'DB_PASSWORD' => password(
@@ -319,16 +612,20 @@ class Installer extends Command
             ),
         ];
 
+        foreach (['DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_PREFIX', 'DB_USERNAME'] as $trimKey) {
+            $databaseDetails[$trimKey] = trim((string) ($databaseDetails[$trimKey] ?? ''));
+        }
+
         if (
-            ! $databaseDetails['DB_DATABASE']
-            || ! $databaseDetails['DB_USERNAME']
-            || ! $databaseDetails['DB_PASSWORD']
+            $databaseDetails['DB_DATABASE'] === ''
+            || $databaseDetails['DB_USERNAME'] === ''
+            || $databaseDetails['DB_PASSWORD'] === ''
         ) {
             return $this->error('Please enter the database credentials.');
         }
 
         foreach ($databaseDetails as $key => $value) {
-            if ($value) {
+            if ($value || $key === 'DB_PREFIX') {
                 $this->envUpdate($key, $value);
             }
         }
@@ -364,19 +661,22 @@ class Installer extends Command
         if ($connectionType === 'cloud') {
             $cloudId = text(
                 label: 'Please enter your Elasticsearch Cloud ID',
-                default: env('ELASTICSEARCH_CLOUD_ID') ?? ''
+                default: env('ELASTICSEARCH_CLOUD_ID') ?? '',
+                transform: trim(...),
             );
             $this->envUpdate('ELASTICSEARCH_CLOUD_ID', $cloudId);
         } else {
             $host = text(
                 label: 'Please enter the Elasticsearch host',
-                default: env('ELASTICSEARCH_HOST') ?? '127.0.0.1:9200'
+                default: env('ELASTICSEARCH_HOST') ?? '127.0.0.1:9200',
+                transform: trim(...),
             );
             $this->envUpdate('ELASTICSEARCH_HOST', $host);
 
             $user = text(
                 label: 'Please enter the Elasticsearch user',
-                default: env('ELASTICSEARCH_USER') ?? ''
+                default: env('ELASTICSEARCH_USER') ?? '',
+                transform: trim(...),
             );
             $this->envUpdate('ELASTICSEARCH_USER', $user);
 
@@ -388,7 +688,8 @@ class Installer extends Command
             if ($connectionType === 'api') {
                 $apiKey = text(
                     label: 'Please enter the Elasticsearch API key',
-                    default: env('ELASTICSEARCH_API_KEY') ?? ''
+                    default: env('ELASTICSEARCH_API_KEY') ?? '',
+                    transform: trim(...),
                 );
                 $this->envUpdate('ELASTICSEARCH_API_KEY', $apiKey);
             }
@@ -396,7 +697,8 @@ class Installer extends Command
 
         $indexPrefix = text(
             label: 'Please enter your Elasticsearch Index Prefix',
-            default: env('ELASTICSEARCH_INDEX_PREFIX') ?? ''
+            default: env('ELASTICSEARCH_INDEX_PREFIX') ?? '',
+            transform: trim(...),
         );
 
         $this->envUpdate('ELASTICSEARCH_INDEX_PREFIX', $indexPrefix);
@@ -412,17 +714,18 @@ class Installer extends Command
         $adminName = text(
             label: 'Set the Name for Administrator',
             default  : 'Example',
-            required: true
+            required: true,
+            transform: trim(...),
         );
 
         $adminEmail = text(
             label: 'Provide Email of Administrator',
             default  : 'admin@example.com',
             validate: fn (string $value) => match (true) {
-                ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'The email address you entered is not valid please try again.',
-                ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'The provided email is invalid, kindly enter a valid email address.',
-                default                                     => null
-            }
+                ! filter_var(trim($value), FILTER_VALIDATE_EMAIL) => 'The email address you entered is not valid please try again.',
+                default                                           => null
+            },
+            transform: trim(...),
         );
 
         $adminPassword = password(
@@ -451,14 +754,24 @@ class Installer extends Command
                     'password' => $password,
                     'role_id'  => 1,
                     'status'   => 1,
+                    'timezone' => config('app.timezone') ?: 'UTC',
                 ]
             );
 
-            if (select(
-                label: 'Do you want sample products?',
-                options: ['yes', 'no'],
-                default: 'no'
-            ) === 'yes') {
+            /**
+             * Skip the prompt when --with-demo-data was passed (handle() seeds
+             * once) or when running non-interactively, so a scripted install
+             * never blocks here or double-seeds.
+             */
+            if (
+                ! $this->option('with-demo-data')
+                && $this->hasInteractiveTerminal()
+                && select(
+                    label: 'Do you want sample products?',
+                    options: ['yes', 'no'],
+                    default: 'no'
+                ) === 'yes'
+            ) {
                 $this->seedSampleProducts();
             }
 
@@ -482,49 +795,13 @@ class Installer extends Command
 
     protected function seedSampleProducts(): void
     {
-        try {
-            $this->warn('Step: Seeding demo extras (channels, attributes, families, core config, ...)...');
-            app(DemoExtrasTableSeeder::class)->run();
+        $result = app(DemoDataInstaller::class)
+            ->seed(fn (string $message) => $this->warn('Step: '.$message));
 
-            $this->warn('Step: Seeding demo categories...');
-            app(CategoryDemoTableSeeder::class)->run();
-
-            $this->warn('Step: Seeding sample products...');
-            app(ProductTableSeeder::class)->run();
-
+        if ($result['success']) {
             $this->info('Sample products seeded successfully.');
-
-            if (config('elasticsearch.enabled') == 'true') {
-                $this->warn('Step: Re-indexing categories to Elasticsearch...');
-                $this->call('unopim:category:index');
-
-                $this->warn('Step: Re-indexing products to Elasticsearch...');
-                $this->call('unopim:product:index');
-            }
-
-            $this->warn('Step: Recalculating product completeness...');
-            $this->recalculateCompleteness();
-        } catch (\Exception $e) {
-            $this->error("Failed to seed sample products: {$e->getMessage()}");
-        }
-    }
-
-    /**
-     * Recalculate product completeness synchronously. The
-     * `unopim:completeness:recalculate` command dispatches queue jobs, so
-     * we temporarily force the sync driver to guarantee the jobs run
-     * before the installer finishes.
-     */
-    protected function recalculateCompleteness(): void
-    {
-        $originalDefault = config('queue.default');
-
-        try {
-            config(['queue.default' => 'sync']);
-
-            $this->call('unopim:completeness:recalculate', ['--all' => true]);
-        } finally {
-            config(['queue.default' => $originalDefault]);
+        } else {
+            $this->error("Failed to seed sample products: {$result['error']}");
         }
     }
 
@@ -608,10 +885,11 @@ class Installer extends Command
         $input = text(
             label: $question,
             default: $defaultValue,
-            required: true
+            required: true,
+            transform: trim(...),
         );
 
-        $this->envUpdate($key, $input ?: $defaultValue);
+        $this->envUpdate($key, $input === '' ? $defaultValue : $input);
     }
 
     /**
@@ -621,11 +899,18 @@ class Installer extends Command
      */
     protected function updateEnvChoice(string $key, string $question, array $choices)
     {
-        $choice = select(
+        $default = $this->getEnvChoiceDefault($key, $choices);
+
+        $choice = (new PreselectedSearchValue(
             label: $question,
-            options: $choices,
-            default: env($key)
-        );
+            options: fn (string $value) => $this->filterChoices($choices, $value),
+            placeholder: 'Type to search...',
+            scroll: 10,
+            hint: $default !== null
+                ? 'Press Enter to keep the current value, or Backspace to clear it and search.'
+                : '',
+            defaultValue: $default,
+        ))->prompt();
 
         $this->envUpdate($key, $choice);
 
@@ -633,27 +918,66 @@ class Installer extends Command
     }
 
     /**
+     * Get the current `.env` value to pre-select, or null when it is missing or
+     * no longer one of the available options.
+     */
+    protected function getEnvChoiceDefault(string $key, array $choices): ?string
+    {
+        $current = $this->getEnvAtRuntime($key);
+
+        if (! is_string($current) || $current === '') {
+            return null;
+        }
+
+        $current = trim($current, "\"'");
+
+        return array_key_exists($current, $choices) ? $current : null;
+    }
+
+    /**
      * Function for getting allowed choices based on the list of options.
      */
     protected function allowedChoice(string $question, array $choices)
     {
-        $selectedValues = multiselect(
+        $selectedKeys = multisearch(
             label: $question,
-            options: array_values($choices),
+            options: fn (string $value) => $this->filterChoices($choices, $value),
+            placeholder: 'Type to search...',
+            scroll: 10,
+            hint: 'Use the space bar to select options.',
         );
 
         $selectedChoices = [];
 
-        foreach ($selectedValues as $selectedValue) {
-            foreach ($choices as $key => $value) {
-                if ($selectedValue === $value) {
-                    $selectedChoices[$key] = $value;
-                    break;
-                }
+        foreach ($selectedKeys as $selectedKey) {
+            if (isset($choices[$selectedKey])) {
+                $selectedChoices[$selectedKey] = $choices[$selectedKey];
             }
         }
 
         return $selectedChoices;
+    }
+
+    /**
+     * Filter the given choices by the user's search query.
+     *
+     * Matches against both the option key (e.g. "en_US", "USD") and the
+     * human-readable label (e.g. "English (United States)", "US Dollar").
+     */
+    protected function filterChoices(array $choices, string $value): array
+    {
+        $value = strtolower(trim($value));
+
+        if ($value === '') {
+            return $choices;
+        }
+
+        return array_filter(
+            $choices,
+            fn (string $label, string $key) => str_contains(strtolower($label), $value)
+                || str_contains(strtolower($key), $value),
+            ARRAY_FILTER_USE_BOTH
+        );
     }
 
     /**

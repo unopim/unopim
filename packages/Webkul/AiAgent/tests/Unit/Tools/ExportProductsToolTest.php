@@ -17,7 +17,7 @@ describe('ExportProducts tool XLSX support (Issue #684)', function () {
             base_path('packages/Webkul/AiAgent/src/Chat/Tools/ExportProducts.php')
         );
 
-        expect($source)->toContain("->withEnumParameter('format'");
+        expect($source)->toMatch('/\'format\'\s+=>\s+\$schema->string\(\)/');
         expect($source)->toContain("'csv', 'xlsx'");
     });
 
@@ -63,7 +63,7 @@ describe('ExportProducts tool XLSX support (Issue #684)', function () {
 
         // The tool should branch on format
         expect($source)->toContain("if (\$format === 'xlsx')");
-        expect($source)->toContain('$this->writeXlsx($relativePath, $rows)');
-        expect($source)->toContain('$this->writeCsv($relativePath, $rows)');
+        expect($source)->toContain('$this->outer->writeXlsx($relativePath, $rows)');
+        expect($source)->toContain('$this->outer->writeCsv($relativePath, $rows)');
     });
 });

@@ -179,6 +179,64 @@ it('excludes a specific category from child results', function () {
     expect($childIds)->toContain($child2->id);
 });
 
+it('paginates a parent\'s child categories and flags when more remain', function () {
+    $root = Category::whereIsRoot()->first();
+    $parent = Category::factory()->create(['parent_id' => $root->id]);
+
+    collect(range(1, 5))->each(fn () => Category::factory()->create(['parent_id' => $parent->id]));
+
+    $page = $this->categoryRepository->getChildCategoriesPaginated($parent->id, 0, 1, 2);
+
+    expect($page['total'])->toBe(5);
+    expect($page['data'])->toHaveCount(2);
+    expect($page['has_more'])->toBeTrue();
+    expect($page['page'])->toBe(1);
+});
+
+it('returns the final page of child categories with has_more false', function () {
+    $root = Category::whereIsRoot()->first();
+    $parent = Category::factory()->create(['parent_id' => $root->id]);
+
+    collect(range(1, 5))->each(fn () => Category::factory()->create(['parent_id' => $parent->id]));
+
+    $page = $this->categoryRepository->getChildCategoriesPaginated($parent->id, 0, 3, 2);
+
+    expect($page['data'])->toHaveCount(1);
+    expect($page['has_more'])->toBeFalse();
+});
+
+it('does not overlap items across paginated child pages', function () {
+    $root = Category::whereIsRoot()->first();
+    $parent = Category::factory()->create(['parent_id' => $root->id]);
+
+    collect(range(1, 4))->each(fn () => Category::factory()->create(['parent_id' => $parent->id]));
+
+    $page1 = $this->categoryRepository->getChildCategoriesPaginated($parent->id, 0, 1, 2);
+    $page2 = $this->categoryRepository->getChildCategoriesPaginated($parent->id, 0, 2, 2);
+
+    $ids1 = collect($page1['data'])->pluck('id');
+    $ids2 = collect($page2['data'])->pluck('id');
+
+    expect($ids1->intersect($ids2))->toHaveCount(0);
+    expect($ids1->merge($ids2)->unique())->toHaveCount(4);
+});
+
+it('excludes a specific category from paginated child results', function () {
+    $root = Category::whereIsRoot()->first();
+    $parent = Category::factory()->create(['parent_id' => $root->id]);
+
+    $child1 = Category::factory()->create(['parent_id' => $parent->id]);
+    $child2 = Category::factory()->create(['parent_id' => $parent->id]);
+
+    $result = $this->categoryRepository->getChildCategoriesPaginated($parent->id, $child1->id, 1, 10);
+
+    $ids = collect($result['data'])->pluck('id')->toArray();
+
+    expect($ids)->not->toContain($child1->id);
+    expect($ids)->toContain($child2->id);
+    expect($result['total'])->toBe(1);
+});
+
 it('returns expected structure from getPartial', function () {
     $category = Category::factory()->create();
 
