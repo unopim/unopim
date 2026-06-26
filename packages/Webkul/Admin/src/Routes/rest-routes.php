@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\DashboardController;
 use Webkul\Admin\Http\Controllers\DataGridController;
+use Webkul\Admin\Http\Controllers\HelpController;
 use Webkul\Admin\Http\Controllers\MagicAI\MagicAIController;
 use Webkul\Admin\Http\Controllers\MagicAI\MagicAIPlatformController;
 use Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController;
@@ -24,6 +25,15 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::get('', 'index')->name('admin.dashboard.index');
 
         Route::get('stats', 'stats')->name('admin.dashboard.stats');
+    });
+
+    /**
+     * Help routes.
+     */
+    Route::controller(HelpController::class)->prefix('help')->group(function () {
+        Route::get('', 'index')->name('admin.help.index');
+
+        Route::post('promo/dismiss', 'dismissPromo')->name('admin.help.promo.dismiss');
     });
 
     /**

@@ -1979,6 +1979,7 @@ return [
                 'integrations'       => 'Integraatiot',
                 'prompt'             => 'Kehote',
                 'general-tab'        => 'Määritys',
+                'help'               => 'Ohje',
             ],
         ],
         'datagrid' => [
@@ -2191,6 +2192,63 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Ohje & Resurssit',
+            'subtitle'  => 'Kaikki mitä tarvitset saadaksesi parhaan hyödyn UnoPimistä — hosting, tuki ja ammattilaispalvelut sekä laajennukset ja kehittäjädokumentaatio.',
+            'services'  => 'Palvelut',
+            'resources' => 'Resurssit & Dokumentaatio',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Pilvihosting',
+                'description' => 'Kustannustehokas, hallinnoitu pilvihosting — kokeile ja julkaise UnoPim pilvessä muutamassa minuutissa, täysin optimoituna ja skaalautuvana.',
+            ],
+            'support' => [
+                'title'       => 'Tuki & Ylläpito',
+                'description' => 'Omistautunut tekninen tuki ja jatkuvat ylläpitosopimukset, jotka pitävät PIM-järjestelmäsi turvallisena, päivitettynä ja sujuvasti toimivana.',
+            ],
+            'services' => [
+                'title'       => 'Maksulliset palvelut',
+                'description' => 'Asiantuntija-apua moduulien integrointiin, mukauttamiseen, datan migraatioon, versiopäivityksiin ja räätälöityyn kehitykseen.',
+            ],
+            'extensions' => [
+                'title'       => 'Laajennukset',
+                'description' => 'Selaa virallisia ja yhteisön lisäosia laajentaaksesi UnoPimiä uusilla liittimillä, kanavilla ja ominaisuuksilla.',
+            ],
+            'user-guide' => [
+                'title'       => 'Käyttöopas',
+                'description' => 'Kehittäjäoppaita, ohjeita ja uusimmat artikkelit, jotka auttavat sinua rakentamaan, määrittämään ja pysymään ajan tasalla.',
+            ],
+            'api-docs' => [
+                'title'       => 'API-dokumentaatio',
+                'description' => 'Täydellinen REST API -viite, jossa on päätepisteet, todennus ja esimerkit UnoPimin integroimiseksi ympäristöösi.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Tarvitsetko vielä apua?',
+            'sub'    => 'Keskustele UnoPim-tiimin kanssa hostingista, räätälöidystä kehityksestä tai mistä tahansa muusta.',
+            'button' => 'Ota yhteyttä',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Pilvihosting',
+                'message' => 'Julkaise UnoPim täysin hallinnoidussa pilvihostingissa — <b>nopeat, turvalliset ja kustannustehokkaat paketit.</b>',
+                'cta'     => 'Näytä paketit',
+            ],
+            'upgrade' => [
+                'tag'     => 'Päivitys saatavilla',
+                'message' => 'Käytössäsi on <b>UnoPim v:version.</b> Uudempi versio on saatavilla — päivitä saadaksesi uusimmat ominaisuudet &amp; korjaukset.',
+                'cta'     => 'Valitse päivityspalvelu',
+            ],
+
+            'dont-show-again' => 'Älä näytä uudelleen',
+            'dismissed'       => 'Asetus tallennettu.',
+        ],
+    ],
     'acl' => [
         'addresses'                => 'Osoitteet',
         'attribute-families'       => 'Attribuuttiperheet',
@@ -2256,6 +2314,7 @@ return [
         'exports'                  => 'Vienti',
         'mass-update'              => 'Määräpäivitys',
         'mass-delete'              => 'Määräpoisto',
+        'help'                     => 'Ohje',
     ],
     'errors' => [
         'dashboard' => 'Ohjauspaneeli',

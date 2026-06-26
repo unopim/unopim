@@ -1979,6 +1979,7 @@ return [
                 'integrations'       => 'Integrare',
                 'prompt'             => 'Prompt',
                 'general-tab'        => 'Configurare',
+                'help'               => 'Ajutor',
             ],
         ],
         'datagrid' => [
@@ -2191,6 +2192,63 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Ajutor și Resurse',
+            'subtitle'  => 'Tot ce ai nevoie pentru a profita la maximum de UnoPim — găzduire, suport și servicii profesionale, plus extensii și documentație pentru dezvoltatori.',
+            'services'  => 'Servicii',
+            'resources' => 'Resurse și Documentație',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Găzduire în Cloud',
+                'description' => 'Găzduire în cloud gestionată și rentabilă — încearcă și lansează UnoPim în cloud în câteva minute, complet optimizat și scalabil.',
+            ],
+            'support' => [
+                'title'       => 'Suport și Mentenanță',
+                'description' => 'Suport tehnic dedicat și planuri de mentenanță continuă pentru a menține PIM-ul tău securizat, actualizat și funcțional.',
+            ],
+            'services' => [
+                'title'       => 'Servicii Plătite',
+                'description' => 'Asistență de la experți pentru integrarea modulelor, personalizare, migrarea datelor, actualizarea versiunilor și dezvoltare la comandă.',
+            ],
+            'extensions' => [
+                'title'       => 'Extensii',
+                'description' => 'Răsfoiește suplimentele oficiale și ale comunității pentru a extinde UnoPim cu noi conectori, canale și funcționalități.',
+            ],
+            'user-guide' => [
+                'title'       => 'Ghid de Utilizare',
+                'description' => 'Ghiduri pentru dezvoltatori, tutoriale și cele mai recente articole care te ajută să construiești, să configurezi și să rămâi la curent.',
+            ],
+            'api-docs' => [
+                'title'       => 'Documentație API',
+                'description' => 'Referință completă REST API cu endpoint-uri, autentificare și exemple pentru a integra UnoPim cu stack-ul tău.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Mai ai nevoie de ajutor?',
+            'sub'    => 'Discută cu echipa UnoPim despre găzduire, dezvoltare personalizată sau orice altceva.',
+            'button' => 'Contactează-ne',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Găzduire în cloud',
+                'message' => 'Lansează UnoPim pe găzduire în cloud complet administrată — <b>planuri rapide, sigure și eficiente din punct de vedere al costurilor.</b>',
+                'cta'     => 'Vezi planurile',
+            ],
+            'upgrade' => [
+                'tag'     => 'Actualizare disponibilă',
+                'message' => 'Folosești <b>UnoPim v:version.</b> Este disponibilă o versiune mai nouă — actualizează pentru cele mai recente funcționalități &amp; remedieri.',
+                'cta'     => 'Alege serviciul de actualizare',
+            ],
+
+            'dont-show-again' => 'Nu mai afișa',
+            'dismissed'       => 'Preferința a fost salvată.',
+        ],
+    ],
     'acl' => [
         'addresses'                => 'Adrese',
         'attribute-families'       => 'Familii de Atribute',
@@ -2212,6 +2270,7 @@ return [
         'email-templates'          => 'Șabloane de E-mail',
         'events'                   => 'Evenimente',
         'groups'                   => 'Grupuri',
+        'help'                     => 'Ajutor',
         'import'                   => 'Importare',
         'imports'                  => 'Importuri',
         'invoices'                 => 'Facturi',
