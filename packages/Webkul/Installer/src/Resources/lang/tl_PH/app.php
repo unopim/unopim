@@ -75,6 +75,7 @@ return [
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Afghan afghani',
+                'CAD' => 'Dolyar ng Canada',
                 'CNY' => 'Chinese yuan',
                 'EUR' => 'Euro',
                 'GBP' => 'British pound',
@@ -147,6 +148,7 @@ return [
                 'application-name'    => 'Pangalan ng Aplikasyon',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Yuan ng Tsina (CNY)',
+                'dollar'              => 'Dolyar ng Canada (CAD)',
                 'database-connection' => 'Koneksyon sa Database',
                 'database-hostname'   => 'Pangalan ng Server ng Database',
                 'database-name'       => 'Pangalan ng Database',

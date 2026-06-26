@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Attribuutvoorwaarden',
                     'attribute-conditions-info'     => 'Alleen producten die aan alle voorwaarden voldoen, worden geëxporteerd.',
                     'no-categories'                 => 'Geen categorieën beschikbaar.',
+                    'search-categories'             => 'Zoek categorieën op naam of code',
                     'add-condition'                 => 'Nog een attribuutvoorwaarde toevoegen',
                     'operator-select'               => 'Voorwaarde',
                     'no-value-needed'               => 'Geen waarde nodig',

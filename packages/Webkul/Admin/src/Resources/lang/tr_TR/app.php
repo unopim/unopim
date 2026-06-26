@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Öznitelik koşulları',
                     'attribute-conditions-info'     => 'Yalnızca tüm koşulları sağlayan ürünler dışa aktarılır.',
                     'no-categories'                 => 'Kullanılabilir kategori yok.',
+                    'search-categories'             => 'Kategorileri ada veya koda göre arayın',
                     'add-condition'                 => 'Başka bir öznitelik koşulu ekle',
                     'operator-select'               => 'Koşul',
                     'no-value-needed'               => 'Değer gerekmiyor',

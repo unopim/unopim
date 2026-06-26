@@ -75,6 +75,7 @@ return [
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Israelsk Shekel',
+                'CAD' => 'Canadisk dollar',
                 'CNY' => 'Kinesisk Yuan',
                 'EUR' => 'EURO',
                 'GBP' => 'Pund Sterling',
@@ -147,6 +148,7 @@ return [
                 'application-name'    => 'Applikationsnavn',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Kinesisk yuan (CNY)',
+                'dollar'              => 'Canadisk dollar (CAD)',
                 'database-connection' => 'Databaseforbindelse',
                 'database-hostname'   => 'Databasevært',
                 'database-name'       => 'Databasenavn',

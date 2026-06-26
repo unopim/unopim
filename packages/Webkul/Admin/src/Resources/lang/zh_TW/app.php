@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => '屬性條件',
                     'attribute-conditions-info'     => '僅匯出符合所有條件的產品。',
                     'no-categories'                 => '沒有可用的類別。',
+                    'search-categories'             => '依名稱或代碼搜尋分類',
                     'add-condition'                 => '新增另一個屬性條件',
                     'operator-select'               => '條件',
                     'no-value-needed'               => '不需要值',

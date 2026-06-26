@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Điều kiện thuộc tính',
                     'attribute-conditions-info'     => 'Chỉ những sản phẩm đáp ứng mọi điều kiện mới được xuất.',
                     'no-categories'                 => 'Không có danh mục nào.',
+                    'search-categories'             => 'Tìm kiếm danh mục theo tên hoặc mã',
                     'add-condition'                 => 'Thêm điều kiện thuộc tính khác',
                     'operator-select'               => 'Điều kiện',
                     'no-value-needed'               => 'Không cần giá trị',

@@ -75,6 +75,7 @@ return [
             'currencies' => [
                 'AED' => 'Dirham de Emiratos Árabes Unidos',
                 'AFN' => 'Afgani',
+                'CAD' => 'Dólar canadiense',
                 'CNY' => 'Yuan Chino',
                 'EUR' => 'Euro',
                 'GBP' => 'Libra Esterlina',
@@ -148,6 +149,7 @@ return [
                 'application-name'    => 'Nombre de la Aplicación',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Yuan Chino (CNY)',
+                'dollar'              => 'Dólar canadiense (CAD)',
                 'database-connection' => 'Conexión de Base de Datos',
                 'database-hostname'   => 'Nombre del Servidor de Base de Datos',
                 'database-name'       => 'Nombre de la Base de Datos',

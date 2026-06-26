@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'شروط السمات',
                     'attribute-conditions-info'     => 'يتم تصدير المنتجات التي تستوفي جميع الشروط فقط.',
                     'no-categories'                 => 'لا توجد فئات متاحة.',
+                    'search-categories'             => 'البحث في الفئات بالاسم أو الرمز',
                     'add-condition'                 => 'إضافة شرط سمة آخر',
                     'operator-select'               => 'الشرط',
                     'no-value-needed'               => 'لا حاجة لقيمة',

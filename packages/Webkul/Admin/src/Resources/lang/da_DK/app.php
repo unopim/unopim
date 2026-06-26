@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Attributbetingelser',
                     'attribute-conditions-info'     => 'Kun produkter, der opfylder alle betingelser, eksporteres.',
                     'no-categories'                 => 'Ingen kategorier tilgængelige.',
+                    'search-categories'             => 'Søg kategorier efter navn eller kode',
                     'add-condition'                 => 'Tilføj endnu en attributbetingelse',
                     'operator-select'               => 'Betingelse',
                     'no-value-needed'               => 'Ingen værdi nødvendig',
