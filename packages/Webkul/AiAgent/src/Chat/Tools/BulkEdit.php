@@ -2,8 +2,10 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
@@ -12,32 +14,55 @@ use Webkul\Core\Helpers\Database\GrammarQueryManager;
 
 class BulkEdit implements PimTool
 {
-    use ChecksPermission;
-
     public function __construct(
         protected ProductWriterService $writerService,
     ) {}
 
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('bulk_edit')
-            ->for('Bulk update products matching a rule/filter. Supports setting values OR transforming existing values (append/prepend/replace). Use changes_json for setting values, transforms_json for modifying existing values.')
-            ->withEnumParameter('filter_by', 'Filter products by', ['status', 'category', 'family', 'all'])
-            ->withStringParameter('filter_value', 'Filter value (e.g. "active", category code, family code)')
-            ->withStringParameter('changes_json', 'JSON of attribute changes to SET (e.g. {"status":"inactive","brand":"Nike"})')
-            ->withStringParameter('transforms_json', 'JSON of attribute transforms to MODIFY existing values. Each entry: {"attribute_code": {"action": "append|prepend|replace", "value": "text", "search": "old text (for replace)"}}. Example: {"url_key": {"action": "append", "value": "-webkul"}}')
-            ->withNumberParameter('limit', 'Max products to update (default 50, max 500)')
-            ->using(function (
-                string $filter_by = 'all',
-                ?string $filter_value = null,
-                ?string $changes_json = null,
-                ?string $transforms_json = null,
-                int $limit = 50,
-            ) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products.mass_update')) {
+        $writerService = $this->writerService;
+
+        return new class($context, $writerService) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function __construct(ChatContext $context, protected ProductWriterService $writerService)
+            {
+                parent::__construct($context);
+            }
+
+            public function name(): string
+            {
+                return 'bulk_edit';
+            }
+
+            public function description(): string
+            {
+                return 'Bulk update products matching a rule/filter. Supports setting values OR transforming existing values (append/prepend/replace). Use changes_json for setting values, transforms_json for modifying existing values.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'filter_by'       => $schema->string()->description('Filter products by')->enum(['status', 'category', 'family', 'all']),
+                    'filter_value'    => $schema->string()->description('Filter value (e.g. "active", category code, family code)'),
+                    'changes_json'    => $schema->string()->description('JSON of attribute changes to SET (e.g. {"status":"inactive","brand":"Nike"})'),
+                    'transforms_json' => $schema->string()->description('JSON of attribute transforms to MODIFY existing values. Each entry: {"attribute_code": {"action": "append|prepend|replace", "value": "text", "search": "old text (for replace)"}}. Example: {"url_key": {"action": "append", "value": "-webkul"}}'),
+                    'limit'           => $schema->integer()->description('Max products to update (default 50, max 500)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.mass_update')) {
                     return $denied;
                 }
+
+                $filter_by = $request->string('filter_by')->toString() ?: 'all';
+                $filter_value = $request->string('filter_value')->toString() ?: null;
+                $changes_json = $request->string('changes_json')->toString() ?: null;
+                $transforms_json = $request->string('transforms_json')->toString() ?: null;
+                $limit = $request->has('limit') ? (int) $request->get('limit') : 50;
 
                 $changes = $changes_json ? json_decode($changes_json, true) : [];
                 $transforms = $transforms_json ? json_decode($transforms_json, true) : [];
@@ -114,11 +139,11 @@ class BulkEdit implements PimTool
                             }
 
                             if ($meta['value_per_channel'] && $meta['value_per_locale']) {
-                                $values['channel_locale_specific'][$context->channel][$context->locale][$code] = $value;
+                                $values['channel_locale_specific'][$this->context->channel][$this->context->locale][$code] = $value;
                             } elseif ($meta['value_per_channel']) {
-                                $values['channel_specific'][$context->channel][$code] = $value;
+                                $values['channel_specific'][$this->context->channel][$code] = $value;
                             } elseif ($meta['value_per_locale']) {
-                                $values['locale_specific'][$context->locale][$code] = $value;
+                                $values['locale_specific'][$this->context->locale][$code] = $value;
                             } else {
                                 $values['common'][$code] = $value;
                             }
@@ -139,11 +164,11 @@ class BulkEdit implements PimTool
                             if ($currentValue === null && isset($familyAttrs[$code])) {
                                 $meta = $familyAttrs[$code];
                                 if ($meta['value_per_channel'] && $meta['value_per_locale']) {
-                                    $currentValue = $values['channel_locale_specific'][$context->channel][$context->locale][$code] ?? null;
+                                    $currentValue = $values['channel_locale_specific'][$this->context->channel][$this->context->locale][$code] ?? null;
                                 } elseif ($meta['value_per_channel']) {
-                                    $currentValue = $values['channel_specific'][$context->channel][$code] ?? null;
+                                    $currentValue = $values['channel_specific'][$this->context->channel][$code] ?? null;
                                 } elseif ($meta['value_per_locale']) {
-                                    $currentValue = $values['locale_specific'][$context->locale][$code] ?? null;
+                                    $currentValue = $values['locale_specific'][$this->context->locale][$code] ?? null;
                                 }
                             }
 
@@ -163,11 +188,11 @@ class BulkEdit implements PimTool
                             if (isset($familyAttrs[$code])) {
                                 $meta = $familyAttrs[$code];
                                 if ($meta['value_per_channel'] && $meta['value_per_locale']) {
-                                    $values['channel_locale_specific'][$context->channel][$context->locale][$code] = $newValue;
+                                    $values['channel_locale_specific'][$this->context->channel][$this->context->locale][$code] = $newValue;
                                 } elseif ($meta['value_per_channel']) {
-                                    $values['channel_specific'][$context->channel][$code] = $newValue;
+                                    $values['channel_specific'][$this->context->channel][$code] = $newValue;
                                 } elseif ($meta['value_per_locale']) {
-                                    $values['locale_specific'][$context->locale][$code] = $newValue;
+                                    $values['locale_specific'][$this->context->locale][$code] = $newValue;
                                 } else {
                                     $values['common'][$code] = $newValue;
                                 }
@@ -191,6 +216,7 @@ class BulkEdit implements PimTool
                         'errors'  => empty($errors) ? null : array_slice($errors, 0, 5),
                     ],
                 ]);
-            });
+            }
+        };
     }
 }

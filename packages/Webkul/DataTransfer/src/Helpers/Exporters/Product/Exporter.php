@@ -2,16 +2,22 @@
 
 namespace Webkul\DataTransfer\Helpers\Exporters\Product;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\DataTransfer\Enums\ProductExportScope;
+use Webkul\DataTransfer\Enums\ProductFilter;
+use Webkul\DataTransfer\Enums\TimeCondition;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
+use Webkul\DataTransfer\Helpers\Formatters\ScopeFilterValue;
 use Webkul\DataTransfer\Helpers\Sources\Export\ProductSource;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
+use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -35,9 +41,43 @@ class Exporter extends AbstractExporter
     protected $currencies = [];
 
     /**
+     * Currency codes keyed by channel code.
+     *
+     * @var array
+     */
+    protected $channelCurrencies = [];
+
+    /**
      * @var array
      */
     protected $attributes = [];
+
+    /**
+     * Lightweight per-attribute metadata (code + type, with a model reference kept for the rare
+     * label/date formatting paths). Precomputed once per worker so the innermost export loop in
+     * setAttributesValues() reads plain array keys instead of triggering Astrotomic Translatable's
+     * getAttribute(), which calls config() on every property read (~110µs each, tens of millions of
+     * times on a large catalog — the original cause of multi-minute, effectively hung exports).
+     *
+     * @var array<int, array{code: string, type: string, attribute: mixed}>
+     */
+    protected array $attributeMeta = [];
+
+    /**
+     * Attribute codes selected in the export profile. When empty every
+     * attribute value is exported.
+     *
+     * @var array
+     */
+    protected $selectedAttributeCodes = [];
+
+    /**
+     * Memoized `optionCode => [locale => label]` maps keyed by attribute code, used when the
+     * "use labels" output option is enabled.
+     *
+     * @var array
+     */
+    protected $optionLabelMaps = [];
 
     /**
      * Create a new instance.
@@ -64,25 +104,157 @@ class Exporter extends AbstractExporter
     public function initilize()
     {
         if (self::$staticInitCache === null) {
-            $channels = $this->channelRepository->all();
+            $channels = $this->channelRepository->with(['locales', 'currencies'])->all();
             $channelsAndLocales = [];
+            $channelCurrencies = [];
             $currencies = [];
 
             foreach ($channels as $channel) {
-                $currencies = array_unique(array_merge($currencies, $channel->currencies->pluck('code')->toArray()));
+                $channelCurrencyCodes = $channel->currencies->pluck('code')->toArray();
+
+                $currencies = array_unique(array_merge($currencies, $channelCurrencyCodes));
                 $channelsAndLocales[$channel->code] = $channel->locales->pluck('code')->toArray();
+                $channelCurrencies[$channel->code] = $channelCurrencyCodes;
             }
+
+            $attributes = $this->attributeRepository->all();
 
             self::$staticInitCache = [
                 'channelsAndLocales' => $channelsAndLocales,
-                'currencies'         => $currencies,
-                'attributes'         => $this->attributeRepository->all(),
+                'channelCurrencies'  => $channelCurrencies,
+                'currencies'         => array_values($currencies),
+                'attributes'         => $attributes,
+                'attributeMeta'      => $this->buildAttributeMeta($attributes),
             ];
         }
 
         $this->channelsAndLocales = self::$staticInitCache['channelsAndLocales'];
+        $this->channelCurrencies = self::$staticInitCache['channelCurrencies'];
         $this->currencies = self::$staticInitCache['currencies'];
         $this->attributes = self::$staticInitCache['attributes'];
+        $this->attributeMeta = self::$staticInitCache['attributeMeta'];
+
+        $this->applyScopeFilters();
+    }
+
+    protected function buildAttributeMeta($attributes): array
+    {
+        $meta = [];
+
+        foreach ($attributes as $attribute) {
+            $meta[] = [
+                'code'      => $attribute->code,
+                'type'      => $attribute->type,
+                'attribute' => $attribute,
+            ];
+        }
+
+        return $meta;
+    }
+
+    protected function applyScopeFilters(): void
+    {
+        $filters = $this->getFilters();
+
+        $this->applyChannelScope(ScopeFilterValue::toCodes($filters[ProductExportScope::CHANNELS->value] ?? null));
+        $this->applyLocaleScope(ScopeFilterValue::toCodes($filters[ProductExportScope::LOCALES->value] ?? null));
+        $this->applyCurrencyScope(ScopeFilterValue::toCodes($filters[ProductExportScope::CURRENCIES->value] ?? null));
+        $this->applyAttributeScope(ScopeFilterValue::toCodes($filters[ProductExportScope::ATTRIBUTES->value] ?? null));
+    }
+
+    protected function applyChannelScope(array $selectedChannels): void
+    {
+        if (empty($selectedChannels)) {
+            return;
+        }
+
+        $this->channelsAndLocales = array_intersect_key(
+            $this->channelsAndLocales,
+            array_flip($selectedChannels)
+        );
+
+        $this->currencies = $this->currenciesForChannels($selectedChannels);
+    }
+
+    protected function applyLocaleScope(array $selectedLocales): void
+    {
+        if (empty($selectedLocales)) {
+            return;
+        }
+
+        foreach ($this->channelsAndLocales as $channel => $locales) {
+            $this->channelsAndLocales[$channel] = array_values(array_intersect($locales, $selectedLocales));
+        }
+    }
+
+    protected function applyCurrencyScope(array $selectedCurrencies): void
+    {
+        if (empty($selectedCurrencies)) {
+            return;
+        }
+
+        $this->currencies = array_values(array_intersect($this->currencies, $selectedCurrencies));
+    }
+
+    protected function applyAttributeScope(array $selectedAttributes): void
+    {
+        $this->selectedAttributeCodes = $selectedAttributes;
+    }
+
+    protected function isAttributeValueExported(string $code): bool
+    {
+        return empty($this->selectedAttributeCodes)
+            || in_array($code, $this->selectedAttributeCodes, true);
+    }
+
+    protected function currenciesForChannels(array $channelCodes): array
+    {
+        $currencies = [];
+
+        foreach ($channelCodes as $channelCode) {
+            $currencies = array_merge($currencies, $this->channelCurrencies[$channelCode] ?? []);
+        }
+
+        return array_values(array_unique($currencies));
+    }
+
+    protected function assertExportIsFeasible($results): void
+    {
+        $productCount = method_exists($results, 'count') ? (int) $results->count() : 0;
+
+        if ($productCount <= 0) {
+            return;
+        }
+
+        $rows = $productCount * max(1, $this->countChannelLocalePairs());
+        $columns = max(1, $this->attributeRepository->count());
+
+        $this->guardAgainstOversizedExport($rows, $columns);
+    }
+
+    protected function countChannelLocalePairs(): int
+    {
+        $filters = $this->getFilters();
+        $channelCodes = ScopeFilterValue::toCodes($filters[ProductExportScope::CHANNELS->value] ?? null);
+        $localeCodes = ScopeFilterValue::toCodes($filters[ProductExportScope::LOCALES->value] ?? null);
+
+        $pairs = 0;
+
+        foreach ($this->channelRepository->with(['locales'])->all() as $channel) {
+            if (! empty($channelCodes) && ! in_array($channel->code, $channelCodes, true)) {
+                continue;
+            }
+
+            foreach ($channel->locales as $locale) {
+                if (! empty($localeCodes) && ! in_array($locale->code, $localeCodes, true)) {
+                    continue;
+                }
+
+                $pairs++;
+            }
+        }
+
+        return $pairs;
     }
 
     /**
@@ -94,9 +266,7 @@ class Exporter extends AbstractExporter
 
         $this->initilize();
 
-        $products = $this->prepareProducts($batch, $filePath);
-
-        $this->exportBuffer->write($products);
+        $this->prepareProducts($batch, $filePath);
 
         /**
          * Update export batch process state summary
@@ -113,9 +283,79 @@ class Exporter extends AbstractExporter
      */
     protected function getResults()
     {
-        $requestParam['filters'] = $this->getFilters();
+        $filters = $this->getFilters();
+
+        $filters[ProductFilter::UPDATED_AFTER->value] = $this->resolveUpdatedAfter($filters);
+        $filters[ProductFilter::UPDATED_BEFORE->value] = $this->resolveUpdatedBefore($filters);
+
+        $requestParam['filters'] = $filters;
 
         return $this->productSource->getResults($requestParam, $this->source, self::BATCH_SIZE);
+    }
+
+    protected function resolveUpdatedAfter(array $filters): ?string
+    {
+        $condition = $filters[ProductFilter::TIME_CONDITION->value] ?? null;
+
+        $date = match ($condition) {
+            TimeCondition::LAST_N_DAYS->value       => $this->daysAgo($filters[ProductFilter::TIME_VALUE->value] ?? null),
+            TimeCondition::SINCE_LAST_EXPORT->value => $this->lastExportCompletedAt(),
+            TimeCondition::BETWEEN_DATES->value     => $this->parseDate($filters[ProductFilter::TIME_DATE->value] ?? null)?->startOfDay(),
+            default                                 => null,
+        };
+
+        return $date?->toDateTimeString();
+    }
+
+    protected function resolveUpdatedBefore(array $filters): ?string
+    {
+        $condition = $filters[ProductFilter::TIME_CONDITION->value] ?? null;
+
+        $date = match ($condition) {
+            TimeCondition::BETWEEN_DATES->value => $this->parseDate($filters[ProductFilter::TIME_DATE_END->value] ?? null)?->endOfDay(),
+            default                             => null,
+        };
+
+        return $date?->toDateTimeString();
+    }
+
+    protected function daysAgo(mixed $days): ?Carbon
+    {
+        $days = (int) $days;
+
+        return $days > 0 ? now()->subDays($days) : null;
+    }
+
+    protected function parseDate(mixed $date): ?Carbon
+    {
+        if (empty($date)) {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($date);
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    protected function lastExportCompletedAt(): ?Carbon
+    {
+        $jobInstanceId = $this->export->jobInstance?->id;
+
+        if (! $jobInstanceId) {
+            return null;
+        }
+
+        $completedAt = JobTrack::query()
+            ->where('job_instances_id', $jobInstanceId)
+            ->where('state', Export::STATE_COMPLETED)
+            ->where('id', '!=', $this->export->id)
+            ->whereNotNull('completed_at')
+            ->orderByDesc('completed_at')
+            ->value('completed_at');
+
+        return $completedAt ? Carbon::parse($completedAt) : null;
     }
 
     protected function getItemsFromIds(array $ids)
@@ -143,7 +383,6 @@ class Exporter extends AbstractExporter
      */
     public function prepareProducts(JobTrackBatchContract $batch, $filePath)
     {
-        $products = [];
         $flatIds = array_column($batch->data, 'id');
 
         $productsByIds = $this->getItemsFromIds($flatIds);
@@ -196,9 +435,9 @@ class Exporter extends AbstractExporter
                         $channelLocaleSpecificFields
                     );
 
-                    $values = $this->setAttributesValues($mergedFields, $filePath);
+                    $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 
-                    $products[] = array_merge([
+                    $row = array_merge([
                         'channel'                 => $channel,
                         'locale'                  => $locale,
                         'sku'                     => $sku,
@@ -212,13 +451,13 @@ class Exporter extends AbstractExporter
                         'cross_sells'             => $crossSells,
                         'related_products'        => $relatedProducts,
                     ], $values);
+
+                    $this->exportBuffer->write([$row]);
                 }
             }
 
             $this->createdItemsCount++;
         }
-
-        return $products;
     }
 
     public function getSuperAttributes($data)
@@ -234,33 +473,170 @@ class Exporter extends AbstractExporter
         return implode(',', $configurable_attributes);
     }
 
+    protected function applyOutputFormatting($attribute, mixed $value, ?string $locale = null): mixed
+    {
+        $filters = $this->getFilters();
+
+        if (($filters['use_labels'] ?? '0') !== '0') {
+            $value = $this->resolveValueLabels($attribute, $value, $locale);
+        }
+
+        $dateFormat = $filters['date_format'] ?? null;
+
+        if (! empty($dateFormat)) {
+            if ($attribute->type === 'date') {
+                $value = $this->formatDateValue($value, $dateFormat);
+            } elseif ($attribute->type === 'datetime') {
+                $value = $this->formatDateValue($value, $dateFormat.' H:i:s');
+            }
+        }
+
+        return $value;
+    }
+
+    protected function resolveValueLabels($attribute, mixed $value, ?string $locale): mixed
+    {
+        if (! in_array($attribute->type, ['select', 'multiselect'])) {
+            return $value;
+        }
+
+        if ($value === null || $value === '') {
+            return $value;
+        }
+
+        $map = $this->optionLabelMap($attribute);
+
+        $resolve = fn ($code) => $map[(string) $code][$locale] ?? (string) $code;
+
+        if (is_array($value)) {
+            return array_map($resolve, $value);
+        }
+
+        return $resolve($value);
+    }
+
+    protected function optionLabelMap($attribute): array
+    {
+        $code = $attribute->code;
+
+        if (isset($this->optionLabelMaps[$code])) {
+            return $this->optionLabelMaps[$code];
+        }
+
+        $map = [];
+
+        foreach ($attribute->options as $option) {
+            foreach ($option->translations as $translation) {
+                $map[(string) $option->code][$translation->locale] = $translation->label;
+            }
+        }
+
+        return $this->optionLabelMaps[$code] = $map;
+    }
+
+    protected function getHeaderLabels(): array
+    {
+        if (($this->getFilters()['use_labels'] ?? '0') === '0') {
+            return [];
+        }
+
+        if (empty($this->attributes)) {
+            $this->initilize();
+        }
+
+        $locale = $this->headerLocale();
+        $labels = [];
+
+        foreach ($this->attributes as $attribute) {
+            if (in_array($attribute->code, ['sku', 'status'])) {
+                continue;
+            }
+
+            $label = $attribute->translate($locale)?->name ?? $attribute->code;
+
+            if ($attribute->type === AttributeTypes::PRICE_ATTRIBUTE_TYPE) {
+                foreach ($this->currencies as $currency) {
+                    $labels["{$attribute->code} ({$currency})"] = "{$label} ({$currency})";
+                }
+
+                continue;
+            }
+
+            $labels[$attribute->code] = $label;
+        }
+
+        return $labels;
+    }
+
+    protected function headerLocale(): ?string
+    {
+        foreach ($this->channelsAndLocales as $locales) {
+            if (! empty($locales)) {
+                return $locales[0];
+            }
+        }
+
+        return null;
+    }
+
+    protected function formatDateValue(mixed $value, string $format): mixed
+    {
+        if ($value === null || $value === '') {
+            return $value;
+        }
+
+        try {
+            return Carbon::parse($value)->format($format);
+        } catch (\Exception $e) {
+            return $value;
+        }
+    }
+
     /**
      * Sets attribute values for a product. If an attribute is not present in the given values array,
      *
      * @return array
      */
-    protected function setAttributesValues(array $values, mixed $filePath)
+    protected function setAttributesValues(array $values, mixed $filePath, ?string $locale = null)
     {
         $attributeValues = [];
         $filters = $this->getFilters();
         $withMedia = (bool) ($filters['with_media'] ?? false);
 
-        foreach ($this->attributes as $attribute) {
-            $code = $attribute->code;
+        $formatOutput = ($filters['use_labels'] ?? '0') !== '0'
+            || ! empty($filters['date_format'] ?? null);
 
-            if (in_array($code, ['sku', 'status'])) {
+        foreach ($this->attributeMeta as $meta) {
+            $code = $meta['code'];
+            $type = $meta['type'];
+
+            if ($code === 'sku' || $code === 'status') {
+                continue;
+            }
+
+            $isPrice = $type === AttributeTypes::PRICE_ATTRIBUTE_TYPE;
+
+            if (! $this->isAttributeValueExported($code)) {
+                if ($isPrice) {
+                    foreach ($this->currencies as $currency) {
+                        $attributeValues["{$code} ({$currency})"] = null;
+                    }
+
+                    continue;
+                }
+
+                $attributeValues[$code] = null;
+
                 continue;
             }
 
             $rawValue = $values[$code] ?? null;
 
             if (
-                $withMedia &&
-                in_array($attribute->type, [
-                    AttributeTypes::FILE_ATTRIBUTE_TYPE,
-                    AttributeTypes::IMAGE_ATTRIBUTE_TYPE,
-                    AttributeTypes::GALLERY_ATTRIBUTE_TYPE,
-                ])
+                $withMedia
+                && ($type === AttributeTypes::FILE_ATTRIBUTE_TYPE
+                    || $type === AttributeTypes::IMAGE_ATTRIBUTE_TYPE
+                    || $type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE)
             ) {
                 $mediaPaths = (array) $rawValue;
                 foreach ($mediaPaths as $path) {
@@ -274,7 +650,7 @@ class Exporter extends AbstractExporter
                 continue;
             }
 
-            if ($attribute->type === AttributeTypes::PRICE_ATTRIBUTE_TYPE) {
+            if ($isPrice) {
                 $priceData = is_array($rawValue) ? $rawValue : [];
 
                 foreach ($this->currencies as $currency) {
@@ -282,6 +658,10 @@ class Exporter extends AbstractExporter
                 }
 
                 continue;
+            }
+
+            if ($formatOutput) {
+                $rawValue = $this->applyOutputFormatting($meta['attribute'], $rawValue, $locale);
             }
 
             if (is_array($rawValue)) {

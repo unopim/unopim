@@ -83,8 +83,18 @@ if [ ! -f "$LOCK_FILE" ]; then
         echo "══════════════════════════════════════════════"
     fi
 else
-    # Lock file exists — check if DB is still intact
-    if php artisan migrate:status --no-interaction >/dev/null 2>&1; then
+
+    DB_OK=0
+    for i in 1 2 3 4 5 6 7 8 9 10; do
+        if php artisan migrate:status --no-interaction >/dev/null 2>&1; then
+            DB_OK=1
+            break
+        fi
+        echo "   Waiting for database... ($i/10)"
+        sleep 3
+    done
+
+    if [ "$DB_OK" -eq 1 ]; then
         echo "→ Checking for pending migrations..."
         php artisan migrate --force --no-interaction
     else
@@ -104,6 +114,12 @@ else
         rm -f "$LOCK_FILE"
         exec "$0" "$@"
     fi
+fi
+
+# ─── Seal the installer ─────────────────────────────────────────────
+INSTALLED_MARKER="/var/www/html/storage/installed"
+if [ ! -f "$INSTALLED_MARKER" ]; then
+    echo "Your UnoPim App is Successfully Installed" > "$INSTALLED_MARKER"
 fi
 
 # Ensure storage directories are writable

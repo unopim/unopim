@@ -32,21 +32,113 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Валюти',
+        'channels' => [
+            'title'      => 'Канали',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Код валюти \'%s\' вже імпортовано в цьому пакеті.',
-                    'code-not-found-to-delete'    => 'Валюту з кодом \'%s\' не знайдено в системі.',
-                    'invalid-status'              => 'Статус має бути 0 або 1 (або порожнім для увімкненого за замовчуванням).',
-                    'channel-related-locale-root' => 'Ви не можете видалити локаль із кодом :code, яка пов\'язана з каналом.',
+                    'code-not-found-to-delete' => 'Канал з кодом :code не знайдено для видалення.',
+                    'locale-not-found'         => 'Одна або кілька мов не існують.',
+                    'root-category-not-found'  => 'Коренева категорія не існує.',
+                    'currency-not-found'       => 'Одна або кілька валют не існують.',
+                    'invalid-locale'           => 'Мова не існує.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
     ],
     'exporters' => [
+        'export-too-large' => 'Цей експорт надто великий для виконання: приблизно :rows рядків × :columns стовпців (~:estimated) перевищують доступний простір (~:available). Звузьте експорт, вибравши менше каналів/локалей (та атрибутів), і повторіть спробу.',
+        'fields'           => [
+            'file-format'         => 'Формат файлу',
+            'with-media'          => 'З медіафайлами',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Статус',
+            'enable'         => 'Увімкнено',
+            'all'            => 'Усі',
+        ],
         'products' => [
-            'title'      => 'Продукти',
+            'title'              => 'Продукти',
+            'invalid-locales'    => 'Не всі вибрані локалі доступні для вибраних каналів.',
+            'invalid-currencies' => 'Не всі вибрані валюти доступні для вибраних каналів.',
+            'filters'            => [
+                'channels'             => 'Канали',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Валюти',
+                'currencies-info'      => 'Атрибути цін експортуються для кожної вибраної валюти. Залиште порожнім, щоб експортувати всі валюти каналу.',
+                'locales'              => 'Локалі',
+                'locales-info'         => 'Локалізовані атрибути експортуються один раз для кожної вибраної локалі. Залиште порожнім, щоб експортувати всі локалі каналу.',
+                'attributes'           => 'Атрибути',
+                'attributes-info'      => 'Експортуються лише вибрані атрибути. Залиште порожнім, щоб експортувати всі атрибути сімейства.',
+                'attribute-families'   => 'Сімейства атрибутів',
+                'categories'           => 'Категорії',
+                'completeness'         => 'Повнота',
+                'completeness-options' => [
+                    'none'         => 'Без умови повноти',
+                    'at-least-one' => 'Повний хоча б в одній вибраній локалі',
+                    'all'          => 'Повний у всіх вибраних локалях',
+                ],
+                'time-condition' => 'Умова за часом',
+                'time-options'   => [
+                    'none'              => 'Без умови за датою',
+                    'last-n-days'       => 'Товари, оновлені за останні N днів',
+                    'between-dates'     => 'Товари, оновлені між двома датами',
+                    'since-last-export' => 'Товари, оновлені з моменту останнього експорту',
+                ],
+                'time-value'     => 'Кількість днів',
+                'time-date'      => 'Дата початку',
+                'time-date-end'  => 'Дата завершення',
+                'status'         => 'Статус',
+                'status-options' => [
+                    'enable'  => 'Увімкнено',
+                    'disable' => 'Вимкнено',
+                    'all'     => 'Усі',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Ідентифікатори',
+                'identifiers-info' => 'Вставте по одному SKU / ідентифікатору в рядку, щоб експортувати лише ці товари. Залиште порожнім, щоб експортувати всі товари.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL ключ: \'%s\' вже створено для товару зі SKU: \'%s\'.',
@@ -60,8 +152,22 @@ return [
         'categories' => [
             'title' => 'Категорії',
         ],
+        'channels' => [
+            'title' => 'Канали',
+        ],
         'currencies' => [
-            'title' => 'Валюти',
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Статус',
+                'active' => 'Active',
+                'all'    => 'Усі',
+            ],
         ],
     ],
     'validation' => [

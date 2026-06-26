@@ -2,34 +2,55 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class GetProductDetails implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('get_product_details')
-            ->for('Get full product details by SKU or ID.')
-            ->withStringParameter('sku', 'Product SKU (preferred)')
-            ->withNumberParameter('product_id', 'Product ID (alternative to SKU)')
-            ->using(function (?string $sku = null, ?int $product_id = null) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'get_product_details';
+            }
+
+            public function description(): string
+            {
+                return 'Get full product details by SKU or ID.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'sku'        => $schema->string()->description('Product SKU (preferred)'),
+                    'product_id' => $schema->integer()->description('Product ID (alternative to SKU)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products')) {
                     return $denied;
                 }
+
+                $sku = $request->string('sku')->toString() ?: null;
+                $productId = $request->has('product_id') ? (int) $request->get('product_id') : null;
 
                 $product = null;
 
                 if ($sku) {
                     $product = DB::table('products')->where('sku', $sku)->first();
-                } elseif ($product_id) {
-                    $product = DB::table('products')->where('id', $product_id)->first();
+                } elseif ($productId) {
+                    $product = DB::table('products')->where('id', $productId)->first();
                 }
 
                 if (! $product) {
@@ -49,6 +70,7 @@ class GetProductDetails implements PimTool
                     'family' => $family,
                     'values' => $values,
                 ]);
-            });
+            }
+        };
     }
 }

@@ -32,21 +32,113 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Valuta\'s',
+        'channels' => [
+            'title'      => 'Kanalen',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Valutacode \'%s\' is al geïmporteerd in deze batch.',
-                    'code-not-found-to-delete'    => 'Valuta met code \'%s\' niet gevonden in het systeem.',
-                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
-                    'channel-related-locale-root' => 'U kunt de locale met code :code die aan een kanaal is gekoppeld niet verwijderen.',
+                    'code-not-found-to-delete' => 'Kanaal met code :code niet gevonden om te verwijderen.',
+                    'locale-not-found'         => 'Een of meer talen bestaan niet.',
+                    'root-category-not-found'  => 'De hoofdcategorie bestaat niet.',
+                    'currency-not-found'       => 'Een of meer valuta bestaan niet.',
+                    'invalid-locale'           => 'De taal bestaat niet.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
     ],
     'exporters' => [
+        'export-too-large' => 'Deze export is te groot om uit te voeren: naar schatting :rows rijen × :columns kolommen (~:estimated) overschrijden de beschikbare ruimte (~:available). Beperk de export door minder kanalen/talen (en attributen) te selecteren en probeer het opnieuw.',
+        'fields'           => [
+            'file-format'         => 'Bestandsformaat',
+            'with-media'          => 'Met media',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Status',
+            'enable'         => 'Ingeschakeld',
+            'all'            => 'Alle',
+        ],
         'products' => [
-            'title'      => 'Producten',
+            'title'              => 'Producten',
+            'invalid-locales'    => 'Niet alle geselecteerde talen zijn beschikbaar voor de geselecteerde kanalen.',
+            'invalid-currencies' => 'Niet alle geselecteerde valuta\'s zijn beschikbaar voor de geselecteerde kanalen.',
+            'filters'            => [
+                'channels'             => 'Kanalen',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Valuta\'s',
+                'currencies-info'      => 'Prijsattributen worden per geselecteerde valuta geëxporteerd. Laat leeg om alle kanaalvaluta\'s te exporteren.',
+                'locales'              => 'Talen',
+                'locales-info'         => 'Lokaliseerbare attributen worden eenmaal per geselecteerde taal geëxporteerd. Laat leeg om alle kanaaltalen te exporteren.',
+                'attributes'           => 'Attributen',
+                'attributes-info'      => 'Alleen de geselecteerde attributen worden geëxporteerd. Laat leeg om alle attributen in de familie te exporteren.',
+                'attribute-families'   => 'Attribuutfamilies',
+                'categories'           => 'Categorieën',
+                'completeness'         => 'Volledigheid',
+                'completeness-options' => [
+                    'none'         => 'Geen voorwaarde voor volledigheid',
+                    'at-least-one' => 'Volledig in ten minste één geselecteerde taal',
+                    'all'          => 'Volledig in alle geselecteerde talen',
+                ],
+                'time-condition' => 'Tijdvoorwaarde',
+                'time-options'   => [
+                    'none'              => 'Geen datumvoorwaarde',
+                    'last-n-days'       => 'Producten bijgewerkt in de laatste N dagen',
+                    'between-dates'     => 'Producten bijgewerkt tussen twee datums',
+                    'since-last-export' => 'Producten bijgewerkt sinds de laatste export',
+                ],
+                'time-value'     => 'Aantal dagen',
+                'time-date'      => 'Startdatum',
+                'time-date-end'  => 'Einddatum',
+                'status'         => 'Status',
+                'status-options' => [
+                    'enable'  => 'Ingeschakeld',
+                    'disable' => 'Uitgeschakeld',
+                    'all'     => 'Alle',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Identificatoren',
+                'identifiers-info' => 'Plak één SKU / identificatie per regel om alleen die producten te exporteren. Laat leeg om alle producten te exporteren.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
@@ -60,8 +152,22 @@ return [
         'categories' => [
             'title' => 'Categorieën',
         ],
+        'channels' => [
+            'title' => 'Kanalen',
+        ],
         'currencies' => [
-            'title' => 'Valuta\'s',
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'Alle',
+            ],
         ],
     ],
     'validation' => [

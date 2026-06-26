@@ -240,7 +240,7 @@ class ImportController extends Controller
     public function importView(int $id): View
     {
         if (! bouncer()->hasPermission('data_transfer.imports')) {
-            abort(403, 'This action is unauthorized');
+            abort(403, trans('admin::app.common.unauthorized'));
         }
 
         $import = $jobInstance = $this->jobInstancesRepository->findOrFail($id);

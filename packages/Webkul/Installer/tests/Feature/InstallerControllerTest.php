@@ -4,17 +4,27 @@ use Illuminate\Support\Facades\URL;
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
 beforeEach(function () {
-    // CSRF + CanInstall + auth middleware would otherwise reject these
-    // requests with 302/419/404. We test the controller logic directly;
-    // those middlewares have their own coverage.
+
     $this->withoutMiddleware();
 
-    // The shared .env's APP_URL is a path-prefixed dev URL
-    // (http://host/issue-docker/unopim/public). That prefix leaks into
-    // the test request URI and the route matcher 404s on it. Force a
-    // clean APP_URL just for the test kernel.
     config(['app.url' => 'http://localhost']);
     URL::forceRootUrl('http://localhost');
+
+    $this->marker = storage_path('installed');
+    $this->markerExisted = file_exists($this->marker);
+    $this->markerContents = $this->markerExisted ? file_get_contents($this->marker) : null;
+
+    if ($this->markerExisted) {
+        unlink($this->marker);
+    }
+});
+
+afterEach(function () {
+    if ($this->markerExisted) {
+        file_put_contents($this->marker, $this->markerContents);
+    } elseif (file_exists($this->marker)) {
+        unlink($this->marker);
+    }
 });
 
 describe('InstallerController::seedSampleData (issue #794)', function () {

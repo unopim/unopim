@@ -134,6 +134,11 @@ class HistoryController extends Controller
             }
         }
 
+        $normalizedData['versionHistory'] = array_filter(
+            $normalizedData['versionHistory'],
+            fn ($entry) => ! empty($entry['old']) || ! empty($entry['new'])
+        );
+
         return $normalizedData;
     }
 

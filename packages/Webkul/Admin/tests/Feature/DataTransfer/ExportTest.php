@@ -78,6 +78,42 @@ it('should create the export job', function () {
     $this->assertDatabaseHas($this->getFullTableName(JobInstances::class), ['code' => $exportJob['code']]);
 });
 
+it('stores attribute condition operators on the export job', function () {
+    $this->loginAsAdmin();
+
+    $code = fake()->unique()->word;
+
+    $exportJob = [
+        'code'            => $code,
+        'entity_type'     => 'products',
+        'field_separator' => ',',
+        'filters'         => [
+            'file_format'       => 'Csv',
+            'custom_attributes' => json_encode([
+                ['attribute' => 'price', 'operator' => 'less_than', 'value' => '20'],
+                ['attribute' => 'release_on', 'operator' => 'between', 'value' => '2024-01-01', 'value2' => '2024-12-31'],
+                ['attribute' => 'color', 'operator' => 'in', 'value' => ['red', 'blue']],
+                ['attribute' => 'brand', 'operator' => 'empty'],
+            ]),
+        ],
+    ];
+
+    postJson(route('admin.settings.data_transfer.exports.store'), $exportJob)
+        ->assertStatus(302)
+        ->assertSessionHas('success');
+
+    $job = JobInstances::where('code', $code)->first();
+
+    expect($job)->not->toBeNull();
+
+    $conditions = json_decode($job->filters['custom_attributes'], true);
+
+    expect($conditions)->toHaveCount(4)
+        ->and($conditions[0])->toMatchArray(['attribute' => 'price', 'operator' => 'less_than', 'value' => '20'])
+        ->and($conditions[1])->toMatchArray(['attribute' => 'release_on', 'operator' => 'between', 'value' => '2024-01-01', 'value2' => '2024-12-31'])
+        ->and($conditions[3])->toMatchArray(['attribute' => 'brand', 'operator' => 'empty']);
+});
+
 it('should create the category export job', function () {
     $this->loginAsAdmin();
 
@@ -243,4 +279,104 @@ it('should delete the export job', function () {
         ]);
 
     $this->assertDatabaseMissing($this->getFullTableName(JobInstances::class), ['code' => $exportJob->code]);
+});
+
+it('keeps the selected entity type filter fields after a validation error reloads the create form', function () {
+    $this->loginAsAdmin();
+
+    /**
+     * An existing job whose code we duplicate to force a server-side validation failure,
+     * which redirects back to the create form with the submitted input flashed as old().
+     */
+    $existing = JobInstances::factory()->exportJob()->entityProduct()->create();
+
+    $this->from(route('admin.settings.data_transfer.exports.create'))
+        ->post(route('admin.settings.data_transfer.exports.store'), [
+            'code'        => $existing->code,
+            'entity_type' => 'products',
+            'filters'     => [
+                'sku' => 'TEST-SKU-123',
+            ],
+        ])
+        ->assertRedirect(route('admin.settings.data_transfer.exports.create'))
+        ->assertSessionHasErrors('code');
+
+    $content = get(route('admin.settings.data_transfer.exports.create'))
+        ->assertStatus(200)
+        ->getContent();
+
+    /**
+     * The Vue component must seed `filterFields` from old('entity_type') (products), not a
+     * hardcoded entity. Otherwise every product/scope/condition card (each `v-if`-gated on
+     * `filterFields`) stays hidden and the user's still-present old() input looks wiped.
+     */
+    $start = strpos($content, 'filterFields:');
+
+    expect($start)->not->toBeFalse();
+
+    $arrayStart = strpos($content, '[', $start);
+    $depth = 0;
+    $end = null;
+
+    for ($i = $arrayStart, $len = strlen($content); $i < $len; $i++) {
+        if ($content[$i] === '[') {
+            $depth++;
+        } elseif ($content[$i] === ']' && --$depth === 0) {
+            $end = $i;
+
+            break;
+        }
+    }
+
+    $filterFields = substr($content, $arrayStart, $end - $arrayStart + 1);
+
+    expect($filterFields)->toContain('"name":"sku"');
+});
+
+it('stores the new output options on the export job', function () {
+    $this->loginAsAdmin();
+
+    $code = fake()->unique()->word;
+
+    $exportJob = [
+        'code'            => $code,
+        'entity_type'     => 'products',
+        'field_separator' => ',',
+        'filters'         => [
+            'file_format' => 'Csv',
+            'header_row'  => '0',
+            'use_labels'  => '1',
+            'date_format' => 'd/m/Y',
+            'file_path'   => '[code]_[date]',
+        ],
+    ];
+
+    postJson(route('admin.settings.data_transfer.exports.store'), $exportJob)
+        ->assertStatus(302)
+        ->assertSessionHas('success');
+
+    $job = JobInstances::where('code', $code)->first();
+
+    expect($job)->not->toBeNull()
+        ->and($job->filters['header_row'])->toBe('0')
+        ->and($job->filters['use_labels'])->toBe('1')
+        ->and($job->filters['date_format'])->toBe('d/m/Y')
+        ->and($job->filters['file_path'])->toBe('[code]_[date]');
+});
+
+it('rejects an invalid date_format on the export job', function () {
+    $this->loginAsAdmin();
+
+    $exportJob = [
+        'code'            => fake()->unique()->word,
+        'entity_type'     => 'products',
+        'field_separator' => ',',
+        'filters'         => [
+            'file_format' => 'Csv',
+            'date_format' => 'not-a-format',
+        ],
+    ];
+
+    postJson(route('admin.settings.data_transfer.exports.store'), $exportJob)
+        ->assertJsonValidationErrors(['filters[date_format]']);
 });

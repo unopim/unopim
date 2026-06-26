@@ -30,7 +30,11 @@ class ExportBatch implements ShouldQueue
         protected $filePath,
         protected $jobTrackId,
         protected $exportBuffer
-    ) {}
+    ) {
+        $count = is_countable($exportBatch->data ?? null) ? count($exportBatch->data) : 0;
+
+        $this->timeout = max(600, $count * 3);
+    }
 
     /**
      * Execute the job.

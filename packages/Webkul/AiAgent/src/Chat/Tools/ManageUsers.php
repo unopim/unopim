@@ -2,64 +2,22 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class ManageUsers implements PimTool
 {
-    use ChecksPermission;
-
-    public function register(ChatContext $context): Tool
-    {
-        return (new Tool)
-            ->as('manage_users')
-            ->for('List or inspect admin users.')
-            ->withEnumParameter('action', 'Action', ['list', 'details'])
-            ->withStringParameter('email', 'User email (for details)')
-            ->using(function (string $action = 'list', ?string $email = null) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'settings.users')) {
-                    return $denied;
-                }
-
-                if ($action === 'list') {
-                    $users = DB::table('admins as a')
-                        ->leftJoin('roles as r', 'r.id', '=', 'a.role_id')
-                        ->select('a.id', 'a.name', 'a.email', 'a.status', 'r.name as role')
-                        ->orderBy('a.id')
-                        ->limit(50)
-                        ->get()
-                        ->map(fn ($u) => $this->maskUserData($u));
-
-                    return json_encode(['users' => $users->toArray()]);
-                }
-
-                if ($action === 'details' && $email) {
-                    $user = DB::table('admins as a')
-                        ->leftJoin('roles as r', 'r.id', '=', 'a.role_id')
-                        ->where('a.email', $email)
-                        ->select('a.id', 'a.name', 'a.email', 'a.status', 'r.name as role')
-                        ->first();
-
-                    if (! $user) {
-                        return json_encode(['error' => "User '{$email}' not found"]);
-                    }
-
-                    return json_encode(['user' => (array) $this->maskUserData($user)]);
-                }
-
-                return json_encode(['error' => 'Invalid action']);
-            });
-    }
-
     /**
      * Mask email addresses to prevent data exposure via AI responses.
      * Shows first 2 and last 2 characters of the local part with a
      * visible block of asterisks so users can tell the email is masked.
      */
-    private function maskUserData(object $user): object
+    public function maskUserData(object $user): object
     {
         if (! empty($user->email)) {
             $atPos = strpos($user->email, '@');
@@ -75,5 +33,76 @@ class ManageUsers implements PimTool
         }
 
         return $user;
+    }
+
+    public function register(ChatContext $context): Tool
+    {
+        $outer = $this;
+
+        return new class($context, $outer) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function __construct(ChatContext $context, protected ManageUsers $outer)
+            {
+                parent::__construct($context);
+            }
+
+            public function name(): string
+            {
+                return 'manage_users';
+            }
+
+            public function description(): string
+            {
+                return 'List or inspect admin users.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'action' => $schema->string()->enum(['list', 'details'])->description('Action'),
+                    'email'  => $schema->string()->description('User email (for details)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'settings.users')) {
+                    return $denied;
+                }
+
+                $action = $request->string('action')->toString() ?: 'list';
+                $email = $request->string('email')->toString() ?: null;
+
+                if ($action === 'list') {
+                    $users = DB::table('admins as a')
+                        ->leftJoin('roles as r', 'r.id', '=', 'a.role_id')
+                        ->select('a.id', 'a.name', 'a.email', 'a.status', 'r.name as role')
+                        ->orderBy('a.id')
+                        ->limit(50)
+                        ->get()
+                        ->map(fn ($u) => $this->outer->maskUserData($u));
+
+                    return json_encode(['users' => $users->toArray()]);
+                }
+
+                if ($action === 'details' && $email) {
+                    $user = DB::table('admins as a')
+                        ->leftJoin('roles as r', 'r.id', '=', 'a.role_id')
+                        ->where('a.email', $email)
+                        ->select('a.id', 'a.name', 'a.email', 'a.status', 'r.name as role')
+                        ->first();
+
+                    if (! $user) {
+                        return json_encode(['error' => "User '{$email}' not found"]);
+                    }
+
+                    return json_encode(['user' => (array) $this->outer->maskUserData($user)]);
+                }
+
+                return json_encode(['error' => 'Invalid action']);
+            }
+        };
     }
 }

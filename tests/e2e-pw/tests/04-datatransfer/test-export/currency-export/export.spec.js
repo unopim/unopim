@@ -35,7 +35,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
     // Status filter must be present — assert, don't skip
     await expect(statusSelect, 'Status filter control should be visible so Issue #243 is actually exercised').toBeVisible({ timeout: 5000 });
 
-    await statusSelect.click();
+    await statusSelect.click({ force: true });
     await adminPage.getByRole('option', { name: new RegExp(statusLabel, 'i') }).locator('span').first().click();
 
     // Save with the status filter applied — redirects back to show page

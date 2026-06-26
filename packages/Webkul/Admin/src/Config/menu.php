@@ -144,4 +144,16 @@ return [
         'sort'   => 9,
         'icon'   => 'icon-configuration',
     ],
+
+    /**
+     * Help.
+     */
+    [
+        'key'   => 'help',
+        'name'  => 'admin::app.components.layouts.sidebar.help',
+        'route' => 'admin.help.index',
+        // Sentinel sort to keep Help pinned last, below any module-registered menu (core max is 9).
+        'sort'  => 99999,
+        'icon'  => 'icon-information',
+    ],
 ];

@@ -2,8 +2,8 @@
 
 namespace Webkul\MagicAI\Services;
 
-use Prism\Prism\Enums\Provider as PrismProvider;
-use Prism\Prism\Facades\Prism;
+use Laravel\Ai\AnonymousAgent;
+use Laravel\Ai\Image;
 use Webkul\MagicAI\Contracts\LLMModelInterface;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Models\MagicAIPlatform;
@@ -11,9 +11,10 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
 /**
  * Adapter that bridges MagicAI's LLMModelInterface with the Laravel AI SDK.
  *
- * Uses Prism directly for both text and image generation, giving full
- * control over parameters and avoiding SDK-level defaults that break
- * certain models.
+ * Uses laravel/ai's AnonymousAgent for text generation and Laravel\Ai\Image
+ * for image generation. Per-request provider config (api_key, api_url, extras)
+ * is pushed into the runtime `ai.providers.*` config so the laravel/ai gateway
+ * picks them up for the duration of the call.
  */
 class LaravelAiAdapter implements LLMModelInterface
 {
@@ -33,69 +34,71 @@ class LaravelAiAdapter implements LLMModelInterface
     }
 
     /**
-     * Configure the Laravel AI SDK / Prism provider dynamically from the platform record.
+     * Push the platform's credentials and overrides into the laravel/ai
+     * runtime config under the provider's config key.
      */
     protected function configureProvider(): void
     {
         $configKey = $this->aiProvider->configKey();
 
         config([
-            "ai.providers.{$configKey}.key"        => $this->platform->api_key,
-            "prism.providers.{$configKey}.api_key" => $this->platform->api_key,
+            "ai.providers.{$configKey}.key" => $this->platform->api_key,
         ]);
 
         if ($this->platform->api_url) {
             config([
-                "ai.providers.{$configKey}.url"     => $this->platform->api_url,
-                "prism.providers.{$configKey}.url"  => $this->platform->api_url,
+                "ai.providers.{$configKey}.url" => $this->platform->api_url,
             ]);
         }
 
         if ($this->platform->extras && is_array($this->platform->extras)) {
             foreach ($this->platform->extras as $key => $value) {
                 config([
-                    "ai.providers.{$configKey}.{$key}"     => $value,
-                    "prism.providers.{$configKey}.{$key}"  => $value,
+                    "ai.providers.{$configKey}.{$key}" => $value,
                 ]);
             }
         }
     }
 
     /**
-     * Generate text content using Prism directly.
+     * Generate text content using laravel/ai's AnonymousAgent.
      *
-     * This is faster than going through the Laravel AI SDK's Agent pattern
-     * because it skips middleware, events, tool invocation, and conversation handling.
-     * It also gives us full control over temperature and maxTokens.
+     * Reasoning models (o-series, gpt-5*) need higher token budgets to absorb
+     * internal reasoning tokens before any visible output is produced; we
+     * surface that via the runtime provider config (max_tokens / temperature)
+     * since laravel/ai's prompt() API doesn't expose them as call-site params.
      */
     public function ask(): string
     {
-        $prismProvider = $this->toPrismProvider();
-
         $isReasoningModel = $this->isReasoningModel($this->model);
+        $configKey = $this->aiProvider->configKey();
 
-        // Reasoning models (o-series, gpt-5*) need higher max_tokens to account for internal reasoning.
-        $maxTokens = $isReasoningModel ? max($this->maxTokens, 16000) : $this->maxTokens;
+        // Reasoning models need bigger headroom; everyone else uses the caller's maxTokens.
+        $effectiveMaxTokens = $isReasoningModel ? max($this->maxTokens, 16000) : $this->maxTokens;
 
-        $request = Prism::text()
-            ->using($prismProvider, $this->model, [
-                'api_key' => $this->platform->api_key,
-            ])
-            ->withMaxTokens($maxTokens)
-            ->withClientOptions(['timeout' => 120]);
+        config([
+            "ai.providers.{$configKey}.max_tokens" => $effectiveMaxTokens,
+        ]);
 
-        // Reasoning models reject the `temperature` parameter (only the default 1.0 is allowed).
+        // Reasoning models reject `temperature` (only the default 1.0 is allowed).
         if (! $isReasoningModel) {
-            $request->usingTemperature($this->temperature);
+            config([
+                "ai.providers.{$configKey}.temperature" => $this->temperature,
+            ]);
         }
 
-        if ($this->systemPrompt) {
-            $request->withSystemPrompt($this->systemPrompt);
-        }
+        $agent = new AnonymousAgent(
+            instructions: $this->systemPrompt,
+            messages: [],
+            tools: [],
+        );
 
-        $response = $request
-            ->withPrompt($this->prompt)
-            ->asText();
+        $response = $agent->prompt(
+            $this->prompt,
+            provider: $this->aiProvider->toLab(),
+            model: $this->model,
+            timeout: 120,
+        );
 
         return $response->text;
     }
@@ -111,14 +114,13 @@ class LaravelAiAdapter implements LLMModelInterface
     }
 
     /**
-     * Generate images using Prism directly.
+     * Generate images using laravel/ai's Image::of() static API.
      *
-     * Bypasses Laravel AI SDK's Image::of() because its OpenAiProvider
-     * hardcodes provider-specific defaults (quality, moderation) that
-     * break models which don't support them (e.g. DALL-E 2/3).
-     * Calling Prism directly lets us send only the options the user set.
+     * Provider-specific options (n, size, quality, response_format) are
+     * pushed into the runtime config so the gateway picks them up.
      *
-     * @see https://github.com/laravel/ai/issues/255
+     * @param  array<string, mixed>  $options
+     * @return array<int, array{url: string}>
      */
     public function images(array $options): array
     {
@@ -128,68 +130,54 @@ class LaravelAiAdapter implements LLMModelInterface
             );
         }
 
+        $configKey = $this->aiProvider->configKey();
+
         $providerOptions = array_filter([
             'n'       => isset($options['n']) ? (int) $options['n'] : null,
-            'size'    => $options['size'] ?? null,
             'quality' => $options['quality'] ?? null,
         ]);
 
-        // DALL-E defaults to returning a hosted URL; force base64 so the frontend
-        // can apply the image without an extra fetch and so the image survives
-        // OpenAI's URL expiration window. gpt-image-1 always returns base64
-        // and rejects this param, so only set it for dall-e-*.
+        // DALL-E defaults to returning a hosted URL; force base64 so the
+        // frontend can apply the image without an extra fetch and so the image
+        // survives OpenAI's URL expiration window. gpt-image-1 always returns
+        // base64 and rejects this param, so only set it for dall-e-*.
         if (str_starts_with($this->model, 'dall-e')) {
             $providerOptions['response_format'] = 'b64_json';
         }
 
-        $response = Prism::image()
-            ->using($this->toPrismProvider(), $this->model, [
-                'api_key' => $this->platform->api_key,
-            ])
-            ->withPrompt($this->prompt)
-            ->withProviderOptions($providerOptions)
-            ->withClientOptions(['timeout' => 120])
-            ->generate();
+        foreach ($providerOptions as $key => $value) {
+            config(["ai.providers.{$configKey}.{$key}" => $value]);
+        }
+
+        $pending = Image::of($this->prompt)
+            ->timeout(120);
+
+        if (! empty($options['size'])) {
+            $pending->size($options['size']);
+        }
+
+        $response = $pending->generate(
+            provider: $this->aiProvider->toLab(),
+            model: $this->model,
+        );
 
         $images = [];
 
         foreach ($response->images as $image) {
-            // Providers return either base64 (gpt-image-1) or a hosted URL (DALL-E default).
-            // Frontend needs a usable URL — prefer base64 data URL, fall back to URL.
-            if (! empty($image->base64)) {
-                $url = sprintf('data:%s;base64,%s', $image->mimeType ?? 'image/png', $image->base64);
-            } elseif (! empty($image->url)) {
-                $url = $image->url;
-            } else {
-                continue;
-            }
+            // Providers return either base64 (gpt-image-1) or a hosted URL
+            // (DALL-E default). Frontend needs a usable URL — prefer base64
+            // data URL, fall back to URL.
+            $base64 = $image->base64 ?? null;
+            $url = $image->url ?? null;
+            $mimeType = $image->mimeType ?? 'image/png';
 
-            $images[] = ['url' => $url];
+            if (! empty($base64)) {
+                $images[] = ['url' => sprintf('data:%s;base64,%s', $mimeType, $base64)];
+            } elseif (! empty($url)) {
+                $images[] = ['url' => $url];
+            }
         }
 
         return $images;
-    }
-
-    /**
-     * Map AiProvider to Prism's Provider enum.
-     */
-    protected function toPrismProvider(): PrismProvider
-    {
-        return match ($this->aiProvider) {
-            AiProvider::OpenAI     => PrismProvider::OpenAI,
-            AiProvider::Anthropic  => PrismProvider::Anthropic,
-            AiProvider::Gemini     => PrismProvider::Gemini,
-            AiProvider::Groq       => PrismProvider::Groq,
-            AiProvider::Ollama     => PrismProvider::Ollama,
-            AiProvider::XAI        => PrismProvider::XAI,
-            AiProvider::Mistral    => PrismProvider::Mistral,
-            AiProvider::DeepSeek   => PrismProvider::DeepSeek,
-            AiProvider::Azure      => PrismProvider::OpenAI,
-            AiProvider::OpenRouter => PrismProvider::OpenRouter,
-            // See AiProvider::Custom — Prism's Groq provider posts to
-            // /chat/completions, the legacy endpoint every OpenAI-compatible
-            // third party (Cerebras, Together, Fireworks, etc.) implements.
-            AiProvider::Custom => PrismProvider::Groq,
-        };
     }
 }

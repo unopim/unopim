@@ -1,5 +1,8 @@
+@php
+    $darkModePreference = request()->cookie('dark_mode', 'auto');
+@endphp
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="ltr" class="{{ (request()->cookie('dark_mode') ?? 0) ? 'dark' : '' }}">
+<html lang="{{ app()->getLocale() }}" dir="ltr" class="{{ $darkModePreference === 'dark' || $darkModePreference === '1' ? 'dark' : '' }}">
     <head>
         <title>{{ $title ?? '' }}</title>
 
@@ -9,6 +12,23 @@
         <meta name="base-url" content="{{ rtrim(config('app.url'), '/') }}">
         <meta name="currency-code" content="{{ core()->getBaseCurrencyCode() }}">
         <meta http-equiv="content-language" content="{{ app()->getLocale() }}">
+
+        <script>
+            (() => {
+                const getCookie = (name) => {
+                    const value = `; ${document.cookie}`;
+                    const parts = value.split(`; ${name}=`);
+
+                    return parts.length === 2 ? parts.pop().split(';').shift() : null;
+                };
+
+                const preference = getCookie('dark_mode') || 'auto';
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const shouldUseDark = preference === 'dark' || preference === '1' || (preference === 'auto' && prefersDark);
+
+                document.documentElement.classList.toggle('dark', shouldUseDark);
+            })();
+        </script>
 
         @stack('meta')
 
@@ -53,6 +73,13 @@
 
         <style>
             {!! core()->getConfigData('general.content.custom_scripts.custom_css') !!}
+        </style>
+
+        {{-- When the promo bar is present, offset the fixed header/sidebar by its height so the left menu is not cut. --}}
+        <style>
+            body:has(#unopim-promo-bar) .unopim-header { top: 3rem; }
+            body:has(#unopim-promo-bar) #unopim-sidebar { top: 6.5rem; }
+            body:has(#unopim-promo-bar) #unopim-sidebar-scroll { height: calc(100vh - 148px); }
         </style>
 
         {!! view_render_event('unopim.admin.layout.head') !!}
