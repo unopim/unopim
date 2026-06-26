@@ -5,6 +5,7 @@ namespace Webkul\Admin\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -37,6 +38,12 @@ class AdminServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
 
         ProductProxy::observe(ProductObserver::class);
+
+        Event::listen('unopim.admin.layout.content.before', function ($viewRenderEventManager) {
+            if (auth()->guard('admin')->check()) {
+                $viewRenderEventManager->addTemplate('admin::promo.bar');
+            }
+        });
 
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -75,6 +82,11 @@ class AdminServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/system.php',
             'core'
+        );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/help.php',
+            'help'
         );
     }
 

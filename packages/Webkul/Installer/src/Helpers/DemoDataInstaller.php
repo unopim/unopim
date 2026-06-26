@@ -6,6 +6,9 @@ use Closure;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Throwable;
+use Webkul\Completeness\Console\RecalculateCompletenessCommand;
+use Webkul\ElasticSearch\Console\Command\CategoryIndexer;
+use Webkul\ElasticSearch\Console\Command\ProductIndexer;
 use Webkul\Installer\Database\Seeders\CategoryDemoTableSeeder;
 use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
 use Webkul\Installer\Database\Seeders\ProductTableSeeder;
@@ -54,11 +57,23 @@ class DemoDataInstaller
             app(ProductTableSeeder::class)->run();
 
             if (config('elasticsearch.enabled') == 'true') {
-                $report('Re-indexing categories to Elasticsearch...');
-                Artisan::call('unopim:category:index');
+                try {
+                    // These indexers are only auto-registered in the console, so
+                    // register them for the web installer. Indexing is an
+                    // optimization — never fail the whole seed if it errors
+                    // (e.g. Elasticsearch unreachable); the data is already in
+                    // the database and can be re-indexed later.
+                    Artisan::registerCommand(app(CategoryIndexer::class));
+                    Artisan::registerCommand(app(ProductIndexer::class));
 
-                $report('Re-indexing products to Elasticsearch...');
-                Artisan::call('unopim:product:index');
+                    $report('Re-indexing categories to Elasticsearch...');
+                    Artisan::call('unopim:category:index');
+
+                    $report('Re-indexing products to Elasticsearch...');
+                    Artisan::call('unopim:product:index');
+                } catch (Throwable $e) {
+                    $report('Elasticsearch re-indexing skipped: '.$e->getMessage());
+                }
             }
 
             $report('Recalculating product completeness...');
@@ -129,6 +144,11 @@ class DemoDataInstaller
 
         try {
             config(['queue.default' => 'sync']);
+
+            // The Completeness package only auto-registers this command when
+            // running in the console, so register it explicitly for the web
+            // installer (which calls this inside an HTTP request).
+            Artisan::registerCommand(app(RecalculateCompletenessCommand::class));
 
             Artisan::call('unopim:completeness:recalculate', ['--all' => true]);
         } finally {

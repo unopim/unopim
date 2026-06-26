@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 use Webkul\Core\ElasticSearch;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
@@ -27,7 +29,8 @@ class Installer extends Command
     protected $signature = 'unopim:install
         { --skip-env-check : Skip env check. }
         { --skip-admin-creation : Skip admin creation. }
-        { --with-demo-data : Seed sample products and demo data. }';
+        { --with-demo-data : Seed sample products and demo data. }
+        { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }';
 
     /**
      * The console command description.
@@ -97,6 +100,33 @@ class Installer extends Command
     ];
 
     /**
+     * Optional open-source add-on packages the installer can pull in.
+     *
+     * Each entry maps a short key to its Composer package name, a human label
+     * for the selection prompt, and the artisan command that performs the
+     * package's own setup (migrations, config publish, etc.).
+     *
+     * @var array<string, array{composer: string, label: string, install: string}>
+     */
+    protected $optionalPackages = [
+        'dam' => [
+            'composer' => 'unopim/dam',
+            'label'    => 'Digital Asset Management (DAM)',
+            'install'  => 'dam-package:install',
+        ],
+        'shopify' => [
+            'composer' => 'unopim/shopify-connector',
+            'label'    => 'Shopify Connector',
+            'install'  => 'shopify-package:install',
+        ],
+        'bagisto' => [
+            'composer' => 'unopim/bagisto-connector',
+            'label'    => 'Bagisto Connector',
+            'install'  => 'bagisto-package:install',
+        ],
+    ];
+
+    /**
      * Install and configure UnoPIm.
      */
     public function handle()
@@ -149,6 +179,14 @@ class Installer extends Command
         $this->warn('Step: Clearing cached bootstrap files...');
         $this->call('optimize:clear');
 
+        /**
+         * Resolve the optional-package selection up front, while the console is
+         * still interactive. Demo-data seeding runs Artisan::call() internally,
+         * which flips the input to non-interactive, so prompting afterwards
+         * would silently skip the multiselect.
+         */
+        $selectedPackages = $this->resolveSelectedPackages();
+
         if (! $this->option('skip-admin-creation')) {
             $this->warn('Step: Create admin credentials...');
             $this->createAdminCredentials();
@@ -158,9 +196,213 @@ class Installer extends Command
             $this->seedSampleProducts();
         }
 
+        $this->installOptionalPackages($selectedPackages);
+
         $this->markInstalled();
 
         ComposerEvents::postCreateProject();
+
+        $this->renderCloudHostingBanner();
+    }
+
+    /**
+     * Resolve which optional packages to install.
+     *
+     * Priority: the `--with-packages` option (comma-separated) when provided,
+     * otherwise an interactive multiselect prompt. With no option in a
+     * non-interactive run nothing is installed — this keeps headless/CI
+     * installs (e.g. `--skip-admin-creation`) from blocking on a prompt.
+     *
+     * @return array<int, string>
+     */
+    protected function resolveSelectedPackages(): array
+    {
+        $option = $this->option('with-packages');
+
+        if ($option !== null && $option !== '') {
+            $keys = array_filter(array_map('trim', explode(',', $option)));
+        } elseif ($this->hasInteractiveTerminal()) {
+            $keys = multiselect(
+                label: 'Select optional packages to install',
+                options: array_map(fn ($package) => $package['label'], $this->optionalPackages),
+                hint: 'Use the space bar to toggle, enter to confirm. Leave empty to skip.',
+            );
+        } else {
+            $keys = [];
+        }
+
+        $selected = [];
+
+        foreach ($keys as $key) {
+            if (isset($this->optionalPackages[$key])) {
+                $selected[] = $key;
+            } else {
+                $this->warn("Skipping unknown package: {$key}");
+            }
+        }
+
+        return array_values(array_unique($selected));
+    }
+
+    /**
+     * Whether the command is attached to a real interactive terminal.
+     *
+     * `$this->input->isInteractive()` is unreliable on some CI runners (it can
+     * report true with no STDIN attached), so a prompt shown on its basis
+     * aborts when reading hits EOF. Checking STDIN for a TTY is order- and
+     * runner-independent, so headless installs never block on the prompt.
+     */
+    protected function hasInteractiveTerminal(): bool
+    {
+        return $this->input->isInteractive()
+            && defined('STDIN')
+            && function_exists('stream_isatty')
+            && @stream_isatty(STDIN);
+    }
+
+    /**
+     * Install the selected optional packages.
+     *
+     * Each package is pulled in with `composer require` and then set up by its
+     * own artisan installer, spawned as a fresh process so the newly required
+     * service provider is discovered (a same-process call would not see it).
+     * A failure for one package is reported with manual instructions and never
+     * aborts the core install.
+     *
+     * @param  array<int, string>  $keys
+     */
+    protected function installOptionalPackages(array $keys): void
+    {
+        if (empty($keys)) {
+            return;
+        }
+
+        $artisan = [PHP_BINARY, base_path('artisan')];
+
+        /**
+         * The spawned artisan processes inherit this shell's environment, where
+         * stray DB_* vars (e.g. a test runner's unopim_test creds) would shadow
+         * the .env and break the package's migrations. Pin the child processes
+         * to the database connection the installer already resolved.
+         */
+        $dbEnv = $this->resolvedDatabaseEnv();
+
+        foreach ($keys as $key) {
+            $package = $this->optionalPackages[$key];
+
+            $this->warn("Step: Installing optional package [{$package['label']}]...");
+
+            try {
+                $this->runProcess(['composer', 'require', $package['composer']], $dbEnv);
+
+                /**
+                 * Clear cached config/providers so the freshly required package
+                 * is discovered before — and after its setup is registered —
+                 * the install command runs in this fresh process.
+                 */
+                $this->runProcess([...$artisan, 'optimize:clear'], $dbEnv);
+
+                $this->runProcess([...$artisan, $package['install'], '--no-interaction'], $dbEnv);
+
+                $this->runProcess([...$artisan, 'optimize:clear'], $dbEnv);
+
+                /**
+                 * Signal running queue workers to restart so they boot with the
+                 * newly installed package's code and jobs instead of the stale
+                 * worker image that predates the package.
+                 */
+                $this->runProcess([...$artisan, 'queue:restart'], $dbEnv);
+
+                $this->info("{$package['label']} installed successfully.");
+            } catch (\Throwable $e) {
+                $this->error("Failed to install {$package['label']}: {$e->getMessage()}");
+                $this->warn('You can install it manually later by running:');
+                $this->line("  composer require {$package['composer']}");
+                $this->line("  php artisan {$package['install']}");
+                $this->line('  php artisan optimize:clear');
+                $this->line('  php artisan queue:restart');
+            }
+        }
+    }
+
+    /**
+     * Build the database environment the spawned processes must use, taken from
+     * the connection the installer already resolved (config), so they never
+     * fall back to stray DB_* vars present in the parent shell.
+     *
+     * @return array<string, string>
+     */
+    protected function resolvedDatabaseEnv(): array
+    {
+        $connection = config('database.default');
+
+        return [
+            'DB_CONNECTION' => (string) $connection,
+            'DB_HOST'       => (string) config("database.connections.{$connection}.host"),
+            'DB_PORT'       => (string) config("database.connections.{$connection}.port"),
+            'DB_DATABASE'   => (string) config("database.connections.{$connection}.database"),
+            'DB_USERNAME'   => (string) config("database.connections.{$connection}.username"),
+            'DB_PASSWORD'   => (string) config("database.connections.{$connection}.password"),
+            'DB_PREFIX'     => (string) config("database.connections.{$connection}.prefix"),
+        ];
+    }
+
+    /**
+     * Run a shell command from the project root and stream its output.
+     *
+     * @param  array<int, string>  $command
+     * @param  array<string, string>  $env  Environment overrides merged onto the inherited shell env.
+     *
+     * @throws ProcessFailedException
+     */
+    protected function runProcess(array $command, array $env = []): void
+    {
+        $process = new Process($command, base_path(), $env ?: null);
+
+        $process->setTimeout(null);
+
+        $process->run(function ($type, $buffer) {
+            $this->output->write($buffer);
+        });
+
+        if (! $process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+    }
+
+    /**
+     * Print the UnoPim cloud hosting promotional banner.
+     */
+    protected function renderCloudHostingBanner(): void
+    {
+        $url = 'https://unopim.com/cloud-hosting/';
+
+        $width = 72;
+
+        /**
+         * Render one full-width line as a solid colored block so the banner
+         * stands out from the surrounding monochrome install log. Padding is
+         * measured with mb_strlen so multibyte glyphs stay aligned.
+         */
+        $row = function (string $text, string $style) use ($width): void {
+            $body = '  '.$text.str_repeat(' ', max(1, $width - 2 - mb_strlen($text)));
+
+            $this->line('  <'.$style.'>'.$body.'</>');
+        };
+
+        $base = 'bg=blue;fg=white';
+
+        $this->newLine();
+        $row('', $base);
+        $row('★  UNOPIM CLOUD HOSTING', 'bg=blue;fg=bright-yellow;options=bold');
+        $row('', $base);
+        $row('Skip the server setup — run UnoPim on fast, secure,', $base);
+        $row('cost-effective managed hosting that scales on demand.', $base);
+        $row('Launch in minutes, without the infrastructure overhead.', $base);
+        $row('', $base);
+        $row('→  '.$url, 'bg=blue;fg=bright-cyan;options=bold');
+        $row('', $base);
+        $this->newLine();
     }
 
     /**
@@ -513,11 +755,20 @@ class Installer extends Command
                 ]
             );
 
-            if (select(
-                label: 'Do you want sample products?',
-                options: ['yes', 'no'],
-                default: 'no'
-            ) === 'yes') {
+            /**
+             * Skip the prompt when --with-demo-data was passed (handle() seeds
+             * once) or when running non-interactively, so a scripted install
+             * never blocks here or double-seeds.
+             */
+            if (
+                ! $this->option('with-demo-data')
+                && $this->hasInteractiveTerminal()
+                && select(
+                    label: 'Do you want sample products?',
+                    options: ['yes', 'no'],
+                    default: 'no'
+                ) === 'yes'
+            ) {
                 $this->seedSampleProducts();
             }
 

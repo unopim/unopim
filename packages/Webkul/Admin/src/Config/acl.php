@@ -686,4 +686,19 @@ return [
         'route' => 'admin.configuration.integrations.delete',
         'sort'  => 3,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Help
+    |--------------------------------------------------------------------------
+    |
+    | ACL related to the help & resources page.
+    |
+    */
+    [
+        'key'   => 'help',
+        'name'  => 'admin::app.acl.help',
+        'route' => 'admin.help.index',
+        'sort'  => 99999,
+    ],
 ];
