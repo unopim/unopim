@@ -15,11 +15,26 @@ class ScopeMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($this->getAclForCurrentRoute() && ! $this->hasPermission($this->getAclForCurrentRoute())) {
+        $acl = $this->getAclForCurrentRoute();
+
+        if ($acl) {
+            if (! $this->hasPermission($acl)) {
+                return response()->json(['error' => 'This action is unauthorized'], 403);
+            }
+        } elseif ($this->isMutatingRequest($request)) {
+
             return response()->json(['error' => 'This action is unauthorized'], 403);
         }
 
         return $next($request);
+    }
+
+    /**
+     * Determine whether the request uses a state-changing HTTP method.
+     */
+    protected function isMutatingRequest(Request $request): bool
+    {
+        return in_array($request->getMethod(), ['POST', 'PUT', 'PATCH', 'DELETE'], true);
     }
 
     /**
