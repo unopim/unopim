@@ -64,6 +64,58 @@ class DatabaseManager
     }
 
     /**
+     * Create the configured database if it does not already exist.
+     *
+     * `migrate:fresh` will not create the schema itself. The name is validated
+     * against a strict pattern before interpolation to avoid SQL injection.
+     */
+    public function createDatabaseIfNotExists(): void
+    {
+        $connection = config('database.default');
+
+        // Branch on the driver, not the connection name, which may be customized.
+        $driver = config("database.connections.{$connection}.driver", $connection);
+
+        // Only server-based drivers need an explicit CREATE DATABASE; skip others (e.g. sqlite).
+        if (! in_array($driver, ['mysql', 'pgsql'], true)) {
+            return;
+        }
+
+        $database = config("database.connections.{$connection}.database");
+
+        if (! $database) {
+            return;
+        }
+
+        if (! preg_match('/^[A-Za-z0-9_]+$/', (string) $database)) {
+            throw new Exception("The database name '{$database}' is invalid. Use only letters, numbers, and underscores.");
+        }
+
+        // Connect without the target database (pgsql needs the "postgres" maintenance db).
+        config(["database.connections.{$connection}.database" => $driver === 'pgsql' ? 'postgres' : null]);
+
+        DB::purge($connection);
+
+        try {
+            if ($driver === 'pgsql') {
+                $exists = DB::connection($connection)->select('SELECT 1 FROM pg_database WHERE datname = ?', [$database]);
+
+                if (empty($exists)) {
+                    // CREATE DATABASE cannot run inside a transaction on pgsql.
+                    DB::connection($connection)->getPdo()->exec("CREATE DATABASE \"{$database}\" ENCODING 'UTF8'");
+                }
+            } else {
+                DB::connection($connection)->statement("CREATE DATABASE IF NOT EXISTS `{$database}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            }
+        } finally {
+            // Restore the database selection for the migration.
+            config(["database.connections.{$connection}.database" => $database]);
+
+            DB::purge($connection);
+        }
+    }
+
+    /**
      * Seed the database.
      *
      * @return void|string

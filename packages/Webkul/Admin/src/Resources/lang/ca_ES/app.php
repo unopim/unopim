@@ -1986,6 +1986,7 @@ return [
                 'attribute-families' => 'Familias de atributos',
                 'attribute-groups'   => 'Grupos de atributos',
                 'attributes'         => 'Atributos',
+                'help'               => 'Ajuda',
                 'history'            => 'Historial',
                 'edit-section'       => 'Datos',
                 'general'            => 'General',
@@ -2225,6 +2226,63 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => 'Ajuda i recursos',
+            'subtitle'  => 'Tot el que necessites per treure el màxim profit d\'UnoPim: allotjament, suport i serveis professionals, a més d\'extensions i documentació per a desenvolupadors.',
+            'services'  => 'Serveis',
+            'resources' => 'Recursos i documentació',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => 'Allotjament al núvol',
+                'description' => 'Allotjament al núvol gestionat i econòmic: prova i llança UnoPim al núvol en minuts, totalment optimitzat i escalable.',
+            ],
+            'support' => [
+                'title'       => 'Suport i manteniment',
+                'description' => 'Suport tècnic dedicat i plans de manteniment continu per mantenir el teu PIM segur, actualitzat i funcionant sense problemes.',
+            ],
+            'services' => [
+                'title'       => 'Serveis de pagament',
+                'description' => 'Ajuda experta per a la integració de mòduls, personalització, migració de dades, actualitzacions de versió i desenvolupament a mida.',
+            ],
+            'extensions' => [
+                'title'       => 'Extensions',
+                'description' => 'Explora els complements oficials i de la comunitat per ampliar UnoPim amb nous connectors, canals i funcionalitats.',
+            ],
+            'user-guide' => [
+                'title'       => 'Guia de l\'usuari',
+                'description' => 'Guies per a desenvolupadors, tutorials i els articles més recents per ajudar-te a construir, configurar i mantenir-te al dia.',
+            ],
+            'api-docs' => [
+                'title'       => 'Documentació de l\'API',
+                'description' => 'Referència completa de la REST API amb endpoints, autenticació i exemples per integrar UnoPim amb el teu entorn.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => 'Encara necessites ajuda?',
+            'sub'    => 'Parla amb l\'equip d\'UnoPim sobre allotjament, desenvolupament personalitzat o qualsevol altra cosa.',
+            'button' => 'Contacta amb nosaltres',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => 'Allotjament al núvol',
+                'message' => 'Posa en marxa UnoPim en un allotjament al núvol totalment gestionat — <b>plans ràpids, segurs i econòmics.</b>',
+                'cta'     => 'Veure plans',
+            ],
+            'upgrade' => [
+                'tag'     => 'Actualització disponible',
+                'message' => 'Estàs utilitzant <b>UnoPim v:version.</b> Hi ha una versió més nova disponible — actualitza per obtenir les darreres funcionalitats &amp; correccions.',
+                'cta'     => 'Tria el servei d\'actualització',
+            ],
+
+            'dont-show-again' => 'No tornar a mostrar',
+            'dismissed'       => 'Preferència desada.',
+        ],
+    ],
     'acl' => [
         'addresses'                => 'Adreces',
         'attribute-families'       => 'Famílies d\'atributs',
@@ -2246,6 +2304,7 @@ return [
         'email-templates'          => 'Plantilles d\'emails',
         'events'                   => 'Esdeveniments',
         'groups'                   => 'Grups',
+        'help'                     => 'Ajuda',
         'import'                   => 'Importar',
         'imports'                  => 'Imports',
         'invoices'                 => 'Factures',

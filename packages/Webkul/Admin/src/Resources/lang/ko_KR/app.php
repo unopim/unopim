@@ -1983,6 +1983,7 @@ return [
                 'theme-light'   => 'Theme: Light',
             ],
             'sidebar' => [
+                'help'               => '도움말',
                 'attribute-families' => '속성 그룹',
                 'attribute-groups'   => '속성 그룹',
                 'attributes'         => '속성',
@@ -2225,7 +2226,66 @@ return [
             ],
         ],
     ],
+    'help' => [
+        'index' => [
+            'title'     => '도움말 및 리소스',
+            'subtitle'  => 'UnoPim을 최대한 활용하는 데 필요한 모든 것 — 호스팅, 지원 및 전문 서비스, 그리고 확장 기능과 개발자 문서까지.',
+            'services'  => '서비스',
+            'resources' => '리소스 및 문서',
+        ],
+
+        'cards' => [
+            'cloud-hosting' => [
+                'title'       => '클라우드 호스팅',
+                'description' => '비용 효율적이고 관리되는 클라우드 호스팅 — 몇 분 안에 클라우드에서 UnoPim을 사용해 보고 출시하세요. 완전히 최적화되고 확장 가능합니다.',
+            ],
+            'support' => [
+                'title'       => '지원 및 유지 관리',
+                'description' => 'PIM을 안전하고 최신 상태로 원활하게 유지하기 위한 전담 기술 지원 및 지속적인 유지 관리 플랜.',
+            ],
+            'services' => [
+                'title'       => '유료 서비스',
+                'description' => '모듈 통합, 사용자 정의, 데이터 마이그레이션, 버전 업그레이드 및 맞춤형 개발을 위한 전문가 지원.',
+            ],
+            'extensions' => [
+                'title'       => '확장 기능',
+                'description' => '새로운 커넥터, 채널 및 기능으로 UnoPim을 확장할 수 있는 공식 및 커뮤니티 애드온을 둘러보세요.',
+            ],
+            'user-guide' => [
+                'title'       => '사용자 가이드',
+                'description' => '구축, 구성 및 최신 상태 유지에 도움이 되는 개발자 가이드, 튜토리얼 및 최신 기사.',
+            ],
+            'api-docs' => [
+                'title'       => 'API 문서',
+                'description' => 'UnoPim을 귀하의 스택과 통합하기 위한 엔드포인트, 인증 및 예제가 포함된 전체 REST API 참조.',
+            ],
+        ],
+
+        'cta' => [
+            'title'  => '아직 도움이 필요하신가요?',
+            'sub'    => '호스팅, 맞춤형 개발 또는 기타 모든 사항에 대해 UnoPim 팀과 상담하세요.',
+            'button' => '문의하기',
+        ],
+
+        'banners' => [
+            'cloud' => [
+                'tag'     => '클라우드 호스팅',
+                'message' => '완전 관리형 클라우드 호스팅에서 UnoPim을 시작하세요 — <b>빠르고 안전하며 비용 효율적인 요금제.</b>',
+                'cta'     => '요금제 보기',
+            ],
+            'upgrade' => [
+                'tag'     => '업데이트 사용 가능',
+                'message' => '현재 <b>UnoPim v:version</b>을 사용 중입니다. 최신 버전이 출시되었습니다 — 최신 기능 &amp; 수정 사항을 위해 업그레이드하세요.',
+                'cta'     => '업그레이드 서비스 선택',
+            ],
+
+            'dont-show-again' => '다시 표시하지 않음',
+            'dismissed'       => '환경설정이 저장되었습니다.',
+        ],
+    ],
+
     'acl' => [
+        'help'                     => '도움말',
         'addresses'                => '주소',
         'attribute-families'       => '속성 가족',
         'attribute-groups'         => '속성 그룹',
