@@ -3,6 +3,7 @@
 namespace Webkul\DataTransfer\Helpers\Sources\Export;
 
 use Webkul\DataTransfer\Cursor\AbstractCursor;
+use Webkul\DataTransfer\Helpers\Sources\Export\Filters\ProductExportFilter;
 
 class ProductCursor extends AbstractCursor
 {
@@ -26,12 +27,8 @@ class ProductCursor extends AbstractCursor
         $query = $this->source->newQuery();
         $filters = $this->requestParams['filters'] ?? [];
 
-        foreach ($filters as $field => $value) {
-            if ($field == 'status' && ! empty($value)) {
-                $value = $value == 'enable' ? true : false;
-                $query->where($field, $value);
-            }
-        }
+        app(ProductExportFilter::class)->applyToQuery($query, $filters);
+
         try {
             $ids = $query->select('id')
                 ->orderBy('id')

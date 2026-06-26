@@ -72,7 +72,7 @@ class WebhookService
             report($e);
         }
 
-        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e));
+        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e), $webhookData);
 
         return $response;
     }
@@ -128,7 +128,7 @@ class WebhookService
             report($e);
         }
 
-        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e));
+        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e), $webhookData);
 
         return $response;
     }
@@ -215,7 +215,7 @@ class WebhookService
                 return null;
             }
 
-            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhookUrl))->post($webhookUrl, $normalized);
+            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhookUrl))->post($webhookUrl, $normalized, $webhookData);
         } catch (\Exception $e) {
             $response = null;
 
@@ -224,12 +224,12 @@ class WebhookService
 
         $status = $response?->successful() ? 1 : 0;
 
-        $this->storeBatchLogs($products, $status, $this->normalizeResponseForLog($response ?? $e));
+        $this->storeBatchLogs($products, $status, $this->normalizeResponseForLog($response ?? $e), $webhookData);
 
         return $response;
     }
 
-    protected function storeLogs(string $code, int $status, $response = null): void
+    protected function storeLogs(string $code, int $status, $response = null, array $payload = []): void
     {
         $admin = auth('admin')->user()
             ?? auth('api')->user()
@@ -246,13 +246,13 @@ class WebhookService
             'user'   => $adminName,
             'sku'    => $code,
             'status' => $status,
-            'extra'  => ['response' => $response],
+            'extra'  => ['payload' => $payload, 'response' => $response],
         ];
 
         $this->logsRepository->create($data);
     }
 
-    protected function storeBatchLogs($products, int $status, $response = null): void
+    protected function storeBatchLogs($products, int $status, $response = null, array $payload = []): void
     {
         $admin = auth('admin')->user()
             ?? auth('api')->user()
@@ -266,7 +266,7 @@ class WebhookService
                 'user'   => $adminName ?? null,
                 'sku'    => $product->sku ?? ($product['sku'] ?? null),
                 'status' => $status,
-                'extra'  => ['response' => $response],
+                'extra'  => ['payload' => $payload, 'response' => $response],
             ];
 
             $this->logsRepository->create($data);

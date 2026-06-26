@@ -309,12 +309,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->addColumn($this->buildColumnDefinition($attribute));
     }
 
-    /**
-     * Add filterable attributes that are not already in the visible columns
-     * so they appear in the filter panel without being shown in the grid.
-     */
     protected function addFilterableAttributes(): void
     {
+        $requestedCodes = $this->getRequestedFilterAttributeCodes();
+
+        if (empty($requestedCodes)) {
+            return;
+        }
+
         $existingCodes = array_merge(
             $this->defaultColumns,
             array_keys($this->attributeColumns)
@@ -322,6 +324,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $filterableAttributes = app(AttributeRepository::class)
             ->where('is_filterable', true)
+            ->whereIn('code', $requestedCodes)
             ->whereNotIn('code', $existingCodes)
             ->get();
 
@@ -333,6 +336,20 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             $this->addColumn($columnDefinition);
         }
+    }
+
+    protected function getRequestedFilterAttributeCodes(): array
+    {
+        $filters = request()->input('filters', []);
+
+        if (! is_array($filters)) {
+            return [];
+        }
+
+        return array_values(array_diff(
+            array_keys($filters),
+            ['all', 'indices', 'channel', 'locale']
+        ));
     }
 
     /**
@@ -523,7 +540,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function processRequestedSorting($requestedSort)
     {
         $sortColumn = $requestedSort['column'] ?? $this->sortColumn ?? $this->primaryColumn;
-        $sortOrder = strtolower($requestedSort['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
+        $sortOrder = $requestedSort['order'] ?? $this->sortOrder;
+
+        $sortOrder = strtolower(trim((string) $sortOrder)) === 'asc' ? 'asc' : 'desc';
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             $attribute = $this->attributeService->findAttributeByCode($sortColumn) ?? 'text';
@@ -663,11 +682,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sort = $sortMapping[$sort] ?? $this->getAttributePathForSort($sort, 'elasticsearch');
 
-        $sortOrder = strtolower($params['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
-
         ElasticSearchQuery::orderBy([
             $sort => [
-                'order'         => $sortOrder,
+                'order'         => $params['order'] ?? $this->sortOrder,
                 'missing'       => '_last',
                 'unmapped_type' => 'keyword',
             ],

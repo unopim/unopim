@@ -82,6 +82,7 @@ return [
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Israeli Shekel',
+                'CAD' => 'Canadian Dollar',
                 'CNY' => 'Chinese Yuan',
                 'EUR' => 'EURO',
                 'GBP' => 'Pound Sterling',
@@ -123,6 +124,35 @@ return [
                 'seed-sample-data-failed'  => 'Sample data could not be seeded. You can install it later via `php artisan unopim:install:demo-data`.',
             ],
 
+            'cloud-bar' => [
+                'tag'     => 'Cloud',
+                'message' => 'Skip the server setup — run UnoPim on fast, secure, managed cloud hosting.',
+                'cta'     => 'Explore Cloud Hosting',
+            ],
+
+            'add-ons' => [
+                'title'             => 'Optional Add-ons',
+                'info'              => 'Select the optional packages you would like to use. These are installed later from the command line — nothing is downloaded now.',
+                'sample-data-title' => 'Sample Data',
+                'sample-data-info'  => 'Install sample products and demo data so you can explore UnoPim right away.',
+                'sample-data-label' => 'Install sample products and demo data',
+                'packages'          => [
+                    'dam' => [
+                        'label'        => 'Digital Asset Management (DAM)',
+                        'description'  => 'Centralize, organize, and reuse your product images and media assets.',
+                    ],
+                    'shopify' => [
+                        'label'        => 'Shopify Connector',
+                        'description'  => 'Sync products, categories, and inventory between UnoPim and Shopify.',
+                    ],
+                    'bagisto' => [
+                        'label'        => 'Bagisto Connector',
+                        'description'  => 'Push your enriched catalog from UnoPim to your Bagisto storefront.',
+                    ],
+                ],
+                'title-step' => 'Add-ons',
+            ],
+
             'environment-configuration' => [
                 'allowed-currencies'  => 'Allowed Currencies',
                 'allowed-locales'     => 'Allowed Locales',
@@ -141,6 +171,7 @@ return [
                 'default-timezone'    => 'Default Timezone',
                 'default-url-link'    => 'https://localhost',
                 'default-url'         => 'Default URL',
+                'dollar'              => 'Canadian Dollar (CAD)',
                 'dirham'              => 'Dirham (AED)',
                 'euro'                => 'Euro (EUR)',
                 'iranian'             => 'Iranian Rial (IRR)',
@@ -155,6 +186,25 @@ return [
                 'select-timezone'     => 'Select Timezone',
                 'sqlsrv'              => 'SQLSRV',
                 'title'               => 'Database Configuration',
+                'step-title'          => 'Environment Configuration',
+                'elasticsearch'       => [
+                    'title'             => 'Elasticsearch',
+                    'info'              => 'Optionally connect Elasticsearch for fast product search and indexing. You can also configure this later in your .env file.',
+                    'enable'            => 'Enable Elasticsearch',
+                    'yes'               => 'Yes',
+                    'no'                => 'No',
+                    'connection'        => 'Connection Type',
+                    'connection-default'=> 'Default (host)',
+                    'connection-api'    => 'API Key',
+                    'connection-cloud'  => 'Elastic Cloud',
+                    'host'              => 'Elasticsearch Host',
+                    'host-placeholder'  => '127.0.0.1:9200',
+                    'user'              => 'Username',
+                    'password'          => 'Password',
+                    'api-key'           => 'API Key',
+                    'cloud-id'          => 'Cloud ID',
+                    'index-prefix'      => 'Index Prefix',
+                ],
                 'turkish-lira'        => 'Turkish Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainian Hryvnia (UAH)',
                 'usd'                 => 'US Dollar (USD)',
@@ -167,12 +217,36 @@ return [
                 'title'       => 'Installation',
             ],
 
+            'terminal' => [
+                'title'              => 'Installing UnoPim...',
+                'preparing-database' => '→ Preparing database...',
+                'database-ready'     => '✓ Database ready',
+                'migrating'          => '→ Migrating tables...',
+                'migrated'           => '✓ Migrated',
+                'seeding'            => '→ Seeding base data...',
+                'seeded'             => '✓ Seeded',
+                'creating-admin'     => '→ Creating administrator...',
+                'admin-created'      => '✓ Admin created',
+                'installing-sample'  => '→ Installing sample data...',
+                'sample-done'        => '✓ Sample data',
+                'sample-failed'      => '✗ Sample data failed: :message',
+                'installing-package' => '→ Installing :label (composer require :composer)...',
+                'package-installed'  => '✓ :label installed',
+                'package-failed'     => '✗ :label failed: :message',
+                'package-manual'     => '! :label cannot be auto-installed on this server (no shell access). Run this from a machine with shell access:',
+            ],
+
             'installation-completed' => [
                 'admin-panel'               => 'Admin Panel',
                 'unopim-forums'             => 'UnoPim Forum',
                 'explore-unopim-extensions' => 'Explore UnoPim Extension',
                 'title-info'                => 'UnoPim is Successfully installed on your system.',
                 'title'                     => 'Installation Completed',
+                'add-ons-title'             => 'Add-ons installed',
+                'add-ons-info'              => 'Your selected add-ons were installed during setup (see the log above).',
+                'add-ons-note'              => 'Add-ons are installed from the command line. Each command pulls the package in with Composer and runs its setup.',
+                'copy'                      => 'Copy',
+                'copied'                    => 'Copied!',
             ],
 
             'ready-for-installation' => [
@@ -223,6 +297,8 @@ return [
             'continue'                 => 'Continue',
             'installation-description' => 'UnoPim installation typically involves several steps. Here\'s a general outline of the installation process for UnoPim:',
             'wizard-language'          => 'Installation Wizard language',
+            'powered-by'               => 'Powered by :unopim,',
+            'open-source-project-by'   => 'An open-source project by :webkul.',
             'installation-info'        => 'We are happy to see you here!',
             'installation-title'       => 'Welcome to Installation',
             'save-configuration'       => 'Save configuration',

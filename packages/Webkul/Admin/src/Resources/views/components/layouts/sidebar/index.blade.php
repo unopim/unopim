@@ -1,5 +1,5 @@
-<div class="fixed top-14 h-full bg-white dark:bg-cherry-700 w-[270px] shadow-[0px_8px_10px_0px_rgba(0,_0,_0,_0.2)] z-[1000] max-lg:hidden transition-all duration-300 group-[.sidebar-collapsed]/container:w-[70px]">
-    <div class="h-[calc(100vh-100px)] overflow-auto journal-scroll group-[.sidebar-collapsed]/container:overflow-visible">
+<div id="unopim-sidebar" class="fixed top-14 h-full bg-white dark:bg-cherry-700 w-[270px] shadow-[0px_8px_10px_0px_rgba(0,_0,_0,_0.2)] z-[1000] max-lg:hidden transition-all duration-300 group-[.sidebar-collapsed]/container:w-[70px]">
+    <div id="unopim-sidebar-scroll" class="h-[calc(100vh-100px)] overflow-auto journal-scroll group-[.sidebar-collapsed]/container:overflow-visible">
         <nav class="grid gap-2 mt-2 w-full">
             <!-- Navigation Menu -->
             @foreach ($menu->items as $menuItem)
