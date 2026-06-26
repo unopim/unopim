@@ -754,16 +754,32 @@ class InstallerController extends Controller
     }
 
     /**
+     * Locations probed for a composer executable, in priority order.
+     *
+     * @return array<int, string>
+     */
+    protected function composerProbePaths(): array
+    {
+        return [
+            '/usr/local/bin/composer',
+            '/usr/bin/composer',
+            base_path('composer.phar'),
+            base_path('bin/composer/composer.phar'),
+        ];
+    }
+
+    /**
      * Resolve the composer executable as a process-argument prefix.
      *
      * A web process PATH may not include composer, so probe common locations
-     * and a project-local composer.phar before falling back to bare "composer".
+     * and the project-local / bundled composer.phar files before falling
+     * back to bare "composer".
      *
      * @return array<int, string>
      */
     protected function resolveComposerBinary(): array
     {
-        foreach (['/usr/local/bin/composer', '/usr/bin/composer', base_path('composer.phar')] as $path) {
+        foreach ($this->composerProbePaths() as $path) {
             if (is_file($path)) {
                 return str_ends_with($path, '.phar') ? [PHP_BINARY, $path] : [$path];
             }
