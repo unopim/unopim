@@ -3,9 +3,9 @@
 use Laravel\Prompts\Key;
 use Laravel\Prompts\Prompt;
 use Webkul\Installer\Console\Commands\Installer;
-use Webkul\Installer\Console\Prompts\PreselectedSearchPrompt;
+use Webkul\Installer\Console\Prompts\PreselectedSearchValue;
 
-function installerLocalePrompt(?string $default): PreselectedSearchPrompt
+function installerLocalePrompt(?string $default): PreselectedSearchValue
 {
     $locales = [
         'en_US' => 'English (United States)',
@@ -13,7 +13,7 @@ function installerLocalePrompt(?string $default): PreselectedSearchPrompt
         'de_DE' => 'German (Germany)',
     ];
 
-    return new PreselectedSearchPrompt(
+    return new PreselectedSearchValue(
         label: 'Please select the default application locale',
         options: function (string $value) use ($locales) {
             $value = strtolower(trim($value));
@@ -38,15 +38,15 @@ afterEach(function () {
     Prompt::interactive(false);
 });
 
-describe('PreselectedSearchPrompt', function () {
+describe('PreselectedSearchValue', function () {
     it('pre-selects the existing .env value and keeps it when Enter is pressed', function () {
-        PreselectedSearchPrompt::fake([Key::ENTER]);
+        PreselectedSearchValue::fake([Key::ENTER]);
 
         expect(installerLocalePrompt('en_US')->prompt())->toBe('en_US');
     });
 
     it('lets the user clear the default with Backspace and search a different value', function () {
-        PreselectedSearchPrompt::fake([
+        PreselectedSearchValue::fake([
             Key::BACKSPACE, Key::BACKSPACE, Key::BACKSPACE, Key::BACKSPACE, Key::BACKSPACE,
             'fr_FR',
             Key::DOWN,
@@ -57,13 +57,13 @@ describe('PreselectedSearchPrompt', function () {
     });
 
     it('shows an empty searchable prompt when no default is configured', function () {
-        PreselectedSearchPrompt::fake(['fr_FR', Key::DOWN, Key::ENTER]);
+        PreselectedSearchValue::fake(['fr_FR', Key::DOWN, Key::ENTER]);
 
         expect(installerLocalePrompt(null)->prompt())->toBe('fr_FR');
     });
 
     it('falls back to an empty prompt when the .env value is no longer a valid option', function () {
-        PreselectedSearchPrompt::fake(['fr_FR', Key::DOWN, Key::ENTER]);
+        PreselectedSearchValue::fake(['fr_FR', Key::DOWN, Key::ENTER]);
 
         expect(installerLocalePrompt('zz_ZZ')->prompt())->toBe('fr_FR');
     });
