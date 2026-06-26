@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Date/Time',
-                        'user'       => 'User',
-                        'status'     => 'Status',
-                        'success'    => 'Success',
-                        'failed'     => 'Failed',
-                        'delete'     => 'Delete',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Date/Time',
+                        'user'             => 'User',
+                        'status'           => 'Status',
+                        'success'          => 'Success',
+                        'failed'           => 'Failed',
+                        'server_error'     => 'Server Error',
+                        'timeout_or_error' => 'Timeout/Error',
+                        'delete'           => 'Delete',
+                        'view'             => 'View',
                     ],
                     'title'          => 'Webhook Logs',
                     'show-title'     => 'Webhook Log Details',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'No payload recorded for this log.',
                     'delete-success' => 'Webhook logs deleted successfully',
                     'delete-failed'  => 'Webhook logs deletion failed unexpectedly',
+                    'unauthorized'   => 'This action is unauthorized',
                 ],
             ],
         ],

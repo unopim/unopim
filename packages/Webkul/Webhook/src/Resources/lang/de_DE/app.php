@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Protokolle',
-            'view'        => 'View',
+            'view'        => 'Ansehen',
             'delete'      => 'Löschen',
             'mass-delete' => 'Massenlöschung',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Datum/Uhrzeit',
-                        'user'       => 'Benutzer',
-                        'status'     => 'Status',
-                        'success'    => 'Erfolgreich',
-                        'failed'     => 'Fehlgeschlagen',
-                        'delete'     => 'Löschen',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Datum/Uhrzeit',
+                        'user'             => 'Benutzer',
+                        'status'           => 'Status',
+                        'success'          => 'Erfolgreich',
+                        'failed'           => 'Fehlgeschlagen',
+                        'server_error'     => 'Serverfehler',
+                        'timeout_or_error' => 'Zeitüberschreitung/Fehler',
+                        'delete'           => 'Löschen',
+                        'view'             => 'Ansehen',
                     ],
                     'title'          => 'Webhook-Protokolle',
                     'show-title'     => 'Webhook-Protokoll Details',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'Für dieses Protokoll wurden keine Nutzdaten aufgezeichnet.',
                     'delete-success' => 'Webhook-Protokolle erfolgreich gelöscht',
                     'delete-failed'  => 'Löschen der Webhook-Protokolle unerwartet fehlgeschlagen',
+                    'unauthorized'   => 'Diese Aktion ist nicht autorisiert',
                 ],
             ],
         ],

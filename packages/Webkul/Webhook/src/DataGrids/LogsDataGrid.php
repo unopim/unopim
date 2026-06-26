@@ -28,7 +28,8 @@ class LogsDataGrid extends DataGrid
             'created_at',
             'sku',
             'user',
-            'status'
+            'status',
+            'extra'
         );
 
         return $queryBuilder;

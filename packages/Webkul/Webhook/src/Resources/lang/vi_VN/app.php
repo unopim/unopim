@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Nhật ký',
-            'view'        => 'View',
+            'view'        => 'Xem',
             'delete'      => 'Xóa',
             'mass-delete' => 'Xóa hàng loạt',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Ngày/Giờ',
-                        'user'       => 'Người dùng',
-                        'status'     => 'Trạng thái',
-                        'success'    => 'Thành công',
-                        'failed'     => 'Thất bại',
-                        'delete'     => 'Xóa',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Ngày/Giờ',
+                        'user'             => 'Người dùng',
+                        'status'           => 'Trạng thái',
+                        'success'          => 'Thành công',
+                        'failed'           => 'Thất bại',
+                        'server_error'     => 'Lỗi máy chủ',
+                        'timeout_or_error' => 'Hết thời gian/Lỗi',
+                        'delete'           => 'Xóa',
+                        'view'             => 'Xem',
                     ],
                     'title'          => 'Nhật ký Webhook',
                     'show-title'     => 'Chi tiết nhật ký Webhook',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'Không có payload nào được ghi lại cho nhật ký này.',
                     'delete-success' => 'Nhật ký Webhook đã được xóa thành công',
                     'delete-failed'  => 'Xóa nhật ký Webhook thất bại một cách bất ngờ',
+                    'unauthorized'   => 'Hành động này không được phép',
                 ],
             ],
         ],

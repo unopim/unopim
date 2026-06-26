@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Jurnale',
-            'view'        => 'View',
+            'view'        => 'Vizualizare',
             'delete'      => 'Ștergere',
             'mass-delete' => 'Ștergere în masă',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Data/Ora',
-                        'user'       => 'Utilizator',
-                        'status'     => 'Stare',
-                        'success'    => 'Succes',
-                        'failed'     => 'Eșuat',
-                        'delete'     => 'Ștergere',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Data/Ora',
+                        'user'             => 'Utilizator',
+                        'status'           => 'Stare',
+                        'success'          => 'Succes',
+                        'failed'           => 'Eșuat',
+                        'server_error'     => 'Eroare server',
+                        'timeout_or_error' => 'Expirare/Eroare',
+                        'delete'           => 'Ștergere',
+                        'view'             => 'Vizualizare',
                     ],
                     'title'          => 'Jurnale Webhook',
                     'show-title'     => 'Detalii jurnal Webhook',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'Niciun payload înregistrat pentru acest jurnal.',
                     'delete-success' => 'Jurnalele Webhook au fost șterse cu succes',
                     'delete-failed'  => 'Ștergerea jurnalelor Webhook a eșuat în mod neașteptat',
+                    'unauthorized'   => 'Această acțiune nu este autorizată',
                 ],
             ],
         ],

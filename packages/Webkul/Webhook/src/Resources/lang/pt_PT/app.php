@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Registos',
-            'view'        => 'View',
+            'view'        => 'Ver',
             'delete'      => 'Eliminar',
             'mass-delete' => 'Eliminação em massa',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Data/Hora',
-                        'user'       => 'Utilizador',
-                        'status'     => 'Estado',
-                        'success'    => 'Sucesso',
-                        'failed'     => 'Falhado',
-                        'delete'     => 'Eliminar',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Data/Hora',
+                        'user'             => 'Utilizador',
+                        'status'           => 'Estado',
+                        'success'          => 'Sucesso',
+                        'failed'           => 'Falhado',
+                        'server_error'     => 'Erro do servidor',
+                        'timeout_or_error' => 'Tempo esgotado/Erro',
+                        'delete'           => 'Eliminar',
+                        'view'             => 'Ver',
                     ],
                     'title'          => 'Registos do Webhook',
                     'show-title'     => 'Detalhes do Registo do Webhook',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'Nenhum payload registado para este registo.',
                     'delete-success' => 'Registos do Webhook eliminados com sucesso',
                     'delete-failed'  => 'A eliminação dos registos do Webhook falhou inesperadamente',
+                    'unauthorized'   => 'Esta ação não está autorizada',
                 ],
             ],
         ],

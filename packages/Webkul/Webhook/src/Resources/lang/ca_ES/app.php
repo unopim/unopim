@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Registres',
-            'view'        => 'View',
+            'view'        => 'Veure',
             'delete'      => 'Eliminar',
             'mass-delete' => 'Eliminació massiva',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Data/Hora',
-                        'user'       => 'Usuari',
-                        'status'     => 'Estat',
-                        'success'    => 'Èxit',
-                        'failed'     => 'Fallat',
-                        'delete'     => 'Eliminar',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Data/Hora',
+                        'user'             => 'Usuari',
+                        'status'           => 'Estat',
+                        'success'          => 'Èxit',
+                        'failed'           => 'Fallat',
+                        'server_error'     => 'Error del servidor',
+                        'timeout_or_error' => 'Temps d\'espera/Error',
+                        'delete'           => 'Eliminar',
+                        'view'             => 'Veure',
                     ],
                     'title'          => 'Registres del Webhook',
                     'show-title'     => 'Detalls del registre del Webhook',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'No s\'ha registrat cap càrrega per a aquest registre.',
                     'delete-success' => 'Els registres del Webhook s\'han eliminat correctament',
                     'delete-failed'  => 'L\'eliminació dels registres del Webhook ha fallat inesperadament',
+                    'unauthorized'   => 'Aquesta acció no està autoritzada',
                 ],
             ],
         ],

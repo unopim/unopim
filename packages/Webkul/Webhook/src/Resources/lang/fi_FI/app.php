@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Lokit',
-            'view'        => 'View',
+            'view'        => 'Näytä',
             'delete'      => 'Poista',
             'mass-delete' => 'Joukkopoisto',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Päivämäärä/Aika',
-                        'user'       => 'Käyttäjä',
-                        'status'     => 'Tila',
-                        'success'    => 'Onnistunut',
-                        'failed'     => 'Epäonnistunut',
-                        'delete'     => 'Poista',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Päivämäärä/Aika',
+                        'user'             => 'Käyttäjä',
+                        'status'           => 'Tila',
+                        'success'          => 'Onnistunut',
+                        'failed'           => 'Epäonnistunut',
+                        'server_error'     => 'Palvelinvirhe',
+                        'timeout_or_error' => 'Aikakatkaisu/Virhe',
+                        'delete'           => 'Poista',
+                        'view'             => 'Näytä',
                     ],
                     'title'          => 'Webhook-lokit',
                     'show-title'     => 'Webhook-lokitiedot',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'Tälle lokimerkinnälle ei ole tallennettu hyötykuormaa.',
                     'delete-success' => 'Webhook-lokit poistettu onnistuneesti',
                     'delete-failed'  => 'Webhook-lokien poisto epäonnistui odottamattomasti',
+                    'unauthorized'   => 'Tätä toimintoa ei ole valtuutettu',
                 ],
             ],
         ],

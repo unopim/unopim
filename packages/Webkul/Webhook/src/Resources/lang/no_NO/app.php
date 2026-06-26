@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Logger',
-            'view'        => 'View',
+            'view'        => 'Vis',
             'delete'      => 'Slett',
             'mass-delete' => 'Massesletting',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Dato/Tid',
-                        'user'       => 'Bruker',
-                        'status'     => 'Status',
-                        'success'    => 'Vellykket',
-                        'failed'     => 'Mislyktes',
-                        'delete'     => 'Slett',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Dato/Tid',
+                        'user'             => 'Bruker',
+                        'status'           => 'Status',
+                        'success'          => 'Vellykket',
+                        'failed'           => 'Mislyktes',
+                        'server_error'     => 'Serverfeil',
+                        'timeout_or_error' => 'Tidsavbrudd/Feil',
+                        'delete'           => 'Slett',
+                        'view'             => 'Vis',
                     ],
                     'title'          => 'Webhook-logger',
                     'show-title'     => 'Webhook Log Detaljer',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'Ingen nyttelast registrert for denne loggen.',
                     'delete-success' => 'Webhook-logger slettet',
                     'delete-failed'  => 'Sletting av Webhook-logger mislyktes uventet',
+                    'unauthorized'   => 'Denne handlingen er ikke autorisert',
                 ],
             ],
         ],

@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Logboeken',
-            'view'        => 'View',
+            'view'        => 'Bekijken',
             'delete'      => 'Verwijderen',
             'mass-delete' => 'Massaal verwijderen',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Datum/Tijd',
-                        'user'       => 'Gebruiker',
-                        'status'     => 'Status',
-                        'success'    => 'Geslaagd',
-                        'failed'     => 'Mislukt',
-                        'delete'     => 'Verwijderen',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Datum/Tijd',
+                        'user'             => 'Gebruiker',
+                        'status'           => 'Status',
+                        'success'          => 'Geslaagd',
+                        'failed'           => 'Mislukt',
+                        'server_error'     => 'Serverfout',
+                        'timeout_or_error' => 'Time-out/Fout',
+                        'delete'           => 'Verwijderen',
+                        'view'             => 'Bekijken',
                     ],
                     'title'          => 'Webhook-logboeken',
                     'show-title'     => 'Webhook Log Details',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'Geen payload opgenomen voor dit logboek.',
                     'delete-success' => 'Webhook-logboeken succesvol verwijderd.',
                     'delete-failed'  => 'Het verwijderen van webhook-logboeken is onverwacht mislukt.',
+                    'unauthorized'   => 'Deze actie is niet toegestaan',
                 ],
             ],
         ],

@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Zapisi',
-            'view'        => 'View',
+            'view'        => 'Pogledaj',
             'delete'      => 'Obriši',
             'mass-delete' => 'Masovno brisanje',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Datum/Vrijeme',
-                        'user'       => 'Korisnik',
-                        'status'     => 'Status',
-                        'success'    => 'Uspjeh',
-                        'failed'     => 'Neuspjeh',
-                        'delete'     => 'Obriši',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Datum/Vrijeme',
+                        'user'             => 'Korisnik',
+                        'status'           => 'Status',
+                        'success'          => 'Uspjeh',
+                        'failed'           => 'Neuspjeh',
+                        'server_error'     => 'Pogreška poslužitelja',
+                        'timeout_or_error' => 'Istek vremena/Pogreška',
+                        'delete'           => 'Obriši',
+                        'view'             => 'Pogledaj',
                     ],
                     'title'          => 'Zapisi Webhooka',
                     'show-title'     => 'Detalji Webhook zapisa',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'Za ovaj zapis nije zabilježen sadržaj.',
                     'delete-success' => 'Zapisi Webhooka uspješno obrisani',
                     'delete-failed'  => 'Brisanje zapisa Webhooka neočekivano nije uspjelo',
+                    'unauthorized'   => 'Ova radnja nije ovlaštena',
                 ],
             ],
         ],

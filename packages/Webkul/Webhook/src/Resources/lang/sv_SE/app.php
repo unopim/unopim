@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Loggar',
-            'view'        => 'View',
+            'view'        => 'Visa',
             'delete'      => 'Radera',
             'mass-delete' => 'Massradering',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Datum/Tid',
-                        'user'       => 'Användare',
-                        'status'     => 'Status',
-                        'success'    => 'Lyckades',
-                        'failed'     => 'Misslyckades',
-                        'delete'     => 'Radera',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Datum/Tid',
+                        'user'             => 'Användare',
+                        'status'           => 'Status',
+                        'success'          => 'Lyckades',
+                        'failed'           => 'Misslyckades',
+                        'server_error'     => 'Serverfel',
+                        'timeout_or_error' => 'Tidsgräns/Fel',
+                        'delete'           => 'Radera',
+                        'view'             => 'Visa',
                     ],
                     'title'          => 'Webhook-loggar',
                     'show-title'     => 'Webhook-loggdetaljer',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'Ingen nyttolast registrerad för den här loggen.',
                     'delete-success' => 'Webhook-loggar raderades framgångsrikt',
                     'delete-failed'  => 'Radering av Webhook-loggar misslyckades oväntat',
+                    'unauthorized'   => 'Denna åtgärd är inte tillåten',
                 ],
             ],
         ],

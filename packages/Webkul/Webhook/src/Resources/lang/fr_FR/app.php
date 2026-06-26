@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -26,7 +26,7 @@ return [
         ],
         'logs' => [
             'index'       => 'Journaux',
-            'view'        => 'View',
+            'view'        => 'Voir',
             'delete'      => 'Supprimer',
             'mass-delete' => 'Suppression en masse',
         ],
@@ -57,15 +57,17 @@ return [
             'logs' => [
                 'index' => [
                     'datagrid' => [
-                        'id'         => 'ID',
-                        'sku'        => 'SKU',
-                        'created_at' => 'Date/Heure',
-                        'user'       => 'Utilisateur',
-                        'status'     => 'Statut',
-                        'success'    => 'Succès',
-                        'failed'     => 'Échoué',
-                        'delete'     => 'Supprimer',
-                        'view'       => 'View',
+                        'id'               => 'ID',
+                        'sku'              => 'SKU',
+                        'created_at'       => 'Date/Heure',
+                        'user'             => 'Utilisateur',
+                        'status'           => 'Statut',
+                        'success'          => 'Succès',
+                        'failed'           => 'Échoué',
+                        'server_error'     => 'Erreur du serveur',
+                        'timeout_or_error' => 'Délai dépassé/Erreur',
+                        'delete'           => 'Supprimer',
+                        'view'             => 'Voir',
                     ],
                     'title'          => 'Journaux du Webhook',
                     'show-title'     => 'Détails du journal Webhook',
@@ -75,6 +77,7 @@ return [
                     'no-payload'     => 'Aucune charge utile enregistrée pour ce journal.',
                     'delete-success' => 'Journaux du Webhook supprimés avec succès',
                     'delete-failed'  => 'La suppression des journaux du Webhook a échoué de manière inattendue',
+                    'unauthorized'   => 'Cette action n\'est pas autorisée',
                 ],
             ],
         ],
