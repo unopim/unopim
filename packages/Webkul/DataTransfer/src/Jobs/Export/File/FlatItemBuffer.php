@@ -16,10 +16,6 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
 
     protected $headerWritten = false;
 
-    /**
-     * Whether the column header row should be written. Controlled by the export profile's
-     * "header_row" option; defaults to true so existing exports keep their header.
-     */
     protected $writeHeaders = true;
 
     /**
@@ -68,10 +64,6 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
         }
     }
 
-    /**
-     * Translates the raw column keys into the header row, substituting readable labels for any
-     * key present in the label map and leaving the rest (structural columns) unchanged.
-     */
     public function buildHeaders(array $keys): array
     {
         if (empty($this->headerLabels)) {

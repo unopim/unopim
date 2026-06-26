@@ -1474,6 +1474,7 @@ return [
                     'attribute-conditions'          => 'Attribute Conditions',
                     'attribute-conditions-info'     => 'Only products matching every condition are exported.',
                     'no-categories'                 => 'No categories available.',
+                    'search-categories'             => 'Search categories by name or code',
                     'add-condition'                 => 'Add another attribute condition',
                     'operator-select'               => 'Condition',
                     'no-value-needed'               => 'No value needed',

@@ -77,11 +77,6 @@ class ProductCursor extends AbstractElasticCursor
         return [];
     }
 
-    /**
-     * Builds the Elasticsearch bool query from the export profile filters.
-     * Structural filters map to native clauses; value-based filters
-     * (completeness, custom attributes) are resolved to product ids.
-     */
     protected function buildBoolQuery(array $filters): array
     {
         $filter = app(ProductExportFilter::class);

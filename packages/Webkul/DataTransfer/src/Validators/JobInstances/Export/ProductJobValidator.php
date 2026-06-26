@@ -27,9 +27,6 @@ class ProductJobValidator extends JobValidator
         'filters.sku'         => 'nullable|string',
     ];
 
-    /**
-     * Create a new validator instance.
-     */
     public function __construct(protected ChannelRepository $channelRepository)
     {
         $this->rules['filters.status'] = 'nullable|in:'.implode(',', ProductStatusFilter::values());
@@ -107,10 +104,6 @@ class ProductJobValidator extends JobValidator
         throw ValidationException::withMessages($messages);
     }
 
-    /**
-     * Builds an error message entry when the selected values for a scope fall
-     * outside the allowed codes.
-     */
     protected function scopeViolation(ProductExportScope $scope, array $filters, array $allowedCodes, string $translationKey): array
     {
         $selected = ScopeFilterValue::toCodes($filters[$scope->value] ?? null);
@@ -122,9 +115,6 @@ class ProductJobValidator extends JobValidator
         return ["filters[{$scope->value}]" => [trans($translationKey)]];
     }
 
-    /**
-     * Distinct codes of the given relation across the channels.
-     */
     protected function relationCodes(Collection $channels, string $relation): array
     {
         return $channels->flatMap(fn ($channel) => $channel->{$relation}->pluck('code'))->unique()->all();

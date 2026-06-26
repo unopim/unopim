@@ -137,12 +137,6 @@ class Exporter extends AbstractExporter
         $this->applyScopeFilters();
     }
 
-    /**
-     * Flattens the attribute models into plain arrays so the export's innermost loop reads `code`
-     * and `type` as array keys rather than Eloquent magic properties. This pays the Translatable
-     * read cost exactly once per attribute (per worker) instead of once per attribute per product
-     * per channel per locale.
-     */
     protected function buildAttributeMeta($attributes): array
     {
         $meta = [];
@@ -158,11 +152,6 @@ class Exporter extends AbstractExporter
         return $meta;
     }
 
-    /**
-     * Restricts the export scope to the channels and currencies selected in the
-     * export profile filters. When a filter is empty the full scope is kept, so
-     * existing profiles continue to export every channel and currency.
-     */
     protected function applyScopeFilters(): void
     {
         $filters = $this->getFilters();
@@ -173,9 +162,6 @@ class Exporter extends AbstractExporter
         $this->applyAttributeScope(ScopeFilterValue::toCodes($filters[ProductExportScope::ATTRIBUTES->value] ?? null));
     }
 
-    /**
-     * Restricts the export scope to the selected channels and their currencies.
-     */
     protected function applyChannelScope(array $selectedChannels): void
     {
         if (empty($selectedChannels)) {
@@ -190,9 +176,6 @@ class Exporter extends AbstractExporter
         $this->currencies = $this->currenciesForChannels($selectedChannels);
     }
 
-    /**
-     * Keeps only the selected locales within every channel's locale scope.
-     */
     protected function applyLocaleScope(array $selectedLocales): void
     {
         if (empty($selectedLocales)) {
@@ -204,9 +187,6 @@ class Exporter extends AbstractExporter
         }
     }
 
-    /**
-     * Keeps only the selected currencies within the current currency scope.
-     */
     protected function applyCurrencyScope(array $selectedCurrencies): void
     {
         if (empty($selectedCurrencies)) {
@@ -216,28 +196,17 @@ class Exporter extends AbstractExporter
         $this->currencies = array_values(array_intersect($this->currencies, $selectedCurrencies));
     }
 
-    /**
-     * Records the selected attributes. Every attribute keeps its column in the
-     * export file; only the selected ones carry values, the rest stay empty.
-     */
     protected function applyAttributeScope(array $selectedAttributes): void
     {
         $this->selectedAttributeCodes = $selectedAttributes;
     }
 
-    /**
-     * Whether the attribute's values should be exported. True for every
-     * attribute when no attribute selection is set on the profile.
-     */
     protected function isAttributeValueExported(string $code): bool
     {
         return empty($this->selectedAttributeCodes)
             || in_array($code, $this->selectedAttributeCodes, true);
     }
 
-    /**
-     * Collects the distinct currencies belonging to the given channels.
-     */
     protected function currenciesForChannels(array $channelCodes): array
     {
         $currencies = [];
@@ -249,12 +218,6 @@ class Exporter extends AbstractExporter
         return array_values(array_unique($currencies));
     }
 
-    /**
-     * Pre-flight feasibility guard. A product export emits one row per channel-locale pair and one
-     * column per attribute, so the output is productCount × pairs × attributes — which explodes on a
-     * wide catalog ("export everything" with no filters). Estimate that here and reject the export
-     * up front (clear message) rather than letting it fill the disk and block the queue for hours.
-     */
     protected function assertExportIsFeasible($results): void
     {
         $productCount = method_exists($results, 'count') ? (int) $results->count() : 0;
@@ -269,11 +232,6 @@ class Exporter extends AbstractExporter
         $this->guardAgainstOversizedExport($rows, $columns);
     }
 
-    /**
-     * Counts the channel-locale pairs each product expands into, honouring the profile's channel and
-     * locale filters. Reads only channels (a small set) — never the full attribute list — so it stays
-     * cheap during batch creation.
-     */
     protected function countChannelLocalePairs(): int
     {
         $filters = $this->getFilters();
@@ -335,11 +293,6 @@ class Exporter extends AbstractExporter
         return $this->productSource->getResults($requestParam, $this->source, self::BATCH_SIZE);
     }
 
-    /**
-     * Resolves the time condition filter into the lower "updated since"
-     * timestamp. Returns null when no date condition applies, so the export
-     * proceeds without a lower time constraint.
-     */
     protected function resolveUpdatedAfter(array $filters): ?string
     {
         $condition = $filters[ProductFilter::TIME_CONDITION->value] ?? null;
@@ -354,11 +307,6 @@ class Exporter extends AbstractExporter
         return $date?->toDateTimeString();
     }
 
-    /**
-     * Resolves the upper "updated until" timestamp for the between-dates
-     * condition. Returns null for every other condition so the export keeps an
-     * open-ended upper bound.
-     */
     protected function resolveUpdatedBefore(array $filters): ?string
     {
         $condition = $filters[ProductFilter::TIME_CONDITION->value] ?? null;
@@ -391,10 +339,6 @@ class Exporter extends AbstractExporter
         }
     }
 
-    /**
-     * Completion timestamp of the most recent successful export run for this
-     * profile, or null when none exists yet.
-     */
     protected function lastExportCompletedAt(): ?Carbon
     {
         $jobInstanceId = $this->export->jobInstance?->id;
@@ -435,11 +379,7 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Prepare products from the current batch and stream each expanded row to the export buffer.
-     *
-     * Rows are written one at a time as they are built rather than collected and returned, so peak
-     * memory stays bounded to a single row regardless of BATCH_SIZE, attribute count, or the number
-     * of channel-locale pairs.
+     * Prepare products from current batch
      */
     public function prepareProducts(JobTrackBatchContract $batch, $filePath)
     {
@@ -512,13 +452,6 @@ class Exporter extends AbstractExporter
                         'related_products'        => $relatedProducts,
                     ], $values);
 
-                    /**
-                     * Stream the row immediately. The buffer keeps its "one line = array of rows"
-                     * contract (consumed by flush()/FlatItemBuffer::addData()), so the row is wrapped
-                     * in a single-element array. Writing here — rather than accumulating into a batch
-                     * array and writing once — is what keeps a wide catalog from building a multi-GB
-                     * structure and OOM-killing the export worker.
-                     */
                     $this->exportBuffer->write([$row]);
                 }
             }
@@ -540,11 +473,6 @@ class Exporter extends AbstractExporter
         return implode(',', $configurable_attributes);
     }
 
-    /**
-     * Applies the export profile's output formatting (date format, readable labels) to a single
-     * resolved attribute value. Shared by this exporter and any subclass (e.g. the DAM exporter)
-     * that reimplements setAttributesValues, so the formatting rules live in exactly one place.
-     */
     protected function applyOutputFormatting($attribute, mixed $value, ?string $locale = null): mixed
     {
         $filters = $this->getFilters();
@@ -566,11 +494,6 @@ class Exporter extends AbstractExporter
         return $value;
     }
 
-    /**
-     * Replaces option codes with their readable labels for select/multiselect attributes, using the
-     * label of the given (row) locale and falling back to the code when no label exists. Non-option
-     * attributes and empty values are returned untouched.
-     */
     protected function resolveValueLabels($attribute, mixed $value, ?string $locale): mixed
     {
         if (! in_array($attribute->type, ['select', 'multiselect'])) {
@@ -592,10 +515,6 @@ class Exporter extends AbstractExporter
         return $resolve($value);
     }
 
-    /**
-     * Builds (and memoizes per attribute) an `optionCode => [locale => label]` lookup so option
-     * labels are resolved without re-querying the option translations for every product row.
-     */
     protected function optionLabelMap($attribute): array
     {
         $code = $attribute->code;
@@ -615,12 +534,6 @@ class Exporter extends AbstractExporter
         return $this->optionLabelMaps[$code] = $map;
     }
 
-    /**
-     * Builds the `columnKey => attribute label` header map used when "use_labels" is enabled,
-     * labelling attribute columns (and their per-currency price variants) in the first exported
-     * locale. Structural columns (sku, channel, …) are intentionally left as codes. The exporter
-     * is initialized on demand because the finalisation (flush) stage does not run initilize().
-     */
     protected function getHeaderLabels(): array
     {
         if (($this->getFilters()['use_labels'] ?? '0') === '0') {
@@ -639,7 +552,7 @@ class Exporter extends AbstractExporter
                 continue;
             }
 
-            $label = $attribute->translate($locale)?->name ?: $attribute->code;
+            $label = $attribute->translate($locale)?->name ?? $attribute->code;
 
             if ($attribute->type === AttributeTypes::PRICE_ATTRIBUTE_TYPE) {
                 foreach ($this->currencies as $currency) {
@@ -655,9 +568,6 @@ class Exporter extends AbstractExporter
         return $labels;
     }
 
-    /**
-     * The locale used for the (single) header row: the first locale of the exported scope.
-     */
     protected function headerLocale(): ?string
     {
         foreach ($this->channelsAndLocales as $locales) {
@@ -669,10 +579,6 @@ class Exporter extends AbstractExporter
         return null;
     }
 
-    /**
-     * Formats a date/datetime value with the given format, returning the original value unchanged
-     * when it is empty or cannot be parsed (so malformed data is never silently dropped).
-     */
     protected function formatDateValue(mixed $value, string $format): mixed
     {
         if ($value === null || $value === '') {
@@ -697,11 +603,6 @@ class Exporter extends AbstractExporter
         $filters = $this->getFilters();
         $withMedia = (bool) ($filters['with_media'] ?? false);
 
-        /**
-         * Output formatting (readable labels / custom date format) is opt-in and rarely enabled.
-         * Resolving it once here lets the hot loop skip the per-cell applyOutputFormatting() call —
-         * and the Eloquent model access it performs — whenever neither option is on.
-         */
         $formatOutput = ($filters['use_labels'] ?? '0') !== '0'
             || ! empty($filters['date_format'] ?? null);
 

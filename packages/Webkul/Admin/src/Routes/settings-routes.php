@@ -208,9 +208,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
                 Route::get('download-error-report/{id}', 'downloadErrorReport')->name('admin.settings.data_transfer.exports.download_error_report');
             });
 
-            /**
-             * Dynamic export filter option routes (Channel, Currency).
-             */
             Route::controller(ExportFilterController::class)->prefix('exports/filters')->group(function () {
                 Route::get('channels', 'channels')->name('admin.settings.data_transfer.exports.filters.channels');
 
@@ -218,7 +215,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
                 Route::get('currencies', 'currencies')->name('admin.settings.data_transfer.exports.filters.currencies');
 
-                Route::get('attributes', 'attributes')->name('admin.settings.data_transfer.exports.filters.attributes');
+                Route::get('attributes', 'getAttributes')->name('admin.settings.data_transfer.exports.filters.attributes');
 
                 Route::get('attribute-families', 'attributeFamilies')->name('admin.settings.data_transfer.exports.filters.attribute_families');
 

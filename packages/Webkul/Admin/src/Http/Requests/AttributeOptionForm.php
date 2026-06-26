@@ -10,9 +10,6 @@ use Webkul\Core\Rules\Code;
 
 class AttributeOptionForm extends FormRequest
 {
-    /**
-     * Mime types which are allowed to be used as a sanitizable SVG swatch image.
-     */
     public const SVG_MIME_TYPES = [
         'image/svg',
         'image/svg+xml',
@@ -48,9 +45,6 @@ class AttributeOptionForm extends FormRequest
         return $rules;
     }
 
-    /**
-     * Add custom validation after the default rules have run.
-     */
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
@@ -75,9 +69,6 @@ class AttributeOptionForm extends FormRequest
         });
     }
 
-    /**
-     * Determine whether the attribute is configured to use an image swatch.
-     */
     protected function isImageSwatch($attributeId): bool
     {
         if (blank($attributeId)) {

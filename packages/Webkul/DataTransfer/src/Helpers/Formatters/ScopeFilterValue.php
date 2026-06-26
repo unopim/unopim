@@ -6,13 +6,6 @@ use Illuminate\Support\Collection;
 
 class ScopeFilterValue
 {
-    /**
-     * Normalizes a multiselect scope filter value into a flat array of codes.
-     *
-     * Accepts every shape the async multiselect may produce: a JSON encoded
-     * array of option objects ([{"code": "..."}]), a JSON/plain array of codes,
-     * a single value, or a comma separated string.
-     */
     public static function toCodes(mixed $value): array
     {
         if (empty($value)) {

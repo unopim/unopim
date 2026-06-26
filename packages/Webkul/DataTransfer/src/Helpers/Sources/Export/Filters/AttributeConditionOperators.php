@@ -4,12 +4,6 @@ namespace Webkul\DataTransfer\Helpers\Sources\Export\Filters;
 
 use Webkul\Attribute\Models\Attribute;
 
-/**
- * Single source of truth for the attribute-condition operators. The set of
- * operators offered for an attribute, and the value control each operator
- * needs, are derived from the attribute type so the export profile UI and the
- * {@see ProductExportFilter} that consumes the saved conditions stay in sync.
- */
 class AttributeConditionOperators
 {
     const IN = 'in';
@@ -38,42 +32,27 @@ class AttributeConditionOperators
 
     const AFTER = 'after';
 
-    /**
-     * Numeric attribute types not declared as constants on the Attribute model.
-     */
     const INTEGER_TYPE = 'integer';
 
     const DECIMAL_TYPE = 'decimal';
 
-    /**
-     * Attribute types whose value is one (or more) option codes.
-     */
     const OPTION_TYPES = [
         Attribute::SELECT_FIELD_TYPE,
         Attribute::MULTISELECT_FIELD_TYPE,
         Attribute::CHECKBOX_FIELD_TYPE,
     ];
 
-    /**
-     * Attribute types compared numerically.
-     */
     const NUMERIC_TYPES = [
         Attribute::PRICE_FIELD_TYPE,
         self::INTEGER_TYPE,
         self::DECIMAL_TYPE,
     ];
 
-    /**
-     * Attribute types compared as dates.
-     */
     const DATE_TYPES = [
         Attribute::DATE_FIELD_TYPE,
         Attribute::DATETIME_FIELD_TYPE,
     ];
 
-    /**
-     * The attribute types exposed to the condition builder, in display order.
-     */
     const KNOWN_TYPES = [
         Attribute::TEXT_TYPE,
         Attribute::TEXTAREA_TYPE,
@@ -88,9 +67,6 @@ class AttributeConditionOperators
         Attribute::DATETIME_FIELD_TYPE,
     ];
 
-    /**
-     * Ordered list of operators available for the given attribute type.
-     */
     public static function forType(?string $type): array
     {
         return match (true) {
@@ -102,10 +78,6 @@ class AttributeConditionOperators
         };
     }
 
-    /**
-     * The value control the UI must render for the given type/operator pair:
-     * none | boolean | options | text | number | date | number_range | date_range.
-     */
     public static function valueControl(?string $type, string $operator): string
     {
         if (in_array($operator, [self::EMPTY, self::NOT_EMPTY], true)) {
@@ -135,10 +107,6 @@ class AttributeConditionOperators
         return 'text';
     }
 
-    /**
-     * Map of every known attribute type to its operator option list
-     * ([{ value, label, control }]), ready to hand to the condition builder.
-     */
     public static function frontendMap(): array
     {
         $map = [];

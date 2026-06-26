@@ -14,22 +14,12 @@ use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\DataTransfer\Enums\ProductExportScope;
 use Webkul\DataTransfer\Helpers\Formatters\ScopeFilterValue;
 
-/**
- * Serves the dynamic option lists consumed by the export profile's scope
- * filters (Channel, Locale, Currency). Responses follow the
- * { options, page, lastPage } contract expected by the async multiselect
- * handler (v-async-select-handler).
- */
 class ExportFilterController extends Controller
 {
-    /**
-     * Number of options returned per page.
-     */
     const PER_PAGE = 20;
 
-    /**
-     * Create a new controller instance.
-     */
+    const DEFAULT_PAGE = 1;
+
     public function __construct(
         protected ChannelRepository $channelRepository,
         protected CurrencyRepository $currencyRepository,
@@ -39,36 +29,25 @@ class ExportFilterController extends Controller
         protected CategoryRepository $categoryRepository,
     ) {}
 
-    /**
-     * Ensures the current admin may run product exports before serving any
-     * filter option list.
-     */
     protected function ensureExportPermission(): void
     {
         if (! bouncer()->hasPermission('data_transfer.export')) {
-            abort(403, 'This action is unauthorized');
+            abort(403, trans('admin::app.common.unauthorized'));
         }
     }
 
-    /**
-     * Dynamic list of channels available as an export scope.
-     */
     public function channels(): JsonResponse
     {
         $this->ensureExportPermission();
 
         $options = $this->channelRepository->all()->map(fn ($channel) => [
             'code'  => $channel->code,
-            'label' => $channel->name ?: $channel->code,
+            'label' => $channel->name ?? $channel->code,
         ])->values();
 
         return $this->respondWithOptions($options);
     }
 
-    /**
-     * Dynamic list of locales, scoped to the selected channel(s) when supplied
-     * and falling back to every active locale otherwise.
-     */
     public function locales(): JsonResponse
     {
         $this->ensureExportPermission();
@@ -76,17 +55,13 @@ class ExportFilterController extends Controller
         $options = $this->scopedRecords('locales', fn () => $this->localeRepository->getActiveLocales())
             ->map(fn ($locale) => [
                 'code'  => $locale->code,
-                'label' => $locale->name ?: $locale->code,
+                'label' => $locale->name ?? $locale->code,
             ])
             ->values();
 
         return $this->respondWithOptions($options);
     }
 
-    /**
-     * Dynamic list of currencies, scoped to the selected channel(s) when
-     * supplied and falling back to every active currency otherwise.
-     */
     public function currencies(): JsonResponse
     {
         $this->ensureExportPermission();
@@ -101,7 +76,7 @@ class ExportFilterController extends Controller
         return $this->respondWithOptions($options);
     }
 
-    public function attributes(): JsonResponse
+    public function getAttributes(): JsonResponse
     {
         $this->ensureExportPermission();
 
@@ -122,8 +97,8 @@ class ExportFilterController extends Controller
 
             return new JsonResponse([
                 'options'  => $this->mapAttributes($query->whereIn('code', $values)->get()),
-                'page'     => 1,
-                'lastPage' => 1,
+                'page'     => self::DEFAULT_PAGE,
+                'lastPage' => self::DEFAULT_PAGE,
             ]);
         }
 
@@ -136,65 +111,51 @@ class ExportFilterController extends Controller
             });
         }
 
-        $page = max(1, (int) request('page', 1));
+        $page = max(self::DEFAULT_PAGE, (int) request('page', self::DEFAULT_PAGE));
 
         $paginator = $query->orderBy('id')->paginate(self::PER_PAGE, ['*'], 'page', $page);
 
         return new JsonResponse([
             'options'  => $this->mapAttributes(collect($paginator->items())),
             'page'     => $paginator->currentPage(),
-            'lastPage' => max(1, $paginator->lastPage()),
+            'lastPage' => max(self::DEFAULT_PAGE, $paginator->lastPage()),
         ]);
     }
 
-    /**
-     * Dynamic list of attribute families available as a product filter.
-     */
     public function attributeFamilies(): JsonResponse
     {
         $this->ensureExportPermission();
 
         $options = $this->attributeFamilyRepository->with('translations')->all()->map(fn ($family) => [
             'code'  => $family->code,
-            'label' => $family->name ?: $family->code,
+            'label' => $family->name ?? $family->code,
         ])->values();
 
         return $this->respondWithOptions($options);
     }
 
-    /**
-     * Dynamic list of categories available as a product filter.
-     */
     public function categories(): JsonResponse
     {
         $this->ensureExportPermission();
 
         $options = $this->categoryRepository->all()->map(fn ($category) => [
             'code'  => $category->code,
-            'label' => $category->name ?: $category->code,
+            'label' => $category->name ?? $category->code,
         ])->values();
 
         return $this->respondWithOptions($options);
     }
 
-    /**
-     * Maps attribute models into the option shape consumed by the async
-     * multiselect handler.
-     */
     protected function mapAttributes(Collection $attributes): array
     {
         return $attributes->map(fn ($attribute) => [
             'id'    => $attribute->id,
             'code'  => $attribute->code,
-            'label' => $attribute->name ?: $attribute->code,
+            'label' => $attribute->name ?? $attribute->code,
             'type'  => $attribute->type,
         ])->values()->all();
     }
 
-    /**
-     * Attribute codes to exclude from the list, supplied as a comma separated
-     * string or array via the "exclude" query param. Empty when none requested.
-     */
     protected function excludedCodes(): array
     {
         $exclude = request('exclude', []);
@@ -209,10 +170,6 @@ class ExportFilterController extends Controller
         )));
     }
 
-    /**
-     * Resolves the channel-scoped records for the given relation, or the
-     * fallback set when no channel is selected.
-     */
     protected function scopedRecords(string $relation, callable $fallback): Collection
     {
         $channelCodes = ScopeFilterValue::toCodes(request(ProductExportScope::CHANNELS->value));
@@ -230,10 +187,6 @@ class ExportFilterController extends Controller
             ->values();
     }
 
-    /**
-     * Applies rehydration (edit screen), search and pagination to the option
-     * set and returns it in the shape the async multiselect handler expects.
-     */
     protected function respondWithOptions(Collection $options): JsonResponse
     {
         $identifiers = request('identifiers');
@@ -245,8 +198,8 @@ class ExportFilterController extends Controller
 
             return new JsonResponse([
                 'options'  => $options->whereIn('code', $values)->values(),
-                'page'     => 1,
-                'lastPage' => 1,
+                'page'     => self::DEFAULT_PAGE,
+                'lastPage' => self::DEFAULT_PAGE,
             ]);
         }
 
@@ -259,8 +212,8 @@ class ExportFilterController extends Controller
             )->values();
         }
 
-        $page = max(1, (int) request('page', 1));
-        $lastPage = max(1, (int) ceil($options->count() / self::PER_PAGE));
+        $page = max(self::DEFAULT_PAGE, (int) request('page', self::DEFAULT_PAGE));
+        $lastPage = max(self::DEFAULT_PAGE, (int) ceil($options->count() / self::PER_PAGE));
 
         return new JsonResponse([
             'options'  => $options->forPage($page, self::PER_PAGE)->values(),

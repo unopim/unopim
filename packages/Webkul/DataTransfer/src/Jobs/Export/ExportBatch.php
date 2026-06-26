@@ -17,10 +17,6 @@ class ExportBatch implements ShouldQueue
 
     public $tries = 3;
 
-    /**
-     * Per-batch timeout in seconds. Scaled with the batch size (with the previous fixed 600s as a
-     * floor) so media-heavy or very large batches are not killed mid-write on big exports.
-     */
     public $timeout = 600;
 
     /**

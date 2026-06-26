@@ -41,11 +41,6 @@ class TinyMCEController extends Controller
 
     /**
      * Store media.
-     *
-     * The uploaded file is persisted under a randomised name (preserving the
-     * real extension) so the attacker-controlled client filename never reaches
-     * the public path. This blocks overwriting existing files and predictable
-     * naming, complementing the image allowlist enforced by the request rules.
      */
     public function storeMedia(?Request $request = null): array
     {

@@ -17,27 +17,12 @@ use Webkul\DataTransfer\Enums\ProductStatusFilter;
 use Webkul\DataTransfer\Helpers\Formatters\ScopeFilterValue;
 use Webkul\Product\Repositories\ProductRepository;
 
-/**
- * Applies the product export profile filters to a query. The SQL export cursor
- * applies every filter natively; the Elasticsearch cursor consumes the resolver
- * helpers and offloads the value-based filters (completeness, custom attributes)
- * to {@see self::valueFilteredIds()}.
- */
 class ProductExportFilter
 {
-    /**
-     * Product attribute whose value lives on the products table column.
-     */
     const COLUMN_ATTRIBUTE = 'sku';
 
-    /**
-     * Memoised active locale codes, resolved once per filter application.
-     */
     private ?array $activeLocaleCodes = null;
 
-    /**
-     * Memoised channel codes, resolved once per filter application.
-     */
     private ?array $activeChannelCodes = null;
 
     public function __construct(
@@ -48,9 +33,6 @@ class ProductExportFilter
         protected ProductRepository $productRepository,
     ) {}
 
-    /**
-     * Applies every product filter to the given SQL query builder.
-     */
     public function applyToQuery(Builder $query, array $filters): void
     {
         $this->applyStatus($query, $filters);
@@ -63,12 +45,6 @@ class ProductExportFilter
         $this->applyCustomAttributes($query, $filters);
     }
 
-    /**
-     * Product ids matching the value-based filters (completeness, custom
-     * attributes and the SKU list) that cannot be expressed natively in
-     * Elasticsearch. Returns null when no such filter is active so the caller
-     * can skip restriction.
-     */
     public function valueFilteredIds(array $filters): ?array
     {
         $hasCompleteness = ! in_array(
@@ -94,10 +70,6 @@ class ProductExportFilter
         return $query->pluck('id')->all();
     }
 
-    /**
-     * Normalized SKU list from the comma and/or whitespace separated SKU
-     * filter, or an empty array when no SKU filter is set.
-     */
     public function skuValues(array $filters): array
     {
         $value = $filters[ProductFilter::SKU->value] ?? null;
@@ -113,10 +85,6 @@ class ProductExportFilter
         return array_values(array_filter(array_map(fn ($sku) => trim((string) $sku), $value)));
     }
 
-    /**
-     * Resolved attribute family ids for the selected family codes, or an empty
-     * array when no family filter is set.
-     */
     public function attributeFamilyIds(array $filters): array
     {
         $codes = ScopeFilterValue::toCodes($filters[ProductFilter::ATTRIBUTE_FAMILIES->value] ?? null);
@@ -128,34 +96,21 @@ class ProductExportFilter
         return $this->attributeFamilyRepository->findWhereIn('code', $codes)->pluck('id')->all();
     }
 
-    /**
-     * Selected category codes, or an empty array when no category filter is set.
-     */
     public function categoryCodes(array $filters): array
     {
         return ScopeFilterValue::toCodes($filters[ProductFilter::CATEGORIES->value] ?? null);
     }
 
-    /**
-     * Resolved "updated since" date, or null when no time condition is set.
-     */
     public function updatedAfter(array $filters): ?string
     {
         return $filters[ProductFilter::UPDATED_AFTER->value] ?? null;
     }
 
-    /**
-     * Resolved "updated until" date, or null when no upper bound is set.
-     */
     public function updatedBefore(array $filters): ?string
     {
         return $filters[ProductFilter::UPDATED_BEFORE->value] ?? null;
     }
 
-    /**
-     * Resolved status flag (true/false), or null when no status filter is set
-     * or when every status is requested.
-     */
     public function statusValue(array $filters): ?bool
     {
         $status = $filters[ProductFilter::STATUS->value] ?? null;
@@ -295,10 +250,6 @@ class ProductExportFilter
         }
     }
 
-    /**
-     * Loads every attribute referenced by the condition rows in a single query,
-     * keyed by code, so each row resolves without an extra round-trip.
-     */
     protected function attributesByCode(array $rows): Collection
     {
         $codes = array_values(array_filter(
@@ -313,10 +264,6 @@ class ProductExportFilter
         return $this->attributeRepository->findWhereIn('code', array_unique($codes))->keyBy('code');
     }
 
-    /**
-     * Applies a single attribute condition, dispatching to the matcher for the
-     * given operator. Conditions whose value is required but missing are skipped.
-     */
     protected function applyCondition(Builder $query, string $code, ?Attribute $attribute, string $operator, mixed $value, mixed $value2): void
     {
         if (in_array($operator, [AttributeConditionOperators::EMPTY, AttributeConditionOperators::NOT_EMPTY], true)) {
@@ -369,10 +316,6 @@ class ProductExportFilter
         $this->applyOptionMatch($query, $code, $attribute, $this->normalizeFilterValues($value), false);
     }
 
-    /**
-     * "Is empty" / "Is not empty": the attribute has no value across any of its
-     * scoped paths (or column, for the SKU).
-     */
     protected function applyEmptiness(Builder $query, string $code, ?Attribute $attribute, bool $notEmpty): void
     {
         if ($code === self::COLUMN_ATTRIBUTE) {
@@ -392,11 +335,6 @@ class ProductExportFilter
         });
     }
 
-    /**
-     * "In list" / "Not in list" / "Equals": matches any of the option codes
-     * inside the (optionally multi-value) attribute. "Not in list" also keeps
-     * products that have no value at all.
-     */
     protected function applyOptionMatch(Builder $query, string $code, ?Attribute $attribute, array $values, bool $negate): void
     {
         if (empty($values)) {
@@ -445,9 +383,6 @@ class ProductExportFilter
         });
     }
 
-    /**
-     * "Contains": substring match on the stored text value.
-     */
     protected function applyContains(Builder $query, string $code, ?Attribute $attribute, mixed $value): void
     {
         $escaped = addcslashes((string) $value, '%_\\');
@@ -469,10 +404,6 @@ class ProductExportFilter
         });
     }
 
-    /**
-     * "Less than" / "greater than" / "before" / "after": a single typed
-     * comparison against the stored value.
-     */
     protected function applyComparison(Builder $query, string $code, ?Attribute $attribute, string $operator, mixed $value): void
     {
         $sqlOperator = match ($operator) {
@@ -492,9 +423,6 @@ class ProductExportFilter
         $this->applyTypedComparison($query, $code, $attribute, $this->isDateOperator($attribute, $operator), [[$sqlOperator, $value]]);
     }
 
-    /**
-     * "Between": an inclusive low/high comparison against the stored value.
-     */
     protected function applyBetween(Builder $query, string $code, ?Attribute $attribute, mixed $low, mixed $high): void
     {
         if ($code === self::COLUMN_ATTRIBUTE) {
@@ -508,11 +436,6 @@ class ProductExportFilter
         $this->applyTypedComparison($query, $code, $attribute, $isDate, [['>=', $low], ['<=', $high]]);
     }
 
-    /**
-     * Applies numeric or date comparisons to the attribute's scoped JSON paths.
-     * The CASE guard keeps the CAST from blowing up on non-numeric/non-date
-     * values, which Postgres (unlike MySQL) treats as a fatal error.
-     */
     protected function applyTypedComparison(Builder $query, string $code, ?Attribute $attribute, bool $isDate, array $comparisons): void
     {
         $grammar = DB::rawQueryGrammar();
@@ -535,26 +458,17 @@ class ProductExportFilter
         });
     }
 
-    /**
-     * Whether the comparison should be treated as a date comparison.
-     */
     protected function isDateOperator(?Attribute $attribute, string $operator): bool
     {
         return in_array($attribute?->type, AttributeConditionOperators::DATE_TYPES, true)
             || in_array($operator, [AttributeConditionOperators::BEFORE, AttributeConditionOperators::AFTER], true);
     }
 
-    /**
-     * First scalar of a (possibly list) value.
-     */
     protected function scalar(mixed $value): mixed
     {
         return is_array($value) ? reset($value) : $value;
     }
 
-    /**
-     * Whether a condition value is effectively empty.
-     */
     protected function isBlank(mixed $value): bool
     {
         if (is_array($value)) {
@@ -564,11 +478,6 @@ class ProductExportFilter
         return $value === null || trim((string) $value) === '';
     }
 
-    /**
-     * Matches a single option code inside a multi-value attribute, which is
-     * stored as a comma separated string (e.g. "red,blue"), without matching
-     * codes that only contain the searched code as a substring.
-     */
     protected function orWhereCommaListContains(Builder $query, string $path, string $value): void
     {
         $escaped = addcslashes($value, '%_\\');
@@ -581,10 +490,6 @@ class ProductExportFilter
         });
     }
 
-    /**
-     * Normalizes a custom attribute filter value (scalar or list) into a flat
-     * list of non-empty string values.
-     */
     protected function normalizeFilterValues(mixed $value): array
     {
         $values = is_array($value) ? $value : [$value];
@@ -595,10 +500,6 @@ class ProductExportFilter
         ));
     }
 
-    /**
-     * JSON paths under the product `values` column where the attribute value may
-     * be stored, derived from the attribute's locale/channel scoping.
-     */
     protected function valuePaths(string $code, ?Attribute $attribute): array
     {
         $paths = ["values->common->{$code}"];
@@ -632,12 +533,6 @@ class ProductExportFilter
         return $paths;
     }
 
-    /**
-     * Same scoped locations as {@see self::valuePaths()} but expressed as path
-     * segment arrays (without the leading `values` column), ready for the
-     * cross-database JSON extract grammar helper used by the typed comparison
-     * and contains matchers.
-     */
     protected function valuePathSegments(string $code, ?Attribute $attribute): array
     {
         if (! preg_match('/^[A-Za-z0-9_]+$/', $code)) {
@@ -707,10 +602,6 @@ class ProductExportFilter
         return $this->activeChannelCodes ??= $this->channelRepository->all()->pluck('code')->all();
     }
 
-    /**
-     * Normalizes the stored custom attribute filters into a list of
-     * ['attribute' => code, 'value' => value] rows.
-     */
     protected function parseCustomAttributes(mixed $value): array
     {
         if (empty($value)) {

@@ -244,12 +244,6 @@
 
         <script type="module">
             @php
-                /**
-                 * Seed the component from the previously selected type so a validation
-                 * error (which reloads the form with old input) keeps the matching filter
-                 * fields visible instead of falling back to the default entity and hiding
-                 * the user's still-present input.
-                 */
                 $selectedEntityType = old('entity_type', 'categories');
 
                 if (! isset($exporterConfig[$selectedEntityType]['filters']['fields'])) {
