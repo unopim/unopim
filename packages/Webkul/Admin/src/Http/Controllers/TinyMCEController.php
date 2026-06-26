@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Webkul\Admin\Http\Requests\TinyMCEUploadRequest;
@@ -40,18 +41,20 @@ class TinyMCEController extends Controller
 
     /**
      * Store media.
-     *
-     * The file type is validated to an image allowlist by the request, and the
-     * stored name is randomised (never the client-supplied name/extension) so an
-     * executable or HTML extension can never be written to the public path.
      */
-    public function storeMedia(TinyMCEUploadRequest $request): array
+    public function storeMedia(?Request $request = null): array
     {
+        $request ??= request();
+
+        if (! $request->hasFile('file')) {
+            return [];
+        }
+
         $file = $request->file('file');
 
-        $name = Str::random(40).'.'.($file->guessExtension() ?: $file->getClientOriginalExtension());
+        $name = Str::random(40).'.'.$file->getClientOriginalExtension();
 
-        $path = $this->fileStorer->storeAs($this->storagePath, $name, $file);
+        $path = $this->fileStorer->storeAs(path: $this->storagePath, name: $name, file: $file);
 
         return [
             'file'      => $path,

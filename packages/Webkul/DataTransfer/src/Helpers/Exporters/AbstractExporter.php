@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Exporters;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Psr\Log\LoggerInterface;
@@ -68,6 +69,10 @@ abstract class AbstractExporter
     ];
 
     public const BATCH_SIZE = 1000;
+
+    protected const ESTIMATED_BYTES_PER_CELL = 32;
+
+    protected const MAX_DISK_USAGE_RATIO = 0.8;
 
     /**
      * Is linking required
@@ -219,12 +224,21 @@ abstract class AbstractExporter
 
     public function getExportParameter(): array
     {
+        $filters = $this->getFilters();
+
         return [
             'fieldDelimiter' => $this->export->jobInstance['field_separator'] ?? ',',
             'filedEnclosure' => '"',
             'shouldAddBOM'   => false,
-            'type'           => $this->filters['file_format'] ?? SpoutWriterFactory::CSV,
+            'type'           => $filters['file_format'] ?? SpoutWriterFactory::CSV,
+            'writeHeaders'   => ($filters['header_row'] ?? '1') !== '0',
+            'headerLabels'   => $this->getHeaderLabels(),
         ];
+    }
+
+    protected function getHeaderLabels(): array
+    {
+        return [];
     }
 
     /**
@@ -298,16 +312,48 @@ abstract class AbstractExporter
     /**
      * Get filename for generate data
      */
-    protected function getFileName(): string
+    public function getFileName(): string
     {
-        $fileName = sprintf(
-            '%s-%s.%s',
-            $this->export->jobInstance->code,
-            $this->export->jobInstance->entity_type,
-            strtolower($this->filters['file_format'] ?? SpoutWriterFactory::CSV),
-        );
+        $filters = $this->getFilters();
 
-        return $fileName;
+        $extension = strtolower($filters['file_format'] ?? SpoutWriterFactory::CSV);
+
+        $base = $this->resolveFileNamePattern($filters['file_path'] ?? null);
+
+        if ($base === '') {
+            $base = sprintf('%s-%s', $this->export->jobInstance->code, $this->export->jobInstance->entity_type);
+        }
+
+        return sprintf('%s.%s', $base, $extension);
+    }
+
+    protected function resolveFileNamePattern(?string $pattern): string
+    {
+        if (empty($pattern)) {
+            return '';
+        }
+
+        $now = Carbon::now();
+
+        $tokens = [
+            'code'        => (string) $this->export->jobInstance->code,
+            'entity_type' => (string) $this->export->jobInstance->entity_type,
+            'date'        => $now->format('Y-m-d'),
+            'time'        => $now->format('His'),
+        ];
+
+        $replacements = [];
+
+        foreach ($tokens as $key => $value) {
+            $replacements['['.$key.']'] = $value;
+            $replacements['{'.$key.'}'] = $value;
+        }
+
+        $expanded = strtr($pattern, $replacements);
+
+        $expanded = preg_replace('/\.(csv|xls|xlsx)$/i', '', $expanded);
+
+        return preg_replace('/[^A-Za-z0-9_-]/', '', $expanded) ?? '';
     }
 
     public function initializeFileBuffer()
@@ -385,6 +431,8 @@ abstract class AbstractExporter
     {
         $results = $this->getResults();
 
+        $this->assertExportIsFeasible($results);
+
         $batchRows = [];
 
         $results->rewind();
@@ -432,6 +480,45 @@ abstract class AbstractExporter
         $this->updateSummary($summaryData);
 
         return $this;
+    }
+
+    protected function assertExportIsFeasible($results): void {}
+
+    protected function guardAgainstOversizedExport(int $rows, int $columns): void
+    {
+        $freeBytes = @disk_free_space(sys_get_temp_dir());
+
+        if ($freeBytes === false || $freeBytes <= 0) {
+            return;
+        }
+
+        if (! $this->exportExceedsDiskBudget($rows, $columns, (int) $freeBytes)) {
+            return;
+        }
+
+        $estimatedBytes = (float) $rows * $columns * static::ESTIMATED_BYTES_PER_CELL;
+
+        throw new \RuntimeException(trans('data_transfer::app.exporters.export-too-large', [
+            'rows'      => number_format($rows),
+            'columns'   => number_format($columns),
+            'estimated' => $this->formatBytes($estimatedBytes),
+            'available' => $this->formatBytes($freeBytes * static::MAX_DISK_USAGE_RATIO),
+        ]));
+    }
+
+    protected function exportExceedsDiskBudget(int $rows, int $columns, int $freeBytes): bool
+    {
+        $estimatedBytes = (float) $rows * $columns * static::ESTIMATED_BYTES_PER_CELL;
+
+        return $estimatedBytes > $freeBytes * static::MAX_DISK_USAGE_RATIO;
+    }
+
+    protected function formatBytes(float $bytes): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        $power = $bytes > 0 ? (int) min(floor(log($bytes, 1024)), count($units) - 1) : 0;
+
+        return round($bytes / (1024 ** $power), 1).' '.$units[$power];
     }
 
     /**

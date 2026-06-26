@@ -5,13 +5,14 @@ namespace Webkul\Attribute\Repositories;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
 use Webkul\Attribute\Contracts\AttributeOption;
 use Webkul\Core\Eloquent\Repository;
-use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Core\Traits\Sanitizer;
 
 class AttributeOptionRepository extends Repository
 {
+    use Sanitizer;
+
     /**
      * Specify Model class name
      */
@@ -106,12 +107,14 @@ class AttributeOptionRepository extends Repository
         }
 
         if ($data['swatch_value'] instanceof UploadedFile) {
-            $file = $data['swatch_value'];
+            $mimeType = $data['swatch_value']->getMimeType();
 
-            $name = Str::random(40).'.'.($file->guessExtension() ?: $file->getClientOriginalExtension());
+            $path = $data['swatch_value']->store('attribute_option');
+
+            $this->sanitizeSVG($path, $mimeType);
 
             parent::update([
-                'swatch_value' => app(FileStorer::class)->storeAs('attribute_option', $name, $file),
+                'swatch_value' => $path,
             ], $optionId);
         }
     }
