@@ -88,6 +88,10 @@
                 currentCategory: {
                     type: [Number, String],
                     default: null
+                },
+                childrenPageSize: {
+                    type: [Number, String],
+                    default: 0
                 }
             },
 

@@ -92,7 +92,7 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.locator('#action').getByRole('combobox').locator('div').filter({ hasText: 'Create/Update' }).click();
     await adminPage.getByRole('option', { name: 'Create/Update' }).locator('span').first().click();
     await adminPage.locator('#validation_strategy').getByRole('combobox').locator('div').filter({ hasText: 'Stop on Errors' }).click();
-    await adminPage.getByText('Stop on Errors').click();
+    await adminPage.getByRole('option', { name: 'Stop on Errors' }).locator('span').first().click();
     await adminPage.getByRole('textbox', { name: 'Allowed Errors' }).fill('');
     await adminPage.getByRole('textbox', { name: 'Field Separator' }).fill('');
     await adminPage.getByRole('button', { name: 'Save Import' }).click();
@@ -129,7 +129,7 @@ test.describe('UnoPim Import Jobs', () => {
     const fileInput = adminPage.locator('input[type="file"]').first();
     await fileInput.setInputFiles('assets/1k_products.xlsx');
     await adminPage.locator('#validation_strategy').getByRole('combobox').locator('div').filter({ hasText: 'Stop on Errors' }).click();
-    await adminPage.getByText('Stop on Errors').click();
+    await adminPage.getByRole('option', { name: 'Stop on Errors' }).locator('span').first().click();
     await adminPage.getByRole('button', { name: 'Save Import' }).click();
     await expect(adminPage.locator('#app').getByText('The Validation Strategy field is required')).toBeVisible();
   });

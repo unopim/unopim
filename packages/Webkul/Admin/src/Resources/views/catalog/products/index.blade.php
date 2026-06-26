@@ -32,7 +32,11 @@
         {!! view_render_event('unopim.admin.catalog.products.list.before') !!}
 
     <!-- Datagrid -->
-    <x-admin::datagrid src="{{ route('admin.catalog.products.index') }}" :isMultiRow="true">
+    <x-admin::datagrid
+        src="{{ route('admin.catalog.products.index') }}"
+        filter-attributes-src="{{ route('admin.catalog.products.filterable_attributes') }}"
+        :isMultiRow="true"
+    >
 
     </x-admin::datagrid>
 

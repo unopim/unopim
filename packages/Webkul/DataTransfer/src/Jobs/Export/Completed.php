@@ -48,6 +48,10 @@ class Completed implements ShouldQueue
             ->flush($this->exportBuffer)
             ->completed();
 
+        if ($this->exportBuffer && method_exists($this->exportBuffer, 'delete')) {
+            $this->exportBuffer->delete();
+        }
+
         Cache::forget('export_init_'.$this->export->id);
     }
 

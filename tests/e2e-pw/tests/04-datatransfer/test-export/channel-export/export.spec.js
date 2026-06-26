@@ -12,7 +12,7 @@ async function createChannelExport(adminPage, code, format = 'CSV') {
 
   // Select Type: Channels
   // The locator for the Type field might vary, but based on export.spec.js:
-  await adminPage.locator('#export-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
+  await adminPage.locator('#export-type').locator('.multiselect__single, .multiselect__placeholder').first().click();
   await adminPage.getByRole('option', { name: 'Channels' }).locator('span').first().click();
 
   // Select File Format
