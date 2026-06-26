@@ -18,6 +18,10 @@ Route::middleware(['web', 'installer_locale'])->group(function () {
             Route::post('admin-config-setup', 'adminConfigSetup')->name('installer.admin_config_setup')->withoutMiddleware('web');
 
             Route::post('seed-sample-data', 'seedSampleData')->name('installer.seed_sample_data')->withoutMiddleware('web');
+
+            Route::post('prepare', 'prepareInstall')->name('installer.prepare')->withoutMiddleware('web');
+
+            Route::get('process', 'processInstall')->name('installer.process')->withoutMiddleware('web');
         });
     });
 });
