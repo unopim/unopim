@@ -47,8 +47,8 @@
                                 </p>
                                 @if (bouncer()->hasPermission('configuration.webhook.settings.update'))
                                     <div class="flex gap-x-2.5 items-center">
-                                        <button 
-                                            type="submit" 
+                                        <button
+                                            type="submit"
                                             class="primary-button"
                                             :disabled="isLoading"
                                         >
@@ -70,7 +70,7 @@
                                         <div class="px-4 pb-4">
                                             <div class="mb-4 !mb-0">
                                                 <label class="flex gap-1 items-center mb-1.5 text-xs text-gray-600 dark:text-gray-300 font-medium">
-                                                    @lang('webhook::app.configuration.webhook.settings.index.active.label') 
+                                                    @lang('webhook::app.configuration.webhook.settings.index.active.label')
                                                 </label>
                                                 <x-admin::form.control-group class="!mb-0">
                                                     <x-admin::form.control-group.control
@@ -93,9 +93,9 @@
                                     </template>
                                     <template v-else>
                                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                                            <p class="text-base font-semibold mb-4"> 
-                                                @lang('webhook::app.configuration.webhook.settings.index.name') 
-                                            </p> 
+                                            <p class="text-base font-semibold mb-4">
+                                                @lang('webhook::app.configuration.webhook.settings.index.name')
+                                            </p>
 
                                             <div class="mb-4">
                                                 <div class="flex flex-col gap-2 mt-2">
@@ -140,7 +140,7 @@
                                 isEnabled: 0,
                                 formData: null,
                             };
-                            
+
                         },
 
                         mounted() {
@@ -166,7 +166,7 @@
                                     setErrors
                             }) {
                                 this.isLoading = true;
-                                
+
                                 let formData = new FormData(this.$refs.storeConfigurationsForm);
 
                                 this.$axios.post("{{ route('webhook.settings.store') }}", formData)
