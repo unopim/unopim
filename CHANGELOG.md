@@ -16,6 +16,7 @@
 - Added **PIM-specific test assertions** — `CoreAssertions` trait with `assertProductExists()`, `assertCategoryExists()`, `assertAttributeExists()`, `assertChannelExists()`, `assertLocaleExists()`, and `assertSuccessJsonResponse()` helpers for Pest tests.
 
 ### Improvements
+- Added **type-to-search locale & currency prompts** to the `php artisan unopim:install` CLI wizard — default/allowed locale and currency selectors now filter as you type (by code or name) instead of scrolling long static lists.
 - Replaced **deprecated `Request::get()`** with `->input()` across remaining controllers (the underlying `symfony/http-foundation` 7.x dependency deprecates `Request::get()` — Laravel inherits the deprecation).
 - Added **return type hints** and adopted **HTTP status constants** (`JsonResponse::HTTP_OK`, etc.) in additional controllers across Admin and AdminApi packages in place of magic numbers.
 - Removed **auto-discovered providers** from `bootstrap/providers.php` — third-party packages (DomPDF, Translatable, Concord, Excel) are auto-discovered by Laravel and no longer need explicit registration.

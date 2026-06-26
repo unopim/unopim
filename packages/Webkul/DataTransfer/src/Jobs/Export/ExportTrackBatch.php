@@ -56,7 +56,19 @@ class ExportTrackBatch implements ShouldQueue
         // Update the state to VALIDATED
         $exportHelper->stateUpdate(ExportHelper::STATE_VALIDATED);
 
-        $exportHelper->started();
+        try {
+            $exportHelper->started();
+        } catch (\Exception $e) {
+            $this->exportBatch->state = ExportHelper::STATE_FAILED;
+            $this->exportBatch->errors = [$e->getMessage()];
+            $this->exportBatch->save();
+
+            $logger->error("Export failed: {$e->getMessage()}", [
+                'exception' => $e->getTraceAsString(),
+            ]);
+
+            return;
+        }
 
         // Check for pending batches
 

@@ -20,6 +20,10 @@ use Webkul\Core\Repositories\ChannelRepository;
 
 class CategoryController extends Controller
 {
+    const DEFAULT_PAGE = 1;
+
+    const SEARCH_PER_PAGE = 50;
+
     /**
      * Create a new controller instance.
      *
@@ -318,30 +322,57 @@ class CategoryController extends Controller
      */
     public function children(): JsonResponse
     {
-        $id = (int) request()->input('id');
+        $parentId = (int) request()->input('id');
 
-        $categoryId = request()->input('category') ?? 0;
+        $categoryId = (int) (request()->input('category') ?? 0);
 
-        $this->categoryRepository->findOrFail($id);
+        $this->categoryRepository->findOrFail($parentId);
 
-        $childCategories = $this->categoryRepository->getChildCategories($id, $categoryId);
+        if (request()->filled('page')) {
+            return new JsonResponse(
+                $this->categoryRepository->getChildCategoriesPaginated(
+                    $parentId,
+                    $categoryId,
+                    (int) request()->input('page'),
+                    (int) request()->input('limit', CategoryRepository::DEFAULT_PER_PAGE),
+                )
+            );
+        }
+
+        $childCategories = $this->categoryRepository->getChildCategories($parentId, $categoryId);
 
         return new JsonResponse($childCategories->toArray());
     }
 
-    /**
-     * Result of search customer.
-     */
     public function search(): JsonResponse
     {
-        $results = [];
+        $locale = preg_replace('/[^A-Za-z_]/', '', (string) (request('locale') ?? core()->getRequestedLocaleCode()));
 
-        $categories = $this->categoryRepository->scopeQuery(function ($query) {
-            return $query
-                ->select('categories.*')
-                ->orderBy('created_at', 'desc');
-        })->paginate(10);
+        $searchQuery = trim((string) request('query', ''));
 
-        return response()->json($categories);
+        $query = $this->categoryRepository->getModel()->newQuery();
+
+        if ($searchQuery !== '') {
+            $query->where(function ($builder) use ($searchQuery, $locale) {
+                $builder->where('additional_data->locale_specific->'.$locale.'->name', 'LIKE', '%'.$searchQuery.'%')
+                    ->orWhere('code', 'LIKE', '%'.$searchQuery.'%');
+            });
+        }
+
+        $page = max(self::DEFAULT_PAGE, (int) request('page', self::DEFAULT_PAGE));
+
+        $paginator = $query->defaultOrder()->paginate(self::SEARCH_PER_PAGE, ['*'], 'page', $page);
+
+        $results = $paginator->getCollection()->map(fn ($category) => [
+            'id'    => $category->id,
+            'code'  => $category->code,
+            'label' => $category->additional_data['locale_specific'][$locale]['name'] ?? '['.$category->code.']',
+        ])->values();
+
+        return new JsonResponse([
+            'data'     => $results,
+            'page'     => $paginator->currentPage(),
+            'lastPage' => $paginator->lastPage(),
+        ]);
     }
 }

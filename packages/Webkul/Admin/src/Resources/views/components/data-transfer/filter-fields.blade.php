@@ -1,7 +1,10 @@
 @props([
     'values'         => [],
     'exporterConfig' => '',
-    'entityType'     => 'categories'
+    'entityType'     => 'categories',
+    'only'           => '',
+    'except'         => '',
+    'gridClass'      => '',
 ])
 
 @php
@@ -17,6 +20,10 @@
 
             foreach ($config['filters']['fields'] as $key => $filter) {
                 $exporterConfig[$name]['filters']['fields'][$key]['title'] = trans($filter['title']);
+
+                if (! empty($filter['info'])) {
+                    $exporterConfig[$name]['filters']['fields'][$key]['info'] = trans($filter['info']);
+                }
 
                 if ($filter['type'] == 'select' || $filter['type'] == 'multiselect') {
                     if (($filter['async'] ?? false) == true && ! empty($filter['list_route'])) {
@@ -42,22 +49,39 @@
     }
 @endphp
 
+<x-admin::data-transfer.tags-input />
+
 <v-filter-fields
     entityType="{{ $entityType }}"
     exporters="{{ $exporterConfig }}"
     values="{{ json_encode($values) }}"
     old="{{ json_encode(old()) }}"
+    only="{{ $only }}"
+    except="{{ $except }}"
+    grid-class="{{ $gridClass }}"
     {{ $attributes }}
 ></v-filter-fields>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-filter-fields-template">
-        <x-admin::form.control-group v-for="filterField in fields" ::key="filterField.name">
+      <div :class="gridClass">
+        <x-admin::form.control-group
+            v-for="filterField in visibleFields"
+            ::key="fieldKey(filterField)"
+            ::class="filterField.full_width ? 'col-span-2' : ''"
+        >
             <x-admin::form.control-group.label
-                v-text="filterField.title"
                 ::class="filterField.required ? 'required' : ''"
                 ::for="filterField.name"
             >
+                <span v-text="filterField.title"></span>
+
+                <span
+                    v-if="filterField.info"
+                    class="icon-information text-base text-gray-500 dark:text-gray-300 cursor-pointer"
+                    :title="filterField.info"
+                >
+                </span>
             </x-admin::form.control-group.label>
 
             <template v-if="filterField?.type == 'boolean'">
@@ -70,7 +94,7 @@
                         value="1"
                         :id="filterField.name"
                         class="sr-only peer"
-                        :checked="'1' == this.getFilterValue(filterField.name)"
+                        :checked="'1' == (this.getFilterValue(filterField.name) ?? filterField.default)"
                         @change="emitChangeEvent(filterField.name, $event.target.checked ? '1' : '0')"
                     />
 
@@ -94,7 +118,7 @@
                             :track-by="filterField.track_by"
                             :label-by="filterField.label_by"
                             :list-route="filterField.list_route"
-                            :queryParams="filterField.query_params"
+                            :queryParams="fieldQueryParams(filterField)"
                             @input="emitChangeEvent(filterField.name, this.parseJson($event, true)[filterField.track_by] ?? '')"
                         >
                         </v-async-select-handler>
@@ -120,7 +144,7 @@
                         :rules="filterField.validation"
                         :name="'filters[' + filterField.name + ']'"
                         :label="filterField.title"
-                        :value="this.getFilterValue(filterField.name)"
+                        :value="resolveFieldValue(filterField)"
                     >
                     <template v-if="filterField?.async">
                         <v-async-select-handler
@@ -132,7 +156,7 @@
                             :track-by="filterField.track_by"
                             :label-by="filterField.label_by"
                             :list-route="filterField.list_route"
-                            :queryParams="filterField.query_params"
+                            :queryParams="fieldQueryParams(filterField)"
                             @input="emitChangeEvent(filterField.name, this.parseJson($event, true) ?? '')"
                         >
                         </v-async-select-handler>
@@ -216,6 +240,15 @@
                 </v-field>
             </template>
 
+            <template v-else-if="filterField.type == 'tags'">
+                <v-data-transfer-tags-input
+                    :name="'filters[' + filterField.name + ']'"
+                    :value="this.getFilterValue(filterField.name)"
+                    :placeholder="filterField.title"
+                >
+                </v-data-transfer-tags-input>
+            </template>
+
             <template v-else>
                 <v-field
                     v-slot="{ field, errors }"
@@ -246,9 +279,13 @@
                 </p>
             </v-error-message>
         </x-admin::form.control-group>
+      </div>
     </script>
 
     <script type="module">
+        const CHANNEL_FIELD = 'channels';
+        const SCOPE_CHILD_FIELDS = ['locales', 'currencies'];
+
         app.component('v-filter-fields', {
             template: '#v-filter-fields-template',
 
@@ -256,20 +293,40 @@
                 'entityType',
                 'exporters',
                 'values',
-                'old'
+                'old',
+                'only',
+                'except',
+                'gridClass'
             ],
             data() {
+                const entity = this.resolveEntity(this.entityType);
+                const exportersConfig = this.parseJson(this.exporters);
+                const filterValues = this.parseJson(this.values);
+                const oldValues = this.parseJson(this.old);
+
+                const channelValue = (oldValues?.filters ? oldValues.filters['channels'] ?? null : null) ?? filterValues['channels'];
+
                 return {
-                    exportersConfig: this.parseJson(this.exporters),
-                    entity: this.entityType,
-                    fields: this.parseJson(this.exporters)[this.entityType]?.filters?.fields ?? [],
-                    filterValues: this.parseJson(this.values),
-                    oldValues: this.parseJson(this.old),
+                    exportersConfig: exportersConfig,
+                    entity: entity,
+                    fields: this.applyFieldScope(exportersConfig[entity]?.filters?.fields ?? []),
+                    filterValues: filterValues,
+                    oldValues: oldValues,
+                    selectedChannelCodes: this.extractCodes(channelValue),
+                    liveScopeValues: {},
+                    currentValues: {},
                 };
             },
 
             mounted() {
                 this.$emitter.on('entity-type-changed', this.changeEntityType);
+                this.$emitter.on('filter-value-changed', this.handleScopeChange);
+            },
+
+            computed: {
+                visibleFields() {
+                    return this.fields.filter(field => this.isVisible(field));
+                },
             },
 
             methods: {
@@ -292,10 +349,117 @@
                 getFilterValue(fieldName) {
                     return (this.oldValues?.filters ? this.oldValues.filters[fieldName] ?? null : null) ?? this.filterValues[fieldName];
                 },
-                changeEntityType(jsonValue) {
-                    this.entity = this.parseJson(jsonValue)?.id;
+                resolveEntity(value) {
+                    const parsed = this.parseJson(value, true);
 
-                    this.fields = this.exportersConfig[this.entity]?.filters?.fields ?? [];
+                    if (parsed && typeof parsed === 'object' && parsed.id) {
+                        return parsed.id;
+                    }
+
+                    return value;
+                },
+                applyFieldScope(fields) {
+                    const toList = (value) => (value ? value.split(',').map(item => item.trim()).filter(Boolean) : []);
+
+                    const only = toList(this.only);
+                    const except = toList(this.except);
+
+                    if (only.length) {
+                        fields = fields.filter(field => only.includes(field.name));
+                    }
+
+                    if (except.length) {
+                        fields = fields.filter(field => ! except.includes(field.name));
+                    }
+
+                    return fields;
+                },
+                changeEntityType(jsonValue) {
+                    this.entity = this.resolveEntity(jsonValue);
+
+                    this.fields = this.applyFieldScope(this.exportersConfig[this.entity]?.filters?.fields ?? []);
+                },
+
+                isScopeChild(name) {
+                    return SCOPE_CHILD_FIELDS.includes(name);
+                },
+
+                extractCodes(value) {
+                    if (! value) {
+                        return [];
+                    }
+
+                    let parsed = value;
+
+                    if (typeof value === 'string') {
+                        parsed = this.parseJson(value, true);
+
+                        if (typeof parsed === 'string') {
+                            parsed = value.split(',');
+                        }
+                    }
+
+                    if (! Array.isArray(parsed)) {
+                        parsed = [parsed];
+                    }
+
+                    return parsed
+                        .map(item => (item && typeof item === 'object') ? item.code : `${item ?? ''}`.trim())
+                        .filter(Boolean);
+                },
+
+                handleScopeChange(changed) {
+                    this.currentValues[changed.filterName] = changed.value;
+
+                    if (changed.filterName === CHANNEL_FIELD) {
+                        this.selectedChannelCodes = this.extractCodes(changed.value);
+
+                        return;
+                    }
+
+                    if (this.isScopeChild(changed.filterName)) {
+                        this.liveScopeValues[changed.filterName] = this.extractCodes(changed.value).join(',');
+                    }
+                },
+
+                isVisible(filterField) {
+                    const rule = filterField.visible_when;
+
+                    if (! rule) {
+                        return true;
+                    }
+
+                    const value = this.currentValues[rule.field] ?? this.getFilterValue(rule.field);
+
+                    return rule.values.includes(value);
+                },
+
+                fieldKey(filterField) {
+                    if (this.isScopeChild(filterField.name)) {
+                        return `${filterField.name}::${this.selectedChannelCodes.join(',')}`;
+                    }
+
+                    return filterField.name;
+                },
+
+                fieldQueryParams(filterField) {
+                    if (this.isScopeChild(filterField.name)) {
+                        return { [CHANNEL_FIELD]: this.selectedChannelCodes };
+                    }
+
+                    return filterField.query_params;
+                },
+
+                resolveFieldValue(filterField) {
+                    if (! this.isScopeChild(filterField.name)) {
+                        return this.getFilterValue(filterField.name);
+                    }
+
+                    if (this.liveScopeValues[filterField.name] !== undefined) {
+                        return this.liveScopeValues[filterField.name];
+                    }
+
+                    return this.extractCodes(this.getFilterValue(filterField.name)).join(',');
                 },
             },
         });

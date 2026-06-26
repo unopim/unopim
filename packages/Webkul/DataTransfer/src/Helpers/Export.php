@@ -10,7 +10,6 @@ use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
-use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Services\JobLogger;
@@ -375,12 +374,7 @@ class Export
         $filters = $typeExporter->getFilters();
 
         $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
-        $fileName = sprintf(
-            '%s-%s.%s',
-            $this->export->jobInstance->code,
-            $this->export->jobInstance->entity_type,
-            strtolower($filters['file_format'] ?? SpoutWriterFactory::CSV)
-        );
+        $fileName = $typeExporter->getFileName();
 
         $buffer = app(FileExportFileBuffer::class)->initialize(
             $directory,

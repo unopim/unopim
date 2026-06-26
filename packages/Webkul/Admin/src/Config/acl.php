@@ -451,10 +451,20 @@ return [
         'route' => 'admin.settings.users.index',
         'sort'  => 8,
     ], [
+        'key'   => 'settings.appearance',
+        'name'  => 'admin::app.acl.appearance',
+        'route' => 'admin.settings.appearance.index',
+        'sort'  => 1,
+    ], [
+        'key'   => 'settings.appearance.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.appearance.update',
+        'sort'  => 1,
+    ], [
         'key'   => 'settings.locales',
         'name'  => 'admin::app.acl.locales',
         'route' => 'admin.settings.locales.index',
-        'sort'  => 1,
+        'sort'  => 2,
     ], [
         'key'   => 'settings.locales.create',
         'name'  => 'admin::app.acl.create',
@@ -685,5 +695,20 @@ return [
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.configuration.integrations.delete',
         'sort'  => 3,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Help
+    |--------------------------------------------------------------------------
+    |
+    | ACL related to the help & resources page.
+    |
+    */
+    [
+        'key'   => 'help',
+        'name'  => 'admin::app.acl.help',
+        'route' => 'admin.help.index',
+        'sort'  => 99999,
     ],
 ];

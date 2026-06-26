@@ -48,7 +48,7 @@ class TrackerController extends Controller
     public function view($batchId = null): View
     {
         if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
-            abort(403, 'This action is unauthorized');
+            abort(403, trans('admin::app.common.unauthorized'));
         }
 
         $import = $this->jobTrackRepository->findOrFail($batchId);
