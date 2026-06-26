@@ -1643,6 +1643,20 @@ return [
             'update-success'            => '用戶更新成功。',
             'current-user-delete-error' => '無法刪除當前用戶。',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => '創建角色',
@@ -2011,6 +2025,7 @@ return [
                 'themes'             => '主題',
                 'users'              => '用戶',
                 'integrations'       => '集成',
+                'appearance'         => 'Appearance',
                 'prompt'             => '提示',
                 'general-tab'        => '配置',
                 'help'               => '說明',
@@ -2290,6 +2305,7 @@ return [
         'attributes'               => '屬性',
         'cancel'                   => '取消',
         'catalog'                  => '目錄',
+        'appearance'               => 'Appearance',
         'categories'               => '類別',
         'channels'                 => '頻道',
         'configure'                => '配置',

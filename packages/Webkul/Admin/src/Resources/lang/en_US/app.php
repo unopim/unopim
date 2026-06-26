@@ -1758,6 +1758,19 @@ return [
             'current-user-delete-error' => 'The logged in user can not be deleted.',
         ],
 
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Create Role',
@@ -2156,6 +2169,7 @@ return [
                 'products'           => 'Products',
                 'roles'              => 'Roles',
                 'settings'           => 'Settings',
+                'appearance'         => 'Appearance',
                 'themes'             => 'Themes',
                 'users'              => 'Users',
                 'integrations'       => 'Integrations',
@@ -2498,6 +2512,7 @@ return [
         'reporting'                => 'Reporting',
         'reviews'                  => 'Reviews',
         'roles'                    => 'Roles',
+        'appearance'               => 'Appearance',
         'sales'                    => 'Sales',
         'search-seo'               => 'Search & SEO',
         'search-synonyms'          => 'Search Synonyms',

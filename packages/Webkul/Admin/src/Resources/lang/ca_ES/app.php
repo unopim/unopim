@@ -1643,6 +1643,20 @@ return [
             'update-success'            => 'Usuari actualitzat correctament.',
             'current-user-delete-error' => 'L\'usuari connectat no es pot eliminar.',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Crear Rol',
@@ -2012,6 +2026,7 @@ return [
                 'themes'             => 'Temas',
                 'users'              => 'Usuarios',
                 'integrations'       => 'Integraciones',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'Missatge',
                 'general-tab'        => 'Configuració',
             ],
@@ -2290,6 +2305,7 @@ return [
         'attributes'               => 'Atributs',
         'cancel'                   => 'Cancel·lar',
         'catalog'                  => 'Catàleg',
+        'appearance'               => 'Appearance',
         'categories'               => 'Categories',
         'channels'                 => 'Cadenes',
         'configure'                => 'Configurar',

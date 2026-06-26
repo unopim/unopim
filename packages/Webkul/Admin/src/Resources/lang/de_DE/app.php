@@ -1643,6 +1643,20 @@ return [
             'update-success'            => 'Benutzer erfolgreich aktualisiert.',
             'current-user-delete-error' => 'Der angemeldete Benutzer kann nicht gelöscht werden.',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Rolle erstellen',
@@ -2012,6 +2026,7 @@ return [
                 'themes'             => 'Designs',
                 'users'              => 'Benutzer',
                 'integrations'       => 'Integrationen',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'Eingabeaufforderung',
                 'general-tab'        => 'Konfiguration',
             ],
@@ -2291,6 +2306,7 @@ return [
         'attributes'               => 'Attribute',
         'cancel'                   => 'Abbrechen',
         'catalog'                  => 'Katalog',
+        'appearance'               => 'Appearance',
         'categories'               => 'Kategorien',
         'channels'                 => 'Kanäle',
         'configure'                => 'Konfigurieren',

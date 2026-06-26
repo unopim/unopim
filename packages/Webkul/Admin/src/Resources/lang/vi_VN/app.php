@@ -1643,6 +1643,20 @@ return [
             'update-success'            => 'Người dùng đã được cập nhật thành công.',
             'current-user-delete-error' => 'Không thể xóa người dùng hiện tại.',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Tạo vai trò',
@@ -2012,6 +2026,7 @@ return [
                 'themes'             => 'Chủ đề',
                 'users'              => 'Người dùng',
                 'integrations'       => 'Tích hợp',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'Nhắc nhở',
                 'general-tab'        => 'Cấu hình',
             ],
@@ -2291,6 +2306,7 @@ return [
         'attributes'               => 'Thuộc tính',
         'cancel'                   => 'Hủy bỏ',
         'catalog'                  => 'Danh mục',
+        'appearance'               => 'Appearance',
         'categories'               => 'Danh mục',
         'channels'                 => 'Kênh',
         'configure'                => 'Cấu hình',

@@ -1643,6 +1643,20 @@ return [
             'update-success'            => 'Kullanıcı başarıyla güncellendi.',
             'current-user-delete-error' => 'Giriş yapmış kullanıcı silinemez.',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Rol Oluştur',
@@ -2012,6 +2026,7 @@ return [
                 'themes'             => 'Temalar',
                 'users'              => 'Kullanıcılar',
                 'integrations'       => 'Entegrasyonlar',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'İstem',
                 'general-tab'        => 'Yapılandırma',
             ],
@@ -2291,6 +2306,7 @@ return [
         'attributes'               => 'Özellikler',
         'cancel'                   => 'İptal',
         'catalog'                  => 'Katalog',
+        'appearance'               => 'Appearance',
         'categories'               => 'Kategoriler',
         'channels'                 => 'Kanallar',
         'configure'                => 'Yapılandır',

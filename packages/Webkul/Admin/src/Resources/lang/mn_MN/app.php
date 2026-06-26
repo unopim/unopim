@@ -1643,6 +1643,20 @@ return [
             'update-success'            => 'Хэрэглэгч амжилттай шинэчлэгдсэн.',
             'current-user-delete-error' => 'Нэвтэрсэн хэрэглэгчийг устгах боломжгүй',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Бүтээх',
@@ -2011,6 +2025,7 @@ return [
                 'themes'             => 'Сэдэвүүд',
                 'users'              => 'Хэрэглэгчид',
                 'integrations'       => 'Бүртгэл',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'Түлхүүр үг',
                 'general-tab'        => 'Тохиргоо',
                 'help'               => 'Тусламж',
@@ -2290,6 +2305,7 @@ return [
         'attributes'               => 'Тусгай чанар',
         'cancel'                   => 'Цуаах',
         'catalog'                  => 'Каталог',
+        'appearance'               => 'Appearance',
         'categories'               => 'Ангилал',
         'channels'                 => 'Сувгууд',
         'configure'                => 'Эвлүүл',

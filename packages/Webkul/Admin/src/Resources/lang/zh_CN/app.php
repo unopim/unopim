@@ -1643,6 +1643,20 @@ return [
             'update-success'            => '用户成功更新了。',
             'current-user-delete-error' => '已登录用户无法删除',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => '创建角色',
@@ -2011,6 +2025,7 @@ return [
                 'themes'             => '主题',
                 'users'              => '用户',
                 'integrations'       => '集成',
+                'appearance'         => 'Appearance',
                 'prompt'             => '提示',
                 'general-tab'        => '配置',
                 'help'               => '帮助',
@@ -2290,6 +2305,7 @@ return [
         'attributes'               => '属性',
         'cancel'                   => '取消',
         'catalog'                  => '目录',
+        'appearance'               => 'Appearance',
         'categories'               => '类别',
         'channels'                 => '频道',
         'configure'                => '配置',

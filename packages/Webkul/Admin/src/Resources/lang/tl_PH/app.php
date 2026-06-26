@@ -1643,6 +1643,20 @@ return [
             'update-success'            => 'Gumagamit ay matagumpay na na-update.',
             'current-user-delete-error' => 'Hindi maaaring tanggalin ang kasalukuyang naka-login na gumagamit.',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Lumikha ng Tungkulin',
@@ -2012,6 +2026,7 @@ return [
                 'themes'             => 'Mga Tema',
                 'users'              => 'Mga Gumagamit',
                 'integrations'       => 'Mga Integrasyon',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'Prompto',
                 'general-tab'        => 'Konpigurasyon',
             ],
@@ -2292,6 +2307,7 @@ return [
         'attributes'               => 'Mga Katangian',
         'cancel'                   => 'Kanselahin',
         'catalog'                  => 'Katalogo',
+        'appearance'               => 'Appearance',
         'categories'               => 'Mga Kategorya',
         'channels'                 => 'Mga Channel',
         'configure'                => 'Pag-configure',

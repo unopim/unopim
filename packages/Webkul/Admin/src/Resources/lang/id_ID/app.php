@@ -1643,6 +1643,20 @@ return [
             'update-success'            => 'Pengguna berhasil diperbarui.',
             'current-user-delete-error' => 'Pengguna yang masuk tidak dapat dihapus',
         ],
+
+        'appearance' => [
+            'title'          => 'Appearance',
+            'section-title'  => 'Visual Branding',
+            'logo'           => 'Logo',
+            'logo-size'      => 'Recommended image resolution: 192px X 50px',
+            'favicon'        => 'Favicon',
+            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
+            'no-logo'        => 'No logo uploaded yet.',
+            'no-favicon'     => 'No favicon uploaded yet.',
+            'save-btn'       => 'Save Appearance',
+            'update-success' => 'Appearance updated successfully.',
+        ],
+
         'roles' => [
             'index' => [
                 'create-btn' => 'Buat peran',
@@ -2012,6 +2026,7 @@ return [
                 'themes'             => 'Tema',
                 'users'              => 'Pengguna',
                 'integrations'       => 'Integrasi',
+                'appearance'         => 'Appearance',
                 'prompt'             => 'Prompt',
                 'general-tab'        => 'Konfigurasi',
             ],
@@ -2291,6 +2306,7 @@ return [
         'attributes'               => 'Atribut',
         'cancel'                   => 'Membatalkan',
         'catalog'                  => 'Katalog',
+        'appearance'               => 'Appearance',
         'categories'               => 'Kategori',
         'channels'                 => 'Saluran',
         'configure'                => 'Konfigurasikan',
