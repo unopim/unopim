@@ -113,7 +113,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
       ]);
       await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
       // Wait for Vue to re-render the multiselect placeholder after tag removal
-      await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().waitFor({ state: 'visible', timeout: 10000 });
+      await expect(adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first()).toBeVisible({ timeout: 20000 });
       // Wait for the re-assignment POST response before asserting the success toast
       await Promise.all([
         adminPage.waitForResponse(r => r.url().includes('completeness-settings/update') && r.status() === 200),

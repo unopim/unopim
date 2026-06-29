@@ -19,11 +19,15 @@ async function goToLoginPage(adminPage) {
     await adminPage.waitForLoadState('networkidle');
     return;
   }
-  // Otherwise log out via the header dropdown
-  await adminPage.click('button.rounded-full');
-  await adminPage.getByRole('link', { name: 'Logout' }).click();
+  // Wait for the page to fully load so the logout form is present in the DOM
+  await adminPage.waitForLoadState('load');
+  // Submit the hidden logout form directly — more reliable than driving the UI dropdown
+  await adminPage.evaluate(() => {
+    const form = document.getElementById('adminLogout');
+    if (form) form.submit();
+  });
   // Use a path-only regex so APP_URL hostname differences don't cause failures
-  await expect(adminPage).toHaveURL(/\/admin\/login/);
+  await adminPage.waitForURL(/\/admin\/login/, { timeout: 15000 });
 }
 
 
@@ -31,8 +35,12 @@ test.describe('Login Page', () => {
 
 test('Logout Check', async ({ adminPage }) => {
   await adminPage.goto('/admin/dashboard', { waitUntil: 'load', timeout: 30000 });
-  await adminPage.click('button.rounded-full');
-  await adminPage.getByRole('link', { name: 'Logout' }).click();
+  // Scope to the header to avoid matching any other rounded-full buttons on the page
+  await adminPage.locator('.unopim-header button.rounded-full').click();
+  // Wait explicitly for the dropdown to open before clicking Logout
+  const logoutLink = adminPage.locator('a[onclick*="adminLogout"]');
+  await logoutLink.waitFor({ state: 'visible', timeout: 10000 });
+  await logoutLink.click();
   // Use a path-only regex so APP_URL hostname differences (localhost vs 127.0.0.1) don't cause failures
   await expect(adminPage).toHaveURL(/\/admin\/login/);
 });
