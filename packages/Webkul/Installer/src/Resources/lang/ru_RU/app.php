@@ -75,7 +75,11 @@ return [
             'currencies' => [
                 'AED' => 'Дирхам',
                 'AFN' => 'Израильский шекель',
+<<<<<<< HEAD
                 'CAD' => 'Canadian Dollar',
+=======
+                'CAD' => 'Канадский доллар',
+>>>>>>> upstream/master
                 'CNY' => 'Китайский юань',
                 'EUR' => 'ЕВРО',
                 'GBP' => 'Фунт стерлингов',
@@ -146,6 +150,7 @@ return [
                 'application-name'    => 'Имя приложения',
                 'unopim'              => 'УноПим',
                 'chinese-yuan'        => 'Китайский юань (CNY)',
+                'dollar'              => 'Канадский доллар (CAD)',
                 'database-connection' => 'Подключение к базе данных',
                 'database-hostname'   => 'Имя хоста базы данных',
                 'database-name'       => 'Имя базы данных',

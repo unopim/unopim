@@ -75,7 +75,11 @@ return [
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Shekel Israel',
+<<<<<<< HEAD
                 'CAD' => 'Canadian Dollar',
+=======
+                'CAD' => 'Dolar Kanada',
+>>>>>>> upstream/master
                 'CNY' => 'Yuan Tiongkok',
                 'EUR' => 'EURO',
                 'GBP' => 'Pound Sterling',
@@ -146,6 +150,7 @@ return [
                 'application-name'    => 'Nama Aplikasi',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Yuan Tiongkok (CNY)',
+                'dollar'              => 'Dolar Kanada (CAD)',
                 'database-connection' => 'Koneksi Database',
                 'database-hostname'   => 'Nama Host Database',
                 'database-name'       => 'Nama Database',

@@ -75,7 +75,11 @@ return [
             'currencies' => [
                 'AED' => 'Dirhem',
                 'AFN' => 'Afgani',
+<<<<<<< HEAD
                 'CAD' => 'Canadian Dollar',
+=======
+                'CAD' => 'Kanada Doları',
+>>>>>>> upstream/master
                 'CNY' => 'Çin Yuanı',
                 'EUR' => 'Euro',
                 'GBP' => 'Sterlin',
@@ -146,6 +150,7 @@ return [
                 'application-name'    => 'Uygulama Adı',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Çin Yuanı (CNY)',
+                'dollar'              => 'Kanada Doları (CAD)',
                 'database-connection' => 'Veritabanı Bağlantısı',
                 'database-hostname'   => 'Veritabanı Ana Bilgisi',
                 'database-name'       => 'Veritabanı Adı',

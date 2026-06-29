@@ -146,6 +146,7 @@ return [
                 'application-name'    => 'Application Name',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Chinese Yuan (CNY)',
+                'dollar'              => 'Canadian Dollar (CAD)',
                 'database-connection' => 'Database Connection',
                 'database-hostname'   => 'Database Hostname',
                 'database-name'       => 'Database Name',

@@ -75,7 +75,11 @@ return [
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Afghani',
+<<<<<<< HEAD
                 'CAD' => 'Canadian Dollar',
+=======
+                'CAD' => 'Đô la Canada',
+>>>>>>> upstream/master
                 'CNY' => 'Nhân dân tệ',
                 'EUR' => 'Euro',
                 'GBP' => 'Bảng Anh',
@@ -146,6 +150,7 @@ return [
                 'application-name'    => 'Tên ứng dụng',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Nhân dân tệ Trung Quốc (CNY)',
+                'dollar'              => 'Đô la Canada (CAD)',
                 'database-connection' => 'Kết nối cơ sở dữ liệu',
                 'database-hostname'   => 'Tên máy chủ cơ sở dữ liệu',
                 'database-name'       => 'Tên cơ sở dữ liệu',

@@ -75,7 +75,11 @@ return [
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Afganistanski Afghani',
+<<<<<<< HEAD
                 'CAD' => 'Canadian Dollar',
+=======
+                'CAD' => 'Kanadski dolar',
+>>>>>>> upstream/master
                 'CNY' => 'Kineski Yuan',
                 'EUR' => 'Euro',
                 'GBP' => 'Funta Sterling',
@@ -146,6 +150,7 @@ return [
                 'application-name'    => 'Ime Aplikacije',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Kineski Yuan (CNY)',
+                'dollar'              => 'Kanadski dolar (CAD)',
                 'database-connection' => 'Veza na Bazu Podataka',
                 'database-hostname'   => 'Naziv Hostinga Baze',
                 'database-name'       => 'Naziv Baze Podataka',

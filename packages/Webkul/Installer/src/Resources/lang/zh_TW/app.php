@@ -75,7 +75,11 @@ return [
             'currencies' => [
                 'AED' => '阿聯酋迪拉姆',
                 'AFN' => '阿富汗尼',
+<<<<<<< HEAD
                 'CAD' => 'Canadian Dollar',
+=======
+                'CAD' => '加拿大元',
+>>>>>>> upstream/master
                 'CNY' => '人民幣',
                 'EUR' => '歐元',
                 'GBP' => '英鎊',
@@ -146,6 +150,7 @@ return [
                 'application-name'    => '應用名稱',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => '人民幣 (CNY)',
+                'dollar'              => '加拿大元 (CAD)',
                 'database-connection' => '資料庫連線',
                 'database-hostname'   => '資料庫主機名稱',
                 'database-name'       => '資料庫名稱',
