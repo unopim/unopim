@@ -1,0 +1,90 @@
+# =============================================================================
+# UnoPim OpenLiteSpeed Override
+# =============================================================================
+# Replaces Nginx + PHP-FPM with OpenLiteSpeed + LSPHP (single container).
+# Adds native HTTP/3 + QUIC (TLS) on top of plain HTTP.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.litespeed.yml up -d
+#
+# Or set in .env:
+#   COMPOSE_FILE=docker-compose.yml:docker-compose.litespeed.yml
+#
+# Endpoints:
+#   http://localhost:${APP_PORT:-8000}/admin            (HTTP/1.1, HTTP/2)
+#   https://localhost:${APP_SSL_PORT:-8443}/admin       (HTTP/2 + HTTP/3 QUIC)
+#
+# HTTP/3 needs UDP — the SSL port is published on both TCP and UDP.
+# A self-signed cert is generated at first start (browser warning expected) —
+# it is NOT baked into the image. For real certs, mount them over
+# /usr/local/lsws/conf/cert.
+#
+# ─── Troubleshooting ────────────────────────────────────────────────────────
+# • HTTP/3 not engaging in the browser?
+#     OpenLiteSpeed advertises HTTP/3 on the listener port (alt-svc h3=":443").
+#     Browsers only auto-upgrade to h3 when the PUBLIC port is 443. On a custom
+#     port (e.g. 8443) they stay on HTTP/2. For a real h3 test, publish 443:
+#       APP_SSL_PORT=443  (and run behind it / as root-capable host)
+#
+# • Every page returns 503? Check the OLS error log inside the container:
+#     docker compose exec unopim-litespeed tail /usr/local/lsws/logs/error.log
+#   If it shows "cgidSuEXEC failed":
+#     OpenLiteSpeed launches PHP through its lscgid/suEXEC helper. A few host
+#     kernels / container runtimes reject that privileged launch (seen on some
+#     Linux 6.x + container setups), so LSPHP never starts. This is a host-level
+#     incompatibility, not an UnoPim issue. Workarounds:
+#       - Run this profile on a different Docker host, OR
+#       - Use the default Nginx or the Apache profile instead (neither uses
+#         suEXEC):  docker compose up -d
+#                   docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
+#
+# • Can't edit your checkout after running this profile?
+#     The bind mount means the entrypoint chowns storage/ and bootstrap/cache/
+#     on the HOST to the LSPHP worker user (nobody, uid 65534). Restore with:
+#       sudo chown -R "$(id -u):$(id -g)" storage bootstrap/cache
+# =============================================================================
+
+services:
+  # Disable Nginx and FPM (replaced by OpenLiteSpeed)
+  unopim-nginx:
+    deploy:
+      replicas: 0
+
+  unopim-fpm:
+    deploy:
+      replicas: 0
+
+  # OpenLiteSpeed + LSPHP (replaces Nginx + FPM)
+  unopim-litespeed:
+    build:
+      context: .
+      dockerfile: dockerfiles/litespeed.Dockerfile
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "${APP_PORT:-8000}:80"
+      - "${APP_SSL_PORT:-8443}:443"
+      - "${APP_SSL_PORT:-8443}:443/udp"
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      APP_URL: "http://localhost:${APP_PORT:-8000}"
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      REDIS_HOST: unopim-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: unopim-elasticsearch:9200
+      MAIL_HOST: unopim-mailpit
+      MAIL_PORT: 1025
+    depends_on:
+      unopim-mysql:
+        condition: service_healthy
+      unopim-redis:
+        condition: service_healthy
+      unopim-elasticsearch:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
