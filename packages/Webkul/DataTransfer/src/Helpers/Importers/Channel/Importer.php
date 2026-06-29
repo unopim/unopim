@@ -25,9 +25,6 @@ class Importer extends AbstractImporter
 
     public const ERROR_INVALID_LOCALE = 'invalid_locale';
 
-    /**
-     * Permanent entity columns
-     */
     protected array $validColumnNames = [
         'code',
         'name',
@@ -219,7 +216,7 @@ class Importer extends AbstractImporter
 
                     $this->deletedItemsCount++;
                 } catch (\Exception $e) {
-                    // skip deleting if it fails due to constraint
+                    $this->skipRow($rowData['row_number'], 'delete_failed', 'code', $e->getMessage());
                 }
             }
         }

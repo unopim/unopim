@@ -70,7 +70,6 @@ beforeEach(function () {
 it('validates a correct locale row', function () {
     $row = ['code' => 'de_DE', 'status' => '1'];
 
-    // Mock DB check for localeExists
     DB::shouldReceive('table')->with('locales')->andReturnSelf();
     DB::shouldReceive('where')->with('code', 'de_DE')->andReturnSelf();
     DB::shouldReceive('value')->with('id')->andReturn(null);
@@ -91,10 +90,6 @@ it('fails validation for invalid status', function () {
 it('respects the "Enable" status filter during import', function () {
     $this->jobTrack->jobInstance->filters['status'] = 'enable';
 
-    // Batch has 1 enabled, 1 disabled.
-    // Expect create/update only for enabled.
-
-    // Mock existing locales check
     DB::shouldReceive('table')->with('locales')->andReturnSelf();
     DB::shouldReceive('whereIn')->andReturnSelf();
     DB::shouldReceive('select')->andReturnSelf();

@@ -32,9 +32,6 @@ class Exporter extends AbstractExporter
 
         $this->exportBuffer->write($locales);
 
-        /**
-         * Update export batch process state summary
-         */
         $this->updateBatchState($batch->id, Export::STATE_PROCESSED);
 
         Event::dispatch('data_transfer.exports.batch.export.after', $batch);
@@ -42,13 +39,6 @@ class Exporter extends AbstractExporter
         return true;
     }
 
-    /**
-     * Prepare locales from current batch.
-     *
-     * Applies the optional `status` filter:
-     *  - 'enable' → export only active locales (status == 1)
-     *  - 'All' or absent → export all locales
-     */
     public function prepareLocales(JobTrackBatchContract $batch): array
     {
         $locales = [];

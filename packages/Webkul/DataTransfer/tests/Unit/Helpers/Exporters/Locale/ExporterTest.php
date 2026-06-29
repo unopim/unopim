@@ -239,7 +239,7 @@ it('strips extra source fields and maps only the four expected keys', function (
 });
 
 it('accumulates created items count across multiple prepareLocales calls', function () {
-    $this->exporter->prepareLocales($this->batch); // 2 locales
+    $this->exporter->prepareLocales($this->batch);
 
     $secondBatch = new class implements JobTrackBatch
     {
@@ -255,18 +255,15 @@ it('accumulates created items count across multiple prepareLocales calls', funct
         ];
     };
 
-    $this->exporter->prepareLocales($secondBatch); // 1 more locale
+    $this->exporter->prepareLocales($secondBatch);
 
-    // Base summary['created'] is 0 (no prior summary), internal count = 3
     expect($this->exporter->getCreatedItemsCount())->toBe(3);
 });
 
 it('initializes the file buffer with XLS format when job instance specifies Xls', function () {
-    // Reconfigure jobInstance to use Xls format
     $this->jobTrack->jobInstance->filters = ['file_format' => 'Xls'];
     $this->exporter->setExport($this->jobTrack);
 
-    // Prime filters from the job instance
     $this->exporter->getFilters();
 
     $this->fileBuffer
@@ -306,17 +303,13 @@ it('dispatches before and after events with the batch as the payload', function 
     );
 });
 
-// ── Status-filter tests ────────────────────────────────────────────────────────
-
 it('exports only enabled locales when status filter is set to enable', function () {
-    // Override filters to request only enabled locales
     $this->jobTrack->jobInstance->filters = [
         'file_format' => 'Csv',
         'status'      => 'enable',
     ];
     $this->exporter->setExport($this->jobTrack);
 
-    // batch has en_US (status=1) and fr_FR (status=0)
     $locales = $this->exporter->prepareLocales($this->batch);
 
     expect($locales)->toHaveCount(1);
@@ -332,11 +325,8 @@ it('skips disabled locales and counts them when status filter is enable', functi
     ];
     $this->exporter->setExport($this->jobTrack);
 
-    // batch has 1 enabled (en_US) and 1 disabled (fr_FR)
     $this->exporter->prepareLocales($this->batch);
 
-    // AbstractExporter::getSkippedtemsCount() returns export->summary['skipped'] + skippedItemsCount
-    // summary is empty array so default is 0 + 1 = 1
     expect($this->exporter->getSkippedtemsCount())->toBe(1);
 });
 
@@ -355,7 +345,6 @@ it('exports all locales when status filter is set to All', function () {
 });
 
 it('exports all locales when no status filter is provided', function () {
-    // Default beforeEach filters have no 'status' key
     $locales = $this->exporter->prepareLocales($this->batch);
 
     expect($locales)->toHaveCount(2);
@@ -383,9 +372,9 @@ it('writes only enabled locales to buffer when status filter is enable', functio
         ->with([
             'state'   => ExportHelper::STATE_PROCESSED,
             'summary' => [
-                'processed' => 0,   // created(1) - skipped(1) = 0
+                'processed' => 0,
                 'created'   => 1,
-                'skipped'   => 1,   // fr_FR was skipped
+                'skipped'   => 1,
             ],
         ], 99)
         ->andReturnNull();

@@ -40,12 +40,7 @@ class Importer extends AbstractImporter
      * `status` is optional — when absent it defaults to enabled (1).
      */
     protected array $validColumnNames = [
-        // Present in the shipped sample file; ignored by the importer.
-        'id',
-
         'code',
-
-        // Present in the shipped sample file; `name` is computed from `code` in the model.
         'name',
         'status',
     ];
@@ -59,10 +54,6 @@ class Importer extends AbstractImporter
         self::ERROR_INVALID_STATUS            => 'data_transfer::app.importers.locales.validation.errors.invalid-status',
     ];
 
-    /**
-     * In-memory set of locale codes seen in this import run
-     * (used for duplicate-code validation without repeated DB queries).
-     */
     protected array $codesSeenInBatch = [];
 
     /**
