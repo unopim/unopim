@@ -106,19 +106,35 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
         })(),
       ]);
     } else {
-      // All already assigned — toggle one by removing and re-adding
+      // All already assigned — find a row with exactly ONE tag so that removing it makes the
+      // multiselect empty and reveals the "Select option" placeholder.
+      const allTagContainers = adminPage.locator('.multiselect__tags');
+      const totalRows = await allTagContainers.count();
+      let singleTagIdx = -1;
+      for (let i = 0; i < totalRows; i++) {
+        const iconCount = await allTagContainers.nth(i).locator('.multiselect__tag-icon').count();
+        if (iconCount === 1) { singleTagIdx = i; break; }
+      }
+      // Fall back to the first row when every row already has multiple tags
+      const targetIdx = singleTagIdx >= 0 ? singleTagIdx : 0;
+      const targetContainer = allTagContainers.nth(targetIdx);
+
       await Promise.all([
         adminPage.waitForResponse(r => r.url().includes('completeness-settings/update') && r.status() === 200),
-        adminPage.locator('.multiselect__tag-icon').first().click(),
+        targetContainer.locator('.multiselect__tag-icon').first().click(),
       ]);
       await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
-      // Wait for Vue to re-render the multiselect placeholder after tag removal
-      await expect(adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first()).toBeVisible({ timeout: 20000 });
-      // Wait for the re-assignment POST response before asserting the success toast
+
+      if (singleTagIdx >= 0) {
+        // Single-tag row: the multiselect is now empty — wait for the placeholder
+        await expect(targetContainer.filter({ hasText: 'Select option' })).toBeVisible({ timeout: 20000 });
+      }
+
+      // Re-assign Default channel to verify assignment still works
       await Promise.all([
         adminPage.waitForResponse(r => r.url().includes('completeness-settings/update') && r.status() === 200),
         (async () => {
-          await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().click();
+          await targetContainer.click();
           await adminPage.getByRole('option', { name: 'Default' }).first().click();
         })(),
       ]);
