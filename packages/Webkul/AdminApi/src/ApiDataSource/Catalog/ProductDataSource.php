@@ -170,7 +170,13 @@ class ProductDataSource extends ApiDataSource
                 $scopeQueryBuilder = $this->filterByCategories($scopeQueryBuilder, $value['operator'], $filterTable, $value['value']);
                 break;
             default:
-                $scopeQueryBuilder->where($filterTable.$requestedColumn, $value['value']);
+                if ($this->operators['IN_LIST'] == $value['operator']) {
+                    $scopeQueryBuilder->whereIn($filterTable.$requestedColumn, $value['value']);
+                } elseif ($this->operators['NOT_IN_LIST'] == $value['operator']) {
+                    $scopeQueryBuilder->whereNotIn($filterTable.$requestedColumn, $value['value']);
+                } else {
+                    $scopeQueryBuilder->where($filterTable.$requestedColumn, $value['operator'], $value['value']);
+                }
                 break;
         }
 
