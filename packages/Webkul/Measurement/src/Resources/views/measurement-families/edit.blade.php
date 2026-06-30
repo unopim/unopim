@@ -277,11 +277,13 @@
                                 >
                                     <x-admin::form.control-group class="mb-2 w-1/3">
                                         <x-admin::form.control-group.control
-                                            type="number"
+                                            type="text"
                                             ::name="'convert_value[' + index + ']'"
-                                            rules="required"
-                                            step="0.000001"
+                                            rules="required|decimal"
+                                            inputmode="decimal"
                                             v-model="conversion.value"
+                                            @keypress="restrictDecimal($event)"
+                                            @paste="restrictPaste($event)"
                                             placeholder="Enter conversion value"
                                             ::disabled="isConversionDisabled"
                                             :label="trans('measurement::app.measurement.unit.conversion_value')"
@@ -525,6 +527,47 @@
                         }
 
                         this.locale.conversions.splice(index, 1);
+                    },
+
+                    /**
+                     * Allow only digits and a single decimal point while typing,
+                     * so the conversion value can be e.g. 1, 1.0, 1.001, 0.001
+                     * and nothing else (letters/symbols are blocked at source).
+                     */
+                    restrictDecimal(event) {
+                        if (event.ctrlKey || event.metaKey) {
+                            return;
+                        }
+
+                        const char = event.key;
+
+                        // Allow non-character keys (Enter, Tab, arrows, etc.).
+                        if (char.length > 1) {
+                            return;
+                        }
+
+                        // Allow digits.
+                        if (/[0-9]/.test(char)) {
+                            return;
+                        }
+
+                        // Allow a single decimal point.
+                        if (char === '.' && ! event.target.value.includes('.')) {
+                            return;
+                        }
+
+                        event.preventDefault();
+                    },
+
+                    /**
+                     * Block pasting anything that is not a plain decimal number.
+                     */
+                    restrictPaste(event) {
+                        const pasted = (event.clipboardData || window.clipboardData).getData('text');
+
+                        if (! /^\d*\.?\d*$/.test(pasted)) {
+                            event.preventDefault();
+                        }
                     },
 
                     resetForm() {
