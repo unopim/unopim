@@ -14,6 +14,7 @@ use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
+use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\multisearch;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
