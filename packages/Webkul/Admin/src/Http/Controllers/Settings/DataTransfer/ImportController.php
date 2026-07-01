@@ -708,6 +708,12 @@ class ImportController extends Controller
                 continue;
             }
 
+            $stat = $zip->statIndex($index);
+
+            if ($stat === false || $stat['size'] > (int) config('image_import.max_entry_size')) {
+                continue;
+            }
+
             $stream = $zip->getStream($entryName);
 
             if ($stream === false) {
