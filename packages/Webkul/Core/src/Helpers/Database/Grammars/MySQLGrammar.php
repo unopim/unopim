@@ -43,14 +43,25 @@ class MySQLGrammar implements Grammar
 
     public function jsonExtract(string $column, string ...$pathSegments): string
     {
-        $jsonPath = '$.'.implode('.', $pathSegments);
+        $segments = array_map([$this, 'escapeJsonPathSegment'], $pathSegments);
+
+        $jsonPath = '$.'.implode('.', $segments);
 
         return "JSON_UNQUOTE(JSON_EXTRACT({$column}, '{$jsonPath}'))";
     }
 
+    /**
+     * Escape a JSON path segment so it cannot break out of the single-quoted
+     * SQL string literal the path is embedded in (SQL injection guard).
+     */
+    protected function escapeJsonPathSegment(string $segment): string
+    {
+        return str_replace(['\\', "'"], ['\\\\', "''"], $segment);
+    }
+
     public function orderByField(string $column, array $ids, string $type = ''): string
     {
-        $idList = implode(',', $ids);
+        $idList = implode(',', array_map('intval', $ids));
 
         return "FIELD({$column}, {$idList})";
     }

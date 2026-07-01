@@ -47,7 +47,23 @@ class InstallerController extends Controller
      */
     protected function abortIfInstalled()
     {
-        abort_if(file_exists((config('installer.installed_marker') ?? storage_path('installed'))), 403);
+        abort_if(
+            file_exists((config('installer.installed_marker') ?? storage_path('installed')))
+                || $this->databaseManager->isMarkedInstalled(),
+            403
+        );
+    }
+
+    /**
+     * Abort with 403 when the database is already populated. Guards the
+     * destructive pre-admin steps (migration/seed/env) against being replayed
+     * on an installed instance whose storage marker was lost.
+     *
+     * @return void
+     */
+    protected function abortIfDatabasePopulated()
+    {
+        abort_if($this->databaseManager->isInstalled(), 403);
     }
 
     /**
@@ -57,6 +73,8 @@ class InstallerController extends Controller
      */
     protected function markInstalled()
     {
+        $this->databaseManager->markInstalled();
+
         if (file_exists((config('installer.installed_marker') ?? storage_path('installed')))) {
             return;
         }
@@ -90,6 +108,7 @@ class InstallerController extends Controller
     public function envFileSetup(Request $request): JsonResponse
     {
         $this->abortIfInstalled();
+        $this->abortIfDatabasePopulated();
 
         $rules = [
             'db_prefix' => 'not_regex:/[^A-Za-z0-9_]/',
@@ -118,6 +137,7 @@ class InstallerController extends Controller
     public function runMigration()
     {
         $this->abortIfInstalled();
+        $this->abortIfDatabasePopulated();
 
         try {
             DB::connection()->getPdo();
@@ -138,6 +158,7 @@ class InstallerController extends Controller
     public function runSeeder()
     {
         $this->abortIfInstalled();
+        $this->abortIfDatabasePopulated();
 
         $selectedParameters = request()->selectedParameters;
         $allParameters = request()->allParameters;

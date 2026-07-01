@@ -44,6 +44,8 @@ class PostgresGrammar implements Grammar
 
     public function jsonExtract(string $column, string ...$pathSegments): string
     {
+        $pathSegments = array_map([$this, 'escapeJsonPathSegment'], $pathSegments);
+
         $operators = count($pathSegments) > 1 ? array_map(fn ($part) => "'{$part}'", $pathSegments) : $pathSegments;
 
         $lastKey = array_pop($operators);
@@ -55,8 +57,21 @@ class PostgresGrammar implements Grammar
         return $jsonString;
     }
 
+    /**
+     * Escape a JSON path segment so it cannot break out of the single-quoted
+     * SQL string literal the path is embedded in (SQL injection guard).
+     */
+    protected function escapeJsonPathSegment(string $segment): string
+    {
+        return str_replace("'", "''", $segment);
+    }
+
     public function orderByField(string $column, array $values, string $type = 'int'): string
     {
+        if ($type === 'int') {
+            $values = array_map('intval', $values);
+        }
+
         $idList = implode(',', $values);
 
         return "array_position(ARRAY[{$idList}]::{$type}[], {$column})";
