@@ -225,6 +225,10 @@ class Core
     {
         $channelCode = request()->input('channel');
 
+        if (! $this->isValidScopeCode($channelCode)) {
+            $channelCode = null;
+        }
+
         if (! $fallback) {
             return $channelCode;
         }
@@ -325,11 +329,25 @@ class Core
     {
         $localeCode = request()->input($localeKey);
 
+        if (! $this->isValidScopeCode($localeCode)) {
+            $localeCode = null;
+        }
+
         if (! $fallback) {
             return $localeCode;
         }
 
         return $localeCode ?: app()->getLocale();
+    }
+
+    /**
+     * Validate a request-supplied locale/channel code before it is used to build
+     * raw SQL (e.g. JSON_EXTRACT paths). Anything outside this safe set is
+     * rejected to prevent SQL injection via the scope parameters.
+     */
+    public function isValidScopeCode($code): bool
+    {
+        return is_string($code) && preg_match('/^[a-zA-Z0-9_-]+$/', $code) === 1;
     }
 
     /**

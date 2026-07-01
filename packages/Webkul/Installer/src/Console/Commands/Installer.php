@@ -12,6 +12,7 @@ use Webkul\Core\ElasticSearch;
 use Webkul\Installer\Console\Prompts\PreselectedSearchValue;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
+use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
 use function Laravel\Prompts\multisearch;
@@ -416,6 +417,8 @@ class Installer extends Command
      */
     protected function markInstalled(): void
     {
+        app(DatabaseManager::class)->markInstalled();
+
         if (file_exists(storage_path('installed'))) {
             return;
         }

@@ -657,8 +657,7 @@ class ImportController extends Controller
             mkdir($extractPath, 0755, true);
         }
 
-        $zip->extractTo($extractPath);
-        $filesCount = $zip->count();
+        $filesCount = $this->extractImageEntries($zip, $extractPath);
         $zip->close();
 
         return new JsonResponse([
@@ -667,5 +666,74 @@ class ImportController extends Controller
             'zip_name'    => $file->getClientOriginalName(),
             'message'     => trans('admin::app.settings.data-transfer.imports.zip-upload-success'),
         ]);
+    }
+
+    /**
+     * Safely extract only genuine image entries from an uploaded ZIP into the
+     * target directory. Non-image extensions, spoofed content, and nested paths
+     * (zip-slip) are rejected so no script/executable file reaches the web root.
+     */
+    protected function extractImageEntries(\ZipArchive $zip, string $extractPath): int
+    {
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+
+        $fileInfo = new \finfo(FILEINFO_MIME_TYPE);
+
+        $extractedCount = 0;
+
+        for ($index = 0; $index < $zip->numFiles; $index++) {
+            $entryName = $zip->getNameIndex($index);
+
+            if ($entryName === false || str_ends_with($entryName, '/')) {
+                continue;
+            }
+
+            $relativePath = ltrim(str_replace('\\', '/', $entryName), '/');
+
+            if ($relativePath === '' || str_contains($relativePath, '../')) {
+                continue;
+            }
+
+            $extension = strtolower(pathinfo($relativePath, PATHINFO_EXTENSION));
+
+            if (! in_array($extension, $allowedExtensions, true)) {
+                continue;
+            }
+
+            $stream = $zip->getStream($entryName);
+
+            if ($stream === false) {
+                continue;
+            }
+
+            $contents = stream_get_contents($stream);
+
+            fclose($stream);
+
+            if ($contents === false || ! str_starts_with((string) $fileInfo->buffer($contents), 'image/')) {
+                continue;
+            }
+
+            $targetPath = $extractPath.DIRECTORY_SEPARATOR.$relativePath;
+
+            $targetDir = dirname($targetPath);
+
+            if (! is_dir($targetDir)) {
+                mkdir($targetDir, 0755, true);
+            }
+
+            $realBase = realpath($extractPath);
+            $realDir = realpath($targetDir);
+
+            if ($realBase === false || $realDir === false || ! str_starts_with($realDir.DIRECTORY_SEPARATOR, $realBase.DIRECTORY_SEPARATOR)) {
+                continue;
+            }
+
+            file_put_contents($targetPath, $contents);
+
+            $extractedCount++;
+        }
+
+        return $extractedCount;
     }
 }
