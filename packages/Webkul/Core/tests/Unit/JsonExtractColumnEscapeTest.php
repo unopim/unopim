@@ -24,3 +24,9 @@ it('escapes a reserved-word column in Postgres json extraction', function () {
     expect($sql)->toContain('"values"')
         ->and($sql)->not->toContain('values->');
 });
+
+it('escapes a table-qualified column in Postgres json extraction', function () {
+    $sql = (new PostgresGrammar)->jsonExtract('products.values', 'common', 'url_key');
+
+    expect($sql)->toContain('"products"."values"');
+});
