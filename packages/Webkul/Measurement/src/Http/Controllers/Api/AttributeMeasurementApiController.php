@@ -55,12 +55,21 @@ class AttributeMeasurementApiController extends Controller
     /**
      * Get the measurement configuration saved for an attribute.
      *
-     * @param  int|string  $attributeId
+     * @param  string  $attributeCode
      * @return JsonResponse
      */
-    public function show($attributeId)
+    public function show($attributeCode)
     {
-        $config = $this->attributeRepository->getByAttributeId($attributeId);
+        $attribute = $this->attributeMasterRepository->findOneByField('code', $attributeCode);
+
+        if (! $attribute) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Attribute not found',
+            ], 404);
+        }
+
+        $config = $this->attributeRepository->getByAttributeId($attribute->id);
 
         if (! $config) {
             return response()->json([
@@ -78,40 +87,40 @@ class AttributeMeasurementApiController extends Controller
     /**
      * Store attribute measurement configuration.
      *
-     * @param  int|string  $attributeId
+     * @param  string  $attributeCode
      * @return JsonResponse
      */
-    public function store($attributeId)
+    public function store($attributeCode)
     {
-        return $this->save($attributeId, 'stored');
+        return $this->save($attributeCode, 'stored');
     }
 
     /**
      * Update attribute measurement configuration.
      *
-     * @param  int|string  $attributeId
+     * @param  string  $attributeCode
      * @return JsonResponse
      */
-    public function update($attributeId)
+    public function update($attributeCode)
     {
-        return $this->save($attributeId, 'updated');
+        return $this->save($attributeCode, 'updated');
     }
 
     /**
      * Validate and persist the attribute measurement configuration.
      *
-     * @param  int|string  $attributeId
+     * @param  string  $attributeCode
      * @param  string  $action
      * @return JsonResponse
      */
-    protected function save($attributeId, $action)
+    protected function save($attributeCode, $action)
     {
         $data = request()->validate([
             'family_code' => ['required', 'string'],
             'unit_code'   => ['required', 'string'],
         ]);
 
-        $attribute = $this->attributeMasterRepository->find($attributeId);
+        $attribute = $this->attributeMasterRepository->findOneByField('code', $attributeCode);
 
         if (! $attribute) {
             return response()->json([
@@ -144,7 +153,7 @@ class AttributeMeasurementApiController extends Controller
         }
 
         try {
-            $this->attributeRepository->saveAttributeMeasurement($attributeId, [
+            $this->attributeRepository->saveAttributeMeasurement($attribute->id, [
                 'family_code' => $data['family_code'],
                 'unit_code'   => $data['unit_code'],
             ]);

@@ -40,12 +40,12 @@ class MeasurementFamilyApiController extends Controller
     /**
      * Show a single measurement family with its labels and units.
      *
-     * @param  int  $id
+     * @param  string  $code
      * @return JsonResponse
      */
-    public function show($id)
+    public function show($code)
     {
-        $family = $this->repository->find($id);
+        $family = $this->repository->findOneWhere(['code' => $code]);
 
         if (! $family) {
             return response()->json([
@@ -111,12 +111,12 @@ class MeasurementFamilyApiController extends Controller
     /**
      * Update a measurement family via API.
      *
-     * @param  int  $id
+     * @param  string  $code
      * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $code)
     {
-        $family = $this->repository->find($id);
+        $family = $this->repository->findOneWhere(['code' => $code]);
 
         if (! $family) {
             return response()->json([
@@ -125,7 +125,7 @@ class MeasurementFamilyApiController extends Controller
             ], 404);
         }
 
-        $request->validate(MeasurementFamilyValidator::apiUpdateRules($id), MeasurementFamilyValidator::messages());
+        $request->validate(MeasurementFamilyValidator::apiUpdateRules($family->id), MeasurementFamilyValidator::messages());
 
         $data = $request->all();
 
@@ -147,7 +147,7 @@ class MeasurementFamilyApiController extends Controller
         }
 
         try {
-            $this->repository->update($data, $id);
+            $this->repository->update($data, $family->id);
 
             return response()->json([
                 'success' => true,
@@ -164,12 +164,12 @@ class MeasurementFamilyApiController extends Controller
     /**
      * Delete a measurement family via API.
      *
-     * @param  int  $id
+     * @param  string  $code
      * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($code)
     {
-        $family = $this->repository->find($id);
+        $family = $this->repository->findOneWhere(['code' => $code]);
 
         if (! $family) {
             return response()->json([
@@ -179,7 +179,7 @@ class MeasurementFamilyApiController extends Controller
         }
 
         try {
-            $this->repository->delete($id);
+            $this->repository->delete($family->id);
 
             return response()->json([
                 'success' => true,

@@ -14,9 +14,9 @@ class MeasurementUnitApiController extends Controller
         protected MeasurementFamilyRepository $repository
     ) {}
 
-    public function index($familyId)
+    public function index($familyCode)
     {
-        $family = $this->repository->find($familyId);
+        $family = $this->repository->findOneWhere(['code' => $familyCode]);
 
         if (! $family) {
             return response()->json([
@@ -35,13 +35,13 @@ class MeasurementUnitApiController extends Controller
     /**
      * Show a single unit of the given measurement family (API).
      *
-     * @param  int  $familyId
+     * @param  string  $familyCode
      * @param  string  $code
      * @return JsonResponse
      */
-    public function show($familyId, $code)
+    public function show($familyCode, $code)
     {
-        $family = $this->repository->find($familyId);
+        $family = $this->repository->findOneWhere(['code' => $familyCode]);
 
         if (! $family) {
             return response()->json([
@@ -68,12 +68,12 @@ class MeasurementUnitApiController extends Controller
     /**
      * Store a new unit for the given measurement family (API).
      *
-     * @param  int  $familyId
+     * @param  string  $familyCode
      * @return JsonResponse
      */
-    public function store(Request $request, $familyId)
+    public function store(Request $request, $familyCode)
     {
-        $family = $this->repository->find($familyId);
+        $family = $this->repository->findOneWhere(['code' => $familyCode]);
 
         if (! $family) {
             return response()->json([
@@ -119,7 +119,7 @@ class MeasurementUnitApiController extends Controller
         ];
 
         try {
-            $this->repository->update(['units' => $units], $familyId);
+            $this->repository->update(['units' => $units], $family->id);
 
             return response()->json([
                 'success' => true,
@@ -136,13 +136,13 @@ class MeasurementUnitApiController extends Controller
     /**
      * Update a unit for the given measurement family (API).
      *
-     * @param  int  $familyId
+     * @param  string  $familyCode
      * @param  string  $code
      * @return JsonResponse
      */
-    public function update(Request $request, $familyId, $code)
+    public function update(Request $request, $familyCode, $code)
     {
-        $family = $this->repository->find($familyId);
+        $family = $this->repository->findOneWhere(['code' => $familyCode]);
 
         if (! $family) {
             return response()->json([
@@ -196,7 +196,7 @@ class MeasurementUnitApiController extends Controller
         }
 
         try {
-            $this->repository->update(['units' => $units], $familyId);
+            $this->repository->update(['units' => $units], $family->id);
 
             return response()->json([
                 'success' => true,
@@ -213,13 +213,13 @@ class MeasurementUnitApiController extends Controller
     /**
      * Delete a unit for the given measurement family (API).
      *
-     * @param  int  $familyId
+     * @param  string  $familyCode
      * @param  string  $code
      * @return JsonResponse
      */
-    public function destroy($familyId, $code)
+    public function destroy($familyCode, $code)
     {
-        $family = $this->repository->find($familyId);
+        $family = $this->repository->findOneWhere(['code' => $familyCode]);
 
         if (! $family) {
             return response()->json([
@@ -249,7 +249,7 @@ class MeasurementUnitApiController extends Controller
         try {
             $this->repository->update([
                 'units' => array_values($filtered),
-            ], $familyId);
+            ], $family->id);
 
             return response()->json([
                 'success' => true,
