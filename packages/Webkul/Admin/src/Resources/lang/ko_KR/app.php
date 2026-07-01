@@ -2401,6 +2401,8 @@ return [
         '429' => [
             'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
             'title'       => '429 Too Many Requests',
+            'description' => '죄송합니다! 시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.',
+            'title'       => '429 요청이 너무 많습니다',
         ],
 
         '500' => [

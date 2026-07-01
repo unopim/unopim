@@ -11,6 +11,8 @@ beforeEach(function () {
     $this->marker = storage_path('installed');
     $this->markerExisted = file_exists($this->marker);
     $this->markerContents = $this->markerExisted ? file_get_contents($this->marker) : null;
+
+    DB::table('core_config')->where('code', 'installer.installed')->delete();
 });
 
 afterEach(function () {
@@ -19,6 +21,8 @@ afterEach(function () {
     } elseif (file_exists($this->marker)) {
         unlink($this->marker);
     }
+
+    DB::table('core_config')->where('code', 'installer.installed')->delete();
 });
 
 /**

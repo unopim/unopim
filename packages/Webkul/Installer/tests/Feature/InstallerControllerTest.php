@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\DemoDataInstaller;
@@ -21,6 +22,8 @@ beforeEach(function () {
     if ($this->markerExisted) {
         unlink($this->marker);
     }
+
+    DB::table('core_config')->where('code', 'installer.installed')->delete();
 });
 
 afterEach(function () {
@@ -29,6 +32,8 @@ afterEach(function () {
     } elseif (file_exists($this->marker)) {
         unlink($this->marker);
     }
+
+    DB::table('core_config')->where('code', 'installer.installed')->delete();
 });
 
 describe('InstallerController::seedSampleData (issue #794)', function () {

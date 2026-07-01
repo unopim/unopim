@@ -2400,6 +2400,8 @@ return [
         '429' => [
             'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
             'title'       => '429 Too Many Requests',
+            'description' => 'Ui! Massa intents. Espereu un minut i torneu-ho a provar.',
+            'title'       => '429 Massa sol·licituds',
         ],
 
         '500' => [

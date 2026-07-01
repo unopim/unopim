@@ -41,6 +41,10 @@ class TinyMCEController extends Controller
 
     /**
      * Store media.
+     *
+     * The file type is validated to an image allowlist by the request, and the
+     * stored name is randomised (never the client-supplied name/extension) so an
+     * executable or HTML extension can never be written to the public path.
      */
     public function storeMedia(?Request $request = null): array
     {
@@ -52,7 +56,7 @@ class TinyMCEController extends Controller
 
         $file = $request->file('file');
 
-        $name = Str::random(40).'.'.$file->getClientOriginalExtension();
+        $name = Str::random(40).'.'.($file->guessExtension() ?: $file->getClientOriginalExtension());
 
         $path = $this->fileStorer->storeAs(path: $this->storagePath, name: $name, file: $file);
 

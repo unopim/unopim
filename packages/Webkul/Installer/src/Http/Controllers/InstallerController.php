@@ -95,7 +95,23 @@ class InstallerController extends Controller
      */
     protected function abortIfInstalled()
     {
-        abort_if(file_exists(storage_path('installed')), 403);
+        abort_if(
+            file_exists(storage_path('installed'))
+                || $this->databaseManager->isMarkedInstalled(),
+            403
+        );
+    }
+
+    /**
+     * Abort with 403 when the database is already populated. Guards the
+     * destructive pre-admin steps (migration/seed/env) against being replayed
+     * on an installed instance whose storage marker was lost.
+     *
+     * @return void
+     */
+    protected function abortIfDatabasePopulated()
+    {
+        abort_if($this->databaseManager->isInstalled(), 403);
     }
 
     /**
@@ -176,6 +192,8 @@ class InstallerController extends Controller
      */
     protected function markInstalled()
     {
+        $this->databaseManager->markInstalled();
+
         if (file_exists(storage_path('installed'))) {
             return;
         }
@@ -252,6 +270,8 @@ class InstallerController extends Controller
     {
         $this->abortIfInstalled();
 
+        $this->abortIfDatabasePopulated();
+
         $this->reloadDatabaseConfigFromEnv();
 
         try {
@@ -275,6 +295,8 @@ class InstallerController extends Controller
     public function runSeeder()
     {
         $this->abortIfInstalled();
+
+        $this->abortIfDatabasePopulated();
 
         $this->reloadDatabaseConfigFromEnv();
 

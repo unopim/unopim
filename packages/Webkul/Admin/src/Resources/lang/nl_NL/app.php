@@ -2401,6 +2401,8 @@ return [
         '429' => [
             'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
             'title'       => '429 Too Many Requests',
+            'description' => 'Oeps! Te veel pogingen. Wacht een minuut en probeer het opnieuw.',
+            'title'       => '429 Te veel verzoeken',
         ],
 
         '500' => [

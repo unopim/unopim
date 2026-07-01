@@ -2400,6 +2400,8 @@ return [
         '429' => [
             'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
             'title'       => '429 Too Many Requests',
+            'description' => 'Өө! Хэт олон оролдлого хийсэн байна. Нэг минут хүлээгээд дахин оролдоно уу.',
+            'title'       => '429 Хэт олон хүсэлт',
         ],
 
         '500' => [

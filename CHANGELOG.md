@@ -1,4 +1,94 @@
 # v2.1.x
+ 
+## v2.1.6
+
+### Security
+
+* Fixed SQL injection in the Product/Category DataGrid via unvalidated `locale`/`channel` request parameters; scope codes are now validated and JSON-path segments escaped in the query grammars ([#534](https://github.com/unopim/unopim/pull/534)).
+* Fixed stored-XSS / remote-code-execution risk in image-ZIP import — extracted archive entries are now restricted to verified image types, kept within their folder (no zip-slip), and capped in size ([#534](https://github.com/unopim/unopim/pull/534)).
+* Sealed the installer endpoints against unauthenticated admin takeover / database reset when the `storage/installed` marker is lost, using a persistent install flag ([#534](https://github.com/unopim/unopim/pull/534)).
+* Neutralised CSV/Excel formula injection in exports while preserving numeric values 
+  
+### Fixes
+
+* Fixed acceptance of uppercase image extensions (`.JPG`/`.JPEG`).
+* Fixed index audits, skipped empty translation audits, and corrected history preview.
+* Added a confirmation prompt before demo-data seeding overwrites existing data.
+* Preselected application locale and currency from `.env` during reinstallation.
+
+### Dependencies
+
+* Bumped `laravel/framework` from **12.55.1** to **12.61.1**.
+* Bumped `phpseclib/phpseclib` from **3.0.52** to **3.0.55**.
+
+
+## v2.1.5
+
+### Security
+
+* Hardened file uploads in the rich-text (TinyMCE) editor — uploads are now limited to an approved set of image types and saved under randomised filenames ([#476](https://github.com/unopim/unopim/pull/476)).
+* Tightened API permission enforcement on the configurable-product endpoints so every request requires the correct access scope ([#477](https://github.com/unopim/unopim/pull/477)).
+* Added the required permission checks to the Magic AI platform **update** and **set-default** actions ([#479](https://github.com/unopim/unopim/pull/479)).
+* Hardened product-grid sorting to safely handle all sort input ([#488](https://github.com/unopim/unopim/pull/488)).
+* Improved how channel names are rendered on the attribute-family **Completeness** screen ([#489](https://github.com/unopim/unopim/pull/489)).
+
+### Bug Fixes
+
+* Fixed **`upgrade.sh` backup excluding user data** — the automated upgrade backup now includes the `storage/` folder (uploaded media, import/export files) and skips only dependencies, regenerable framework caches, logs, and debugbar output; previously a restore from the script's backup lost all product media.
+* Fixed **`upgrade.sh` dropping hidden files** — new-release dotfiles (`.env.example`, `.gitignore`, `.htaccess`) are now copied during the upgrade.
+* Fixed **`upgrade.sh` `.env` parsing** — database credentials containing `=`, quotes, or matching multiple keys (e.g. commented lines) no longer break the database dump; passwords are passed via environment variables instead of the command line.
+* Fixed **`upgrade.sh` PostgreSQL compatibility** — the backup process now detects `DB_CONNECTION` and uses `pg_dump` for PostgreSQL installations.
+* Fixed **GitHub issue templates** — corrected labels, issue-template links, issue-chooser navigation, and related template inconsistencies; added a consolidated bug-report form with environment validation and duplicate-report checks.
+* Fixed **repository documentation** — corrected broken HTML comments in the pull request template, added a missing code-fence close in `UPGRADE.md`, and updated contribution guidelines to reflect the current development workflow.
+
+### DevOps
+
+* Cleaned up **dead files** — removed the empty `public/forge`, the orphan `patches.lock.json` (composer-patches was never installed), config files for uninstalled packages (`config/horizon.php`, `config/sitemap.php`), a placeholder DataGrid test, and the broken `bin/codecept` symlink. Added a root `public/favicon.ico` (browsers request it unconditionally) and ignored nested `node_modules/` directories.
+* Moved **AI agent skills to a dedicated repository** — [unopim/agent-skills](https://github.com/unopim/agent-skills). The in-repo `.github/skills/` directory, the `.ai`/`.claude`/`.codex`/`.cursor`/`.kilocode` symlinks, the connector code-generation/code-review instruction files, and the skills-consistency workflow were removed; install skills locally with `npx skills add unopim/agent-skills` and set up Laravel Boost with `php artisan boost:install`.
+
+## v2.1.4 - 2026-06-06
+
+### Features
+- Added a **Help & Resources** admin page and sidebar menu.
+- Added **dismissible cloud-hosting and version-upgrade promo banners** in the admin.
+
+### Improvements
+- Added **type-to-search locale & currency prompts** to the `php artisan unopim:install` CLI wizard — default/allowed locale and currency selectors now filter as you type (by code or name) instead of scrolling long static lists.
+- Revamped the **web installer** — admin-themed UI, a live terminal view of the install, optional add-on packages (DAM, Shopify, Bagisto) and Elasticsearch setup, database auto-create, and shared/FTP-only hosting support.
+
+## v2.1.3 - 2026-06-04
+
+### Security
+- Sealed the installer once setup completes — the `CanInstall` middleware now blocks every `/install` request after a `storage/installed` marker exists, and defense-in-depth `abortIfInstalled()` guards were added to each state-changing install endpoint (env-file-setup, run-migration, run-seeder, admin-config-setup, seed-sample-data, smtp-config-setup). The completion marker is written only at the very end of the flow, closing a pre-auth admin-takeover vector on already-installed instances ([#459](https://github.com/unopim/unopim/pull/459)).
+- Enforced ACL permission checks on state-changing admin routes that were absent from `acl.php` — including integration management, product bulk-edit, and family-completeness/configuration actions. The `Bouncer` middleware only enforced permissions for mapped routes, so unmapped write routes were reachable by any authenticated admin; restricted users now receive a 403 ([#467](https://github.com/unopim/unopim/pull/467)).
+- Fixed **insecure default admin password on install** — the installer no longer creates the admin with a known default password. Set `INSTALLER_ADMIN_EMAIL` / `INSTALLER_ADMIN_PASSWORD`, or leave them blank and a random password is generated and written once to `storage/app/admin-credentials.txt` (read it, log in, then delete). Existing admin users are never overwritten on re-install ([#457](https://github.com/unopim/unopim/pull/457)).
+- Fixed **duplicate rows on re-seeding** — admin and role seeders are now idempotent and skip insertion when the record already exists ([#457](https://github.com/unopim/unopim/pull/457)).
+
+### Improvements
+- Added a debug-only **`AppUrlGuard`** package — detects when the browser host does not match the configured `APP_URL` (a common cause of broken CSS/JS), shows a guided fix modal, and forces admin logout on a mismatched host. It stays completely inert when `APP_DEBUG=false` and ships translations for 33 locales ([#456](https://github.com/unopim/unopim/pull/456)).
+
+## v2.1.2 - 2026-05-29
+
+### Improvements
+- Hardened **webhook URL handling** — webhook target URLs are now validated to ensure they resolve to a publicly reachable host before any request is made, applied both when saving the webhook settings and on each product-save dispatch. Outgoing webhook requests connect only to the validated address and no longer follow HTTP redirects ([#448](https://github.com/unopim/unopim/pull/448), [#450](https://github.com/unopim/unopim/pull/450)).
+
+
+## v2.1.1 - 2026-05-26
+
+### Security
+- Patched an authorization gap on several admin write-verb routes (`*.store` / `*.update`) — they were missing from `packages/Webkul/Admin/src/Config/acl.php`, so the `Bouncer` middleware did not enforce a permission check. Mapped each missing route to the same ACL key as its sibling GET form (`.create` / `.edit`) and added regression coverage.
+- Hardened against `Host` / `X-Forwarded-Host` header poisoning. Asset and URL helpers (`url()`, `asset()`, Vite) previously resolved against the request `Host` header, so a crafted header could cause the admin layout to load JavaScript from an attacker origin. URL generation is now pinned to `APP_URL` via `URL::forceRootUrl()` + `URL::forceScheme()`, the four templates that rendered `url()->to('/')` / `asset('/')` were switched to `config('app.url')`, `trustProxies` is restricted via the new `TRUSTED_PROXIES` env variable (defaults to `127.0.0.1`), and `trustHosts` is enabled seeded from `APP_URL` + the new `TRUSTED_HOSTS` env variable.
+
+### Bug Fixes
+- Fixed **MagicAI chat-latest model temperature** — newer OpenAI chat-latest models reject the `temperature` parameter; the adapter now omits the field when targeting those models ([#416](https://github.com/unopim/unopim/pull/416)).
+- Fixed **styled 405 Method Not Allowed page** — replaced the unstyled framework error with a translated 405 error view consistent with 403/404/500, including translations for all 33 locales ([#417](https://github.com/unopim/unopim/pull/417)).
+- Fixed **PostgreSQL demo-data seeding** — `DemoExtrasSeeder` now casts booleans for pgsql, bypasses FK during seed, and resets sequences afterwards so the demo install completes cleanly on PostgreSQL ([#418](https://github.com/unopim/unopim/pull/418)).
+- Fixed **installer rejects invalid `DB_DATABASE`** — special characters in the database name are now rejected up front instead of causing a partial install that has to be torn down by hand ([#419](https://github.com/unopim/unopim/pull/419)).
+- Fixed **installer prompts ignore leading/trailing whitespace** — applied `transform: trim(...)` across installer prompts so a stray space in DB or Elasticsearch credentials no longer breaks the install ([#420](https://github.com/unopim/unopim/pull/420)).
+
+### DevOps
+- Added **multi-architecture Docker images** — the publish workflow now produces both `linux/amd64` and `linux/arm64` images so Apple Silicon and ARM cloud hosts get native binaries ([#426](https://github.com/unopim/unopim/pull/426)).
+
 
 ## Unreleased
 

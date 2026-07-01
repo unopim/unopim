@@ -2400,6 +2400,8 @@ return [
         '429' => [
             'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
             'title'       => '429 Too Many Requests',
+            'description' => '哎呀！嘗試次數過多。請稍候一分鐘後再試。',
+            'title'       => '429 請求過多',
         ],
 
         '500' => [

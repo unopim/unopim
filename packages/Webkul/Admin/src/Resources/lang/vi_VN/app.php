@@ -2400,6 +2400,8 @@ return [
         '429' => [
             'description' => 'Oops! Too many requests have been made in a short time. Please wait a moment and try again.',
             'title'       => '429 Too Many Requests',
+            'description' => 'Rất tiếc! Quá nhiều lần thử. Vui lòng đợi một phút rồi thử lại.',
+            'title'       => '429 Quá nhiều yêu cầu',
         ],
 
         '500' => [
