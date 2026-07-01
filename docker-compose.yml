@@ -22,6 +22,9 @@
 # Apache alternative:
 #   docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
 #
+# OpenLiteSpeed alternative (adds native HTTP/3 + QUIC):
+#   docker compose -f docker-compose.yml -f docker-compose.litespeed.yml up -d
+#
 # Port conflicts? Override FORWARD_* variables in .env
 #
 # =============================================================================
