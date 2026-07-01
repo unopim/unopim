@@ -70,6 +70,8 @@ class PostgresGrammar implements Grammar
     {
         if ($type === 'int') {
             $values = array_map('intval', $values);
+        } else {
+            $values = array_map(fn ($value) => "'".str_replace("'", "''", (string) $value)."'", $values);
         }
 
         $idList = implode(',', $values);

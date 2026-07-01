@@ -685,6 +685,8 @@ class ImportController extends Controller
     {
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
 
+        $maxEntrySize = (int) config('image_import.max_entry_size', 15 * 1024 * 1024);
+
         $fileInfo = new \finfo(FILEINFO_MIME_TYPE);
 
         $extractedCount = 0;
@@ -710,7 +712,7 @@ class ImportController extends Controller
 
             $stat = $zip->statIndex($index);
 
-            if ($stat === false || $stat['size'] > (int) config('image_import.max_entry_size')) {
+            if ($stat === false || ($maxEntrySize > 0 && $stat['size'] > $maxEntrySize)) {
                 continue;
             }
 
