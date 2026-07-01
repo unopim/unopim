@@ -63,6 +63,29 @@ it('still extracts legitimate image files from an imported zip', function () use
     Storage::disk('public')->deleteDirectory($path);
 });
 
+it('rejects oversized zip entries to prevent memory-exhaustion DoS', function () use ($onePixelPng) {
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.imports.edit']);
+
+    config(['image_import.max_entry_size' => 1024 * 1024]);
+
+    $zip = makeImageZip([
+        'huge.png' => $onePixelPng.str_repeat("\0", 2 * 1024 * 1024),
+        'good.png' => $onePixelPng,
+    ]);
+
+    $response = $this->post(route('admin.settings.data_transfer.imports.upload_images_zip'), [
+        'images_zip' => $zip,
+    ]);
+
+    $path = $response->json('path');
+
+    expect(Storage::disk('public')->exists($path.'/huge.png'))->toBeFalse()
+        ->and(Storage::disk('public')->exists($path.'/good.png'))->toBeTrue()
+        ->and($response->json('files_count'))->toBe(1);
+
+    Storage::disk('public')->deleteDirectory($path);
+});
+
 it('preserves subfolders so same-named images do not collide', function () use ($onePixelPng) {
     $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.imports.edit']);
 
