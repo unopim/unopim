@@ -57,10 +57,6 @@ class DatabaseManager
      */
     public function isMarkedInstalled(): bool
     {
-        if (! file_exists(base_path('.env'))) {
-            return false;
-        }
-
         try {
             if (! Schema::hasTable('core_config')) {
                 return false;

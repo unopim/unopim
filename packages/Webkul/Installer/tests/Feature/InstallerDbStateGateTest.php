@@ -7,9 +7,7 @@ beforeEach(function () {
     config(['app.url' => 'http://localhost']);
     URL::forceRootUrl('http://localhost');
 
-    // Simulate a completed install whose ephemeral storage/ marker was lost
-    // (tmpfs storage, container redeploy) while the database persists: the
-    // persistent DB completion flag is set, but the marker file is absent.
+    // Completed install whose storage marker was lost but DB flag persists.
     $this->marker = storage_path('installed');
     $this->markerExisted = file_exists($this->marker);
     $this->markerContents = $this->markerExisted ? file_get_contents($this->marker) : null;
@@ -57,6 +55,5 @@ it('does not let an unauthenticated request re-run migrations when the marker is
 
     expect($response->getStatusCode())->not->toBe(200);
 
-    // The admins table must still hold the original installed data.
     expect(DB::table('admins')->where('id', 1)->exists())->toBeTrue();
 });
