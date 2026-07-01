@@ -1,5 +1,5 @@
 # v2.1.x
-
+ 
 ## v2.1.6
 
 ### Security
@@ -7,7 +7,20 @@
 * Fixed SQL injection in the Product/Category DataGrid via unvalidated `locale`/`channel` request parameters; scope codes are now validated and JSON-path segments escaped in the query grammars ([#534](https://github.com/unopim/unopim/pull/534)).
 * Fixed stored-XSS / remote-code-execution risk in image-ZIP import — extracted archive entries are now restricted to verified image types, kept within their folder (no zip-slip), and capped in size ([#534](https://github.com/unopim/unopim/pull/534)).
 * Sealed the installer endpoints against unauthenticated admin takeover / database reset when the `storage/installed` marker is lost, using a persistent install flag ([#534](https://github.com/unopim/unopim/pull/534)).
-* Neutralised CSV/Excel formula injection in exports while preserving numeric values ([#534](https://github.com/unopim/unopim/pull/534)).
+* Neutralised CSV/Excel formula injection in exports while preserving numeric values 
+  
+### Fixes
+
+* Fixed acceptance of uppercase image extensions (`.JPG`/`.JPEG`).
+* Fixed index audits, skipped empty translation audits, and corrected history preview.
+* Added a confirmation prompt before demo-data seeding overwrites existing data.
+* Preselected application locale and currency from `.env` during reinstallation.
+
+### Dependencies
+
+* Bumped `laravel/framework` from **12.55.1** to **12.61.1**.
+* Bumped `phpseclib/phpseclib` from **3.0.52** to **3.0.55**.
+
 
 ## v2.1.5
 
