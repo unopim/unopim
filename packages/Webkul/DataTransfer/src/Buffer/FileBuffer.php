@@ -108,6 +108,12 @@ class FileBuffer
             return false;
         }
 
-        return in_array($value[0], ['=', '+', '-', '@', "\t", "\r"], true);
+        if (in_array($value[0], ['=', '+', '-', '@', "\t", "\r"], true)) {
+            return true;
+        }
+
+        $trimmed = ltrim($value, " \t\r\n");
+
+        return $trimmed !== '' && in_array($trimmed[0], ['=', '+', '-', '@'], true);
     }
 }

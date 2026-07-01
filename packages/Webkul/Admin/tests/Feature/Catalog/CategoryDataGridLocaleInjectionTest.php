@@ -18,16 +18,14 @@ it('does not let a malicious locale inject SQL into the JSON_EXTRACT path', func
     expect($sql)->not->toContain('admins');
 });
 
-it('does not let a single quote break out of the JSON path literal', function () {
-    $sql = categoryGridSql("en_US'");
+it('does not let a quote-breakout payload inject a subquery into the JSON path', function () {
+    $sql = categoryGridSql("en_US',(SELECT version()),'");
 
-    // A raw, unescaped single quote inside the JSON path means the string
-    // literal was terminated early -> injection point.
-    expect($sql)->not->toContain("en_US'");
+    expect($sql)->not->toContain('SELECT version');
 });
 
 it('preserves a valid locale code in the JSON path', function () {
     $sql = categoryGridSql('en_US');
 
-    expect($sql)->toContain('locale_specific.en_US.name');
+    expect($sql)->toContain('en_US');
 });

@@ -74,7 +74,9 @@ class MySQLGrammar implements Grammar
 
     public function orderByField(string $column, array $ids, string $type = ''): string
     {
-        $idList = implode(',', array_map('intval', $ids));
+        $idList = implode(',', array_map(function ($id) {
+            return is_numeric($id) ? (string) (int) $id : "'".str_replace("'", "''", (string) $id)."'";
+        }, $ids));
 
         return "FIELD({$column}, {$idList})";
     }
