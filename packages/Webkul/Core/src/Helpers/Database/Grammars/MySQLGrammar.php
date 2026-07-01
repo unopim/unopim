@@ -58,7 +58,7 @@ class MySQLGrammar implements Grammar
     {
         $parts = explode('.', $column);
         $escaped = implode('.', array_map(fn ($p) => "`{$p}`", $parts));
-        $jsonPath = '$.'.implode('.', $pathSegments);
+        $jsonPath = '$.'.implode('.', array_map([$this, 'escapeJsonPathSegment'], $pathSegments));
 
         return "JSON_CONTAINS(JSON_EXTRACT({$escaped}, '{$jsonPath}'), {$value})";
     }
@@ -74,9 +74,7 @@ class MySQLGrammar implements Grammar
 
     public function orderByField(string $column, array $ids, string $type = ''): string
     {
-        $idList = implode(',', array_map(function ($id) {
-            return is_numeric($id) ? (string) (int) $id : "'".str_replace("'", "''", (string) $id)."'";
-        }, $ids));
+        $idList = implode(',', $ids);
 
         return "FIELD({$column}, {$idList})";
     }

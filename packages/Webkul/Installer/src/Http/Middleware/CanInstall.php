@@ -33,13 +33,13 @@ class CanInstall
     /**
      * Installation has been fully completed.
      *
-     * Unlike {@see isAlreadyInstalled()}, this relies solely on the
-     * `storage/installed` marker, which is written only at the true end of the
-     * install flow ({@see InstallerController::adminConfigSetup()} when no demo
-     * data is requested, otherwise {@see InstallerController::seedSampleData()}).
-     * A populated `admins` table is not enough: the seeder inserts the default
-     * admin (id 1) *before* those steps run, so gating on the DB would lock the
-     * installer out mid-flow.
+     * Considered complete when either the `storage/installed` marker exists or
+     * the persistent `installer.installed` DB flag is set — both written only at
+     * the true end of the install flow ({@see InstallerController::adminConfigSetup()},
+     * or {@see InstallerController::seedSampleData()} when demo data is requested).
+     * The DB flag seals the installer even if the ephemeral marker is lost, while
+     * a merely populated `admins` table is intentionally not enough: the seeder
+     * inserts the default admin (id 1) *before* those steps run.
      */
     public function isInstallationCompleted(): bool
     {

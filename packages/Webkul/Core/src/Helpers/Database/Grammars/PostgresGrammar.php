@@ -84,12 +84,6 @@ class PostgresGrammar implements Grammar
 
     public function orderByField(string $column, array $values, string $type = 'int'): string
     {
-        if ($type === 'int') {
-            $values = array_map('intval', $values);
-        } else {
-            $values = array_map(fn ($value) => "'".str_replace("'", "''", (string) $value)."'", $values);
-        }
-
         $idList = implode(',', $values);
 
         return "array_position(ARRAY[{$idList}]::{$type}[], {$column})";
