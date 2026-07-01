@@ -43,7 +43,11 @@ class CanInstall
      */
     public function isInstallationCompleted(): bool
     {
-        return file_exists(storage_path('installed'));
+        if (file_exists(storage_path('installed'))) {
+            return true;
+        }
+
+        return app(DatabaseManager::class)->isMarkedInstalled();
     }
 
     /**
