@@ -43,7 +43,7 @@ class ResetPasswordController extends Controller
             $this->validate(request(), [
                 'token'    => 'required',
                 'email'    => 'required|email',
-                'password' => 'required|confirmed|min:6',
+                'password' => 'required|confirmed|min:8',
             ]);
 
             $response = $this->broker()->reset(
