@@ -1,5 +1,18 @@
 # v2.0.x
 
+# v2.0.4 - 2026-07-01
+
+## Security
+
+* Fixed **SQL injection in the Product/Category DataGrid** via unvalidated `locale`/`channel` request parameters. Scope codes are now validated and JSON-path segments are escaped in the query grammars. (#533)
+* Fixed **stored XSS / remote code execution in image-ZIP import** — extracted archive entries are restricted to verified image types, kept within their folder (no zip-slip), and capped in size. (#533)
+* Sealed the **installer endpoints** against unauthenticated admin takeover / database reset when the `storage/installed` marker is lost, using a persistent install flag with a backfill migration for existing instances. (#533)
+* Neutralised **CSV/Excel formula injection** in exports while preserving numeric values, added **login/forgot-password throttling**, enforced a stronger **password policy**, and removed **forgot-password user enumeration**. (#533)
+
+## Bug Fixes
+
+* Fixed **import job failing with SQL 1064** on JSON extraction — the product importer built `JSON_EXTRACT(values, ...)` with the reserved word `values` unquoted; the column name is now back-quoted (MySQL) / double-quoted (Postgres). (#536)
+
 # v2.0.3 - 2026-06-16
 
 ## Security
