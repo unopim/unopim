@@ -47,7 +47,9 @@ class MySQLGrammar implements Grammar
 
         $jsonPath = '$.'.implode('.', $segments);
 
-        return "JSON_UNQUOTE(JSON_EXTRACT({$column}, '{$jsonPath}'))";
+        $escapedColumn = implode('.', array_map(fn ($part) => "`{$part}`", explode('.', $column)));
+
+        return "JSON_UNQUOTE(JSON_EXTRACT({$escapedColumn}, '{$jsonPath}'))";
     }
 
     /**
