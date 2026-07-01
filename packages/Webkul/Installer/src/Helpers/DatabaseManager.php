@@ -47,6 +47,50 @@ class DatabaseManager
     }
 
     /**
+     * Key under which the persistent "installation completed" flag is stored.
+     */
+    const INSTALLED_CONFIG_CODE = 'installer.installed';
+
+    /**
+     * Whether installation was completed, based on a persistent database flag
+     * that survives loss of the ephemeral storage/ marker.
+     */
+    public function isMarkedInstalled(): bool
+    {
+        try {
+            if (! Schema::hasTable('core_config')) {
+                return false;
+            }
+
+            return DB::table('core_config')
+                ->where('code', self::INSTALLED_CONFIG_CODE)
+                ->exists();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Persist the "installation completed" flag in the database so the installer
+     * stays sealed even if the storage/ marker is lost.
+     */
+    public function markInstalled(): void
+    {
+        try {
+            if (! Schema::hasTable('core_config')) {
+                return;
+            }
+
+            DB::table('core_config')->updateOrInsert(
+                ['code' => self::INSTALLED_CONFIG_CODE],
+                ['value' => '1']
+            );
+        } catch (Exception $e) {
+            // Marker persistence is best-effort; the storage marker still applies.
+        }
+    }
+
+    /**
      * Drop all the tables and migrate in the database
      *
      * @return void|string

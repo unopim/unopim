@@ -44,21 +44,13 @@ class ForgetPasswordController extends Controller
                 'email' => 'required|email',
             ]);
 
-            $response = $this->broker()->sendResetLink(
+            $this->broker()->sendResetLink(
                 request(['email'])
             );
 
-            if ($response == Password::RESET_LINK_SENT) {
-                session()->flash('success', trans('admin::app.users.forget-password.create.reset-link-sent'));
+            session()->flash('success', trans('admin::app.users.forget-password.create.reset-link-sent'));
 
-                return redirect()->route('admin.forget_password.create');
-            }
-
-            return redirect()->route('admin.forget_password.create')
-                ->withInput(request(['email']))
-                ->withErrors([
-                    'email' => trans('admin::app.users.forget-password.create.email-not-exist'),
-                ]);
+            return redirect()->route('admin.forget_password.create');
         } catch (\Exception $e) {
             session()->flash('error', trans('admin::app.users.forget-password.create.email-settings-error'));
             report($e);

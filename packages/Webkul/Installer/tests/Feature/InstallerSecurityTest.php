@@ -15,12 +15,16 @@ beforeEach(function () {
     unlink($this->marker);
 
     config(['installer.installed_marker' => $this->marker]);
+
+    DB::table('core_config')->where('code', 'installer.installed')->delete();
 });
 
 afterEach(function () {
     if (file_exists($this->marker)) {
         unlink($this->marker);
     }
+
+    DB::table('core_config')->where('code', 'installer.installed')->delete();
 });
 
 describe('Installer pre-auth admin takeover', function () {
