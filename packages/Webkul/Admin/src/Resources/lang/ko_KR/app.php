@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => '속성 조건',
                     'attribute-conditions-info'     => '모든 조건을 충족하는 제품만 내보냅니다.',
                     'no-categories'                 => '사용 가능한 카테고리가 없습니다.',
+                    'search-categories'             => '이름 또는 코드로 카테고리 검색',
                     'add-condition'                 => '다른 속성 조건 추가',
                     'operator-select'               => '조건',
                     'no-value-needed'               => '값이 필요 없음',

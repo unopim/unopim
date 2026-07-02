@@ -95,7 +95,23 @@ class InstallerController extends Controller
      */
     protected function abortIfInstalled()
     {
-        abort_if(file_exists(storage_path('installed')), 403);
+        abort_if(
+            file_exists(storage_path('installed'))
+                || $this->databaseManager->isMarkedInstalled(),
+            403
+        );
+    }
+
+    /**
+     * Abort with 403 when the database is already populated. Guards the
+     * destructive pre-admin steps (migration/seed/env) against being replayed
+     * on an installed instance whose storage marker was lost.
+     *
+     * @return void
+     */
+    protected function abortIfDatabasePopulated()
+    {
+        abort_if($this->databaseManager->isInstalled(), 403);
     }
 
     /**
@@ -176,6 +192,8 @@ class InstallerController extends Controller
      */
     protected function markInstalled()
     {
+        $this->databaseManager->markInstalled();
+
         if (file_exists(storage_path('installed'))) {
             return;
         }
@@ -251,6 +269,7 @@ class InstallerController extends Controller
     public function runMigration()
     {
         $this->abortIfInstalled();
+        $this->abortIfDatabasePopulated();
 
         $this->reloadDatabaseConfigFromEnv();
 
@@ -275,6 +294,7 @@ class InstallerController extends Controller
     public function runSeeder()
     {
         $this->abortIfInstalled();
+        $this->abortIfDatabasePopulated();
 
         $this->reloadDatabaseConfigFromEnv();
 
@@ -754,16 +774,32 @@ class InstallerController extends Controller
     }
 
     /**
+     * Locations probed for a composer executable, in priority order.
+     *
+     * @return array<int, string>
+     */
+    protected function composerProbePaths(): array
+    {
+        return [
+            '/usr/local/bin/composer',
+            '/usr/bin/composer',
+            base_path('composer.phar'),
+            base_path('bin/composer/composer.phar'),
+        ];
+    }
+
+    /**
      * Resolve the composer executable as a process-argument prefix.
      *
      * A web process PATH may not include composer, so probe common locations
-     * and a project-local composer.phar before falling back to bare "composer".
+     * and the project-local / bundled composer.phar files before falling
+     * back to bare "composer".
      *
      * @return array<int, string>
      */
     protected function resolveComposerBinary(): array
     {
-        foreach (['/usr/local/bin/composer', '/usr/bin/composer', base_path('composer.phar')] as $path) {
+        foreach ($this->composerProbePaths() as $path) {
             if (is_file($path)) {
                 return str_ends_with($path, '.phar') ? [PHP_BINARY, $path] : [$path];
             }

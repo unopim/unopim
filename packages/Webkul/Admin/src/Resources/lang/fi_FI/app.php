@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Attribuuttiehdot',
                     'attribute-conditions-info'     => 'Vain kaikki ehdot täyttävät tuotteet viedään.',
                     'no-categories'                 => 'Ei luokkia saatavilla.',
+                    'search-categories'             => 'Hae luokkia nimellä tai koodilla',
                     'add-condition'                 => 'Lisää toinen attribuuttiehto',
                     'operator-select'               => 'Ehto',
                     'no-value-needed'               => 'Arvoa ei tarvita',

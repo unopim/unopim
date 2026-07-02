@@ -75,6 +75,7 @@ return [
             'currencies' => [
                 'AED' => 'درهم',
                 'AFN' => 'الشيكل الإسرائيلي',
+                'CAD' => 'الدولار الكندي',
                 'CNY' => 'اليوان الصيني',
                 'EUR' => 'اليورو',
                 'GBP' => 'الجنيه الاسترليني',
@@ -147,6 +148,7 @@ return [
                 'application-name'    => 'اسم التطبيق',
                 'unopim'              => 'أونوبيم',
                 'chinese-yuan'        => 'اليوان الصيني (CNY)',
+                'dollar'              => 'الدولار الكندي (CAD)',
                 'database-connection' => 'اتصال قاعدة البيانات',
                 'database-hostname'   => 'اسم مضيف قاعدة البيانات',
                 'database-name'       => 'اسم قاعدة البيانات',

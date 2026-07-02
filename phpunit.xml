@@ -19,10 +19,6 @@
             <directory suffix="Test.php">packages/Webkul/Core/tests/Unit</directory>
         </testsuite>
 
-        <testsuite name="DataGrid Unit Test">
-            <directory suffix="Test.php">packages/Webkul/DataGrid/tests/Unit</directory>
-        </testsuite>
-
         <testsuite name="DataTransfer Unit Test">
             <directory suffix="Test.php">packages/Webkul/DataTransfer/tests/Unit</directory>
         </testsuite>

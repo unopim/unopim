@@ -205,15 +205,15 @@
 
                 function installProjectDepedencies(&$installationSuccessful)
                 {
-                    $composerHome = realpath(__DIR__.'/../bin/composer/composer.phar');
+                    $composerPhar = realpath(__DIR__.'/../bin/composer/composer.phar');
                     $workingDirectory = realpath(__DIR__.'/..');
 
-                    // Set environment variable
-                    putenv("COMPOSER_HOME=$composerHome");
+                    // Composer needs a writable home directory for its cache and config
+                    putenv("COMPOSER_HOME=$workingDirectory/storage/composer");
 
                     // Define multiple commands
                     $commands = [
-                        "php $composerHome install --no-ansi --working-dir=$workingDirectory",
+                        "php $composerPhar install --no-ansi --working-dir=$workingDirectory",
                     ];
 
                     if (file_exists("$workingDirectory/.env.example")) {

@@ -144,6 +144,7 @@ class DemoDataInstaller
 
         try {
             config(['queue.default' => 'sync']);
+            Artisan::registerCommand(app(RecalculateCompletenessCommand::class));
 
             // The Completeness package only auto-registers this command when
             // running in the console, so register it explicitly for the web

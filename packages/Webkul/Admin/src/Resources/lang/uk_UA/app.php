@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Умови атрибутів',
                     'attribute-conditions-info'     => 'Експортуються лише товари, що відповідають усім умовам.',
                     'no-categories'                 => 'Немає доступних категорій.',
+                    'search-categories'             => 'Пошук категорій за назвою або кодом',
                     'add-condition'                 => 'Додати ще одну умову атрибута',
                     'operator-select'               => 'Умова',
                     'no-value-needed'               => 'Значення не потрібне',

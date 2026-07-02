@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Warunki atrybutów',
                     'attribute-conditions-info'     => 'Eksportowane są tylko produkty spełniające wszystkie warunki.',
                     'no-categories'                 => 'Brak dostępnych kategorii.',
+                    'search-categories'             => 'Szukaj kategorii według nazwy lub kodu',
                     'add-condition'                 => 'Dodaj kolejny warunek atrybutu',
                     'operator-select'               => 'Warunek',
                     'no-value-needed'               => 'Wartość nie jest wymagana',

@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Uvjeti atributa',
                     'attribute-conditions-info'     => 'Izvoze se samo proizvodi koji zadovoljavaju sve uvjete.',
                     'no-categories'                 => 'Nema dostupnih kategorija.',
+                    'search-categories'             => 'Pretraži kategorije po nazivu ili šifri',
                     'add-condition'                 => 'Dodaj još jedan uvjet atributa',
                     'operator-select'               => 'Uvjet',
                     'no-value-needed'               => 'Vrijednost nije potrebna',

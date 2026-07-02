@@ -1376,6 +1376,7 @@ return [
                     'attribute-conditions'          => 'Condiții de atribut',
                     'attribute-conditions-info'     => 'Sunt exportate doar produsele care îndeplinesc toate condițiile.',
                     'no-categories'                 => 'Nicio categorie disponibilă.',
+                    'search-categories'             => 'Caută categorii după nume sau cod',
                     'add-condition'                 => 'Adăugați altă condiție de atribut',
                     'operator-select'               => 'Condiție',
                     'no-value-needed'               => 'Nu este necesară nicio valoare',
