@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'ロケール',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'ロケールコード \'%s\' はこのバッチですでにインポートされています。',
+                    'code-not-found-to-delete'    => 'コード \'%s\' のロケールがシステムに見つかりません。',
+                    'invalid-status'              => 'ステータスは0または1である必要があります（またはデフォルト有効の場合は空）。',
+                    'channel-related-locale-root' => 'コード :code のロケールはチャネルに関連付けられているため削除できません。',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'チャネル',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'ステータス',
+                'enable' => '有効',
+                'all'    => 'すべて',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'ステータス',
+                'active' => 'アクティブ',
+                'all'    => 'すべて',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,9 @@ return [
         ],
         'categories' => [
             'title' => 'カテゴリー',
+        ],
+        'locales' => [
+            'title' => 'ロケール',
         ],
         'channels' => [
             'title' => 'チャネル',

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Bahasa',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kode bahasa \'%s\' sudah diimpor dalam batch ini.',
+                    'code-not-found-to-delete'    => 'Bahasa dengan kode \'%s\' tidak ditemukan di sistem.',
+                    'invalid-status'              => 'Status harus 0 atau 1 (atau kosong untuk default aktif).',
+                    'channel-related-locale-root' => 'Anda tidak dapat menghapus bahasa dengan kode :code karena terkait dengan channel.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Saluran',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Status',
+                'enable' => 'Aktifkan',
+                'all'    => 'Semua',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Status',
+                'active' => 'Aktif',
+                'all'    => 'Semua',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategori',
+        ],
+        'locales' => [
+            'title' => 'Bahasa',
         ],
         'channels' => [
             'title' => 'Saluran',

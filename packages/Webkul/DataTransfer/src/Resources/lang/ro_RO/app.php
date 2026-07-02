@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Limbi',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Codul limbii \'%s\' a fost deja importat în acest lot.',
+                    'code-not-found-to-delete'    => 'Limba cu codul \'%s\' nu a fost găsită în sistem.',
+                    'invalid-status'              => 'Statusul trebuie să fie 0 sau 1 (sau gol pentru activat implicit).',
+                    'channel-related-locale-root' => 'Nu puteți șterge limba cu codul :code deoarece este asociată unui canal.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Canale',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Stare',
+                'enable' => 'Activat',
+                'all'    => 'Toate',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Stare',
+                'active' => 'Activ',
+                'all'    => 'Toate',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorii',
+        ],
+        'locales' => [
+            'title' => 'Limbi',
         ],
         'channels' => [
             'title' => 'Canale',

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Хэлүүд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Хэлний код \'%s\' энэ багцад аль хэдийн импортлогдсон байна.',
+                    'code-not-found-to-delete'    => 'Код \'%s\' бүхий хэл системд олдсонгүй.',
+                    'invalid-status'              => 'Төлөв 0 эсвэл 1 байх ёстой (эсвэл анхдагчаар идэвхжүүлэхийн тулд хоосон).',
+                    'channel-related-locale-root' => 'Та :code кодтой хэлийг устгах боломжгүй, учир нь энэ нь сувагтай холбоотой.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Сувгууд',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Төлөв',
+                'enable' => 'Идэвхтэй',
+                'all'    => 'Бүгд',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Төлөв',
+                'active' => 'Идэвхтэй',
+                'all'    => 'Бүгд',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,9 @@ return [
         ],
         'categories' => [
             'title' => 'Ангилал',
+        ],
+        'locales' => [
+            'title' => 'Хэлүүд',
         ],
         'channels' => [
             'title' => 'Сувгууд',

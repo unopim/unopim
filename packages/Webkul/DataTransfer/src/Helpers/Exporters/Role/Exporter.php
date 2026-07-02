@@ -50,7 +50,6 @@ class Exporter extends AbstractExporter
         $roles = [];
         foreach ($batch->data as $rowData) {
             $roles[] = [
-                'id'              => $rowData['id'],
                 'name'            => EscapeFormulaOperators::escapeValue($rowData['name']),
                 'description'     => EscapeFormulaOperators::escapeValue($rowData['description']),
                 'permission_type' => $rowData['permission_type'],

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Diller',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Dil kodu \'%s\' bu partide zaten içe aktarılmış.',
+                    'code-not-found-to-delete'    => 'Sistemde \'%s\' koduna sahip dil bulunamadı.',
+                    'invalid-status'              => 'Durum 0 veya 1 olmalıdır (veya varsayılan etkin için boş).',
+                    'channel-related-locale-root' => ':code koduna sahip dili silemezsiniz çünkü bir kanala bağlıdır.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanallar',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Durum',
+                'enable' => 'Etkin',
+                'all'    => 'Tümü',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Durum',
+                'active' => 'Aktif',
+                'all'    => 'Tümü',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriler',
+        ],
+        'locales' => [
+            'title' => 'Diller',
         ],
         'channels' => [
             'title' => 'Kanallar',
