@@ -1,0 +1,88 @@
+<?php
+
+return [
+
+    'acl' => [
+        'unauthorized' => 'У вас немає дозволу на виконання цієї дії.',
+    ],
+    'attribute' => [
+        'measurement' => 'Вимірювання',
+    ],
+
+    'measurement' => [
+        'index' => [
+            'create'                => 'Створити групу вимірювань',
+            'code'                  => 'Код',
+            'standard'              => 'Код стандартної одиниці',
+            'symbol'                => 'Символ',
+            'save'                  => 'Зберегти',
+            'conversion_operation'  => 'Conversion operation',
+            'add_new_operation'     => 'Add New Operation',
+        ],
+
+        'edit' => [
+            'measurement_edit'      => 'Редагувати групу вимірювань',
+            'back'                  => 'Назад',
+            'save'                  => 'Зберегти',
+            'conversion_operation'  => 'Conversion operation',
+            'add_new_operation'     => 'Add New Operation',
+            'general'               => 'Загальні',
+            'code'                  => 'Код',
+            'label'                 => 'Мітка',
+            'units'                 => 'Одиниці',
+            'create_units'          => 'Створити одиниці',
+        ],
+
+        'unit' => [
+            'edit_unit'             => 'Редагувати одиницю',
+            'create_unit'           => 'Створити одиницю',
+            'symbol'                => 'Символ',
+            'save'                  => 'Зберегти',
+            'conversion_operation'  => 'Операція перетворення',
+            'add_new_operation'     => 'Додати нову операцію',
+            'conversion_value'      => 'Значення',
+            'conversion_operator'   => 'Оператор',
+        ],
+    ],
+
+    'attribute_type' => [
+        'measurement_families' => 'Групи вимірювань',
+        'measurement_family'   => 'Група вимірювань',
+        'measurement_unit'     => 'Одиниця вимірювання',
+    ],
+
+    'datagrid' => [
+        'labels'        => 'Назва',
+        'code'          => 'Код',
+        'standard_unit' => 'Стандартна одиниця',
+        'unit_count'    => 'Кількість одиниць',
+        'is_standard'   => 'Позначити як стандартну одиницю',
+    ],
+
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Одиниця ":unit" не є дійсною одиницею для атрибута вимірювання ":attribute".',
+            ],
+        ],
+    ],
+
+    'messages' => [
+        'family' => [
+            'created'      => 'Сім’ю вимірювань успішно створено.',
+            'updated'      => 'Група вимірювань успішно оновлена.',
+            'deleted'      => 'Група вимірювань успішно видалена.',
+            'mass_deleted' => 'Вибрані групи вимірювань успішно видалені.',
+        ],
+
+        'unit' => [
+            'not_found'              => 'Групу вимірювань не знайдено.',
+            'already_exists'         => 'Код одиниці вже існує.',
+            'units_not_found'        => 'Одиницю не знайдено.',
+            'deleted'                => 'Одиницю успішно видалено.',
+            'no_items_selected'      => 'Жоден елемент не вибрано.',
+            'mass_deleted'           => 'Вибрані одиниці вимірювань успішно видалені.',
+        ],
+    ],
+
+];
