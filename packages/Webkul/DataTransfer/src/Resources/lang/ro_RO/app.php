@@ -57,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Stare',
+                'enable' => 'Activat',
+                'all'    => 'Toate',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -77,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Stare',
+                'active' => 'Activ',
+                'all'    => 'Toate',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',

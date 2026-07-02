@@ -57,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => '状态',
+                'enable' => '启用',
+                'all'    => '全部',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -77,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => '状态',
+                'active' => '活跃',
+                'all'    => '全部',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',

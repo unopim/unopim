@@ -43,17 +43,17 @@ return [
             'fields' => [
                 [
                     'name'     => 'status',
-                    'title'    => 'Status',
+                    'title'    => 'data_transfer::app.importers.currencies.filters.status',
                     'required' => false,
                     'type'     => 'select',
                     'options'  => [
                         [
                             'value' => 'enable',
-                            'label' => 'Enable',
+                            'label' => 'data_transfer::app.importers.currencies.filters.enable',
                         ],
                         [
                             'value' => 'all',
-                            'label' => 'All',
+                            'label' => 'data_transfer::app.importers.currencies.filters.all',
                         ],
                     ],
                 ],
@@ -79,16 +79,16 @@ return [
             'fields' => [
                 [
                     'name'     => 'status',
-                    'title'    => 'Status',
+                    'title'    => 'data_transfer::app.importers.users.filters.status',
                     'required' => false,
                     'type'     => 'select',
                     'options'  => [
                         [
-                            'label' => 'Active',
+                            'label' => 'data_transfer::app.importers.users.filters.active',
                             'value' => 'active',
                         ],
                         [
-                            'label' => 'All',
+                            'label' => 'data_transfer::app.importers.users.filters.all',
                             'value' => 'all',
                         ],
                     ],
