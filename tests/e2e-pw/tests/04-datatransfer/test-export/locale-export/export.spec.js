@@ -32,8 +32,15 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   await adminPage.getByRole('button', { name: /Save Export/i }).click();
   await adminPage.waitForLoadState('networkidle');
 
+  await navigateTo(adminPage, 'exports');
+  await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+  await adminPage.keyboard.press('Enter');
+  await adminPage.waitForLoadState('networkidle');
+  await adminPage.locator('span[title="Export"]').first().click();
+  await adminPage.waitForLoadState('networkidle');
+
   const exportNowBtn = adminPage.getByRole('button', { name: 'Export Now' });
-  await expect(exportNowBtn).toBeVisible({ timeout: 5000 });
+  await expect(exportNowBtn).toBeVisible({ timeout: 10000 });
   await exportNowBtn.click();
 
   await expect(adminPage.locator('#app').getByText(/Job queued/i)).toBeVisible({ timeout: 20000 });
