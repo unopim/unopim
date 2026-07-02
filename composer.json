@@ -83,8 +83,7 @@
             "Webkul\\Webhook\\": "packages/Webkul/Webhook/src",
             "Webkul\\Completeness\\": "packages/Webkul/Completeness/src",
             "Webkul\\AiAgent\\": "packages/Webkul/AiAgent/src",
-            "Webkul\\Measurement\\": "packages/Webkul/Measurement/src"
-
+            "Webkul\\Measurement\\": "packages/Webkul/Measurement/src",
             "Webkul\\AppUrlGuard\\": "packages/Webkul/AppUrlGuard/src"
         }
     },
