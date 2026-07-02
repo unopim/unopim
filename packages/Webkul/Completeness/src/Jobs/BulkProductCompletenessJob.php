@@ -97,22 +97,16 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
     protected function getFamilyProductIds(): array
     {
         $allIds = [];
-        $page = 1;
 
-        do {
-            $products = $this->productRepository
-                ->select('id')
-                ->where('attribute_family_id', $this->familyId)
-                ->forPage($page, self::BATCH_SIZE)
-                ->pluck('id');
-
-            if ($products->isEmpty()) {
-                break;
-            }
-
-            $allIds = array_merge($allIds, $products->toArray());
-            $page++;
-        } while ($products->count() === self::BATCH_SIZE);
+        $this->productRepository
+            ->select('id')
+            ->where('attribute_family_id', $this->familyId)
+            ->orderBy('id')
+            ->chunkById(self::BATCH_SIZE, function ($products) use (&$allIds) {
+                foreach ($products as $product) {
+                    $allIds[] = $product->id;
+                }
+            });
 
         return $allIds;
     }
