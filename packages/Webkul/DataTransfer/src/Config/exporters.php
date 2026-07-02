@@ -272,7 +272,7 @@ return [
             'fields' => [
                 [
                     'name'       => 'file_format',
-                    'title'      => 'File Format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
                     'type'       => 'select',
                     'required'   => true,
                     'validation' => 'required',
@@ -290,16 +290,16 @@ return [
                     ],
                 ], [
                     'name'     => 'status',
-                    'title'    => 'Status',
+                    'title'    => 'data_transfer::app.exporters.fields.status',
                     'required' => false,
                     'type'     => 'select',
                     'options'  => [
                         [
-                            'label' => 'Enable',
+                            'label' => 'data_transfer::app.exporters.fields.enable',
                             'value' => 'enable',
                         ], [
-                            'label' => 'All',
-                            'value' => 'All',
+                            'label' => 'data_transfer::app.exporters.fields.all',
+                            'value' => 'all',
                         ],
                     ],
                 ],

@@ -53,7 +53,6 @@ class Exporter extends AbstractExporter
             }
 
             $locales[] = [
-                'id'     => $rowData['id'],
                 'code'   => $rowData['code'],
                 'name'   => $rowData['name'],
                 'status' => $rowData['status'],

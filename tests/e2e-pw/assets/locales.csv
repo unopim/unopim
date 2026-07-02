@@ -1,8 +1,8 @@
-id,code,name,status
-1,af_ZA,"Afrikaans (South Africa)",0
-2,am_ET,"Amharic (Ethiopia)",0
-3,ar_AE,"Arabic (United Arab Emirates)",0
-4,ar_BH,"Arabic (Bahrain)",0
+code,name,status
+af_ZA,"Afrikaans (South Africa)",0
+am_ET,"Amharic (Ethiopia)",0
+ar_AE,"Arabic (United Arab Emirates)",0
+ar_BH,"Arabic (Bahrain)",0
 5,ar_DZ,"Arabic (Algeria)",0
 6,ar_EG,"Arabic (Egypt)",0
 7,ar_IQ,"Arabic (Iraq)",0
