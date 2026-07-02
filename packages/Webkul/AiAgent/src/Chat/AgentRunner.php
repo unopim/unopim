@@ -4,21 +4,23 @@ namespace Webkul\AiAgent\Chat;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Prism\Prism\Facades\Prism;
-use Prism\Prism\Text\PendingRequest;
-use Prism\Prism\Text\Response;
-use Prism\Prism\ValueObjects\Media\Image;
-use Prism\Prism\ValueObjects\Messages\AssistantMessage;
-use Prism\Prism\ValueObjects\Messages\UserMessage;
+use Laravel\Ai\AnonymousAgent;
+use Laravel\Ai\Files\Image;
+use Laravel\Ai\Messages\AssistantMessage;
+use Laravel\Ai\Messages\UserMessage;
+use Laravel\Ai\Responses\AgentResponse;
+use Laravel\Ai\Streaming\Events\TextDelta;
+use Laravel\Ai\Streaming\Events\ToolCall;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\MagicAI\Enums\AiProvider;
 
 /**
- * Orchestrates the AI agent loop using Prism's built-in tool calling.
+ * Orchestrates the AI agent loop using laravel/ai's built-in tool calling.
  *
- * Replaces the hardcoded dispatchAction() router. The LLM autonomously
- * decides which tools to call, Prism executes them, feeds results back,
- * and iterates until the LLM produces a final text response.
+ * The LLM autonomously decides which tools to call, laravel/ai executes
+ * them, feeds results back, and iterates until the LLM produces a final
+ * text response. Streaming variant pipes StreamEvents (tool calls + text
+ * deltas) back to the browser as Server-Sent Events.
  */
 class AgentRunner
 {
@@ -38,15 +40,24 @@ class AgentRunner
      */
     public function run(ChatContext $context): array
     {
-        $request = $this->buildPrismRequest($context);
-        $response = $request->asText();
+        $agent = $this->buildAgent($context);
+        $response = $agent->prompt(
+            $context->message,
+            attachments: $this->buildAttachments($context),
+            provider: AiProvider::from($context->platform->provider)->toLab(),
+            model: $context->model,
+            timeout: 120,
+        );
+
+        $usage = $response->usage;
+        $tokensUsed = ($usage->promptTokens ?? 0) + ($usage->completionTokens ?? 0);
 
         $result = [
             'reply'  => $response->text ?: 'Operation completed.',
             'action' => 'agent_response',
             'data'   => [
                 'steps'       => $response->steps->count(),
-                'tokens_used' => ($response->usage->promptTokens ?? 0) + ($response->usage->completionTokens ?? 0),
+                'tokens_used' => $tokensUsed,
             ],
         ];
 
@@ -58,9 +69,9 @@ class AgentRunner
     /**
      * Run the agent with Server-Sent Events streaming.
      *
-     * Sends progress events during tool execution, then streams the
-     * final text response. The callback-based approach works with Prism's
-     * multi-step tool loop while providing real-time feedback.
+     * Sends progress events during tool execution, then streams the final
+     * text response. Subscribes to laravel/ai stream events (ToolCall,
+     * TextDelta) to provide real-time feedback to the chat widget.
      */
     public function runStreaming(ChatContext $context): StreamedResponse
     {
@@ -81,59 +92,66 @@ class AgentRunner
             $this->sendSSE('status', ['message' => $statusMsg]);
 
             try {
-                $request = $this->buildPrismRequest($context);
+                $agent = $this->buildAgent($context);
 
-                // Use asText with callback — fires after all steps complete
-                $response = $request->asText(function (PendingRequest $req, Response $res) {
-                    $stepCount = $res->steps->count();
+                $stream = $agent->stream(
+                    $context->message,
+                    attachments: $this->buildAttachments($context),
+                    provider: AiProvider::from($context->platform->provider)->toLab(),
+                    model: $context->model,
+                    timeout: 120,
+                );
 
-                    foreach ($res->steps as $i => $step) {
-                        foreach ($step->toolCalls as $toolCall) {
-                            $this->sendSSE('tool_call', [
-                                'step'       => $i + 1,
-                                'total'      => $stepCount,
-                                'tool'       => $toolCall->name,
-                            ]);
+                $textBuffer = '';
+                $stepCount = 0;
+                $statusSent = false;
+
+                foreach ($stream as $event) {
+                    if ($event instanceof ToolCall) {
+                        $stepCount++;
+                        $this->sendSSE('tool_call', [
+                            'step' => $stepCount,
+                            'tool' => $event->toolCall->name,
+                        ]);
+
+                        continue;
+                    }
+
+                    if ($event instanceof TextDelta) {
+                        if (! $statusSent && $stepCount > 0) {
+                            $this->sendSSE('status', ['message' => 'Generating response...']);
+                            $statusSent = true;
                         }
-                    }
 
-                    if ($stepCount > 0) {
-                        $this->sendSSE('status', ['message' => 'Generating response...']);
+                        $textBuffer .= $event->delta;
+                        $this->sendSSE('text_delta', ['chunk' => $event->delta]);
                     }
-                });
+                }
 
-                // Track token usage for budget enforcement
-                $tokensUsed = ($response->usage->promptTokens ?? 0) + ($response->usage->completionTokens ?? 0);
+                // After stream completes, the StreamableAgentResponse holds
+                // final usage + text. Fall back to buffer if usage is null.
+                $finalText = $stream->text ?: $textBuffer ?: 'Operation completed.';
+                $usage = $stream->usage;
+                $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
+
                 $this->recordStreamingTokens($context, $tokensUsed);
 
-                // Build result
                 $result = [
-                    'reply'  => $response->text ?: 'Operation completed.',
+                    'reply'  => $finalText,
                     'action' => 'agent_response',
                     'data'   => [
-                        'steps'       => $response->steps->count(),
+                        'steps'       => $stepCount,
                         'tokens_used' => $tokensUsed,
                     ],
                 ];
 
-                $this->extractActionResults($response, $result);
+                $this->extractStreamActionResults($stream, $result);
 
-                // Stream the final text in smaller chunks for smoother rendering
-                $text = $result['reply'];
-                $chunkSize = 20;
-
-                for ($i = 0; $i < mb_strlen($text); $i += $chunkSize) {
-                    $this->sendSSE('text_delta', [
-                        'chunk' => mb_substr($text, $i, $chunkSize),
-                    ]);
-                    usleep(12000); // 12ms between chunks
-                }
-
-                // Send the complete result with metadata
-                unset($result['reply']); // Already streamed as text_delta
+                // Already streamed as text_delta; strip from final payload.
+                unset($result['reply']);
                 $this->sendSSE('complete', $result);
             } catch (\Throwable $e) {
-                $resolved = PrismErrorResolver::resolve($e);
+                $resolved = AiErrorResolver::resolve($e);
 
                 if ($resolved['is_known']) {
                     Log::warning('AI Agent stream provider error', [
@@ -155,47 +173,42 @@ class AgentRunner
     }
 
     /**
-     * Build the configured Prism request for a chat context.
+     * Build an AnonymousAgent configured with this context's tools, history,
+     * and system prompt.
      */
-    protected function buildPrismRequest(ChatContext $context): PendingRequest
+    protected function buildAgent(ChatContext $context): AnonymousAgent
     {
         $aiProvider = AiProvider::from($context->platform->provider);
-        $prismProvider = $aiProvider->toPrismProvider();
 
         $this->configureProvider($aiProvider, $context);
 
         $tools = $this->toolRegistry->build($context);
         $messages = $this->convertHistory($context->history);
 
-        $imageContent = [];
+        return new AnonymousAgent(
+            instructions: $this->buildSystemPrompt($context),
+            messages: $messages,
+            tools: $tools,
+        );
+    }
+
+    /**
+     * Build image attachments for the prompt from the context's uploaded images.
+     *
+     * @return array<int, Image>
+     */
+    protected function buildAttachments(ChatContext $context): array
+    {
+        $attachments = [];
+
         foreach ($context->uploadedImagePaths as $imgPath) {
             if (file_exists($imgPath)) {
                 $compressed = $this->compressImage($imgPath);
-                $imageContent[] = Image::fromLocalPath($compressed);
+                $attachments[] = Image::fromPath($compressed);
             }
         }
 
-        $messages[] = new UserMessage($context->message, $imageContent);
-
-        $isReasoningModel = (bool) preg_match('/^chat-latest|^o[1-9]|^o[1-9]-|^gpt-5/i', $context->model);
-
-        $request = Prism::text()
-            ->using($prismProvider, $context->model, [
-                'api_key' => $context->platform->api_key,
-            ])
-            ->withSystemPrompt($this->buildSystemPrompt($context))
-            ->withMessages($messages)
-            ->withTools($tools)
-            ->withMaxSteps($this->resolveMaxSteps())
-            ->withMaxTokens($isReasoningModel ? 16000 : 4096)
-            ->withClientOptions(['timeout' => 120]);
-
-        // Reasoning models (o-series, gpt-5*) reject `temperature` — only the default is allowed.
-        if (! $isReasoningModel) {
-            $request->usingTemperature(0.7);
-        }
-
-        return $request;
+        return $attachments;
     }
 
     /**
@@ -247,6 +260,9 @@ class AgentRunner
 
     /**
      * Resolve the max steps from admin configuration.
+     *
+     * Currently informational only — laravel/ai's tool loop runs until the
+     * LLM stops calling tools; a hard cap is not exposed by the public API.
      */
     protected function resolveMaxSteps(): int
     {
@@ -256,25 +272,25 @@ class AgentRunner
     }
 
     /**
-     * Configure Prism provider credentials from the platform record.
+     * Configure laravel/ai provider credentials from the platform record.
      */
     protected function configureProvider(AiProvider $aiProvider, ChatContext $context): void
     {
         $configKey = $aiProvider->configKey();
 
         config([
-            "prism.providers.{$configKey}.api_key" => $context->platform->api_key,
+            "ai.providers.{$configKey}.key" => $context->platform->api_key,
         ]);
 
         if ($context->platform->api_url) {
             config([
-                "prism.providers.{$configKey}.url" => $context->platform->api_url,
+                "ai.providers.{$configKey}.url" => $context->platform->api_url,
             ]);
         }
 
         if ($context->platform->extras && is_array($context->platform->extras)) {
             foreach ($context->platform->extras as $key => $value) {
-                config(["prism.providers.{$configKey}.{$key}" => $value]);
+                config(["ai.providers.{$configKey}.{$key}" => $value]);
             }
         }
     }
@@ -350,7 +366,6 @@ PROMPT;
 
         $prompt .= "\nLocale:{$context->locale} Channel:{$context->channel}";
 
-        // Inject approval mode
         $approvalMode = core()->getConfigData('general.magic_ai.agentic_pim.approval_mode') ?: 'auto';
 
         if ($approvalMode === 'auto') {
@@ -405,7 +420,6 @@ MODE;
                     ->orWhere('expires_at', '>', now());
             });
 
-        // Try keyword-matched memories first
         $memories = collect();
 
         if (! empty($keywords)) {
@@ -418,7 +432,6 @@ MODE;
             $memories = $keywordQuery->orderByDesc('updated_at')->limit(3)->get();
         }
 
-        // Fill remaining slots with most recent memories
         if ($memories->count() < 5) {
             $existingIds = $memories->pluck('id')->toArray();
             $remaining = (clone $baseQuery)
@@ -438,7 +451,6 @@ MODE;
             }
         }
 
-        // Inject content style preferences from user feedback
         $stylePref = DB::table('ai_agent_memories')
             ->where('key', 'content_style_preference')
             ->where(function ($q) use ($context) {
@@ -457,7 +469,7 @@ MODE;
     }
 
     /**
-     * Convert the chat widget's history array to Prism Message objects.
+     * Convert the chat widget's history array to laravel/ai Message objects.
      *
      * @param  array<int, array{role: string, content: string}>  $history
      * @return array<int, UserMessage|AssistantMessage>
@@ -485,36 +497,71 @@ MODE;
     }
 
     /**
-     * Extract product_url or download_url from tool call results and add to response.
+     * Extract product_url / download_url / result from tool call results
+     * captured on the blocking AgentResponse, and merge into the response array.
      *
-     * Tools can return JSON with special keys that the widget uses for action buttons.
-     *
-     * @param  mixed  $response  Prism response
      * @param  array<string, mixed>  $result  Response array (modified by reference)
      */
-    protected function extractActionResults(mixed $response, array &$result): void
+    protected function extractActionResults(AgentResponse $response, array &$result): void
     {
-        foreach ($response->steps as $step) {
-            foreach ($step->toolCalls as $toolCall) {
-                // Check if any tool result contains a product_url or download_url
-                foreach ($step->toolResults as $toolResult) {
-                    $decoded = json_decode($toolResult->result, true);
+        foreach ($response->toolResults as $toolResult) {
+            // ToolResult.result may be string, Stringable, or already array-shaped
+            $payload = is_string($toolResult->result) || $toolResult->result instanceof \Stringable
+                ? json_decode((string) $toolResult->result, true)
+                : null;
 
-                    if (is_array($decoded)) {
-                        if (! empty($decoded['product_url'])) {
-                            $result['product_url'] = $decoded['product_url'];
-                        }
+            $this->mergeActionPayload($payload, $result);
+        }
+    }
 
-                        if (! empty($decoded['download_url'])) {
-                            $result['download_url'] = $decoded['download_url'];
-                        }
-
-                        if (! empty($decoded['result']) && is_array($decoded['result'])) {
-                            $result['result'] = $decoded['result'];
-                        }
-                    }
-                }
+    /**
+     * Same as extractActionResults but for the streaming response, which
+     * exposes the underlying StreamedAgentResponse via adoptStateFrom().
+     *
+     * @param  array<string, mixed>  $result
+     */
+    protected function extractStreamActionResults(mixed $stream, array &$result): void
+    {
+        // StreamableAgentResponse copies tool results onto itself once the
+        // underlying StreamedAgentResponse completes; access via $stream->events
+        // collected during iteration.
+        foreach ($stream->events as $event) {
+            if (! isset($event->toolResult)) {
+                continue;
             }
+
+            $raw = $event->toolResult->result ?? null;
+            $payload = is_string($raw) || $raw instanceof \Stringable
+                ? json_decode((string) $raw, true)
+                : null;
+
+            $this->mergeActionPayload($payload, $result);
+        }
+    }
+
+    /**
+     * Pull special keys out of a tool result payload and merge them into the
+     * response array. Widget uses these for action buttons (open product,
+     * download file, render table).
+     *
+     * @param  array<string, mixed>  $result
+     */
+    protected function mergeActionPayload(mixed $payload, array &$result): void
+    {
+        if (! is_array($payload)) {
+            return;
+        }
+
+        if (! empty($payload['product_url'])) {
+            $result['product_url'] = $payload['product_url'];
+        }
+
+        if (! empty($payload['download_url'])) {
+            $result['download_url'] = $payload['download_url'];
+        }
+
+        if (! empty($payload['result']) && is_array($payload['result'])) {
+            $result['result'] = $payload['result'];
         }
     }
 
@@ -533,7 +580,6 @@ MODE;
 
             [$width, $height, $type] = $info;
 
-            // Skip if already small enough
             if ($width <= $maxDim && $height <= $maxDim && filesize($path) < 200_000) {
                 return $path;
             }
@@ -550,7 +596,6 @@ MODE;
                 return $path;
             }
 
-            // Calculate new dimensions
             $ratio = min($maxDim / $width, $maxDim / $height, 1.0);
             $newW = (int) round($width * $ratio);
             $newH = (int) round($height * $ratio);

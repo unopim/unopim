@@ -271,9 +271,11 @@
             @case('multiselect')
                 <!-- NO BREAK -->
                 @php
-                    $value = str_contains($value, ',')
-                        ? explode(',', $value)
-                        : (empty($value) ? '' : [$value]);
+                    if (! is_array($value)) {
+                        $value = str_contains((string) $value, ',')
+                            ? explode(',', $value)
+                            : (empty($value) ? '' : [$value]);
+                    }
                 @endphp
             @case('select')
                 <!-- NO BREAK -->

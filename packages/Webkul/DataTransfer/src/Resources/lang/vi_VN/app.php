@@ -32,21 +32,113 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => 'Tiền tệ',
+        'channels' => [
+            'title'      => 'Kênh',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => 'Mã tiền tệ \'%s\' đã được nhập trong đợt này.',
-                    'code-not-found-to-delete'    => 'Không tìm thấy tiền tệ có mã \'%s\' trong hệ thống.',
-                    'invalid-status'              => 'Trạng thái phải là 0 hoặc 1 (hoặc để trống để kích hoạt mặc định).',
-                    'channel-related-locale-root' => 'Bạn không thể xóa locale với mã :code được liên kết với một kênh.',
+                    'code-not-found-to-delete' => 'Không tìm thấy kênh với mã :code để xóa.',
+                    'locale-not-found'         => 'Một hoặc nhiều ngôn ngữ không tồn tại.',
+                    'root-category-not-found'  => 'Danh mục gốc không tồn tại.',
+                    'currency-not-found'       => 'Một hoặc nhiều loại tiền tệ không tồn tại.',
+                    'invalid-locale'           => 'Ngôn ngữ không tồn tại.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
     ],
     'exporters' => [
+        'export-too-large' => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
+        'fields'           => [
+            'file-format'         => 'Định dạng tệp',
+            'with-media'          => 'Kèm phương tiện',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Trạng thái',
+            'enable'         => 'Bật',
+            'all'            => 'Tất cả',
+        ],
         'products' => [
-            'title'      => 'Các sản phẩm',
+            'title'              => 'Các sản phẩm',
+            'invalid-locales'    => 'Không phải tất cả ngôn ngữ đã chọn đều khả dụng cho các kênh đã chọn.',
+            'invalid-currencies' => 'Không phải tất cả tiền tệ đã chọn đều khả dụng cho các kênh đã chọn.',
+            'filters'            => [
+                'channels'             => 'Kênh',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Tiền tệ',
+                'currencies-info'      => 'Thuộc tính giá được xuất theo từng loại tiền tệ đã chọn. Để trống để xuất tất cả tiền tệ của kênh.',
+                'locales'              => 'Ngôn ngữ',
+                'locales-info'         => 'Thuộc tính có thể bản địa hóa được xuất một lần cho mỗi ngôn ngữ đã chọn. Để trống để xuất tất cả ngôn ngữ của kênh.',
+                'attributes'           => 'Thuộc tính',
+                'attributes-info'      => 'Chỉ các thuộc tính đã chọn được xuất. Để trống để xuất tất cả thuộc tính trong nhóm.',
+                'attribute-families'   => 'Nhóm thuộc tính',
+                'categories'           => 'Danh mục',
+                'completeness'         => 'Mức độ hoàn chỉnh',
+                'completeness-options' => [
+                    'none'         => 'Không có điều kiện về mức độ hoàn chỉnh',
+                    'at-least-one' => 'Hoàn chỉnh trong ít nhất một ngôn ngữ đã chọn',
+                    'all'          => 'Hoàn chỉnh trong tất cả ngôn ngữ đã chọn',
+                ],
+                'time-condition' => 'Điều kiện thời gian',
+                'time-options'   => [
+                    'none'              => 'Không có điều kiện ngày',
+                    'last-n-days'       => 'Sản phẩm được cập nhật trong N ngày qua',
+                    'between-dates'     => 'Sản phẩm được cập nhật giữa hai ngày',
+                    'since-last-export' => 'Sản phẩm được cập nhật kể từ lần xuất gần nhất',
+                ],
+                'time-value'     => 'Số ngày',
+                'time-date'      => 'Ngày bắt đầu',
+                'time-date-end'  => 'Ngày kết thúc',
+                'status'         => 'Trạng thái',
+                'status-options' => [
+                    'enable'  => 'Bật',
+                    'disable' => 'Tắt',
+                    'all'     => 'Tất cả',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Định danh',
+                'identifiers-info' => 'Dán mỗi dòng một SKU / mã định danh để chỉ xuất những sản phẩm đó. Để trống để xuất tất cả sản phẩm.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL key: \'%s\' đã được tạo cho một mục có SKU: \'%s\'.',
@@ -60,8 +152,22 @@ return [
         'categories' => [
             'title' => 'Các danh mục',
         ],
+        'channels' => [
+            'title' => 'Kênh',
+        ],
         'currencies' => [
-            'title' => 'Tiền tệ',
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Trạng thái',
+                'active' => 'Active',
+                'all'    => 'Tất cả',
+            ],
         ],
     ],
     'validation' => [

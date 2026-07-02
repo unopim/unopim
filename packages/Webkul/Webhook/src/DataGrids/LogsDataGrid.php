@@ -192,7 +192,7 @@ class LogsDataGrid extends DataGrid
     public function processRequestedFilters(array $requestedFilters)
     {
         if (isset($requestedFilters['status'])) {
-            $statusValues = $requestedFilters['status'];
+            $statusValues = (array) $requestedFilters['status'];
             unset($requestedFilters['status']);
 
             $this->queryBuilder->where(function ($outer) use ($statusValues) {
@@ -232,6 +232,19 @@ class LogsDataGrid extends DataGrid
      */
     public function prepareActions()
     {
+        if (bouncer()->hasPermission('configuration.webhook.logs.view')) {
+            $this->addAction([
+                'index'         => 'view',
+                'icon'          => 'icon-view',
+                'title'         => trans('webhook::app.configuration.webhook.logs.index.datagrid.view'),
+                'method'        => 'GET',
+                'frontend_view' => 'view-modal',
+                'url'           => function ($row) {
+                    return route('webhook.logs.show', $row->id);
+                },
+            ]);
+        }
+
         if (bouncer()->hasPermission('configuration.webhook.logs.delete')) {
             $this->addAction([
                 'index'  => 'delete',

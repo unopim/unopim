@@ -10,7 +10,6 @@ use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
-use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Services\JobLogger;
@@ -375,12 +374,7 @@ class Export
         $filters = $typeExporter->getFilters();
 
         $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
-        $fileName = sprintf(
-            '%s-%s.%s',
-            $this->export->jobInstance->code,
-            $this->export->jobInstance->entity_type,
-            strtolower($filters['file_format'] ?? SpoutWriterFactory::CSV)
-        );
+        $fileName = $typeExporter->getFileName();
 
         $buffer = app(FileExportFileBuffer::class)->initialize(
             $directory,
@@ -465,7 +459,15 @@ class Export
         $jobInstance = $this->export->jobInstance;
 
         if (! $this->typeExporter) {
-            $exporterConfig = config('exporters.'.$jobInstance->entity_type) ?? config('quick_exporters.'.$jobInstance->entity_type);
+            $entityType = $this->resolveEntityType($jobInstance->entity_type);
+            $exporterConfig = config('exporters.'.$entityType) ?? config('quick_exporters.'.$entityType);
+
+            if (! is_array($exporterConfig) || ! isset($exporterConfig['exporter'], $exporterConfig['source'])) {
+                throw new \UnexpectedValueException(sprintf(
+                    'Exporter configuration not found for entity type [%s].',
+                    $jobInstance->entity_type
+                ));
+            }
 
             $this->typeExporter = app()->make($exporterConfig['exporter'])
                 ->setExport($this->export)
@@ -477,5 +479,20 @@ class Export
         }
 
         return $this->typeExporter;
+    }
+
+    /**
+     * Resolve legacy entity types to the current config keys.
+     */
+    protected function resolveEntityType(string $entityType): string
+    {
+        return match ($entityType) {
+            'product'  => 'products',
+            'category' => 'categories',
+            'currency' => 'currencies',
+            'role'     => 'roles',
+            'user'     => 'users',
+            default    => $entityType,
+        };
     }
 }

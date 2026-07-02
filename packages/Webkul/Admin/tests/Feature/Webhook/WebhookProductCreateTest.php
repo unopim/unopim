@@ -10,7 +10,7 @@ use Webkul\Webhook\Services\WebhookService;
 beforeEach(function () {
     DB::table('webhook_settings')->updateOrInsert(
         ['field' => 'webhook_url'],
-        ['value' => 'https://example.test/hook', 'updated_at' => now(), 'created_at' => now()]
+        ['value' => 'https://1.1.1.1/hook', 'updated_at' => now(), 'created_at' => now()]
     );
 
     DB::table('webhook_settings')->updateOrInsert(

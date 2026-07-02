@@ -20,7 +20,7 @@ beforeEach(function () {
 
     DB::table('webhook_settings')->updateOrInsert(
         ['field' => 'webhook_url'],
-        ['value' => 'https://example.test/hook', 'updated_at' => now(), 'created_at' => now()]
+        ['value' => 'https://1.1.1.1/hook', 'updated_at' => now(), 'created_at' => now()]
     );
     DB::table('webhook_settings')->updateOrInsert(
         ['field' => 'webhook_active'],
@@ -37,7 +37,7 @@ afterEach(function () {
 
 it('logs status=1 with HTTP 200 in extra when the endpoint succeeds', function () {
     Http::fake([
-        'example.test/*' => Http::response(['ok' => true], 200),
+        '1.1.1.1/*' => Http::response(['ok' => true], 200),
     ]);
 
     $product = Product::factory()->create();
@@ -55,7 +55,7 @@ it('logs status=1 with HTTP 200 in extra when the endpoint succeeds', function (
 
 it('logs status=0 when the endpoint returns 404', function () {
     Http::fake([
-        'example.test/*' => Http::response(['error' => 'not found'], 404),
+        '1.1.1.1/*' => Http::response(['error' => 'not found'], 404),
     ]);
 
     $product = Product::factory()->create();
@@ -73,7 +73,7 @@ it('logs status=0 when the endpoint returns 404', function () {
 
 it('logs status=0 when the endpoint returns 500', function () {
     Http::fake([
-        'example.test/*' => Http::response(['error' => 'server'], 500),
+        '1.1.1.1/*' => Http::response(['error' => 'server'], 500),
     ]);
 
     $product = Product::factory()->create();

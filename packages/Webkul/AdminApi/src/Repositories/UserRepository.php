@@ -20,19 +20,13 @@ class UserRepository extends BaseUserRepository
 {
     /**
      * Get a user entity by user credentials.
-     *
-     * @param  string  $username
-     * @param  string  $password
-     * @param  string  $grantType
-     * @param  ClientEntityInterface  $clientEntity
-     * @return UserEntityInterface|null
      */
     public function getUserEntityByUserCredentials(
-        $username,
-        $password,
-        $grantType,
-        $clientEntity
-    ) {
+        string $username,
+        string $password,
+        string $grantType,
+        ClientEntityInterface $clientEntity
+    ): ?UserEntityInterface {
         // Find the admin user by email
         $user = Admin::where('email', $username)->first();
 

@@ -4,7 +4,6 @@ namespace Webkul\MagicAI\Enums;
 
 use GuzzleHttp\Client;
 use Laravel\Ai\Enums\Lab;
-use Prism\Prism\Enums\Provider as PrismProvider;
 
 enum AiProvider: string
 {
@@ -33,30 +32,12 @@ enum AiProvider: string
             self::DeepSeek   => Lab::DeepSeek,
             self::Azure      => Lab::Azure,
             self::OpenRouter => Lab::OpenRouter,
-            self::Custom     => Lab::OpenAI,
-        };
-    }
-
-    public function toPrismProvider(): PrismProvider
-    {
-        return match ($this) {
-            self::OpenAI     => PrismProvider::OpenAI,
-            self::Anthropic  => PrismProvider::Anthropic,
-            self::Gemini     => PrismProvider::Gemini,
-            self::Groq       => PrismProvider::Groq,
-            self::Ollama     => PrismProvider::Ollama,
-            self::XAI        => PrismProvider::XAI,
-            self::Mistral    => PrismProvider::Mistral,
-            self::DeepSeek   => PrismProvider::DeepSeek,
-            self::Azure      => PrismProvider::OpenAI,
-            self::OpenRouter => PrismProvider::OpenRouter,
-            // Prism's OpenAI provider posts to /responses (new Responses API,
-            // OpenAI-only). Most "OpenAI-compatible" third parties (Cerebras,
-            // Together, Fireworks, Perplexity, DeepInfra) only implement the
-            // legacy /chat/completions endpoint — which is exactly what the
-            // Groq Prism provider speaks. Routing Custom through Groq lets
-            // any chat-completions-compatible API work out of the box.
-            self::Custom => PrismProvider::Groq,
+            // Custom providers (Cerebras, Together, Fireworks, Perplexity,
+            // DeepInfra, etc.) only implement OpenAI's legacy /chat/completions
+            // endpoint — which is what laravel/ai's Groq gateway speaks.
+            // Routing Custom through Groq lets any chat-completions-compatible
+            // API work out of the box with a runtime api_url override.
+            self::Custom => Lab::Groq,
         };
     }
 
@@ -90,7 +71,7 @@ enum AiProvider: string
     {
         return match ($this) {
             self::OpenRouter => 'openrouter',
-            // Custom routes through PrismProvider::Groq (chat-completions),
+            // Custom routes through laravel/ai's Groq gateway (chat-completions),
             // so its api_url override must land in the groq config namespace.
             self::Custom => 'groq',
             default      => $this->value,

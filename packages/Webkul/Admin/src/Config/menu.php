@@ -98,34 +98,40 @@ return [
         'sort'       => 8,
         'icon'       => 'icon-setting',
     ], [
+        'key'        => 'settings.appearance',
+        'name'       => 'admin::app.components.layouts.sidebar.appearance',
+        'route'      => 'admin.settings.appearance.index',
+        'sort'       => 1,
+        'icon'       => '',
+    ], [
         'key'        => 'settings.locales',
         'name'       => 'admin::app.components.layouts.sidebar.locales',
         'route'      => 'admin.settings.locales.index',
-        'sort'       => 1,
+        'sort'       => 2,
         'icon'       => '',
     ], [
         'key'        => 'settings.currencies',
         'name'       => 'admin::app.components.layouts.sidebar.currencies',
         'route'      => 'admin.settings.currencies.index',
-        'sort'       => 2,
+        'sort'       => 3,
         'icon'       => '',
     ], [
         'key'        => 'settings.channels',
         'name'       => 'admin::app.components.layouts.sidebar.channels',
         'route'      => 'admin.settings.channels.index',
-        'sort'       => 5,
+        'sort'       => 6,
         'icon'       => '',
     ], [
         'key'        => 'settings.users',
         'name'       => 'admin::app.components.layouts.sidebar.users',
         'route'      => 'admin.settings.users.index',
-        'sort'       => 6,
+        'sort'       => 7,
         'icon'       => '',
     ], [
         'key'        => 'settings.roles',
         'name'       => 'admin::app.components.layouts.sidebar.roles',
         'route'      => 'admin.settings.roles.index',
-        'sort'       => 7,
+        'sort'       => 8,
         'icon'       => '',
     ],
     /**
@@ -137,5 +143,17 @@ return [
         'route'  => 'admin.configuration.integrations.index',
         'sort'   => 9,
         'icon'   => 'icon-configuration',
+    ],
+
+    /**
+     * Help.
+     */
+    [
+        'key'   => 'help',
+        'name'  => 'admin::app.components.layouts.sidebar.help',
+        'route' => 'admin.help.index',
+        // Sentinel sort to keep Help pinned last, below any module-registered menu (core max is 9).
+        'sort'  => 99999,
+        'icon'  => 'icon-information',
     ],
 ];

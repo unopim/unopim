@@ -53,7 +53,7 @@ test.describe('UnoPim Export Jobs', () => {
     await navigateTo(adminPage, 'exports');
     await adminPage.getByRole('link', { name: 'Create Export' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(`exp-type-${uid}`);
-    await adminPage.locator('#export-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
+    await adminPage.locator('#export-type').locator('.multiselect__single, .multiselect__placeholder').first().click();
     await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
     await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
@@ -76,7 +76,7 @@ test.describe('UnoPim Export Jobs', () => {
     await navigateTo(adminPage, 'exports');
     await adminPage.getByRole('link', { name: 'Create Export' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-    await adminPage.locator('#export-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
+    await adminPage.locator('#export-type').locator('.multiselect__single, .multiselect__placeholder').first().click();
     await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
     await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
     await adminPage.getByRole('button', { name: 'Save Export' }).click();
