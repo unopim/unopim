@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Kategori Alanları',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategori alan kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silmek için kategori alan kodu bulunamadı.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Nitelikler',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Nitelik kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete'             => 'Silinecek nitelik kodu bulunamadı.',
+                    'code_is_system_and_cannot_be_deleted' => 'Sistem niteliği silinemez.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Nitelik Grupları',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Nitelik grup kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete'             => 'Silinecek nitelik grup kodu bulunamadı.',
+                    'code_is_system_and_cannot_be_deleted' => 'Sistem nitelik grubu silinemez.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Nitelik Aileleri',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Nitelik ailesi kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silinecek nitelik ailesi kodu bulunamadı.',
+                    'invalid-attribute-group'  => 'Nitelik grubu ":code" mevcut değil.',
+                    'invalid-attribute'        => 'Nitelik ":code" mevcut değil.',
+                    'invalid-channel'          => 'Kanal ":code" mevcut değil.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Nitelik Seçenekleri',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Nitelik seçenek kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silinecek nitelik seçenek kodu bulunamadı.',
+                    'locale-not-exist'         => 'Yerel ":code" mevcut değil.',
+                    'invalid-attribute'        => 'Nitelik ":code" mevcut değil.',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => 'Diller',
             'validation' => [
@@ -56,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => 'Mga Pera',
+            'filters' => [
                 'status' => 'Durum',
                 'enable' => 'Etkin',
                 'all'    => 'Tümü',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Durum 0 veya 1 olmalıdır (veya varsayılan etkin için boş).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Roller',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => 'Kullanıcılar',
+            'filters' => [
                 'status' => 'Durum',
                 'active' => 'Aktif',
                 'all'    => 'Tümü',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Dosya Yolu',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Durum',
             'enable'         => 'Etkin',
@@ -175,6 +225,21 @@ return [
         'categories' => [
             'title' => 'Kategoriler',
         ],
+        'category-fields' => [
+            'title' => 'Kategori Alanları',
+        ],
+        'attributes' => [
+            'title' => 'Nitelikler',
+        ],
+        'attribute-groups' => [
+            'title' => 'Nitelik Grupları',
+        ],
+        'attribute-families' => [
+            'title' => 'Nitelik Aileleri',
+        ],
+        'attribute-options' => [
+            'title' => 'Nitelik Seçenekleri',
+        ],
         'locales' => [
             'title' => 'Diller',
         ],
@@ -182,16 +247,16 @@ return [
             'title' => 'Kanallar',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Mga Pera',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Roller',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Kullanıcılar',
             'filters' => [
                 'status' => 'Durum',
-                'active' => 'Active',
+                'active' => 'Aktif',
                 'all'    => 'Tümü',
             ],
         ],

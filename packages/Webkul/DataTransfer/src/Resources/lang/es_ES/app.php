@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Campos de categoría',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El código del campo de categoría :code ya está en uso.',
+                    'code_not_found_to_delete' => 'No se encontró el código del campo de categoría para eliminar.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'El código de atributo :code ya está en uso.',
+                    'code_not_found_to_delete'             => 'Código de atributo no encontrado para su eliminación.',
+                    'code_is_system_and_cannot_be_deleted' => 'El atributo del sistema no se puede eliminar.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupos de Atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'El código de grupo de atributos :code ya está en uso.',
+                    'code_not_found_to_delete'             => 'Código de grupo de atributos no encontrado para su eliminación.',
+                    'code_is_system_and_cannot_be_deleted' => 'El grupo de atributos del sistema no se puede eliminar.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Familias de Atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El código de familia de atributos :code ya está en uso.',
+                    'code_not_found_to_delete' => 'Código de familia de atributos no encontrado para su eliminación.',
+                    'invalid-attribute-group'  => 'El grupo de atributos ":code" no existe.',
+                    'invalid-attribute'        => 'El atributo ":code" no existe.',
+                    'invalid-channel'          => 'El canal ":code" no existe.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opciones de Atributo',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El código de opción de atributo :code ya está en uso.',
+                    'code_not_found_to_delete' => 'Código de opción de atributo no encontrado para su eliminación.',
+                    'locale-not-exist'         => 'La configuración regional ":code" no existe.',
+                    'invalid-attribute'        => 'El atributo ":code" no existe.',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => 'Idiomas',
             'validation' => [
@@ -56,18 +108,17 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => 'Monedas',
+            'filters' => [
                 'status' => 'Estado',
                 'enable' => 'Activar',
                 'all'    => 'Todos',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'El estado debe ser 0 o 1 (o vacío para habilitado por defecto).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => 'Usuarios',
+            'filters' => [
                 'status' => 'Estado',
                 'active' => 'Activo',
                 'all'    => 'Todos',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Ruta de archivo',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Estado',
             'enable'         => 'Habilitado',
@@ -157,7 +207,7 @@ return [
                     'disable' => 'Deshabilitado',
                     'all'     => 'Todos',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Sku',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Identificadores',
                 'identifiers-info' => 'Pega un SKU / identificador por línea para exportar solo esos productos. Déjalo vacío para exportar todos los productos.',
@@ -175,7 +225,21 @@ return [
         'categories' => [
             'title' => 'Categorías',
         ],
-
+        'category-fields' => [
+            'title' => 'Campos de categoría',
+        ],
+        'attributes' => [
+            'title' => 'Atributos',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupos de Atributos',
+        ],
+        'attribute-families' => [
+            'title' => 'Familias de Atributos',
+        ],
+        'attribute-options' => [
+            'title' => 'Opciones de Atributo',
+        ],
         'locales' => [
             'title' => 'Idiomas',
         ],
@@ -183,16 +247,16 @@ return [
             'title' => 'Canales',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Monedas',
         ],
         'roles' => [
             'title' => 'Roles',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Usuarios',
             'filters' => [
                 'status' => 'Estado',
-                'active' => 'Active',
+                'active' => 'Activo',
                 'all'    => 'Todos',
             ],
         ],

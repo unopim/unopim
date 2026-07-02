@@ -322,10 +322,24 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             array_keys($this->attributeColumns)
         );
 
+        $requestedFilters = array_keys(request()->input('filters', []));
+
+        $propertyColumnKeys = array_merge(
+            array_keys($this->getPropertyColumns()),
+            ['channel', 'locale', 'all', 'indices']
+        );
+
+        $activeAttributeFilters = array_diff($requestedFilters, $propertyColumnKeys, $existingCodes);
+
+        if (empty($activeAttributeFilters)) {
+            return;
+        }
+
         $filterableAttributes = app(AttributeRepository::class)
             ->where('is_filterable', true)
             ->whereIn('code', $requestedCodes)
             ->whereNotIn('code', $existingCodes)
+            ->whereIn('code', array_values($activeAttributeFilters))
             ->get();
 
         foreach ($filterableAttributes as $attribute) {

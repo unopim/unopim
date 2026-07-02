@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => '分類欄位',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '分類欄位代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '找不到要刪除的分類欄位代碼。',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => '屬性',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '屬性代碼 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要刪除的屬性代碼。',
+                    'code_is_system_and_cannot_be_deleted' => '無法刪除系統屬性。',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => '屬性組',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '屬性組代碼 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要刪除的屬性組代碼。',
+                    'code_is_system_and_cannot_be_deleted' => '無法刪除系統屬性組。',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => '屬性族',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '屬性族代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要刪除的屬性族代碼。',
+                    'invalid-attribute-group'  => '屬性組“:code”不存在。',
+                    'invalid-attribute'        => '屬性“:code”不存在。',
+                    'invalid-channel'          => '渠道“:code”不存在。',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => '屬性選項',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '屬性選項代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要刪除的屬性選項代碼。',
+                    'locale-not-exist'         => '區域設置“:code”不存在。',
+                    'invalid-attribute'        => '屬性“:code”不存在。',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => '語言',
             'validation' => [
@@ -56,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => '貨幣',
+            'filters' => [
                 'status' => '狀態',
                 'enable' => '啟用',
                 'all'    => '全部',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => '狀態必須為 0 或 1（或留空表示預設啟用）。',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => '角色',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => '用戶',
+            'filters' => [
                 'status' => '狀態',
                 'active' => '活躍',
                 'all'    => '全部',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => '文件路徑',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => '狀態',
             'enable'         => '啟用',
@@ -175,6 +225,21 @@ return [
         'categories' => [
             'title' => '分類',
         ],
+        'category-fields' => [
+            'title' => '分類欄位',
+        ],
+        'attributes' => [
+            'title' => '屬性',
+        ],
+        'attribute-groups' => [
+            'title' => '屬性組',
+        ],
+        'attribute-families' => [
+            'title' => '屬性族',
+        ],
+        'attribute-options' => [
+            'title' => '屬性選項',
+        ],
         'locales' => [
             'title' => '語言',
         ],
@@ -182,16 +247,16 @@ return [
             'title' => '渠道',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => '貨幣',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => '角色',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => '用戶',
             'filters' => [
                 'status' => '狀態',
-                'active' => 'Active',
+                'active' => '啟用',
                 'all'    => '全部',
             ],
         ],
