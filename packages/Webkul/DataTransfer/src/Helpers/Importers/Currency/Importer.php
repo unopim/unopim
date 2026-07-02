@@ -66,9 +66,6 @@ class Importer extends AbstractImporter
         parent::__construct($importBatchRepository);
     }
 
-    /**
-     * Initialize Product error templates
-     */
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -78,9 +75,6 @@ class Importer extends AbstractImporter
         parent::initErrorMessages();
     }
 
-    /**
-     * Validate data.
-     */
     public function validateData(): void
     {
         Log::info('Currency Importer Valid Columns:', $this->getValidColumnNames());
@@ -91,9 +85,6 @@ class Importer extends AbstractImporter
         parent::validateData();
     }
 
-    /**
-     * Validates row
-     */
     public function validateRow(array $rowData, int $rowNumber): bool
     {
         if (isset($this->validatedRows[$rowNumber])) {
@@ -133,9 +124,6 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
-    /**
-     * Start the import process
-     */
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -160,9 +148,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Delete currencies from current batch
-     */
     protected function deleteCurrencyData(JobTrackBatchContract $batch): bool
     {
         $codes = Arr::pluck($batch->data, 'code');
@@ -185,9 +170,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Save currency from current batch
-     */
     protected function saveCurrencyData(JobTrackBatchContract $batch): bool
     {
         $this->currencyStorage->load(Arr::pluck($batch->data, 'code'));
@@ -233,9 +215,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Resolve status value
-     */
     protected function resolveStatus(mixed $status): int
     {
         if (is_numeric($status)) {

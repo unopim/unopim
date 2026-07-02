@@ -32,9 +32,6 @@ class Exporter extends AbstractExporter
 
         $this->exportBuffer->write($roles);
 
-        /**
-         * Update export batch process state summary
-         */
         $this->updateBatchState($batch->id, Export::STATE_PROCESSED);
 
         Event::dispatch('data_transfer.exports.batch.export.after', $batch);

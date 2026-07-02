@@ -181,9 +181,6 @@ class Importer extends AbstractImporter
         return $isValidRow;
     }
 
-    /**
-     * Start the import process for a batch
-     */
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -208,9 +205,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Delete category fields from current batch
-     */
     protected function deleteCategoryFieldData(JobTrackBatchContract $batch): bool
     {
         $this->categoryFieldStorage->load(Arr::pluck($batch->data, 'code'));
@@ -237,9 +231,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Save category fields from current batch
-     */
     protected function saveCategoryFieldData(JobTrackBatchContract $batch): bool
     {
         $codes = Arr::pluck($batch->data, 'code');
@@ -256,9 +247,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Prepare category fields data structure from a single row
-     */
     public function prepareCategoryFields(array $rowData, array &$categoryFields): void
     {
         $isExisting = $this->isCategoryFieldExist($rowData['code']);
@@ -304,9 +292,6 @@ class Importer extends AbstractImporter
         }
     }
 
-    /**
-     * Persist category fields to the database
-     */
     public function saveCategoryFields(array $categoryFields): void
     {
         if (! empty($categoryFields['update'])) {
@@ -331,9 +316,6 @@ class Importer extends AbstractImporter
         }
     }
 
-    /**
-     * Check if a category field with the given code exists
-     */
     public function isCategoryFieldExist(string $code): bool
     {
         return $this->categoryFieldStorage->has($code);

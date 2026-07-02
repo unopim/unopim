@@ -88,7 +88,7 @@ class Storage
     /**
      * Is storage empty
      */
-    public function isEmpty(): int
+    public function isEmpty(): bool
     {
         return empty($this->items);
     }

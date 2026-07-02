@@ -61,9 +61,6 @@ class Importer extends AbstractImporter
         self::ERROR_INVALID_ATTRIBUTE         => 'data_transfer::app.importers.attribute-options.validation.errors.invalid-attribute',
     ];
 
-    /**
-     * locales storage
-     */
     protected array $locales = [];
 
     public function __construct(
@@ -78,9 +75,6 @@ class Importer extends AbstractImporter
         $this->initLocales();
     }
 
-    /**
-     * Initialize error templates
-     */
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -90,17 +84,11 @@ class Importer extends AbstractImporter
         parent::initErrorMessages();
     }
 
-    /**
-     * Initialize locales
-     */
     protected function initLocales(): void
     {
         $this->locales = $this->localeRepository->getActiveLocales()->pluck('code')->toArray();
     }
 
-    /**
-     * Validate data before import
-     */
     public function validateData(): void
     {
         $this->attributeOptionStorage->init();
@@ -112,9 +100,6 @@ class Importer extends AbstractImporter
         parent::validateData();
     }
 
-    /**
-     * Validates row
-     */
     public function validateRow(array $rowData, int $rowNumber): bool
     {
         if (isset($this->validatedRows[$rowNumber])) {
@@ -179,9 +164,6 @@ class Importer extends AbstractImporter
         return $isValidRow;
     }
 
-    /**
-     * Start the import process
-     */
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -206,9 +188,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Delete attribute options from current batch
-     */
     protected function deleteAttributeOptionData(JobTrackBatchContract $batch): bool
     {
         $this->attributeOptionStorage->load(Arr::pluck($batch->data, 'code'));
@@ -231,9 +210,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Save attribute options from current batch
-     */
     protected function saveAttributeOptionData(JobTrackBatchContract $batch): bool
     {
         $this->attributeStorage->init();
@@ -252,9 +228,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Prepare attribute options from current batch
-     */
     public function prepareAttributeOptions(array $rowData, array &$attributeOptions): void
     {
         $isAttributeOption = $this->isAttributeOptionExist($rowData['code']);
@@ -294,9 +267,6 @@ class Importer extends AbstractImporter
         }
     }
 
-    /**
-     * Save attribute options from current batch
-     */
     public function saveAttributeOptions(array $attributeOptions): void
     {
         if (! empty($attributeOptions['update'])) {
@@ -321,9 +291,6 @@ class Importer extends AbstractImporter
         }
     }
 
-    /**
-     * Check if attribute option code exists
-     */
     public function isAttributeOptionExist(string $code): bool
     {
         return $this->attributeOptionStorage->has($code);

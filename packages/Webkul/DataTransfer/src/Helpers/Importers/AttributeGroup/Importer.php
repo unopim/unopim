@@ -57,9 +57,6 @@ class Importer extends AbstractImporter
         self::ERROR_CODE_IS_SYSTEM            => 'data_transfer::app.importers.attribute-groups.validation.errors.code_is_system_and_cannot_be_deleted',
     ];
 
-    /**
-     * locales storage
-     */
     protected array $locales = [];
 
     public function __construct(
@@ -73,9 +70,6 @@ class Importer extends AbstractImporter
         $this->initLocales();
     }
 
-    /**
-     * Initialize Attribute Group error templates
-     */
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -85,17 +79,11 @@ class Importer extends AbstractImporter
         parent::initErrorMessages();
     }
 
-    /**
-     * Initialize locales
-     */
     protected function initLocales(): void
     {
         $this->locales = $this->localeRepository->getActiveLocales()->pluck('code')->toArray();
     }
 
-    /**
-     * Validate data before import
-     */
     public function validateData(): void
     {
         $this->attributeGroupStorage->init();
@@ -103,9 +91,6 @@ class Importer extends AbstractImporter
         parent::validateData();
     }
 
-    /**
-     * Validates row
-     */
     public function validateRow(array $rowData, int $rowNumber): bool
     {
         if (isset($this->validatedRows[$rowNumber])) {
@@ -156,9 +141,6 @@ class Importer extends AbstractImporter
         return $isValidRow;
     }
 
-    /**
-     * Start the import process
-     */
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -183,9 +165,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Delete attribute groups from current batch
-     */
     protected function deleteAttributeGroupData(JobTrackBatchContract $batch): bool
     {
         $this->attributeGroupStorage->load(Arr::pluck($batch->data, 'code'));
@@ -208,9 +187,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Save attribute groups from current batch
-     */
     protected function saveAttributeGroupData(JobTrackBatchContract $batch): bool
     {
         $codes = Arr::pluck($batch->data, 'code');
@@ -227,9 +203,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Prepare attribute groups from current batch
-     */
     public function prepareAttributeGroups(array $rowData, array &$attributeGroups): void
     {
         $isAttributeGroup = $this->isAttributeGroupExist($rowData['code']);
@@ -255,9 +228,6 @@ class Importer extends AbstractImporter
         }
     }
 
-    /**
-     * Save attribute groups from current batch
-     */
     public function saveAttributeGroups(array $attributeGroups): void
     {
         if (! empty($attributeGroups['update'])) {
@@ -282,9 +252,6 @@ class Importer extends AbstractImporter
         }
     }
 
-    /**
-     * Check if attribute group code exists
-     */
     public function isAttributeGroupExist(string $code): bool
     {
         return $this->attributeGroupStorage->has($code);

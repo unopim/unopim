@@ -59,12 +59,6 @@ class Importer extends AbstractImporter
      */
     protected string $masterAttributeCode = 'id';
 
-    /*
-     * -------------------------------------------------------------------------
-     * Error message translation keys
-     * -------------------------------------------------------------------------
-     */
-
     protected array $messages = [
         self::ERROR_CODE_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.attribute-families.validation.errors.code_not_found_to_delete',
         self::ERROR_NOT_FOUND_LOCALE          => 'data_transfer::app.importers.products.validation.errors.locale-not-exist',
@@ -73,12 +67,6 @@ class Importer extends AbstractImporter
         self::ERROR_INVALID_CHANNEL           => 'data_transfer::app.importers.attribute-families.validation.errors.invalid-channel',
         self::ERROR_DUPLICATE_CODE            => 'data_transfer::app.importers.attribute-families.validation.errors.duplicate-code',
     ];
-
-    /*
-     * -------------------------------------------------------------------------
-     * Internal caches populated at construction / first use
-     * -------------------------------------------------------------------------
-     */
 
     /** @var string[] Active locale codes */
     protected array $locales = [];
@@ -169,9 +157,6 @@ class Importer extends AbstractImporter
 
         $this->validatedRows[$rowNumber] = true;
 
-        /*
-         * DELETE action — only requires that the code exists in storage.
-         */
         if ($this->import->action === Import::ACTION_DELETE) {
             if (! $this->attributeFamilyStorage->get($rowData['code'] ?? '')) {
                 $this->skipRow($rowNumber, self::ERROR_CODE_NOT_FOUND_FOR_DELETE, 'code');
@@ -181,10 +166,6 @@ class Importer extends AbstractImporter
 
             return true;
         }
-
-        /*
-         * INSERT / UPDATE actions
-         */
 
         if (empty($rowData['locale']) || ! in_array($rowData['locale'], $this->locales)) {
             $this->skipRow(
@@ -504,15 +485,6 @@ class Importer extends AbstractImporter
         }
     }
 
-    /*
-     * -------------------------------------------------------------------------
-     * Public helpers
-     * -------------------------------------------------------------------------
-     */
-
-    /**
-     * Return true when the family code is present in the storage cache
-     */
     public function isAttributeFamilyExist(string $code): bool
     {
         return $this->attributeFamilyStorage->has($code);

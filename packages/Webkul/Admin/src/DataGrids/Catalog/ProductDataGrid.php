@@ -309,16 +309,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->addColumn($this->buildColumnDefinition($attribute));
     }
 
-    /**
-     * Add filterable attributes that are not already in the visible columns
-     * so they appear in the filter panel without being shown in the grid.
-     *
-     * Performance: Loading ALL filterable attributes on every page request causes
-     * a PHP timeout with large attribute sets (1800+). Instead, we only hydrate
-     * the specific attribute columns that are actually being filtered in this
-     * request. On a plain listing page (no attribute filters), this method
-     * returns immediately with zero extra DB queries.
-     */
     protected function addFilterableAttributes(): void
     {
         $requestedCodes = $this->getRequestedFilterAttributeCodes();
