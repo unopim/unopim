@@ -57,6 +57,14 @@ return [
         'has_file_options' => true,
     ],
 
+    'locales' => [
+        'title'            => 'data_transfer::app.importers.locales.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Locale\Importer',
+        'sample_path'      => 'data-transfer/samples/locales.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\LocaleJobValidator',
+        'has_file_options' => true,
+    ],
+
     'channels' => [
         'title'            => 'data_transfer::app.importers.channels.title',
         'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Channel\Importer',
@@ -74,18 +82,18 @@ return [
         'filters'          => [
             'fields' => [
                 [
-                    'name'       => 'status',
-                    'title'      => 'Status',
-                    'required'   => false,
-                    'type'       => 'select',
-                    'options'    => [
+                    'name'     => 'status',
+                    'title'    => 'data_transfer::app.importers.currencies.filters.status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
                         [
                             'value' => 'enable',
-                            'label' => 'Enable',
+                            'label' => 'data_transfer::app.importers.currencies.filters.enable',
                         ],
                         [
                             'value' => 'all',
-                            'label' => 'All',
+                            'label' => 'data_transfer::app.importers.currencies.filters.all',
                         ],
                     ],
                 ],
@@ -110,17 +118,17 @@ return [
         'filters'          => [
             'fields' => [
                 [
-                    'name'       => 'status',
-                    'title'      => 'Status',
-                    'required'   => false,
-                    'type'       => 'select',
-                    'options'    => [
+                    'name'     => 'status',
+                    'title'    => 'data_transfer::app.importers.users.filters.status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
                         [
-                            'label' => 'Active',
+                            'label' => 'data_transfer::app.importers.users.filters.active',
                             'value' => 'active',
                         ],
                         [
-                            'label' => 'All',
+                            'label' => 'data_transfer::app.importers.users.filters.all',
                             'value' => 'all',
                         ],
                     ],

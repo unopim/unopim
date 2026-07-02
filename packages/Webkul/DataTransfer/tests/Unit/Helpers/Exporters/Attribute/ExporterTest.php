@@ -7,8 +7,6 @@ use Webkul\DataTransfer\Helpers\Exporters\Attribute\Exporter;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
-// ─── Shared Helpers ───────────────────────────────────────────────────────────
-
 /**
  * Build a JobTrack mock with the given file format.
  */
@@ -78,8 +76,6 @@ function getProtectedProperty(object $object, string $property): mixed
     return $ref->getValue($object);
 }
 
-// ─── Global beforeEach / afterEach ───────────────────────────────────────────
-
 beforeEach(function () {
     $this->exportBatchRepository = Mockery::mock(JobTrackBatchRepository::class);
     $this->exportFileBuffer = Mockery::mock(FileExportFileBuffer::class);
@@ -94,12 +90,6 @@ beforeEach(function () {
 
 afterEach(fn () => Mockery::close());
 
-// ─── Shared assertion logic ───────────────────────────────────────────────────
-//
-// Defined at file scope so $this doesn't exist here.
-// Fix: accept $exporter explicitly instead of relying on $this.
-//
-
 $sharedPrepareAssertions = function (string $fileFormat, Exporter $exporter): void {
     $exporter->setExport(makeExportTrack($fileFormat));
 
@@ -107,12 +97,10 @@ $sharedPrepareAssertions = function (string $fileFormat, Exporter $exporter): vo
     $batch = makeAttributeExportBatch([attributeRow()]);
     $result = $exporter->prepareAttributes($batch, "dummy/path/attributes.{$fileFormat}");
 
-    // ── Structure ──────────────────────────────────────────────────────────
     expect($result)
         ->toBeArray()
         ->toHaveCount(count($locales));
 
-    // ── en_US row ─────────────────────────────────────────────────────────
     $enRow = collect($result)->firstWhere('locale', 'en_US');
 
     expect($enRow)->not->toBeNull()
@@ -128,7 +116,6 @@ $sharedPrepareAssertions = function (string $fileFormat, Exporter $exporter): vo
         ->and($enRow['is_filterable'])->toBe(1)
         ->and($enRow['productCounts'])->toBe(0);
 
-    // ── fr_FR row (when locale is active) ─────────────────────────────────
     if ($locales->contains('fr_FR')) {
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
 
@@ -136,7 +123,6 @@ $sharedPrepareAssertions = function (string $fileFormat, Exporter $exporter): vo
             ->and($frRow['name'])->toBe('Couleur');
     }
 
-    // ── Required keys present in every row ────────────────────────────────
     foreach ($result as $row) {
         expect($row)->toHaveKeys([
             'code', 'type', 'locale', 'name', 'position',
@@ -147,8 +133,6 @@ $sharedPrepareAssertions = function (string $fileFormat, Exporter $exporter): vo
         ]);
     }
 };
-
-// ─── initilize() ─────────────────────────────────────────────────────────────
 
 describe('initilize', function () {
     it('calls initialize on the file buffer for CSV', function () {
@@ -173,11 +157,8 @@ describe('initilize', function () {
     });
 });
 
-// ─── CSV ─────────────────────────────────────────────────────────────────────
-
 describe('prepareAttributes [CSV]', function () use ($sharedPrepareAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedPrepareAssertions) {
-        // Pass $this->exporter explicitly — $this is valid inside it() closures
         ($sharedPrepareAssertions)('Csv', $this->exporter);
     });
 
@@ -232,7 +213,6 @@ describe('prepareAttributes [CSV]', function () use ($sharedPrepareAssertions) {
         ]);
         $this->exporter->prepareAttributes($batch, 'dummy/path/attributes.csv');
 
-        // Use reflection because $createdItemsCount is protected
         expect(getProtectedProperty($this->exporter, 'createdItemsCount'))->toBe(2);
     });
 
@@ -249,8 +229,6 @@ describe('prepareAttributes [CSV]', function () use ($sharedPrepareAssertions) {
         expect(count($result))->toBe(2 * count($locales));
     });
 });
-
-// ─── XLS ─────────────────────────────────────────────────────────────────────
 
 describe('prepareAttributes [XLS]', function () use ($sharedPrepareAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedPrepareAssertions) {
@@ -325,8 +303,6 @@ describe('prepareAttributes [XLS]', function () use ($sharedPrepareAssertions) {
     });
 });
 
-// ─── XLSX ────────────────────────────────────────────────────────────────────
-
 describe('prepareAttributes [XLSX]', function () use ($sharedPrepareAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedPrepareAssertions) {
         ($sharedPrepareAssertions)('Xlsx', $this->exporter);
@@ -399,8 +375,6 @@ describe('prepareAttributes [XLSX]', function () use ($sharedPrepareAssertions) 
         expect(count($result))->toBe(2 * count($locales));
     });
 });
-
-// ─── Output parity across all formats ────────────────────────────────────────
 
 describe('output parity across formats', function () {
     it('produces identical attribute rows regardless of file format', function () {

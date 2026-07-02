@@ -25,18 +25,15 @@ function makeImporter(array $overrides = []): array
     $localeRepo = $overrides['localeRepo'] ?? mock(LocaleRepository::class);
     $errorHelper = $overrides['errorHelper'] ?? mock(Error::class);
 
-    // Default: one active locale
     $localeRepo->shouldReceive('getActiveLocales')
         ->andReturn(collect([(object) ['code' => 'en']]));
 
     $attributeStorage->shouldReceive('init')->byDefault();
     $attributeStorage->shouldReceive('load')->byDefault();
 
-    // Wire up errorHelper defaults so AbstractImporter never hits null
     $errorHelper->shouldReceive('addErrorMessage')->byDefault();
     $errorHelper->shouldReceive('addError')->byDefault();
     $errorHelper->shouldReceive('addRowToSkip')->byDefault();
-    // Default: row is valid (no errors). Override per-test when you need invalid.
     $errorHelper->shouldReceive('isRowInvalid')->andReturn(false)->byDefault();
 
     $importer = new Importer($batchRepo, $attributeRepo, $attributeStorage, $localeRepo);
@@ -118,7 +115,6 @@ describe('validateRow', function () {
 
         $importer->setImport(makeImport(Import::ACTION_APPEND));
 
-        // After skipRow is called the row will be marked invalid
         $errorHelper->shouldReceive('isRowInvalid')->with(1)->andReturn(true);
 
         $result = $importer->validateRow(['code' => 'size', 'locale' => ''], 1);
@@ -190,8 +186,6 @@ describe('validateRow', function () {
 
         $storage->shouldReceive('has')->with('brand')->andReturn(false);
 
-        // Default isRowInvalid → false, so no override needed
-
         $result = $importer->validateRow(
             ['code' => 'brand', 'locale' => 'en', 'type' => 'text'],
             1,
@@ -205,7 +199,6 @@ describe('validateRow', function () {
 
         $importer->setImport(makeImport(Import::ACTION_APPEND));
 
-        // Attribute already exists → update path; type is optional
         $storage->shouldReceive('has')->with('color')->andReturn(true);
 
         $result = $importer->validateRow(
@@ -223,15 +216,12 @@ describe('validateRow', function () {
 
         $storage->shouldReceive('has')->with('brand')->andReturn(false)->once();
 
-        // First call validates; second call must return the cached result
         $importer->validateRow(['code' => 'brand', 'locale' => 'en', 'type' => 'text'], 1);
         $result = $importer->validateRow(['code' => 'brand', 'locale' => 'en', 'type' => 'text'], 1);
 
         expect($result)->toBeTrue();
     });
 });
-
-// ─── prepareAttributes ────────────────────────────────────────────────────────
 
 describe('prepareAttributes', function () {
 
@@ -362,8 +352,6 @@ describe('prepareAttributes', function () {
     });
 });
 
-// ─── saveAttributes ───────────────────────────────────────────────────────────
-
 describe('saveAttributes', function () {
 
     it('calls attributeRepository->create for each insert entry', function () {
@@ -440,8 +428,6 @@ describe('saveAttributes', function () {
     });
 });
 
-// ─── importBatch ─────────────────────────────────────────────────────────────
-
 describe('importBatch', function () {
 
     it('fires before and after events and marks batch as processed', function () {
@@ -513,7 +499,6 @@ describe('importBatch', function () {
         $storage->shouldReceive('has')->with('sku')->andReturn(true);
         $storage->shouldReceive('get')->with('sku')->andReturn(1);
 
-        // deleteWhere must be called with an empty list — sku is a protected system attribute
         $repo->shouldReceive('deleteWhere')
             ->once()
             ->with([['id', 'IN', []]]);
@@ -522,13 +507,10 @@ describe('importBatch', function () {
 
         $result = $importer->importBatch($batch);
 
-        // Batch returns true but the deleted count stays at zero
         expect($result)->toBeTrue()
             ->and($importer->getDeletedItemsCount())->toBe(0);
     });
 });
-
-// ─── isAttributeExist ────────────────────────────────────────────────────────
 
 describe('isAttributeExist', function () {
 

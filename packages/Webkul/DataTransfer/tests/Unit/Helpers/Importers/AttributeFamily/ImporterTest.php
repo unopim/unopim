@@ -37,11 +37,9 @@ function makeImporter(array $overrides = []): array
     $localeRepo = $overrides['localeRepo'] ?? mock(LocaleRepository::class);
     $errorHelper = $overrides['errorHelper'] ?? mock(Error::class);
 
-    // Locales
     $localeRepo->shouldReceive('getActiveLocales')
         ->andReturn(collect([(object) ['code' => 'en']]));
 
-    // Cache mocks
     $groupRepo->shouldReceive('query->select->get->pluck->toArray')
         ->andReturn(['general' => 1]);
 
@@ -51,12 +49,10 @@ function makeImporter(array $overrides = []): array
     $channelRepo->shouldReceive('all->pluck->toArray')
         ->andReturn(['ecommerce' => 5]);
 
-    // Storage defaults
     $storage->shouldReceive('init')->byDefault();
     $storage->shouldReceive('load')->byDefault();
     $storage->shouldReceive('has')->byDefault()->andReturn(false);
 
-    // Error helper
     $errorHelper->shouldReceive('addErrorMessage')->byDefault();
     $errorHelper->shouldReceive('addError')->byDefault();
     $errorHelper->shouldReceive('addRowToSkip')->byDefault();

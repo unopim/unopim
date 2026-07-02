@@ -84,6 +84,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Locales',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Locale code \'%s\' has already been imported in this batch.',
+                    'code-not-found-to-delete'    => 'Locale with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete locale with code :code that is associated with a channel.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Channels',
             'validation' => [
@@ -97,7 +108,12 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Currencies',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Enable',
+                'all'    => 'All',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -117,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -128,8 +149,69 @@ return [
         ],
     ],
     'exporters' => [
+        'export-too-large' => 'This export is too large to run: an estimated :rows rows × :columns columns (~:estimated) exceeds the available space (~:available). Narrow the export by selecting fewer channels/locales (and attributes) and try again.',
+        'fields'           => [
+            'file-format'         => 'File Format',
+            'with-media'          => 'With Media',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Status',
+            'enable'         => 'Enable',
+            'all'            => 'All',
+        ],
         'products' => [
-            'title'      => 'Products',
+            'title'              => 'Products',
+            'invalid-locales'    => 'The selected locales are not all available for the selected channels.',
+            'invalid-currencies' => 'The selected currencies are not all available for the selected channels.',
+            'filters'            => [
+                'channels'             => 'Channels',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Currencies',
+                'currencies-info'      => 'Price attributes are exported per selected currency. Leave empty to export every channel currency.',
+                'locales'              => 'Locales',
+                'locales-info'         => 'Localizable attributes are exported once per selected locale. Leave empty to export every channel locale.',
+                'attributes'           => 'Attributes',
+                'attributes-info'      => 'Only the selected attributes are exported. Leave empty to export every attribute in the family.',
+                'attribute-families'   => 'Attribute Families',
+                'categories'           => 'Categories',
+                'completeness'         => 'Completeness',
+                'completeness-options' => [
+                    'none'         => 'No condition on completeness',
+                    'at-least-one' => 'Complete on at least one selected locale',
+                    'all'          => 'Complete on all selected locales',
+                ],
+                'time-condition' => 'Time Condition',
+                'time-options'   => [
+                    'none'              => 'No date condition',
+                    'last-n-days'       => 'Updated products over the last N days',
+                    'between-dates'     => 'Updated products between two dates',
+                    'since-last-export' => 'Updated products since last export',
+                ],
+                'time-value'     => 'Number of days',
+                'time-date'      => 'Start date',
+                'time-date-end'  => 'End date',
+                'status'         => 'Status',
+                'status-options' => [
+                    'enable'  => 'Enable',
+                    'disable' => 'Disable',
+                    'all'     => 'All',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma or space separated SKUs to export, e.g. SKU001, SKU002 SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Identifiers',
+                'identifiers-info' => 'Paste one SKU / identifier per line to export only those products. Leave empty to export every product.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL key: \'%s\' has already been generated for an item with the SKU: \'%s\'.',
@@ -158,7 +240,9 @@ return [
         'attribute-options' => [
             'title' => 'Attribute Options',
         ],
-
+        'locales' => [
+            'title' => 'Locales',
+        ],
         'channels' => [
             'title' => 'Channels',
         ],

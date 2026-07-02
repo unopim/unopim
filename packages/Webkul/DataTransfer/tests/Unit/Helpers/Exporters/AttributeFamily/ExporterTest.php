@@ -7,8 +7,6 @@ use Webkul\DataTransfer\Helpers\Exporters\AttributeFamily\Exporter;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
-// ─── Shared Helpers ───────────────────────────────────────────────────────────
-
 /**
  * Build a JobTrack mock with the given file format.
  */
@@ -65,8 +63,6 @@ function getFamilyProtectedProperty(object $object, string $property): mixed
     return $ref->getValue($object);
 }
 
-// ─── Global beforeEach / afterEach ───────────────────────────────────────────
-
 beforeEach(function () {
     $this->exportBatchRepository = Mockery::mock(JobTrackBatchRepository::class);
     $this->exportFileBuffer = Mockery::mock(FileExportFileBuffer::class);
@@ -81,12 +77,6 @@ beforeEach(function () {
 
 afterEach(fn () => Mockery::close());
 
-// ─── Shared assertion logic ───────────────────────────────────────────────────
-//
-// Accepts $exporter explicitly to avoid "Using $this when not in object context"
-// which happens when closures are defined at file scope.
-//
-
 $sharedFamilyAssertions = function (string $fileFormat, Exporter $exporter): void {
     $exporter->setExport(makeFamilyExportTrack($fileFormat));
 
@@ -94,12 +84,10 @@ $sharedFamilyAssertions = function (string $fileFormat, Exporter $exporter): voi
     $batch = makeFamilyBatch([familyRow()]);
     $result = $exporter->prepareAttributeFamilies($batch, "dummy/path/attribute-families.{$fileFormat}");
 
-    // ── Structure ──────────────────────────────────────────────────────────
     expect($result)
         ->toBeArray()
         ->toHaveCount(count($locales));
 
-    // ── en_US row ─────────────────────────────────────────────────────────
     $enRow = collect($result)->firstWhere('locale', 'en_US');
 
     expect($enRow)->not->toBeNull()
@@ -107,7 +95,6 @@ $sharedFamilyAssertions = function (string $fileFormat, Exporter $exporter): voi
         ->and($enRow['name'])->toBe('Default')
         ->and($enRow['locale'])->toBe('en_US');
 
-    // ── fr_FR row (when locale is active) ─────────────────────────────────
     if ($locales->contains('fr_FR')) {
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
 
@@ -115,13 +102,10 @@ $sharedFamilyAssertions = function (string $fileFormat, Exporter $exporter): voi
             ->and($frRow['name'])->toBe('Défaut');
     }
 
-    // ── Required keys present in every row ────────────────────────────────
     foreach ($result as $row) {
         expect($row)->toHaveKeys(['code', 'locale', 'name']);
     }
 };
-
-// ─── initilize() ─────────────────────────────────────────────────────────────
 
 describe('initilize', function () {
     it('calls initialize on the file buffer for CSV', function () {
@@ -145,8 +129,6 @@ describe('initilize', function () {
         $this->exporter->initilize();
     });
 });
-
-// ─── CSV ─────────────────────────────────────────────────────────────────────
 
 describe('prepareAttributeFamilies [CSV]', function () use ($sharedFamilyAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedFamilyAssertions) {
@@ -179,7 +161,6 @@ describe('prepareAttributeFamilies [CSV]', function () use ($sharedFamilyAsserti
         $batch = makeFamilyBatch([familyRow([
             'translations' => [
                 ['locale' => 'en_US', 'name' => 'Default'],
-                // fr_FR intentionally missing
             ],
         ])]);
         $result = $this->exporter->prepareAttributeFamilies($batch, 'dummy/path/attribute-families.csv');
@@ -218,8 +199,6 @@ describe('prepareAttributeFamilies [CSV]', function () use ($sharedFamilyAsserti
         expect(count($result))->toBe(2 * count($locales));
     });
 });
-
-// ─── XLS ─────────────────────────────────────────────────────────────────────
 
 describe('prepareAttributeFamilies [XLS]', function () use ($sharedFamilyAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedFamilyAssertions) {
@@ -291,8 +270,6 @@ describe('prepareAttributeFamilies [XLS]', function () use ($sharedFamilyAsserti
     });
 });
 
-// ─── XLSX ────────────────────────────────────────────────────────────────────
-
 describe('prepareAttributeFamilies [XLSX]', function () use ($sharedFamilyAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedFamilyAssertions) {
         ($sharedFamilyAssertions)('Xlsx', $this->exporter);
@@ -362,8 +339,6 @@ describe('prepareAttributeFamilies [XLSX]', function () use ($sharedFamilyAssert
         expect(count($result))->toBe(2 * count($locales));
     });
 });
-
-// ─── Output parity across all formats ────────────────────────────────────────
 
 describe('output parity across formats', function () {
     it('produces identical family rows regardless of file format', function () {

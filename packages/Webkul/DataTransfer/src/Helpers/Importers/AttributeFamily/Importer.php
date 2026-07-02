@@ -163,7 +163,6 @@ class Importer extends AbstractImporter
 
     public function validateRow(array $rowData, int $rowNumber): bool
     {
-        // Return cached result for rows already examined in this batch
         if (isset($this->validatedRows[$rowNumber])) {
             return ! $this->errorHelper->isRowInvalid($rowNumber);
         }
@@ -187,7 +186,6 @@ class Importer extends AbstractImporter
          * INSERT / UPDATE actions
          */
 
-        // Locale must be supplied and must be active
         if (empty($rowData['locale']) || ! in_array($rowData['locale'], $this->locales)) {
             $this->skipRow(
                 $rowNumber,
@@ -202,7 +200,6 @@ class Importer extends AbstractImporter
         $isUpdate = $this->attributeFamilyStorage->has($rowData['code'] ?? '')
             || in_array($rowData['code'] ?? '', $this->familyCodesInBatch);
 
-        // Core field validation (code required; unique check for new families)
         $validator = Validator::make($rowData, [
             'code' => [
                 'required',
@@ -230,7 +227,6 @@ class Importer extends AbstractImporter
             );
         }
 
-        // Validate attribute code when provided
         if (! empty($rowData['attributes'])
             && ! isset($this->attributeCache[$rowData['attributes']])
         ) {
@@ -242,7 +238,6 @@ class Importer extends AbstractImporter
             );
         }
 
-        // Validate completeness channel codes when provided
         if (! empty($rowData['completeness'])) {
             foreach (explode(',', $rowData['completeness']) as $channelCode) {
                 $channelCode = trim($channelCode);
@@ -266,8 +261,6 @@ class Importer extends AbstractImporter
         $isValidRow = ! $this->errorHelper->isRowInvalid($rowNumber);
 
         if ($isValidRow && ! $isUpdate) {
-            // Track the code so subsequent rows for the same family in this
-            // batch are treated as updates rather than new inserts
             $this->familyCodesInBatch[] = $rowData['code'];
         }
 
@@ -395,9 +388,6 @@ class Importer extends AbstractImporter
 
     public function saveAttributeFamilies(array $families): void
     {
-        /*
-         * Inserts
-         */
         if (! empty($families['insert'])) {
             $this->createdItemsCount += count($families['insert']);
 
@@ -426,35 +416,14 @@ class Importer extends AbstractImporter
         }
     }
 
-    /*
-     * -------------------------------------------------------------------------
-     * Repository payload builder
-     * -------------------------------------------------------------------------
-     */
-
-    /**
-     * Convert the internal $familyData structure into the shape expected by
-     * AttributeFamilyRepository::create() or ::update().
-     *
-     * create() expects:
-     *   attribute_groups[$groupId]['position']         = int
-     *   attribute_groups[$groupId]['custom_attributes'] = [['id' => int], ...]
-     *
-     * update() additionally needs:
-     *   attribute_groups[$groupId]['attribute_groups_mapping'] = ''
-     *   (empty string → the repository treats it as a new mapping and removes
-     *    the old ones at the end of its loop)
-     */
     protected function buildRepositoryPayload(array $familyData, bool $forUpdate = false): array
     {
         $payload = ['code' => $familyData['code']];
 
-        // Translatable name fields — one key per locale (e.g. 'en' => 'Default')
         foreach ($familyData['translations'] as $locale => $name) {
             $payload[$locale] = ['name' => $name];
         }
 
-        // Attribute group structure
         $groupPosition = 1;
 
         foreach ($familyData['attribute_groups'] as $groupCode => $groupData) {
@@ -486,8 +455,6 @@ class Importer extends AbstractImporter
             ];
 
             if ($forUpdate) {
-                // Empty string signals the repository to create a new mapping
-                // and discard the previous one for this family
                 $groupEntry['attribute_groups_mapping'] = '';
             }
 
@@ -497,24 +464,8 @@ class Importer extends AbstractImporter
         return $payload;
     }
 
-    /*
-     * -------------------------------------------------------------------------
-     * Completeness settings sync
-     * -------------------------------------------------------------------------
-     */
-
-    /**
-     * Synchronise the completeness_settings table for the given family.
-     *
-     * For each (attribute, channel) pair declared in the CSV the method
-     * ensures a row exists in completeness_settings.  Rows that are no longer
-     * referenced by the import are removed.
-     *
-     * @param  array<string, array{completeness: array}>  $attributeGroups
-     */
     protected function syncCompletenessSettings(int $familyId, array $attributeGroups): void
     {
-        // Collect all (attribute_id, channel_id) pairs from this import
         $incoming = [];
 
         foreach ($attributeGroups as $groupData) {
@@ -541,13 +492,11 @@ class Importer extends AbstractImporter
             }
         }
 
-        // Remove all existing completeness rows for this family and re-insert
         DB::table('completeness_settings')
             ->where('family_id', $familyId)
             ->delete();
 
         if (! empty($incoming)) {
-            // Deduplicate before inserting
             $unique = array_unique(array_map('serialize', $incoming));
             $rows = array_map('unserialize', $unique);
 

@@ -140,7 +140,6 @@ class Importer extends AbstractImporter
                 return false;
             }
 
-            // Protect the built-in 'name' field from deletion
             if ($rowData['code'] === CategoryField::NON_DELETABLE_FIELD_CODE) {
                 $this->skipRow($rowNumber, self::ERROR_DUPLICATE_CODE, $rowData['code']);
 

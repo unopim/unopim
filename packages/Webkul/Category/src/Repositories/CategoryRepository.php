@@ -18,6 +18,10 @@ class CategoryRepository extends Repository
 
     const COMMON_VALUES_KEY = 'common';
 
+    const DEFAULT_PAGE = 1;
+
+    const DEFAULT_PER_PAGE = 100;
+
     public function __construct(Container $app, protected FileStorer $fileStorer)
     {
         parent::__construct($app);
@@ -199,6 +203,31 @@ class CategoryRepository extends Repository
         }
 
         return $query->get()->toTree();
+    }
+
+    public function getChildCategoriesPaginated(int $parentId, int $categoryId = 0, int $page = self::DEFAULT_PAGE, int $limit = self::DEFAULT_PER_PAGE): array
+    {
+        $page = max($page, self::DEFAULT_PAGE);
+        $limit = max($limit, 1);
+
+        $query = $this->getModel()->where('parent_id', $parentId);
+
+        if ($categoryId) {
+            $query->where('id', '!=', $categoryId);
+        }
+
+        $total = (clone $query)->count();
+
+        $children = $query->defaultOrder()
+            ->forPage($page, $limit)
+            ->get();
+
+        return [
+            'data'     => $children->toArray(),
+            'page'     => $page,
+            'has_more' => ($page * $limit) < $total,
+            'total'    => $total,
+        ];
     }
 
     /**

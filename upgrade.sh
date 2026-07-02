@@ -2,6 +2,11 @@
 
 set -e
 
+# Read a single value from .env (first match, key anchored, quotes stripped)
+env_val() {
+  grep -E "^$1=" .env | head -n 1 | cut -d '=' -f 2- | tr -d '\r' | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//"
+}
+
 # Function to create project backup
 backup_project() {
   BACKUP_FILE=$1
@@ -18,35 +23,58 @@ backup_project() {
     echo "⚠️ Failed to create database dump."
   fi
 
-  zip -rq $BACKUP_FILE . -x "./vendor/*" "./node_modules/*" "./storage/*" "./backups/*"
+  # Keep user data (storage/app uploads, media) in the backup; exclude
+  # dependencies, regenerable framework caches, logs and debugbar output.
+  zip -rq $BACKUP_FILE . \
+    -x "./vendor/*" \
+    -x "./node_modules/*" \
+    -x "./backups/*" \
+    -x "./storage/framework/cache/*" \
+    -x "./storage/framework/sessions/*" \
+    -x "./storage/framework/testing/*" \
+    -x "./storage/framework/views/*" \
+    -x "./storage/debugbar/*" \
+    -x "./storage/logs/*"
 
-  zip -urq $BACKUP_FILE "./storage/app/public/data-transfer/samples/" "storage/app/private/.gitignore" "storage/fonts/.gitignore" "storage/debugbar/.gitignore" "storage/framework/cache/.gitignore" "storage/framework/sessions/.gitignore" "storage/framework/testing/.gitignore" "storage/framework/views/.gitignore" "storage/logs/.gitignore"
+  zip -urq $BACKUP_FILE "storage/framework/cache/.gitignore" "storage/framework/sessions/.gitignore" "storage/framework/testing/.gitignore" "storage/framework/views/.gitignore" "storage/debugbar/.gitignore" "storage/logs/.gitignore"
 
-  rm $DB_DUMP_FILE
+  rm -f "$DB_DUMP_FILE"
 }
 
-# Function to create database dump
+# Function to create database dump (supports MySQL and PostgreSQL)
 create_database_dump() {
-  DB_HOST=$(grep -E 'DB_HOST' .env | cut -d '=' -f 2 | tr -d '[:space:]')
-  DB_PORT=$(grep -E 'DB_PORT' .env | cut -d '=' -f 2 | tr -d '[:space:]')
-  DB_NAME=$(grep -E 'DB_DATABASE' .env | cut -d '=' -f 2 | tr -d '[:space:]')
-  DB_USER=$(grep -E 'DB_USERNAME' .env | cut -d '=' -f 2 | tr -d '[:space:]')
-  DB_PASS=$(grep -E 'DB_PASSWORD' .env | cut -d '=' -f 2 | tr -d '[:space:]')
+  DB_CONNECTION=$(env_val DB_CONNECTION)
+  DB_HOST=$(env_val DB_HOST)
+  DB_PORT=$(env_val DB_PORT)
+  DB_NAME=$(env_val DB_DATABASE)
+  DB_USER=$(env_val DB_USERNAME)
+  DB_PASS=$(env_val DB_PASSWORD)
 
   if [[ -z "$DB_NAME" || -z "$DB_USER" ]]; then
     return 1
   fi
 
-  mysqldump -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" > "$1"
-  return $?
+  case "$DB_CONNECTION" in
+    pgsql)
+      PGPASSWORD="$DB_PASS" pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" "$DB_NAME" > "$1"
+      ;;
+    mysql|"")
+      MYSQL_PWD="$DB_PASS" mysqldump -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" "$DB_NAME" > "$1"
+      ;;
+    *)
+      echo "⚠️ Unsupported DB_CONNECTION: $DB_CONNECTION"
+      return 1
+      ;;
+  esac
 }
 
-# Function to copy folders
+# Function to copy folders (including dotfiles like .env.example, .gitignore)
 copy_folder() {
   SRC=$1
   DST=$2
   mkdir -p "$DST"
 
+  shopt -s dotglob
   for ITEM in "$SRC"/*; do
     NAME=$(basename "$ITEM")
     case "$NAME" in
@@ -54,6 +82,7 @@ copy_folder() {
     esac
     cp -a "$ITEM" "$DST/"
   done
+  shopt -u dotglob
 }
 
 # Configuration
@@ -62,7 +91,6 @@ GITHUB_REPO="unopim"
 BACKUP_DIR="./backups"
 ROOT_PATH="$(pwd)"
 CURRENT_VERSION=$(php artisan unopim:version)
-UPGRADE_TO_VERSION="v0.3.0"
 echo -e "\n🔧 Starting Unopim upgrade script...\n"
 
 # 1. Get current version

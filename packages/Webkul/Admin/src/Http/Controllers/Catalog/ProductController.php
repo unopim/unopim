@@ -14,6 +14,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Admin\Http\Requests\ProductForm;
+use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -25,6 +26,8 @@ use Webkul\Product\Validator\ProductValuesValidator;
 
 class ProductController extends Controller
 {
+    use AttributeColumnTrait;
+
     /*
     * Using const variable for status
     */
@@ -358,6 +361,42 @@ class ProductController extends Controller
         $products->setCollection(collect($results));
 
         return response()->json($products);
+    }
+
+    public function filterableAttributes(): JsonResponse
+    {
+        $query = $this->attributeRepository->getModel()->newQuery()
+            ->where('is_filterable', true)
+            ->with('translations');
+
+        $search = trim((string) request('query', ''));
+
+        if ($search !== '') {
+            $query->where(function ($builder) use ($search) {
+                $builder->whereTranslationLike('name', '%'.$search.'%')
+                    ->orWhere('code', 'LIKE', '%'.$search.'%');
+            });
+        }
+
+        $page = max(1, (int) request('page', 1));
+
+        $paginator = $query->orderBy('id')->paginate(20, ['*'], 'page', $page);
+
+        $options = $paginator->getCollection()->map(function ($attribute) {
+            $column = $this->buildColumnDefinition($attribute);
+
+            unset($column['closure']);
+
+            $column['visible'] = false;
+
+            return $column;
+        })->values();
+
+        return new JsonResponse([
+            'options'  => $options,
+            'page'     => $paginator->currentPage(),
+            'lastPage' => $paginator->lastPage(),
+        ]);
     }
 
     /**

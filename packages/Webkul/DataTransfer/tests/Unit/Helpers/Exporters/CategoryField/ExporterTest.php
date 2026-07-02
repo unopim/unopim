@@ -7,8 +7,6 @@ use Webkul\DataTransfer\Helpers\Exporters\CategoryField\Exporter;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
-// ─── Shared Helpers ───────────────────────────────────────────────────────────
-
 /**
  * Build a JobTrack mock with the given file format.
  */
@@ -75,8 +73,6 @@ function getCategoryFieldProtectedProperty(object $object, string $property): mi
     return $ref->getValue($object);
 }
 
-// ─── Global beforeEach / afterEach ───────────────────────────────────────────
-
 beforeEach(function () {
     $this->exportBatchRepository = Mockery::mock(JobTrackBatchRepository::class);
     $this->exportFileBuffer = Mockery::mock(FileExportFileBuffer::class);
@@ -91,8 +87,6 @@ beforeEach(function () {
 
 afterEach(fn () => Mockery::close());
 
-// ─── Shared assertion logic ───────────────────────────────────────────────────
-
 $sharedCategoryFieldAssertions = function (string $fileFormat, Exporter $exporter): void {
     $exporter->setExport(makeCategoryFieldExportTrack($fileFormat));
 
@@ -100,12 +94,10 @@ $sharedCategoryFieldAssertions = function (string $fileFormat, Exporter $exporte
     $batch = makeCategoryFieldBatch([categoryFieldRow()]);
     $result = $exporter->prepareCategoryFields($batch, "dummy/path/category-fields.{$fileFormat}");
 
-    // ── Structure ──────────────────────────────────────────────────────────
     expect($result)
         ->toBeArray()
         ->toHaveCount(count($locales));
 
-    // ── en_US row ─────────────────────────────────────────────────────────
     $enRow = collect($result)->firstWhere('locale', 'en_US');
 
     expect($enRow)->not->toBeNull()
@@ -121,7 +113,6 @@ $sharedCategoryFieldAssertions = function (string $fileFormat, Exporter $exporte
         ->and($enRow['validation'])->toBeNull()
         ->and($enRow['value_per_locale'])->toBe(1);
 
-    // ── fr_FR row (when locale is active) ─────────────────────────────────
     if ($locales->contains('fr_FR')) {
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
 
@@ -129,7 +120,6 @@ $sharedCategoryFieldAssertions = function (string $fileFormat, Exporter $exporte
             ->and($frRow['name'])->toBe('Description FR');
     }
 
-    // ── Required keys present in every row ────────────────────────────────
     foreach ($result as $row) {
         expect($row)->toHaveKeys([
             'code', 'type', 'locale', 'name', 'enable_wysiwyg',
@@ -139,8 +129,6 @@ $sharedCategoryFieldAssertions = function (string $fileFormat, Exporter $exporte
         ]);
     }
 };
-
-// ─── initilize() ─────────────────────────────────────────────────────────────
 
 describe('initilize', function () {
     it('calls initialize on the file buffer for CSV', function () {
@@ -164,8 +152,6 @@ describe('initilize', function () {
         $this->exporter->initilize();
     });
 });
-
-// ─── CSV ─────────────────────────────────────────────────────────────────────
 
 describe('prepareCategoryFields [CSV]', function () use ($sharedCategoryFieldAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedCategoryFieldAssertions) {
@@ -240,8 +226,6 @@ describe('prepareCategoryFields [CSV]', function () use ($sharedCategoryFieldAss
     });
 });
 
-// ─── XLS ─────────────────────────────────────────────────────────────────────
-
 describe('prepareCategoryFields [XLS]', function () use ($sharedCategoryFieldAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedCategoryFieldAssertions) {
         ($sharedCategoryFieldAssertions)('Xls', $this->exporter);
@@ -315,8 +299,6 @@ describe('prepareCategoryFields [XLS]', function () use ($sharedCategoryFieldAss
     });
 });
 
-// ─── XLSX ────────────────────────────────────────────────────────────────────
-
 describe('prepareCategoryFields [XLSX]', function () use ($sharedCategoryFieldAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedCategoryFieldAssertions) {
         ($sharedCategoryFieldAssertions)('Xlsx', $this->exporter);
@@ -389,8 +371,6 @@ describe('prepareCategoryFields [XLSX]', function () use ($sharedCategoryFieldAs
         expect(count($result))->toBe(2 * count($locales));
     });
 });
-
-// ─── Output parity across all formats ────────────────────────────────────────
 
 describe('output parity across formats', function () {
     it('produces identical category field rows regardless of file format', function () {

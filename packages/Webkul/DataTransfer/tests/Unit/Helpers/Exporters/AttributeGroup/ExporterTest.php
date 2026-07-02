@@ -163,7 +163,6 @@ describe('prepareAttributeGroups [CSV]', function () use ($sharedGroupAssertions
         $batch = makeGroupBatch([groupRow([
             'translations' => [
                 ['locale' => 'en_US', 'name' => 'General'],
-                // fr_FR intentionally missing
             ],
         ])]);
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.csv');

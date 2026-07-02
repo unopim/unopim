@@ -287,7 +287,6 @@ class Importer extends AbstractImporter
 
         foreach ($fields as $field) {
             if (isset($rowData[$field]) && $rowData[$field] !== '') {
-                // boolean casting for typical DB structure
                 if (in_array($field, ['enable_wysiwyg', 'is_required', 'is_unique', 'value_per_locale', 'value_per_channel', 'is_filterable', 'ai_translate'])) {
                     $data[$field] = (int) (bool) $rowData[$field];
                 } elseif ($field === 'position') {
@@ -325,7 +324,6 @@ class Importer extends AbstractImporter
             foreach ($attributes['update'] as $code => $attributeData) {
                 $attributeId = $this->attributeStorage->get($code);
 
-                // Fetch the existing model to update translations properly through the repository
                 $this->attributeRepository->update($attributeData, $attributeId);
             }
         }

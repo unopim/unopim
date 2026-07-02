@@ -228,7 +228,7 @@ class ExportController extends Controller
     public function exportView(int $id): View
     {
         if (! bouncer()->hasPermission('data_transfer.export')) {
-            abort(403, 'This action is unauthorized');
+            abort(403, trans('admin::app.common.unauthorized'));
         }
 
         $export = $jobInstance = $this->jobInstancesRepository->findOrFail($id);

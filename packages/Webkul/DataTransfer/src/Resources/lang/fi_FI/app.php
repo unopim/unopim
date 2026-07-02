@@ -32,7 +32,6 @@ return [
                 ],
             ],
         ],
-
         'category-fields' => [
             'title'      => 'Kategoriakentät',
             'validation' => [
@@ -85,6 +84,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Kielet',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kielikoodi \'%s\' on jo tuotu tässä erässä.',
+                    'code-not-found-to-delete'    => 'Kieltä koodilla \'%s\' ei löytynyt järjestelmästä.',
+                    'invalid-status'              => 'Tilan tulee olla 0 tai 1 (tai tyhjä oletuksena käytössä).',
+                    'channel-related-locale-root' => 'Et voi poistaa kieltä koodilla :code, koska se on liitetty kanavaan.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanavat',
             'validation' => [
@@ -98,7 +108,12 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Currencies',
+            'filters' => [
+                'status' => 'Tila',
+                'enable' => 'Käytössä',
+                'all'    => 'Kaikki',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -118,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Tila',
+                'active' => 'Aktiivinen',
+                'all'    => 'Kaikki',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -129,8 +149,69 @@ return [
         ],
     ],
     'exporters' => [
+        'export-too-large' => 'Tämä vienti on liian suuri suoritettavaksi: arvioidut :rows riviä × :columns saraketta (~:estimated) ylittävät käytettävissä olevan tilan (~:available). Rajaa vientiä valitsemalla vähemmän kanavia/kieliä (ja attribuutteja) ja yritä uudelleen.',
+        'fields'           => [
+            'file-format'         => 'Tiedostomuoto',
+            'with-media'          => 'Median kanssa',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Tila',
+            'enable'         => 'Käytössä',
+            'all'            => 'Kaikki',
+        ],
         'products' => [
-            'title'      => 'Tuotteet',
+            'title'              => 'Tuotteet',
+            'invalid-locales'    => 'Kaikki valitut kielet eivät ole käytettävissä valituilla kanavilla.',
+            'invalid-currencies' => 'Kaikki valitut valuutat eivät ole käytettävissä valituilla kanavilla.',
+            'filters'            => [
+                'channels'             => 'Kanavat',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Valuutat',
+                'currencies-info'      => 'Hinta-attribuutit viedään kullekin valitulle valuutalle. Jätä tyhjäksi viedäksesi kaikki kanavan valuutat.',
+                'locales'              => 'Kielet',
+                'locales-info'         => 'Lokalisoitavat attribuutit viedään kerran kutakin valittua kieltä kohden. Jätä tyhjäksi viedäksesi kaikki kanavan kielet.',
+                'attributes'           => 'Attribuutit',
+                'attributes-info'      => 'Vain valitut attribuutit viedään. Jätä tyhjäksi viedäksesi perheen kaikki attribuutit.',
+                'attribute-families'   => 'Attribuuttiperheet',
+                'categories'           => 'Kategoriat',
+                'completeness'         => 'Täydellisyys',
+                'completeness-options' => [
+                    'none'         => 'Ei täydellisyysehtoa',
+                    'at-least-one' => 'Täydellinen vähintään yhdessä valitussa kielessä',
+                    'all'          => 'Täydellinen kaikissa valituissa kielissä',
+                ],
+                'time-condition' => 'Aikaehto',
+                'time-options'   => [
+                    'none'              => 'Ei päivämääräehtoa',
+                    'last-n-days'       => 'Viimeisten N päivän aikana päivitetyt tuotteet',
+                    'between-dates'     => 'Kahden päivämäärän välillä päivitetyt tuotteet',
+                    'since-last-export' => 'Viimeisimmän viennin jälkeen päivitetyt tuotteet',
+                ],
+                'time-value'     => 'Päivien lukumäärä',
+                'time-date'      => 'Aloituspäivä',
+                'time-date-end'  => 'Lopetuspäivä',
+                'status'         => 'Tila',
+                'status-options' => [
+                    'enable'  => 'Käytössä',
+                    'disable' => 'Pois käytöstä',
+                    'all'     => 'Kaikki',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Tunnisteet',
+                'identifiers-info' => 'Liitä yksi SKU / tunniste riviä kohden viedäksesi vain kyseiset tuotteet. Jätä tyhjäksi viedäksesi kaikki tuotteet.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-avain: \'%s\' on jo luotu tuotteelle, jonka SKU on: \'%s\'.',
@@ -141,11 +222,11 @@ return [
                 ],
             ],
         ],
-        'category-fields' => [
-            'title' => 'Kategoriakentät',
-        ],
         'categories' => [
             'title' => 'Kategoriat',
+        ],
+        'category-fields' => [
+            'title' => 'Kategoriakentät',
         ],
         'attributes' => [
             'title' => 'Attribuutit',
@@ -158,6 +239,9 @@ return [
         ],
         'attribute-options' => [
             'title' => 'Attribuuttivaihtoehdot',
+        ],
+        'locales' => [
+            'title' => 'Kielet',
         ],
         'channels' => [
             'title' => 'Kanavat',

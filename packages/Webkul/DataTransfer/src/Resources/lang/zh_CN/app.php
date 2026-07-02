@@ -84,6 +84,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => '语言',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '语言代码 \'%s\' 已在此批次中导入。',
+                    'code-not-found-to-delete'    => '系统中未找到代码为 \'%s\' 的语言。',
+                    'invalid-status'              => '状态必须为 0 或 1（或留空表示默认启用）。',
+                    'channel-related-locale-root' => '无法删除代码为 :code 的语言，因为它与某个渠道关联。',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => '渠道',
             'validation' => [
@@ -97,7 +108,12 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Currencies',
+            'filters' => [
+                'status' => '状态',
+                'enable' => '启用',
+                'all'    => '全部',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -117,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Users',
+            'filters' => [
+                'status' => '状态',
+                'active' => '活跃',
+                'all'    => '全部',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -128,8 +149,69 @@ return [
         ],
     ],
     'exporters' => [
+        'export-too-large' => '此导出过大，无法运行：预计 :rows 行 × :columns 列（~:estimated）超出了可用空间（~:available）。请通过选择更少的渠道/区域（和属性）来缩小导出范围，然后重试。',
+        'fields'           => [
+            'file-format'         => '文件格式',
+            'with-media'          => '包含媒体',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => '状态',
+            'enable'         => '启用',
+            'all'            => '全部',
+        ],
         'products' => [
-            'title'      => '产品',
+            'title'              => '产品',
+            'invalid-locales'    => '并非所有所选语言环境都适用于所选渠道。',
+            'invalid-currencies' => '并非所有所选货币都适用于所选渠道。',
+            'filters'            => [
+                'channels'             => '渠道',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => '货币',
+                'currencies-info'      => '价格属性按每个所选货币导出。留空则导出所有渠道货币。',
+                'locales'              => '语言环境',
+                'locales-info'         => '可本地化属性按每个所选语言环境导出一次。留空则导出所有渠道语言环境。',
+                'attributes'           => '属性',
+                'attributes-info'      => '仅导出所选属性。留空则导出该属性族中的所有属性。',
+                'attribute-families'   => '属性族',
+                'categories'           => '类别',
+                'completeness'         => '完整度',
+                'completeness-options' => [
+                    'none'         => '无完整度条件',
+                    'at-least-one' => '在至少一个所选语言环境中完整',
+                    'all'          => '在所有所选语言环境中完整',
+                ],
+                'time-condition' => '时间条件',
+                'time-options'   => [
+                    'none'              => '无日期条件',
+                    'last-n-days'       => '过去 N 天内更新的产品',
+                    'between-dates'     => '在两个日期之间更新的产品',
+                    'since-last-export' => '自上次导出以来更新的产品',
+                ],
+                'time-value'     => '天数',
+                'time-date'      => '开始日期',
+                'time-date-end'  => '结束日期',
+                'status'         => '状态',
+                'status-options' => [
+                    'enable'  => '启用',
+                    'disable' => '禁用',
+                    'all'     => '全部',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => '标识符',
+                'identifiers-info' => '每行粘贴一个 SKU / 标识符，仅导出这些产品。留空则导出所有产品。',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL 密钥：已为 SKU 为“%s”的商品生成了“%s”。',
@@ -157,6 +239,9 @@ return [
         ],
         'attribute-options' => [
             'title' => '属性选项',
+        ],
+        'locales' => [
+            'title' => '语言',
         ],
         'channels' => [
             'title' => '渠道',

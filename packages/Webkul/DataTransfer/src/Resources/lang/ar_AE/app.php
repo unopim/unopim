@@ -84,6 +84,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'اللغات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'رمز اللغة \'%s\' تم استيراده بالفعل في هذه الدفعة.',
+                    'code-not-found-to-delete'    => 'لم يتم العثور على لغة بالرمز \'%s\' في النظام.',
+                    'invalid-status'              => 'يجب أن تكون الحالة 0 أو 1 (أو فارغة للتفعيل الافتراضي).',
+                    'channel-related-locale-root' => 'لا يمكنك حذف اللغة بالرمز :code لأنها مرتبطة بقناة.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'القنوات',
             'validation' => [
@@ -97,7 +108,12 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Currencies',
+            'filters' => [
+                'status' => 'الحالة',
+                'enable' => 'مفعل',
+                'all'    => 'الكل',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -117,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'الحالة',
+                'active' => 'نشط',
+                'all'    => 'الكل',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -128,8 +149,69 @@ return [
         ],
     ],
     'exporters' => [
+        'export-too-large' => 'هذا التصدير كبير جدًا بحيث لا يمكن تشغيله: العدد التقديري :rows صف × :columns عمود (~:estimated) يتجاوز المساحة المتاحة (~:available). قلّص نطاق التصدير باختيار عدد أقل من القنوات/اللغات (والسمات) ثم حاول مرة أخرى.',
+        'fields'           => [
+            'file-format'         => 'تنسيق الملف',
+            'with-media'          => 'مع الوسائط',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'الحالة',
+            'enable'         => 'مفعّل',
+            'all'            => 'الكل',
+        ],
         'products' => [
-            'title'      => 'منتجات',
+            'title'              => 'منتجات',
+            'invalid-locales'    => 'ليست كل اللغات المحددة متاحة للقنوات المحددة.',
+            'invalid-currencies' => 'ليست كل العملات المحددة متاحة للقنوات المحددة.',
+            'filters'            => [
+                'channels'             => 'القنوات',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'العملات',
+                'currencies-info'      => 'يتم تصدير سمات السعر لكل عملة محددة. اتركه فارغًا لتصدير جميع عملات القناة.',
+                'locales'              => 'اللغات',
+                'locales-info'         => 'يتم تصدير السمات القابلة للترجمة مرة واحدة لكل لغة محددة. اتركه فارغًا لتصدير جميع لغات القناة.',
+                'attributes'           => 'السمات',
+                'attributes-info'      => 'يتم تصدير السمات المحددة فقط. اتركه فارغًا لتصدير جميع السمات في العائلة.',
+                'attribute-families'   => 'عائلات السمات',
+                'categories'           => 'الفئات',
+                'completeness'         => 'الاكتمال',
+                'completeness-options' => [
+                    'none'         => 'لا يوجد شرط على الاكتمال',
+                    'at-least-one' => 'مكتمل في لغة واحدة على الأقل من اللغات المحددة',
+                    'all'          => 'مكتمل في جميع اللغات المحددة',
+                ],
+                'time-condition' => 'شرط الوقت',
+                'time-options'   => [
+                    'none'              => 'لا يوجد شرط على التاريخ',
+                    'last-n-days'       => 'المنتجات المحدّثة خلال آخر N أيام',
+                    'between-dates'     => 'المنتجات المحدّثة بين تاريخين',
+                    'since-last-export' => 'المنتجات المحدّثة منذ آخر تصدير',
+                ],
+                'time-value'     => 'عدد الأيام',
+                'time-date'      => 'تاريخ البدء',
+                'time-date-end'  => 'تاريخ الانتهاء',
+                'status'         => 'الحالة',
+                'status-options' => [
+                    'enable'  => 'مفعّل',
+                    'disable' => 'معطّل',
+                    'all'     => 'الكل',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'المعرّفات',
+                'identifiers-info' => 'الصق معرّف SKU / معرّفًا واحدًا في كل سطر لتصدير تلك المنتجات فقط. اتركه فارغًا لتصدير جميع المنتجات.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'مفتاح URL: تم إنشاء \'%s\' بالفعل لعنصر يحتوي على SKU: \'%s\'.',
@@ -143,6 +225,9 @@ return [
         'categories' => [
             'title' => 'فئات',
         ],
+        'category-fields' => [
+            'title' => 'حقول الفئة',
+        ],
         'attributes' => [
             'title' => 'السمات',
         ],
@@ -155,8 +240,8 @@ return [
         'attribute-options' => [
             'title' => 'خيارات السمة',
         ],
-        'category-fields' => [
-            'title' => 'حقول الفئة',
+        'locales' => [
+            'title' => 'اللغات',
         ],
         'channels' => [
             'title' => 'القنوات',

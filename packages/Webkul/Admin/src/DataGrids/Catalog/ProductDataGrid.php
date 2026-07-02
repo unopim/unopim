@@ -321,16 +321,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected function addFilterableAttributes(): void
     {
+        $requestedCodes = $this->getRequestedFilterAttributeCodes();
+
+        if (empty($requestedCodes)) {
+            return;
+        }
+
         $existingCodes = array_merge(
             $this->defaultColumns,
             array_keys($this->attributeColumns)
         );
 
-        // Determine which filters are being applied in this request.
         $requestedFilters = array_keys(request()->input('filters', []));
 
-        // Remove built-in property columns and reserved filter keys so we are
-        // left with only the attribute codes the user is filtering on.
         $propertyColumnKeys = array_merge(
             array_keys($this->getPropertyColumns()),
             ['channel', 'locale', 'all', 'indices']
@@ -338,14 +341,13 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $activeAttributeFilters = array_diff($requestedFilters, $propertyColumnKeys, $existingCodes);
 
-        // No attribute-based filters active — skip the expensive full load.
         if (empty($activeAttributeFilters)) {
             return;
         }
 
-        // Only fetch the specific attributes being filtered right now.
         $filterableAttributes = app(AttributeRepository::class)
             ->where('is_filterable', true)
+            ->whereIn('code', $requestedCodes)
             ->whereNotIn('code', $existingCodes)
             ->whereIn('code', array_values($activeAttributeFilters))
             ->get();
@@ -358,6 +360,20 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             $this->addColumn($columnDefinition);
         }
+    }
+
+    protected function getRequestedFilterAttributeCodes(): array
+    {
+        $filters = request()->input('filters', []);
+
+        if (! is_array($filters)) {
+            return [];
+        }
+
+        return array_values(array_diff(
+            array_keys($filters),
+            ['all', 'indices', 'channel', 'locale']
+        ));
     }
 
     /**
@@ -548,7 +564,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function processRequestedSorting($requestedSort)
     {
         $sortColumn = $requestedSort['column'] ?? $this->sortColumn ?? $this->primaryColumn;
-        $sortOrder = $requestedSort['order'] ?? $this->sortOrder;
+        $sortOrder = strtolower($requestedSort['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
+
+        $sortOrder = strtolower(trim((string) $sortOrder)) === 'asc' ? 'asc' : 'desc';
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             $attribute = $this->attributeService->findAttributeByCode($sortColumn) ?? 'text';
@@ -688,9 +706,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sort = $sortMapping[$sort] ?? $this->getAttributePathForSort($sort, 'elasticsearch');
 
+        $sortOrder = strtolower($params['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
+
         ElasticSearchQuery::orderBy([
             $sort => [
-                'order'         => $params['order'] ?? $this->sortOrder,
+                'order'         => $sortOrder,
                 'missing'       => '_last',
                 'unmapped_type' => 'keyword',
             ],

@@ -16,8 +16,6 @@ use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
 use function Pest\Laravel\mock;
 
-// ─── Shared helpers ──────────────────────────────────────────────────────────
-
 /**
  * Build an Importer with Mockery mocks.
  */
@@ -66,8 +64,6 @@ function makeCFBatch(string $action, array $data = []): JobTrackBatchContract
 
     return $batch;
 }
-
-// ─── validateRow ─────────────────────────────────────────────────────────────
 
 describe('validateRow', function () {
 
@@ -147,8 +143,6 @@ describe('validateRow', function () {
         expect($result)->toBeTrue();
     });
 });
-
-// ─── prepareCategoryFields ───────────────────────────────────────────────────
 
 describe('prepareCategoryFields', function () {
 
@@ -240,8 +234,6 @@ describe('prepareCategoryFields', function () {
     });
 });
 
-// ─── saveCategoryFields ───────────────────────────────────────────────────────
-
 describe('saveCategoryFields', function () {
 
     it('creates new category fields', function () {
@@ -273,8 +265,6 @@ describe('saveCategoryFields', function () {
         expect($importer->getUpdatedItemsCount())->toBe(1);
     });
 });
-
-// ─── importBatch ─────────────────────────────────────────────────────────────
 
 describe('importBatch', function () {
 
@@ -340,7 +330,6 @@ describe('importBatch', function () {
         $storage->shouldReceive('has')->with('name')->andReturn(true);
         $storage->shouldReceive('get')->with('name')->andReturn(1)->byDefault();
 
-        // deleteWhere should NOT be called with any ids (name is protected)
         $repo->shouldReceive('deleteWhere')->once()->with([['id', 'IN', []]]);
 
         $batchRepo->shouldReceive('update')->andReturn($batch);
@@ -348,8 +337,6 @@ describe('importBatch', function () {
         $importer->importBatch($batch);
     });
 });
-
-// ─── isCategoryFieldExist ────────────────────────────────────────────────────
 
 describe('isCategoryFieldExist', function () {
 

@@ -84,6 +84,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Diller',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Dil kodu \'%s\' bu partide zaten içe aktarılmış.',
+                    'code-not-found-to-delete'    => 'Sistemde \'%s\' koduna sahip dil bulunamadı.',
+                    'invalid-status'              => 'Durum 0 veya 1 olmalıdır (veya varsayılan etkin için boş).',
+                    'channel-related-locale-root' => ':code koduna sahip dili silemezsiniz çünkü bir kanala bağlıdır.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanallar',
             'validation' => [
@@ -97,7 +108,12 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Currencies',
+            'filters' => [
+                'status' => 'Durum',
+                'enable' => 'Etkin',
+                'all'    => 'Tümü',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -117,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Durum',
+                'active' => 'Aktif',
+                'all'    => 'Tümü',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -128,8 +149,69 @@ return [
         ],
     ],
     'exporters' => [
+        'export-too-large' => 'Bu dışa aktarma çalıştırılamayacak kadar büyük: tahmini :rows satır × :columns sütun (~:estimated) kullanılabilir alanı (~:available) aşıyor. Daha az kanal/yerel (ve öznitelik) seçerek dışa aktarmayı daraltın ve tekrar deneyin.',
+        'fields'           => [
+            'file-format'         => 'Dosya biçimi',
+            'with-media'          => 'Medya ile',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Durum',
+            'enable'         => 'Etkin',
+            'all'            => 'Tümü',
+        ],
         'products' => [
-            'title'      => 'Ürünler',
+            'title'              => 'Ürünler',
+            'invalid-locales'    => 'Seçilen yerel ayarların tümü, seçilen kanallar için kullanılabilir değil.',
+            'invalid-currencies' => 'Seçilen para birimlerinin tümü, seçilen kanallar için kullanılabilir değil.',
+            'filters'            => [
+                'channels'             => 'Kanallar',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Para birimleri',
+                'currencies-info'      => 'Fiyat öznitelikleri, seçilen her para birimi için dışa aktarılır. Tüm kanal para birimlerini dışa aktarmak için boş bırakın.',
+                'locales'              => 'Yerel ayarlar',
+                'locales-info'         => 'Yerelleştirilebilir öznitelikler, seçilen her yerel ayar için bir kez dışa aktarılır. Tüm kanal yerel ayarlarını dışa aktarmak için boş bırakın.',
+                'attributes'           => 'Öznitelikler',
+                'attributes-info'      => 'Yalnızca seçilen öznitelikler dışa aktarılır. Ailedeki tüm öznitelikleri dışa aktarmak için boş bırakın.',
+                'attribute-families'   => 'Öznitelik aileleri',
+                'categories'           => 'Kategoriler',
+                'completeness'         => 'Tamlık',
+                'completeness-options' => [
+                    'none'         => 'Tamlık koşulu yok',
+                    'at-least-one' => 'En az bir seçili yerel ayarda tam',
+                    'all'          => 'Tüm seçili yerel ayarlarda tam',
+                ],
+                'time-condition' => 'Zaman koşulu',
+                'time-options'   => [
+                    'none'              => 'Tarih koşulu yok',
+                    'last-n-days'       => 'Son N günde güncellenen ürünler',
+                    'between-dates'     => 'İki tarih arasında güncellenen ürünler',
+                    'since-last-export' => 'Son dışa aktarmadan bu yana güncellenen ürünler',
+                ],
+                'time-value'     => 'Gün sayısı',
+                'time-date'      => 'Başlangıç tarihi',
+                'time-date-end'  => 'Bitiş tarihi',
+                'status'         => 'Durum',
+                'status-options' => [
+                    'enable'  => 'Etkin',
+                    'disable' => 'Devre dışı',
+                    'all'     => 'Tümü',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Tanımlayıcılar',
+                'identifiers-info' => 'Yalnızca bu ürünleri dışa aktarmak için her satıra bir SKU / tanımlayıcı yapıştırın. Tüm ürünleri dışa aktarmak için boş bırakın.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL anahtar: \'%s\' SKU: \'%s\' için zaten bir öğe için oluşturuldu.',
@@ -157,6 +239,9 @@ return [
         ],
         'attribute-options' => [
             'title' => 'Nitelik Seçenekleri',
+        ],
+        'locales' => [
+            'title' => 'Diller',
         ],
         'channels' => [
             'title' => 'Kanallar',

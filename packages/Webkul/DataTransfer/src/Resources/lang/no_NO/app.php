@@ -84,6 +84,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Språk',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Språkkoden \'%s\' er allerede importert i denne batchen.',
+                    'code-not-found-to-delete'    => 'Språk med koden \'%s\' ble ikke funnet i systemet.',
+                    'invalid-status'              => 'Status må være 0 eller 1 (eller tom for standard aktivert).',
+                    'channel-related-locale-root' => 'Du kan ikke slette språket med koden :code fordi det er knyttet til en kanal.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanaler',
             'validation' => [
@@ -97,7 +108,12 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Currencies',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Aktiver',
+                'all'    => 'Alle',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -117,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alle',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -128,8 +149,69 @@ return [
         ],
     ],
     'exporters' => [
+        'export-too-large' => 'Denne eksporten er for stor til å kjøre: anslåtte :rows rader × :columns kolonner (~:estimated) overskrider tilgjengelig plass (~:available). Begrens eksporten ved å velge færre kanaler/språk (og attributter), og prøv igjen.',
+        'fields'           => [
+            'file-format'         => 'Filformat',
+            'with-media'          => 'Med medier',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Status',
+            'enable'         => 'Aktivert',
+            'all'            => 'Alle',
+        ],
         'products' => [
-            'title'      => 'Produkter',
+            'title'              => 'Produkter',
+            'invalid-locales'    => 'Ikke alle valgte språk er tilgjengelige for de valgte kanalene.',
+            'invalid-currencies' => 'Ikke alle valgte valutaer er tilgjengelige for de valgte kanalene.',
+            'filters'            => [
+                'channels'             => 'Kanaler',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Valutaer',
+                'currencies-info'      => 'Prisattributter eksporteres per valgt valuta. La feltet stå tomt for å eksportere alle kanalvalutaer.',
+                'locales'              => 'Språk',
+                'locales-info'         => 'Lokaliserbare attributter eksporteres én gang per valgt språk. La feltet stå tomt for å eksportere alle kanalspråk.',
+                'attributes'           => 'Attributter',
+                'attributes-info'      => 'Bare de valgte attributtene eksporteres. La feltet stå tomt for å eksportere alle attributter i familien.',
+                'attribute-families'   => 'Attributtfamilier',
+                'categories'           => 'Kategorier',
+                'completeness'         => 'Fullstendighet',
+                'completeness-options' => [
+                    'none'         => 'Ingen betingelse for fullstendighet',
+                    'at-least-one' => 'Fullstendig på minst ett valgt språk',
+                    'all'          => 'Fullstendig på alle valgte språk',
+                ],
+                'time-condition' => 'Tidsbetingelse',
+                'time-options'   => [
+                    'none'              => 'Ingen datobetingelse',
+                    'last-n-days'       => 'Produkter oppdatert de siste N dagene',
+                    'between-dates'     => 'Produkter oppdatert mellom to datoer',
+                    'since-last-export' => 'Produkter oppdatert siden forrige eksport',
+                ],
+                'time-value'     => 'Antall dager',
+                'time-date'      => 'Startdato',
+                'time-date-end'  => 'Sluttdato',
+                'status'         => 'Status',
+                'status-options' => [
+                    'enable'  => 'Aktivert',
+                    'disable' => 'Deaktivert',
+                    'all'     => 'Alle',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Identifikatorer',
+                'identifiers-info' => 'Lim inn én SKU / identifikator per linje for å eksportere bare disse produktene. La feltet stå tomt for å eksportere alle produkter.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL-nøkkel: \'%s\' ble allerede generert for en vare med SKU: \'%s\'.',
@@ -157,6 +239,9 @@ return [
         ],
         'attribute-options' => [
             'title' => 'Attributtalternativer',
+        ],
+        'locales' => [
+            'title' => 'Språk',
         ],
         'channels' => [
             'title' => 'Kanaler',

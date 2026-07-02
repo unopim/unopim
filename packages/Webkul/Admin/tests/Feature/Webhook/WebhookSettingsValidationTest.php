@@ -61,14 +61,14 @@ it('saves a valid https webhook URL when the probe succeeds', function () {
 
     $response = storeWebhookSettings([
         'webhook_active' => 1,
-        'webhook_url'    => 'https://wh58b8f638f57c37d003.free.beeceptor.com',
+        'webhook_url'    => 'https://1.1.1.1',
     ]);
 
     $payload = json_decode($response->getContent(), true);
     expect($payload['success'] ?? null)->toBeTrue();
 
     $stored = DB::table('webhook_settings')->where('field', 'webhook_url')->value('value');
-    expect($stored)->toBe('https://wh58b8f638f57c37d003.free.beeceptor.com');
+    expect($stored)->toBe('https://1.1.1.1');
 });
 
 it('rejects the save when the probe returns a non-2xx response', function () {
@@ -78,7 +78,7 @@ it('rejects the save when the probe returns a non-2xx response', function () {
 
     $response = storeWebhookSettings([
         'webhook_active' => 1,
-        'webhook_url'    => 'https://example.test/not-a-hook',
+        'webhook_url'    => 'https://1.1.1.1/not-a-hook',
     ]);
 
     expect($response->getStatusCode())->toBe(422);
@@ -98,7 +98,7 @@ it('rejects the save when the probe cannot reach the host', function () {
 
     $response = storeWebhookSettings([
         'webhook_active' => 1,
-        'webhook_url'    => 'https://does-not-exist.invalid/hook',
+        'webhook_url'    => 'https://1.1.1.1/hook',
     ]);
 
     expect($response->getStatusCode())->toBe(422);

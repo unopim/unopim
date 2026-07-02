@@ -1,5 +1,76 @@
 # v2.1.x
 
+## Unreleased
+
+
+## v2.1.5
+
+### Security
+
+* Hardened file uploads in the rich-text (TinyMCE) editor — uploads are now limited to an approved set of image types and saved under randomised filenames ([#476](https://github.com/unopim/unopim/pull/476)).
+* Tightened API permission enforcement on the configurable-product endpoints so every request requires the correct access scope ([#477](https://github.com/unopim/unopim/pull/477)).
+* Added the required permission checks to the Magic AI platform **update** and **set-default** actions ([#479](https://github.com/unopim/unopim/pull/479)).
+* Hardened product-grid sorting to safely handle all sort input ([#488](https://github.com/unopim/unopim/pull/488)).
+* Improved how channel names are rendered on the attribute-family **Completeness** screen ([#489](https://github.com/unopim/unopim/pull/489)).
+
+### Bug Fixes
+
+* Fixed **`upgrade.sh` backup excluding user data** — the automated upgrade backup now includes the `storage/` folder (uploaded media, import/export files) and skips only dependencies, regenerable framework caches, logs, and debugbar output; previously a restore from the script's backup lost all product media.
+* Fixed **`upgrade.sh` dropping hidden files** — new-release dotfiles (`.env.example`, `.gitignore`, `.htaccess`) are now copied during the upgrade.
+* Fixed **`upgrade.sh` `.env` parsing** — database credentials containing `=`, quotes, or matching multiple keys (e.g. commented lines) no longer break the database dump; passwords are passed via environment variables instead of the command line.
+* Fixed **`upgrade.sh` PostgreSQL compatibility** — the backup process now detects `DB_CONNECTION` and uses `pg_dump` for PostgreSQL installations.
+* Fixed **GitHub issue templates** — corrected labels, issue-template links, issue-chooser navigation, and related template inconsistencies; added a consolidated bug-report form with environment validation and duplicate-report checks.
+* Fixed **repository documentation** — corrected broken HTML comments in the pull request template, added a missing code-fence close in `UPGRADE.md`, and updated contribution guidelines to reflect the current development workflow.
+
+### DevOps
+
+* Cleaned up **dead files** — removed the empty `public/forge`, the orphan `patches.lock.json` (composer-patches was never installed), config files for uninstalled packages (`config/horizon.php`, `config/sitemap.php`), a placeholder DataGrid test, and the broken `bin/codecept` symlink. Added a root `public/favicon.ico` (browsers request it unconditionally) and ignored nested `node_modules/` directories.
+* Moved **AI agent skills to a dedicated repository** — [unopim/agent-skills](https://github.com/unopim/agent-skills). The in-repo `.github/skills/` directory, the `.ai`/`.claude`/`.codex`/`.cursor`/`.kilocode` symlinks, the connector code-generation/code-review instruction files, and the skills-consistency workflow were removed; install skills locally with `npx skills add unopim/agent-skills` and set up Laravel Boost with `php artisan boost:install`.
+
+## v2.1.4 - 2026-06-06
+
+### Features
+- Added a **Help & Resources** admin page and sidebar menu.
+- Added **dismissible cloud-hosting and version-upgrade promo banners** in the admin.
+
+### Improvements
+- Added **type-to-search locale & currency prompts** to the `php artisan unopim:install` CLI wizard — default/allowed locale and currency selectors now filter as you type (by code or name) instead of scrolling long static lists.
+- Revamped the **web installer** — admin-themed UI, a live terminal view of the install, optional add-on packages (DAM, Shopify, Bagisto) and Elasticsearch setup, database auto-create, and shared/FTP-only hosting support.
+
+## v2.1.3 - 2026-06-04
+
+### Security
+- Sealed the installer once setup completes — the `CanInstall` middleware now blocks every `/install` request after a `storage/installed` marker exists, and defense-in-depth `abortIfInstalled()` guards were added to each state-changing install endpoint (env-file-setup, run-migration, run-seeder, admin-config-setup, seed-sample-data, smtp-config-setup). The completion marker is written only at the very end of the flow, closing a pre-auth admin-takeover vector on already-installed instances ([#459](https://github.com/unopim/unopim/pull/459)).
+- Enforced ACL permission checks on state-changing admin routes that were absent from `acl.php` — including integration management, product bulk-edit, and family-completeness/configuration actions. The `Bouncer` middleware only enforced permissions for mapped routes, so unmapped write routes were reachable by any authenticated admin; restricted users now receive a 403 ([#467](https://github.com/unopim/unopim/pull/467)).
+- Fixed **insecure default admin password on install** — the installer no longer creates the admin with a known default password. Set `INSTALLER_ADMIN_EMAIL` / `INSTALLER_ADMIN_PASSWORD`, or leave them blank and a random password is generated and written once to `storage/app/admin-credentials.txt` (read it, log in, then delete). Existing admin users are never overwritten on re-install ([#457](https://github.com/unopim/unopim/pull/457)).
+- Fixed **duplicate rows on re-seeding** — admin and role seeders are now idempotent and skip insertion when the record already exists ([#457](https://github.com/unopim/unopim/pull/457)).
+
+### Improvements
+- Added a debug-only **`AppUrlGuard`** package — detects when the browser host does not match the configured `APP_URL` (a common cause of broken CSS/JS), shows a guided fix modal, and forces admin logout on a mismatched host. It stays completely inert when `APP_DEBUG=false` and ships translations for 33 locales ([#456](https://github.com/unopim/unopim/pull/456)).
+
+## v2.1.2 - 2026-05-29
+
+### Improvements
+- Hardened **webhook URL handling** — webhook target URLs are now validated to ensure they resolve to a publicly reachable host before any request is made, applied both when saving the webhook settings and on each product-save dispatch. Outgoing webhook requests connect only to the validated address and no longer follow HTTP redirects ([#448](https://github.com/unopim/unopim/pull/448), [#450](https://github.com/unopim/unopim/pull/450)).
+
+
+## v2.1.1 - 2026-05-26
+
+### Security
+- Patched an authorization gap on several admin write-verb routes (`*.store` / `*.update`) — they were missing from `packages/Webkul/Admin/src/Config/acl.php`, so the `Bouncer` middleware did not enforce a permission check. Mapped each missing route to the same ACL key as its sibling GET form (`.create` / `.edit`) and added regression coverage.
+- Hardened against `Host` / `X-Forwarded-Host` header poisoning. Asset and URL helpers (`url()`, `asset()`, Vite) previously resolved against the request `Host` header, so a crafted header could cause the admin layout to load JavaScript from an attacker origin. URL generation is now pinned to `APP_URL` via `URL::forceRootUrl()` + `URL::forceScheme()`, the four templates that rendered `url()->to('/')` / `asset('/')` were switched to `config('app.url')`, `trustProxies` is restricted via the new `TRUSTED_PROXIES` env variable (defaults to `127.0.0.1`), and `trustHosts` is enabled seeded from `APP_URL` + the new `TRUSTED_HOSTS` env variable.
+
+### Bug Fixes
+- Fixed **MagicAI chat-latest model temperature** — newer OpenAI chat-latest models reject the `temperature` parameter; the adapter now omits the field when targeting those models ([#416](https://github.com/unopim/unopim/pull/416)).
+- Fixed **styled 405 Method Not Allowed page** — replaced the unstyled framework error with a translated 405 error view consistent with 403/404/500, including translations for all 33 locales ([#417](https://github.com/unopim/unopim/pull/417)).
+- Fixed **PostgreSQL demo-data seeding** — `DemoExtrasSeeder` now casts booleans for pgsql, bypasses FK during seed, and resets sequences afterwards so the demo install completes cleanly on PostgreSQL ([#418](https://github.com/unopim/unopim/pull/418)).
+- Fixed **installer rejects invalid `DB_DATABASE`** — special characters in the database name are now rejected up front instead of causing a partial install that has to be torn down by hand ([#419](https://github.com/unopim/unopim/pull/419)).
+- Fixed **installer prompts ignore leading/trailing whitespace** — applied `transform: trim(...)` across installer prompts so a stray space in DB or Elasticsearch credentials no longer breaks the install ([#420](https://github.com/unopim/unopim/pull/420)).
+
+### DevOps
+- Added **multi-architecture Docker images** — the publish workflow now produces both `linux/amd64` and `linux/arm64` images so Apple Silicon and ARM cloud hosts get native binaries ([#426](https://github.com/unopim/unopim/pull/426)).
+
+
 ## v2.1.0 - 2026-05-13
 
 ### Features
@@ -16,6 +87,7 @@
 - Added **PIM-specific test assertions** — `CoreAssertions` trait with `assertProductExists()`, `assertCategoryExists()`, `assertAttributeExists()`, `assertChannelExists()`, `assertLocaleExists()`, and `assertSuccessJsonResponse()` helpers for Pest tests.
 
 ### Improvements
+- Added **type-to-search locale & currency prompts** to the `php artisan unopim:install` CLI wizard — default/allowed locale and currency selectors now filter as you type (by code or name) instead of scrolling long static lists.
 - Replaced **deprecated `Request::get()`** with `->input()` across remaining controllers (the underlying `symfony/http-foundation` 7.x dependency deprecates `Request::get()` — Laravel inherits the deprecation).
 - Added **return type hints** and adopted **HTTP status constants** (`JsonResponse::HTTP_OK`, etc.) in additional controllers across Admin and AdminApi packages in place of magic numbers.
 - Removed **auto-discovered providers** from `bootstrap/providers.php` — third-party packages (DomPDF, Translatable, Concord, Excel) are auto-discovered by Laravel and no longer need explicit registration.
@@ -44,6 +116,8 @@
 - Fixed **`DB_PREFIX` validation** — installer command and `InstallerController` now trim, reject internal whitespace, and clear stale prefix values ([#386](https://github.com/unopim/unopim/pull/386), [#335](https://github.com/unopim/unopim/pull/335)).
 - Fixed **MagicAI HTML translation paragraph loss** — translate-to-locale endpoints now preserve every `<p>` paragraph by iterating all matches instead of `end()` (thanks to [@bentierny](https://github.com/bentierny), [#378](https://github.com/unopim/unopim/pull/378)).
 - Fixed **admin login denied after install with seeded data** — installer writes a proper `APP_KEY` and `AdminsTableSeeder` sets a default timezone for the admin user ([#385](https://github.com/unopim/unopim/pull/385)).
+- Fixed **insecure default admin password on install** — the installer no longer creates the admin with a known default password. Set `INSTALLER_ADMIN_EMAIL` / `INSTALLER_ADMIN_PASSWORD`, or leave them blank and a random password is generated and written once to `storage/app/admin-credentials.txt` (read it, log in, then delete). Existing admin users are never overwritten on re-install ([#457](https://github.com/unopim/unopim/pull/457)).
+- Fixed **duplicate rows on re-seeding** — admin and role seeders are now idempotent and skip insertion when the record already exists ([#457](https://github.com/unopim/unopim/pull/457)).
 - Fixed **MySQL bulk-mode session vars** crashing PostgreSQL — `unique_checks` and `foreign_key_checks` are now gated by driver in the product Importer ([#368](https://github.com/unopim/unopim/pull/368)).
 - Fixed **installer re-run after switching `DB_CONNECTION`** — `database.default` is updated and the previous connection purged at runtime so the new driver is targeted ([#367](https://github.com/unopim/unopim/pull/367)).
 - Fixed **PostgreSQL incompatibilities** in AiAgent tools (`BulkEdit`, `SearchProducts`, `ListCategories`, etc.) and Channel/AttributeOption DataGrids — added `PostgresGrammar::jsonContains()`; also fixed profile-image placeholder and TinyMCE copy-paste ([#376](https://github.com/unopim/unopim/pull/376)).
@@ -227,7 +301,7 @@ Thanks to the following community contributors for this release:
 ### Features
 - Added **PostgreSQL Support** for improved cross-database compatibility. Fixes issue: [#45](https://github.com/unopim/unopim/issues/45)
 - Implemented **System Prompt Management** for configuring AI prompt behavior and max token settings.
-- Added **Custom Prompts** for Magic AI content generation and **Product Values Translation** to translate an attribute value in multiple other languages with Magic AI.  
+- Added **Custom Prompts** for Magic AI content generation and **Product Values Translation** to translate an attribute value in multiple other languages with Magic AI.
 - Introduced **Product Completeness**, providing completeness score and evaluation of product data quality based on completeness settings.
 - Added **Product Bulk Edit** with advanced multi-product editing capabilities for faster workflows.
 - Added **Product Update Webhook**, enabling external systems to react to real-time product updates.
@@ -243,7 +317,7 @@ Thanks to the following community contributors for this release:
 
 ### Bug Fixes
 
-- Corrected handling of the `@lang` directive to ensure consistent and secure output rendering on the import job page.  
+- Corrected handling of the `@lang` directive to ensure consistent and secure output rendering on the import job page.
 
 ### Dependency Updates
 - Bump enshrined/svg-sanitize from `0.16.0` to `0.22.0`
@@ -302,33 +376,33 @@ Thanks to the following community contributors for this release:
 * Upgraded `laravel/framework` from `10.48.23` to `10.48.29`
 * Updated Finnish translations [#161](https://github.com/unopim/unopim/pull/161)
 * Optimized attribute options grid performance for large datasets
- 
+
 # v0.2.x
- 
+
 ## v0.2.0 - 2025-03-26
-### ✨ **Features**  
-- Added disk parameter to `sanitizeSVG`. [#58](https://github.com/unopim/unopim/pull/58)  
-- Introduced dynamic import job filters. [#80](https://github.com/unopim/unopim/pull/80)  
-- Added in-app and email notifications. [#78](https://github.com/unopim/unopim/pull/78)  
-- New API endpoints for patching and deleting products/categories. [#98](https://github.com/unopim/unopim/pull/98)  
-- Implemented GUI installer for easier setup. [#55](https://github.com/unopim/unopim/pull/55)  
-- Added Magic Image feature. [#100](https://github.com/unopim/unopim/pull/100)  
-- "Powered by" message added to authentication screens. [#110](https://github.com/unopim/unopim/pull/110)  
+### ✨ **Features**
+- Added disk parameter to `sanitizeSVG`. [#58](https://github.com/unopim/unopim/pull/58)
+- Introduced dynamic import job filters. [#80](https://github.com/unopim/unopim/pull/80)
+- Added in-app and email notifications. [#78](https://github.com/unopim/unopim/pull/78)
+- New API endpoints for patching and deleting products/categories. [#98](https://github.com/unopim/unopim/pull/98)
+- Implemented GUI installer for easier setup. [#55](https://github.com/unopim/unopim/pull/55)
+- Added Magic Image feature. [#100](https://github.com/unopim/unopim/pull/100)
+- "Powered by" message added to authentication screens. [#110](https://github.com/unopim/unopim/pull/110)
 
-### 🛠 **Fixes & Enhancements**  
-- Fixed gallery image removal issue. [#90](https://github.com/unopim/unopim/pull/90)  
-- Enabled product status by default. [#89](https://github.com/unopim/unopim/pull/89)  
-- Quick export fix for selected products. [#116](https://github.com/unopim/unopim/pull/116)  
-- Fixed JSON encoding issues with special characters. [#104](https://github.com/unopim/unopim/pull/104)  
-- Prevented HTML entities from showing in flash messages. [#114](https://github.com/unopim/unopim/pull/114)  
-- Improved cumulative filter conditions. [#108](https://github.com/unopim/unopim/pull/108)  
-- Fixed TypeError with filterable dropdown column. [#106](https://github.com/unopim/unopim/pull/106)  
-- Improved CSS styling for GUI installer and image previews. [#73](https://github.com/unopim/unopim/pull/73)  
+### 🛠 **Fixes & Enhancements**
+- Fixed gallery image removal issue. [#90](https://github.com/unopim/unopim/pull/90)
+- Enabled product status by default. [#89](https://github.com/unopim/unopim/pull/89)
+- Quick export fix for selected products. [#116](https://github.com/unopim/unopim/pull/116)
+- Fixed JSON encoding issues with special characters. [#104](https://github.com/unopim/unopim/pull/104)
+- Prevented HTML entities from showing in flash messages. [#114](https://github.com/unopim/unopim/pull/114)
+- Improved cumulative filter conditions. [#108](https://github.com/unopim/unopim/pull/108)
+- Fixed TypeError with filterable dropdown column. [#106](https://github.com/unopim/unopim/pull/106)
+- Improved CSS styling for GUI installer and image previews. [#73](https://github.com/unopim/unopim/pull/73)
 
-### 🔄 **Dependency Updates**  
-- Upgraded `phpoffice/phpspreadsheet` to `1.29.9`. [#101](https://github.com/unopim/unopim/pull/101)  
-- Upgraded `league/commonmark` to `2.6.0`. [#74](https://github.com/unopim/unopim/pull/74)  
-- Upgraded `nesbot/carbon` to `2.72.6`. [#93](https://github.com/unopim/unopim/pull/93)  
+### 🔄 **Dependency Updates**
+- Upgraded `phpoffice/phpspreadsheet` to `1.29.9`. [#101](https://github.com/unopim/unopim/pull/101)
+- Upgraded `league/commonmark` to `2.6.0`. [#74](https://github.com/unopim/unopim/pull/74)
+- Upgraded `nesbot/carbon` to `2.72.6`. [#93](https://github.com/unopim/unopim/pull/93)
 
 
 # v0.1.x
@@ -345,7 +419,7 @@ Thanks to the following community contributors for this release:
 **Full Changelog**: [v0.1.4...v0.1.5](https://github.com/unopim/unopim/compare/v0.1.4...v0.1.5)
 
 ## **v0.1.4 (17 October 2024)** - *Release*
-* Security Issue #41: fixed Stored XSS 
+* Security Issue #41: fixed Stored XSS
 
 ## **v0.1.3 (14 October 2024)** - *Release*
 

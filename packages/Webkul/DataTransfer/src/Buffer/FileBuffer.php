@@ -81,14 +81,39 @@ class FileBuffer
 
     public function escapeFormulaCells(Row $row): Row
     {
-        $escapedCells = array_map(static function (Cell $cell): Cell {
+        $escapedCells = array_map(function (Cell $cell): Cell {
+            $value = $cell->getValue();
+
+            if (is_string($value) && $this->isFormulaValue($value)) {
+                return new Cell\StringCell("'".$value, null);
+            }
+
             if ($cell instanceof Cell\FormulaCell) {
-                return new Cell\StringCell($cell->getValue(), null);
+                return new Cell\StringCell($value, null);
             }
 
             return $cell;
         }, $row->getCells());
 
         return new Row($escapedCells);
+    }
+
+    /**
+     * Determine whether a cell value would be interpreted as a formula by a
+     * spreadsheet application (CSV/XLSX formula-injection guard).
+     */
+    protected function isFormulaValue(string $value): bool
+    {
+        if ($value === '' || is_numeric($value)) {
+            return false;
+        }
+
+        if (in_array($value[0], ['=', '+', '-', '@', "\t", "\r"], true)) {
+            return true;
+        }
+
+        $trimmed = ltrim($value, " \t\r\n");
+
+        return $trimmed !== '' && in_array($trimmed[0], ['=', '+', '-', '@'], true);
     }
 }

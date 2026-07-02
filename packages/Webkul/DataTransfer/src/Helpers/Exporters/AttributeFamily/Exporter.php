@@ -76,7 +76,6 @@ class Exporter extends AbstractExporter
 
         $familyIds = collect($batch->data)->pluck('id')->toArray();
 
-        // Get all attributes belonging to families, along with their group code
         $attributes = DB::table('attribute_family_group_mappings')
             ->join('attribute_group_mappings', 'attribute_family_group_mappings.id', '=', 'attribute_group_mappings.attribute_family_group_id')
             ->join('attributes', 'attribute_group_mappings.attribute_id', '=', 'attributes.id')

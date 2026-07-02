@@ -84,6 +84,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Lingue',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Il codice lingua \'%s\' è già stato importato in questo batch.',
+                    'code-not-found-to-delete'    => 'Lingua con codice \'%s\' non trovata nel sistema.',
+                    'invalid-status'              => 'Lo stato deve essere 0 o 1 (o vuoto per abilitato di default).',
+                    'channel-related-locale-root' => 'Non puoi eliminare la lingua con codice :code perché è associata a un canale.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Canali',
             'validation' => [
@@ -97,7 +108,12 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Currencies',
+            'filters' => [
+                'status' => 'Stato',
+                'enable' => 'Abilitato',
+                'all'    => 'Tutti',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -117,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Stato',
+                'active' => 'Attivo',
+                'all'    => 'Tutti',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -128,8 +149,69 @@ return [
         ],
     ],
     'exporters' => [
+        'export-too-large' => 'Questa esportazione è troppo grande per essere eseguita: circa :rows righe × :columns colonne (~:estimated) superano lo spazio disponibile (~:available). Restringi l\'esportazione selezionando meno canali/lingue (e attributi) e riprova.',
+        'fields'           => [
+            'file-format'         => 'Formato file',
+            'with-media'          => 'Con media',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => 'Stato',
+            'enable'         => 'Abilitato',
+            'all'            => 'Tutti',
+        ],
         'products' => [
-            'title'      => 'Prodotti',
+            'title'              => 'Prodotti',
+            'invalid-locales'    => 'Non tutte le lingue selezionate sono disponibili per i canali selezionati.',
+            'invalid-currencies' => 'Non tutte le valute selezionate sono disponibili per i canali selezionati.',
+            'filters'            => [
+                'channels'             => 'Canali',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Valute',
+                'currencies-info'      => 'Gli attributi di prezzo vengono esportati per ogni valuta selezionata. Lascia vuoto per esportare tutte le valute del canale.',
+                'locales'              => 'Lingue',
+                'locales-info'         => 'Gli attributi localizzabili vengono esportati una volta per ogni lingua selezionata. Lascia vuoto per esportare tutte le lingue del canale.',
+                'attributes'           => 'Attributi',
+                'attributes-info'      => 'Vengono esportati solo gli attributi selezionati. Lascia vuoto per esportare tutti gli attributi della famiglia.',
+                'attribute-families'   => 'Famiglie di attributi',
+                'categories'           => 'Categorie',
+                'completeness'         => 'Completezza',
+                'completeness-options' => [
+                    'none'         => 'Nessuna condizione di completezza',
+                    'at-least-one' => 'Completo in almeno una lingua selezionata',
+                    'all'          => 'Completo in tutte le lingue selezionate',
+                ],
+                'time-condition' => 'Condizione temporale',
+                'time-options'   => [
+                    'none'              => 'Nessuna condizione di data',
+                    'last-n-days'       => 'Prodotti aggiornati negli ultimi N giorni',
+                    'between-dates'     => 'Prodotti aggiornati tra due date',
+                    'since-last-export' => 'Prodotti aggiornati dall\'ultima esportazione',
+                ],
+                'time-value'     => 'Numero di giorni',
+                'time-date'      => 'Data di inizio',
+                'time-date-end'  => 'Data di fine',
+                'status'         => 'Stato',
+                'status-options' => [
+                    'enable'  => 'Abilitato',
+                    'disable' => 'Disabilitato',
+                    'all'     => 'Tutti',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Identificatori',
+                'identifiers-info' => 'Incolla un SKU / identificatore per riga per esportare solo quei prodotti. Lascia vuoto per esportare tutti i prodotti.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Chiave URL: \'%s\' è già stata generata per un articolo con l\'SKU: \'%s\'.',
@@ -157,6 +239,9 @@ return [
         ],
         'attribute-options' => [
             'title' => 'Opzioni attributo',
+        ],
+        'locales' => [
+            'title' => 'Lingue',
         ],
         'channels' => [
             'title' => 'Canali',
