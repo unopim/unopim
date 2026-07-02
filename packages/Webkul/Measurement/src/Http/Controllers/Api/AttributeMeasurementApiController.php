@@ -60,7 +60,7 @@ class AttributeMeasurementApiController extends Controller
      */
     public function show($attributeCode)
     {
-        $attribute = $this->attributeMasterRepository->findOneByField('code', $attributeCode);
+        $attribute = $this->attributeMasterRepository->findOneByField('id', $attributeCode);
 
         if (! $attribute) {
             return response()->json([
@@ -120,7 +120,7 @@ class AttributeMeasurementApiController extends Controller
             'unit_code'   => ['required', 'string'],
         ]);
 
-        $attribute = $this->attributeMasterRepository->findOneByField('code', $attributeCode);
+        $attribute = $this->attributeMasterRepository->findOneByField('id', $attributeCode);
 
         if (! $attribute) {
             return response()->json([

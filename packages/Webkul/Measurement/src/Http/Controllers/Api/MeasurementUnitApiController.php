@@ -16,7 +16,7 @@ class MeasurementUnitApiController extends Controller
 
     public function index($familyCode)
     {
-        $family = $this->repository->findOneWhere(['code' => $familyCode]);
+        $family = $this->repository->findOneWhere(['id' => $familyCode]);
 
         if (! $family) {
             return response()->json([
@@ -41,7 +41,7 @@ class MeasurementUnitApiController extends Controller
      */
     public function show($familyCode, $code)
     {
-        $family = $this->repository->findOneWhere(['code' => $familyCode]);
+        $family = $this->repository->findOneWhere(['id' => $familyCode]);
 
         if (! $family) {
             return response()->json([
@@ -73,7 +73,7 @@ class MeasurementUnitApiController extends Controller
      */
     public function store(Request $request, $familyCode)
     {
-        $family = $this->repository->findOneWhere(['code' => $familyCode]);
+        $family = $this->repository->findOneWhere(['id' => $familyCode]);
 
         if (! $family) {
             return response()->json([
@@ -142,7 +142,7 @@ class MeasurementUnitApiController extends Controller
      */
     public function update(Request $request, $familyCode, $code)
     {
-        $family = $this->repository->findOneWhere(['code' => $familyCode]);
+        $family = $this->repository->findOneWhere(['id' => $familyCode]);
 
         if (! $family) {
             return response()->json([
@@ -219,7 +219,7 @@ class MeasurementUnitApiController extends Controller
      */
     public function destroy($familyCode, $code)
     {
-        $family = $this->repository->findOneWhere(['code' => $familyCode]);
+        $family = $this->repository->findOneWhere(['id' => $familyCode]);
 
         if (! $family) {
             return response()->json([

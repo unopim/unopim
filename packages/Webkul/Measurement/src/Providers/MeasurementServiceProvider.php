@@ -129,5 +129,8 @@ class MeasurementServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/acl.php', 'acl'
         );
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/api-acl.php', 'api-acl'
+        );
     }
 }
