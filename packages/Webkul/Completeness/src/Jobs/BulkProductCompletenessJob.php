@@ -183,7 +183,7 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
             'title'        => trans('completeness::app.notifications.completeness-title'),
             'description'  => $description,
             'user_ids'     => $userIds,
-            'mailable'     => $mailConfigured && env('NOTIFICATIONS_ENABLED', true),
+            'mailable'     => $mailConfigured && config('notifications.enabled', true),
             'user_emails'  => $userEmails,
             'templateName' => 'completeness::emails.completeness-completed',
             'templateData' => [

@@ -158,10 +158,10 @@ class AttributeFamilyRepository extends Repository
                 }
 
                 if ($previousAttributeIds->count()) {
-                    foreach ($previousAttributeIds as $attributeId) {
-                        $attribute = $this->attributeRepository->find($attributeId);
-                        $old[] = $attribute->toArray()['code'];
-                    }
+                    $old = array_merge(
+                        $old,
+                        $this->attributeRepository->findWhereIn('id', $previousAttributeIds->all())->pluck('code')->all()
+                    );
                     $familyGroupMapping->customAttributes()->detach($previousAttributeIds);
                 }
             }

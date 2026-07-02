@@ -2,7 +2,7 @@
 
 namespace Webkul\AdminApi\Providers;
 
-use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\UserRepository as PassportUserRepository;
@@ -109,6 +109,12 @@ class AdminApiServiceProvider extends ServiceProvider
     {
         Passport::loadKeysFrom(__DIR__.'/../Secrets/Oauth');
 
+        // league/oauth2-server v9 rejects OAuth key files that are not 600/660.
+        // The bundled keys ship with looser permissions that git cannot preserve
+        // across clones, so skip the permission check to keep the API bootable
+        // in every environment.
+        Passport::$validateKeyPermissions = false;
+
         Passport::$passwordGrantEnabled = true;
         Passport::useClientModel(Client::class);
 
@@ -121,11 +127,10 @@ class AdminApiServiceProvider extends ServiceProvider
         $accessTokenTtl = (int) config('api.access_token_ttl', 3600);
         $refreshTokenTtl = (int) config('api.refresh_token_ttl', 3600);
 
-        // Set access token TTL
-        Passport::tokensExpireIn(Carbon::now()->addSeconds($accessTokenTtl));
+        // Relative intervals keep expiry Octane-safe (absolute now() would freeze at worker boot).
+        Passport::tokensExpireIn(CarbonInterval::seconds($accessTokenTtl));
 
-        // Set refresh token TTL
-        Passport::refreshTokensExpireIn(Carbon::now()->addSeconds($refreshTokenTtl));
+        Passport::refreshTokensExpireIn(CarbonInterval::seconds($refreshTokenTtl));
 
         $this->app->bind(ClientRepository::class, \Webkul\AdminApi\Repositories\ClientRepository::class);
     }

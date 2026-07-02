@@ -25,7 +25,7 @@ class SendNotificationListener implements ShouldQueue
      */
     public function sendNotification($event)
     {
-        if (! env('NOTIFICATIONS_ENABLED', true)) {
+        if (! config('notifications.enabled', true)) {
             Log::info('Notifications are disabled. No notification sent.', ['event' => $event]);
 
             return;

@@ -30,7 +30,7 @@ class ThemeServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('themes', function () {
+        $this->app->scoped('themes', function () {
             return new Themes;
         });
 

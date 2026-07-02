@@ -51,12 +51,9 @@ class ResultCursorFactory implements CursorFactoryContract
         return new ResultIterator($ids, $totalCount, new SearchResponse($results['hits']['hits'] ?? []));
     }
 
-    /**
-     * @return array
-     */
-    protected static function resolveOptions(array $options)
+    protected static function resolveOptions(array $options): array
     {
-        $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+        $indexPrefix = config('elasticsearch.prefix');
 
         $options['page'] = $options['pagination']['page'] ?? 1;
         $options['per_page'] = $options['pagination']['per_page'] ?? 10;
