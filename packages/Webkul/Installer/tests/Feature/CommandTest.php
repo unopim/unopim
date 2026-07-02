@@ -1,7 +1,10 @@
 <?php
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Webkul\Installer\Console\Commands\Installer;
 use Webkul\User\Models\Admin;
+
+uses(DatabaseTransactions::class);
 
 it('should ask for email if email option is not provided in the command', function () {
     $this->artisan('unopim:user:create', [
@@ -141,6 +144,10 @@ it('should not create a user if one with same already exists for same email with
         'email' => 'new.user@example.com',
         'name'  => 'New User',
     ]);
+
+    if (! Admin::where('email', 'admin@example.com')->exists()) {
+        Admin::factory()->create(['email' => 'admin@example.com']);
+    }
 
     $this->artisan('unopim:user:create', [
         '--name'      => 'New User',

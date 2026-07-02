@@ -1,20 +1,39 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\DemoDataInstaller;
+use Webkul\Installer\Helpers\EnvironmentManager;
+use Webkul\Installer\Helpers\ServerRequirements;
+use Webkul\Installer\Http\Controllers\InstallerController;
 
 beforeEach(function () {
-    // CSRF + CanInstall + auth middleware would otherwise reject these
-    // requests with 302/419/404. We test the controller logic directly;
-    // those middlewares have their own coverage.
+
     $this->withoutMiddleware();
 
-    // The shared .env's APP_URL is a path-prefixed dev URL
-    // (http://host/issue-docker/unopim/public). That prefix leaks into
-    // the test request URI and the route matcher 404s on it. Force a
-    // clean APP_URL just for the test kernel.
     config(['app.url' => 'http://localhost']);
     URL::forceRootUrl('http://localhost');
+
+    $this->marker = storage_path('installed');
+    $this->markerExisted = file_exists($this->marker);
+    $this->markerContents = $this->markerExisted ? file_get_contents($this->marker) : null;
+
+    if ($this->markerExisted) {
+        unlink($this->marker);
+    }
+
+    DB::table('core_config')->where('code', 'installer.installed')->delete();
+});
+
+afterEach(function () {
+    if ($this->markerExisted) {
+        file_put_contents($this->marker, $this->markerContents);
+    } elseif (file_exists($this->marker)) {
+        unlink($this->marker);
+    }
+
+    DB::table('core_config')->where('code', 'installer.installed')->delete();
 });
 
 describe('InstallerController::seedSampleData (issue #794)', function () {
@@ -73,5 +92,35 @@ describe('InstallerController::envFileSetup DB_PREFIX validation (issue #794)', 
         ])
             ->assertStatus(422)
             ->assertJsonPath('error', 'The database prefix can only contain letters, numbers, and underscores.');
+    });
+});
+
+describe('InstallerController::resolveComposerBinary', function () {
+    it('probes the bundled bin/composer/composer.phar', function () {
+        $controller = app(InstallerController::class);
+
+        $method = new ReflectionMethod($controller, 'composerProbePaths');
+        $paths = $method->invoke($controller);
+
+        expect($paths)->toContain(base_path('bin/composer/composer.phar'))
+            ->and($paths)->toContain(base_path('composer.phar'));
+    });
+
+    it('returns a php + phar argument prefix when only the bundled phar exists', function () {
+        $controller = new class(app(ServerRequirements::class), app(EnvironmentManager::class), app(DatabaseManager::class)) extends InstallerController
+        {
+            protected function composerProbePaths(): array
+            {
+                return [base_path('bin/composer/composer.phar')];
+            }
+
+            public function exposedResolveComposerBinary(): array
+            {
+                return $this->resolveComposerBinary();
+            }
+        };
+
+        expect($controller->exposedResolveComposerBinary())
+            ->toBe([PHP_BINARY, base_path('bin/composer/composer.phar')]);
     });
 });

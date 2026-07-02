@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Webkul\Admin\Http\Controllers\Settings\AppearanceController;
 use Webkul\Admin\Http\Controllers\Settings\ChannelController;
 use Webkul\Admin\Http\Controllers\Settings\CurrencyController;
 use Webkul\Admin\Http\Controllers\Settings\DataTransfer\ExportController;
+use Webkul\Admin\Http\Controllers\Settings\DataTransfer\ExportFilterController;
 use Webkul\Admin\Http\Controllers\Settings\DataTransfer\ImportController;
 use Webkul\Admin\Http\Controllers\Settings\DataTransfer\TrackerController;
 use Webkul\Admin\Http\Controllers\Settings\LocaleController;
@@ -15,6 +17,15 @@ use Webkul\Admin\Http\Controllers\Settings\UserController;
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
     Route::prefix('settings')->group(function () {
+        /**
+         * Appearance routes.
+         */
+        Route::controller(AppearanceController::class)->prefix('appearance')->group(function () {
+            Route::get('', 'index')->name('admin.settings.appearance.index');
+
+            Route::put('', 'update')->name('admin.settings.appearance.update');
+        });
+
         /**
          * Channels routes.
          */
@@ -205,6 +216,20 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
                 Route::get('download/{id}', 'download')->name('admin.settings.data_transfer.exports.download');
 
                 Route::get('download-error-report/{id}', 'downloadErrorReport')->name('admin.settings.data_transfer.exports.download_error_report');
+            });
+
+            Route::controller(ExportFilterController::class)->prefix('exports/filters')->group(function () {
+                Route::get('channels', 'channels')->name('admin.settings.data_transfer.exports.filters.channels');
+
+                Route::get('locales', 'locales')->name('admin.settings.data_transfer.exports.filters.locales');
+
+                Route::get('currencies', 'currencies')->name('admin.settings.data_transfer.exports.filters.currencies');
+
+                Route::get('attributes', 'getAttributes')->name('admin.settings.data_transfer.exports.filters.attributes');
+
+                Route::get('attribute-families', 'attributeFamilies')->name('admin.settings.data_transfer.exports.filters.attribute_families');
+
+                Route::get('categories', 'categories')->name('admin.settings.data_transfer.exports.filters.categories');
             });
         });
     });

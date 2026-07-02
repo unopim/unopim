@@ -32,21 +32,113 @@ return [
                 ],
             ],
         ],
-        'currencies' => [
-            'title'      => '통화',
+        'channels' => [
+            'title'      => '채널',
             'validation' => [
                 'errors' => [
-                    'duplicate-code'              => '통화 코드 \'%s\'이(가) 이미 이 배치에서 가져왔습니다.',
-                    'code-not-found-to-delete'    => '코드 \'%s\'에 해당하는 통화를 시스템에서 찾을 수 없습니다.',
-                    'invalid-status'              => '상태는 0 또는 1이어야 합니다(또는 기본 활성화의 경우 비어 있음).',
-                    'channel-related-locale-root' => '채널에 연결된 :code 코드의 로케일은 삭제할 수 없습니다.',
+                    'code-not-found-to-delete' => '코드 :code 인 채널을 삭제할 수 없습니다.',
+                    'locale-not-found'         => '하나 이상의 로케일이 존재하지 않습니다.',
+                    'root-category-not-found'  => '루트 카테고리가 존재하지 않습니다.',
+                    'currency-not-found'       => '하나 이상의 통화가 존재하지 않습니다.',
+                    'invalid-locale'           => '로케일이 존재하지 않습니다.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'      => 'Currencies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Roles',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'      => 'Users',
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
                 ],
             ],
         ],
     ],
     'exporters' => [
+        'export-too-large' => '이 내보내기는 너무 커서 실행할 수 없습니다: 예상 :rows 행 × :columns 열(~:estimated)이 사용 가능한 공간(~:available)을 초과합니다. 채널/로케일(및 속성)을 줄여 범위를 좁힌 후 다시 시도하세요.',
+        'fields'           => [
+            'file-format'         => '파일 형식',
+            'with-media'          => '미디어 포함',
+            'header-row'          => 'Header Row',
+            'header-row-info'     => 'Write attribute codes as the first line',
+            'use-labels'          => 'Use Labels',
+            'use-labels-info'     => 'Export readable labels instead of codes',
+            'date-format'         => 'Date Format',
+            'date-format-options' => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-path'      => 'File Path',
+            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'status'         => '상태',
+            'enable'         => '활성화',
+            'all'            => '전체',
+        ],
         'products' => [
-            'title'      => '제품',
+            'title'              => '제품',
+            'invalid-locales'    => '선택한 로케일이 모두 선택한 채널에서 사용 가능한 것은 아닙니다.',
+            'invalid-currencies' => '선택한 통화가 모두 선택한 채널에서 사용 가능한 것은 아닙니다.',
+            'filters'            => [
+                'channels'             => '채널',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => '통화',
+                'currencies-info'      => '가격 속성은 선택한 통화별로 내보내집니다. 모든 채널 통화를 내보내려면 비워 두세요.',
+                'locales'              => '로케일',
+                'locales-info'         => '현지화 가능한 속성은 선택한 로케일마다 한 번씩 내보내집니다. 모든 채널 로케일을 내보내려면 비워 두세요.',
+                'attributes'           => '속성',
+                'attributes-info'      => '선택한 속성만 내보내집니다. 패밀리의 모든 속성을 내보내려면 비워 두세요.',
+                'attribute-families'   => '속성 패밀리',
+                'categories'           => '카테고리',
+                'completeness'         => '완전성',
+                'completeness-options' => [
+                    'none'         => '완전성 조건 없음',
+                    'at-least-one' => '선택한 하나 이상의 로케일에서 완전',
+                    'all'          => '선택한 모든 로케일에서 완전',
+                ],
+                'time-condition' => '시간 조건',
+                'time-options'   => [
+                    'none'              => '날짜 조건 없음',
+                    'last-n-days'       => '지난 N일 동안 업데이트된 제품',
+                    'between-dates'     => '두 날짜 사이에 업데이트된 제품',
+                    'since-last-export' => '마지막 내보내기 이후 업데이트된 제품',
+                ],
+                'time-value'     => '일수',
+                'time-date'      => '시작일',
+                'time-date-end'  => '종료일',
+                'status'         => '상태',
+                'status-options' => [
+                    'enable'  => '활성화',
+                    'disable' => '비활성화',
+                    'all'     => '전체',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => '식별자',
+                'identifiers-info' => '해당 제품만 내보내려면 한 줄에 하나의 SKU / 식별자를 붙여넣으세요. 모든 제품을 내보내려면 비워 두세요.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL 키: \'%s\'는 SKU: \'%s\'를 가진 항목에 이미 생성되었습니다.',
@@ -60,8 +152,22 @@ return [
         'categories' => [
             'title' => '카테고리',
         ],
+        'channels' => [
+            'title' => '채널',
+        ],
         'currencies' => [
-            'title' => '통화',
+            'title' => 'Currencies',
+        ],
+        'roles' => [
+            'title' => 'Roles',
+        ],
+        'users' => [
+            'title'   => 'Users',
+            'filters' => [
+                'status' => '상태',
+                'active' => 'Active',
+                'all'    => '전체',
+            ],
         ],
     ],
     'validation' => [

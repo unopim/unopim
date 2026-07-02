@@ -73,7 +73,7 @@ UnoPim is an open-source Product Information Management (PIM) system built on La
   </tr>
 </table>
 
-> Upgrading from v1.0.0? See the [Upgrade Guide](UPGRADE-1.0.0-2.0.0.md) and [CHANGELOG](CHANGELOG.md) for full release notes.
+> Upgrading from an older version? See the [Upgrade Guide](UPGRADE.md) and [CHANGELOG](CHANGELOG.md) for full release notes.
 
 ## ⚙️ Scalability
 
@@ -198,11 +198,19 @@ docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
 
 > **Port conflicts?** If you already have MySQL, Redis, or Elasticsearch running locally, edit the `FORWARD_*` ports in `.env` and restart. See `.env.docker` for details.
 
+### ☁️ Cloud Hosting (Managed — no setup)
+<p>
+  <a href="https://unopim.com/cloud-hosting">
+    <img src="https://raw.githubusercontent.com/unopim/temp-media/main/cloud-hosting-banner.png" alt="Deploy UnoPim on cost-effective cloud hosting" width="720">
+  </a>
+</p>
+
 ### ☁️ AWS Marketplace
-
-Deploy UnoPim on a pre-configured Amazon Machine Image (AMI) without any manual setup — ideal for scalable production or testing environments.
-
-[**Launch UnoPim on AWS**](https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw)
+<p>
+  <a href="https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw">
+    <img src="https://raw.githubusercontent.com/unopim/temp-media/main/aws-marketplace-banner.png" alt="Launch UnoPim on AWS Marketplace" width="720">
+  </a>
+</p>
 
 ## 🤝 Contributing
 

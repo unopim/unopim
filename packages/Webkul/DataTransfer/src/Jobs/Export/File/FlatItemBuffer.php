@@ -16,11 +16,25 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
 
     protected $headerWritten = false;
 
+    protected $writeHeaders = true;
+
+    /**
+     * Optional `columnKey => label` map used to write readable header labels instead of codes
+     * when the "use_labels" option is enabled. Unmapped keys fall back to the key itself.
+     *
+     * @var array
+     */
+    protected $headerLabels = [];
+
     public function initialize($directory, $fileName, $options = [])
     {
         $this->count = 0;
 
         $this->headerWritten = false;
+
+        $this->writeHeaders = $options['writeHeaders'] ?? true;
+
+        $this->headerLabels = $options['headerLabels'] ?? [];
 
         if (! $this->writer) {
             $this->filePath = $this->make($directory, $options['type'], $fileName);
@@ -38,14 +52,25 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
     {
         foreach ($items as $item) {
             if (! $this->headerWritten) {
-                $headers = array_keys($item);
-                $this->writeHeader($headers);
+                if ($this->writeHeaders) {
+                    $this->writeHeader($this->buildHeaders(array_keys($item)));
+                }
+
                 $this->headerWritten = true;
             }
 
             $this->writer->addRow($this->escapeFormulaCells(Row::fromValues($item)));
             $this->count++;
         }
+    }
+
+    public function buildHeaders(array $keys): array
+    {
+        if (empty($this->headerLabels)) {
+            return $keys;
+        }
+
+        return array_map(fn ($key) => $this->headerLabels[$key] ?? $key, $keys);
     }
 
     public function writerClose()

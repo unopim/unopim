@@ -17,6 +17,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::controller(WebhookLogsController::class)->prefix('logs')->group(function () {
             Route::get('', 'index')->name('webhook.logs.index');
+            Route::get('show/{id}', 'show')->name('webhook.logs.show');
             Route::delete('delete/{id}', 'destroy')->name('webhook.logs.delete');
             Route::post('mass-delete', 'massDestroy')->name('webhook.logs.mass_delete');
         });

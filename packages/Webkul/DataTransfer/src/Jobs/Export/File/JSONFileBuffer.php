@@ -86,6 +86,17 @@ class JSONFileBuffer implements \Iterator
         return $this->filename;
     }
 
+    public function delete(): void
+    {
+        unset($this->file);
+
+        if ($this->filename && is_file($this->filename)) {
+            @unlink($this->filename);
+        }
+
+        $this->filename = '';
+    }
+
     public function __sleep(): array
     {
         return ['filename'];

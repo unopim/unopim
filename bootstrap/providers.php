@@ -3,6 +3,7 @@
 use Webkul\Admin\Providers\AdminServiceProvider;
 use Webkul\AdminApi\Providers\AdminApiServiceProvider;
 use Webkul\AiAgent\Providers\AiAgentServiceProvider;
+use Webkul\AppUrlGuard\Providers\AppUrlGuardServiceProvider;
 use Webkul\Attribute\Providers\AttributeServiceProvider;
 use Webkul\Category\Providers\CategoryServiceProvider;
 use Webkul\Completeness\Providers\CompletenessServiceProvider;
@@ -51,4 +52,5 @@ return [
     CompletenessServiceProvider::class,
     AiAgentServiceProvider::class,
     MeasurementServiceProvider::class,
+    AppUrlGuardServiceProvider::class,
 ];

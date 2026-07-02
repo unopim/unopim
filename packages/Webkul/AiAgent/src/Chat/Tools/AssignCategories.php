@@ -2,28 +2,49 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class AssignCategories implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('assign_categories')
-            ->for('Assign categories to products by SKU.')
-            ->withStringParameter('skus', 'Comma-separated product SKUs')
-            ->withStringParameter('categories', 'Comma-separated category codes or paths')
-            ->using(function (string $skus, string $categories) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products.edit')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'assign_categories';
+            }
+
+            public function description(): string
+            {
+                return 'Assign categories to products by SKU.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'skus'       => $schema->string()->description('Comma-separated product SKUs'),
+                    'categories' => $schema->string()->description('Comma-separated category codes or paths'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.edit')) {
                     return $denied;
                 }
+
+                $skus = $request->string('skus')->toString();
+                $categories = $request->string('categories')->toString();
 
                 $skuList = array_map('trim', explode(',', $skus));
                 $categoryInputs = array_map('trim', explode(',', $categories));
@@ -84,6 +105,7 @@ class AssignCategories implements PimTool
                         'errors'     => empty($errors) ? null : $errors,
                     ],
                 ]);
-            });
+            }
+        };
     }
 }

@@ -6,6 +6,9 @@ use Closure;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Throwable;
+use Webkul\Completeness\Console\RecalculateCompletenessCommand;
+use Webkul\ElasticSearch\Console\Command\CategoryIndexer;
+use Webkul\ElasticSearch\Console\Command\ProductIndexer;
 use Webkul\Installer\Database\Seeders\CategoryDemoTableSeeder;
 use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
 use Webkul\Installer\Database\Seeders\ProductTableSeeder;
@@ -54,11 +57,23 @@ class DemoDataInstaller
             app(ProductTableSeeder::class)->run();
 
             if (config('elasticsearch.enabled') == 'true') {
-                $report('Re-indexing categories to Elasticsearch...');
-                Artisan::call('unopim:category:index');
+                try {
+                    // These indexers are only auto-registered in the console, so
+                    // register them for the web installer. Indexing is an
+                    // optimization — never fail the whole seed if it errors
+                    // (e.g. Elasticsearch unreachable); the data is already in
+                    // the database and can be re-indexed later.
+                    Artisan::registerCommand(app(CategoryIndexer::class));
+                    Artisan::registerCommand(app(ProductIndexer::class));
 
-                $report('Re-indexing products to Elasticsearch...');
-                Artisan::call('unopim:product:index');
+                    $report('Re-indexing categories to Elasticsearch...');
+                    Artisan::call('unopim:category:index');
+
+                    $report('Re-indexing products to Elasticsearch...');
+                    Artisan::call('unopim:product:index');
+                } catch (Throwable $e) {
+                    $report('Elasticsearch re-indexing skipped: '.$e->getMessage());
+                }
             }
 
             $report('Recalculating product completeness...');
@@ -104,17 +119,15 @@ class DemoDataInstaller
     }
 
     /**
-     * Returns true when demo data is already present in the database.
-     *
-     * Probes for any non-root category — the base installer only
-     * creates the root row, while CategoryDemoTableSeeder inserts the
-     * full demo tree under it. A child category therefore proves the
-     * demo pipeline has already run.
+     * Check if demo or operator-created catalog data already exists.
      */
     public function isAlreadySeeded(): bool
     {
         try {
-            return DB::table('categories')->whereNotNull('parent_id')->exists();
+            return DB::table('products')->exists()
+                || DB::table('categories')->whereNotNull('parent_id')->exists()
+                || DB::table('attribute_families')->where('code', '!=', 'default')->exists()
+                || DB::table('channels')->where('code', '!=', 'default')->exists();
         } catch (Throwable) {
             // Table missing / DB not migrated yet → treat as not seeded
             // so the caller can decide how to handle the failure mode.
@@ -123,10 +136,7 @@ class DemoDataInstaller
     }
 
     /**
-     * Recalculate product completeness synchronously. The
-     * `unopim:completeness:recalculate` command dispatches queue jobs,
-     * so the sync driver is forced while it runs to guarantee work
-     * lands before the installer finishes.
+     * Recalculate product completeness synchronously.
      */
     protected function recalculateCompleteness(): void
     {
@@ -134,6 +144,12 @@ class DemoDataInstaller
 
         try {
             config(['queue.default' => 'sync']);
+            Artisan::registerCommand(app(RecalculateCompletenessCommand::class));
+
+            // The Completeness package only auto-registers this command when
+            // running in the console, so register it explicitly for the web
+            // installer (which calls this inside an HTTP request).
+            Artisan::registerCommand(app(RecalculateCompletenessCommand::class));
 
             Artisan::call('unopim:completeness:recalculate', ['--all' => true]);
         } finally {
