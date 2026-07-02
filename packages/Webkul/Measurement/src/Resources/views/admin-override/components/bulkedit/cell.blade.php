@@ -1,17 +1,3 @@
-{{--
-    Measurement package override of `admin::components.bulkedit.cell`.
-
-    This file is an exact copy of the core bulk-edit cell component with two
-    measurement-specific additions:
-
-      1. It registers the `v-spreadsheet-measurement` component (the two-field
-         value + unit editor) so the bulk-edit grid can render it.
-      2. `getComponentType()` maps the `measurement` attribute type to that
-         component instead of falling back to a plain text input.
-
-    Loaded ahead of the core copy via the `admin` namespace prepend in
-    MeasurementServiceProvider. Keep in sync with the core cell component.
---}}
 @include('measurement::components.bulkedit.type.measurement')
 
 @pushOnce('scripts')

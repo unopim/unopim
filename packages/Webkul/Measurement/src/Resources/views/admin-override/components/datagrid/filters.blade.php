@@ -874,8 +874,6 @@
         });
     </script>
 
-    {{-- Self-contained measurement filter (value + unit). Keeps its own state per
-         instance so it never collides with the shared price-filter state. --}}
     <script type="text/x-template" id="v-measurement-filter-template">
         <div>
             <div class="mb-2 mt-1.5 grid grid-cols-2 gap-2">

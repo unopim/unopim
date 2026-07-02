@@ -207,13 +207,11 @@ class MeasurementUnitsController extends Controller
                 continue;
             }
 
-            // Update labels
             $unit['labels'] = array_merge(
                 $unit['labels'] ?? [],
                 $newLabels
             );
 
-            // Update symbol
             $unit['symbol'] = request('symbol');
 
             $conversionOperators = request('convert_from_standard');
@@ -238,7 +236,6 @@ class MeasurementUnitsController extends Controller
                     ];
                 }
 
-                // Standard unit fallback
                 if (empty($conversionRows)) {
                     $conversionRows[] = [
                         'operator' => 'mul',
@@ -253,7 +250,6 @@ class MeasurementUnitsController extends Controller
                 );
             }
 
-            // Ensure standard unit always has valid conversion
             if (empty($unit['convert_from_standard'])) {
                 $unit['convert_from_standard'] = [
                     [

@@ -97,8 +97,6 @@
             },
 
             async mounted() {
-                // Data is rendered inline with the page (initialData). Only fall
-                // back to the AJAX request if it was not provided for some reason.
                 if (this.familyOptions !== null) {
                     return;
                 }

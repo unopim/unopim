@@ -15,7 +15,6 @@ class Importer extends CoreImporter
     {
         parent::initAttributes();
 
-        // Add measurement attribute columns to valid column names
         foreach ($this->attributes as $attribute) {
             if ($attribute->type === 'measurement') {
                 $this->addMeasurementAttributesColumns($attribute->code);
@@ -127,7 +126,6 @@ class Importer extends CoreImporter
                 continue;
             }
 
-            // Skip unit columns as they will be processed with their main attribute
             if (str_ends_with($columnName, '(unit)') || str_ends_with($columnName, '_unit')) {
                 continue;
             }
@@ -151,7 +149,6 @@ class Importer extends CoreImporter
                 $value = explode(',', $value);
             }
 
-            // Handle measurement attributes with unit column
             if ($attribute->type === 'measurement') {
                 $unitColumnName = $attributeCode.'(unit)';
                 $unitUnderscoreName = $attributeCode.'_unit';
@@ -166,7 +163,6 @@ class Importer extends CoreImporter
                     $rowData['locale'] ?? null
                 );
 
-                // ALWAYS normalize structure
                 if (! is_null($value)) {
                     $value = [
                         'value' => (float) $value,

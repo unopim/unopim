@@ -1,14 +1,4 @@
 @pushOnce('scripts')
-    {{--
-        Spreadsheet cell editor for `measurement` attributes in the product Bulk
-        Edit grid. Mirrors the two-field (value + unit) UI used on the product edit
-        page and the datagrid filter, so measurement attributes are editable in
-        bulk just like everywhere else.
-
-        It emits the raw `{ value, unit }` shape; the Measurement ProductObserver
-        converts it into the stored `{ unit, amount, family, base_data, base_unit }`
-        structure when the BulkProductUpdate job saves each product.
-    --}}
     <script type="text/x-template" id="v-spreadsheet-measurement-template">
         <div ref="wrapper" class="flex w-full h-full items-stretch">
             <!-- Value Field -->

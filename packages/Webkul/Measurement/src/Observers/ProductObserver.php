@@ -158,7 +158,6 @@ class ProductObserver
             return $value === '' || $value === null;
         }
 
-        // Already processed/stored format carries a non-empty amount.
         if (isset($value['amount']) && $value['amount'] !== '' && $value['amount'] !== null) {
             return false;
         }
@@ -224,12 +223,10 @@ class ProductObserver
      */
     protected function processScope(array &$scopedValues)
     {
-        // 1. Preload all attributes in one go
         $attributes = app(AttributeRepository::class)
             ->findWhereIn('code', array_keys($scopedValues))
             ->keyBy('code');
 
-        // 2. Cache measurement lookups
         $measurementCache = [];
 
         foreach ($scopedValues as $attributeCode => $value) {
@@ -240,7 +237,6 @@ class ProductObserver
                 continue;
             }
 
-            // Skip already processed formats
             if (isset($value['amount']) || isset($value['<all_channels>'])) {
                 continue;
             }
@@ -251,7 +247,6 @@ class ProductObserver
                 continue;
             }
 
-            // 3. Cache measurement per attribute
             if (! isset($measurementCache[$attribute->id])) {
                 $measurementCache[$attribute->id] =
                     $this->attributeMeasurementRepository->getByAttributeId($attribute->id);
@@ -263,9 +258,6 @@ class ProductObserver
 
                 $family = $measurement->family;
 
-                // Reuse the shared helper so the unit -> base conversion is done in
-                // ONE place (reverse + invert of convert_from_standard). This avoids
-                // the previous forward-direction bug that stored wrong base_data.
                 $baseData = $this->helper->calculateBaseValue(
                     $value['value'],
                     $value['unit'] ?? null,

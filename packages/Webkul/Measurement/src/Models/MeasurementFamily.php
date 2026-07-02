@@ -186,8 +186,6 @@ class MeasurementFamily extends Model implements HistoryAuditable
             }
         }
 
-        // Delete removed units via model instances (not a mass delete) so the
-        // `deleted` model event fires and the change is audited as history.
         $this->units()
             ->when(
                 ! empty($keptCodes),
@@ -238,7 +236,6 @@ class MeasurementFamily extends Model implements HistoryAuditable
             }
         }
 
-        // Remove conversion steps that are no longer present.
         foreach ($existing as $index => $current) {
             if ($index >= count($conversions)) {
                 $current->delete();

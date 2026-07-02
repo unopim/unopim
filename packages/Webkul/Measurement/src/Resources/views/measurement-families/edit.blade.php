@@ -541,17 +541,14 @@
 
                         const char = event.key;
 
-                        // Allow non-character keys (Enter, Tab, arrows, etc.).
                         if (char.length > 1) {
                             return;
                         }
 
-                        // Allow digits.
                         if (/[0-9]/.test(char)) {
                             return;
                         }
 
-                        // Allow a single decimal point.
                         if (char === '.' && ! event.target.value.includes('.')) {
                             return;
                         }

@@ -83,7 +83,6 @@ class MeasurementFamilyApiController extends Controller
             ], 422);
         }
 
-        // Add default conversion for the standard unit
         foreach ($data['units'] as &$unit) {
             if ($unit['code'] === $data['standard_unit']) {
                 $unit['convert_from_standard'] = [
@@ -129,8 +128,6 @@ class MeasurementFamilyApiController extends Controller
 
         $data = $request->all();
 
-        // When the units and/or the standard unit are being changed, the standard
-        // unit must still be one of the family's units, otherwise conversions break.
         if (array_key_exists('standard_unit', $data) || array_key_exists('units', $data)) {
             $standardUnit = $data['standard_unit'] ?? $family->standard_unit;
 

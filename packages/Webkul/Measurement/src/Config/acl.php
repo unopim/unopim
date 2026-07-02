@@ -9,7 +9,6 @@ return [
         'icon'    => '',
     ],
 
-    // Measurement Families
     [
         'key'   => 'catalog.measurements.families',
         'name'  => 'Measurement Families',
@@ -53,7 +52,6 @@ return [
         'sort'  => 4,
     ],
 
-    // Measurement Units
     [
         'key'   => 'catalog.measurements.units',
         'name'  => 'Measurement Units',

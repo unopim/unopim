@@ -38,7 +38,6 @@ class MeasurementFilter extends AbstractDatabaseAttributeFilter
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
-        // Value arrives as [unitCode, amount] from the reused price-style filter UI.
         $unit = is_array($value) ? ($value[0] ?? null) : null;
         $amount = is_array($value) ? ($value[1] ?? null) : $value;
 
@@ -53,7 +52,6 @@ class MeasurementFilter extends AbstractDatabaseAttributeFilter
         $grammar = DB::rawQueryGrammar();
         $tablePath = $this->getSearchTablePath($options);
 
-        // jsonExtract already wraps in JSON_UNQUOTE, so values compare as plain strings/numbers.
         $unitPath = $grammar->jsonExtract($tablePath, ...array_merge($scopedPath, ['unit']));
         $amountPath = $grammar->jsonExtract($tablePath, ...array_merge($scopedPath, ['amount']));
 
