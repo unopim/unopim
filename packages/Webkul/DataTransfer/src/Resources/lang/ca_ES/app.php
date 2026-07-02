@@ -25,7 +25,7 @@ return [
             ],
         ],
         'categories' => [
-            'title'      => 'Categories',
+            'title'      => 'Categorías',
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'No pots eliminar la categoria arrel associada amb un canal',
@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Monedes',
             'filters' => [
                 'status' => 'Estat',
                 'enable' => 'Activar',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'L\'estat ha de ser 0 o 1 (o buit per defecte activat).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Rols',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Usuaris',
             'filters' => [
                 'status' => 'Estat',
                 'active' => 'Actiu',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Camí del Fitxer',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Estat',
             'enable'         => 'Activat',
@@ -184,7 +184,7 @@ return [
                 'attributes'           => 'Atributs',
                 'attributes-info'      => 'Només s\'exporten els atributs seleccionats. Deixeu-ho buit per exportar tots els atributs de la família.',
                 'attribute-families'   => 'Famílies d\'atributs',
-                'categories'           => 'Categories',
+                'categories'           => 'Categorías',
                 'completeness'         => 'Completesa',
                 'completeness-options' => [
                     'none'         => 'Sense condició de completesa',
@@ -223,7 +223,7 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Categories',
+            'title' => 'Categorías',
         ],
         'category-fields' => [
             'title' => 'Camps de categoria',
@@ -247,16 +247,16 @@ return [
             'title' => 'Canals',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Monedes',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Rols',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Usuaris',
             'filters' => [
                 'status' => 'Estat',
-                'active' => 'Active',
+                'active' => 'Actiu',
                 'all'    => 'Tots',
             ],
         ],

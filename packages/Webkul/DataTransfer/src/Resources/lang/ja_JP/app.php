@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => '通貨',
             'filters' => [
                 'status' => 'ステータス',
                 'enable' => '有効',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'ステータスは0または1である必要があります（またはデフォルト有効の場合は空）。',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'ロール',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'ユーザー',
             'filters' => [
                 'status' => 'ステータス',
                 'active' => 'アクティブ',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'ファイル パス',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'ステータス',
             'enable'         => '有効',
@@ -247,16 +247,16 @@ return [
             'title' => 'チャネル',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => '通貨',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'ロール',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'ユーザー',
             'filters' => [
                 'status' => 'ステータス',
-                'active' => 'Active',
+                'active' => '有効',
                 'all'    => 'すべて',
             ],
         ],

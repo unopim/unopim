@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Mga Pera',
             'filters' => [
                 'status' => 'Katayuan',
                 'enable' => 'I-enable',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Ang status ay dapat 0 o 1 (o walang laman para sa default na naka-enable).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Mga Tungkulin',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Mga Gumagamit',
             'filters' => [
                 'status' => 'Katayuan',
                 'active' => 'Aktibo',
@@ -164,9 +164,9 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Daan ng File',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
-            'status'         => 'Status',
+            'status'         => 'Katayuan',
             'enable'         => 'Naka-enable',
             'all'            => 'Lahat',
         ],
@@ -201,7 +201,7 @@ return [
                 'time-value'     => 'Bilang ng mga araw',
                 'time-date'      => 'Petsa ng simula',
                 'time-date-end'  => 'Petsa ng pagtatapos',
-                'status'         => 'Status',
+                'status'         => 'Katayuan',
                 'status-options' => [
                     'enable'  => 'Naka-enable',
                     'disable' => 'Naka-disable',
@@ -247,16 +247,16 @@ return [
             'title' => 'Mga Channel',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Mga Pera',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Mga Tungkulin',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Mga Gumagamit',
             'filters' => [
-                'status' => 'Status',
-                'active' => 'Active',
+                'status' => 'Katayuan',
+                'active' => 'Aktibo',
                 'all'    => 'Lahat',
             ],
         ],

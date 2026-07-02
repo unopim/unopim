@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Devises',
             'filters' => [
                 'status' => 'Statut',
                 'enable' => 'Activé',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Le statut doit être 0 ou 1 (ou vide pour activé par défaut).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Rôles',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Utilisateurs',
             'filters' => [
                 'status' => 'Statut',
                 'active' => 'Actif',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Chemin du fichier',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Statut',
             'enable'         => 'Activé',
@@ -207,7 +207,7 @@ return [
                     'disable' => 'Désactivé',
                     'all'     => 'Tous',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Sku',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Identifiants',
                 'identifiers-info' => 'Collez un SKU / identifiant par ligne pour exporter uniquement ces produits. Laissez vide pour exporter tous les produits.',
@@ -247,16 +247,16 @@ return [
             'title' => 'Canaux',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Devises',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Rôles',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Utilisateurs',
             'filters' => [
                 'status' => 'Statut',
-                'active' => 'Active',
+                'active' => 'Actif',
                 'all'    => 'Tous',
             ],
         ],

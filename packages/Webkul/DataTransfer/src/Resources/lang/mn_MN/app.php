@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Валютууд',
             'filters' => [
                 'status' => 'Төлөв',
                 'enable' => 'Идэвхтэй',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Төлөв 0 эсвэл 1 байх ёстой (эсвэл анхдагчаар идэвхжүүлэхийн тулд хоосон).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Дүрээ',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Хэрэглэгчид',
             'filters' => [
                 'status' => 'Төлөв',
                 'active' => 'Идэвхтэй',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Файлын зам',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Төлөв',
             'enable'         => 'Идэвхтэй',
@@ -207,7 +207,7 @@ return [
                     'disable' => 'Идэвхгүй',
                     'all'     => 'Бүгд',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Уран жимс',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Танигчид',
                 'identifiers-info' => 'Зөвхөн тэдгээр бүтээгдэхүүнийг экспортлохын тулд мөр бүрт нэг SKU / танигч буулгана уу. Бүх бүтээгдэхүүнийг экспортлохын тулд хоосон үлдээнэ үү.',
@@ -247,16 +247,16 @@ return [
             'title' => 'Сувгууд',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Валютууд',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Дүрээ',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Хэрэглэгчид',
             'filters' => [
                 'status' => 'Төлөв',
-                'active' => 'Active',
+                'active' => 'Идэвхтэй',
                 'all'    => 'Бүгд',
             ],
         ],

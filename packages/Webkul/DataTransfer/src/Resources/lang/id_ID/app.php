@@ -108,9 +108,9 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Mata uang',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Negara',
                 'enable' => 'Aktifkan',
                 'all'    => 'Semua',
             ],
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status harus 0 atau 1 (atau kosong untuk default aktif).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Peran',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,9 +133,9 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Pengguna',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Negara',
                 'active' => 'Aktif',
                 'all'    => 'Semua',
             ],
@@ -164,9 +164,9 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Jalur file',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
-            'status'         => 'Status',
+            'status'         => 'Negara',
             'enable'         => 'Aktif',
             'all'            => 'Semua',
         ],
@@ -201,13 +201,13 @@ return [
                 'time-value'     => 'Jumlah hari',
                 'time-date'      => 'Tanggal mulai',
                 'time-date-end'  => 'Tanggal selesai',
-                'status'         => 'Status',
+                'status'         => 'Negara',
                 'status-options' => [
                     'enable'  => 'Aktif',
                     'disable' => 'Nonaktif',
                     'all'     => 'Semua',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Sku',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Pengidentifikasi',
                 'identifiers-info' => 'Tempel satu SKU / pengidentifikasi per baris untuk mengekspor hanya produk tersebut. Biarkan kosong untuk mengekspor semua produk.',
@@ -247,16 +247,16 @@ return [
             'title' => 'Saluran',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Mata uang',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Peran',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Pengguna',
             'filters' => [
-                'status' => 'Status',
-                'active' => 'Active',
+                'status' => 'Negara',
+                'active' => 'Aktif',
                 'all'    => 'Semua',
             ],
         ],

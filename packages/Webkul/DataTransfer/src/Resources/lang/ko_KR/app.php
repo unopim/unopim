@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => '통화',
             'filters' => [
                 'status' => '상태',
                 'enable' => '활성화',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => '상태는 0 또는 1이어야 합니다 (또는 기본 활성화를 위해 비워둡니다).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => '역할',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => '사용자',
             'filters' => [
                 'status' => '상태',
                 'active' => '활성',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => '파일 경로',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => '상태',
             'enable'         => '활성화',
@@ -247,16 +247,16 @@ return [
             'title' => '채널',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => '통화',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => '역할',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => '사용자',
             'filters' => [
                 'status' => '상태',
-                'active' => 'Active',
+                'active' => '활성',
                 'all'    => '전체',
             ],
         ],

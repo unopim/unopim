@@ -85,7 +85,7 @@ return [
             ],
         ],
         'locales' => [
-            'title'      => 'Locales',
+            'title'      => 'Target Locales',
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Locale code \'%s\' has already been imported in this batch.',
@@ -179,7 +179,7 @@ return [
                 'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
                 'currencies'           => 'Currencies',
                 'currencies-info'      => 'Price attributes are exported per selected currency. Leave empty to export every channel currency.',
-                'locales'              => 'Locales',
+                'locales'              => 'Target Locales',
                 'locales-info'         => 'Localizable attributes are exported once per selected locale. Leave empty to export every channel locale.',
                 'attributes'           => 'Attributes',
                 'attributes-info'      => 'Only the selected attributes are exported. Leave empty to export every attribute in the family.',
@@ -241,7 +241,7 @@ return [
             'title' => 'Attribute Options',
         ],
         'locales' => [
-            'title' => 'Locales',
+            'title' => 'Target Locales',
         ],
         'channels' => [
             'title' => 'Channels',

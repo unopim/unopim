@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Waluty',
             'filters' => [
                 'status' => 'Status',
                 'enable' => 'Włącz',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status musi wynosić 0 lub 1 (lub pusty dla domyślnie włączonego).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Role',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Użytkownicy',
             'filters' => [
                 'status' => 'Status',
                 'active' => 'Aktywny',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Ścieżka pliku',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Włączony',
@@ -247,16 +247,16 @@ return [
             'title' => 'Kanały',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Waluty',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Role',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Użytkownicy',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Aktywne',
                 'all'    => 'Wszystkie',
             ],
         ],

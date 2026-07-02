@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'العملات',
             'filters' => [
                 'status' => 'الحالة',
                 'enable' => 'مفعل',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'يجب أن تكون الحالة 0 أو 1 (أو فارغة للتفعيل الافتراضي).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'أدوار',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'المستخدمون',
             'filters' => [
                 'status' => 'الحالة',
                 'active' => 'نشط',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'مسار الملف',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'الحالة',
             'enable'         => 'مفعّل',
@@ -207,7 +207,7 @@ return [
                     'disable' => 'معطّل',
                     'all'     => 'الكل',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'رمز التخزين التعريفي',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'المعرّفات',
                 'identifiers-info' => 'الصق معرّف SKU / معرّفًا واحدًا في كل سطر لتصدير تلك المنتجات فقط. اتركه فارغًا لتصدير جميع المنتجات.',
@@ -247,16 +247,16 @@ return [
             'title' => 'القنوات',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'العملات',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'أدوار',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'المستخدمون',
             'filters' => [
                 'status' => 'الحالة',
-                'active' => 'Active',
+                'active' => 'نشط',
                 'all'    => 'الكل',
             ],
         ],

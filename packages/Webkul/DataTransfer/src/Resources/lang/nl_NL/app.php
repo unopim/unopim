@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Valuta',
             'filters' => [
                 'status' => 'Status',
                 'enable' => 'Inschakelen',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Rollen',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Gebruikers',
             'filters' => [
                 'status' => 'Status',
                 'active' => 'Actief',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Bestandspad',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Ingeschakeld',
@@ -247,16 +247,16 @@ return [
             'title' => 'Kanalen',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valuta',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Rollen',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Gebruikers',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Actief',
                 'all'    => 'Alle',
             ],
         ],

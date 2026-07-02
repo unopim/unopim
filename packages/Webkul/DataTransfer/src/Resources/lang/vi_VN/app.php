@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Các Tiền Tệ',
             'filters' => [
                 'status' => 'Trạng thái',
                 'enable' => 'Bật',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Trạng thái phải là 0 hoặc 1 (hoặc để trống cho mặc định bật).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Vai trò',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Người dùng',
             'filters' => [
                 'status' => 'Trạng thái',
                 'active' => 'Hoạt động',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Đường dẫn tệp',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Trạng thái',
             'enable'         => 'Bật',
@@ -247,16 +247,16 @@ return [
             'title' => 'Kênh',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Các Tiền Tệ',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Vai trò',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Người dùng',
             'filters' => [
                 'status' => 'Trạng thái',
-                'active' => 'Active',
+                'active' => 'Hoạt động',
                 'all'    => 'Tất cả',
             ],
         ],

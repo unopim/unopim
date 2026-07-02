@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Валюти',
             'filters' => [
                 'status' => 'Статус',
                 'enable' => 'Увімкнено',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Статус має бути 0 або 1 (або порожній для увімкнення за замовчуванням).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Ролі',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Користувачі',
             'filters' => [
                 'status' => 'Статус',
                 'active' => 'Активний',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Шлях до файлу',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Статус',
             'enable'         => 'Увімкнено',
@@ -207,7 +207,7 @@ return [
                     'disable' => 'Вимкнено',
                     'all'     => 'Усі',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Артикул',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Ідентифікатори',
                 'identifiers-info' => 'Вставте по одному SKU / ідентифікатору в рядку, щоб експортувати лише ці товари. Залиште порожнім, щоб експортувати всі товари.',
@@ -247,16 +247,16 @@ return [
             'title' => 'Канали',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Валюти',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Ролі',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Користувачі',
             'filters' => [
                 'status' => 'Статус',
-                'active' => 'Active',
+                'active' => 'Активні',
                 'all'    => 'Усі',
             ],
         ],

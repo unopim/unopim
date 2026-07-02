@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Monedas',
             'filters' => [
                 'status' => 'Estado',
                 'enable' => 'Activar',
@@ -118,7 +118,7 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'El estado debe ser 0 o 1 (o vacío para habilitado por defecto).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Usuarios',
             'filters' => [
                 'status' => 'Estado',
                 'active' => 'Activo',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Ruta de archivo',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Estado',
             'enable'         => 'Habilitado',
@@ -207,7 +207,7 @@ return [
                     'disable' => 'Deshabilitado',
                     'all'     => 'Todos',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Sku',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Identificadores',
                 'identifiers-info' => 'Pega un SKU / identificador por línea para exportar solo esos productos. Déjalo vacío para exportar todos los productos.',
@@ -247,16 +247,16 @@ return [
             'title' => 'Canales',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Monedas',
         ],
         'roles' => [
             'title' => 'Roles',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Usuarios',
             'filters' => [
                 'status' => 'Estado',
-                'active' => 'Active',
+                'active' => 'Activo',
                 'all'    => 'Todos',
             ],
         ],

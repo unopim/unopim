@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => '货币',
             'filters' => [
                 'status' => '状态',
                 'enable' => '启用',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => '状态必须为 0 或 1（或留空表示默认启用）。',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => '角色',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => '用户',
             'filters' => [
                 'status' => '状态',
                 'active' => '活跃',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => '文件路径',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => '状态',
             'enable'         => '启用',
@@ -207,7 +207,7 @@ return [
                     'disable' => '禁用',
                     'all'     => '全部',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'sku',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => '标识符',
                 'identifiers-info' => '每行粘贴一个 SKU / 标识符，仅导出这些产品。留空则导出所有产品。',
@@ -247,16 +247,16 @@ return [
             'title' => '渠道',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => '货币',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => '角色',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => '用户',
             'filters' => [
                 'status' => '状态',
-                'active' => 'Active',
+                'active' => '启用',
                 'all'    => '全部',
             ],
         ],

@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Monede',
             'filters' => [
                 'status' => 'Stare',
                 'enable' => 'Activat',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Statusul trebuie să fie 0 sau 1 (sau gol pentru activat implicit).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Roluri',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Utilizatori',
             'filters' => [
                 'status' => 'Stare',
                 'active' => 'Activ',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Calea Fișierului',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Stare',
             'enable'         => 'Activat',
@@ -247,16 +247,16 @@ return [
             'title' => 'Canale',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Monede',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Roluri',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Utilizatori',
             'filters' => [
                 'status' => 'Stare',
-                'active' => 'Active',
+                'active' => 'Activ',
                 'all'    => 'Toate',
             ],
         ],

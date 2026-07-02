@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Valuutat',
             'filters' => [
                 'status' => 'Tila',
                 'enable' => 'Käytössä',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Tilan tulee olla 0 tai 1 (tai tyhjä oletuksena käytössä).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Roolit',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Käyttäjät',
             'filters' => [
                 'status' => 'Tila',
                 'active' => 'Aktiivinen',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Tiedostopolku',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Tila',
             'enable'         => 'Käytössä',
@@ -247,16 +247,16 @@ return [
             'title' => 'Kanavat',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valuutat',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Roolit',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Käyttäjät',
             'filters' => [
                 'status' => 'Tila',
-                'active' => 'Active',
+                'active' => 'Aktiivinen',
                 'all'    => 'Kaikki',
             ],
         ],

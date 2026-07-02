@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Валюты',
             'filters' => [
                 'status' => 'Статус',
                 'enable' => 'Включено',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Статус должен быть 0 или 1 (или пустым для включения по умолчанию).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Роли',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Пользователи',
             'filters' => [
                 'status' => 'Статус',
                 'active' => 'Активный',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Путь к файлу',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Статус',
             'enable'         => 'Включён',
@@ -207,7 +207,7 @@ return [
                     'disable' => 'Отключён',
                     'all'     => 'Все',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Sku',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Идентификаторы',
                 'identifiers-info' => 'Вставьте по одному SKU / идентификатору в строке, чтобы экспортировать только эти товары. Оставьте пустым, чтобы экспортировать все товары.',
@@ -247,16 +247,16 @@ return [
             'title' => 'Каналы',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Валюты',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Роли',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Пользователи',
             'filters' => [
                 'status' => 'Статус',
-                'active' => 'Active',
+                'active' => 'Активные',
                 'all'    => 'Все',
             ],
         ],

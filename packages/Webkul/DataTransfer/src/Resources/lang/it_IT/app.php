@@ -108,7 +108,7 @@ return [
             ],
         ],
         'currencies' => [
-            'title'   => 'Currencies',
+            'title'   => 'Valute',
             'filters' => [
                 'status' => 'Stato',
                 'enable' => 'Abilitato',
@@ -118,13 +118,13 @@ return [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Lo stato deve essere 0 o 1 (o vuoto per abilitato di default).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Ruoli',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -133,7 +133,7 @@ return [
             ],
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Utenti',
             'filters' => [
                 'status' => 'Stato',
                 'active' => 'Attivo',
@@ -164,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Percorso File',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Stato',
             'enable'         => 'Abilitato',
@@ -247,16 +247,16 @@ return [
             'title' => 'Canali',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valute',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Ruoli',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Utenti',
             'filters' => [
                 'status' => 'Stato',
-                'active' => 'Active',
+                'active' => 'Attivo',
                 'all'    => 'Tutti',
             ],
         ],
