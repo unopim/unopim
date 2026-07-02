@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Gebietsschemata',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Der Sprachcode \'%s\' wurde bereits in diesem Batch importiert.',
+                    'code-not-found-to-delete'    => 'Sprache mit dem Code \'%s\' wurde im System nicht gefunden.',
+                    'invalid-status'              => 'Der Status muss 0 oder 1 sein (oder leer für standardmäßig aktiviert).',
+                    'channel-related-locale-root' => 'Sie können die Sprache mit dem Code :code nicht löschen, da sie mit einem Kanal verknüpft ist.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanäle',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Status',
+                'enable' => 'Aktiviert',
+                'all'    => 'Alle',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alle',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,10 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorien',
+        ],
+
+        'locales' => [
+            'title' => 'Gebietsschemata',
         ],
         'channels' => [
             'title' => 'Kanäle',

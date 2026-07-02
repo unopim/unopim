@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Языки',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Код языка \'%s\' уже импортирован в этой партии.',
+                    'code-not-found-to-delete'    => 'Язык с кодом \'%s\' не найден в системе.',
+                    'invalid-status'              => 'Статус должен быть 0 или 1 (или пустым для включения по умолчанию).',
+                    'channel-related-locale-root' => 'Вы не можете удалить язык с кодом :code, так как он связан с каналом.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Каналы',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Статус',
+                'enable' => 'Включено',
+                'all'    => 'Все',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Статус',
+                'active' => 'Активный',
+                'all'    => 'Все',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,9 @@ return [
         ],
         'categories' => [
             'title' => 'Категории',
+        ],
+        'locales' => [
+            'title' => 'Языки',
         ],
         'channels' => [
             'title' => 'Каналы',

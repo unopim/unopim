@@ -9,7 +9,6 @@ async function createChannelImport(adminPage, code, filePath = 'assets/channels.
     await adminPage.getByRole('link', { name: 'Create Import' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
 
-    // Select 'Channels' from the type dropdown
     await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'categories' }).click();
     await adminPage.getByRole('option', { name: 'Channels' }).locator('span').first().click();
 
@@ -42,14 +41,11 @@ test.describe('UnoPim Channel Import Jobs', () => {
 
         await createChannelImport(adminPage, code);
 
-        // Verify we are on the edit/show page of the created import
         await expect(adminPage.getByRole('button', { name: 'Import Now' })).toBeVisible();
 
-        // Run Import Now
         await adminPage.getByRole('button', { name: 'Import Now' }).click();
         await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
 
-        // Cleanup
         await deleteImport(adminPage, code);
     });
 
@@ -59,14 +55,12 @@ test.describe('UnoPim Channel Import Jobs', () => {
 
         await createChannelImport(adminPage, code);
 
-        // Search
         await navigateTo(adminPage, 'imports');
         await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
         await adminPage.keyboard.press('Enter');
         await adminPage.waitForLoadState('networkidle');
         await expect(adminPage.locator('#app').getByText(code, { exact: true })).toBeVisible();
 
-        // Cleanup
         await deleteImport(adminPage, code);
     });
 
@@ -74,10 +68,8 @@ test.describe('UnoPim Channel Import Jobs', () => {
         const uid = generateUid();
         const code = `actions-chan-${uid}`;
 
-        // Create
         await createChannelImport(adminPage, code);
 
-        // Navigate and search
         await navigateTo(adminPage, 'imports');
         await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
         await adminPage.keyboard.press('Enter');
@@ -85,25 +77,21 @@ test.describe('UnoPim Channel Import Jobs', () => {
 
         const itemRow = adminPage.locator('div', { hasText: code });
 
-        // Test Import action icon
         await itemRow.locator('span[title="Import"]').first().click();
         await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports\/import/);
         await adminPage.goBack();
         await adminPage.waitForLoadState('networkidle');
 
-        // Search again
         await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
         await adminPage.keyboard.press('Enter');
         await adminPage.waitForLoadState('networkidle');
 
-        // Test Edit action icon
         const itemRow2 = adminPage.locator('div', { hasText: code });
         await itemRow2.locator('span[title="Edit"]').first().click();
         await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports\/edit/);
         await adminPage.goBack();
         await adminPage.waitForLoadState('networkidle');
 
-        // Cleanup
         await deleteImport(adminPage, code);
     });
 });

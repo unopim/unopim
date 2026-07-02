@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'भाषाएँ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'भाषा कोड \'%s\' इस बैच में पहले ही आयात किया जा चुका है।',
+                    'code-not-found-to-delete'    => 'कोड \'%s\' वाली भाषा सिस्टम में नहीं मिली।',
+                    'invalid-status'              => 'स्थिति 0 या 1 होनी चाहिए (या डिफ़ॉल्ट सक्षम के लिए खाली)।',
+                    'channel-related-locale-root' => 'आप कोड :code वाली भाषा को हटा नहीं सकते क्योंकि यह एक चैनल से जुड़ी है।',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'चैनल',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'स्थिति',
+                'enable' => 'सक्षम',
+                'all'    => 'सभी',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'स्थिति',
+                'active' => 'सक्रिय',
+                'all'    => 'सभी',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,9 @@ return [
         ],
         'categories' => [
             'title' => 'श्रेणियाँ',
+        ],
+        'locales' => [
+            'title' => 'भाषाएँ',
         ],
         'channels' => [
             'title' => 'चैनल',

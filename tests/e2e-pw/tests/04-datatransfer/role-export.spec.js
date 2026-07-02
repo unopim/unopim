@@ -34,7 +34,6 @@ test.describe('Role Export Jobs', () => {
     const code = `role-csv-${uid}`;
     await createExport(adminPage, code, 'CSV');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 
@@ -43,7 +42,6 @@ test.describe('Role Export Jobs', () => {
     const code = `role-xls-${uid}`;
     await createExport(adminPage, code, 'XLS');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 
@@ -52,7 +50,6 @@ test.describe('Role Export Jobs', () => {
     const code = `role-xlsx-${uid}`;
     await createExport(adminPage, code, 'XLSX');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 });
