@@ -14,6 +14,7 @@ use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Support\ModelRecommender;
+use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 class MagicAIPlatformController extends Controller
 {
@@ -192,12 +193,23 @@ class MagicAIPlatformController extends Controller
 
     public function testConnection(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent.platform')) {
+            abort(403);
+        }
+
         $this->validate(request(), [
             'provider' => 'required|string',
             'api_key'  => 'nullable|string',
             'api_url'  => 'nullable',
             'models'   => 'required|string',
         ]);
+
+        if (! $this->isSafeApiUrl(request()->input('api_url'))) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => trans('admin::app.configuration.platform.message.test-fail'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         try {
             $provider = AiProvider::from(request()->input('provider'));
@@ -276,11 +288,21 @@ class MagicAIPlatformController extends Controller
 
     public function fetchModels(): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent.platform')) {
+            abort(403);
+        }
+
         $this->validate(request(), [
             'provider' => 'required|string',
             'api_key'  => 'nullable|string',
             'api_url'  => 'nullable',
         ]);
+
+        if (! $this->isSafeApiUrl(request()->input('api_url'))) {
+            return new JsonResponse([
+                'message' => trans('admin::app.configuration.platform.message.fetch-models-fail'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         try {
             $provider = AiProvider::from(request()->input('provider'));
@@ -301,6 +323,16 @@ class MagicAIPlatformController extends Controller
                 'message' => trans('admin::app.configuration.platform.message.fetch-models-fail').': '.$e->getMessage(),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
+    }
+
+    /**
+     * Guards user-supplied provider URLs against SSRF before any outbound call.
+     */
+    private function isSafeApiUrl(?string $apiUrl): bool
+    {
+        $apiUrl = trim((string) $apiUrl);
+
+        return $apiUrl === '' || SafeWebhookUrl::validate($apiUrl)['valid'];
     }
 
     /**

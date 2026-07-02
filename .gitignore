@@ -39,3 +39,6 @@ tests/e2e-pw/test-results/
 tests/e2e-pw/test-results/
 test-results
 
+
+# Passport OAuth signing keys — generated per environment, never commit
+packages/Webkul/AdminApi/src/Secrets/Oauth/*.key

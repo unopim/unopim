@@ -3,6 +3,9 @@
 namespace Webkul\AdminApi\Providers;
 
 use Carbon\CarbonInterval;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\UserRepository as PassportUserRepository;
@@ -35,9 +38,12 @@ class AdminApiServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Route::middleware('web')->group(__DIR__.'/../Routes/integrations-routes.php');
+        Route::middleware('web')
+            ->where(['id' => '[0-9]+'])
+            ->group(__DIR__.'/../Routes/integrations-routes.php');
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->activateMiddlewareAliases();
+        $this->registerRateLimiter();
         $this->activatePassportApiClient();
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'admin_api');
@@ -78,6 +84,17 @@ class AdminApiServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the rate limiter guarding the REST API.
+     */
+    protected function registerRateLimiter(): void
+    {
+        RateLimiter::for('rest-api', function (Request $request) {
+            return Limit::perMinute((int) config('api.rate_limit', 120))
+                ->by($request->user()?->getAuthIdentifier() ?: $request->ip());
+        });
+    }
+
+    /**
      * Define the "api" routes for the application.
      *
      * @return void
@@ -107,12 +124,13 @@ class AdminApiServiceProvider extends ServiceProvider
      */
     protected function activatePassportApiClient(): void
     {
+        $this->ensureOauthKeys(__DIR__.'/../Secrets/Oauth');
+
         Passport::loadKeysFrom(__DIR__.'/../Secrets/Oauth');
 
-        // league/oauth2-server v9 rejects OAuth key files that are not 600/660.
-        // The bundled keys ship with looser permissions that git cannot preserve
-        // across clones, so skip the permission check to keep the API bootable
-        // in every environment.
+        // Keys are generated per environment (see ensureOauthKeys) and are never
+        // committed, so their on-disk permissions can vary by host umask. Skip
+        // league/oauth2-server v9's 600/660 check to keep the API bootable.
         Passport::$validateKeyPermissions = false;
 
         Passport::$passwordGrantEnabled = true;
@@ -133,6 +151,41 @@ class AdminApiServiceProvider extends ServiceProvider
         Passport::refreshTokensExpireIn(CarbonInterval::seconds($refreshTokenTtl));
 
         $this->app->bind(ClientRepository::class, \Webkul\AdminApi\Repositories\ClientRepository::class);
+    }
+
+    /**
+     * Generates a per-environment Passport signing keypair when absent so the
+     * key never has to be committed. Existing keys are left untouched.
+     */
+    protected function ensureOauthKeys(string $path): void
+    {
+        $privateKeyPath = $path.'/oauth-private.key';
+        $publicKeyPath = $path.'/oauth-public.key';
+
+        if (file_exists($privateKeyPath) && file_exists($publicKeyPath)) {
+            return;
+        }
+
+        if (! is_dir($path)) {
+            mkdir($path, 0755, true);
+        }
+
+        $resource = openssl_pkey_new([
+            'private_key_bits' => 4096,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+        ]);
+
+        if ($resource === false) {
+            return;
+        }
+
+        openssl_pkey_export($resource, $privateKey);
+
+        file_put_contents($privateKeyPath, $privateKey, LOCK_EX);
+        file_put_contents($publicKeyPath, openssl_pkey_get_details($resource)['key'], LOCK_EX);
+
+        chmod($privateKeyPath, 0600);
+        chmod($publicKeyPath, 0600);
     }
 
     /**
