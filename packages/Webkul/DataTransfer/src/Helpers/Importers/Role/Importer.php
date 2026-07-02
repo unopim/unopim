@@ -60,9 +60,6 @@ class Importer extends AbstractImporter
         parent::__construct($importBatchRepository);
     }
 
-    /**
-     * Initialize error templates
-     */
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -72,9 +69,6 @@ class Importer extends AbstractImporter
         parent::initErrorMessages();
     }
 
-    /**
-     * Validate data.
-     */
     public function validateData(): void
     {
         $this->roleStorage->init();
@@ -82,9 +76,6 @@ class Importer extends AbstractImporter
         parent::validateData();
     }
 
-    /**
-     * Validates row
-     */
     public function validateRow(array $rowData, int $rowNumber): bool
     {
         if (isset($this->validatedRows[$rowNumber])) {
@@ -118,9 +109,6 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
-    /**
-     * Start the import process
-     */
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -145,9 +133,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Delete roles from current batch
-     */
     protected function deleteRoleData(JobTrackBatchContract $batch): bool
     {
         $this->roleStorage->load(Arr::pluck($batch->data, 'name'));
@@ -174,9 +159,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Save roles from current batch
-     */
     protected function saveRoleData(JobTrackBatchContract $batch): bool
     {
         $this->roleStorage->load(Arr::pluck($batch->data, 'name'));

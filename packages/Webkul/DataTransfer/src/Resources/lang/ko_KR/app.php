@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => '카테고리 필드',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '카테고리 필드 코드 :code 는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 카테고리 필드 코드를 찾을 수 없습니다.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => '속성',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '속성 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete'             => '삭제할 속성 코드를 찾을 수 없습니다.',
+                    'code_is_system_and_cannot_be_deleted' => '시스템 속성은 삭제할 수 없습니다.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => '속성 그룹',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '속성 그룹 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete'             => '삭제할 속성 그룹 코드를 찾을 수 없습니다.',
+                    'code_is_system_and_cannot_be_deleted' => '시스템 속성 그룹은 삭제할 수 없습니다.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => '속성 계열',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '속성 계열 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 속성 계열 코드를 찾을 수 없습니다.',
+                    'invalid-attribute-group'  => '속성 그룹 ":code"가 존재하지 않습니다.',
+                    'invalid-attribute'        => '속성 ":code"가 존재하지 않습니다.',
+                    'invalid-channel'          => '채널 ":code"가 존재하지 않습니다.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => '속성 옵션',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '속성 옵션 코드 :code는 이미 사용 중입니다.',
+                    'code_not_found_to_delete' => '삭제할 속성 옵션 코드를 찾을 수 없습니다.',
+                    'locale-not-exist'         => '로캘 ":code"가 존재하지 않습니다.',
+                    'invalid-attribute'        => '속성 ":code"가 존재하지 않습니다.',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => '로케일',
             'validation' => [
@@ -56,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => '통화',
+            'filters' => [
                 'status' => '상태',
                 'enable' => '활성화',
                 'all'    => '전체',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => '상태는 0 또는 1이어야 합니다 (또는 기본 활성화를 위해 비워둡니다).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => '역할',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => '사용자',
+            'filters' => [
                 'status' => '상태',
                 'active' => '활성',
                 'all'    => '전체',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => '파일 경로',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => '상태',
             'enable'         => '활성화',
@@ -175,6 +225,21 @@ return [
         'categories' => [
             'title' => '카테고리',
         ],
+        'category-fields' => [
+            'title' => '카테고리 필드',
+        ],
+        'attributes' => [
+            'title' => '속성',
+        ],
+        'attribute-groups' => [
+            'title' => '속성 그룹',
+        ],
+        'attribute-families' => [
+            'title' => '속성 계열',
+        ],
+        'attribute-options' => [
+            'title' => '속성 옵션',
+        ],
         'locales' => [
             'title' => '로케일',
         ],
@@ -182,16 +247,16 @@ return [
             'title' => '채널',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => '통화',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => '역할',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => '사용자',
             'filters' => [
                 'status' => '상태',
-                'active' => 'Active',
+                'active' => '활성',
                 'all'    => '전체',
             ],
         ],

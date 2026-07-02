@@ -99,9 +99,6 @@ class Importer extends AbstractImporter
         parent::initErrorMessages();
     }
 
-    /**
-     * Validate data.
-     */
     public function validateData(): void
     {
         $this->userStorage->init();
@@ -109,9 +106,6 @@ class Importer extends AbstractImporter
         parent::validateData();
     }
 
-    /**
-     * Validates row
-     */
     public function validateRow(array $rowData, int $rowNumber): bool
     {
         if (isset($this->validatedRows[$rowNumber])) {
@@ -164,9 +158,6 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
-    /**
-     * Determine whether the current row should be imported for this profile.
-     */
     protected function shouldImportRow(array $rowData): bool
     {
         return ! (
@@ -175,9 +166,6 @@ class Importer extends AbstractImporter
         );
     }
 
-    /**
-     * Get the selected status filter for this import profile.
-     */
     protected function getStatusFilter(): string
     {
         $filters = $this->import->jobInstance->filters ?? [];
@@ -185,9 +173,6 @@ class Importer extends AbstractImporter
         return $filters['status'] ?? self::FILTER_STATUS_ALL;
     }
 
-    /**
-     * Start the import process
-     */
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -212,9 +197,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Delete users from current batch
-     */
     protected function deleteUserData(JobTrackBatchContract $batch): bool
     {
         $this->userStorage->loadAdmins(Arr::pluck($batch->data, 'email'));
@@ -241,9 +223,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Save users from current batch
-     */
     protected function saveUserData(JobTrackBatchContract $batch): bool
     {
         $this->userStorage->init();
@@ -253,9 +232,6 @@ class Importer extends AbstractImporter
         foreach ($batch->data as $rowData) {
             $id = $this->userStorage->getAdminId($rowData['email']);
 
-            /**
-             * Create or Update Role if permissions are provided
-             */
             $roleId = $this->userStorage->getRoleId($rowData['role_name']);
 
             if (! empty($rowData['permission_type'])) {
@@ -271,7 +247,6 @@ class Importer extends AbstractImporter
                     $role = $this->roleRepository->create($roleData);
                     $roleId = $role->id;
 
-                    // Refresh storage roles
                     $this->userStorage->loadRoles();
                 }
             }
@@ -311,9 +286,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Store the imported user image in the normal admin image directory.
-     */
     protected function storeUserImage(?string $image, mixed $admin): ?string
     {
         $image = $this->resolveImportImagePath($image);
@@ -340,9 +312,6 @@ class Importer extends AbstractImporter
         return $newPath;
     }
 
-    /**
-     * Build the public-disk path for an imported image reference.
-     */
     protected function resolveImportImagePath(?string $image): ?string
     {
         $image = $image ? ltrim(trim($image), '/') : null;

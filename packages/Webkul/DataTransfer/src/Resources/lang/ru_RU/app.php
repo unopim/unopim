@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Поля категории',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код поля категории :code уже используется.',
+                    'code_not_found_to_delete' => 'Код поля категории не найден для удаления.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Атрибуты',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Код атрибута :code уже используется.',
+                    'code_not_found_to_delete'             => 'Код атрибута для удаления не найден.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системный атрибут не может быть удален.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Группы атрибутов',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Код группы атрибутов :code уже используется.',
+                    'code_not_found_to_delete'             => 'Код группы атрибутов для удаления не найден.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системная группа атрибутов не может быть удалена.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Семейства атрибутов',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код семейства атрибутов :code уже используется.',
+                    'code_not_found_to_delete' => 'Код семейства атрибутов для удаления не найден.',
+                    'invalid-attribute-group'  => 'Группа атрибутов ":code" не существует.',
+                    'invalid-attribute'        => 'Атрибут ":code" не существует.',
+                    'invalid-channel'          => 'Канал ":code" не существует.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Параметры атрибутов',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код параметра атрибута :code уже используется.',
+                    'code_not_found_to_delete' => 'Код параметра атрибута для удаления не найден.',
+                    'locale-not-exist'         => 'Локаль ":code" не существует.',
+                    'invalid-attribute'        => 'Атрибут ":code" не существует.',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => 'Языки',
             'validation' => [
@@ -56,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => 'Валюты',
+            'filters' => [
                 'status' => 'Статус',
                 'enable' => 'Включено',
                 'all'    => 'Все',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Статус должен быть 0 или 1 (или пустым для включения по умолчанию).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Роли',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => 'Пользователи',
+            'filters' => [
                 'status' => 'Статус',
                 'active' => 'Активный',
                 'all'    => 'Все',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Путь к файлу',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Статус',
             'enable'         => 'Включён',
@@ -157,7 +207,7 @@ return [
                     'disable' => 'Отключён',
                     'all'     => 'Все',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Sku',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Идентификаторы',
                 'identifiers-info' => 'Вставьте по одному SKU / идентификатору в строке, чтобы экспортировать только эти товары. Оставьте пустым, чтобы экспортировать все товары.',
@@ -175,6 +225,21 @@ return [
         'categories' => [
             'title' => 'Категории',
         ],
+        'category-fields' => [
+            'title' => 'Поля категории',
+        ],
+        'attributes' => [
+            'title' => 'Атрибуты',
+        ],
+        'attribute-groups' => [
+            'title' => 'Группы атрибутов',
+        ],
+        'attribute-families' => [
+            'title' => 'Семейства атрибутов',
+        ],
+        'attribute-options' => [
+            'title' => 'Параметры атрибутов',
+        ],
         'locales' => [
             'title' => 'Языки',
         ],
@@ -182,16 +247,16 @@ return [
             'title' => 'Каналы',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Валюты',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Роли',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Пользователи',
             'filters' => [
                 'status' => 'Статус',
-                'active' => 'Active',
+                'active' => 'Активные',
                 'all'    => 'Все',
             ],
         ],

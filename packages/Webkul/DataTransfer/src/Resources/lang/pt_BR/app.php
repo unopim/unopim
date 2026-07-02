@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Campos de categoria',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'O código do campo de categoria :code já está em uso.',
+                    'code_not_found_to_delete' => 'Código do campo de categoria não encontrado para exclusão.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'O código do atributo :code já está em uso.',
+                    'code_not_found_to_delete'             => 'Código de atributo não encontrado para exclusão.',
+                    'code_is_system_and_cannot_be_deleted' => 'O atributo do sistema não pode ser excluído.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupos de atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'O código do grupo de atributos :code já está em uso.',
+                    'code_not_found_to_delete'             => 'Código de grupo de atributos não encontrado para exclusão.',
+                    'code_is_system_and_cannot_be_deleted' => 'O grupo de atributos do sistema não pode ser excluído.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Famílias de atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'O código da família de atributos :code já está em uso.',
+                    'code_not_found_to_delete' => 'Código de família de atributos não encontrado para exclusão.',
+                    'invalid-attribute-group'  => 'O grupo de atributos ":code" não existe.',
+                    'invalid-attribute'        => 'O atributo ":code" não existe.',
+                    'invalid-channel'          => 'O canal ":code" não existe.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opções de atributos',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'O código de opção de atributo :code já está em uso.',
+                    'code_not_found_to_delete' => 'Código de opção de atributo não encontrado para exclusão.',
+                    'locale-not-exist'         => 'A localidade ":code" não existe.',
+                    'invalid-attribute'        => 'O atributo ":code" não existe.',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => 'Idiomas',
             'validation' => [
@@ -56,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => 'Moedas',
+            'filters' => [
                 'status' => 'Status',
                 'enable' => 'Ativar',
                 'all'    => 'Todos',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'O status deve ser 0 ou 1 (ou vazio para ativado por padrão).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Funções',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => 'Usuários',
+            'filters' => [
                 'status' => 'Status',
                 'active' => 'Ativo',
                 'all'    => 'Todos',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Caminho do Arquivo',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Ativado',
@@ -175,6 +225,21 @@ return [
         'categories' => [
             'title' => 'Categorias',
         ],
+        'category-fields' => [
+            'title' => 'Campos de categoria',
+        ],
+        'attributes' => [
+            'title' => 'Atributos',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupos de atributos',
+        ],
+        'attribute-families' => [
+            'title' => 'Famílies de atributos',
+        ],
+        'attribute-options' => [
+            'title' => 'Opções de atributos',
+        ],
         'locales' => [
             'title' => 'Idiomas',
         ],
@@ -182,16 +247,16 @@ return [
             'title' => 'Canais',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Moedas',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Funções',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Usuários',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Ativo',
                 'all'    => 'Todos',
             ],
         ],

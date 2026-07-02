@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'حقول الفئة',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'رمز حقل الفئة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على رمز حقل الفئة للحذف.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'السمات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'كود السمة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete'             => 'لم يتم العثور على كود السمة للحذف.',
+                    'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف سمة النظام.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'مجموعات السمات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'كود مجموعة السمات :code مستخدم بالفعل.',
+                    'code_not_found_to_delete'             => 'لم يتم العثور على كود مجموعة السمات للحذف.',
+                    'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف مجموعة سمات النظام.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'عائلات السمات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'كود عائلة السمات :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على كود عائلة السمات للحذف.',
+                    'invalid-attribute-group'  => 'مجموعة السمات ":code" غير موجودة.',
+                    'invalid-attribute'        => 'السمة ":code" غير موجودة.',
+                    'invalid-channel'          => 'القناة ":code" غير موجودة.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'خيارات السمة',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'كود خيار السمة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على كود خيار السمة للحذف.',
+                    'locale-not-exist'         => 'اللغة المحلية ":code" غير موجودة.',
+                    'invalid-attribute'        => 'السمة ":code" غير موجودة.',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => 'اللغات',
             'validation' => [
@@ -56,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => 'العملات',
+            'filters' => [
                 'status' => 'الحالة',
                 'enable' => 'مفعل',
                 'all'    => 'الكل',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'يجب أن تكون الحالة 0 أو 1 (أو فارغة للتفعيل الافتراضي).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'أدوار',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => 'المستخدمون',
+            'filters' => [
                 'status' => 'الحالة',
                 'active' => 'نشط',
                 'all'    => 'الكل',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'مسار الملف',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'الحالة',
             'enable'         => 'مفعّل',
@@ -157,7 +207,7 @@ return [
                     'disable' => 'معطّل',
                     'all'     => 'الكل',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'رمز التخزين التعريفي',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'المعرّفات',
                 'identifiers-info' => 'الصق معرّف SKU / معرّفًا واحدًا في كل سطر لتصدير تلك المنتجات فقط. اتركه فارغًا لتصدير جميع المنتجات.',
@@ -175,7 +225,21 @@ return [
         'categories' => [
             'title' => 'فئات',
         ],
-
+        'category-fields' => [
+            'title' => 'حقول الفئة',
+        ],
+        'attributes' => [
+            'title' => 'السمات',
+        ],
+        'attribute-groups' => [
+            'title' => 'مجموعات السمات',
+        ],
+        'attribute-families' => [
+            'title' => 'عائلات السمات',
+        ],
+        'attribute-options' => [
+            'title' => 'خيارات السمة',
+        ],
         'locales' => [
             'title' => 'اللغات',
         ],
@@ -183,16 +247,16 @@ return [
             'title' => 'القنوات',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'العملات',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'أدوار',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'المستخدمون',
             'filters' => [
                 'status' => 'الحالة',
-                'active' => 'Active',
+                'active' => 'نشط',
                 'all'    => 'الكل',
             ],
         ],

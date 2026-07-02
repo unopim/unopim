@@ -48,11 +48,9 @@ describe('User Exporter', function () {
     it('calls userStorage->init() during initialization', function () {
         $this->mockUserStorage->shouldReceive('init')->once();
 
-        // Partially mock the exporter to bypass initializeFileBuffer (which needs a real export model/file system)
         $exporter = \Mockery::mock(Exporter::class)->makePartial()->shouldAllowMockingProtectedMethods();
         $exporter->shouldReceive('initializeFileBuffer')->once()->andReturnNull();
 
-        // Inject mocked userStorage via reflection
         setProtectedProperty($exporter, 'userStorage', $this->mockUserStorage);
 
         $exporter->initilize();
@@ -136,7 +134,6 @@ describe('User Exporter', function () {
     });
 
     it('filters results by active status via getResults', function () {
-        // Inject filters directly using reflection, bypassing $export dependency
         setProtectedProperty($this->exporter, 'filters', ['status' => 'active']);
         setProtectedProperty($this->exporter, 'source', $this->mockAdminRepository);
 
@@ -154,13 +151,11 @@ describe('User Exporter', function () {
     });
 
     it('does not filter results when status filter is all', function () {
-        // Inject filters directly — no WHERE clause should be applied
         setProtectedProperty($this->exporter, 'filters', ['status' => 'all']);
         setProtectedProperty($this->exporter, 'source', $this->mockAdminRepository);
 
         $mockQuery = mock(Builder::class);
         $this->mockAdminRepository->shouldReceive('query')->andReturn($mockQuery);
-        // 'where' should NOT be called when status is 'all'
         $mockQuery->shouldNotReceive('where');
         $mockQuery->shouldReceive('get')->andReturn(collect([]));
 
@@ -177,9 +172,9 @@ describe('User Exporter', function () {
                 'name'         => 'Ghost User',
                 'email'        => 'ghost@example.com',
                 'status'       => 1,
-                'role_id'      => 999, // Non-existent
+                'role_id'      => 999,
                 'timezone'     => 'UTC',
-                'ui_locale_id' => 999, // Non-existent
+                'ui_locale_id' => 999,
             ],
         ];
 

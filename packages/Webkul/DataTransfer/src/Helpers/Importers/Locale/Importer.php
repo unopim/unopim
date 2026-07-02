@@ -63,9 +63,6 @@ class Importer extends AbstractImporter
      */
     protected array $existingLocales = [];
 
-    /**
-     * Create a new helper instance.
-     */
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
         protected LocaleRepository $localeRepository,
@@ -73,9 +70,6 @@ class Importer extends AbstractImporter
         parent::__construct($importBatchRepository);
     }
 
-    /**
-     * Initialize additional error message templates.
-     */
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -85,9 +79,6 @@ class Importer extends AbstractImporter
         parent::initErrorMessages();
     }
 
-    /**
-     * Validate a single row from the source file.
-     */
     public function validateRow(array $rowData, int $rowNumber): bool
     {
         if (isset($this->validatedRows[$rowNumber])) {
@@ -98,9 +89,6 @@ class Importer extends AbstractImporter
 
         $code = $rowData['code'] ?? null;
 
-        /**
-         * Delete action: code must already exist in DB.
-         */
         if ($this->import->action === Import::ACTION_DELETE) {
             if (! $this->localeExists($code)) {
                 $this->skipRow($rowNumber, self::ERROR_CODE_NOT_FOUND_FOR_DELETE, 'code');
@@ -111,9 +99,6 @@ class Importer extends AbstractImporter
             return true;
         }
 
-        /**
-         * Duplicate-code check within this import run.
-         */
         if (in_array($code, $this->codesSeenInBatch, strict: true)) {
             $this->skipRow($rowNumber, self::ERROR_DUPLICATE_CODE, 'code');
 
@@ -142,9 +127,6 @@ class Importer extends AbstractImporter
         return $isValid;
     }
 
-    /**
-     * Import a single validated batch.
-     */
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -169,9 +151,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Persist locales from the current batch (insert or update).
-     */
     protected function saveLocaleData(JobTrackBatchContract $batch): void
     {
         $filters = $this->getFilters();
@@ -185,9 +164,6 @@ class Importer extends AbstractImporter
             $code = $rowData['code'];
             $status = isset($rowData['status']) ? (int) $rowData['status'] : 1;
 
-            /**
-             * Respect the "Enable" filter: only process enabled locales from the file.
-             */
             if ($statusFilter === 'enable' && $status !== 1) {
                 continue;
             }
@@ -210,9 +186,6 @@ class Importer extends AbstractImporter
         }
     }
 
-    /**
-     * Delete locales that appear in the current batch.
-     */
     protected function deleteLocaleData(JobTrackBatchContract $batch): void
     {
         $filters = $this->getFilters();
@@ -226,9 +199,6 @@ class Importer extends AbstractImporter
             $code = $rowData['code'];
             $status = isset($rowData['status']) ? (int) $rowData['status'] : 1;
 
-            /**
-             * Respect the "Enable" filter: only process enabled locales from the file.
-             */
             if ($statusFilter === 'Enable' && $status !== 1) {
                 continue;
             }
@@ -243,9 +213,6 @@ class Importer extends AbstractImporter
         }
     }
 
-    /**
-     * Retrieve filters from the job instance.
-     */
     protected function getFilters(): array
     {
         return $this->import->jobInstance->filters ?? [];
@@ -274,9 +241,6 @@ class Importer extends AbstractImporter
             });
     }
 
-    /**
-     * Check whether a locale code already exists in the database.
-     */
     protected function localeExists(?string $code): bool
     {
         if (! $code) {
