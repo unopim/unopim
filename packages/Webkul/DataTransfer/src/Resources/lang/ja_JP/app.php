@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'ロケール',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'ロケールコード \'%s\' はこのバッチですでにインポートされています。',
+                    'code-not-found-to-delete'    => 'コード \'%s\' のロケールがシステムに見つかりません。',
+                    'invalid-status'              => 'ステータスは0または1である必要があります（またはデフォルト有効の場合は空）。',
+                    'channel-related-locale-root' => 'コード :code のロケールはチャネルに関連付けられているため削除できません。',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'チャネル',
             'validation' => [
@@ -151,6 +162,9 @@ return [
         ],
         'categories' => [
             'title' => 'カテゴリー',
+        ],
+        'locales' => [
+            'title' => 'ロケール',
         ],
         'channels' => [
             'title' => 'チャネル',

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Kielet',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kielikoodi \'%s\' on jo tuotu tässä erässä.',
+                    'code-not-found-to-delete'    => 'Kieltä koodilla \'%s\' ei löytynyt järjestelmästä.',
+                    'invalid-status'              => 'Tilan tulee olla 0 tai 1 (tai tyhjä oletuksena käytössä).',
+                    'channel-related-locale-root' => 'Et voi poistaa kieltä koodilla :code, koska se on liitetty kanavaan.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanavat',
             'validation' => [
@@ -151,6 +162,10 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriat',
+        ],
+
+        'locales' => [
+            'title' => 'Kielet',
         ],
         'channels' => [
             'title' => 'Kanavat',

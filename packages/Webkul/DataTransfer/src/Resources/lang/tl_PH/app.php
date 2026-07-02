@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Mga Wika',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Ang code ng wika \'%s\' ay na-import na sa batch na ito.',
+                    'code-not-found-to-delete'    => 'Ang wikang may code \'%s\' ay hindi natagpuan sa system.',
+                    'invalid-status'              => 'Ang status ay dapat 0 o 1 (o walang laman para sa default na naka-enable).',
+                    'channel-related-locale-root' => 'Hindi mo maaaring tanggalin ang wikang may code :code dahil ito ay naka-ugnay sa isang channel.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Mga Channel',
             'validation' => [
@@ -151,6 +162,9 @@ return [
         ],
         'categories' => [
             'title' => 'Mga Kategorya',
+        ],
+        'locales' => [
+            'title' => 'Mga Wika',
         ],
         'channels' => [
             'title' => 'Mga Channel',

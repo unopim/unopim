@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => '로케일',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '로케일 코드 \'%s\' 는 이 배치에서 이미 가져왔습니다.',
+                    'code-not-found-to-delete'    => '코드 \'%s\' 의 로케일을 시스템에서 찾을 수 없습니다.',
+                    'invalid-status'              => '상태는 0 또는 1이어야 합니다 (또는 기본 활성화를 위해 비워둡니다).',
+                    'channel-related-locale-root' => '코드 :code 의 로케일은 채널과 연결되어 있으므로 삭제할 수 없습니다.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => '채널',
             'validation' => [
@@ -151,6 +162,9 @@ return [
         ],
         'categories' => [
             'title' => '카테고리',
+        ],
+        'locales' => [
+            'title' => '로케일',
         ],
         'channels' => [
             'title' => '채널',

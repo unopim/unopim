@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Lingue',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Il codice lingua \'%s\' è già stato importato in questo batch.',
+                    'code-not-found-to-delete'    => 'Lingua con codice \'%s\' non trovata nel sistema.',
+                    'invalid-status'              => 'Lo stato deve essere 0 o 1 (o vuoto per abilitato di default).',
+                    'channel-related-locale-root' => 'Non puoi eliminare la lingua con codice :code perché è associata a un canale.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Canali',
             'validation' => [
@@ -151,6 +162,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorie',
+        ],
+        'locales' => [
+            'title' => 'Lingue',
         ],
         'channels' => [
             'title' => 'Canali',

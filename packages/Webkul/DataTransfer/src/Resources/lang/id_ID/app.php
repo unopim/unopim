@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Bahasa',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kode bahasa \'%s\' sudah diimpor dalam batch ini.',
+                    'code-not-found-to-delete'    => 'Bahasa dengan kode \'%s\' tidak ditemukan di sistem.',
+                    'invalid-status'              => 'Status harus 0 atau 1 (atau kosong untuk default aktif).',
+                    'channel-related-locale-root' => 'Anda tidak dapat menghapus bahasa dengan kode :code karena terkait dengan channel.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Saluran',
             'validation' => [
@@ -151,6 +162,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategori',
+        ],
+        'locales' => [
+            'title' => 'Bahasa',
         ],
         'channels' => [
             'title' => 'Saluran',

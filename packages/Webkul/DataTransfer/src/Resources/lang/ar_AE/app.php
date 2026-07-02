@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'اللغات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'رمز اللغة \'%s\' تم استيراده بالفعل في هذه الدفعة.',
+                    'code-not-found-to-delete'    => 'لم يتم العثور على لغة بالرمز \'%s\' في النظام.',
+                    'invalid-status'              => 'يجب أن تكون الحالة 0 أو 1 (أو فارغة للتفعيل الافتراضي).',
+                    'channel-related-locale-root' => 'لا يمكنك حذف اللغة بالرمز :code لأنها مرتبطة بقناة.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'القنوات',
             'validation' => [
@@ -151,6 +162,10 @@ return [
         ],
         'categories' => [
             'title' => 'فئات',
+        ],
+
+        'locales' => [
+            'title' => 'اللغات',
         ],
         'channels' => [
             'title' => 'القنوات',

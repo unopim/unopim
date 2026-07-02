@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Języki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kod języka \'%s\' został już zaimportowany w tej partii.',
+                    'code-not-found-to-delete'    => 'Nie znaleziono języka o kodzie \'%s\' w systemie.',
+                    'invalid-status'              => 'Status musi wynosić 0 lub 1 (lub pusty dla domyślnie włączonego).',
+                    'channel-related-locale-root' => 'Nie możesz usunąć języka o kodzie :code, ponieważ jest powiązany z kanałem.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanały',
             'validation' => [
@@ -151,6 +162,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorie',
+        ],
+        'locales' => [
+            'title' => 'Języki',
         ],
         'channels' => [
             'title' => 'Kanały',

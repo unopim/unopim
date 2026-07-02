@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Языки',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Код языка \'%s\' уже импортирован в этой партии.',
+                    'code-not-found-to-delete'    => 'Язык с кодом \'%s\' не найден в системе.',
+                    'invalid-status'              => 'Статус должен быть 0 или 1 (или пустым для включения по умолчанию).',
+                    'channel-related-locale-root' => 'Вы не можете удалить язык с кодом :code, так как он связан с каналом.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Каналы',
             'validation' => [
@@ -151,6 +162,9 @@ return [
         ],
         'categories' => [
             'title' => 'Категории',
+        ],
+        'locales' => [
+            'title' => 'Языки',
         ],
         'channels' => [
             'title' => 'Каналы',

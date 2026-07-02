@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Språk',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Språkkoden \'%s\' har redan importerats i denna batch.',
+                    'code-not-found-to-delete'    => 'Språk med koden \'%s\' hittades inte i systemet.',
+                    'invalid-status'              => 'Status måste vara 0 eller 1 (eller tom för standard aktiverad).',
+                    'channel-related-locale-root' => 'Du kan inte ta bort språket med kod :code eftersom det är kopplat till en kanal.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanaler',
             'validation' => [
@@ -151,6 +162,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorier',
+        ],
+        'locales' => [
+            'title' => 'Språk',
         ],
         'channels' => [
             'title' => 'Kanaler',

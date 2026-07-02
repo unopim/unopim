@@ -74,6 +74,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Talen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'De taalcode \'%s\' is al geïmporteerd in deze batch.',
+                    'code-not-found-to-delete'    => 'Taal met code \'%s\' niet gevonden in het systeem.',
+                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
+                    'channel-related-locale-root' => 'Je kunt de taal met code :code niet verwijderen omdat deze is gekoppeld aan een kanaal.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
         'export-too-large' => 'Deze export is te groot om uit te voeren: naar schatting :rows rijen × :columns kolommen (~:estimated) overschrijden de beschikbare ruimte (~:available). Beperk de export door minder kanalen/talen (en attributen) te selecteren en probeer het opnieuw.',
@@ -151,6 +162,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorieën',
+        ],
+        'locales' => [
+            'title' => 'Talen',
         ],
         'channels' => [
             'title' => 'Kanalen',

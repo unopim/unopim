@@ -17,6 +17,14 @@ return [
         'has_file_options' => true,
     ],
 
+    'locales' => [
+        'title'            => 'data_transfer::app.importers.locales.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Locale\Importer',
+        'sample_path'      => 'data-transfer/samples/locales.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\LocaleJobValidator',
+        'has_file_options' => true,
+    ],
+
     'channels' => [
         'title'            => 'data_transfer::app.importers.channels.title',
         'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Channel\Importer',
@@ -34,11 +42,11 @@ return [
         'filters'          => [
             'fields' => [
                 [
-                    'name'       => 'status',
-                    'title'      => 'Status',
-                    'required'   => false,
-                    'type'       => 'select',
-                    'options'    => [
+                    'name'     => 'status',
+                    'title'    => 'Status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
                         [
                             'value' => 'enable',
                             'label' => 'Enable',
@@ -70,11 +78,11 @@ return [
         'filters'          => [
             'fields' => [
                 [
-                    'name'       => 'status',
-                    'title'      => 'Status',
-                    'required'   => false,
-                    'type'       => 'select',
-                    'options'    => [
+                    'name'     => 'status',
+                    'title'    => 'Status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
                         [
                             'label' => 'Active',
                             'value' => 'active',
