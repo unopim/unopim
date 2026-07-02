@@ -330,10 +330,10 @@ it('skips disabled locales and counts them when status filter is enable', functi
     expect($this->exporter->getSkippedtemsCount())->toBe(1);
 });
 
-it('exports all locales when status filter is set to All', function () {
+it('exports all locales when status filter is set to all', function () {
     $this->jobTrack->jobInstance->filters = [
         'file_format' => 'Csv',
-        'status'      => 'All',
+        'status'      => 'all',
     ];
     $this->exporter->setExport($this->jobTrack);
 
