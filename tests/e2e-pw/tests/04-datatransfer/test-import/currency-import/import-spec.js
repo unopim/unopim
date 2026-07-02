@@ -12,11 +12,9 @@ test.describe('Currency Import', () => {
 
         await adminPage.getByRole('textbox', { name: 'Code' }).fill(importCode);
 
-        // Select Type: Currency
         await adminPage.locator('#import-type').locator('.multiselect__single, .multiselect__placeholder').first().click();
         await adminPage.getByRole('option', { name: 'Currency' }).locator('span').first().click();
 
-        // Upload File
         const fileInput = adminPage.locator('input[type="file"][name="file"]');
         const assetPath = path.join(__dirname, '../../../../assets/currencies.csv');
         await fileInput.setInputFiles(assetPath);

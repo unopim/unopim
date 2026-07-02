@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => '语言',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '语言代码 \'%s\' 已在此批次中导入。',
+                    'code-not-found-to-delete'    => '系统中未找到代码为 \'%s\' 的语言。',
+                    'invalid-status'              => '状态必须为 0 或 1（或留空表示默认启用）。',
+                    'channel-related-locale-root' => '无法删除代码为 :code 的语言，因为它与某个渠道关联。',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => '渠道',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => '状态',
+                'enable' => '启用',
+                'all'    => '全部',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => '状态',
+                'active' => '活跃',
+                'all'    => '全部',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,10 @@ return [
         ],
         'categories' => [
             'title' => '类别',
+        ],
+
+        'locales' => [
+            'title' => '语言',
         ],
         'channels' => [
             'title' => '渠道',

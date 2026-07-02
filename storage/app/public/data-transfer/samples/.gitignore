@@ -2,3 +2,8 @@
 !.gitignore
 !categories.csv
 !sample-variant-products.csv
+!channels.csv
+!locales.csv
+!users.csv
+!currencies.csv
+!roles.csv

@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Kielet',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kielikoodi \'%s\' on jo tuotu tässä erässä.',
+                    'code-not-found-to-delete'    => 'Kieltä koodilla \'%s\' ei löytynyt järjestelmästä.',
+                    'invalid-status'              => 'Tilan tulee olla 0 tai 1 (tai tyhjä oletuksena käytössä).',
+                    'channel-related-locale-root' => 'Et voi poistaa kieltä koodilla :code, koska se on liitetty kanavaan.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanavat',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Tila',
+                'enable' => 'Käytössä',
+                'all'    => 'Kaikki',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Tila',
+                'active' => 'Aktiivinen',
+                'all'    => 'Kaikki',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,10 @@ return [
         ],
         'categories' => [
             'title' => 'Kategoriat',
+        ],
+
+        'locales' => [
+            'title' => 'Kielet',
         ],
         'channels' => [
             'title' => 'Kanavat',

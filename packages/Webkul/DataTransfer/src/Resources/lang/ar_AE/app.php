@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'اللغات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'رمز اللغة \'%s\' تم استيراده بالفعل في هذه الدفعة.',
+                    'code-not-found-to-delete'    => 'لم يتم العثور على لغة بالرمز \'%s\' في النظام.',
+                    'invalid-status'              => 'يجب أن تكون الحالة 0 أو 1 (أو فارغة للتفعيل الافتراضي).',
+                    'channel-related-locale-root' => 'لا يمكنك حذف اللغة بالرمز :code لأنها مرتبطة بقناة.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'القنوات',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'الحالة',
+                'enable' => 'مفعل',
+                'all'    => 'الكل',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'الحالة',
+                'active' => 'نشط',
+                'all'    => 'الكل',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,10 @@ return [
         ],
         'categories' => [
             'title' => 'فئات',
+        ],
+
+        'locales' => [
+            'title' => 'اللغات',
         ],
         'channels' => [
             'title' => 'القنوات',

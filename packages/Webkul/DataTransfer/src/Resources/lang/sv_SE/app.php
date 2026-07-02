@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Språk',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Språkkoden \'%s\' har redan importerats i denna batch.',
+                    'code-not-found-to-delete'    => 'Språk med koden \'%s\' hittades inte i systemet.',
+                    'invalid-status'              => 'Status måste vara 0 eller 1 (eller tom för standard aktiverad).',
+                    'channel-related-locale-root' => 'Du kan inte ta bort språket med kod :code eftersom det är kopplat till en kanal.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanaler',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Status',
+                'enable' => 'Aktivera',
+                'all'    => 'Alla',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alla',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,9 @@ return [
         ],
         'categories' => [
             'title' => 'Kategorier',
+        ],
+        'locales' => [
+            'title' => 'Språk',
         ],
         'channels' => [
             'title' => 'Kanaler',

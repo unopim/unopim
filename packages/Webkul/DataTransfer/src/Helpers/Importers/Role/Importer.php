@@ -28,7 +28,6 @@ class Importer extends AbstractImporter
      * Permanent entity columns
      */
     protected array $validColumnNames = [
-        'id',
         'name',
         'description',
         'permission_type',
