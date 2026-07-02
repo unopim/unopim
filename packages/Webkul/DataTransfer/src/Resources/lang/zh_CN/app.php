@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => '分类字段',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '分类字段代码 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到用于删除的分类字段代码。',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => '属性',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '属性代码 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要删除的属性代码。',
+                    'code_is_system_and_cannot_be_deleted' => '无法删除系统属性。',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => '属性组',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '属性组代码 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要删除的属性组代码。',
+                    'code_is_system_and_cannot_be_deleted' => '无法删除系统属性组。',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => '属性族',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '属性族代码 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要删除的属性族代码。',
+                    'invalid-attribute-group'  => '属性组“:code”不存在。',
+                    'invalid-attribute'        => '属性“:code”不存在。',
+                    'invalid-channel'          => '渠道“:code”不存在。',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => '属性选项',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '属性选项代码 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要删除的属性选项代码。',
+                    'locale-not-exist'         => '区域设置“:code”不存在。',
+                    'invalid-attribute'        => '属性“:code”不存在。',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => '语言',
             'validation' => [
@@ -56,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => '货币',
+            'filters' => [
                 'status' => '状态',
                 'enable' => '启用',
                 'all'    => '全部',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => '状态必须为 0 或 1（或留空表示默认启用）。',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => '角色',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => '用户',
+            'filters' => [
                 'status' => '状态',
                 'active' => '活跃',
                 'all'    => '全部',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => '文件路径',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => '状态',
             'enable'         => '启用',
@@ -157,7 +207,7 @@ return [
                     'disable' => '禁用',
                     'all'     => '全部',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'sku',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => '标识符',
                 'identifiers-info' => '每行粘贴一个 SKU / 标识符，仅导出这些产品。留空则导出所有产品。',
@@ -175,7 +225,21 @@ return [
         'categories' => [
             'title' => '类别',
         ],
-
+        'category-fields' => [
+            'title' => '分类字段',
+        ],
+        'attributes' => [
+            'title' => '属性',
+        ],
+        'attribute-groups' => [
+            'title' => '属性组',
+        ],
+        'attribute-families' => [
+            'title' => '属性族',
+        ],
+        'attribute-options' => [
+            'title' => '属性选项',
+        ],
         'locales' => [
             'title' => '语言',
         ],
@@ -183,16 +247,16 @@ return [
             'title' => '渠道',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => '货币',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => '角色',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => '用户',
             'filters' => [
                 'status' => '状态',
-                'active' => 'Active',
+                'active' => '启用',
                 'all'    => '全部',
             ],
         ],

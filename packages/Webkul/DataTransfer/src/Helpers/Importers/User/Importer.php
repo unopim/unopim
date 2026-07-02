@@ -271,7 +271,6 @@ class Importer extends AbstractImporter
                     $role = $this->roleRepository->create($roleData);
                     $roleId = $role->id;
 
-                    // Refresh storage roles
                     $this->userStorage->loadRoles();
                 }
             }

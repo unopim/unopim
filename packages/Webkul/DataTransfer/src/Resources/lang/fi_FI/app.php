@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Kategoriakentät',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategoriakentän koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Kategoriakentän koodia ei löytynyt poistamista varten.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attribuutit',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribuuttikoodi :code on jo käytössä.',
+                    'code_not_found_to_delete'             => 'Attribuuttikoodia ei löytynyt poistettavaksi.',
+                    'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttia ei voi poistaa.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attribuuttiryhmät',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribuuttiryhmän koodi :code on jo käytössä.',
+                    'code_not_found_to_delete'             => 'Attribuuttiryhmän koodia ei löytynyt poistettavaksi.',
+                    'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttiryhmää ei voi poistaa.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attribuuttiperheet',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribuuttiperheen koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Attribuuttiperheen koodia ei löytynyt poistettavaksi.',
+                    'invalid-attribute-group'  => 'Attribuuttiryhmää ":code" ei ole olemassa.',
+                    'invalid-attribute'        => 'Attribuuttia ":code" ei ole olemassa.',
+                    'invalid-channel'          => 'Kanavaa ":code" ei ole olemassa.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attribuuttivaihtoehdot',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribuuttivaihtoehdon koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Attribuuttivaihtoehdon koodia ei löytynyt poistettavaksi.',
+                    'locale-not-exist'         => 'Kieltä ":code" ei ole olemassa.',
+                    'invalid-attribute'        => 'Attribuuttia ":code" ei ole olemassa.',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => 'Kielet',
             'validation' => [
@@ -56,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => 'Valuutat',
+            'filters' => [
                 'status' => 'Tila',
                 'enable' => 'Käytössä',
                 'all'    => 'Kaikki',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Tilan tulee olla 0 tai 1 (tai tyhjä oletuksena käytössä).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Roolit',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => 'Käyttäjät',
+            'filters' => [
                 'status' => 'Tila',
                 'active' => 'Aktiivinen',
                 'all'    => 'Kaikki',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Tiedostopolku',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Tila',
             'enable'         => 'Käytössä',
@@ -175,7 +225,21 @@ return [
         'categories' => [
             'title' => 'Kategoriat',
         ],
-
+        'category-fields' => [
+            'title' => 'Kategoriakentät',
+        ],
+        'attributes' => [
+            'title' => 'Attribuutit',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attribuuttiryhmät',
+        ],
+        'attribute-families' => [
+            'title' => 'Attribuuttiperheet',
+        ],
+        'attribute-options' => [
+            'title' => 'Attribuuttivaihtoehdot',
+        ],
         'locales' => [
             'title' => 'Kielet',
         ],
@@ -183,16 +247,16 @@ return [
             'title' => 'Kanavat',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valuutat',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Roolit',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Käyttäjät',
             'filters' => [
                 'status' => 'Tila',
-                'active' => 'Active',
+                'active' => 'Aktiivinen',
                 'all'    => 'Kaikki',
             ],
         ],

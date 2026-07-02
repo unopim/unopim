@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Ангиллын талбарууд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Ангиллын талбарын код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах ангиллын талбарын код олдсонгүй.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Шинж чанарууд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Шиж чанарын код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete'             => 'Устгах шинж чанарын код олдсонгүй.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системийн шинж чанарыг устгах боломжгүй.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Шинж чанарын бүлгүүд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Шиж чанарын бүлгийн код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete'             => 'Устгах шинж чанарын бүлгийн код олдсонгүй.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системийн шинж чанарын бүлгийг устгах боломжгүй.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Шинж чанарын бүлгэмүүд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Шиж чанарын бүлгэмийн код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах шинж чанарын бүлгэмийн код олдсонгүй.',
+                    'invalid-attribute-group'  => '":code" шинж чанарын бүлэг байхгүй байна.',
+                    'invalid-attribute'        => '":code" шинж чанар байхгүй байна.',
+                    'invalid-channel'          => '":code" суваг байхгүй байна.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Шинж чанарын сонголтууд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Шиж чанарын сонголтын код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах шинж чанарын сонголтын код олдсонгүй.',
+                    'locale-not-exist'         => '":code" хэл байхгүй байна.',
+                    'invalid-attribute'        => '":code" шинж чанар байхгүй байна.',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => 'Хэлүүд',
             'validation' => [
@@ -56,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => 'Валютууд',
+            'filters' => [
                 'status' => 'Төлөв',
                 'enable' => 'Идэвхтэй',
                 'all'    => 'Бүгд',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Төлөв 0 эсвэл 1 байх ёстой (эсвэл анхдагчаар идэвхжүүлэхийн тулд хоосон).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Дүрээ',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => 'Хэрэглэгчид',
+            'filters' => [
                 'status' => 'Төлөв',
                 'active' => 'Идэвхтэй',
                 'all'    => 'Бүгд',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Файлын зам',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Төлөв',
             'enable'         => 'Идэвхтэй',
@@ -157,7 +207,7 @@ return [
                     'disable' => 'Идэвхгүй',
                     'all'     => 'Бүгд',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Уран жимс',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Танигчид',
                 'identifiers-info' => 'Зөвхөн тэдгээр бүтээгдэхүүнийг экспортлохын тулд мөр бүрт нэг SKU / танигч буулгана уу. Бүх бүтээгдэхүүнийг экспортлохын тулд хоосон үлдээнэ үү.',
@@ -175,6 +225,21 @@ return [
         'categories' => [
             'title' => 'Ангилал',
         ],
+        'category-fields' => [
+            'title' => 'Ангиллын талбарууд',
+        ],
+        'attributes' => [
+            'title' => 'Шинж чанарууд',
+        ],
+        'attribute-groups' => [
+            'title' => 'Шинж чанарын бүлгүүд',
+        ],
+        'attribute-families' => [
+            'title' => 'Шинж чанарын бүлгэмүүд',
+        ],
+        'attribute-options' => [
+            'title' => 'Шинж чанарын сонголтууд',
+        ],
         'locales' => [
             'title' => 'Хэлүүд',
         ],
@@ -182,16 +247,16 @@ return [
             'title' => 'Сувгууд',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Валютууд',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Дүрээ',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Хэрэглэгчид',
             'filters' => [
                 'status' => 'Төлөв',
-                'active' => 'Active',
+                'active' => 'Идэвхтэй',
                 'all'    => 'Бүгд',
             ],
         ],

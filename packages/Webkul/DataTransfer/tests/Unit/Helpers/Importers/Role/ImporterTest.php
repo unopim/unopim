@@ -33,8 +33,8 @@ describe('Role Importer', function () {
         expect($importer->validateRow($validRow, 1))->toBeTrue();
 
         $invalidRow = [
-            'name'            => '', // name required
-            'permission_type' => 'invalid', // invalid permission type
+            'name'            => '',
+            'permission_type' => 'invalid',
         ];
 
         expect($importer->validateRow($invalidRow, 2))->toBeFalse();
@@ -108,7 +108,7 @@ describe('Role Importer', function () {
         $source->shouldReceive('getColumnNames')->andReturn(['name']);
         $importer->setSource($source);
 
-        $importer->validateData(); // Initializes storage
+        $importer->validateData();
 
         $importer->importBatch($batch);
 

@@ -32,6 +32,58 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Polja kategorije',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod polja kategorije :code već je u upotrebi.',
+                    'code_not_found_to_delete' => 'Kod polja kategorije nije pronađen za brisanje.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Značajke',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod značajke :code već se koristi.',
+                    'code_not_found_to_delete'             => 'Kod značajke nije pronađen za brisanje.',
+                    'code_is_system_and_cannot_be_deleted' => 'Značajka sustava ne može se izbrisati.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupe značajki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod grupe značajki :code već se koristi.',
+                    'code_not_found_to_delete'             => 'Kod grupe značajki nije pronađen za brisanje.',
+                    'code_is_system_and_cannot_be_deleted' => 'Grupa značajki sustava ne može se izbrisati.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Obitelji značajki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod obitelji značajki :code već se koristi.',
+                    'code_not_found_to_delete' => 'Kod obitelji značajki nije pronađen za brisanje.',
+                    'invalid-attribute-group'  => 'Grupa značajki ":code" ne postoji.',
+                    'invalid-attribute'        => 'Značajka ":code" ne postoji.',
+                    'invalid-channel'          => 'Kanal ":code" ne postoji.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opcije značajki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod opcije značajki :code već se koristi.',
+                    'code_not_found_to_delete' => 'Kod opcije značajki nije pronađen za brisanje.',
+                    'locale-not-exist'         => 'Lokalizacija ":code" ne postoji.',
+                    'invalid-attribute'        => 'Značajka ":code" ne postoji.',
+                ],
+            ],
+        ],
         'locales' => [
             'title'      => 'Jezici',
             'validation' => [
@@ -56,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => 'Valute',
+            'filters' => [
                 'status' => 'Status',
                 'enable' => 'Omogući',
                 'all'    => 'Sve',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status mora biti 0 ili 1 (ili prazno za zadano omogućeno).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Uloge',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -82,13 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => 'Korisnici',
+            'filters' => [
                 'status' => 'Status',
                 'active' => 'Aktivno',
                 'all'    => 'Sve',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Putanja Datoteke',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Omogućeno',
@@ -175,7 +225,21 @@ return [
         'categories' => [
             'title' => 'Kategorije',
         ],
-
+        'category-fields' => [
+            'title' => 'Polja kategorije',
+        ],
+        'attributes' => [
+            'title' => 'Značajke',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupe značajki',
+        ],
+        'attribute-families' => [
+            'title' => 'Obitelji značajki',
+        ],
+        'attribute-options' => [
+            'title' => 'Opcije značajki',
+        ],
         'locales' => [
             'title' => 'Jezici',
         ],
@@ -183,16 +247,16 @@ return [
             'title' => 'Kanali',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valute',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Uloge',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Korisnici',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Aktivno',
                 'all'    => 'Sve',
             ],
         ],

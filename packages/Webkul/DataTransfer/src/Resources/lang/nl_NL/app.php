@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Categorievelden',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'De code van het categorieveld :code is al in gebruik.',
+                    'code_not_found_to_delete' => 'De code van het categorieveld is niet gevonden om te verwijderen.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attributen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribuutcode :code is al in gebruik.',
+                    'code_not_found_to_delete'             => 'Attribuutcode niet gevonden voor verwijdering.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systeemattribuut kan niet worden verwijderd.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attribuutgroepen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribuutgroepcode :code is al in gebruik.',
+                    'code_not_found_to_delete'             => 'Attribuutgroepcode niet gevonden voor verwijdering.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systeemattribuutgroep kan niet worden verwijderd.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attribuutfamilies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribuutfamiliecode :code is al in gebruik.',
+                    'code_not_found_to_delete' => 'Attribuutfamiliecode niet gevonden voor verwijdering.',
+                    'invalid-attribute-group'  => 'Attribuutgroep ":code" bestaat niet.',
+                    'invalid-attribute'        => 'Attribuut ":code" bestaat niet.',
+                    'invalid-channel'          => 'Kanaal ":code" bestaat niet.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attribuutopties',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribuutoptiecode :code is al in gebruik.',
+                    'code_not_found_to_delete' => 'Attribuutoptiecode niet gevonden voor verwijdering.',
+                    'locale-not-exist'         => 'Landinstelling ":code" bestaat niet.',
+                    'invalid-attribute'        => 'Attribuut ":code" bestaat niet.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Talen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'De taalcode \'%s\' is al geïmporteerd in deze batch.',
+                    'code-not-found-to-delete'    => 'Taal met code \'%s\' niet gevonden in het systeem.',
+                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
+                    'channel-related-locale-root' => 'Je kunt de taal met code :code niet verwijderen omdat deze is gekoppeld aan een kanaal.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanalen',
             'validation' => [
@@ -45,24 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
-            'filters'    => [
+            'title'   => 'Valuta',
+            'filters' => [
                 'status' => 'Status',
                 'enable' => 'Inschakelen',
                 'all'    => 'Alle',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Rollen',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -71,29 +133,17 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
-            'filters'    => [
+            'title'   => 'Gebruikers',
+            'filters' => [
                 'status' => 'Status',
                 'active' => 'Actief',
                 'all'    => 'Alle',
             ],
-
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
                     'invalid-role'              => 'Invalid role name found.',
                     'invalid-locale'            => 'Invalid UI locale code found.',
-                ],
-            ],
-        ],
-        'locales' => [
-            'title'      => 'Talen',
-            'validation' => [
-                'errors' => [
-                    'duplicate-code'              => 'De taalcode \'%s\' is al geïmporteerd in deze batch.',
-                    'code-not-found-to-delete'    => 'Taal met code \'%s\' niet gevonden in het systeem.',
-                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
-                    'channel-related-locale-root' => 'Je kunt de taal met code :code niet verwijderen omdat deze is gekoppeld aan een kanaal.',
                 ],
             ],
         ],
@@ -114,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Bestandspad',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Ingeschakeld',
@@ -175,6 +225,21 @@ return [
         'categories' => [
             'title' => 'Categorieën',
         ],
+        'category-fields' => [
+            'title' => 'Categorievelden',
+        ],
+        'attributes' => [
+            'title' => 'Attributen',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attribuutgroepen',
+        ],
+        'attribute-families' => [
+            'title' => 'Attribuutfamilies',
+        ],
+        'attribute-options' => [
+            'title' => 'Attribuutopties',
+        ],
         'locales' => [
             'title' => 'Talen',
         ],
@@ -182,16 +247,16 @@ return [
             'title' => 'Kanalen',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valuta',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Rollen',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Gebruikers',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Actief',
                 'all'    => 'Alle',
             ],
         ],
