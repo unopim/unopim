@@ -150,7 +150,7 @@ class BulkProductUpdate implements ShouldQueue
 
             $values = $product->values;
 
-            $familyAttributeCodes = $this->getFamilyAttribute($productId, $productRepository);
+            $familyAttributeCodes = $this->getFamilyAttribute($productId, $productRepository, $product);
 
             foreach ($attributeData as $attributeCode => $value) {
                 $attribute = $this->attributeService->findAttributeByCode($attributeCode);
@@ -422,9 +422,9 @@ class BulkProductUpdate implements ShouldQueue
      * @param  ProductRepository  $productRepository  Repository to fetch product details.
      * @return array List of attribute codes belonging to the family.
      */
-    public function getFamilyAttribute(int $productId, ProductRepository $productRepository)
+    public function getFamilyAttribute(int $productId, ProductRepository $productRepository, $product = null)
     {
-        $product = $productRepository->find($productId);
+        $product = $product ?: $productRepository->find($productId);
 
         if (! $product) {
             return [];
