@@ -70,13 +70,11 @@ it('prepares locale rows for export batches', function () {
 
     expect($locales)->toBe([
         [
-            'id'     => 1,
             'code'   => 'en_US',
             'name'   => 'English',
             'status' => 1,
         ],
         [
-            'id'     => 2,
             'code'   => 'fr_FR',
             'name'   => 'French',
             'status' => 0,
@@ -130,13 +128,11 @@ it('writes locale rows to the export buffer and marks the batch as processed', f
     expect($buffer->writes)->toHaveCount(1);
     expect($buffer->writes[0])->toBe([
         [
-            'id'     => 1,
             'code'   => 'en_US',
             'name'   => 'English',
             'status' => 1,
         ],
         [
-            'id'     => 2,
             'code'   => 'fr_FR',
             'name'   => 'French',
             'status' => 0,
@@ -180,7 +176,6 @@ it('prepares a single locale row correctly', function () {
 
     expect($locales)->toHaveCount(1);
     expect($locales[0])->toBe([
-        'id'     => 10,
         'code'   => 'de_DE',
         'name'   => 'German',
         'status' => 1,
@@ -229,7 +224,6 @@ it('strips extra source fields and maps only the four expected keys', function (
     $locales = $this->exporter->prepareLocales($extraFieldsBatch);
 
     expect($locales[0])->toBe([
-        'id'     => 7,
         'code'   => 'es_ES',
         'name'   => 'Spanish',
         'status' => 1,
