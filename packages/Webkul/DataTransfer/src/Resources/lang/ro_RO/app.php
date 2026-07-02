@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Stare',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Toate',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Antetul conține atribute invalide: "%s".',
             'system'               => 'A apărut o eroare sistemică neașteptată.',
             'wrong-quotes'         => 'A fost utilizată virgulă în loc de virgulă directă.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Fișierul este gol sau nu conține un rând de antet. Vă rugăm să încărcați un fișier valid cu date.',
         ],
     ],
     'job' => [

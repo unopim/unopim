@@ -257,7 +257,7 @@ return [
             'filters' => [
                 'status' => 'Status',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Alle',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Header enthält ungültige Attribute: „%s“.',
             'system'               => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
             'wrong-quotes'         => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Die Datei ist leer oder enthält keine Kopfzeile. Bitte laden Sie eine gültige Datei mit Daten hoch.',
         ],
     ],
     'job' => [

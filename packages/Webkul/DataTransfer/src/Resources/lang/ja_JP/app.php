@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'ステータス',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'すべて',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'ヘッダーに無効な属性が含まれています: 「%s」。',
             'system'               => '予期しないシステムエラーが発生しました。',
             'wrong-quotes'         => 'ストレート引用符の代わりに波型引用符が使用されています。',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'ファイルが空であるか、ヘッダー行が含まれていません。データを含む有効なファイルをアップロードしてください。',
         ],
     ],
     'job' => [

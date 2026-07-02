@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Статус',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Усі',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Заголовок містить недійсні атрибути: "%s".',
             'system'               => 'Сталася несподівана система помилка.',
             'wrong-quotes'         => 'Використано криві лапки замість прямих лапок.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Файл порожній або не містить рядка заголовка. Будь ласка, завантажте коректний файл з даними.',
         ],
     ],
     'job' => [

@@ -257,7 +257,7 @@ return [
             'filters' => [
                 'status' => 'Status',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Alla',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Rubriken innehåller ogiltiga attribut: "%s".',
             'system'               => 'Ett oväntat systemfel inträffade.',
             'wrong-quotes'         => 'Krokiga citattecken användes i stället för raka citattecken.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Filen är tom eller innehåller ingen rubrikrad. Vänligen ladda upp en giltig fil med data.',
         ],
     ],
     'job' => [

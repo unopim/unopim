@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Estado',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Todos',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'El encabezado contiene atributos no válidos: "%s".',
             'system'               => 'Ocurrió un error del sistema inesperado.',
             'wrong-quotes'         => 'Se utilizaron comillas curvas en lugar de comillas rectas.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'El archivo está vacío o no contiene una fila de encabezado. Por favor, suba un archivo válido con datos.',
         ],
     ],
     'job' => [

@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Trạng thái',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Tất cả',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
             'system'               => 'Lỗi hệ thống không mong muốn xảy ra.',
             'wrong-quotes'         => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',
         ],
     ],
     'job' => [

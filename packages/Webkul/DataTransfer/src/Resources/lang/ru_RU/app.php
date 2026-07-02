@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Статус',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Все',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Заголовок содержит недопустимые атрибуты: "%s".',
             'system'               => 'Произошла непредвиденная системная ошибка.',
             'wrong-quotes'         => 'Вместо прямых кавычек используются фигурные кавычки.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Файл пуст или не содержит строку заголовка. Пожалуйста, загрузите корректный файл с данными.',
         ],
     ],
     'job' => [

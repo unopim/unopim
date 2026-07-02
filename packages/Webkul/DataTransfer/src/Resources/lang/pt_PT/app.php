@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Estado',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Todos',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'O cabeçalho contém atributos inválidos: "%s".',
             'system'               => 'Ocorreu um erro do sistema inesperado.',
             'wrong-quotes'         => 'Aspas inclinadas usadas em vez de aspas diretas.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'O ficheiro está vazio ou não contém uma linha de cabeçalho. Por favor, carregue um ficheiro válido com dados.',
         ],
     ],
     'job' => [

@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Tila',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Kaikki',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
             'system'               => 'Odottamaton järjestelmävirhe tapahtui.',
             'wrong-quotes'         => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',
         ],
     ],
     'job' => [

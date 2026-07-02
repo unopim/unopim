@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => '状态',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => '全部',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => '标头包含无效属性：“%s”。',
             'system'               => '发生意外的系统错误。',
             'wrong-quotes'         => '使用弯引号代替直引号。',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => '文件为空或不包含标题行。请上传包含数据的有效文件。',
         ],
     ],
     'job' => [

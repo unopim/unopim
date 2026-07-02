@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'الحالة',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'الكل',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'يحتوي الرأس على سمة (سمات) غير صالحة: "%s".',
             'system'               => 'حدث خطأ غير متوقع في النظام.',
             'wrong-quotes'         => 'يتم استخدام علامات الاقتباس المتعرجة بدلاً من علامات الاقتباس المستقيمة.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'الملف فارغ أو لا يحتوي على صف رأس. يرجى تحميل ملف صالح يحتوي على بيانات.',
         ],
     ],
     'job' => [

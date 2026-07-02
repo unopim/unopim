@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Төлөв',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Бүгд',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Толгой хэсэгт хүчингүй атрибут(ууд) агуулагдаж байна: "%s".',
             'system'               => 'Гэнэтийн системийн алдаа гарлаа.',
             'wrong-quotes'         => 'Шулуун ишлэлийн оронд буржгар ишлэл ашигласан.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Файл хоосон эсвэл толгой мөр агуулаагүй байна. Өгөгдөл бүхий зөв файл байршуулна уу.',
         ],
     ],
     'job' => [

@@ -257,7 +257,7 @@ return [
             'filters' => [
                 'status' => 'Status',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Sve',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Zaglavlje sadrži neispravne atribut(e): "%s".',
             'system'               => 'Došlo je do neočekivane sistemske greške.',
             'wrong-quotes'         => 'Kovrčave navodnike koristite umjesto ravnih navodnika.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Datoteka je prazna ili ne sadrži redak zaglavlja. Molimo učitajte valjanu datoteku s podacima.',
         ],
     ],
     'job' => [

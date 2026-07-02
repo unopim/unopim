@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => '狀態',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => '全部',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => '標題包含無效屬性: "%s".',
             'system'               => '發生了一個意外的系統錯誤。',
             'wrong-quotes'         => '使用了弓形引號而不是直引號。',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => '檔案為空或不包含標題列。請上傳包含資料的有效檔案。',
         ],
     ],
     'job' => [

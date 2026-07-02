@@ -255,9 +255,9 @@ return [
         'users' => [
             'title'   => 'Users',
             'filters' => [
-                'status' => 'Status',
+                'status' => 'Stato',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Tutti',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'L\'intestazione contiene attributi non validi: "%s".',
             'system'               => 'Si è verificato un errore di sistema imprevisto.',
             'wrong-quotes'         => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
         ],
     ],
     'job' => [

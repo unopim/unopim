@@ -257,7 +257,7 @@ return [
             'filters' => [
                 'status' => 'Status',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Alle',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Overskrift inneholder ugyldige attributter: "%s".',
             'system'               => 'En uventet systemfeil oppstod.',
             'wrong-quotes'         => 'Skråstilt anførselstegn brukt i stedet for rette anførselstegn.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'Filen er tom eller inneholder ingen overskriftsrad. Vennligst last opp en gyldig fil med data.',
         ],
     ],
     'job' => [

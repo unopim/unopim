@@ -257,7 +257,7 @@ return [
             'filters' => [
                 'status' => 'Status',
                 'active' => 'Active',
-                'all'    => 'All',
+                'all'    => 'Semua',
             ],
         ],
     ],
@@ -270,7 +270,7 @@ return [
             'invalid-attribute'    => 'Header berisi atribut yang tidak valid: "%s".',
             'system'               => 'Terjadi kesalahan sistem yang tidak terduga.',
             'wrong-quotes'         => 'Kutipan keriting digunakan sebagai pengganti tanda kutip lurus.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-empty'           => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',
         ],
     ],
     'job' => [
