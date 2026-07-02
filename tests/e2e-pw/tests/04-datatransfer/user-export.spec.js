@@ -34,7 +34,6 @@ test.describe('User Export Jobs', () => {
     const code = `user-csv-${uid}`;
     await createExport(adminPage, code, 'CSV');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 });

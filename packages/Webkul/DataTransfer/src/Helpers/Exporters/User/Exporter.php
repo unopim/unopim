@@ -94,7 +94,6 @@ class Exporter extends AbstractExporter
             }
 
             $users[] = [
-                'id'              => $rowData['id'],
                 'name'            => EscapeFormulaOperators::escapeValue($rowData['name']),
                 'email'           => $rowData['email'],
                 'image'           => $exportedImage,

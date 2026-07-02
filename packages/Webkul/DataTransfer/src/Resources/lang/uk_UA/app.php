@@ -32,6 +32,17 @@ return [
                 ],
             ],
         ],
+        'locales' => [
+            'title'      => 'Мови',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Код мови \'%s\' вже імпортовано в цьому пакеті.',
+                    'code-not-found-to-delete'    => 'Мову з кодом \'%s\' не знайдено в системі.',
+                    'invalid-status'              => 'Статус має бути 0 або 1 (або порожній для увімкнення за замовчуванням).',
+                    'channel-related-locale-root' => 'Ви не можете видалити мову з кодом :code, оскільки вона пов’язана з каналом.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Канали',
             'validation' => [
@@ -46,6 +57,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Статус',
+                'enable' => 'Увімкнено',
+                'all'    => 'Усі',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,6 +83,12 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Статус',
+                'active' => 'Активний',
+                'all'    => 'Усі',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -151,6 +174,9 @@ return [
         ],
         'categories' => [
             'title' => 'Категорії',
+        ],
+        'locales' => [
+            'title' => 'Мови',
         ],
         'channels' => [
             'title' => 'Канали',

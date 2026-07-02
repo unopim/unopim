@@ -34,7 +34,6 @@ test.describe('User Import Jobs', () => {
     const code = `user-imp-${uid}`;
     await createUserImport(adminPage, code);
 
-    // Cleanup
     await deleteImport(adminPage, code);
   });
 
@@ -46,7 +45,6 @@ test.describe('User Import Jobs', () => {
     await adminPage.getByRole('button', { name: 'Import Now' }).click();
     await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
 
-    // Cleanup
     await deleteImport(adminPage, code);
   });
 });

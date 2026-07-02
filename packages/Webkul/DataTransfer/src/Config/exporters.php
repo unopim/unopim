@@ -262,6 +262,51 @@ return [
         ],
     ],
 
+    'locales' => [
+        'title'       => 'data_transfer::app.exporters.locales.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Locale\Exporter',
+        'source'      => 'Webkul\Core\Repositories\LocaleRepository',
+        'sample_path' => 'data-transfer/samples/locales.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\LocaleJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ], [
+                    'name'     => 'status',
+                    'title'    => 'data_transfer::app.exporters.fields.status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
+                        [
+                            'label' => 'data_transfer::app.exporters.fields.enable',
+                            'value' => 'enable',
+                        ], [
+                            'label' => 'data_transfer::app.exporters.fields.all',
+                            'value' => 'all',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'channels' => [
         'title'       => 'data_transfer::app.exporters.channels.title',
         'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Channel\Exporter',

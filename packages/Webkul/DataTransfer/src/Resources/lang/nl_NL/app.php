@@ -46,6 +46,12 @@ return [
         ],
         'currencies' => [
             'title'      => 'Currencies',
+            'filters'    => [
+                'status' => 'Status',
+                'enable' => 'Inschakelen',
+                'all'    => 'Alle',
+            ],
+
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,11 +72,28 @@ return [
         ],
         'users' => [
             'title'      => 'Users',
+            'filters'    => [
+                'status' => 'Status',
+                'active' => 'Actief',
+                'all'    => 'Alle',
+            ],
+
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
                     'invalid-role'              => 'Invalid role name found.',
                     'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Talen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'De taalcode \'%s\' is al geïmporteerd in deze batch.',
+                    'code-not-found-to-delete'    => 'Taal met code \'%s\' niet gevonden in het systeem.',
+                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
+                    'channel-related-locale-root' => 'Je kunt de taal met code :code niet verwijderen omdat deze is gekoppeld aan een kanaal.',
                 ],
             ],
         ],
@@ -151,6 +174,9 @@ return [
         ],
         'categories' => [
             'title' => 'Categorieën',
+        ],
+        'locales' => [
+            'title' => 'Talen',
         ],
         'channels' => [
             'title' => 'Kanalen',
