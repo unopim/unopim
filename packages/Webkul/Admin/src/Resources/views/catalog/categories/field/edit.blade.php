@@ -21,6 +21,7 @@
 
             <!-- Input Form -->
             <x-admin::form
+                ajax
                 :action="route('admin.catalog.category_fields.update', $categoryField->id)"
                 enctype="multipart/form-data"
                 method="PUT"

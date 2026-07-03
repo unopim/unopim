@@ -42,7 +42,6 @@
         "prettus/l5-repository": "^4.0",
         "pusher/pusher-php-server": "^7.0",
         "shetabit/visitor": "^4.1",
-        "spatie/laravel-responsecache": "^8.2",
         "symfony/intl": "^7.0"
     },
     "require-dev": {
@@ -53,6 +52,7 @@
         "laravel/pint": "^1.29.1",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
+        "nunomaduro/larastan": "^3.10",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-laravel": "^4.0",
         "phpunit/phpunit": "^12.0",
@@ -71,7 +71,6 @@
             "Webkul\\DataGrid\\": "packages/Webkul/DataGrid/src",
             "Webkul\\DataTransfer\\": "packages/Webkul/DataTransfer/src",
             "Webkul\\DebugBar\\": "packages/Webkul/DebugBar/src",
-            "Webkul\\FPC\\": "packages/Webkul/FPC/src",
             "Webkul\\HistoryControl\\": "packages/Webkul/HistoryControl/src",
             "Webkul\\Installer\\": "packages/Webkul/Installer/src",
             "Webkul\\Inventory\\": "packages/Webkul/Inventory/src",
@@ -112,7 +111,25 @@
         "post-create-project-cmd": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate --ansi"
+        ],
+        "phpstan": [
+            "./vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
+        "phpstan-baseline": [
+            "./vendor/bin/phpstan analyse --memory-limit=2G --generate-baseline"
+        ],
+        "rector": [
+            "./vendor/bin/rector process"
+        ],
+        "rector-dry": [
+            "./vendor/bin/rector process --dry-run"
         ]
+    },
+    "scripts-descriptions": {
+        "phpstan": "Run PHPStan static analysis at max level against the application.",
+        "phpstan-baseline": "Regenerate the PHPStan baseline of pre-existing errors.",
+        "rector": "Apply Rector automated refactorings to the application.",
+        "rector-dry": "Preview Rector refactorings without modifying files."
     },
     "extra": {
         "laravel": {

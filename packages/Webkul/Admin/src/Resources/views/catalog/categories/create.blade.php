@@ -8,6 +8,7 @@
 
     <!-- Category Create Form -->
     <x-admin::form
+        ajax
         :action="route('admin.catalog.categories.store')"
         enctype="multipart/form-data"
     >

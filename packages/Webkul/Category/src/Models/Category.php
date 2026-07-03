@@ -75,6 +75,8 @@ class Category extends Model implements CategoryContract, HistoryContract, Prese
         if ($fallback = core()->getDefaultLocaleCodeFromDefaultChannel()) {
             return $fallback;
         }
+
+        return null;
     }
 
     /**

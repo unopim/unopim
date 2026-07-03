@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6886802d15e5d85823b354a747bd4fa9",
+    "content-hash": "dc084b7e5d5a22ff32601eab33bccba4",
     "packages": [
         {
             "name": "astrotomic/laravel-translatable",
@@ -7568,212 +7568,6 @@
             "time": "2026-05-19T20:15:12+00:00"
         },
         {
-            "name": "spatie/laravel-package-tools",
-            "version": "1.93.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/laravel-package-tools.git",
-                "reference": "d5552849801f2642aea710557463234b59ef65eb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/d5552849801f2642aea710557463234b59ef65eb",
-                "reference": "d5552849801f2642aea710557463234b59ef65eb",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/contracts": "^10.0|^11.0|^12.0|^13.0",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.5",
-                "orchestra/testbench": "^8.0|^9.2|^10.0|^11.0",
-                "pestphp/pest": "^2.1|^3.1|^4.0",
-                "phpunit/php-code-coverage": "^10.0|^11.0|^12.0",
-                "phpunit/phpunit": "^10.5|^11.5|^12.5",
-                "spatie/pest-plugin-test-time": "^2.2|^3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\LaravelPackageTools\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Tools for creating Laravel packages",
-            "homepage": "https://github.com/spatie/laravel-package-tools",
-            "keywords": [
-                "laravel-package-tools",
-                "spatie"
-            ],
-            "support": {
-                "issues": "https://github.com/spatie/laravel-package-tools/issues",
-                "source": "https://github.com/spatie/laravel-package-tools/tree/1.93.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-05-19T14:06:37+00:00"
-        },
-        {
-            "name": "spatie/laravel-responsecache",
-            "version": "8.4.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/laravel-responsecache.git",
-                "reference": "313f9b66794319238fb0ce0391ab1962b448961e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-responsecache/zipball/313f9b66794319238fb0ce0391ab1962b448961e",
-                "reference": "313f9b66794319238fb0ce0391ab1962b448961e",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/cache": "^12.0|^13.0",
-                "illuminate/console": "^12.0|^13.0",
-                "illuminate/container": "^12.0|^13.0",
-                "illuminate/http": "^12.0|^13.0",
-                "illuminate/support": "^12.0|^13.0",
-                "nesbot/carbon": "^3.0",
-                "php": "^8.4",
-                "spatie/laravel-package-tools": "^1.9",
-                "spatie/php-attribute-reader": "^1.0"
-            },
-            "require-dev": {
-                "larastan/larastan": "^3.9",
-                "laravel/framework": "^12.0|^13.0",
-                "laravel/pint": "^1.13.7",
-                "mockery/mockery": "^1.6",
-                "orchestra/testbench": "^10.0|^11.0",
-                "pestphp/pest": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "ResponseCache": "Spatie\\ResponseCache\\Facades\\ResponseCache"
-                    },
-                    "providers": [
-                        "Spatie\\ResponseCache\\ResponseCacheServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\ResponseCache\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Speed up a Laravel application by caching the entire response",
-            "homepage": "https://github.com/spatie/laravel-responsecache",
-            "keywords": [
-                "cache",
-                "laravel",
-                "laravel-responsecache",
-                "performance",
-                "response",
-                "spatie"
-            ],
-            "support": {
-                "issues": "https://github.com/spatie/laravel-responsecache/issues",
-                "source": "https://github.com/spatie/laravel-responsecache/tree/8.4.1"
-            },
-            "funding": [
-                {
-                    "url": "https://spatie.be/open-source/support-us",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-05-25T11:09:32+00:00"
-        },
-        {
-            "name": "spatie/php-attribute-reader",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/php-attribute-reader.git",
-                "reference": "46e7484d7b51f5b22d672745c541e48c5a385404"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/php-attribute-reader/zipball/46e7484d7b51f5b22d672745c541e48c5a385404",
-                "reference": "46e7484d7b51f5b22d672745c541e48c5a385404",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.0"
-            },
-            "require-dev": {
-                "pestphp/pest": "^1.0|^2.0|^3.0|^4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\Attributes\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A clean API for working with PHP attributes",
-            "homepage": "https://github.com/spatie/php-attribute-reader",
-            "keywords": [
-                "attributes",
-                "php-attribute-reader",
-                "reflection",
-                "spatie"
-            ],
-            "support": {
-                "issues": "https://github.com/spatie/php-attribute-reader/issues",
-                "source": "https://github.com/spatie/php-attribute-reader/tree/1.1.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-02-23T09:01:55+00:00"
-        },
-        {
             "name": "symfony/clock",
             "version": "v8.1.0",
             "source": {
@@ -11590,6 +11384,47 @@
             "time": "2025-04-30T06:54:44+00:00"
         },
         {
+            "name": "iamcal/sql-parser",
+            "version": "v0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iamcal/SQLParser.git",
+                "reference": "610392f38de49a44dab08dc1659960a29874c4b8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/iamcal/SQLParser/zipball/610392f38de49a44dab08dc1659960a29874c4b8",
+                "reference": "610392f38de49a44dab08dc1659960a29874c4b8",
+                "shasum": ""
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^1.0",
+                "phpunit/phpunit": "^5|^6|^7|^8|^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "iamcal\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cal Henderson",
+                    "email": "cal@iamcal.com"
+                }
+            ],
+            "description": "MySQL schema parser",
+            "support": {
+                "issues": "https://github.com/iamcal/SQLParser/issues",
+                "source": "https://github.com/iamcal/SQLParser/tree/v0.7"
+            },
+            "time": "2026-01-28T22:20:33+00:00"
+        },
+        {
             "name": "jean85/pretty-package-versions",
             "version": "2.1.1",
             "source": {
@@ -12156,6 +11991,97 @@
                 }
             ],
             "time": "2026-04-21T14:04:20+00:00"
+        },
+        {
+            "name": "nunomaduro/larastan",
+            "version": "v3.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/larastan/larastan.git",
+                "reference": "2970f83398154178a739609c244577267c7ee8eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/larastan/larastan/zipball/2970f83398154178a739609c244577267c7ee8eb",
+                "reference": "2970f83398154178a739609c244577267c7ee8eb",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "iamcal/sql-parser": "^0.7.0",
+                "illuminate/console": "^11.44.2 || ^12.4.1 || ^13",
+                "illuminate/container": "^11.44.2 || ^12.4.1 || ^13",
+                "illuminate/contracts": "^11.44.2 || ^12.4.1 || ^13",
+                "illuminate/database": "^11.44.2 || ^12.4.1 || ^13",
+                "illuminate/http": "^11.44.2 || ^12.4.1 || ^13",
+                "illuminate/pipeline": "^11.44.2 || ^12.4.1 || ^13",
+                "illuminate/support": "^11.44.2 || ^12.4.1 || ^13",
+                "php": "^8.2",
+                "phpstan/phpstan": "^2.2.0"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^14",
+                "laravel/framework": "^11.44.2 || ^12.7.2 || ^13",
+                "mockery/mockery": "^1.6.12",
+                "nikic/php-parser": "^5.4",
+                "orchestra/canvas": "^v9.2.2 || ^10.0.1 || ^11",
+                "orchestra/testbench-core": "^9.12.0 || ^10.1 || ^11",
+                "phpstan/phpstan-deprecation-rules": "^2.0.1",
+                "phpunit/phpunit": "^10.5.35 || ^11.5.15 || ^12.5.8 || ^13.1.8"
+            },
+            "suggest": {
+                "orchestra/testbench": "Using Larastan for analysing a package needs Testbench",
+                "phpmyadmin/sql-parser": "Install to enable Larastan's optional phpMyAdmin-based SQL parser automatically"
+            },
+            "type": "phpstan-extension",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "extension.neon"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Larastan\\Larastan\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Can Vural",
+                    "email": "can9119@gmail.com"
+                }
+            ],
+            "description": "Larastan - Discover bugs in your code without running it. A phpstan/phpstan extension for Laravel",
+            "keywords": [
+                "PHPStan",
+                "code analyse",
+                "code analysis",
+                "larastan",
+                "laravel",
+                "package",
+                "php",
+                "static analysis"
+            ],
+            "support": {
+                "issues": "https://github.com/larastan/larastan/issues",
+                "source": "https://github.com/larastan/larastan/tree/v3.10.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/canvural",
+                    "type": "github"
+                }
+            ],
+            "abandoned": "larastan/larastan",
+            "time": "2026-05-28T08:00:58+00:00"
         },
         {
             "name": "pestphp/pest",

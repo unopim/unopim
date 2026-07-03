@@ -54,10 +54,10 @@
     <script type="text/x-template" id="v-import-filter-fields-template">
         <x-admin::form.control-group v-for="filterField in fields" ::key="filterField.name">
             <x-admin::form.control-group.label
-                v-text="filterField.title"
                 ::class="filterField.required ? 'required' : ''"
                 ::for="filterField.name"
             >
+                <span v-text="filterField.title"></span>
             </x-admin::form.control-group.label>
 
             <template v-if="filterField?.type == 'boolean'">

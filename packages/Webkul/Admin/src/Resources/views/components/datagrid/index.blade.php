@@ -286,6 +286,17 @@
                                 managedColumns
                             } = response.data;
 
+                            /**
+                             * Guard against malformed responses (e.g. an auth redirect returning HTML instead of
+                             * the datagrid JSON). Without a valid columns array the filter-initialisation below
+                             * throws `Cannot read properties of undefined (reading 'filter')` and breaks the page.
+                             */
+                            if (! Array.isArray(columns)) {
+                                this.isLoading = false;
+
+                                return;
+                            }
+
                             this.available.id = id;
 
                             this.available.columns = columns;
@@ -1030,7 +1041,11 @@
 
                     switch (method) {
                         case 'get':
-                            window.location.href = action.url;
+                            if (window.unopim && typeof window.unopim.visit === 'function') {
+                                window.unopim.visit(action.url);
+                            } else {
+                                window.location.href = action.url;
+                            }
 
                             break;
 

@@ -12,13 +12,14 @@
     <x-admin::form
         method="PUT"
         enctype="multipart/form-data"
+        ajax
     >
         {!! view_render_event('unopim.admin.catalog.product.edit.actions.before', ['product' => $product]) !!}
 
         <input type="hidden" name="sku" value="{{ $product->sku }}">
 
         <!-- Page Header -->
-        <div class="sticky top-[60px] z-10 bg-white dark:bg-cherry-800 -mx-4 px-4 pb-2.5 pt-1">
+        <div class="js-sticky-header sticky z-10 dark:bg-cherry-800 -mx-4 px-4 py-2.5 transition-shadow" style="top: 56px;">
             <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
                 <div class="grid gap-1.5">
                     <p class="text-xl text-gray-800 dark:text-slate-50 font-bold leading-6">
@@ -37,10 +38,7 @@
                         @lang('admin::app.account.edit.back-btn')
                     </a>
 
-                    <!-- Save Button -->
-                    <button class="primary-button">
-                        @lang('admin::app.catalog.products.edit.save-btn')
-                    </button>
+                    {{-- Save handled by the global unsaved-changes bar (appears on edit). --}}
                 </div>
             </div>
         </div>
@@ -262,4 +260,31 @@
     </x-admin::form>
 
     {!! view_render_event('unopim.admin.catalog.product.edit.after', ['product' => $product]) !!}
+
+    @pushOnce('scripts')
+        {{-- Give the sticky edit header a solid white background once the page is scrolled
+             (Vue has no `.window` event modifier, so this is done with a plain listener). --}}
+        <script>
+            (function () {
+                // Query the header on each call — it's rendered by Vue (inside <v-form>),
+                // so it may not exist yet when this script first runs.
+                const update = () => {
+                    const header = document.querySelector('.js-sticky-header');
+
+                    if (! header) {
+                        return;
+                    }
+
+                    const scrolled = window.scrollY > 0;
+
+                    header.classList.toggle('bg-white', scrolled);
+                    header.classList.toggle('shadow-md', scrolled);
+                };
+
+                window.addEventListener('scroll', update, { passive: true });
+
+                setTimeout(update, 300);
+            })();
+        </script>
+    @endPushOnce
 </x-admin::layouts.with-history>

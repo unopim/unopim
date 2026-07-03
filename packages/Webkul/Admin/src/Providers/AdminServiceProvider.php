@@ -23,7 +23,9 @@ class AdminServiceProvider extends ServiceProvider
     {
         $this->configureRateLimiting();
 
-        Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
+        Route::middleware('web')
+            ->where(['id' => '[0-9]+'])
+            ->group(__DIR__.'/../Routes/web.php');
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'admin');
 

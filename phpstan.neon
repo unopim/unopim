@@ -1,0 +1,19 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    paths:
+        - app
+        - packages/Webkul
+
+    level: max
+
+    excludePaths:
+        - packages/*/tests/*
+        - packages/*/src/Database/Migration/*
+        - packages/*/src/Resources/*
+        - packages/Webkul/DebugBar/*
+        - packages/Webkul/FPC/src/Hasher/DefaultHasher.php
+
+    ignoreErrors:

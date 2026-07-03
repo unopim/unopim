@@ -6,7 +6,7 @@ use Webkul\Completeness\Http\Controllers\CompletenessSettingsController;
 
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
     Route::controller(CompletenessSettingsController::class)->prefix('completeness-settings')->group(function () {
-        Route::get('{family_id}/edit', 'edit')->name('admin.catalog.families.completeness.edit');
+        Route::get('{family_id}/edit', 'edit')->name('admin.catalog.families.completeness.edit')->where(['family_id' => '[0-9]+']);
 
         Route::post('update', 'update')->name('admin.catalog.families.completeness.update');
 

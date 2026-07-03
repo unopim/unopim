@@ -274,7 +274,9 @@ class ProductDataSource extends ApiDataSource
 
     protected function getCompletenessScores(string $id): array
     {
-        $completenessScores = $this->productCompletenessScoreRepository->findByField('product_id', $id);
+        $completenessScores = $this->productCompletenessScoreRepository
+            ->findByField('product_id', $id)
+            ->load(['channel:id,code', 'locale:id,code']);
 
         $completenessData = [];
 

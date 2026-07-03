@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\AttributeGroupDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreAttributeGroupRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\UpdateAttributeGroupRequest;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
 
 class AttributeGroupController extends ApiController
@@ -47,15 +49,9 @@ class AttributeGroupController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(): JsonResponse
+    public function store(StoreAttributeGroupRequest $request): JsonResponse
     {
-        $validator = $this->codeRequireWithUniqueValidator('attribute_groups');
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
-
-        $requestData = request()->only(['code', 'labels']);
+        $requestData = $request->only(['code', 'labels']);
         $requestData = $this->setLabels($requestData);
 
         try {
@@ -77,9 +73,9 @@ class AttributeGroupController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(string $code): JsonResponse
+    public function update(UpdateAttributeGroupRequest $request, string $code): JsonResponse
     {
-        $requestData = request()->only([
+        $requestData = $request->only([
             'labels',
         ]);
 

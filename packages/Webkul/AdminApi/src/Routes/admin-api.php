@@ -6,6 +6,7 @@ Route::group([
     'prefix'     => 'v1/rest',
     'middleware' => [
         'auth:api',
+        'throttle:rest-api',
         'api.scope',
         'accept.json',
         'request.locale',

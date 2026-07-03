@@ -20,6 +20,7 @@
 
             <!-- Input Form -->
             <x-admin::form
+                ajax
                 :action="route('admin.catalog.attributes.update', $attribute->id)"
                 enctype="multipart/form-data"
                 method="PUT"

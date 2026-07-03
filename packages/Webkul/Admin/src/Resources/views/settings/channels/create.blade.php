@@ -6,7 +6,7 @@
 
     {!! view_render_event('unopim.admin.settings.channels.create.before') !!}
 
-    <x-admin::form  action="{{ route('admin.settings.channels.store') }}">
+    <x-admin::form  ajax action="{{ route('admin.settings.channels.store') }}">
 
         {!! view_render_event('admin.settings.channels.create.create_form_controls.before') !!}
 

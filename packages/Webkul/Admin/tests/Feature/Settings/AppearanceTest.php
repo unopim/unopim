@@ -24,6 +24,6 @@ it('updates logo and favicon from appearance settings', function () {
         'favicon'    => UploadedFile::fake()->image('favicon.png', 16, 16),
     ]);
 
-    $response->assertRedirect(route('admin.settings.appearance.index'));
+    $response->assertRedirect(route('admin.configuration.system.settings'));
     $response->assertSessionHas('success');
 });

@@ -8,13 +8,13 @@
         <transition-group
             tag='div'
             name="flash-group"
-            enter-from-class="ltr:translate-x-full rtl:-translate-x-full"
+            enter-from-class="translate-y-full opacity-0"
             enter-active-class="transform transition ease-in-out duration-200"
-            enter-to-class="ltr:translate-x-0 rtl:-translate-x-0"
-            leave-from-class="ltr:translate-x-0 rtl:-translate-x-0"
+            enter-to-class="translate-y-0 opacity-100"
+            leave-from-class="translate-y-0 opacity-100"
             leave-active-class="transform transition ease-in-out duration-200"
-            leave-to-class="ltr:translate-x-full rtl:-translate-x-full"
-            class='grid gap-2.5 fixed top-5 ltr:right-5 rtl:left-5 z-[10060] justify-items-end'
+            leave-to-class="translate-y-full opacity-0"
+            class='grid gap-2.5 fixed bottom-5 left-1/2 -translate-x-1/2 z-[10060] justify-items-center'
         >
             <x-admin::flash-group.item />
         </transition-group>

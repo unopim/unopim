@@ -131,7 +131,7 @@ class CategoryDataSource extends ApiDataSource
 
         if ($this->operators['NOT_IN_LIST'] == $value['operator']) {
             // Apply the 'not in list' operator to the query builder.
-            $scopeQueryBuilder->hereNotIn($filterTable.$requestedColumn, $value['value']);
+            $scopeQueryBuilder->whereNotIn($filterTable.$requestedColumn, $value['value']);
         }
 
         // Return the updated query builder instance.

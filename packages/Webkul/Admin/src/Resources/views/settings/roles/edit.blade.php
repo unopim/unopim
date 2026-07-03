@@ -22,6 +22,7 @@
         >
             <div>
                 <x-admin::form
+                    ajax
                     method="PUT"
                     :action="route('admin.settings.roles.update', $role->id)"
                 >

@@ -451,16 +451,6 @@ return [
         'route' => 'admin.settings.users.index',
         'sort'  => 8,
     ], [
-        'key'   => 'settings.appearance',
-        'name'  => 'admin::app.acl.appearance',
-        'route' => 'admin.settings.appearance.index',
-        'sort'  => 1,
-    ], [
-        'key'   => 'settings.appearance.edit',
-        'name'  => 'admin::app.acl.edit',
-        'route' => 'admin.settings.appearance.update',
-        'sort'  => 1,
-    ], [
         'key'   => 'settings.locales',
         'name'  => 'admin::app.acl.locales',
         'route' => 'admin.settings.locales.index',
@@ -710,5 +700,28 @@ return [
         'name'  => 'admin::app.acl.help',
         'route' => 'admin.help.index',
         'sort'  => 99999,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | System Configuration
+    |--------------------------------------------------------------------------
+    |
+    */
+    [
+        'key'   => 'configuration.system_information',
+        'name'  => 'admin::app.acl.system-information',
+        'route' => 'admin.configuration.system.information',
+        'sort'  => 4,
+    ], [
+        'key'   => 'configuration.system_settings',
+        'name'  => 'admin::app.acl.system-settings',
+        'route' => 'admin.configuration.system.settings',
+        'sort'  => 5,
+    ], [
+        'key'   => 'configuration.system_settings.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.appearance.update',
+        'sort'  => 1,
     ],
 ];

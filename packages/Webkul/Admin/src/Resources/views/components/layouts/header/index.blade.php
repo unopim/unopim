@@ -110,6 +110,7 @@
                         method="DELETE"
                         action="{{ route('admin.session.destroy') }}"
                         id="adminLogout"
+                        :track-dirty="false"
                     >
                     </x-admin::form>
 

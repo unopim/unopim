@@ -27,13 +27,21 @@
                 <!-- Add Media tile (always first) -->
                 <label
                     class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
+                    :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : ''"
                     v-if="ai.enabled"
                     :for="$.uid + '_imageInput'"
                     @click="resetAIModal(); $refs.choiceImageModal.open()"
+                    @dragover.prevent="isDragging = true"
+                    @dragenter.prevent="isDragging = true"
+                    @dragleave.prevent="isDragging = false"
+                    @drop.prevent="onDrop"
                 >
                     <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
                     <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
                         @lang('admin::app.components.media.images.add-media-btn')
+                    </p>
+                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                        @lang('admin::app.components.media.images.drag-drop-hint')
                     </p>
                     <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
                         @lang('admin::app.components.media.images.allowed-types')
@@ -45,11 +53,19 @@
                 <label
                     v-else
                     class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
+                    :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : ''"
                     :for="$.uid + '_imageInput'"
+                    @dragover.prevent="isDragging = true"
+                    @dragenter.prevent="isDragging = true"
+                    @dragleave.prevent="isDragging = false"
+                    @drop.prevent="onDrop"
                 >
                     <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
                     <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
                         @lang('admin::app.components.media.images.add-media-btn')
+                    </p>
+                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                        @lang('admin::app.components.media.images.drag-drop-hint')
                     </p>
                     <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
                         @lang('admin::app.components.media.images.allowed-types')
@@ -620,6 +636,8 @@
                 return {
                     images: [],
 
+                    isDragging: false,
+
                     placeholders: [
                     ],
 
@@ -683,6 +701,45 @@
             },
 
             methods: {
+                onDrop(event) {
+                    this.isDragging = false;
+
+                    let files = event.dataTransfer ? event.dataTransfer.files : null;
+
+                    if (! files || ! files.length) {
+                        return;
+                    }
+
+                    let selectedFiles = Array.from(this.allowMultiple ? files : [files[0]]);
+
+                    const validFiles = selectedFiles.every(file => file.type.includes('image/') || file.type.includes('video/'));
+
+                    if (! validFiles) {
+                        this.$emitter.emit('add-flash', {
+                            type: 'warning',
+                            message: "@lang('admin::app.components.media.gallery.not-allowed-error')"
+                        });
+
+                        return;
+                    }
+
+                    selectedFiles.forEach((file) => {
+                        this.images.push({
+                            id: 'image_' + this.images.length,
+                            url: '',
+                            file: file,
+                            type: file.type,
+                            name: file.name
+                        });
+                    });
+
+                    this.signalChange();
+
+                    if (this.ai.enabled) {
+                        this.$refs.choiceImageModal.close();
+                    }
+                },
+
                 selectImage(image, allowMultiple) {
                     if (allowMultiple) {
                         image.selected =!image.selected;
@@ -720,6 +777,8 @@
                         });
                     });
 
+                    this.signalChange();
+
                     if (this.ai.enabled) {
                         this.$refs.choiceImageModal.close()
                     }
@@ -729,6 +788,19 @@
                     let index = this.images.indexOf(image);
 
                     this.images.splice(index, 1);
+
+                    this.signalChange();
+                },
+
+                signalChange() {
+                    this.$nextTick(() => {
+                        if (this.$el && this.$el.dispatchEvent) {
+                            this.$el.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                                bubbles: true,
+                                detail: { name: this.name },
+                            }));
+                        }
+                    });
                 },
 
                 toggleImageAIModal() {
@@ -893,6 +965,8 @@
                             name: file.name,
                         });
                     });
+
+                    this.signalChange();
 
                     this.$refs.magicAIImageModal.close();
                 },

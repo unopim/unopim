@@ -13,18 +13,36 @@
 -->
 @else
     @props([
-        'method' => 'POST',
+        'method'              => 'POST',
+        'trackDirty'          => true,
+        'hideSaveWhenTracked' => true,
+        'ajax'                => false,
     ])
 
     @php
         $method = strtoupper($method);
+
+        $shouldTrack = $trackDirty && ! in_array($method, ['GET', 'HEAD', 'OPTIONS']);
+
+        $isAjax = filter_var($ajax, FILTER_VALIDATE_BOOLEAN);
     @endphp
+
+    @if ($shouldTrack)
+        @include('admin::components.form.unsaved-changes')
+
+        <v-unsaved-changes :hide-save-when-tracked="{{ $hideSaveWhenTracked ? 'true' : 'false' }}">
+    @endif
 
     <v-form
         method="{{ $method === 'GET' ? 'GET' : 'POST' }}"
         :initial-errors="{{ json_encode($errors->getMessages()) }}"
         v-slot="{ meta, errors, setValues }"
         @invalid-submit="onInvalidSubmit"
+        @if ($isAjax)
+            @submit="onAjaxSubmit"
+            data-ajax-form="true"
+            data-ajax-error-message="{{ trans('admin::app.components.form.ajax-error') }}"
+        @endif
         {{ $attributes }}
     >
         @unless(in_array($method, ['HEAD', 'GET', 'OPTIONS']))
@@ -37,4 +55,8 @@
 
         {{ $slot }}
     </v-form>
+
+    @if ($shouldTrack)
+        </v-unsaved-changes>
+    @endif
 @endif

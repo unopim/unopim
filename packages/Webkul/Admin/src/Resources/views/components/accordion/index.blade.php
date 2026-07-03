@@ -2,7 +2,7 @@
     'isActive' => true,
 ])
 
-<div {{ $attributes->merge(['class' => 'bg-white dark:bg-cherry-900 rounded box-shadow']) }}>
+<div data-dirty-section {{ $attributes->merge(['class' => 'bg-white dark:bg-cherry-900 rounded box-shadow']) }}>
     <v-accordion
         is-active="{{ $isActive }}"
         {{ $attributes }}
@@ -11,7 +11,7 @@
 
         @isset($header)
             <template v-slot:header="{ toggle, isOpen }">
-                <div {{ $header->attributes->merge(['class' => 'flex items-center justify-between p-1.5']) }}>
+                <div {{ $header->attributes->merge(['class' => 'flex items-center justify-between p-1.5 px-4']) }}>
                     {{ $header }}
 
                     <span

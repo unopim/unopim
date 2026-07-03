@@ -11,6 +11,7 @@
     @pushOnce('scripts')
         <script type="text/x-template" id="v-import-profile-template">
             <x-admin::form
+                ajax
                 :action="route('admin.settings.data_transfer.imports.store')"
                 enctype="multipart/form-data"
             >

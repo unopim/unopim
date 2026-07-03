@@ -21,6 +21,7 @@
 
             <!-- Input Form -->
             <x-admin::form
+                ajax
                 :action="route('admin.catalog.attributes.store')"
                 enctype="multipart/form-data"
             >

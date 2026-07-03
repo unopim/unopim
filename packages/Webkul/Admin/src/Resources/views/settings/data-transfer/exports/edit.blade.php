@@ -15,6 +15,7 @@
     @pushOnce('scripts')
         <script type="text/x-template" id="v-export-profile-edit-template">
             <x-admin::form
+                ajax
                 :action="route('admin.settings.data_transfer.exports.update', $export->id)"
                 method="PUT"
                 enctype="multipart/form-data"

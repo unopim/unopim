@@ -6,6 +6,7 @@
 
     <!-- Input Form -->
     <x-admin::form
+        ajax
         :action="route('admin.account.update')"
         enctype="multipart/form-data"
         method="PUT">

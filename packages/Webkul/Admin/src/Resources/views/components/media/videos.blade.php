@@ -29,16 +29,24 @@
 
                 <label
                     class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 dark:invert dark:mix-blend-exclusion"
-                    :class="[errors['videos.files[0]'] ? 'border border-red-500' : 'border-gray-300']"
+                    :class="[errors['videos.files[0]'] ? 'border border-red-500' : 'border-gray-300', isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : '']"
                     :for="$.uid + '_videoInput'"
                     v-if="allowMultiple || videos.length == 0"
+                    @dragover.prevent="isDragging = true"
+                    @dragenter.prevent="isDragging = true"
+                    @dragleave.prevent="isDragging = false"
+                    @drop.prevent="onDrop"
                 >
                     <div class="flex flex-col items-center">
                         <span class="icon-image text-2xl"></span>
 
                         <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
                             @lang('admin::app.components.media.videos.add-video-btn')
-                            
+
+                            <span class="text-[11px] font-normal">
+                                @lang('admin::app.components.media.images.drag-drop-hint')
+                            </span>
+
                             <span class="text-xs">
                                 @lang('admin::app.components.media.videos.allowed-types')
                             </span>
@@ -171,6 +179,8 @@
             data() {
                 return {
                     videos: [],
+
+                    isDragging: false,
                 }
             },
 
@@ -179,6 +189,39 @@
             },
 
             methods: {
+                onDrop(event) {
+                    this.isDragging = false;
+
+                    let files = event.dataTransfer ? event.dataTransfer.files : null;
+
+                    if (! files || ! files.length) {
+                        return;
+                    }
+
+                    let selectedFiles = Array.from(this.allowMultiple ? files : [files[0]]);
+
+                    const validFiles = selectedFiles.every(file => file.type.includes('video/'));
+
+                    if (! validFiles) {
+                        this.$emitter.emit('add-flash', {
+                            type: 'warning',
+                            message: "@lang('admin::app.components.media.videos.not-allowed-error')"
+                        });
+
+                        return;
+                    }
+
+                    selectedFiles.forEach((file) => {
+                        this.videos.push({
+                            id: 'video_' + this.videos.length,
+                            url: '',
+                            file: file
+                        });
+                    });
+
+                    this.signalChange();
+                },
+
                 add() {
                     let videoInput = this.$refs[this.$.uid + '_videoInput'];
 
@@ -204,12 +247,27 @@
                             file: file
                         });
                     });
+
+                    this.signalChange();
                 },
 
                 remove(video) {
                     let index = this.videos.indexOf(video);
 
                     this.videos.splice(index, 1);
+
+                    this.signalChange();
+                },
+
+                signalChange() {
+                    this.$nextTick(() => {
+                        if (this.$el && this.$el.dispatchEvent) {
+                            this.$el.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                                bubbles: true,
+                                detail: { name: this.name },
+                            }));
+                        }
+                    });
                 },
             }
         });

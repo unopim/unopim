@@ -11,6 +11,7 @@
     {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.before') !!}
 
     <x-admin::form
+        ajax
         :action="route('admin.settings.data_transfer.imports.update', $import->id)"
         method="PUT"
         enctype="multipart/form-data"

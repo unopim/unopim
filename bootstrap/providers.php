@@ -13,7 +13,6 @@ use Webkul\DataGrid\Providers\DataGridServiceProvider;
 use Webkul\DataTransfer\Providers\DataTransferServiceProvider;
 use Webkul\DebugBar\Providers\DebugBarServiceProvider;
 use Webkul\ElasticSearch\Providers\ElasticSearchServiceProvider;
-use Webkul\FPC\Providers\FPCServiceProvider;
 use Webkul\HistoryControl\Providers\HistoryControlServiceProvider;
 use Webkul\Installer\Providers\InstallerServiceProvider;
 use Webkul\MagicAI\Providers\MagicAIServiceProvider;
@@ -38,7 +37,6 @@ return [
     DataGridServiceProvider::class,
     DataTransferServiceProvider::class,
     DebugBarServiceProvider::class,
-    FPCServiceProvider::class,
     HistoryControlServiceProvider::class,
     InstallerServiceProvider::class,
     MagicAIServiceProvider::class,

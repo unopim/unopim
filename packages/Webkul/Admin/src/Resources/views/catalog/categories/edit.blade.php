@@ -20,6 +20,7 @@
 
     <!-- Category Edit Form -->
     <x-admin::form
+        ajax
         :action="route('admin.catalog.categories.update', $category->id)"
         enctype="multipart/form-data"
         method="PUT"

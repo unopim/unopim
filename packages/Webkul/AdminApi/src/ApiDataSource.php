@@ -56,6 +56,11 @@ abstract class ApiDataSource
     protected $itemsPerPage = 10;
 
     /**
+     * Maximum items a client may request per page.
+     */
+    protected int $maxItemsPerPage = 100;
+
+    /**
      * Query builder instance.
      *
      * @var object
@@ -267,9 +272,21 @@ abstract class ApiDataSource
     public function processRequestedPagination($requestedPagination)
     {
         return $this->queryBuilder->paginate(
-            $requestedPagination['limit'] ?? $this->itemsPerPage,
+            $this->resolvePerPage($requestedPagination['limit'] ?? null),
             ['*']
         );
+    }
+
+    /**
+     * Resolves a safe per-page value, clamped between 1 and the allowed maximum.
+     */
+    protected function resolvePerPage(mixed $limit): int
+    {
+        if (! is_numeric($limit)) {
+            return $this->itemsPerPage;
+        }
+
+        return (int) max(1, min((int) $limit, $this->maxItemsPerPage));
     }
 
     /**

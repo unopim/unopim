@@ -23,7 +23,7 @@
 
             <div class="flex flex-col min-w-[300px] bg-white dark:bg-cherry-800 rounded-md box-shadow">
                 <!-- Forget Password Form -->
-                <x-admin::form :action="route('admin.forget_password.store')">
+                <x-admin::form :action="route('admin.forget_password.store')" :track-dirty="false">
                     <div class="p-4">
                         <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
                             @lang('admin::app.users.forget-password.create.title')

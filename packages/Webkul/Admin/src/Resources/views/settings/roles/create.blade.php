@@ -17,7 +17,7 @@
             id="v-create-user-role-template"
         >
             <div>
-                <x-admin::form :action="route('admin.settings.roles.store')">
+                <x-admin::form ajax :action="route('admin.settings.roles.store')">
                     {!! view_render_event('unopim.admin.settings.roles.create.create_form_controls.before') !!}
 
                     <div class="flex justify-between items-center">

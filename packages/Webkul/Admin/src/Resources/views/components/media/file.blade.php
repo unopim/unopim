@@ -29,9 +29,14 @@
                     <!-- AI Image Generation Button -->
                     <label
                         class="grid justify-items-center items-center w-full h-[120px] max-w-[120px] min-w-[110px] max-h-[120px] min-h-[110px] border border-dashed border-violet-300 rounded cursor-pointer transition-all hover:border-violet-700  dark:invert dark:mix-blend-exclusion"
+                        :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : ''"
                         :style="{'max-width': this.width, 'max-height': this.height}"
                         v-if="ai.enabled"
                         @click="resetAIModal(); $refs.magicAIImageModal.open()"
+                        @dragover.prevent="isDragging = true"
+                        @dragenter.prevent="isDragging = true"
+                        @dragleave.prevent="isDragging = false"
+                        @drop.prevent="onDrop"
                     >
                         <div class="flex flex-col items-center">
                             <span class="icon-magic text-2xl text-violet-700"></span>
@@ -49,15 +54,24 @@
                     <!-- Upload Image Button -->
                     <label
                         class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300 dark:border-gray-300"
+                        :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : ''"
                         :style="{'max-width': this.width, 'max-height': this.height}"
                         :for="$.uid + '_imageInput'"
+                        @dragover.prevent="isDragging = true"
+                        @dragenter.prevent="isDragging = true"
+                        @dragleave.prevent="isDragging = false"
+                        @drop.prevent="onDrop"
                     >
                         <div class="flex flex-col items-center">
                             <span class="icon-image text-2xl"></span>
 
                             <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
                                 @lang('admin::app.components.media.images.add-image-btn')
-                                
+
+                                <span class="text-[11px] font-normal">
+                                    @lang('admin::app.components.media.images.drag-drop-hint')
+                                </span>
+
                                 <span class="text-xs">
                                     @lang('admin::app.components.media.images.allowed-types')
                                 </span>
@@ -404,6 +418,8 @@
                 return {
                     images: [],
 
+                    isDragging: false,
+
                     placeholders: [
                     ],
 
@@ -438,6 +454,37 @@
             },
 
             methods: {
+                onDrop(event) {
+                    this.isDragging = false;
+
+                    let files = event.dataTransfer ? event.dataTransfer.files : null;
+
+                    if (! files || ! files.length) {
+                        return;
+                    }
+
+                    let selectedFiles = Array.from(this.allowMultiple ? files : [files[0]]);
+
+                    const validFiles = selectedFiles.every(file => file.type.includes('image/'));
+
+                    if (! validFiles) {
+                        this.$emitter.emit('add-flash', {
+                            type: 'warning',
+                            message: "@lang('admin::app.components.media.images.not-allowed-error')"
+                        });
+
+                        return;
+                    }
+
+                    selectedFiles.forEach((file) => {
+                        this.images.push({
+                            id: 'image_' + this.images.length,
+                            url: '',
+                            file: file
+                        });
+                    });
+                },
+
                 add() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput'];
 
