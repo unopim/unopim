@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { environment } from '../config/environment';
 import { LoginPage } from '../pages/auth/login-page';
 

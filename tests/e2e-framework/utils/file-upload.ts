@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 export class FileUploadUtility {
   constructor(private readonly page: Page) {}

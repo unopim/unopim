@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 export class VideoUtility {
   constructor(private readonly page: Page) {}
