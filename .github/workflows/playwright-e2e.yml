@@ -69,13 +69,24 @@ jobs:
       - name: Start Laravel server
         run: |
           php artisan serve --host=127.0.0.1 --port=8000 > /tmp/unopim-server.log 2>&1 &
-          for i in {1..30}; do
+          for i in {1..60}; do
             if curl -sf http://127.0.0.1:8000 > /dev/null 2>&1; then
               echo "Laravel app is up"
               break
             fi
+            if ! ps -p $! > /dev/null 2>&1; then
+              echo "Laravel server exited unexpectedly"
+              cat /tmp/unopim-server.log
+              exit 1
+            fi
             sleep 2
           done
+
+          if ! curl -sf http://127.0.0.1:8000 > /dev/null 2>&1; then
+            echo "Laravel server did not become ready in time"
+            cat /tmp/unopim-server.log
+            exit 1
+          fi
 
       - name: Install Playwright dependencies
         working-directory: tests/e2e-framework
