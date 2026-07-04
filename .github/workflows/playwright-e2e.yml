@@ -81,9 +81,13 @@ jobs:
         working-directory: tests/e2e-framework
         run: npm ci
 
+      - name: Install Playwright browser
+        working-directory: tests/e2e-framework
+        run: npx playwright install --with-deps chrome
+
       - name: Run Playwright tests
         working-directory: tests/e2e-framework
-        run: npm run ci
+        run: npm test
 
       - name: Upload Playwright report
         if: always()
