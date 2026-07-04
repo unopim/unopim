@@ -13,9 +13,9 @@
     "test:debug": "playwright test --debug",
     "report": "playwright show-report reports/html",
     "codegen": "playwright codegen",
-    "ci": "npm ci && npx playwright install --with-deps && npm test"
+    "ci": "npm ci && npx playwright install --with-deps chrome && npm test"
   },
-  "postinstall": "npx playwright install --with-deps",
+  "postinstall": "npx playwright install --with-deps chrome",
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",
     "@playwright/test": "^1.60.0",
