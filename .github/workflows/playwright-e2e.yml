@@ -69,8 +69,8 @@ jobs:
       - name: Start Laravel server
         run: |
           php artisan serve --host=127.0.0.1 --port=8000 > /tmp/unopim-server.log 2>&1 &
-          for i in {1..60}; do
-            if curl -sf http://127.0.0.1:8000 > /dev/null 2>&1; then
+          for i in {1..90}; do
+            if curl -sf http://127.0.0.1:8000/admin/login > /dev/null 2>&1; then
               echo "Laravel app is up"
               break
             fi
@@ -82,7 +82,7 @@ jobs:
             sleep 2
           done
 
-          if ! curl -sf http://127.0.0.1:8000 > /dev/null 2>&1; then
+          if ! curl -sf http://127.0.0.1:8000/admin/login > /dev/null 2>&1; then
             echo "Laravel server did not become ready in time"
             cat /tmp/unopim-server.log
             exit 1
