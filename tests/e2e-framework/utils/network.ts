@@ -1,4 +1,4 @@
-import { Page, Route } from '@playwright/test';
+import type { Page, Route } from '@playwright/test';
 
 export class NetworkUtility {
   constructor(private readonly page: Page) {}

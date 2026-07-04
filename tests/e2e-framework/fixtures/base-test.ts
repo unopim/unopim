@@ -1,4 +1,5 @@
-import { test as base, expect, Page } from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { ApiClient } from '../api/api-client';
 import { DatabaseHelper } from '../database/database-helper';
 import { AuthHelper } from '../helpers/auth-helper';

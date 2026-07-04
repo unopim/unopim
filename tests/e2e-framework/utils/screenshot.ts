@@ -1,6 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 export class ScreenshotUtility {
   constructor(private readonly page: Page) {}
