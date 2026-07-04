@@ -7,7 +7,7 @@ import { LoginPage } from '../pages/auth/login-page';
 export default async function globalSetup(_config: FullConfig): Promise<void> {
   await fs.mkdir(path.dirname(environment.storageStatePath), { recursive: true });
 
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ channel: 'chrome' });
   const page = await browser.newPage({ baseURL: environment.baseUrl });
   await new LoginPage(page).login();
   await page.context().storageState({ path: environment.storageStatePath });
