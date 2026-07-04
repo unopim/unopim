@@ -1,6 +1,8 @@
 const { test, expect } = require('../../utils/fixtures');
+const path = require('path');
 const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 const UNOPIM_URL = `${BASE_URL}/admin/login`;
+const STORAGE_STATE = path.resolve(__dirname, '../../.state/admin-auth.json');
 const loginCredentials = {
   email: process.env.ADMIN_USERNAME || process.env.ADMIN_EMAIL || 'admin@example.com',
   password: process.env.ADMIN_PASSWORD || 'admin123',
@@ -36,93 +38,92 @@ async function goToLoginPage(adminPage) {
   await expect(adminPage.getByLabel(/Email/i)).toBeVisible({ timeout: 15000 });
 }
 
-
 test.describe('Login Page', () => {
+  test('Logout Check', async ({ adminPage }) => {
+    await adminPage.goto('/admin/dashboard', { waitUntil: 'load', timeout: 30000 });
+    await logout(adminPage);
+    await expect(adminPage).toHaveURL(UNOPIM_URL);
+  });
 
-test('Logout Check', async ({ adminPage }) => {
-  await adminPage.goto('/admin/dashboard', { waitUntil: 'load', timeout: 30000 });
-  await logout(adminPage);
-  await expect(adminPage).toHaveURL(UNOPIM_URL);
-});
+  test('shows an error for invalid email and password', async ({ adminPage }) => {
+    await goToLoginPage(adminPage);
+    await adminPage.getByLabel(/Email/i).fill(invalidCredentials.email);
+    await adminPage.getByLabel(/Password/i).fill(invalidCredentials.password);
+    await adminPage.getByLabel(/Password/i).press('Enter');
+    await expect(adminPage.getByText(/Please check your credentials and try again\./i).first()).toBeVisible();
+  });
 
-test('shows an error for invalid email and password', async ({ adminPage }) => {
-  await goToLoginPage(adminPage);
-  await adminPage.getByLabel(/Email/i).fill(invalidCredentials.email);
-  await adminPage.getByLabel(/Password/i).fill(invalidCredentials.password);
-  await adminPage.getByLabel(/Password/i).press('Enter');
-  await expect(adminPage.getByText(/Please check your credentials and try again\./i).first()).toBeVisible();
-});
+  test('shows an error for invalid email and valid password', async ({ adminPage }) => {
+    await goToLoginPage(adminPage);
+    await adminPage.getByLabel(/Email/i).fill(invalidCredentials.email);
+    await adminPage.getByLabel(/Password/i).fill(loginCredentials.password);
+    await adminPage.getByLabel(/Password/i).press('Enter');
+    await expect(adminPage.getByText(/Please check your credentials and try again\./i).first()).toBeVisible();
+  });
 
-test('shows an error for invalid email and valid password', async ({ adminPage }) => {
-  await goToLoginPage(adminPage);
-  await adminPage.getByLabel(/Email/i).fill(invalidCredentials.email);
-  await adminPage.getByLabel(/Password/i).fill(loginCredentials.password);
-  await adminPage.getByLabel(/Password/i).press('Enter');
-  await expect(adminPage.getByText(/Please check your credentials and try again\./i).first()).toBeVisible();
-});
+  test('shows an error for valid email and invalid password', async ({ adminPage }) => {
+    await goToLoginPage(adminPage);
+    await adminPage.getByLabel(/Email/i).fill(loginCredentials.email);
+    await adminPage.getByLabel(/Password/i).fill(invalidCredentials.password);
+    await adminPage.getByLabel(/Password/i).press('Enter');
+    await expect(adminPage.getByText(/Please check your credentials and try again\./i).first()).toBeVisible();
+  });
 
-test('shows an error for valid email and invalid password', async ({ adminPage }) => {
-  await goToLoginPage(adminPage);
-  await adminPage.getByLabel(/Email/i).fill(loginCredentials.email);
-  await adminPage.getByLabel(/Password/i).fill(invalidCredentials.password);
-  await adminPage.getByLabel(/Password/i).press('Enter');
-  await expect(adminPage.getByText(/Please check your credentials and try again\./i).first()).toBeVisible();
-});
+  test('shows validation errors for empty credentials', async ({ adminPage }) => {
+    await goToLoginPage(adminPage);
+    await adminPage.getByRole('button', { name: /sign in/i }).click();
+    await expect(adminPage.getByText(/The Email Address field is required/i).first()).toBeVisible();
+    await expect(adminPage.getByText(/The Password field is required/i).first()).toBeVisible();
+  });
 
-test('shows validation errors for empty credentials', async ({ adminPage }) => {
-  await goToLoginPage(adminPage);
-  await adminPage.getByRole('button', { name: /sign in/i }).click();
-  await expect(adminPage.getByText(/The Email Address field is required/i).first()).toBeVisible();
-  await expect(adminPage.getByText(/The Password field is required/i).first()).toBeVisible();
-});
+  test('shows a validation error when email is empty', async ({ adminPage }) => {
+    await goToLoginPage(adminPage);
+    await adminPage.getByLabel(/Password/i).fill(loginCredentials.password);
+    await adminPage.getByLabel(/Password/i).press('Enter');
+    await expect(adminPage.getByText(/The Email Address field is required/i).first()).toBeVisible();
+  });
 
-test('shows a validation error when email is empty', async ({ adminPage }) => {
-  await goToLoginPage(adminPage);
-  await adminPage.getByLabel(/Password/i).fill(loginCredentials.password);
-  await adminPage.getByLabel(/Password/i).press('Enter');
-  await expect(adminPage.getByText(/The Email Address field is required/i).first()).toBeVisible();
-});
+  test('shows a validation error when password is empty', async ({ adminPage }) => {
+    await goToLoginPage(adminPage);
+    await adminPage.getByLabel(/Email/i).fill(loginCredentials.email);
+    await adminPage.getByRole('button', { name: /sign in/i }).click();
+    await expect(adminPage.getByText(/The Password field is required/i).first()).toBeVisible();
+  });
 
-test('shows a validation error when password is empty', async ({ adminPage }) => {
-  await goToLoginPage(adminPage);
-  await adminPage.getByLabel(/Email/i).fill(loginCredentials.email);
-  await adminPage.getByRole('button', { name: /sign in/i }).click();
-  await expect(adminPage.getByText(/The Password field is required/i).first()).toBeVisible();
-});
+  test('shows a validation error for a short password', async ({ adminPage }) => {
+    await goToLoginPage(adminPage);
+    await adminPage.getByLabel(/Password/i).fill('in123');
+    await adminPage.getByRole('button', { name: /sign in/i }).click();
+    await expect(adminPage.getByText(/The Password field must be at least 6 characters/i).first()).toBeVisible();
+  });
 
-test('shows a validation error for a short password', async ({ adminPage }) => {
-  await goToLoginPage(adminPage);
-  await adminPage.getByLabel(/Password/i).fill('in123');
-  await adminPage.getByRole('button', { name: /sign in/i }).click();
-  await expect(adminPage.getByText(/The Password field must be at least 6 characters/i).first()).toBeVisible();
-});
+  test('toggles password visibility', async ({ adminPage }) => {
+    await goToLoginPage(adminPage);
+    await adminPage.getByLabel(/Password/i).fill('in123');
+    await adminPage.locator('#visibilityIcon').click();
+    const inputType = await adminPage.getByLabel(/Password/i).getAttribute('type');
+    expect(inputType).toBe('text');
+  });
 
-test('toggles password visibility', async ({ adminPage }) => {
-  await goToLoginPage(adminPage);
-  await adminPage.getByLabel(/Password/i).fill('in123');
-  await adminPage.locator('#visibilityIcon').click();
-  const inputType = await adminPage.getByLabel(/Password/i).getAttribute('type');
-  expect(inputType).toBe('text');
-});
+  test('preserves the email value after a failed login attempt', async ({ adminPage }) => {
+    await goToLoginPage(adminPage);
+    await adminPage.getByLabel(/Email/i).fill(loginCredentials.email);
+    await adminPage.getByLabel(/Password/i).fill(invalidCredentials.password);
+    await adminPage.getByLabel(/Password/i).press('Enter');
+    await expect(adminPage.getByText(/Please check your credentials and try again\./i).first()).toBeVisible();
 
-test('preserves the email value after a failed login attempt', async ({ adminPage }) => {
-  await goToLoginPage(adminPage);
-  await adminPage.getByLabel(/Email/i).fill(loginCredentials.email);
-  await adminPage.getByLabel(/Password/i).fill(invalidCredentials.password);
-  await adminPage.getByLabel(/Password/i).press('Enter');
-  await expect(adminPage.getByText(/Please check your credentials and try again\./i).first()).toBeVisible();
+    const emailValue = await adminPage.getByLabel(/Email/i).inputValue();
+    expect(emailValue).toBe(loginCredentials.email);
+    const passwordValue = await adminPage.getByLabel(/Password/i).inputValue();
+    expect(passwordValue).toBe('');
+  });
 
-  const emailValue = await adminPage.getByLabel(/Email/i).inputValue();
-  expect(emailValue).toBe(loginCredentials.email);
-  const passwordValue = await adminPage.getByLabel(/Password/i).inputValue();
-  expect(passwordValue).toBe('');
-});
-
-test('logs in with valid credentials', async ({ adminPage }) => {
-  await goToLoginPage(adminPage);
-  await adminPage.getByLabel(/Email/i).fill(loginCredentials.email);
-  await adminPage.getByLabel(/Password/i).fill(loginCredentials.password);
-  await adminPage.getByLabel(/Password/i).press('Enter');
-  await expect(adminPage).toHaveURL(/\/admin\//);
-});
+  test('logs in with valid credentials', async ({ adminPage }) => {
+    await goToLoginPage(adminPage);
+    await adminPage.getByLabel(/Email/i).fill(loginCredentials.email);
+    await adminPage.getByLabel(/Password/i).fill(loginCredentials.password);
+    await adminPage.getByLabel(/Password/i).press('Enter');
+    await expect(adminPage).toHaveURL(/\/admin\//);
+    await adminPage.context().storageState({ path: STORAGE_STATE });
+  });
 });
