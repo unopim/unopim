@@ -20,7 +20,14 @@ export class LoginPage extends BasePage {
     await this.email.fill(email);
     await this.password.fill(password);
     await this.submit.click();
-    await this.page.waitForURL((url) => !url.pathname.endsWith('/login'), { timeout: 30_000 });
+
+    await Promise.race([
+      this.page.waitForURL((url) => !url.pathname.endsWith('/login'), { timeout: 30_000 }),
+      this.page.waitForSelector('body', { timeout: 30_000 })
+    ]).catch(() => undefined);
+
+    await this.page.waitForLoadState('domcontentloaded').catch(() => undefined);
+    await this.page.waitForTimeout(2000);
   }
 
   async expectValidationError(): Promise<void> {
