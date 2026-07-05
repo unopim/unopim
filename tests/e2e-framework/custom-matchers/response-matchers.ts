@@ -1,4 +1,5 @@
-import { expect, APIResponse } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { APIResponse } from '@playwright/test';
 
 export async function expectSuccessfulJson(response: APIResponse): Promise<void> {
   expect(response.ok(), await response.text()).toBeTruthy();
