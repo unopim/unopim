@@ -1,4 +1,5 @@
-import { APIRequestContext, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { APIRequestContext } from '@playwright/test';
 import { environment } from '../config/environment';
 
 export class ApiClient {

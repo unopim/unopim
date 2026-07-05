@@ -1,6 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import { BrowserContext } from '@playwright/test';
+import type { BrowserContext } from '@playwright/test';
 
 export class TraceUtility {
   constructor(private readonly context: BrowserContext) {}
