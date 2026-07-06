@@ -39,11 +39,11 @@ async function goToLoginPage(adminPage) {
 
 test.describe('Login Page', () => {
   test('Logout Check', async ({ guestPage: adminPage }) => {
-    await adminPage.goto('/admin/login', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await goToLoginPage(adminPage);
     await adminPage.getByRole('textbox', { name: 'Email Address' }).fill(loginCredentials.email);
     await adminPage.getByRole('textbox', { name: 'Password' }).fill(loginCredentials.password);
     await adminPage.getByRole('button', { name: /sign in/i }).click();
-    await adminPage.waitForURL(/\/admin\//, { timeout: 30000 });
+    await adminPage.waitForURL((url) => !url.pathname.endsWith('/login'), { timeout: 30000 });
     await logout(adminPage);
     await expect(adminPage).toHaveURL(UNOPIM_URL);
   });
