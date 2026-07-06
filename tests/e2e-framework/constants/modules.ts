@@ -88,7 +88,7 @@ export const modules: ModuleDefinition[] = [
     area: 'catalog',
     path: '/admin/catalog/products',
     table: 'products',
-    apiPaths: ['/api/v1/rest/products', '/api/v1/rest/configurable-products', '/api/v1/rest/configrable-products'],
+    apiPaths: ['/api/v1/rest/products', '/api/v1/rest/configurable-products'],
     mandatoryFields: ['sku', 'type', 'attribute_family_id'],
     optionalFields: ['status', 'values', 'categories', 'associations', 'images', 'videos'],
     dependencies: ['attribute families', 'attributes', 'categories', 'channels', 'locales'],

@@ -1,5 +1,6 @@
 import { test, expect } from '../../fixtures/base-test';
 import { modules } from '../../constants/modules';
+import { environment } from '../../config/environment';
 import { expectSuccessfulJson } from '../../custom-matchers/response-matchers';
 
 const apiModules = modules.flatMap((module) =>
@@ -10,16 +11,22 @@ const apiModules = modules.flatMap((module) =>
 );
 
 test.describe('Admin API validation', () => {
-  test.beforeEach(async ({ api }) => {
-    test.skip(!(await api.authenticate()), 'API credentials are not configured');
-  });
-
   for (const item of apiModules) {
-    test(`@api ${item.module} list endpoint returns JSON envelope: ${item.path}`, async ({ api }) => {
+    test(`@api ${item.module} REST endpoint is protected: ${item.path}`, async ({ request, api }) => {
+      const unauthenticated = await request.get(`${environment.apiBaseUrl}${item.path}`, {
+        headers: { Accept: 'application/json' }
+      });
+      expect(unauthenticated.ok(), 'unauthenticated REST access must be denied').toBeFalsy();
+
+      // Envelope validation needs a token; only runs when API credentials are set.
+      const token = await api.authenticate();
+      if (!token) {
+        return;
+      }
+
       const response = await api.get(item.path);
       await expectSuccessfulJson(response);
-      const body = await response.json();
-      expect(body).toBeTruthy();
+      expect(await response.json()).toBeTruthy();
     });
   }
 });
