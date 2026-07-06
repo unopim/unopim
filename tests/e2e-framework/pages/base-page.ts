@@ -11,7 +11,9 @@ export abstract class BasePage {
 
   async waitForAppReady(): Promise<void> {
     await this.page.waitForLoadState('domcontentloaded');
-    await this.page.waitForLoadState('networkidle').catch(() => undefined);
+    // `load` is deterministic; `networkidle` is discouraged and hangs on pages
+    // with background polling (dashboard stats, notifications, ai-agent).
+    await this.page.waitForLoadState('load').catch(() => undefined);
   }
 
   toast(): Locator {

@@ -74,15 +74,13 @@ npx playwright test --grep-invert @a11y   # everything except accessibility (the
 
 ## Project Structure
 
-- `pages/` — Page Object Model (`BasePage` → `CrudPage`/`LoginPage`/…).
+- `pages/` — Page Object Model (`BasePage` → `CrudPage`/`LoginPage`).
 - `tests/` — auth, module, API, database, and security specifications.
 - `fixtures/` — custom Playwright fixtures (page objects, API client, DB helper).
-- `constants/` — the source-backed module registry and scenario taxonomy.
+- `constants/` — the source-backed module registry (`modules.ts`).
 - `api/` — OAuth-aware REST API client.
 - `database/` — MySQL validation helpers.
-- `utils/` — logging, retry, network, file-upload, screenshot, trace, video,
-  and accessibility helpers.
-- `helpers/` — authentication and workflow helpers.
+- `utils/` — logging, random test data, accessibility, and environment helpers.
 - `docs/` — functional spec, scenario matrix, and source analysis.
 - `reports/` — HTML, JUnit, Allure, trace, video, and screenshot output (git-ignored).
 

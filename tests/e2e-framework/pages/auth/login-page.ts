@@ -28,8 +28,7 @@ export class LoginPage extends BasePage {
       this.page.waitForSelector('body', { timeout: 30_000 })
     ]).catch(() => undefined);
 
-    await this.page.waitForLoadState('domcontentloaded').catch(() => undefined);
-    await this.page.waitForTimeout(1500);
+    await this.page.waitForLoadState('load').catch(() => undefined);
   }
 
   /**
