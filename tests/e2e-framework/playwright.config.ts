@@ -10,7 +10,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
-  workers: isCI ? 4 : undefined,
+  // 2 workers on CI: 4 parallel Chromium instances (plus MySQL, PHP server and
+  // the memory-heavy axe runs) exhaust a standard ~7GB runner and get killed
+  // with exit 137 (OOM/SIGKILL). Two is the stable ceiling.
+  workers: isCI ? 2 : undefined,
   timeout: 90_000,
   expect: { timeout: 15_000 },
   globalSetup: './global-setup/global-setup.ts',
@@ -36,7 +39,16 @@ export default defineConfig({
     ignoreHTTPSErrors: true
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'], channel: 'chrome' } },
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: 'chrome',
+        // --disable-dev-shm-usage is essential in CI: the container's /dev/shm
+        // is tiny, and Chromium otherwise exhausts it and is killed (exit 137).
+        launchOptions: { args: ['--disable-dev-shm-usage', '--disable-gpu', '--no-sandbox'] }
+      }
+    },
     ...(browserMatrix
       ? [
           { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
