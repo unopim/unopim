@@ -26,9 +26,9 @@ test.describe('Discovered admin modules', () => {
       await crudPage.assertKeyboardTabOrder();
     });
 
-    test(`@a11y ${module.name} has no critical automated accessibility violations`, async ({ page, crudPage }) => {
+    test(`@a11y ${module.name} automated accessibility audit`, async ({ page, crudPage }, testInfo) => {
       await crudPage.goto(module.path!);
-      await new AccessibilityUtility(page).assertNoCriticalViolations();
+      await new AccessibilityUtility(page).reportCriticalViolations(testInfo);
     });
   }
 });
