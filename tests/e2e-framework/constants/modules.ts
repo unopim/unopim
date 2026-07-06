@@ -275,7 +275,7 @@ export const modules: ModuleDefinition[] = [
     key: 'api-keys',
     name: 'API Integrations',
     area: 'configuration',
-    path: '/admin/configuration/integrations',
+    path: '/admin/integrations/api-keys',
     table: 'api_keys',
     mandatoryFields: ['name', 'permission_type'],
     optionalFields: ['permissions', 'revoked'],
