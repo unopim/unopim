@@ -22,11 +22,10 @@ async function navigateToNotifications(page) {
     await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
   }
 
-  // Wait for the notifications view to render. Target the status-tab container,
-  // which is always present once the Vue app mounts — unlike `.icon-notification`,
-  // which the blade renders only in the empty state (v-if), so it is absent
-  // whenever notifications exist.
-  await page.waitForSelector('.flex.gap-4.pt-2.border-b', { timeout: 15000 });
+  // Wait for the admin shell to render. `.icon-notification` is the header
+  // bell, always present once the page loads (the same wait 03-dashboard's
+  // notification-history test uses successfully).
+  await page.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });
 }
 
 // ─── Notification Page Tests ────────────────────────────────────────
