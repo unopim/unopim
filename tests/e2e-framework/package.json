@@ -1,0 +1,32 @@
+{
+  "name": "unopim-playwright-framework",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:api": "playwright test tests/api",
+    "test:a11y": "playwright test --grep @a11y",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report reports/html",
+    "codegen": "playwright codegen",
+    "ci": "npm ci && npx playwright install --with-deps chrome && npm test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.1",
+    "allure-playwright": "^3.0.0",
+    "dotenv": "^17.0.0",
+    "mysql2": "^3.11.5",
+    "typescript": "^5.6.0",
+    "winston": "^3.17.0"
+  }
+}

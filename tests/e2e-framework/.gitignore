@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Local environment
+.env
+*.env
+!environments/*.env.example
+
+# Playwright / report artifacts (keep the tracked reports/.gitkeep)
+/reports/*
+!/reports/.gitkeep
+/test-results/
+/playwright-report/
+/blob-report/
+/.auth/

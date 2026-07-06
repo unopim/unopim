@@ -1,0 +1,126 @@
+name: Playwright E2E
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: unopim_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      APP_ENV: testing
+      APP_DEBUG: false
+      APP_URL: http://127.0.0.1:8000
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: unopim_test
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      BASE_URL: http://127.0.0.1:8000
+      ADMIN_USERNAME: admin@example.com
+      ADMIN_PASSWORD: admin123
+      # Force deterministic seeded admin credentials so Playwright can log in.
+      # Without these, AdminsTableSeeder generates a random password.
+      INSTALLER_ADMIN_EMAIL: admin@example.com
+      INSTALLER_ADMIN_PASSWORD: admin123
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, bcmath, pdo_mysql, curl, gd, intl, zip
+          ini-values: post_max_size=256M, memory_limit=1G
+          tools: composer:v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: tests/e2e-framework/package-lock.json
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Prepare Laravel environment
+        run: |
+          cp .env.example .env || true
+          php artisan key:generate
+          php artisan migrate --force
+          php artisan db:seed --force
+
+      - name: Start Laravel server
+        run: |
+          php artisan serve --host=127.0.0.1 --port=8000 > /tmp/unopim-server.log 2>&1 &
+          for i in {1..90}; do
+            if curl -sf http://127.0.0.1:8000/admin/login > /dev/null 2>&1; then
+              echo "Laravel app is up"
+              break
+            fi
+            if ! ps -p $! > /dev/null 2>&1; then
+              echo "Laravel server exited unexpectedly"
+              cat /tmp/unopim-server.log
+              exit 1
+            fi
+            sleep 2
+          done
+
+          if ! curl -sf http://127.0.0.1:8000/admin/login > /dev/null 2>&1; then
+            echo "Laravel server did not become ready in time"
+            cat /tmp/unopim-server.log
+            exit 1
+          fi
+
+      - name: Install Playwright dependencies
+        working-directory: tests/e2e-framework
+        run: npm ci
+
+      - name: Type-check framework
+        working-directory: tests/e2e-framework
+        run: npm run typecheck
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('tests/e2e-framework/package-lock.json') }}
+
+      - name: Install Playwright browser
+        working-directory: tests/e2e-framework
+        run: npx playwright install --with-deps chrome
+
+      - name: Run Playwright tests
+        working-directory: tests/e2e-framework
+        # Accessibility specs are report-only by default (they attach axe
+        # findings without failing); set A11Y_STRICT=true to gate on them once
+        # the admin UI has been triaged.
+        run: npm test
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: tests/e2e-framework/reports
+          if-no-files-found: ignore

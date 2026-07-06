@@ -65,6 +65,26 @@ exports.test = base.test.extend({
     await context.close();
   },
 
+  /**
+   * Unauthenticated admin page fixture (widget hidden), with its own browser
+   * context and therefore its own server-side session.
+   *
+   * Login-page tests log in and out, which destroys the session they run
+   * against. Using this instead of the shared `adminPage` keeps those tests
+   * from de-authenticating the session every other suite reuses via
+   * `.state/admin-auth.json`.
+   */
+  guestPage: async ({ browser }, use) => {
+    const context = await browser.newContext();
+    await context.addInitScript(HIDE_WIDGET_SCRIPT);
+    const page = await context.newPage();
+
+    await use(page);
+
+    await page.close();
+    await context.close();
+  },
+
   /** Unique identifier for test data isolation in parallel execution */
   uid: async ({}, use) => {
     const { randomBytes } = require('crypto');
