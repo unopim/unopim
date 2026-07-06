@@ -96,6 +96,16 @@ jobs:
         working-directory: tests/e2e-framework
         run: npm ci
 
+      - name: Type-check framework
+        working-directory: tests/e2e-framework
+        run: npm run typecheck
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('tests/e2e-framework/package-lock.json') }}
+
       - name: Install Playwright browser
         working-directory: tests/e2e-framework
         run: npx playwright install --with-deps chrome
