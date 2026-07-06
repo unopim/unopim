@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => '閉じる',
+        ],
         'form' => [
             'ajax-error'      => '保存中に問題が発生しました。もう一度お試しください。',
             'unsaved-changes' => [

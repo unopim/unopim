@@ -2173,6 +2173,9 @@ return [
     ],
 
     'components' => [
+        'flash-group' => [
+            'close' => 'Close',
+        ],
         'form' => [
             'ajax-error'      => 'Something went wrong while saving. Please try again.',
             'unsaved-changes' => [

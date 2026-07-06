@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Kapat',
+        ],
         'form' => [
             'ajax-error'      => 'Kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.',
             'unsaved-changes' => [

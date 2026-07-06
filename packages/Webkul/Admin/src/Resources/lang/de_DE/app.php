@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Schließen',
+        ],
         'form' => [
             'ajax-error'      => 'Beim Speichern ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
             'unsaved-changes' => [

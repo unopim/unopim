@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Sluiten',
+        ],
         'form' => [
             'ajax-error'      => 'Er is iets misgegaan tijdens het opslaan. Probeer het opnieuw.',
             'unsaved-changes' => [

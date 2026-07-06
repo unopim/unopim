@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => '닫기',
+        ],
         'form' => [
             'ajax-error'      => '저장하는 동안 문제가 발생했습니다. 다시 시도해 주세요.',
             'unsaved-changes' => [

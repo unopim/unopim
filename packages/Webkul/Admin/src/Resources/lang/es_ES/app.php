@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Cerrar',
+        ],
         'form' => [
             'ajax-error'      => 'Algo salió mal al guardar. Por favor, inténtelo de nuevo.',
             'unsaved-changes' => [

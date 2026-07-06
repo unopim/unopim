@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Luk',
+        ],
         'form' => [
             'ajax-error'      => 'Noget gik galt under lagringen. Prøv venligst igen.',
             'unsaved-changes' => [

@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Isara',
+        ],
         'form' => [
             'ajax-error'      => 'May nangyaring mali habang nagse-save. Pakisubukang muli.',
             'unsaved-changes' => [

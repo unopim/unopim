@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Zatvori',
+        ],
         'form' => [
             'ajax-error'      => 'Nešto je pošlo po zlu prilikom spremanja. Pokušajte ponovno.',
             'unsaved-changes' => [

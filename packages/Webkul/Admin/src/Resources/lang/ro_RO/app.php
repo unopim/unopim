@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Închide',
+        ],
         'form' => [
             'ajax-error'      => 'A apărut o eroare la salvare. Vă rugăm să încercați din nou.',
             'unsaved-changes' => [

@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Tutup',
+        ],
         'form' => [
             'ajax-error'      => 'Terjadi kesalahan saat menyimpan. Silakan coba lagi.',
             'unsaved-changes' => [

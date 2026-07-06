@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Хаах',
+        ],
         'form' => [
             'ajax-error'      => 'Хадгалах явцад алдаа гарлаа. Дахин оролдоно уу.',
             'unsaved-changes' => [

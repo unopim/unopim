@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => '关闭',
+        ],
         'form' => [
             'ajax-error'      => '保存时出现问题。请重试。',
             'unsaved-changes' => [

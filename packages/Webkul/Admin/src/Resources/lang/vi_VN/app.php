@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Đóng',
+        ],
         'form' => [
             'ajax-error'      => 'Đã xảy ra lỗi khi lưu. Vui lòng thử lại.',
             'unsaved-changes' => [

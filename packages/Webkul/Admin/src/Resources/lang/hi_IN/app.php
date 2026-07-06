@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'बंद करें',
+        ],
         'form' => [
             'ajax-error'      => 'सहेजते समय कुछ गलत हो गया। कृपया पुनः प्रयास करें।',
             'unsaved-changes' => [

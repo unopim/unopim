@@ -121,7 +121,9 @@ const appOptions = {
                     const message = (response && response.data && response.data.message)
                         || form.dataset.ajaxErrorMessage;
 
-                    this.$emitter.emit(EMITTER_EVENTS.ADD_FLASH, { type: "error", message });
+                    const type = (response && response.data && response.data.type) || "error";
+
+                    this.$emitter.emit(EMITTER_EVENTS.ADD_FLASH, { type, message });
                 });
         },
     },

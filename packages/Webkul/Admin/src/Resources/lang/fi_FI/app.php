@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Sulje',
+        ],
         'form' => [
             'ajax-error'      => 'Tallennuksen aikana tapahtui virhe. Yritä uudelleen.',
             'unsaved-changes' => [

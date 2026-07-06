@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Tanca',
+        ],
         'form' => [
             'ajax-error'      => 'Alguna cosa ha anat malament en desar. Torneu-ho a provar.',
             'unsaved-changes' => [

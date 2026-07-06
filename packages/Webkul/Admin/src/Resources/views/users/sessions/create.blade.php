@@ -23,7 +23,7 @@
 
             <div class="flex flex-col min-w-[300px] bg-white dark:bg-cherry-800 rounded-md box-shadow">
                 <!-- Login Form -->
-                <x-admin::form :action="route('admin.session.store')" :track-dirty="false">
+                <x-admin::form :action="route('admin.session.store')" :track-dirty="false" ajax="true">
                     <p class="p-4 text-xl text-gray-800 dark:text-slate-50 font-bold">
                         @lang('admin::app.users.sessions.title')
                     </p>

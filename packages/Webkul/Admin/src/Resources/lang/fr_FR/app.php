@@ -2022,6 +2022,9 @@ return [
         ],
     ],
     'components' => [
+        'flash-group' => [
+            'close' => 'Fermer',
+        ],
         'form' => [
             'ajax-error'      => 'Une erreur s\'est produite lors de l\'enregistrement. Veuillez réessayer.',
             'unsaved-changes' => [
