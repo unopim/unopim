@@ -51,3 +51,4 @@ opencode.json
 skills-lock.json
 # Passport OAuth signing keys — generated per environment, never commit
 packages/Webkul/AdminApi/src/Secrets/Oauth/*.key
+AGENTS.md

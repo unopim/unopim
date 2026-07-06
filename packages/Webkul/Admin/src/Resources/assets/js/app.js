@@ -80,7 +80,7 @@ const appOptions = {
                     this.$emitter.emit(EMITTER_EVENTS.FORM_SAVED, data);
 
                     if (data.redirect_url) {
-                        window.location.href = data.redirect_url;
+                        this.$navigate(data.redirect_url);
 
                         return;
                     }
@@ -179,6 +179,21 @@ function createAdminApp() {
     app.directive("slugify", Slugify);
     app.directive("debounce", Debounce);
     app.directive("code", Code);
+
+    /**
+     * Canonical post-action navigation helper, available on every component as
+     * `this.$navigate(url)`. Prefers the SPA ajax-nav visit (no full reload);
+     * falls back to a hard navigation when the nav layer is unavailable (e.g.
+     * the anonymous login page). Every redirect-after-save should route through
+     * this instead of assigning `window.location.href` directly.
+     */
+    app.config.globalProperties.$navigate = (url) => {
+        if (window.unopim?.visit) {
+            window.unopim.visit(url);
+        } else {
+            window.location.href = url;
+        }
+    };
 
     window.app = app;
 

@@ -39,9 +39,8 @@
 </p>
 
 <p align="center">
-  <!-- 33 locales shipped in packages/Webkul/Admin/src/Resources/lang (ca_ES + es_ES share the Spain flag) -->
-  🇦🇪 🇪🇸 🇩🇰 🇩🇪 🇦🇺 🇬🇧 🇳🇿 🇺🇸 🇻🇪 🇫🇮 🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵
-  🇰🇷 🇲🇳 🇳🇱 🇳🇴 🇵🇱 🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇵🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳 🇹🇼
+  🇦🇪 🇪🇸 🇩🇰 🇩🇪 🇦🇺 🇬🇧 🇦🇺 🇺🇸 🇫🇮 🇫🇷 🇮🇳 🇭🇷 
+  🇮🇹 🇯🇵 🇰🇷 🇦🇲 🇳🇱 🇵🇱 🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇹🇼
 </p>
 
 UnoPim is an open-source Product Information Management (PIM) system built on Laravel 12. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.

@@ -4,133 +4,165 @@
         @lang('admin::app.users.sessions.title')
     </x-slot>
 
-    <div class="flex justify-center items-center h-[100vh]">
-        <div class="flex flex-col gap-5 items-center">
+    <div class="flex min-h-screen w-full items-center justify-center p-6 bg-gradient-to-b from-violet-50 to-gray-50 dark:from-cherry-900 dark:to-cherry-900">
+        <div class="w-full max-w-[400px]">
             <!-- Logo -->
-            @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                <img
-                    class="w-[110px] h-10"
-                    src="{{ Storage::url($logo) }}"
-                    alt="{{ config('app.name') }}"
-                />
-            @else
-                <img
-                    class="w-max"
-                    src="{{ unopim_asset('images/logo.svg') }}"
-                    alt="{{ config('app.name') }}"
-                />
-            @endif
+            <div class="mb-8 flex justify-center">
+                @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
+                    <img
+                        class="h-10"
+                        src="{{ Storage::url($logo) }}"
+                        alt="{{ config('app.name') }}"
+                    />
+                @else
+                    {{-- Default UnoPim logo — swaps with the theme. --}}
+                    <img
+                        class="h-10 w-max dark:hidden"
+                        src="{{ unopim_asset('images/logo.svg') }}"
+                        alt="{{ config('app.name') }}"
+                    />
 
-            <div class="flex flex-col min-w-[300px] bg-white dark:bg-cherry-800 rounded-md box-shadow">
+                    <img
+                        class="h-10 w-max hidden dark:block"
+                        src="{{ unopim_asset('images/dark_logo.svg') }}"
+                        alt="{{ config('app.name') }}"
+                    />
+                @endif
+            </div>
+
+            <div class="rounded-xl border border-gray-100 dark:border-cherry-700 bg-white dark:bg-cherry-800 shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-6 sm:p-8">
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+                    @lang('admin::app.users.sessions.title')
+                </h1>
+
+                <p class="mt-1 mb-6 text-sm text-gray-500 dark:text-gray-400">
+                    @lang('admin::app.users.sessions.subtitle')
+                </p>
+
+                @if ($isMicrosoftSsoConfigured ?? false)
+                    <!-- SSO (primary when configured) -->
+                    <a
+                        href="{{ route('admin.session.microsoft.redirect') }}"
+                        class="flex justify-center items-center gap-2 w-full px-4 py-2.5 mb-4 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-cherry-700 transition-colors"
+                    >
+                        @lang('admin::app.users.sessions.sso-sign-in-with-microsoft')
+                    </a>
+
+                    <div class="relative my-4">
+                        <div class="absolute inset-0 flex items-center">
+                            <span class="w-full border-t border-gray-200 dark:border-gray-700"></span>
+                        </div>
+                        <div class="relative flex justify-center text-xs uppercase">
+                            <span class="px-2 bg-white dark:bg-cherry-800 text-gray-400">
+                                @lang('admin::app.users.sessions.sso-divider')
+                            </span>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Login Form -->
                 <x-admin::form :action="route('admin.session.store')" :track-dirty="false" ajax="true">
-                    <p class="p-4 text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.users.sessions.title')
-                    </p>
+                    <!-- Email -->
+                    <x-admin::form.control-group>
+                        <x-admin::form.control-group.label class="required">
+                            @lang('admin::app.users.sessions.email')
+                        </x-admin::form.control-group.label>
 
-                    <div class="p-4 border-y dark:border-gray-800">
-                        <!-- Email -->
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.users.sessions.email')
-                            </x-admin::form.control-group.label>
+                        <x-admin::form.control-group.control
+                            type="email"
+                            class="w-full"
+                            id="email"
+                            name="email"
+                            rules="required|email"
+                            :value="old('email')"
+                            :label="trans('admin::app.users.sessions.email')"
+                            :placeholder="trans('admin::app.users.sessions.email')"
+                            autocomplete="username"
+                            autofocus
+                        />
 
+                        <x-admin::form.control-group.error control-name="email" />
+                    </x-admin::form.control-group>
+
+                    <!-- Password -->
+                    <x-admin::form.control-group class="relative w-full">
+                        <x-admin::form.control-group.label class="required">
+                            @lang('admin::app.users.sessions.password')
+                        </x-admin::form.control-group.label>
+
+                        <x-admin::form.control-group.control
+                            type="password"
+                            class="w-full ltr:pr-10 rtl:pl-10"
+                            id="password"
+                            name="password"
+                            rules="required"
+                            :label="trans('admin::app.users.sessions.password')"
+                            :placeholder="trans('admin::app.users.sessions.password')"
+                            autocomplete="current-password"
+                        />
+
+                        <span
+                            class="text-2xl cursor-pointer absolute top-[42px] -translate-y-2/4 ltr:right-2 rtl:left-2 icon-view text-gray-500"
+                            onclick="switchVisibility()"
+                            id="visibilityIcon"
+                            role="button"
+                            tabindex="0"
+                            aria-label="{{ trans('admin::app.users.sessions.toggle-password') }}"
+                        >
+                        </span>
+
+                        <x-admin::form.control-group.error control-name="password" />
+                    </x-admin::form.control-group>
+
+                    <!-- Remember me + Forgot -->
+                    <div class="flex justify-between items-center mt-1 mb-5">
+                        <x-admin::form.control-group class="flex gap-2 items-center !mb-0">
                             <x-admin::form.control-group.control
-                                type="email"
-                                class="w-[254px] max-w-full"
-                                id="email"
-                                name="email"
-                                rules="required|email"
-                                :value="old('email')"
-                                :label="trans('admin::app.users.sessions.email')"
-                                :placeholder="trans('admin::app.users.sessions.email')"
+                                type="checkbox"
+                                id="remember"
+                                name="remember"
+                                value="1"
+                                for="remember"
                             />
 
-                            <x-admin::form.control-group.error control-name="email" />
-                        </x-admin::form.control-group>
-
-                        <!-- Password -->
-                        <x-admin::form.control-group class="relative w-full">
-                            <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.users.sessions.password')
-                            </x-admin::form.control-group.label>
-
-                            <x-admin::form.control-group.control
-                                type="password"
-                                class="w-[254px] max-w-full ltr:pr-10 rtl:pl-10"
-                                id="password"
-                                name="password"
-                                rules="required|min:6"
-                                :label="trans('admin::app.users.sessions.password')"
-                                :placeholder="trans('admin::app.users.sessions.password')"
-                            />
-
-                            <span
-                                class="text-2xl cursor-pointer absolute top-[42px] -translate-y-2/4 ltr:right-2 rtl:left-2 icon-view"
-                                onclick="switchVisibility()"
-                                id="visibilityIcon"
-                                role="presentation"
-                                tabindex="0"
+                            <label
+                                class="text-sm text-gray-700 dark:text-gray-300 font-medium cursor-pointer select-none"
+                                for="remember"
                             >
-                            </span>
-
-                            <x-admin::form.control-group.error control-name="password" />
+                                @lang('admin::app.users.sessions.remember-me')
+                            </label>
                         </x-admin::form.control-group>
-                    </div>
 
-                    <div class="flex justify-between items-center p-4">
-                        <!-- Forgot Password Link -->
                         <a
-                            class="text-xs text-violet-700 font-semibold leading-6 cursor-pointer"
+                            class="text-sm text-violet-700 dark:text-violet-400 font-semibold hover:underline"
                             href="{{ route('admin.forget_password.create') }}"
                         >
                             @lang('admin::app.users.sessions.forget-password-link')
                         </a>
-
-                        <!-- Submit Button -->
-                        <button
-                            class="primary-button"
-                            aria-label="{{ trans('admin::app.users.sessions.submit-btn')}}"
-                        >
-                            @lang('admin::app.users.sessions.submit-btn')
-                        </button>
                     </div>
+
+                    <!-- Submit -->
+                    <button
+                        type="submit"
+                        class="primary-button w-full justify-center py-2.5"
+                        aria-label="{{ trans('admin::app.users.sessions.submit-btn') }}"
+                    >
+                        @lang('admin::app.users.sessions.submit-btn')
+                    </button>
                 </x-admin::form>
-
-                @if ($isMicrosoftSsoConfigured ?? false)
-                    <div class="px-4 pb-4">
-                        <div class="relative my-2">
-                            <div class="absolute inset-0 flex items-center">
-                                <span class="w-full border-t dark:border-gray-700"></span>
-                            </div>
-                            <div class="relative flex justify-center text-xs uppercase">
-                                <span class="bg-white dark:bg-cherry-800 px-2 text-gray-500">@lang('admin::app.users.sessions.sso-divider')</span>
-                            </div>
-                        </div>
-
-                        <a
-                            href="{{ route('admin.session.microsoft.redirect') }}"
-                            class="flex justify-center items-center w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-cherry-700"
-                        >
-                            @lang('admin::app.users.sessions.sso-sign-in-with-microsoft')
-                        </a>
-                    </div>
-                @endif
             </div>
 
             <!-- Powered By -->
-            <div class="absolute bottom-6 inset-x-0 text-xs text-gray-800 dark:text-white font-medium flex flex-col items-center">
+            <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
                 <div>
                     @lang('admin::app.users.sessions.powered-by', [
-                        'unopim' => '<a class="text-violet-700 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>'
+                        'unopim' => '<a class="text-violet-700 dark:text-violet-400 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>',
                     ])
                 </div>
                 <div>
-                    <div class="text-xs text-gray-800 dark:text-white font-medium">
-                        @lang('admin::app.users.sessions.open-source-project-by', [
-                            'webkul' => '<a class="text-violet-700 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
-                        ])
-                    </div>
+                    @lang('admin::app.users.sessions.open-source-project-by', [
+                        'webkul' => '<a class="text-violet-700 dark:text-violet-400 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
+                    ])
                 </div>
             </div>
         </div>

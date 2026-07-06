@@ -106,8 +106,6 @@
                         {!! view_render_event('unopim.admin.configuration.integrations.edit.card.access-control.after') !!}
                     </div>
 
-
-
                     <!-- Right sub-component -->
                     <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
 

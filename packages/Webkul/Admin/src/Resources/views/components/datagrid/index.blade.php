@@ -877,7 +877,7 @@
                                         })
                                         .then(response => {
                                             if (response.data.redirect && actionType === 'redirect') {
-                                                window.location.href = response.data.redirect;
+                                                this.$navigate(response.data.redirect);
                                                 return;
                                             }
 
@@ -1071,7 +1071,7 @@
                                     this.$axios[method](action.url)
                                         .then(response => {
                                             if (response.data.redirect_url) {
-                                                window.location.href = response.data.redirect_url;
+                                                this.$navigate(response.data.redirect_url);
 
                                                 return;
                                             }
