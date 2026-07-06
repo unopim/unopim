@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\User;
 
 use Illuminate\Contracts\Auth\PasswordBroker;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
@@ -39,23 +40,38 @@ class ForgetPasswordController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(): RedirectResponse|JsonResponse
     {
-        try {
-            $this->validate(request(), [
-                'email' => 'required|email',
-            ]);
+        $this->validate(request(), [
+            'email' => 'required|email',
+        ]);
 
+        $wantsJson = request()->wantsJson();
+
+        try {
             $this->broker()->sendResetLink(
                 request(['email'])
             );
 
-            session()->flash('success', trans('admin::app.users.forget-password.create.reset-link-sent'));
+            $message = trans('admin::app.users.forget-password.create.reset-link-sent');
+
+            if ($wantsJson) {
+                return response()->json(['message' => $message]);
+            }
+
+            session()->flash('success', $message);
 
             return redirect()->route('admin.forget_password.create');
         } catch (\Exception $e) {
-            session()->flash('error', trans('admin::app.users.forget-password.create.email-settings-error'));
             report($e);
+
+            $message = trans('admin::app.users.forget-password.create.email-settings-error');
+
+            if ($wantsJson) {
+                return response()->json(['message' => $message], 500);
+            }
+
+            session()->flash('error', $message);
 
             return redirect()->route('admin.forget_password.create');
         }

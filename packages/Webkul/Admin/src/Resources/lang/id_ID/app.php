@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Masuk ke akun Anda untuk melanjutkan',
+            'tagline'                    => 'Kelola semua informasi produk Anda di satu tempat',
+            'remember-me'                => 'Ingat saya',
+            'toggle-password'            => 'Tampilkan atau sembunyikan kata sandi',
+            'too-many-attempts'          => 'Terlalu banyak percobaan masuk. Silakan coba lagi sebentar.',
             'email'                      => 'Alamat email',
             'forget-password-link'       => 'Lupa Password ?',
             'password'                   => 'Kata sandi',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Masukkan email Anda dan kami akan mengirimkan tautan atur ulang kata sandi.',
                 'email'                  => 'Email terdaftar',
                 'email-not-exist'        => 'Email tidak ada',
                 'page-title'             => 'Lupa Password',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Pilih kata sandi baru untuk akun Anda.',
+            'invalid-link'           => 'Tautan pengaturan ulang kata sandi ini tidak valid atau telah kedaluwarsa.',
             'back-link-title'        => 'Kembali untuk Masuk?',
             'confirm-password'       => 'konfirmasi sandi',
             'email'                  => 'Email terdaftar',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Katalog',
             'total-families'       => 'Total keluarga',
             'total-attributes'     => 'Atribut total',
-            'total-groups'         => 'Total kelompok',
+            'total-groups'         => 'Total grup atribut',
             'total-categories'     => 'Total Kategori',
             'total-products'       => 'Total produk',
             'settings-details'     => 'Struktur katalog',

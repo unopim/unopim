@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -37,15 +38,17 @@ class ResetPasswordController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(): RedirectResponse|JsonResponse
     {
-        try {
-            $this->validate(request(), [
-                'token'    => 'required',
-                'email'    => 'required|email',
-                'password' => 'required|confirmed|min:8',
-            ]);
+        $this->validate(request(), [
+            'token'    => 'required',
+            'email'    => 'required|email',
+            'password' => 'required|confirmed|min:'.config('admin.auth.password_min'),
+        ]);
 
+        $wantsJson = request()->wantsJson();
+
+        try {
             $response = $this->broker()->reset(
                 request(['email', 'password', 'password_confirmation', 'token']), function ($admin, $password) {
                     $this->resetPassword($admin, $password);
@@ -53,16 +56,34 @@ class ResetPasswordController extends Controller
             );
 
             if ($response == Password::PASSWORD_RESET) {
+                if ($wantsJson) {
+                    return response()->json(['redirect_url' => route('admin.dashboard.index')]);
+                }
+
                 return redirect()->route('admin.dashboard.index');
+            }
+
+            $error = trans('admin::app.users.reset-password.invalid-link');
+
+            if ($wantsJson) {
+                return response()->json(['errors' => ['email' => [$error]]], 422);
             }
 
             return back()
                 ->withInput(request(['email']))
                 ->withErrors([
-                    'email' => trans($response),
+                    'email' => $error,
                 ]);
         } catch (\Exception $e) {
-            session()->flash('error', trans($e->getMessage()));
+            report($e);
+
+            $message = trans('admin::app.users.reset-password.invalid-link');
+
+            if ($wantsJson) {
+                return response()->json(['message' => $message], 500);
+            }
+
+            session()->flash('error', $message);
 
             return redirect()->back();
         }

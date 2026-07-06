@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Connectez-vous à votre compte pour continuer',
+            'tagline'                    => 'Gérez toutes les informations de vos produits en un seul endroit',
+            'remember-me'                => 'Se souvenir de moi',
+            'toggle-password'            => 'Afficher ou masquer le mot de passe',
+            'too-many-attempts'          => 'Trop de tentatives de connexion. Veuillez réessayer dans un instant.',
             'email'                      => 'Adresse e-mail',
             'forget-password-link'       => 'Mot de passe oublié ?',
             'password'                   => 'Mot de passe',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Saisissez votre e-mail et nous vous enverrons un lien de réinitialisation du mot de passe.',
                 'email'                  => 'Adresse e-mail',
                 'email-not-exist'        => 'L\'e-mail n\'existe pas',
                 'page-title'             => 'Mot de passe oublié',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Choisissez un nouveau mot de passe pour votre compte.',
+            'invalid-link'           => 'Ce lien de réinitialisation du mot de passe est invalide ou a expiré.',
             'back-link-title'        => 'Retour à la connexion',
             'confirm-password'       => 'Confirmez le mot de passe',
             'email'                  => 'Adresse e-mail',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Catalogue',
             'total-families'       => 'Familles',
             'total-attributes'     => 'Attributs',
-            'total-groups'         => 'Groupes',
+            'total-groups'         => 'Total des groupes d\'attributs',
             'total-categories'     => 'Catégories',
             'total-products'       => 'Produits',
             'settings-details'     => 'Structure du catalogue',

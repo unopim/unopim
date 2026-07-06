@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => '続行するにはアカウントにサインインしてください',
+            'tagline'                    => 'すべての製品情報を一か所で管理',
+            'remember-me'                => 'ログイン状態を保存する',
+            'toggle-password'            => 'パスワードを表示または非表示',
+            'too-many-attempts'          => 'ログイン試行回数が多すぎます。しばらくしてからもう一度お試しください。',
             'email'                      => 'メールアドレス',
             'forget-password-link'       => 'パスワードを忘れましたか?',
             'password'                   => 'パスワード',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'メールアドレスを入力してください。パスワード再設定用のリンクをお送りします。',
                 'email'                  => '登録済みのメール',
                 'email-not-exist'        => 'メールが存在しません',
                 'page-title'             => 'パスワードを忘れた場合',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'アカウントの新しいパスワードを設定してください。',
+            'invalid-link'           => 'このパスワードリセットリンクは無効か、有効期限が切れています。',
             'back-link-title'        => 'サインインに戻りますか?',
             'confirm-password'       => 'パスワードの確認',
             'email'                  => '登録したメール',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'カタログ',
             'total-families'       => 'ファミリーの合計',
             'total-attributes'     => '属性の合計',
-            'total-groups'         => 'グループの合計',
+            'total-groups'         => '属性グループ合計',
             'total-categories'     => 'カテゴリの合計',
             'total-products'       => '製品の合計',
             'settings-details'     => 'カタログ構造',

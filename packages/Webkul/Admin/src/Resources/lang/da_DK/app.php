@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Log ind på din konto for at fortsætte',
+            'tagline'                    => 'Administrer alle dine produktoplysninger ét sted',
+            'remember-me'                => 'Husk mig',
+            'toggle-password'            => 'Vis eller skjul adgangskode',
+            'too-many-attempts'          => 'For mange loginforsøg. Prøv igen om et øjeblik.',
             'email'                      => 'E-mailadresse',
             'forget-password-link'       => 'Glemt adgangskode?',
             'password'                   => 'Adgangskode',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Indtast din e-mail, så sender vi dig et link til nulstilling af adgangskode.',
                 'email'                  => 'Registreret e-mail',
                 'email-not-exist'        => 'E-mail eksisterer ikke',
                 'page-title'             => 'Glemt adgangskode',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Vælg en ny adgangskode til din konto.',
+            'invalid-link'           => 'Dette link til nulstilling af adgangskode er ugyldigt eller udløbet.',
             'back-link-title'        => 'Tilbage til log ind?',
             'confirm-password'       => 'Bekræft adgangskode',
             'email'                  => 'Registreret e-mail',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Katalog',
             'total-families'       => 'Samlede familier',
             'total-attributes'     => 'Samlede attributter',
-            'total-groups'         => 'Samlede grupper',
+            'total-groups'         => 'Samlede attributgrupper',
             'total-categories'     => 'Samlede kategorier',
             'total-products'       => 'Samlede produkter',
             'settings-details'     => 'Katalogstruktur',

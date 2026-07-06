@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => '登录您的账户以继续',
+            'tagline'                    => '在一处管理您所有的产品信息',
+            'remember-me'                => '记住我',
+            'toggle-password'            => '显示或隐藏密码',
+            'too-many-attempts'          => '登录尝试次数过多，请稍后再试。',
             'email'                      => '电子邮件地址',
             'forget-password-link'       => '忘记密码 ？',
             'password'                   => '密码',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => '输入您的邮箱，我们将向您发送密码重置链接。',
                 'email'                  => '注册的电子邮件',
                 'email-not-exist'        => '电子邮件不存在',
                 'page-title'             => '忘记密码',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => '为您的账户设置新密码。',
+            'invalid-link'           => '此密码重置链接无效或已过期。',
             'back-link-title'        => '返回登录？',
             'confirm-password'       => '确认密码',
             'email'                  => '注册的电子邮件',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => '目录',
             'total-families'       => '总家庭',
             'total-attributes'     => '总属性',
-            'total-groups'         => '总组',
+            'total-groups'         => '属性组总数',
             'total-categories'     => '总类别',
             'total-products'       => '总产品',
             'settings-details'     => '目录结构',

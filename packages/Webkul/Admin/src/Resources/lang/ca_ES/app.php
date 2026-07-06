@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Inicia la sessió al teu compte per continuar',
+            'tagline'                    => 'Gestiona tota la informació dels teus productes en un sol lloc',
+            'remember-me'                => 'Recorda\'m',
+            'toggle-password'            => 'Mostra o amaga la contrasenya',
+            'too-many-attempts'          => 'Massa intents d\'inici de sessió. Torna-ho a provar d\'aquí a un moment.',
             'email'                      => 'Adreça electrònica',
             'forget-password-link'       => 'Oblidar contrasenya?',
             'password'                   => 'Contrasenya',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Introdueix el teu correu electrònic i t\'enviarem un enllaç per restablir la contrasenya.',
                 'email'                  => 'Correu electrònic registrat',
                 'email-not-exist'        => 'El correu no existeix',
                 'page-title'             => 'Oblidar contrasenya',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Tria una nova contrasenya per al teu compte.',
+            'invalid-link'           => 'Aquest enllaç de restabliment de contrasenya no és vàlid o ha caducat.',
             'back-link-title'        => 'Tornar a Iniciar sessió?',
             'confirm-password'       => 'Confirmar contrasenya',
             'email'                  => 'Correu electrònic registrat',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Catàleg',
             'total-families'       => 'Total de famílies',
             'total-attributes'     => 'Total d’atributs',
-            'total-groups'         => 'Total de grups',
+            'total-groups'         => 'Total de grups d\'atributs',
             'total-categories'     => 'Total de categories',
             'total-products'       => 'Total de productes',
             'settings-details'     => 'Estructura del catàleg',

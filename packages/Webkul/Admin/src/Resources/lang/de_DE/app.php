@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Melden Sie sich bei Ihrem Konto an, um fortzufahren',
+            'tagline'                    => 'Verwalten Sie alle Ihre Produktinformationen an einem Ort',
+            'remember-me'                => 'Angemeldet bleiben',
+            'toggle-password'            => 'Passwort anzeigen oder ausblenden',
+            'too-many-attempts'          => 'Zu viele Anmeldeversuche. Bitte versuchen Sie es in Kürze erneut.',
             'email'                      => 'E-Mail-Adresse',
             'forget-password-link'       => 'Passwort vergessen?',
             'password'                   => 'Passwort',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen des Passworts.',
                 'email'                  => 'Registrierte E-Mail',
                 'email-not-exist'        => 'E-Mail existiert nicht',
                 'page-title'             => 'Passwort vergessen',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Wählen Sie ein neues Passwort für Ihr Konto.',
+            'invalid-link'           => 'Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.',
             'back-link-title'        => 'Zurück zur Anmeldung ?',
             'confirm-password'       => 'Passwort bestätigen',
             'email'                  => 'Registrierte E-Mail',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Katalog',
             'total-families'       => 'Gesamtzahl Familien',
             'total-attributes'     => 'Gesamtzahl Attribute',
-            'total-groups'         => 'Gesamtzahl Gruppen',
+            'total-groups'         => 'Attributgruppen gesamt',
             'total-categories'     => 'Gesamtzahl Kategorien',
             'total-products'       => 'Gesamtzahl Produkte',
             'settings-details'     => 'Katalogstruktur',

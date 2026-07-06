@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Logga in på ditt konto för att fortsätta',
+            'tagline'                    => 'Hantera all din produktinformation på ett ställe',
+            'remember-me'                => 'Kom ihåg mig',
+            'toggle-password'            => 'Visa eller dölj lösenord',
+            'too-many-attempts'          => 'För många inloggningsförsök. Försök igen om en stund.',
             'email'                      => 'E-postadress',
             'forget-password-link'       => 'Glömt lösenord?',
             'password'                   => 'Lösenord',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Ange din e-postadress så skickar vi en länk för att återställa lösenordet.',
                 'email'                  => 'Registrerad e-post',
                 'email-not-exist'        => 'E-postadress finns inte',
                 'page-title'             => 'Glömt lösenord',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Välj ett nytt lösenord för ditt konto.',
+            'invalid-link'           => 'Den här länken för lösenordsåterställning är ogiltig eller har upphört att gälla.',
             'back-link-title'        => 'Tillbaka till inloggning?',
             'confirm-password'       => 'Bekräfta lösenord',
             'email'                  => 'Registrerad e-post',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Katalog',
             'total-families'       => 'Totala familjer',
             'total-attributes'     => 'Totala attribut',
-            'total-groups'         => 'Totala grupper',
+            'total-groups'         => 'Totalt antal attributgrupper',
             'total-categories'     => 'Totala kategorier',
             'total-products'       => 'Totala produkter',
             'settings-details'     => 'Katalogstruktur',

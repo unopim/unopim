@@ -158,7 +158,7 @@
                             <x-admin::form.control-group.control
                                 type="password"
                                 name="current_password"
-                                rules="required|min:6"
+                                rules="required"
                                 :label="trans('admin::app.account.edit.current-password')"
                                 :placeholder="trans('admin::app.account.edit.current-password')"
                             />
@@ -175,7 +175,7 @@
                             <x-admin::form.control-group.control
                                 type="password"
                                 name="password"
-                                rules="min:6"
+                                rules="min:{{ config('admin.auth.password_min') }}"
                                 :placeholder="trans('admin::app.account.edit.password')"
                                 ref="password"
                             />

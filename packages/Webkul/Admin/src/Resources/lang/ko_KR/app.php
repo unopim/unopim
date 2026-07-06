@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => '계속하려면 계정에 로그인하세요',
+            'tagline'                    => '모든 제품 정보를 한곳에서 관리하세요',
+            'remember-me'                => '로그인 상태 유지',
+            'toggle-password'            => '비밀번호 표시 또는 숨기기',
+            'too-many-attempts'          => '로그인 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.',
             'email'                      => '이메일 주소',
             'forget-password-link'       => '비밀번호를 잊으셨나요?',
             'password'                   => '비밀번호',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => '이메일을 입력하시면 비밀번호 재설정 링크를 보내드립니다.',
                 'email'                  => '등록된 이메일',
                 'email-not-exist'        => '이메일이 존재하지 않습니다',
                 'page-title'             => '비밀번호 찾기',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => '계정의 새 비밀번호를 설정하세요.',
+            'invalid-link'           => '이 비밀번호 재설정 링크가 유효하지 않거나 만료되었습니다.',
             'back-link-title'        => '로그인 화면으로 돌아가기?',
             'confirm-password'       => '비밀번호 확인',
             'email'                  => '등록된 이메일',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => '카탈로그',
             'total-families'       => '전체 가족 수',
             'total-attributes'     => '전체 속성',
-            'total-groups'         => '전체 그룹',
+            'total-groups'         => '전체 속성 그룹',
             'total-categories'     => '전체 카테고리',
             'total-products'       => '전체 제품 수',
             'settings-details'     => '카탈로그 구조',

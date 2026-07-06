@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Prijavite se na svoj račun za nastavak',
+            'tagline'                    => 'Upravljajte svim informacijama o proizvodima na jednom mjestu',
+            'remember-me'                => 'Zapamti me',
+            'toggle-password'            => 'Prikaži ili sakrij lozinku',
+            'too-many-attempts'          => 'Previše pokušaja prijave. Pokušajte ponovno za trenutak.',
             'email'                      => 'Adresa e-pošte',
             'forget-password-link'       => 'Zaboravili ste lozinku?',
             'password'                   => 'Lozinka',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Unesite svoju e-poštu i poslat ćemo vam poveznicu za ponovno postavljanje lozinke.',
                 'email'                  => 'Registrirana e-pošta',
                 'email-not-exist'        => 'E-pošta ne postoji',
                 'page-title'             => 'Zaboravljena lozinka',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Odaberite novu lozinku za svoj račun.',
+            'invalid-link'           => 'Ova poveznica za ponovno postavljanje lozinke nevažeća je ili je istekla.',
             'back-link-title'        => 'Natrag na prijavu?',
             'confirm-password'       => 'Potvrdite lozinku',
             'email'                  => 'Registrirana e-pošta',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Katalog',
             'total-families'       => 'Ukupno obitelji',
             'total-attributes'     => 'Ukupno atributa',
-            'total-groups'         => 'Ukupno grupa',
+            'total-groups'         => 'Ukupno grupa atributa',
             'total-categories'     => 'Ukupno kategorija',
             'total-products'       => 'Ukupno proizvoda',
             'settings-details'     => 'Struktura kataloga',

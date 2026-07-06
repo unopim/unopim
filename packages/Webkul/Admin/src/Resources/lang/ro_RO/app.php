@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Autentifică-te în contul tău pentru a continua',
+            'tagline'                    => 'Gestionează toate informațiile despre produse într-un singur loc',
+            'remember-me'                => 'Ține-mă minte',
+            'toggle-password'            => 'Afișează sau ascunde parola',
+            'too-many-attempts'          => 'Prea multe încercări de autentificare. Încearcă din nou în scurt timp.',
             'email'                      => 'Adresă de e-mail',
             'forget-password-link'       => 'Ai uitat parola?',
             'password'                   => 'Parolă',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Introdu adresa de e-mail și îți vom trimite un link pentru resetarea parolei.',
                 'email'                  => 'E-mail înregistrat',
                 'email-not-exist'        => 'E-mail nu există',
                 'page-title'             => 'Ai uitat parola',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Alege o nouă parolă pentru contul tău.',
+            'invalid-link'           => 'Acest link de resetare a parolei este invalid sau a expirat.',
             'back-link-title'        => 'Înapoi la Conectare?',
             'confirm-password'       => 'Confirmați parola',
             'email'                  => 'E-mail înregistrat',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Catalog',
             'total-families'       => 'Total familii',
             'total-attributes'     => 'Total Atribute',
-            'total-groups'         => 'Total Grupe',
+            'total-groups'         => 'Total grupuri de atribute',
             'total-categories'     => 'Total Categorii',
             'total-products'       => 'Total Produse',
             'settings-details'     => 'Structură Catalog',

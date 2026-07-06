@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Inicie sessão na sua conta para continuar',
+            'tagline'                    => 'Faça a gestão de toda a informação dos seus produtos num só lugar',
+            'remember-me'                => 'Lembrar-me',
+            'toggle-password'            => 'Mostrar ou ocultar a palavra-passe',
+            'too-many-attempts'          => 'Demasiadas tentativas de início de sessão. Tente novamente dentro de momentos.',
             'email'                      => 'Endereço de e-mail',
             'forget-password-link'       => 'Esqueceu a palavra-passe?',
             'password'                   => 'Palavra-passe',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Introduza o seu e-mail e enviar-lhe-emos uma ligação para redefinir a palavra-passe.',
                 'email'                  => 'E-mail registado',
                 'email-not-exist'        => 'O e-mail não existe',
                 'page-title'             => 'Esqueceu a palavra-passe',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Escolha uma nova palavra-passe para a sua conta.',
+            'invalid-link'           => 'Esta ligação de redefinição de palavra-passe é inválida ou expirou.',
             'back-link-title'        => 'Voltar à página de login?',
             'confirm-password'       => 'Confirmar palavra-passe',
             'email'                  => 'E-mail registado',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Catálogo',
             'total-families'       => 'Total de famílias',
             'total-attributes'     => 'Total de atributos',
-            'total-groups'         => 'Total de grupos',
+            'total-groups'         => 'Total de grupos de atributos',
             'total-categories'     => 'Total de categorias',
             'total-products'       => 'Total de produtos',
             'settings-details'     => 'Estrutura do catálogo',

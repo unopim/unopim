@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Kirjaudu tilillesi jatkaaksesi',
+            'tagline'                    => 'Hallitse kaikkia tuotetietojasi yhdessä paikassa',
+            'remember-me'                => 'Muista minut',
+            'toggle-password'            => 'Näytä tai piilota salasana',
+            'too-many-attempts'          => 'Liian monta kirjautumisyritystä. Yritä hetken kuluttua uudelleen.',
             'email'                      => 'Sähköpostiosoite',
             'forget-password-link'       => 'Unohtuiko salasana?',
             'password'                   => 'Salasana',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Anna sähköpostiosoitteesi, niin lähetämme sinulle salasanan palautuslinkin.',
                 'email'                  => 'Rekisteröity sähköposti',
                 'email-not-exist'        => 'Sähköpostiosoitetta ei löydy',
                 'page-title'             => 'Salasanan palauttaminen',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Valitse tilillesi uusi salasana.',
+            'invalid-link'           => 'Tämä salasanan palautuslinkki on virheellinen tai vanhentunut.',
             'back-link-title'        => 'Takaisin kirjautumiseen',
             'confirm-password'       => 'Vahvista salasana',
             'email'                  => 'Rekisteröity sähköposti',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Luettelo',
             'total-families'       => 'Perheitä yhteensä',
             'total-attributes'     => 'Attribuutteja yhteensä',
-            'total-groups'         => 'Ryhmiä yhteensä',
+            'total-groups'         => 'Attribuuttiryhmät yhteensä',
             'total-categories'     => 'Kategorioita yhteensä',
             'total-products'       => 'Tuotteita yhteensä',
             'settings-details'     => 'Luettelon rakenne',

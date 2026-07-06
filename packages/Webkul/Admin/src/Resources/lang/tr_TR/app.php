@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Devam etmek için hesabınıza giriş yapın',
+            'tagline'                    => 'Tüm ürün bilgilerinizi tek bir yerden yönetin',
+            'remember-me'                => 'Beni hatırla',
+            'toggle-password'            => 'Parolayı göster veya gizle',
+            'too-many-attempts'          => 'Çok fazla giriş denemesi. Lütfen birazdan tekrar deneyin.',
             'email'                      => 'E-posta Adresi',
             'forget-password-link'       => 'Şifreyi Unuttunuz mu?',
             'password'                   => 'Şifre',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'E-posta adresinizi girin, size parola sıfırlama bağlantısı gönderelim.',
                 'email'                  => 'Kayıtlı E-posta',
                 'email-not-exist'        => 'E-posta bulunamadı',
                 'page-title'             => 'Şifreyi Unuttum',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Hesabınız için yeni bir parola seçin.',
+            'invalid-link'           => 'Bu parola sıfırlama bağlantısı geçersiz veya süresi dolmuş.',
             'back-link-title'        => 'Geri Giriş Yap?',
             'confirm-password'       => 'Şifreyi Onayla',
             'email'                  => 'Kayıtlı E-posta',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Katalog',
             'total-families'       => 'Toplam Aileler',
             'total-attributes'     => 'Toplam Nitelikler',
-            'total-groups'         => 'Toplam Gruplar',
+            'total-groups'         => 'Toplam öznitelik grupları',
             'total-categories'     => 'Toplam Kategoriler',
             'total-products'       => 'Toplam Ürünler',
             'settings-details'     => 'Katalog Yapısı',

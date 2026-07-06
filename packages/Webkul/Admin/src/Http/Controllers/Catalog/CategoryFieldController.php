@@ -55,7 +55,7 @@ class CategoryFieldController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(): RedirectResponse|JsonResponse
     {
         $this->validate(request(), [
             'code'     => ['required', 'unique:category_fields,code', new Code, new NotSupportedFields],

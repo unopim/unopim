@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => '登入您的帳戶以繼續',
+            'tagline'                    => '在單一位置管理您所有的產品資訊',
+            'remember-me'                => '記住我',
+            'toggle-password'            => '顯示或隱藏密碼',
+            'too-many-attempts'          => '登入嘗試次數過多，請稍後再試。',
             'email'                      => '電子郵件地址',
             'forget-password-link'       => '忘記密碼？',
             'password'                   => '密碼',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => '輸入您的電子郵件，我們將向您發送密碼重設連結。',
                 'email'                  => '已註冊的電子郵件',
                 'email-not-exist'        => '電子郵件不存在',
                 'page-title'             => '忘記密碼',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => '為您的帳戶設定新密碼。',
+            'invalid-link'           => '此密碼重設連結無效或已過期。',
             'back-link-title'        => '返回登入？',
             'confirm-password'       => '確認密碼',
             'email'                  => '已註冊的電子郵件',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => '目錄',
             'total-families'       => '總家庭',
             'total-attributes'     => '總屬性',
-            'total-groups'         => '總組',
+            'total-groups'         => '屬性群組總數',
             'total-categories'     => '總類別',
             'total-products'       => '總產品',
             'settings-details'     => '目錄結構',

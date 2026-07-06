@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Logg inn på kontoen din for å fortsette',
+            'tagline'                    => 'Administrer all produktinformasjonen din på ett sted',
+            'remember-me'                => 'Husk meg',
+            'toggle-password'            => 'Vis eller skjul passord',
+            'too-many-attempts'          => 'For mange innloggingsforsøk. Prøv igjen om et øyeblikk.',
             'email'                      => 'E-postadresse',
             'forget-password-link'       => 'Glemt passord?',
             'password'                   => 'Passord',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Skriv inn e-posten din, så sender vi deg en lenke for å tilbakestille passordet.',
                 'email'                  => 'Registrert e-post',
                 'email-not-exist'        => 'E-post finnes ikke',
                 'page-title'             => 'Glemt passord',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Velg et nytt passord for kontoen din.',
+            'invalid-link'           => 'Denne lenken for tilbakestilling av passord er ugyldig eller utløpt.',
             'back-link-title'        => 'Tilbake til innlogging?',
             'confirm-password'       => 'Bekreft passord',
             'email'                  => 'Registrert e-post',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Katalog',
             'total-families'       => 'Totale familier',
             'total-attributes'     => 'Totale attributter',
-            'total-groups'         => 'Totale grupper',
+            'total-groups'         => 'Totalt antall attributtgrupper',
             'total-categories'     => 'Totale kategorier',
             'total-products'       => 'Totale produkter',
             'settings-details'     => 'Katalogstruktur',

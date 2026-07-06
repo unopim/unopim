@@ -65,6 +65,6 @@ Route::group(['prefix' => config('app.admin_url')], function () {
 
         Route::get('{token}', 'create')->name('admin.reset_password.create');
 
-        Route::post('', 'store')->name('admin.reset_password.store');
+        Route::post('', 'store')->name('admin.reset_password.store')->middleware('throttle:admin-reset-password');
     });
 });

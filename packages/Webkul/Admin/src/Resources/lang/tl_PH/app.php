@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Mag-sign in sa iyong account upang magpatuloy',
+            'tagline'                    => 'Pamahalaan ang lahat ng impormasyon ng iyong produkto sa isang lugar',
+            'remember-me'                => 'Tandaan ako',
+            'toggle-password'            => 'Ipakita o itago ang password',
+            'too-many-attempts'          => 'Masyadong maraming pagtatangkang mag-log in. Pakisubukang muli mamaya.',
             'email'                      => 'Email Address',
             'forget-password-link'       => 'Nakalimutan ang password?',
             'password'                   => 'Password',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Ilagay ang iyong email at padadalhan ka namin ng link para i-reset ang password.',
                 'email'                  => 'Nai-rehistro na Email',
                 'email-not-exist'        => 'Walang ganitong Email',
                 'page-title'             => 'Nakalimutan ang password',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Pumili ng bagong password para sa iyong account.',
+            'invalid-link'           => 'Ang link na ito para sa pag-reset ng password ay hindi wasto o nag-expire na.',
             'back-link-title'        => 'Bumalik sa Mag-sign In?',
             'confirm-password'       => 'Kumpirmahin ang Password',
             'email'                  => 'Nai-rehistro na Email',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Catalog',
             'total-families'       => 'Mga Kabuuang Pamilya',
             'total-attributes'     => 'Mga Kabuuang Atributo',
-            'total-groups'         => 'Mga Kabuuang Grupo',
+            'total-groups'         => 'Kabuuang Mga Grupo ng Attribute',
             'total-categories'     => 'Mga Kabuuang Kategorya',
             'total-products'       => 'Mga Kabuuang Produkto',
             'settings-details'     => 'Estruktura ng Catalog',

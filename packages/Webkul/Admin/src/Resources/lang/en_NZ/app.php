@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Sign in to your account to continue',
+            'tagline'                    => 'Manage all your product information in one place',
+            'remember-me'                => 'Remember me',
+            'toggle-password'            => 'Show or hide password',
+            'too-many-attempts'          => 'Too many login attempts. Please try again in a moment.',
             'email'                      => 'Email Address',
             'forget-password-link'       => 'Forgot Password?',
             'password'                   => 'Password',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Enter your email and we\'ll send you a password reset link.',
                 'email'                  => 'Registered Email',
                 'email-not-exist'        => 'Email Does Not Exist',
                 'page-title'             => 'Forgot Password',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Choose a new password for your account.',
+            'invalid-link'           => 'This password reset link is invalid or has expired.',
             'back-link-title'        => 'Back to Sign In?',
             'confirm-password'       => 'Confirm Password',
             'email'                  => 'Registered Email',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Catalogue',
             'total-families'       => 'Total Families',
             'total-attributes'     => 'Total Attributes',
-            'total-groups'         => 'Total Groups',
+            'total-groups'         => 'Total Attribute Groups',
             'total-categories'     => 'Total Categories',
             'total-products'       => 'Total Products',
             'settings-details'     => 'Catalogue Structure',

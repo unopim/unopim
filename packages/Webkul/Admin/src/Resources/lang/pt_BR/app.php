@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Entre na sua conta para continuar',
+            'tagline'                    => 'Gerencie todas as informações dos seus produtos em um só lugar',
+            'remember-me'                => 'Lembrar de mim',
+            'toggle-password'            => 'Mostrar ou ocultar a senha',
+            'too-many-attempts'          => 'Muitas tentativas de login. Tente novamente em instantes.',
             'email'                      => 'Endereço de e-mail',
             'forget-password-link'       => 'Esqueceu a senha?',
             'password'                   => 'Senha',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Digite seu e-mail e enviaremos um link para redefinir a senha.',
                 'email'                  => 'E-mail registrado',
                 'email-not-exist'        => 'E-mail não encontrado',
                 'page-title'             => 'Esqueceu a senha',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Escolha uma nova senha para sua conta.',
+            'invalid-link'           => 'Este link de redefinição de senha é inválido ou expirou.',
             'back-link-title'        => 'Voltar para a tela de login?',
             'confirm-password'       => 'Confirmar senha',
             'email'                  => 'E-mail registrado',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Catálogo',
             'total-families'       => 'Total de famílias',
             'total-attributes'     => 'Total de atributos',
-            'total-groups'         => 'Total de grupos',
+            'total-groups'         => 'Total de grupos de atributos',
             'total-categories'     => 'Total de categorias',
             'total-products'       => 'Total de produtos',
             'settings-details'     => 'Estrutura do catálogo',

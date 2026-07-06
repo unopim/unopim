@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Accedi al tuo account per continuare',
+            'tagline'                    => 'Gestisci tutte le informazioni sui tuoi prodotti in un unico posto',
+            'remember-me'                => 'Ricordami',
+            'toggle-password'            => 'Mostra o nascondi la password',
+            'too-many-attempts'          => 'Troppi tentativi di accesso. Riprova tra un momento.',
             'email'                      => 'Indirizzo email',
             'forget-password-link'       => 'Hai dimenticato la password?',
             'password'                   => 'Password',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Inserisci la tua email e ti invieremo un link per reimpostare la password.',
                 'email'                  => 'Email registrata',
                 'email-not-exist'        => 'Email non esistente',
                 'page-title'             => 'Recupera password',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Scegli una nuova password per il tuo account.',
+            'invalid-link'           => 'Questo link per reimpostare la password non è valido o è scaduto.',
             'back-link-title'        => 'Torna ad Accedi?',
             'confirm-password'       => 'Conferma password',
             'email'                  => 'Email registrata',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Catalogo',
             'total-families'       => 'Famiglie totali',
             'total-attributes'     => 'Attributi totali',
-            'total-groups'         => 'Gruppi totali',
+            'total-groups'         => 'Totale gruppi di attributi',
             'total-categories'     => 'Categorie totali',
             'total-products'       => 'Prodotti totali',
             'settings-details'     => 'Struttura del catalogo',

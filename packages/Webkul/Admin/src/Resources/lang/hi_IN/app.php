@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'जारी रखने के लिए अपने खाते में साइन इन करें',
+            'tagline'                    => 'अपनी सभी उत्पाद जानकारी को एक ही स्थान पर प्रबंधित करें',
+            'remember-me'                => 'मुझे याद रखें',
+            'toggle-password'            => 'पासवर्ड दिखाएँ या छिपाएँ',
+            'too-many-attempts'          => 'बहुत अधिक लॉगिन प्रयास। कृपया कुछ देर बाद पुनः प्रयास करें।',
             'email'                      => 'मेल पता',
             'forget-password-link'       => 'पासवर्ड भूल गए ?',
             'password'                   => 'पासवर्ड',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'अपना ईमेल दर्ज करें और हम आपको पासवर्ड रीसेट लिंक भेजेंगे।',
                 'email'                  => 'पंजीकृत ईमेल',
                 'email-not-exist'        => 'ईमेल मौजूद नहीं है',
                 'page-title'             => 'पासवर्ड भूल गए',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'अपने खाते के लिए एक नया पासवर्ड चुनें।',
+            'invalid-link'           => 'यह पासवर्ड रीसेट लिंक अमान्य है या इसकी समय-सीमा समाप्त हो गई है।',
             'back-link-title'        => 'वापस साइन इन करने के लिए?',
             'confirm-password'       => 'पासवर्ड की पुष्टि कीजिये',
             'email'                  => 'पंजीकृत ईमेल',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'सूची',
             'total-families'       => 'कुल परिवार',
             'total-attributes'     => 'कुल विशेषताएँ',
-            'total-groups'         => 'कुल समूह',
+            'total-groups'         => 'कुल विशेषता समूह',
             'total-categories'     => 'कुल श्रेणियां',
             'total-products'       => 'कुल उत्पाद',
             'settings-details'     => 'सूची संरचना',

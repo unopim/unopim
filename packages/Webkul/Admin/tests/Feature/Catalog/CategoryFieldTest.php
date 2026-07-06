@@ -94,6 +94,28 @@ it('should create category field successfully', function () {
     $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), $data);
 });
 
+it('converts the create redirect into a json redirect_url for an ajax-form submit (ConvertAjaxFormRedirect middleware)', function () {
+    $this->loginAsAdmin();
+
+    $data = [
+        'code'     => 'Test_category_Field_ajax_1',
+        'type'     => 'text',
+        'status'   => 1,
+        'position' => 1,
+        'section'  => 'left',
+    ];
+
+    $this->withHeader('X-Ajax-Form', 'true')
+        ->post(route('admin.catalog.category_fields.store'), $data)
+        ->assertOk()
+        ->assertJson([
+            'message'      => trans('admin::app.catalog.category_fields.create-success'),
+            'redirect_url' => route('admin.catalog.category_fields.index'),
+        ]);
+
+    $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), $data);
+});
+
 it('should show the category field edit form', function () {
     $this->loginAsAdmin();
 

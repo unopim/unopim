@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Meld u aan bij uw account om door te gaan',
+            'tagline'                    => 'Beheer al uw productinformatie op één plek',
+            'remember-me'                => 'Onthoud mij',
+            'toggle-password'            => 'Wachtwoord tonen of verbergen',
+            'too-many-attempts'          => 'Te veel inlogpogingen. Probeer het over een moment opnieuw.',
             'email'                      => 'E-mailadres',
             'forget-password-link'       => 'Wachtwoord vergeten?',
             'password'                   => 'Wachtwoord',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Voer uw e-mailadres in en we sturen u een link om uw wachtwoord opnieuw in te stellen.',
                 'email'                  => 'Geregistreerd e-mailadres',
                 'email-not-exist'        => 'E-mail bestaat niet.',
                 'page-title'             => 'Wachtwoord vergeten',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Kies een nieuw wachtwoord voor uw account.',
+            'invalid-link'           => 'Deze link om het wachtwoord opnieuw in te stellen is ongeldig of verlopen.',
             'back-link-title'        => 'Terug naar de inlogpagina',
             'confirm-password'       => 'Bevestig wachtwoord',
             'email'                  => 'Geregistreerd e-mailadres',

@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Đăng nhập vào tài khoản của bạn để tiếp tục',
+            'tagline'                    => 'Quản lý mọi thông tin sản phẩm của bạn ở một nơi',
+            'remember-me'                => 'Ghi nhớ tôi',
+            'toggle-password'            => 'Hiện hoặc ẩn mật khẩu',
+            'too-many-attempts'          => 'Quá nhiều lần đăng nhập. Vui lòng thử lại sau giây lát.',
             'email'                      => 'Địa chỉ Email',
             'forget-password-link'       => 'Quên mật khẩu?',
             'password'                   => 'Mật khẩu',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Nhập email của bạn và chúng tôi sẽ gửi cho bạn liên kết đặt lại mật khẩu.',
                 'email'                  => 'Email đã đăng ký',
                 'email-not-exist'        => 'Email không tồn tại',
                 'page-title'             => 'Quên mật khẩu',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Chọn mật khẩu mới cho tài khoản của bạn.',
+            'invalid-link'           => 'Liên kết đặt lại mật khẩu này không hợp lệ hoặc đã hết hạn.',
             'back-link-title'        => 'Quay lại Đăng nhập?',
             'confirm-password'       => 'Xác nhận mật khẩu',
             'email'                  => 'Email đã đăng ký',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Danh mục',
             'total-families'       => 'Tổng gia đình',
             'total-attributes'     => 'Tổng thuộc tính',
-            'total-groups'         => 'Tổng nhóm',
+            'total-groups'         => 'Tổng số nhóm thuộc tính',
             'total-categories'     => 'Tổng danh mục',
             'total-products'       => 'Tổng sản phẩm',
             'settings-details'     => 'Cấu trúc danh mục',

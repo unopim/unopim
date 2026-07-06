@@ -58,6 +58,25 @@ class Dashboard
     }
 
     /**
+     * Invalidate the catalog totals cache (categories + products) so the
+     * dashboard reflects a category create/update/delete immediately.
+     */
+    public static function invalidateCatalogCache(): void
+    {
+        Cache::forget('dashboard.total_catalogs');
+    }
+
+    /**
+     * Invalidate the configuration totals cache (attributes, attribute groups,
+     * attribute families, locales, channels, currencies) so the dashboard
+     * reflects a change to any of those immediately.
+     */
+    public static function invalidateConfigurationCache(): void
+    {
+        Cache::forget('dashboard.total_configurations');
+    }
+
+    /**
      * This method calculates and returns the total number of various catalog entities.
      *
      * @return array An associative array containing the total count of each catalog entity.

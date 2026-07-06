@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Zaloguj się na swoje konto, aby kontynuować',
+            'tagline'                    => 'Zarządzaj wszystkimi informacjami o produktach w jednym miejscu',
+            'remember-me'                => 'Zapamiętaj mnie',
+            'toggle-password'            => 'Pokaż lub ukryj hasło',
+            'too-many-attempts'          => 'Zbyt wiele prób logowania. Spróbuj ponownie za chwilę.',
             'email'                      => 'Adres e-mail',
             'forget-password-link'       => 'Zapomniałeś hasła?',
             'password'                   => 'Hasło',
@@ -15,6 +20,7 @@ return [
         ],
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Wpisz swój adres e-mail, a wyślemy Ci link do zresetowania hasła.',
                 'email'                  => 'Zarejestrowany e-mail',
                 'email-not-exist'        => 'E-mail nie istnieje',
                 'page-title'             => 'Zapomniałeś hasła',
@@ -28,6 +34,8 @@ return [
             ],
         ],
         'reset-password' => [
+            'subtitle'               => 'Wybierz nowe hasło do swojego konta.',
+            'invalid-link'           => 'Ten link do resetowania hasła jest nieprawidłowy lub wygasł.',
             'back-link-title'        => 'Wracasz do logowania?',
             'confirm-password'       => 'Potwierdź hasło',
             'email'                  => 'Zarejestrowany e-mail',
@@ -87,7 +95,7 @@ return [
             'catalog-details'      => 'Katalog',
             'total-families'       => 'Całkowita liczba rodzin',
             'total-attributes'     => 'Całkowita liczba atrybutów',
-            'total-groups'         => 'Całkowita liczba grup',
+            'total-groups'         => 'Łącznie grup atrybutów',
             'total-categories'     => 'Całkowita liczba kategorii',
             'total-products'       => 'Całkowita liczba produktów',
             'settings-details'     => 'Struktura katalogu',
