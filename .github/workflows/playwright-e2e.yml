@@ -36,6 +36,10 @@ jobs:
       BASE_URL: http://127.0.0.1:8000
       ADMIN_USERNAME: admin@example.com
       ADMIN_PASSWORD: admin123
+      # Force deterministic seeded admin credentials so Playwright can log in.
+      # Without these, AdminsTableSeeder generates a random password.
+      INSTALLER_ADMIN_EMAIL: admin@example.com
+      INSTALLER_ADMIN_PASSWORD: admin123
 
     steps:
       - name: Checkout
