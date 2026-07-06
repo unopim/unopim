@@ -9,7 +9,11 @@ test.describe('Discovered admin modules', () => {
     test(`@smoke ${module.name} page loads`, async ({ page, crudPage }) => {
       await crudPage.goto(module.path!);
       await crudPage.expectIndexReady();
-      await expect(page.locator('body')).not.toContainText(/403|404|500|exception|stack trace/i);
+      // Match Laravel/HTTP error-page signatures, not bare numbers — a grid
+      // legitimately showing "500" rows or a "404" SKU must not fail this.
+      await expect(page.locator('body')).not.toContainText(
+        /(403 Forbidden|404 Not Found|419 Page Expired|500 (Internal )?Server Error|Whoops, looking for something\?|Symfony\\Component|Stack trace)/i
+      );
     });
 
     test(`@regression ${module.name} handles hostile search text`, async ({ crudPage }) => {

@@ -1,0 +1,5 @@
+# Scoped overrides for the Playwright framework.
+# The repo root uses 4-space indent; this TypeScript suite is 2-space.
+[*.{ts,js,json,yml,yaml}]
+indent_style = space
+indent_size = 2

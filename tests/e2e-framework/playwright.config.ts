@@ -16,7 +16,8 @@ export default defineConfig({
   globalSetup: './global-setup/global-setup.ts',
   globalTeardown: './global-teardown/global-teardown.ts',
   reporter: [
-    ['list'],
+    // Inline PR annotations on CI; readable list locally.
+    isCI ? ['github'] : ['list'],
     ['html', { outputFolder: 'reports/html', open: 'never' }],
     ['junit', { outputFile: 'reports/junit/results.xml' }],
     ['allure-playwright', { outputFolder: 'reports/allure-results' }]

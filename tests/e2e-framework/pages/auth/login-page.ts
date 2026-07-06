@@ -32,7 +32,23 @@ export class LoginPage extends BasePage {
     await this.page.waitForTimeout(1500);
   }
 
-  async expectValidationError(): Promise<void> {
-    await expect(this.page.locator('body')).toContainText(/required|invalid|credentials|password/i);
+  /**
+   * Server-side rejection after a well-formed but wrong login attempt.
+   * UnoPim flashes "Please check your credentials and try again." and
+   * redirects back to the login route.
+   */
+  async expectInvalidCredentialsError(): Promise<void> {
+    await expect(this.page.getByText(/check your credentials/i)).toBeVisible();
+    await expect(this.page).toHaveURL(/\/login/);
+  }
+
+  /**
+   * Client-side VeeValidate errors shown when mandatory fields are empty.
+   * These render as `<p class="text-red-600">` next to each control, so we
+   * assert on the error element rather than the whole page (which always
+   * contains the word "password" via the field label).
+   */
+  async expectFieldValidationErrors(): Promise<void> {
+    await expect(this.page.locator('.text-red-600').first()).toBeVisible();
   }
 }

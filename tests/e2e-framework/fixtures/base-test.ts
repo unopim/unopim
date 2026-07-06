@@ -44,4 +44,5 @@ export const test = base.extend<UnoPimFixtures>({
   }
 });
 
-export { expect, Page };
+export { expect };
+export type { Page };
