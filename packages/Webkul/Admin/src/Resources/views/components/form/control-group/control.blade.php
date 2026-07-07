@@ -1074,6 +1074,24 @@
                     <template v-slot:option="{ option }">
                         {{ $option }}
                     </template>
+                @else
+                    <template v-slot:option="{ option }">
+                        <div class="flex items-center gap-2 py-1">
+                            <template v-if="multiple">
+                                <input
+                                    type="checkbox"
+                                    class="cursor-pointer pointer-events-none"
+                                    :checked="isSelected(option)"
+                                    tabindex="-1"
+                                    disabled
+                                    aria-hidden="true"
+                                    role="presentation"
+                                />
+                            </template>
+
+                            <span v-text="option[labelBy] ?? option[trackBy]"></span>
+                        </div>
+                    </template>
                 @endisset
 
                 @isset($singleLabel)
@@ -1344,6 +1362,14 @@
                             value: removeValue
                         }
                     });
+                },
+
+                isSelected(option) {
+                    if (! this.multiple || ! Array.isArray(this.selectedValue)) {
+                        return false;
+                    }
+
+                    return this.selectedValue.some((selected) => selected?.[this.trackBy] === option?.[this.trackBy]);
                 },
 
                 previewImage(option) {

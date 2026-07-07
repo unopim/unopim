@@ -8,6 +8,11 @@ use Webkul\DataTransfer\Rules\SeparatorTypes;
 class CSV extends AbstractSource
 {
     /**
+     * UTF-8 BOM bytes.
+     */
+    protected const UTF8_BOM = "\xEF\xBB\xBF";
+
+    /**
      * CSV reader
      */
     protected mixed $reader;
@@ -47,7 +52,9 @@ class CSV extends AbstractSource
                 stream_set_read_buffer($this->reader, 65536);
             }
 
-            $headerRow = fgetcsv($this->reader, $this->maxLineLength, $delimiter);
+            $headerRow = $this->normalizeColumnNames(
+                fgetcsv($this->reader, $this->maxLineLength, $delimiter) ?: []
+            );
 
             if (
                 $headerRow === false
@@ -139,5 +146,27 @@ class CSV extends AbstractSource
         rewind($this->reader);
 
         parent::rewind();
+    }
+
+    /**
+     * Normalize header names for compatibility with external CSV generators.
+     */
+    protected function normalizeColumnNames(array $columnNames): array
+    {
+        if (! empty($columnNames[0]) && is_string($columnNames[0])) {
+            $columnNames[0] = $this->stripUtf8Bom($columnNames[0]);
+        }
+
+        return $columnNames;
+    }
+
+    /**
+     * Remove a UTF-8 BOM from the beginning of a string.
+     */
+    protected function stripUtf8Bom(string $value): string
+    {
+        return str_starts_with($value, self::UTF8_BOM)
+            ? substr($value, 3)
+            : $value;
     }
 }

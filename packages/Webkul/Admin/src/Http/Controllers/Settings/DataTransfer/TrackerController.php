@@ -111,9 +111,38 @@ class TrackerController extends Controller
      */
     public function download(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
+            abort(403, 'This action is unauthorized');
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
-        return Storage::disk('public')->download($import->file_path);
+        if (empty($import->file_path)) {
+            abort(404);
+        }
+
+        $disk = null;
+
+        if (Storage::disk('private')->exists($import->file_path)) {
+            $disk = Storage::disk('private');
+        } elseif (Storage::disk('public')->exists($import->file_path)) {
+            $disk = Storage::disk('public');
+        } else {
+            abort(404);
+        }
+
+        $stream = $disk->readStream($import->file_path);
+
+        if (! is_resource($stream)) {
+            abort(404);
+        }
+
+        return response()->streamDownload(function () use ($stream) {
+            fpassthru($stream);
+            fclose($stream);
+        }, basename($import->file_path), [
+            'Content-Type' => 'application/octet-stream',
+        ]);
     }
 
     /**
