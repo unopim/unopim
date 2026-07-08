@@ -15,7 +15,7 @@
             leave-from-class="translate-x-0 opacity-100"
             leave-active-class="transform transition ease-in duration-200 absolute"
             leave-to-class="ltr:translate-x-[120%] rtl:-translate-x-[120%] opacity-0"
-            class='flex flex-col gap-2.5 fixed top-5 ltr:right-5 rtl:left-5 z-[10060] ltr:items-end rtl:items-start'
+            class='flex flex-col gap-2.5 fixed top-20 ltr:right-5 rtl:left-5 z-[10060] ltr:items-end rtl:items-start'
         >
             <x-admin::flash-group.item />
         </transition-group>
