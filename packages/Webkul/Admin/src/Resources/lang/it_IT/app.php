@@ -433,6 +433,7 @@ return [
             'saved-inventory-message' => 'Prodotto salvato con successo',
             'update-success'          => 'Prodotto aggiornato con successo',
             'unique-validation'       => 'Questo valore è già in uso.',
+            'sku-already-used'        => 'Questo SKU è già utilizzato da un altro prodotto: ":name" (ID: :id). Scegli uno SKU diverso.',
             'invalid-type'            => 'Tipo di prodotto ":type" non trovato',
             'product-not-found'       => 'Prodotto con SKU ":sku" non trovato',
             'parent-not-found'        => 'Genitore con SKU ":sku" non trovato',

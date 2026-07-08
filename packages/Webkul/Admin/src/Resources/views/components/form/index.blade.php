@@ -37,4 +37,27 @@
 
         {{ $slot }}
     </v-form>
+
+    {{--
+        When the server returns validation errors (e.g. a duplicate SKU that can only be
+        checked server side), scroll to and focus the first invalid field on load, mirroring
+        the client side `onInvalidSubmit` behaviour.
+    --}}
+    @if ($errors->any())
+        @push('scripts')
+            <script type="text/javascript">
+                window.addEventListener('load', () => {
+                    const element = document.querySelector('[name="' + @json($errors->keys()[0]) + '"]');
+
+                    if (! element) {
+                        return;
+                    }
+
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    setTimeout(() => element.focus(), 500);
+                });
+            </script>
+        @endpush
+    @endif
 @endif
