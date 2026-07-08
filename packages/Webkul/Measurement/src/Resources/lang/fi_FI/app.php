@@ -1,0 +1,88 @@
+<?php
+
+return [
+
+    'acl' => [
+        'unauthorized' => 'Sinulla ei ole oikeutta suorittaa tätä toimintoa.',
+    ],
+    'attribute' => [
+        'measurement' => 'Mittaus',
+    ],
+
+    'measurement' => [
+        'index' => [
+            'create'                => 'Luo mittausperhe',
+            'code'                  => 'Koodi',
+            'standard'              => 'Vakioyksikön koodi',
+            'symbol'                => 'Symboli',
+            'save'                  => 'Tallenna',
+            'conversion_operation'  => 'Conversion operation',
+            'add_new_operation'     => 'Add New Operation',
+        ],
+
+        'edit' => [
+            'measurement_edit'      => 'Muokkaa mittausperhettä',
+            'back'                  => 'Takaisin',
+            'save'                  => 'Tallenna',
+            'conversion_operation'  => 'Conversion operation',
+            'add_new_operation'     => 'Add New Operation',
+            'general'               => 'Yleinen',
+            'code'                  => 'Koodi',
+            'label'                 => 'Nimike',
+            'units'                 => 'Yksiköt',
+            'create_units'          => 'Luo yksiköt',
+        ],
+
+        'unit' => [
+            'edit_unit'             => 'Muokkaa yksikköä',
+            'create_unit'           => 'Luo yksikkö',
+            'symbol'                => 'Symboli',
+            'save'                  => 'Tallenna',
+            'conversion_operation'  => 'Muunnosoperaatio',
+            'add_new_operation'     => 'Lisää uusi toiminto',
+            'conversion_value'      => 'Arvo',
+            'conversion_operator'   => 'Operaattori',
+        ],
+    ],
+
+    'attribute_type' => [
+        'measurement_families' => 'Mittausperheet',
+        'measurement_family'   => 'Mittausperhe',
+        'measurement_unit'     => 'Mittayksikkö',
+    ],
+
+    'datagrid' => [
+        'labels'        => 'Nimi',
+        'code'          => 'Koodi',
+        'standard_unit' => 'Vakioyksikkö',
+        'unit_count'    => 'Yksiköiden määrä',
+        'is_standard'   => 'Merkitse vakioyksiköksi',
+    ],
+
+    'importers' => [
+        'products' => [
+            'validation' => [
+                'invalid-unit' => 'Yksikkö ":unit" ei ole kelvollinen yksikkö mittausmääritteelle ":attribute".',
+            ],
+        ],
+    ],
+
+    'messages' => [
+        'family' => [
+            'created'      => 'Mittausperhe luotiin onnistuneesti.',
+            'updated'      => 'Mittausperhe päivitettiin onnistuneesti.',
+            'deleted'      => 'Mittausperhe poistettiin onnistuneesti.',
+            'mass_deleted' => 'Valitut mittausperheet poistettiin onnistuneesti.',
+        ],
+
+        'unit' => [
+            'not_found'              => 'Mittausperhettä ei löytynyt.',
+            'already_exists'         => 'Yksikkökoodi on jo olemassa.',
+            'units_not_found'        => 'Yksikköä ei löytynyt.',
+            'deleted'                => 'Yksikkö poistettiin onnistuneesti.',
+            'no_items_selected'      => 'Kohteita ei ole valittu.',
+            'mass_deleted'           => 'Valitut mittayksiköt poistettiin onnistuneesti.',
+        ],
+    ],
+
+];

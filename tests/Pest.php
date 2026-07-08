@@ -8,6 +8,7 @@ use Webkul\Completeness\Tests\CompletenessTestCase;
 use Webkul\Core\Tests\CoreTestCase;
 use Webkul\DataGrid\Tests\DataGridTestCase;
 use Webkul\Installer\Tests\UserCreateCommandTestCase;
+use Webkul\Measurement\Tests\MeasurementTestCase;
 use Webkul\Product\Tests\ProductTestCase;
 use Webkul\User\Tests\UserTestCase;
 
@@ -36,6 +37,7 @@ uses(CompletenessTestCase::class)->in('../packages/Webkul/Completeness/tests');
 uses(ProductTestCase::class)->in('../packages/Webkul/Product/tests');
 uses(AttributeTestCase::class)->in('../packages/Webkul/Attribute/tests');
 uses(CategoryTestCase::class)->in('../packages/Webkul/Category/tests');
+uses(MeasurementTestCase::class)->in('../packages/Webkul/Measurement/tests');
 uses(CoreTestCase::class)->in('../packages/Webkul/AiAgent/tests');
 uses(AdminTestCase::class)->in('../packages/Webkul/AppUrlGuard/tests');
 
