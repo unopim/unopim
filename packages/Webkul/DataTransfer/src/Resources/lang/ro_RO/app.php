@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Câmpuri categorie',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Codul câmpului de categorie :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul câmpului de categorie nu a fost găsit pentru ștergere.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atribute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Codul atributului :code este deja utilizat.',
+                    'code_not_found_to_delete'             => 'Codul atributului nu a fost găsit pentru ștergere.',
+                    'code_is_system_and_cannot_be_deleted' => 'Atributul de sistem nu poate fi șters.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupuri de atribute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Codul grupului de atribute :code este deja utilizat.',
+                    'code_not_found_to_delete'             => 'Codul grupului de atribute nu a fost găsit pentru ștergere.',
+                    'code_is_system_and_cannot_be_deleted' => 'Grupul de atribute de sistem nu poate fi șters.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Familii de atribute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Codul familiei de atribute :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul familiei de atribute nu a fost găsit pentru ștergere.',
+                    'invalid-attribute-group'  => 'Grupul de atribute ":code" nu există.',
+                    'invalid-attribute'        => 'Atributul ":code" nu există.',
+                    'invalid-channel'          => 'Canalul ":code" nu există.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opțiuni atribute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Codul opțiunii atributului :code este deja utilizat.',
+                    'code_not_found_to_delete' => 'Codul opțiunii atributului nu a fost găsit pentru ștergere.',
+                    'locale-not-exist'         => 'Numele de localizare ":code" nu există.',
+                    'invalid-attribute'        => 'Atributul ":code" nu există.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Limbi',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Codul limbii \'%s\' a fost deja importat în acest lot.',
+                    'code-not-found-to-delete'    => 'Limba cu codul \'%s\' nu a fost găsită în sistem.',
+                    'invalid-status'              => 'Statusul trebuie să fie 0 sau 1 (sau gol pentru activat implicit).',
+                    'channel-related-locale-root' => 'Nu puteți șterge limba cu codul :code deoarece este asociată unui canal.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Canale',
             'validation' => [
@@ -45,18 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Monede',
+            'filters' => [
+                'status' => 'Stare',
+                'enable' => 'Activat',
+                'all'    => 'Toate',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Statusul trebuie să fie 0 sau 1 (sau gol pentru activat implicit).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Roluri',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Utilizatori',
+            'filters' => [
+                'status' => 'Stare',
+                'active' => 'Activ',
+                'all'    => 'Toate',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -91,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Calea Fișierului',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Stare',
             'enable'         => 'Activat',
@@ -152,20 +225,38 @@ return [
         'categories' => [
             'title' => 'Categorii',
         ],
+        'category-fields' => [
+            'title' => 'Câmpuri categorie',
+        ],
+        'attributes' => [
+            'title' => 'Atribute',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupuri de atribute',
+        ],
+        'attribute-families' => [
+            'title' => 'Familii de atribute',
+        ],
+        'attribute-options' => [
+            'title' => 'Opțiuni atribute',
+        ],
+        'locales' => [
+            'title' => 'Limbi',
+        ],
         'channels' => [
             'title' => 'Canale',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Monede',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Roluri',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Utilizatori',
             'filters' => [
                 'status' => 'Stare',
-                'active' => 'Active',
+                'active' => 'Activ',
                 'all'    => 'Toate',
             ],
         ],

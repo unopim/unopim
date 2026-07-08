@@ -1,0 +1,91 @@
+code,name,symbol,decimal,status
+ADP,"Andorran Peseta",ADP,2,0
+AED,"United Arab Emirates Dirham",د.إ,2,0
+AFA,"Afghan Afghani (1927–2002)",AFA,2,0
+AFN,"Afghan Afghani",؋,2,0
+ALK,"Albanian Lek (1946–1965)",ALK,2,0
+ALL,"Albanian Lek",ALL,2,0
+AMD,"Armenian Dram",AMD,2,0
+ANG,"Netherlands Antillean Guilder",ANG,2,0
+AOA,"Angolan Kwanza",AOA,2,0
+AOK,"Angolan Kwanza (1977–1991)",AOK,2,0
+AON,"Angolan New Kwanza (1990–2000)",AON,2,0
+AOR,"Angolan Readjusted Kwanza (1995–1999)",AOR,2,0
+ARA,"Argentine Austral",ARA,2,0
+ARL,"Argentine Peso Ley (1970–1983)",ARL,2,0
+ARM,"Argentine Peso (1881–1970)",ARM,2,0
+ARP,"Argentine Peso (1983–1985)",ARP,2,0
+ARS,"Argentine Peso",ARS,2,0
+ATS,"Austrian Schilling",ATS,2,0
+AUD,"Australian Dollar",AUD,2,0
+AWG,"Aruban Florin",AWG,2,0
+AZM,"Azerbaijani Manat (1993–2006)",AZM,2,0
+AZN,"Azerbaijani Manat",AZN,2,0
+BAD,"Bosnia-Herzegovina Dinar (1992–1994)",BAD,2,0
+BAM,"Bosnia-Herzegovina Convertible Mark",BAM,2,0
+BAN,"Bosnia-Herzegovina New Dinar (1994–1997)",BAN,2,0
+BBD,"Barbadian Dollar",BBD,2,0
+BDT,"Bangladeshi Taka",BDT,2,0
+BEC,"Belgian Franc (convertible)",BEC,2,0
+BEF,"Belgian Franc",BEF,2,0
+BEL,"Belgian Franc (financial)",BEL,2,0
+BGL,"Bulgarian Hard Lev",BGL,2,0
+BGM,"Bulgarian Socialist Lev",BGM,2,0
+BGN,"Bulgarian Lev",BGN,2,0
+BGO,"Bulgarian Lev (1879–1952)",BGO,2,0
+BHD,"Bahraini Dinar",BHD,2,0
+BIF,"Burundian Franc",BIF,2,0
+BMD,"Bermudan Dollar",BMD,2,0
+BND,"Brunei Dollar",BND,2,0
+BOB,"Bolivian Boliviano",BOB,2,0
+BOL,"Bolivian Boliviano (1863–1963)",BOL,2,0
+BOP,"Bolivian Peso",BOP,2,0
+BOV,"Bolivian Mvdol",BOV,2,0
+BRB,"Brazilian New Cruzeiro (1967–1986)",BRB,2,0
+BRC,"Brazilian Cruzado (1986–1989)",BRC,2,0
+BRE,"Brazilian Cruzeiro (1990–1993)",BRE,2,0
+BRL,"Brazilian Real",BRL,2,0
+BRN,"Brazilian New Cruzado (1989–1990)",BRN,2,0
+BRR,"Brazilian Cruzeiro (1993–1994)",BRR,2,0
+BRZ,"Brazilian Cruzeiro (1942–1967)",BRZ,2,0
+BSD,"Bahamian Dollar",BSD,2,0
+BTN,"Bhutanese Ngultrum",BTN,2,0
+BUK,"Burmese Kyat",BUK,2,0
+BWP,"Botswanan Pula",BWP,2,0
+BYB,"Belarusian Ruble (1994–1999)",BYB,2,0
+BYR,"Belarusian Ruble (2000–2016)",BYR,2,0
+BZD,"Belize Dollar",BZD,2,0
+CAD,"Canadian Dollar",CAD,2,0
+CDF,"Congolese Franc",CDF,2,0
+CHE,"WIR Euro",CHE,2,0
+CHF,"Swiss Franc",CHF,2,0
+CHW,"WIR Franc",CHW,2,0
+CLE,"Chilean Escudo",CLE,2,0
+CLF,"Chilean Unit of Account (UF)",CLF,2,0
+CLP,"Chilean Peso",CLP,2,0
+CNX,"Chinese People’s Bank Dollar",CNX,2,0
+CNY,"Chinese Yuan",¥,2,0
+COP,"Colombian Peso",COP,2,0
+COU,"Colombian Real Value Unit",COU,2,0
+CRC,"Costa Rican Colón",CRC,2,0
+CSD,"Serbian Dinar (2002–2006)",CSD,2,0
+CSK,"Czechoslovak Hard Koruna",CSK,2,0
+CUC,"Cuban Convertible Peso",CUC,2,0
+CUP,"Cuban Peso",CUP,2,0
+CVE,"Cape Verdean Escudo",CVE,2,0
+CYP,"Cypriot Pound",CYP,2,0
+CZK,"Czech Koruna",CZK,2,0
+DDM,"East German Mark",DDM,2,0
+DEM,"German Mark",DEM,2,0
+DJF,"Djiboutian Franc",DJF,2,0
+DKK,"Danish Krone",DKK,2,0
+EUR,Euro,€,2,1
+GBP,"British Pound",£,2,0
+RUB,"Russian Ruble",₽,2,0
+IRR,"Iranian Rial",﷼,2,0
+INR,"Indian Rupee",₹,2,0
+JPY,"Japanese Yen",¥,2,0
+SAR,"Saudi Riyal",﷼,2,0
+TRY,"Turkish Lira",₺,2,0
+UAH,"Ukrainian Hryvnia",₴,2,0
+USD,"US Dollar",$,3,1

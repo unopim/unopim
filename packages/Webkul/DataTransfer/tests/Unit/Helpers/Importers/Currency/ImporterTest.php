@@ -24,7 +24,6 @@ describe('Currency Importer', function () {
             'status'  => 1,
         ];
 
-        // Setup import action append
         $import = JobTrack::factory()->create([
             'action' => Import::ACTION_APPEND,
         ]);
@@ -70,7 +69,6 @@ describe('Currency Importer', function () {
         $this->assertDatabaseHas('currencies', ['code' => 'TEST_USD', 'status' => 1]);
         $this->assertDatabaseHas('currencies', ['code' => 'TEST_EUR', 'status' => 0]);
 
-        // Cleanup
         app(CurrencyRepository::class)->deleteWhere([['code', 'LIKE', 'TEST_%']]);
     });
 
@@ -81,7 +79,6 @@ describe('Currency Importer', function () {
             'action' => Import::ACTION_APPEND,
         ]);
 
-        // Mock jobInstance filters
         $import->jobInstance->update(['filters' => ['status' => 'enable']]);
 
         $importer->setImport($import);
@@ -111,12 +108,10 @@ describe('Currency Importer', function () {
         $this->assertDatabaseHas('currencies', ['code' => 'FILTER_USD']);
         $this->assertDatabaseMissing('currencies', ['code' => 'FILTER_EUR']);
 
-        // Cleanup
         app(CurrencyRepository::class)->deleteWhere([['code', 'LIKE', 'FILTER_%']]);
     });
 
     it('should delete currencies when action is delete', function () {
-        // Pre-create currency
         app(CurrencyRepository::class)->create([
             'code'   => 'DEL_USD',
             'symbol' => '$',

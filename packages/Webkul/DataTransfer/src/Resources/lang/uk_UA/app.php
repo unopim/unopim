@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Поля категорії',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код поля категорії :code вже використовується.',
+                    'code_not_found_to_delete' => 'Код поля категорії не знайдено для видалення.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Атрибути',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Код атрибута :code вже використовується.',
+                    'code_not_found_to_delete'             => 'Код атрибута для видалення не знайдено.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системний атрибут не може бути видалено.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Групи атрибутів',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Код групи атрибутів :code вже використовується.',
+                    'code_not_found_to_delete'             => 'Код групи атрибутов для видалення не знайдено.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системна група атрибутів не може бути видалена.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Сімейства атрибутів',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код сімейства атрибутів :code вже використовується.',
+                    'code_not_found_to_delete' => 'Код сімейства атрибутів для видалення не знайдено.',
+                    'invalid-attribute-group'  => 'Група атрибутів ":code" не існує.',
+                    'invalid-attribute'        => 'Атрибут ":code" не існує.',
+                    'invalid-channel'          => 'Канал ":code" не існує.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Варіанти атрибутів',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код варіанта атрибута :code вже використовується.',
+                    'code_not_found_to_delete' => 'Код варіанта атрибута для видалення не знайдено.',
+                    'locale-not-exist'         => 'Локаль ":code" не існує.',
+                    'invalid-attribute'        => 'Атрибут ":code" не існує.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Мови',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Код мови \'%s\' вже імпортовано в цьому пакеті.',
+                    'code-not-found-to-delete'    => 'Мову з кодом \'%s\' не знайдено в системі.',
+                    'invalid-status'              => 'Статус має бути 0 або 1 (або порожній для увімкнення за замовчуванням).',
+                    'channel-related-locale-root' => 'Ви не можете видалити мову з кодом :code, оскільки вона пов’язана з каналом.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Канали',
             'validation' => [
@@ -45,18 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Валюти',
+            'filters' => [
+                'status' => 'Статус',
+                'enable' => 'Увімкнено',
+                'all'    => 'Усі',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Статус має бути 0 або 1 (або порожній для увімкнення за замовчуванням).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Ролі',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Користувачі',
+            'filters' => [
+                'status' => 'Статус',
+                'active' => 'Активний',
+                'all'    => 'Усі',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -91,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Шлях до файлу',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Статус',
             'enable'         => 'Увімкнено',
@@ -134,7 +207,7 @@ return [
                     'disable' => 'Вимкнено',
                     'all'     => 'Усі',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Артикул',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Ідентифікатори',
                 'identifiers-info' => 'Вставте по одному SKU / ідентифікатору в рядку, щоб експортувати лише ці товари. Залиште порожнім, щоб експортувати всі товари.',
@@ -152,20 +225,38 @@ return [
         'categories' => [
             'title' => 'Категорії',
         ],
+        'category-fields' => [
+            'title' => 'Поля категорії',
+        ],
+        'attributes' => [
+            'title' => 'Атрибути',
+        ],
+        'attribute-groups' => [
+            'title' => 'Групи атрибутів',
+        ],
+        'attribute-families' => [
+            'title' => 'Сімейства атрибутів',
+        ],
+        'attribute-options' => [
+            'title' => 'Варіанти атрибутів',
+        ],
+        'locales' => [
+            'title' => 'Мови',
+        ],
         'channels' => [
             'title' => 'Канали',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Валюти',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Ролі',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Користувачі',
             'filters' => [
                 'status' => 'Статус',
-                'active' => 'Active',
+                'active' => 'Активні',
                 'all'    => 'Усі',
             ],
         ],

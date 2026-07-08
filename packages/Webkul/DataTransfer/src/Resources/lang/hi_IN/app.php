@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'श्रेणी फ़ील्ड',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'श्रेणी फ़ील्ड कोड :code पहले से उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए श्रेणी फ़ील्ड कोड नहीं मिला।',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'विशेषताएँ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'विशेषता कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete'             => 'हटाने के लिए विशेषता कोड नहीं मिला।',
+                    'code_is_system_and_cannot_be_deleted' => 'सिस्टम विशेषता को हटाया नहीं जा सकता।',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'विशेषता समूह',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'विशेषता समूह कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete'             => 'हटाने के लिए विशेषता समूह कोड नहीं मिला।',
+                    'code_is_system_and_cannot_be_deleted' => 'सिस्टम विशेषता समूह को हटाया नहीं जा सकता।',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'विशेषता परिवार',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'विशेषता परिवार कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए विशेषता परिवार कोड नहीं मिला।',
+                    'invalid-attribute-group'  => 'विशेषता समूह ":code" मौजूद नहीं है।',
+                    'invalid-attribute'        => 'विशेषता ":code" मौजूद नहीं है।',
+                    'invalid-channel'          => 'चैनल ":code" मौजूद नहीं है।',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'विशेषता विकल्प',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'विशेषता विकल्प कोड :code पहले से ही उपयोग में है।',
+                    'code_not_found_to_delete' => 'हटाने के लिए विशेषता विकल्प कोड नहीं मिला।',
+                    'locale-not-exist'         => 'लोकेल ":code" मौजूद नहीं है।',
+                    'invalid-attribute'        => 'विशेषता ":code" मौजूद नहीं है।',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'भाषाएँ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'भाषा कोड \'%s\' इस बैच में पहले ही आयात किया जा चुका है।',
+                    'code-not-found-to-delete'    => 'कोड \'%s\' वाली भाषा सिस्टम में नहीं मिली।',
+                    'invalid-status'              => 'स्थिति 0 या 1 होनी चाहिए (या डिफ़ॉल्ट सक्षम के लिए खाली)।',
+                    'channel-related-locale-root' => 'आप कोड :code वाली भाषा को हटा नहीं सकते क्योंकि यह एक चैनल से जुड़ी है।',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'चैनल',
             'validation' => [
@@ -45,18 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'मुद्राओं',
+            'filters' => [
+                'status' => 'स्थिति',
+                'enable' => 'सक्षम',
+                'all'    => 'सभी',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'स्थिति 0 या 1 होनी चाहिए (या डिफ़ॉल्ट सक्षम के लिए खाली)।',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'भूमिकाएँ',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'उपयोगकर्ताओं',
+            'filters' => [
+                'status' => 'स्थिति',
+                'active' => 'सक्रिय',
+                'all'    => 'सभी',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -91,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'दस्तावेज पथ',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'स्थिति',
             'enable'         => 'सक्षम',
@@ -134,7 +207,7 @@ return [
                     'disable' => 'अक्षम',
                     'all'     => 'सभी',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'स्कू',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'पहचानकर्ता',
                 'identifiers-info' => 'केवल उन उत्पादों को निर्यात करने के लिए प्रति पंक्ति एक SKU / पहचानकर्ता पेस्ट करें। सभी उत्पादों को निर्यात करने के लिए खाली छोड़ें।',
@@ -152,20 +225,38 @@ return [
         'categories' => [
             'title' => 'श्रेणियाँ',
         ],
+        'category-fields' => [
+            'title' => 'श्रेणी फ़ील्ड',
+        ],
+        'attributes' => [
+            'title' => 'विशेषताएँ',
+        ],
+        'attribute-groups' => [
+            'title' => 'विशेषता समूह',
+        ],
+        'attribute-families' => [
+            'title' => 'विशेषता परिवार',
+        ],
+        'attribute-options' => [
+            'title' => 'विशेषता विकल्प',
+        ],
+        'locales' => [
+            'title' => 'भाषाएँ',
+        ],
         'channels' => [
             'title' => 'चैनल',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'मुद्राओं',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'भूमिकाएँ',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'उपयोगकर्ताओं',
             'filters' => [
                 'status' => 'स्थिति',
-                'active' => 'Active',
+                'active' => 'सक्रिय',
                 'all'    => 'सभी',
             ],
         ],

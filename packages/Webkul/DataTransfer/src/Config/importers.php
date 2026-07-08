@@ -17,6 +17,54 @@ return [
         'has_file_options' => true,
     ],
 
+    'attributes' => [
+        'title'            => 'data_transfer::app.importers.attributes.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Attribute\Importer',
+        'sample_path'      => 'data-transfer/samples/attributes.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\AttributeJobValidator',
+        'has_file_options' => true,
+    ],
+
+    'category-fields' => [
+        'title'            => 'data_transfer::app.importers.category-fields.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\CategoryField\Importer',
+        'sample_path'      => 'data-transfer/samples/category-fields.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\CategoryFieldJobValidator',
+        'has_file_options' => true,
+    ],
+
+    'attribute-groups' => [
+        'title'            => 'data_transfer::app.importers.attribute-groups.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\AttributeGroup\Importer',
+        'sample_path'      => 'data-transfer/samples/attribute-groups.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\AttributeGroupJobValidator',
+        'has_file_options' => true,
+    ],
+
+    'attribute-families' => [
+        'title'            => 'data_transfer::app.importers.attribute-families.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\AttributeFamily\Importer',
+        'sample_path'      => 'data-transfer/samples/attribute-families.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\AttributeFamilyJobValidator',
+        'has_file_options' => true,
+    ],
+
+    'attribute-options' => [
+        'title'            => 'data_transfer::app.importers.attribute-options.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\AttributeOption\Importer',
+        'sample_path'      => 'data-transfer/samples/attribute-options.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\AttributeOptionJobValidator',
+        'has_file_options' => true,
+    ],
+
+    'locales' => [
+        'title'            => 'data_transfer::app.importers.locales.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Locale\Importer',
+        'sample_path'      => 'data-transfer/samples/locales.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\LocaleJobValidator',
+        'has_file_options' => true,
+    ],
+
     'channels' => [
         'title'            => 'data_transfer::app.importers.channels.title',
         'importer'         => 'Webkul\DataTransfer\Helpers\Importers\Channel\Importer',
@@ -34,18 +82,18 @@ return [
         'filters'          => [
             'fields' => [
                 [
-                    'name'       => 'status',
-                    'title'      => 'Status',
-                    'required'   => false,
-                    'type'       => 'select',
-                    'options'    => [
+                    'name'     => 'status',
+                    'title'    => 'data_transfer::app.importers.currencies.filters.status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
                         [
                             'value' => 'enable',
-                            'label' => 'Enable',
+                            'label' => 'data_transfer::app.importers.currencies.filters.enable',
                         ],
                         [
                             'value' => 'all',
-                            'label' => 'All',
+                            'label' => 'data_transfer::app.importers.currencies.filters.all',
                         ],
                     ],
                 ],
@@ -70,17 +118,17 @@ return [
         'filters'          => [
             'fields' => [
                 [
-                    'name'       => 'status',
-                    'title'      => 'Status',
-                    'required'   => false,
-                    'type'       => 'select',
-                    'options'    => [
+                    'name'     => 'status',
+                    'title'    => 'data_transfer::app.importers.users.filters.status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
                         [
-                            'label' => 'Active',
+                            'label' => 'data_transfer::app.importers.users.filters.active',
                             'value' => 'active',
                         ],
                         [
-                            'label' => 'All',
+                            'label' => 'data_transfer::app.importers.users.filters.all',
                             'value' => 'all',
                         ],
                     ],

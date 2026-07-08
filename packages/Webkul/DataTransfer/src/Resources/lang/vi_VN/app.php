@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Trường danh mục',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Mã trường danh mục :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã trường danh mục để xóa.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Mã thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete'             => 'Không tìm thấy mã thuộc tính để xóa.',
+                    'code_is_system_and_cannot_be_deleted' => 'Không thể xóa thuộc tính hệ thống.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Nhóm thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Mã nhóm thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete'             => 'Không tìm thấy mã nhóm thuộc tính để xóa.',
+                    'code_is_system_and_cannot_be_deleted' => 'Không thể xóa nhóm thuộc tính hệ thống.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Họ thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Mã họ thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã họ thuộc tính để xóa.',
+                    'invalid-attribute-group'  => 'Nhóm thuộc tính ":code" không tồn tại.',
+                    'invalid-attribute'        => 'Thuộc tính ":code" không tồn tại.',
+                    'invalid-channel'          => 'Kênh ":code" không tồn tại.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Tùy chọn thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Mã tùy chọn thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã tùy chọn thuộc tính để xóa.',
+                    'locale-not-exist'         => 'Vị trí ":code" không tồn tại.',
+                    'invalid-attribute'        => 'Thuộc tính ":code" không tồn tại.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Ngôn ngữ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Mã ngôn ngữ \'%s\' đã được nhập trong đợt này.',
+                    'code-not-found-to-delete'    => 'Không tìm thấy ngôn ngữ với mã \'%s\' trong hệ thống.',
+                    'invalid-status'              => 'Trạng thái phải là 0 hoặc 1 (hoặc để trống cho mặc định bật).',
+                    'channel-related-locale-root' => 'Bạn không thể xóa ngôn ngữ với mã :code vì nó liên kết với một kênh.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kênh',
             'validation' => [
@@ -45,18 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Các Tiền Tệ',
+            'filters' => [
+                'status' => 'Trạng thái',
+                'enable' => 'Bật',
+                'all'    => 'Tất cả',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Trạng thái phải là 0 hoặc 1 (hoặc để trống cho mặc định bật).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Vai trò',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Người dùng',
+            'filters' => [
+                'status' => 'Trạng thái',
+                'active' => 'Hoạt động',
+                'all'    => 'Tất cả',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -91,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Đường dẫn tệp',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Trạng thái',
             'enable'         => 'Bật',
@@ -152,20 +225,38 @@ return [
         'categories' => [
             'title' => 'Các danh mục',
         ],
+        'category-fields' => [
+            'title' => 'Trường danh mục',
+        ],
+        'attributes' => [
+            'title' => 'Thuộc tính',
+        ],
+        'attribute-groups' => [
+            'title' => 'Nhóm thuộc tính',
+        ],
+        'attribute-families' => [
+            'title' => 'Họ thuộc tính',
+        ],
+        'attribute-options' => [
+            'title' => 'Tùy chọn thuộc tính',
+        ],
+        'locales' => [
+            'title' => 'Ngôn ngữ',
+        ],
         'channels' => [
             'title' => 'Kênh',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Các Tiền Tệ',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Vai trò',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Người dùng',
             'filters' => [
                 'status' => 'Trạng thái',
-                'active' => 'Active',
+                'active' => 'Hoạt động',
                 'all'    => 'Tất cả',
             ],
         ],

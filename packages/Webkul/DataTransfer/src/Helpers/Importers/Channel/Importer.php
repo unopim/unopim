@@ -81,9 +81,6 @@ class Importer extends AbstractImporter
         $this->initLocalesAndCurrencies();
     }
 
-    /**
-     * Initialize Product error templates
-     */
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -93,18 +90,12 @@ class Importer extends AbstractImporter
         parent::initErrorMessages();
     }
 
-    /**
-     * Initialize locales and currencies
-     */
     protected function initLocalesAndCurrencies(): void
     {
         $this->activeLocales = $this->localeRepository->getActiveLocales()->pluck('id', 'code')->toArray();
         $this->activeCurrencies = $this->currencyRepository->getActiveCurrencies()->pluck('id', 'code')->toArray();
     }
 
-    /**
-     * Validates row
-     */
     public function validateRow(array $rowData, int $rowNumber): bool
     {
         if (isset($this->validatedRows[$rowNumber])) {
@@ -174,9 +165,6 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
-    /**
-     * Start the import process
-     */
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -201,9 +189,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Delete channels from current batch
-     */
     protected function deleteChannelData(JobTrackBatchContract $batch): bool
     {
         foreach ($batch->data as $rowData) {
@@ -227,9 +212,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Save channel from current batch
-     */
     protected function saveChannelData(JobTrackBatchContract $batch): bool
     {
         $channelsData = [];

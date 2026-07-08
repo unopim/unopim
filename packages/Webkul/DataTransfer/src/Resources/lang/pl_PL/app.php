@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Pola kategorii',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod pola kategorii :code jest już używany.',
+                    'code_not_found_to_delete' => 'Nie znaleziono kodu pola kategorii do usunięcia.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atrybuty',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod atrybutu :code jest już w użyciu.',
+                    'code_not_found_to_delete'             => 'Nie znaleziono kodu atrybutu do usunięcia.',
+                    'code_is_system_and_cannot_be_deleted' => 'Nie można usunąć atrybutu systemowego.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupy atrybutów',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod grupy atrybutów :code jest już w użyciu.',
+                    'code_not_found_to_delete'             => 'Nie znaleziono kodu grupy atrybutów do usunięcia.',
+                    'code_is_system_and_cannot_be_deleted' => 'Nie można usunąć systemowej grupy atrybutów.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Rodziny atrybutów',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod rodziny atrybutów :code jest już w użyciu.',
+                    'code_not_found_to_delete' => 'Nie znaleziono kodu rodziny atrybutów do usunięcia.',
+                    'invalid-attribute-group'  => 'Grupa atrybutów ":code" nie istnieje.',
+                    'invalid-attribute'        => 'Atrybut ":code" nie istnieje.',
+                    'invalid-channel'          => 'Kanał ":code" nie istnieje.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opcje atrybutu',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod opcji atrybutu :code jest już w użyciu.',
+                    'code_not_found_to_delete' => 'Nie znaleziono kodu opcji atrybutu do usunięcia.',
+                    'locale-not-exist'         => 'Ustawienia regionalne ":code" nie istnieją.',
+                    'invalid-attribute'        => 'Atrybut ":code" nie istnieje.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Języki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kod języka \'%s\' został już zaimportowany w tej partii.',
+                    'code-not-found-to-delete'    => 'Nie znaleziono języka o kodzie \'%s\' w systemie.',
+                    'invalid-status'              => 'Status musi wynosić 0 lub 1 (lub pusty dla domyślnie włączonego).',
+                    'channel-related-locale-root' => 'Nie możesz usunąć języka o kodzie :code, ponieważ jest powiązany z kanałem.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanały',
             'validation' => [
@@ -45,18 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Waluty',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Włącz',
+                'all'    => 'Wszystkie',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status musi wynosić 0 lub 1 (lub pusty dla domyślnie włączonego).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Role',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Użytkownicy',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktywny',
+                'all'    => 'Wszystkie',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -91,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Ścieżka pliku',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Włączony',
@@ -152,20 +225,38 @@ return [
         'categories' => [
             'title' => 'Kategorie',
         ],
+        'category-fields' => [
+            'title' => 'Pola kategorii',
+        ],
+        'attributes' => [
+            'title' => 'Atrybuty',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupy atrybutów',
+        ],
+        'attribute-families' => [
+            'title' => 'Rodziny atrybutów',
+        ],
+        'attribute-options' => [
+            'title' => 'Opcje atrybutu',
+        ],
+        'locales' => [
+            'title' => 'Języki',
+        ],
         'channels' => [
             'title' => 'Kanały',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Waluty',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Role',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Użytkownicy',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Aktywne',
                 'all'    => 'Wszystkie',
             ],
         ],

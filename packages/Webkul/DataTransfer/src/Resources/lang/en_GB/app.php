@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Category Fields',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Category field code :code is already in use.',
+                    'code_not_found_to_delete' => 'Category field code not found for deletion.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attributes',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribute code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
+                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attribute Groups',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribute group code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute group code not found for deletion.',
+                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attribute Families',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribute family code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
+                    'invalid-attribute-group'  => 'Attribute group ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                    'invalid-channel'          => 'Channel ":code" does not exist.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attribute Options',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribute option code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
+                    'locale-not-exist'         => 'Locale ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Target Locales',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Locale code \'%s\' has already been imported in this batch.',
+                    'code-not-found-to-delete'    => 'Locale with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete locale with code :code that is associated with a channel.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Channels',
             'validation' => [
@@ -45,7 +108,12 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Currencies',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Enable',
+                'all'    => 'All',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -106,7 +179,7 @@ return [
                 'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
                 'currencies'           => 'Currencies',
                 'currencies-info'      => 'Price attributes are exported per selected currency. Leave empty to export every channel currency.',
-                'locales'              => 'Locales',
+                'locales'              => 'Target Locales',
                 'locales-info'         => 'Localizable attributes are exported once per selected locale. Leave empty to export every channel locale.',
                 'attributes'           => 'Attributes',
                 'attributes-info'      => 'Only the selected attributes are exported. Leave empty to export every attribute in the family.',
@@ -151,6 +224,24 @@ return [
         ],
         'categories' => [
             'title' => 'Categories',
+        ],
+        'category-fields' => [
+            'title' => 'Category Fields',
+        ],
+        'attributes' => [
+            'title' => 'Attributes',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attribute Groups',
+        ],
+        'attribute-families' => [
+            'title' => 'Attribute Families',
+        ],
+        'attribute-options' => [
+            'title' => 'Attribute Options',
+        ],
+        'locales' => [
+            'title' => 'Target Locales',
         ],
         'channels' => [
             'title' => 'Channels',

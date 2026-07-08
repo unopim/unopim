@@ -1,0 +1,91 @@
+code,locale,name,attribute_group,attributes,completeness
+default,de_DE,Accessories,general,sku,"default,ecommerce,Sales"
+default,en_US,Default,general,sku,"default,ecommerce,Sales"
+default,fr_FR,Accessories,general,sku,"default,ecommerce,Sales"
+default,de_DE,Accessories,general,name,"default,ecommerce,Sales"
+default,en_US,Default,general,name,"default,ecommerce,Sales"
+default,fr_FR,Accessories,general,name,"default,ecommerce,Sales"
+default,de_DE,Accessories,general,url_key,"default,Sales"
+default,en_US,Default,general,url_key,"default,Sales"
+default,fr_FR,Accessories,general,url_key,"default,Sales"
+default,de_DE,Accessories,general,color,"default,ecommerce"
+default,en_US,Default,general,color,"default,ecommerce"
+default,fr_FR,Accessories,general,color,"default,ecommerce"
+default,de_DE,Accessories,general,size,"default,ecommerce"
+default,en_US,Default,general,size,"default,ecommerce"
+default,fr_FR,Accessories,general,size,"default,ecommerce"
+default,de_DE,Accessories,general,product_number,"default,ecommerce"
+default,en_US,Default,general,product_number,"default,ecommerce"
+default,fr_FR,Accessories,general,product_number,"default,ecommerce"
+default,de_DE,Accessories,description,short_description,default
+default,en_US,Default,description,short_description,default
+default,fr_FR,Accessories,description,short_description,default
+default,de_DE,Accessories,description,description,"default,ecommerce"
+default,en_US,Default,description,description,"default,ecommerce"
+default,fr_FR,Accessories,description,description,"default,ecommerce"
+default,de_DE,Accessories,meta_description,meta_title,"default,Sales"
+default,en_US,Default,meta_description,meta_title,"default,Sales"
+default,fr_FR,Accessories,meta_description,meta_title,"default,Sales"
+default,de_DE,Accessories,meta_description,meta_keywords,"default,Sales"
+default,en_US,Default,meta_description,meta_keywords,"default,Sales"
+default,fr_FR,Accessories,meta_description,meta_keywords,"default,Sales"
+default,de_DE,Accessories,meta_description,meta_description,default
+default,en_US,Default,meta_description,meta_description,default
+default,fr_FR,Accessories,meta_description,meta_description,default
+default,de_DE,Accessories,price,price,"default,ecommerce,Sales"
+default,en_US,Default,price,price,"default,ecommerce,Sales"
+default,fr_FR,Accessories,price,price,"default,ecommerce,Sales"
+default,de_DE,Accessories,price,cost,"default,ecommerce,Sales"
+default,en_US,Default,price,cost,"default,ecommerce,Sales"
+default,fr_FR,Accessories,price,cost,"default,ecommerce,Sales"
+default,de_DE,Accessories,media,image,"default,ecommerce,Sales"
+default,en_US,Default,media,image,"default,ecommerce,Sales"
+default,fr_FR,Accessories,media,image,"default,ecommerce,Sales"
+default,de_DE,Accessories,media,Gallery,default
+default,en_US,Default,media,Gallery,default
+default,fr_FR,Accessories,media,Gallery,default
+default,de_DE,Accessories,media,File,"default,ecommerce,Sales"
+default,en_US,Default,media,File,"default,ecommerce,Sales"
+default,fr_FR,Accessories,media,File,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",general,sku,
+Camcorders,en_US,Camcorders,general,sku,
+Camcorders,fr_FR,"Caméscopes numériques",general,sku,
+Camcorders,de_DE,"Digitale Videokameras",general,name,
+Camcorders,en_US,Camcorders,general,name,
+Camcorders,fr_FR,"Caméscopes numériques",general,name,
+Camcorders,de_DE,"Digitale Videokameras",general,url_key,
+Camcorders,en_US,Camcorders,general,url_key,
+Camcorders,fr_FR,"Caméscopes numériques",general,url_key,
+Camcorders,de_DE,"Digitale Videokameras",general,short_description,"default,ecommerce,Sales"
+Camcorders,en_US,Camcorders,general,short_description,"default,ecommerce,Sales"
+Camcorders,fr_FR,"Caméscopes numériques",general,short_description,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",description,meta_keywords,"default,ecommerce,Sales"
+Camcorders,en_US,Camcorders,description,meta_keywords,"default,ecommerce,Sales"
+Camcorders,fr_FR,"Caméscopes numériques",description,meta_keywords,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",description,meta_description,"default,ecommerce,Sales"
+Camcorders,en_US,Camcorders,description,meta_description,"default,ecommerce,Sales"
+Camcorders,fr_FR,"Caméscopes numériques",description,meta_description,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",description,weight,"default,ecommerce,Sales"
+Camcorders,en_US,Camcorders,description,weight,"default,ecommerce,Sales"
+Camcorders,fr_FR,"Caméscopes numériques",description,weight,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",description,color,"default,ecommerce,Sales"
+Camcorders,en_US,Camcorders,description,color,"default,ecommerce,Sales"
+Camcorders,fr_FR,"Caméscopes numériques",description,color,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",meta_description,width,"default,ecommerce,Sales"
+Camcorders,en_US,Camcorders,meta_description,width,"default,ecommerce,Sales"
+Camcorders,fr_FR,"Caméscopes numériques",meta_description,width,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",meta_description,brand,"default,ecommerce,Sales"
+Camcorders,en_US,Camcorders,meta_description,brand,"default,ecommerce,Sales"
+Camcorders,fr_FR,"Caméscopes numériques",meta_description,brand,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",price,price,"default,ecommerce,Sales"
+Camcorders,en_US,Camcorders,price,price,"default,ecommerce,Sales"
+Camcorders,fr_FR,"Caméscopes numériques",price,price,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",price,cost,"default,ecommerce,Sales"
+Camcorders,en_US,Camcorders,price,cost,"default,ecommerce,Sales"
+Camcorders,fr_FR,"Caméscopes numériques",price,cost,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",price,product_number,"default,ecommerce,Sales"
+Camcorders,en_US,Camcorders,price,product_number,"default,ecommerce,Sales"
+Camcorders,fr_FR,"Caméscopes numériques",price,product_number,"default,ecommerce,Sales"
+Camcorders,de_DE,"Digitale Videokameras",media,image,
+Camcorders,en_US,Camcorders,media,image,
+Camcorders,fr_FR,"Caméscopes numériques",media,image,

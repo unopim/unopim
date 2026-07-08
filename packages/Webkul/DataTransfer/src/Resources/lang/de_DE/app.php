@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Kategoriefelder',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Der Code des Kategoriefeldes :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Der Code des Kategoriefeldes wurde zum Löschen nicht gefunden.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attribute',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributcode :code wird bereits verwendet.',
+                    'code_not_found_to_delete'             => 'Attributcode zum Löschen nicht gefunden.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattribut kann nicht gelöscht werden.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attributgruppen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributgruppencode :code wird bereits verwendet.',
+                    'code_not_found_to_delete'             => 'Attributgruppencode zum Löschen nicht gefunden.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributgruppe kann nicht gelöscht werden.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attributfamilien',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributfamiliencode :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Attributfamiliencode zum Löschen nicht gefunden.',
+                    'invalid-attribute-group'  => 'Attributgruppe ":code" existiert nicht.',
+                    'invalid-attribute'        => 'Attribut ":code" existiert nicht.',
+                    'invalid-channel'          => 'Kanal ":code" existiert nicht.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attributoptionen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributoptionscode :code wird bereits verwendet.',
+                    'code_not_found_to_delete' => 'Attributoptionscode zum Löschen nicht gefunden.',
+                    'locale-not-exist'         => 'Gebietsschema ":code" existiert nicht.',
+                    'invalid-attribute'        => 'Attribut ":code" existiert nicht.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Gebietsschemata',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Der Sprachcode \'%s\' wurde bereits in diesem Batch importiert.',
+                    'code-not-found-to-delete'    => 'Sprache mit dem Code \'%s\' wurde im System nicht gefunden.',
+                    'invalid-status'              => 'Der Status muss 0 oder 1 sein (oder leer für standardmäßig aktiviert).',
+                    'channel-related-locale-root' => 'Sie können die Sprache mit dem Code :code nicht löschen, da sie mit einem Kanal verknüpft ist.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanäle',
             'validation' => [
@@ -45,18 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Währungen',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Aktiviert',
+                'all'    => 'Alle',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Der Status muss 0 oder 1 sein (oder leer für standardmäßig aktiviert).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Rollen',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Benutzer',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alle',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -91,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Dateipfad',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Aktiviert',
@@ -134,7 +207,7 @@ return [
                     'disable' => 'Deaktiviert',
                     'all'     => 'Alle',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Artikelnummer',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Bezeichner',
                 'identifiers-info' => 'Fügen Sie pro Zeile eine SKU / einen Bezeichner ein, um nur diese Produkte zu exportieren. Leer lassen, um alle Produkte zu exportieren.',
@@ -152,20 +225,38 @@ return [
         'categories' => [
             'title' => 'Kategorien',
         ],
+        'category-fields' => [
+            'title' => 'Kategoriefelder',
+        ],
+        'attributes' => [
+            'title' => 'Attribute',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attributgruppen',
+        ],
+        'attribute-families' => [
+            'title' => 'Attributfamilien',
+        ],
+        'attribute-options' => [
+            'title' => 'Attributoptionen',
+        ],
+        'locales' => [
+            'title' => 'Gebietsschemata',
+        ],
         'channels' => [
             'title' => 'Kanäle',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Währungen',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Rollen',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Benutzer',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Aktiv',
                 'all'    => 'Alle',
             ],
         ],
