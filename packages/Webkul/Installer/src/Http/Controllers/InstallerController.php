@@ -232,6 +232,10 @@ class InstallerController extends Controller
     {
         $this->abortIfInstalled();
 
+        // Refuse to rewrite a live .env when the database is already populated,
+        // even if the install marker/flag were lost (prevents the .env-reset takeover).
+        $this->abortIfDatabasePopulated();
+
         $request = $request->all();
 
         if (isset($request['db_prefix'])) {
@@ -835,6 +839,8 @@ class InstallerController extends Controller
     public function smtpConfigSetup()
     {
         $this->abortIfInstalled();
+
+        $this->abortIfDatabasePopulated();
 
         $this->environmentManager->setEnvConfiguration(request()->input());
 
