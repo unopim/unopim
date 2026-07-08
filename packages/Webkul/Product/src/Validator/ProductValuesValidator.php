@@ -39,7 +39,7 @@ class ProductValuesValidator
     /**
      * Validate different sections data in product values json
      *
-     * @throws Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function validate(mixed $data, array $options = [], ?int $productId = null): void
     {
@@ -77,7 +77,7 @@ class ProductValuesValidator
     /**
      * Validate different sections data in product values json
      *
-     * @throws Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function validateOnlyExistingSectionData(mixed $data, array $options = [], ?int $productId = null): void
     {
