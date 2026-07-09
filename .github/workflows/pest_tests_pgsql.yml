@@ -67,7 +67,13 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
-        run: vendor/bin/pest --colors=always
+        run: |
+          # Run heavy suites in separate PHP processes so memory is released
+          # between them. The full suite in a single process peaked past the
+          # runner memory limit and was OOM-killed (exit 137).
+          vendor/bin/pest --testsuite "Admin Feature Test" --colors=always
+          vendor/bin/pest --testsuite "Api Feature Test,DataTransfer Unit Test" --colors=always
+          vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
 
   pest-pgsql-elasticsearch:
     runs-on: ubuntu-24.04
@@ -150,4 +156,10 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
-        run: vendor/bin/pest --colors=always
+        run: |
+          # Run heavy suites in separate PHP processes so memory is released
+          # between them. The full suite in a single process peaked past the
+          # runner memory limit and was OOM-killed (exit 137).
+          vendor/bin/pest --testsuite "Admin Feature Test" --colors=always
+          vendor/bin/pest --testsuite "Api Feature Test,DataTransfer Unit Test" --colors=always
+          vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
