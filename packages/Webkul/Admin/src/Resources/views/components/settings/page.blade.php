@@ -1,12 +1,11 @@
 @props([
     'title',
-    'info'       => '',
-    'back'       => null,
-    'action'     => null,
-    'method'     => 'POST',
-    'ajax'       => false,
-    'enctype'    => null,
-    'trackDirty' => false,
+    'info'    => '',
+    'back'    => null,
+    'action'  => null,
+    'method'  => 'POST',
+    'ajax'    => false,
+    'enctype' => null,
 ])
 
 {{--
@@ -20,11 +19,12 @@
     <x-slot:title>{{ $title }}</x-slot>
 
     @if ($action)
+        {{-- track-dirty defaults to true (form default), so saving flows through the
+             global unsaved-changes bar — same as every other admin edit page. --}}
         <x-admin::form
             :action="$action"
             :method="$method"
             :ajax="$ajax"
-            :track-dirty="$trackDirty"
             enctype="{{ $enctype }}"
         >
             <x-admin::settings.page-header :title="$title" :info="$info" :back="$back">
