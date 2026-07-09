@@ -47,33 +47,30 @@
 
     @push('scripts')
         <script>
-            (() => {
-                const input = document.querySelector('input[data-settings-search]');
-
-                if (! input) {
+            // Delegated on document so it survives the search field's Vue re-render.
+            document.addEventListener('input', (event) => {
+                if (! event.target.matches('[data-settings-search]')) {
                     return;
                 }
 
-                input.addEventListener('input', () => {
-                    const query = input.value.trim().toLowerCase();
+                const query = event.target.value.trim().toLowerCase();
 
-                    document.querySelectorAll('[data-settings-section]').forEach((section) => {
-                        let anyVisible = false;
+                document.querySelectorAll('[data-settings-section]').forEach((section) => {
+                    let anyVisible = false;
 
-                        section.querySelectorAll('[data-settings-row]').forEach((row) => {
-                            const match = row.getAttribute('data-search').includes(query);
+                    section.querySelectorAll('[data-settings-row]').forEach((row) => {
+                        const match = row.getAttribute('data-search').includes(query);
 
-                            row.style.display = match ? '' : 'none';
+                        row.style.display = match ? '' : 'none';
 
-                            if (match) {
-                                anyVisible = true;
-                            }
-                        });
-
-                        section.style.display = anyVisible ? '' : 'none';
+                        if (match) {
+                            anyVisible = true;
+                        }
                     });
+
+                    section.style.display = anyVisible ? '' : 'none';
                 });
-            })();
+            });
         </script>
     @endpush
 </x-admin::layouts>
