@@ -45,7 +45,7 @@ return [
         'key'          => 'system.email',
         'name'         => 'admin::app.settings.system-settings.email.title',
         'info'         => 'admin::app.settings.system-settings.email.info',
-        'icon'         => 'icon-notification',
+        'icon'         => 'icon-at',
         // References the existing core-config group so saved codes stay put.
         'config_group' => 'emails.configure.email_settings',
         'acl'          => 'configuration.system_settings',
