@@ -10,6 +10,7 @@ parameters:
     level: max
 
     excludePaths:
+        - packages/*/vendor/*
         - packages/*/tests/*
         - packages/*/src/Database/Migration/*
         - packages/*/src/Resources/*
