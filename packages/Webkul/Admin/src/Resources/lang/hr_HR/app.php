@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Trenutno prijavljeni korisnik se ne može obrisati.',
         ],
         'system-settings' => [
-            'info' => 'Upravljajte izgledom, e-poštom (SMTP) i ispravljanjem pogrešaka s jednog mjesta.',
+            'title'              => 'Postavke sustava',
+            'info'               => 'Upravljajte izgledom, e-poštom (SMTP) i ispravljanjem pogrešaka s jednog mjesta.',
+            'search-placeholder' => 'Pretraži postavke',
+            'save-btn'           => 'Spremi',
+            'save-message'       => 'Postavke su uspješno spremljene.',
+            'system'             => [
+                'title' => 'Sustav',
+                'info'  => 'Osnovne postavke aplikacije.',
+            ],
+            'email'              => [
+                'title' => 'E-pošta',
+                'info'  => 'SMTP pošiljatelj i vjerodajnice.',
+            ],
+            'debug'              => [
+                'title' => 'Ispravljanje pogrešaka',
+                'info'  => 'Ispravljanje pogrešaka i bilježenje aplikacije.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logotip, favicon i tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

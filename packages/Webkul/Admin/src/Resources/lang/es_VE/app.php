@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'No se puede eliminar al usuario actual.',
         ],
         'system-settings' => [
-            'info' => 'Gestiona la apariencia, el correo electrónico (SMTP) y la depuración desde un solo lugar.',
+            'title'              => 'Configuración del sistema',
+            'info'               => 'Gestiona la apariencia, el correo electrónico (SMTP) y la depuración desde un solo lugar.',
+            'search-placeholder' => 'Buscar configuración',
+            'save-btn'           => 'Guardar',
+            'save-message'       => 'Configuración guardada correctamente.',
+            'system'             => [
+                'title' => 'Sistema',
+                'info'  => 'Configuración principal de la aplicación.',
+            ],
+            'email'              => [
+                'title' => 'Correo electrónico',
+                'info'  => 'Remitente y credenciales SMTP.',
+            ],
+            'debug'              => [
+                'title' => 'Depuración',
+                'info'  => 'Depuración y registro de la aplicación.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logotipo, favicon y tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

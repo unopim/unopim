@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => '已登录用户无法删除',
         ],
         'system-settings' => [
-            'info' => '在一个地方管理外观、电子邮件 (SMTP) 和调试设置。',
+            'title'              => '系统设置',
+            'info'               => '在一个地方管理外观、电子邮件 (SMTP) 和调试设置。',
+            'search-placeholder' => '搜索设置',
+            'save-btn'           => '保存',
+            'save-message'       => '设置已成功保存。',
+            'system'             => [
+                'title' => '系统',
+                'info'  => '核心应用程序设置。',
+            ],
+            'email'              => [
+                'title' => '电子邮件',
+                'info'  => 'SMTP 发件人和凭据。',
+            ],
+            'debug'              => [
+                'title' => '调试',
+                'info'  => '应用程序调试和日志记录。',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => '徽标、图标和主题。',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'ログインユーザーは削除できません',
         ],
         'system-settings' => [
-            'info' => '外観、メール（SMTP）、デバッグの設定を一か所で管理できます。',
+            'title'              => 'システム設定',
+            'info'               => '外観、メール（SMTP）、デバッグの設定を一か所で管理できます。',
+            'search-placeholder' => '設定を検索',
+            'save-btn'           => '保存',
+            'save-message'       => '設定が正常に保存されました。',
+            'system'             => [
+                'title' => 'システム',
+                'info'  => 'アプリケーションの基本設定。',
+            ],
+            'email'              => [
+                'title' => 'メール',
+                'info'  => 'SMTP送信者と認証情報。',
+            ],
+            'debug'              => [
+                'title' => 'デバッグ',
+                'info'  => 'アプリケーションのデバッグとログ記録。',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'ロゴ、ファビコン、テーマ。',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

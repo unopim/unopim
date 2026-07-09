@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Kirjautunutta käyttäjää ei voi poistaa.',
         ],
         'system-settings' => [
-            'info' => 'Hallitse ulkoasua, sähköpostia (SMTP) ja virheenkorjausta yhdestä paikasta.',
+            'title'              => 'Järjestelmäasetukset',
+            'info'               => 'Hallitse ulkoasua, sähköpostia (SMTP) ja virheenkorjausta yhdestä paikasta.',
+            'search-placeholder' => 'Hae asetuksia',
+            'save-btn'           => 'Tallenna',
+            'save-message'       => 'Asetukset tallennettu onnistuneesti.',
+            'system'             => [
+                'title' => 'Järjestelmä',
+                'info'  => 'Sovelluksen perusasetukset.',
+            ],
+            'email'              => [
+                'title' => 'Sähköposti',
+                'info'  => 'SMTP-lähettäjä ja tunnistetiedot.',
+            ],
+            'debug'              => [
+                'title' => 'Virheenkorjaus',
+                'info'  => 'Sovelluksen virheenkorjaus ja lokitus.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon ja teema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

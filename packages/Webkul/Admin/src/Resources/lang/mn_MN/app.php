@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Нэвтэрсэн хэрэглэгчийг устгах боломжгүй',
         ],
         'system-settings' => [
-            'info' => 'Харагдац, имэйл (SMTP), дибаг тохиргоог нэг дороос удирдана.',
+            'info'               => 'Харагдац, имэйл (SMTP), дибаг тохиргоог нэг дороос удирдана.',
+            'title'              => 'Системийн тохиргоо',
+            'search-placeholder' => 'Тохиргоо хайх',
+            'save-btn'           => 'Хадгалах',
+            'save-message'       => 'Тохиргоо амжилттай хадгалагдлаа.',
+            'system'             => [
+                'title' => 'Систем',
+                'info'  => 'Үндсэн програмын тохиргоо.',
+            ],
+            'email'              => [
+                'title' => 'Имэйл',
+                'info'  => 'SMTP илгээгч болон нэвтрэх мэдээлэл.',
+            ],
+            'debug'              => [
+                'title' => 'Дибаг',
+                'info'  => 'Програмын дибаг болон логлолт.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Лого, favicon болон загвар.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

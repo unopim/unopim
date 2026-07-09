@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Pengguna yang masuk tidak dapat dihapus',
         ],
         'system-settings' => [
-            'info' => 'Kelola tampilan, email (SMTP), dan debug dari satu tempat.',
+            'title'              => 'Pengaturan Sistem',
+            'info'               => 'Kelola tampilan, email (SMTP), dan debug dari satu tempat.',
+            'search-placeholder' => 'Cari pengaturan',
+            'save-btn'           => 'Simpan',
+            'save-message'       => 'Pengaturan berhasil disimpan.',
+            'system'             => [
+                'title' => 'Sistem',
+                'info'  => 'Pengaturan inti aplikasi.',
+            ],
+            'email'              => [
+                'title' => 'Email',
+                'info'  => 'Pengirim dan kredensial SMTP.',
+            ],
+            'debug'              => [
+                'title' => 'Debug',
+                'info'  => 'Debug dan pencatatan aplikasi.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon, dan tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

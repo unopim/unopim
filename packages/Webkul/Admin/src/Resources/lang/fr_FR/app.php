@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'L\'utilisateur connecté ne peut pas être supprimé',
         ],
         'system-settings' => [
-            'info' => 'Gérez l\'apparence, l\'e-mail (SMTP) et le débogage depuis un seul endroit.',
+            'title'              => 'Paramètres système',
+            'info'               => 'Gérez l\'apparence, l\'e-mail (SMTP) et le débogage depuis un seul endroit.',
+            'search-placeholder' => 'Rechercher des paramètres',
+            'save-btn'           => 'Enregistrer',
+            'save-message'       => 'Paramètres enregistrés avec succès.',
+            'system'             => [
+                'title' => 'Système',
+                'info'  => 'Paramètres principaux de l\'application.',
+            ],
+            'email'              => [
+                'title' => 'E-mail',
+                'info'  => 'Expéditeur et identifiants SMTP.',
+            ],
+            'debug'              => [
+                'title' => 'Débogage',
+                'info'  => 'Débogage et journalisation de l\'application.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon et thème.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

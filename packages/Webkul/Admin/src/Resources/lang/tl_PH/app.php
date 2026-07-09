@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Hindi maaaring tanggalin ang kasalukuyang naka-login na gumagamit.',
         ],
         'system-settings' => [
-            'info' => 'Pamahalaan ang hitsura, email (SMTP), at debug mula sa iisang lugar.',
+            'title'              => 'Mga Setting ng Sistema',
+            'info'               => 'Pamahalaan ang hitsura, email (SMTP), at debug mula sa iisang lugar.',
+            'search-placeholder' => 'Maghanap ng mga setting',
+            'save-btn'           => 'I-save',
+            'save-message'       => 'Matagumpay na na-save ang mga setting.',
+            'system'             => [
+                'title' => 'Sistema',
+                'info'  => 'Mga pangunahing setting ng application.',
+            ],
+            'email'              => [
+                'title' => 'Email',
+                'info'  => 'Nagpapadala ng SMTP at mga kredensyal.',
+            ],
+            'debug'              => [
+                'title' => 'Debug',
+                'info'  => 'Debug at pag-log ng application.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon at tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'De ingelogde gebruiker kan niet worden verwijderd.',
         ],
         'system-settings' => [
-            'info' => 'Beheer weergave, e-mail (SMTP) en foutopsporing vanaf één plek.',
+            'info'               => 'Beheer weergave, e-mail (SMTP) en foutopsporing vanaf één plek.',
+            'title'              => 'Systeeminstellingen',
+            'search-placeholder' => 'Instellingen zoeken',
+            'save-btn'           => 'Opslaan',
+            'save-message'       => 'Instellingen succesvol opgeslagen.',
+            'system'             => [
+                'title' => 'Systeem',
+                'info'  => 'Kerninstellingen van de applicatie.',
+            ],
+            'email'              => [
+                'title' => 'E-mail',
+                'info'  => 'SMTP-afzender en inloggegevens.',
+            ],
+            'debug'              => [
+                'title' => 'Foutopsporing',
+                'info'  => 'Foutopsporing en logging van de applicatie.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon en thema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

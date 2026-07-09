@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Nie można usunąć zalogowanego użytkownika.',
         ],
         'system-settings' => [
-            'info' => 'Zarządzaj wyglądem, pocztą e-mail (SMTP) i debugowaniem w jednym miejscu.',
+            'info'               => 'Zarządzaj wyglądem, pocztą e-mail (SMTP) i debugowaniem w jednym miejscu.',
+            'title'              => 'Ustawienia systemu',
+            'search-placeholder' => 'Szukaj ustawień',
+            'save-btn'           => 'Zapisz',
+            'save-message'       => 'Ustawienia zostały zapisane pomyślnie.',
+            'system'             => [
+                'title' => 'System',
+                'info'  => 'Podstawowe ustawienia aplikacji.',
+            ],
+            'email'              => [
+                'title' => 'E-mail',
+                'info'  => 'Nadawca SMTP i dane uwierzytelniające.',
+            ],
+            'debug'              => [
+                'title' => 'Debugowanie',
+                'info'  => 'Debugowanie i rejestrowanie aplikacji.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon i motyw.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

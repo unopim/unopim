@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Не можна видалити поточного користувача.',
         ],
         'system-settings' => [
-            'info' => 'Керуйте виглядом, електронною поштою (SMTP) та налагодженням в одному місці.',
+            'title'              => 'Налаштування системи',
+            'info'               => 'Керуйте виглядом, електронною поштою (SMTP) та налагодженням в одному місці.',
+            'search-placeholder' => 'Пошук налаштувань',
+            'save-btn'           => 'Зберегти',
+            'save-message'       => 'Налаштування успішно збережено.',
+            'system'             => [
+                'title' => 'Система',
+                'info'  => 'Основні налаштування додатка.',
+            ],
+            'email'              => [
+                'title' => 'Електронна пошта',
+                'info'  => 'Відправник SMTP та облікові дані.',
+            ],
+            'debug'              => [
+                'title' => 'Налагодження',
+                'info'  => 'Налагодження та журналювання додатка.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Логотип, значок і тема.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

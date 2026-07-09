@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Den loggede bruger kan ikke slettes.',
         ],
         'system-settings' => [
-            'info' => 'Administrer udseende, e-mail (SMTP) og fejlfinding fra ét sted.',
+            'info'               => 'Administrer udseende, e-mail (SMTP) og fejlfinding fra ét sted.',
+            'title'              => 'Systemindstillinger',
+            'search-placeholder' => 'Søg i indstillinger',
+            'save-btn'           => 'Gem',
+            'save-message'       => 'Indstillinger gemt.',
+            'system'             => [
+                'title' => 'System',
+                'info'  => 'Grundlæggende programindstillinger.',
+            ],
+            'email'              => [
+                'title' => 'E-mail',
+                'info'  => 'SMTP-afsender og legitimationsoplysninger.',
+            ],
+            'debug'              => [
+                'title' => 'Fejlfinding',
+                'info'  => 'Programfejlfinding og logning.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon og tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

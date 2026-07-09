@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'لا يمكن حذف المستخدم الذي قام بتسجيل الدخول',
         ],
         'system-settings' => [
-            'info' => 'إدارة إعدادات المظهر والبريد الإلكتروني (SMTP) والتصحيح من مكان واحد.',
+            'info'               => 'إدارة إعدادات المظهر والبريد الإلكتروني (SMTP) والتصحيح من مكان واحد.',
+            'title'              => 'إعدادات النظام',
+            'search-placeholder' => 'البحث في الإعدادات',
+            'save-btn'           => 'حفظ',
+            'save-message'       => 'تم حفظ الإعدادات بنجاح.',
+            'system'             => [
+                'title' => 'النظام',
+                'info'  => 'إعدادات التطبيق الأساسية.',
+            ],
+            'email'              => [
+                'title' => 'البريد الإلكتروني',
+                'info'  => 'مُرسِل SMTP وبيانات الاعتماد.',
+            ],
+            'debug'              => [
+                'title' => 'التصحيح',
+                'info'  => 'تصحيح أخطاء التطبيق والتسجيل.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'الشعار والأيقونة المفضلة والمظهر.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

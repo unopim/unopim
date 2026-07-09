@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Não é possível excluir o usuário logado.',
         ],
         'system-settings' => [
-            'info' => 'Gerencie aparência, e-mail (SMTP) e depuração em um único lugar.',
+            'info'               => 'Gerencie aparência, e-mail (SMTP) e depuração em um único lugar.',
+            'title'              => 'Configurações do sistema',
+            'search-placeholder' => 'Pesquisar configurações',
+            'save-btn'           => 'Salvar',
+            'save-message'       => 'Configurações salvas com sucesso.',
+            'system'             => [
+                'title' => 'Sistema',
+                'info'  => 'Configurações principais da aplicação.',
+            ],
+            'email'              => [
+                'title' => 'E-mail',
+                'info'  => 'Remetente SMTP e credenciais.',
+            ],
+            'debug'              => [
+                'title' => 'Depuração',
+                'info'  => 'Depuração e registro da aplicação.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logotipo, favicon e tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

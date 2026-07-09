@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'The logged-in user cannot be deleted.',
         ],
         'system-settings' => [
-            'info' => 'Manage appearance, email (SMTP) and debug settings from a single place.',
+            'info'               => 'Manage appearance, email (SMTP) and debug settings from a single place.',
+            'title'              => 'System Settings',
+            'search-placeholder' => 'Search settings',
+            'save-btn'           => 'Save',
+            'save-message'       => 'Settings saved successfully.',
+            'system'             => [
+                'title' => 'System',
+                'info'  => 'Core application settings.',
+            ],
+            'email'              => [
+                'title' => 'Email',
+                'info'  => 'SMTP sender and credentials.',
+            ],
+            'debug'              => [
+                'title' => 'Debug',
+                'info'  => 'Application debug and logging.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon and theme.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

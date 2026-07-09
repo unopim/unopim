@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Giriş yapmış kullanıcı silinemez.',
         ],
         'system-settings' => [
-            'info' => 'Görünüm, e-posta (SMTP) ve hata ayıklama ayarlarını tek bir yerden yönetin.',
+            'title'              => 'Sistem Ayarları',
+            'info'               => 'Görünüm, e-posta (SMTP) ve hata ayıklama ayarlarını tek bir yerden yönetin.',
+            'search-placeholder' => 'Ayarlarda ara',
+            'save-btn'           => 'Kaydet',
+            'save-message'       => 'Ayarlar başarıyla kaydedildi.',
+            'system'             => [
+                'title' => 'Sistem',
+                'info'  => 'Temel uygulama ayarları.',
+            ],
+            'email'              => [
+                'title' => 'E-posta',
+                'info'  => 'SMTP gönderici ve kimlik bilgileri.',
+            ],
+            'debug'              => [
+                'title' => 'Hata Ayıklama',
+                'info'  => 'Uygulama hata ayıklama ve günlük kaydı.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon ve tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Nu se poate șterge utilizatorul conectat.',
         ],
         'system-settings' => [
-            'info' => 'Gestionează aspectul, e-mailul (SMTP) și depanarea dintr-un singur loc.',
+            'info'               => 'Gestionează aspectul, e-mailul (SMTP) și depanarea dintr-un singur loc.',
+            'title'              => 'Setări de sistem',
+            'search-placeholder' => 'Caută setări',
+            'save-btn'           => 'Salvează',
+            'save-message'       => 'Setările au fost salvate cu succes.',
+            'system'             => [
+                'title' => 'Sistem',
+                'info'  => 'Setări principale ale aplicației.',
+            ],
+            'email'              => [
+                'title' => 'E-mail',
+                'info'  => 'Expeditor SMTP și acreditări.',
+            ],
+            'debug'              => [
+                'title' => 'Depanare',
+                'info'  => 'Depanarea și înregistrarea aplicației.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon și temă.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

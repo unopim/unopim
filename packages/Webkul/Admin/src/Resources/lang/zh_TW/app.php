@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => '無法刪除當前用戶。',
         ],
         'system-settings' => [
-            'info' => '在同一處管理外觀、電子郵件 (SMTP) 與除錯設定。',
+            'title'              => '系統設定',
+            'info'               => '在同一處管理外觀、電子郵件 (SMTP) 與除錯設定。',
+            'search-placeholder' => '搜尋設定',
+            'save-btn'           => '儲存',
+            'save-message'       => '設定已成功儲存。',
+            'system'             => [
+                'title' => '系統',
+                'info'  => '核心應用程式設定。',
+            ],
+            'email'              => [
+                'title' => '電子郵件',
+                'info'  => 'SMTP 寄件者與憑證。',
+            ],
+            'debug'              => [
+                'title' => '偵錯',
+                'info'  => '應用程式偵錯與記錄。',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => '標誌、網站圖示與佈景主題。',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

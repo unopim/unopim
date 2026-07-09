@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Non è possibile eliminare l\'utente attualmente connesso.',
         ],
         'system-settings' => [
-            'info' => 'Gestisci aspetto, email (SMTP) e debug da un unico posto.',
+            'title'              => 'Impostazioni di sistema',
+            'info'               => 'Gestisci aspetto, email (SMTP) e debug da un unico posto.',
+            'search-placeholder' => 'Cerca impostazioni',
+            'save-btn'           => 'Salva',
+            'save-message'       => 'Impostazioni salvate con successo.',
+            'system'             => [
+                'title' => 'Sistema',
+                'info'  => 'Impostazioni principali dell\'applicazione.',
+            ],
+            'email'              => [
+                'title' => 'Email',
+                'info'  => 'Mittente e credenziali SMTP.',
+            ],
+            'debug'              => [
+                'title' => 'Debug',
+                'info'  => 'Debug e registrazione dell\'applicazione.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon e tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Không thể xóa người dùng hiện tại.',
         ],
         'system-settings' => [
-            'info' => 'Quản lý giao diện, email (SMTP) và gỡ lỗi từ một nơi duy nhất.',
+            'title'              => 'Cài đặt hệ thống',
+            'info'               => 'Quản lý giao diện, email (SMTP) và gỡ lỗi từ một nơi duy nhất.',
+            'search-placeholder' => 'Tìm kiếm cài đặt',
+            'save-btn'           => 'Lưu',
+            'save-message'       => 'Đã lưu cài đặt thành công.',
+            'system'             => [
+                'title' => 'Hệ thống',
+                'info'  => 'Cài đặt cốt lõi của ứng dụng.',
+            ],
+            'email'              => [
+                'title' => 'Email',
+                'info'  => 'Người gửi SMTP và thông tin đăng nhập.',
+            ],
+            'debug'              => [
+                'title' => 'Gỡ lỗi',
+                'info'  => 'Gỡ lỗi và ghi nhật ký ứng dụng.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon và giao diện.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => '로그인한 사용자는 삭제할 수 없습니다.',
         ],
         'system-settings' => [
-            'info' => '모양, 이메일(SMTP), 디버그 설정을 한 곳에서 관리하세요.',
+            'info'               => '모양, 이메일(SMTP), 디버그 설정을 한 곳에서 관리하세요.',
+            'title'              => '시스템 설정',
+            'search-placeholder' => '설정 검색',
+            'save-btn'           => '저장',
+            'save-message'       => '설정이 성공적으로 저장되었습니다.',
+            'system'             => [
+                'title' => '시스템',
+                'info'  => '핵심 애플리케이션 설정.',
+            ],
+            'email'              => [
+                'title' => '이메일',
+                'info'  => 'SMTP 발신자 및 자격 증명.',
+            ],
+            'debug'              => [
+                'title' => '디버그',
+                'info'  => '애플리케이션 디버그 및 로깅.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => '로고, 파비콘 및 테마.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

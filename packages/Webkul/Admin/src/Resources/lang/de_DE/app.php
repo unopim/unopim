@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Der angemeldete Benutzer kann nicht gelöscht werden.',
         ],
         'system-settings' => [
-            'info' => 'Verwalten Sie Erscheinungsbild, E-Mail (SMTP) und Debugging an einem Ort.',
+            'info'               => 'Verwalten Sie Erscheinungsbild, E-Mail (SMTP) und Debugging an einem Ort.',
+            'title'              => 'Systemeinstellungen',
+            'search-placeholder' => 'Einstellungen durchsuchen',
+            'save-btn'           => 'Speichern',
+            'save-message'       => 'Einstellungen erfolgreich gespeichert.',
+            'system'             => [
+                'title' => 'System',
+                'info'  => 'Grundlegende Anwendungseinstellungen.',
+            ],
+            'email'              => [
+                'title' => 'E-Mail',
+                'info'  => 'SMTP-Absender und Anmeldedaten.',
+            ],
+            'debug'              => [
+                'title' => 'Debug',
+                'info'  => 'Anwendungs-Debugging und Protokollierung.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, Favicon und Design.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

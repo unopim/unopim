@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Den inloggade användaren kan inte tas bort.',
         ],
         'system-settings' => [
-            'info' => 'Hantera utseende, e-post (SMTP) och felsökning från ett och samma ställe.',
+            'title'              => 'Systeminställningar',
+            'info'               => 'Hantera utseende, e-post (SMTP) och felsökning från ett och samma ställe.',
+            'search-placeholder' => 'Sök inställningar',
+            'save-btn'           => 'Spara',
+            'save-message'       => 'Inställningarna har sparats.',
+            'system'             => [
+                'title' => 'System',
+                'info'  => 'Grundläggande programinställningar.',
+            ],
+            'email'              => [
+                'title' => 'E-post',
+                'info'  => 'SMTP-avsändare och autentiseringsuppgifter.',
+            ],
+            'debug'              => [
+                'title' => 'Felsökning',
+                'info'  => 'Felsökning och loggning av programmet.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logotyp, favicon och tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

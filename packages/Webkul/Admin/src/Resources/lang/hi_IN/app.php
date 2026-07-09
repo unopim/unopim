@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'लॉग इन उपयोगकर्ता को हटाया नहीं जा सकता',
         ],
         'system-settings' => [
-            'info' => 'दिखावट, ईमेल (SMTP) और डिबग सेटिंग्स को एक ही स्थान से प्रबंधित करें।',
+            'title'              => 'सिस्टम सेटिंग्स',
+            'info'               => 'दिखावट, ईमेल (SMTP) और डिबग सेटिंग्स को एक ही स्थान से प्रबंधित करें।',
+            'search-placeholder' => 'सेटिंग्स खोजें',
+            'save-btn'           => 'सहेजें',
+            'save-message'       => 'सेटिंग्स सफलतापूर्वक सहेजी गईं।',
+            'system'             => [
+                'title' => 'सिस्टम',
+                'info'  => 'मुख्य एप्लिकेशन सेटिंग्स।',
+            ],
+            'email'              => [
+                'title' => 'ईमेल',
+                'info'  => 'SMTP प्रेषक और क्रेडेंशियल।',
+            ],
+            'debug'              => [
+                'title' => 'डिबग',
+                'info'  => 'एप्लिकेशन डिबग और लॉगिंग।',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'लोगो, फ़ेविकॉन और थीम।',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

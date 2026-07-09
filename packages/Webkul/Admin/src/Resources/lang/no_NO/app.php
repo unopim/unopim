@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Innlogget bruker kan ikke slettes.',
         ],
         'system-settings' => [
-            'info' => 'Administrer utseende, e-post (SMTP) og feilsøking fra ett sted.',
+            'info'               => 'Administrer utseende, e-post (SMTP) og feilsøking fra ett sted.',
+            'title'              => 'Systeminnstillinger',
+            'search-placeholder' => 'Søk i innstillinger',
+            'save-btn'           => 'Lagre',
+            'save-message'       => 'Innstillingene ble lagret.',
+            'system'             => [
+                'title' => 'System',
+                'info'  => 'Grunnleggende programinnstillinger.',
+            ],
+            'email'              => [
+                'title' => 'E-post',
+                'info'  => 'SMTP-avsender og legitimasjon.',
+            ],
+            'debug'              => [
+                'title' => 'Feilsøking',
+                'info'  => 'Feilsøking og logging av applikasjonen.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favikon og tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

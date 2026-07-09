@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'L\'usuari connectat no es pot eliminar.',
         ],
         'system-settings' => [
-            'info' => 'Gestiona l\'aparença, el correu electrònic (SMTP) i la depuració des d\'un sol lloc.',
+            'info'               => 'Gestiona l\'aparença, el correu electrònic (SMTP) i la depuració des d\'un sol lloc.',
+            'title'              => 'Configuració del sistema',
+            'search-placeholder' => 'Cerca la configuració',
+            'save-btn'           => 'Desa',
+            'save-message'       => 'Configuració desada correctament.',
+            'system'             => [
+                'title' => 'Sistema',
+                'info'  => 'Configuració bàsica de l\'aplicació.',
+            ],
+            'email'              => [
+                'title' => 'Correu electrònic',
+                'info'  => 'Remitent SMTP i credencials.',
+            ],
+            'debug'              => [
+                'title' => 'Depuració',
+                'info'  => 'Depuració i registre de l\'aplicació.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logotip, icona i tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

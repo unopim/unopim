@@ -1654,11 +1654,28 @@ return [
             'current-user-delete-error' => 'Зарегистрированный пользователь не может быть удален.',
         ],
         'system-settings' => [
-            'info' => 'Управляйте внешним видом, электронной почтой (SMTP) и отладкой в одном месте.',
+            'title'              => 'Настройки системы',
+            'info'               => 'Управляйте внешним видом, электронной почтой (SMTP) и отладкой в одном месте.',
+            'search-placeholder' => 'Поиск настроек',
+            'save-btn'           => 'Сохранить',
+            'save-message'       => 'Настройки успешно сохранены.',
+            'system'             => [
+                'title' => 'Система',
+                'info'  => 'Основные настройки приложения.',
+            ],
+            'email'              => [
+                'title' => 'Электронная почта',
+                'info'  => 'Отправитель SMTP и учётные данные.',
+            ],
+            'debug'              => [
+                'title' => 'Отладка',
+                'info'  => 'Отладка и журналирование приложения.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Логотип, значок и тема.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
