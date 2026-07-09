@@ -6,60 +6,36 @@
     $currentLocale = core()->getRequestedLocale();
 @endphp
 
-<x-admin::layouts>
-    <x-slot:title>@lang($entry['name'])</x-slot>
+<x-admin::settings.page
+    :title="trans($entry['name'])"
+    :info="isset($entry['info']) ? trans($entry['info']) : ''"
+    :back="route('admin.settings.system.index')"
+    :action="route('admin.settings.system.update', $entry['key'])"
+    method="PUT"
+    :ajax="true"
+    enctype="multipart/form-data"
+>
+    <x-slot:actions>
+        <button type="submit" class="primary-button">
+            @lang('admin::app.settings.system-settings.save-btn')
+        </button>
+    </x-slot>
 
     {!! view_render_event('unopim.admin.system_settings.edit.'.$entry['key'].'.before', ['entry' => $entry]) !!}
 
-    <x-admin::form
-        ajax
-        :action="route('admin.settings.system.update', $entry['key'])"
-        method="PUT"
-        enctype="multipart/form-data"
-    >
-        <div class="flex gap-4 justify-between items-center mt-3.5 max-sm:flex-wrap">
-            <div class="flex items-center gap-3">
-                <a
-                    href="{{ route('admin.settings.system.index') }}"
-                    class="flex items-center justify-center w-9 h-9 rounded-md border border-gray-200 dark:border-cherry-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-cherry-800 transition-all shrink-0"
-                    aria-label="{{ trans('admin::app.settings.system-settings.back') }}"
-                >
-                    <span class="icon-left rtl:rotate-180 text-xl"></span>
-                </a>
+    <div class="mt-6 grid gap-1.5 p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+        {{-- $group is the effective field group: the entry itself for inline `fields`,
+             or the referenced config('core') group — its `key` drives the config codes. --}}
+        @php ($item = $group)
 
-                <div class="flex flex-col gap-1">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang($entry['name'])
-                    </p>
-
-                    @isset($entry['info'])
-                        <p class="text-gray-600 dark:text-gray-300 leading-[140%] max-w-[720px]">
-                            @lang($entry['info'])
-                        </p>
-                    @endisset
-                </div>
-            </div>
-
-            <button type="submit" class="primary-button">
-                @lang('admin::app.settings.system-settings.save-btn')
-            </button>
-        </div>
-
-        <div class="mt-6 grid gap-1.5 p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-            {{-- $group is the effective field group: the entry itself for inline
-                 `fields`, or the referenced config('core') group — either way its
-                 `key` drives the config codes so persistence stays stable. --}}
-            @php ($item = $group)
-
-            @foreach ($group['fields'] as $field)
-                @if ($field['type'] == 'blade' && view()->exists($path = $field['path']))
-                    {!! view($path, compact('field', 'item'))->render() !!}
-                @else
-                    @include('admin::configuration.field-type')
-                @endif
-            @endforeach
-        </div>
-    </x-admin::form>
+        @foreach ($group['fields'] as $field)
+            @if ($field['type'] == 'blade' && view()->exists($path = $field['path']))
+                {!! view($path, compact('field', 'item'))->render() !!}
+            @else
+                @include('admin::configuration.field-type')
+            @endif
+        @endforeach
+    </div>
 
     {!! view_render_event('unopim.admin.system_settings.edit.'.$entry['key'].'.after', ['entry' => $entry]) !!}
-</x-admin::layouts>
+</x-admin::settings.page>
