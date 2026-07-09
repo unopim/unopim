@@ -450,11 +450,11 @@
                             return;
                         }
 
-                        // Hide rather than remove so the node still exists for any JS that
-                        // looks it up or a partial re-render that expects it.
-                        btn.classList.add('hidden');
-
-                        btn.setAttribute('data-unsaved-hidden', '');
+                        // Remove outright: a hidden submit button still acts as the
+                        // form's implicit submit-on-Enter, so it must be gone (not just
+                        // hidden). The SPA re-renders the form on each visit, so it comes
+                        // back cleanly and is re-removed by mount.
+                        btn.remove();
                     });
                 },
 
