@@ -81,6 +81,11 @@ it('returns the friendly throttle message as json on too many login attempts', f
         ]);
     }
 
+    // The throttle 429 is rendered by the Core exception handler as an
+    // {error, description} payload (see LoginThrottleErrorPageTest).
     $response->assertStatus(429);
-    $response->assertJson(['message' => trans('admin::app.users.sessions.too-many-attempts')]);
+    $response->assertJson([
+        'error'       => trans('admin::app.errors.429.title'),
+        'description' => trans('admin::app.errors.429.description'),
+    ]);
 });

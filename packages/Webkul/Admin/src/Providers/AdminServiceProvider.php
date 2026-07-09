@@ -3,7 +3,6 @@
 namespace Webkul\Admin\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -206,11 +205,10 @@ class AdminServiceProvider extends ServiceProvider
         RateLimiter::for('admin-login', function (Request $request) {
             $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
 
-            return Limit::perMinute(5)->by($key)->response(function () {
-                return new JsonResponse([
-                    'message' => trans('admin::app.users.sessions.too-many-attempts'),
-                ], JsonResponse::HTTP_TOO_MANY_REQUESTS);
-            });
+            // No ->response() override: let the throttle middleware throw a real 429
+            // so the Core exception handler renders the branded 429 page (HTML) or a
+            // {error, description} 429 payload (JSON) — see LoginThrottleErrorPageTest.
+            return Limit::perMinute(5)->by($key);
         });
 
         RateLimiter::for('admin-forgot-password', function (Request $request) {
