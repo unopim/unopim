@@ -634,17 +634,17 @@ return [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.integrations.index',
-        'sort'   => 9,
+        'sort'   => 10,
     ], [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.store',
-        'sort'   => 9,
+        'sort'   => 10,
     ], [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.download',
-        'sort'   => 9,
+        'sort'   => 10,
     ], [
         'key'   => 'configuration.integrations',
         'name'  => 'admin::app.acl.integrations',
