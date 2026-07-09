@@ -5131,12 +5131,6 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/Settings/AppearanceController.php
 
 		-
-			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/Settings/AppearanceController.php
-
-		-
 			message: '#^Parameter \#2 \$model of class Prettus\\Repository\\Events\\RepositoryEntityUpdated constructor expects Illuminate\\Database\\Eloquent\\Model\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
