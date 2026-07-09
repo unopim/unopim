@@ -107,6 +107,9 @@ jobs:
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          # The API E2E specs fire many requests back-to-back; lift the REST rate
+          # limit for the test server so they don't trip the 120/min throttle (429).
+          echo "REST_API_RATE_LIMIT=100000" >> .env
 
       - name: Running UnoPim Installer & Start Server
         env:
