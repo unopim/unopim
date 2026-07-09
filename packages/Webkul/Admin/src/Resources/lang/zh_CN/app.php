@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => '系统设置',
+            'back'               => '返回',
             'info'               => '在一个地方管理外观、电子邮件 (SMTP) 和调试设置。',
             'search-placeholder' => '搜索设置',
             'save-btn'           => '保存',

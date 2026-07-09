@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => 'Postavke sustava',
+            'back'               => 'Natrag',
             'info'               => 'Upravljajte izgledom, e-poštom (SMTP) i ispravljanjem pogrešaka s jednog mjesta.',
             'search-placeholder' => 'Pretraži postavke',
             'save-btn'           => 'Spremi',

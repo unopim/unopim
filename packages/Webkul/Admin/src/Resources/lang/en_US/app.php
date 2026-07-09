@@ -1769,6 +1769,7 @@ return [
 
         'system-settings' => [
             'title'              => 'System Settings',
+            'back'               => 'Back',
             'info'               => 'Manage appearance, email (SMTP) and debug settings from a single place.',
             'search-placeholder' => 'Search settings',
             'save-btn'           => 'Save',

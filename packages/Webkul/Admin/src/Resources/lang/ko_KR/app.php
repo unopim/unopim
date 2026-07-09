@@ -1656,6 +1656,7 @@ return [
         'system-settings' => [
             'info'               => '모양, 이메일(SMTP), 디버그 설정을 한 곳에서 관리하세요.',
             'title'              => '시스템 설정',
+            'back'               => '뒤로',
             'search-placeholder' => '설정 검색',
             'save-btn'           => '저장',
             'save-message'       => '설정이 성공적으로 저장되었습니다.',

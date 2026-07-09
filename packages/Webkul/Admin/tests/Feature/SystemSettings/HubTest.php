@@ -14,7 +14,9 @@ it('renders the system settings hub with registered rows', function () {
 });
 
 it('hides a row the admin lacks permission for and shows the search box', function () {
-    $this->loginWithPermissions(permissions: ['dashboard']);
+    // Can reach the hub (configuration.system_settings, with its parent) but lacks
+    // the row's own acl.
+    $this->loginWithPermissions(permissions: ['configuration', 'configuration.system_settings']);
 
     config(['system_settings' => [
         ['key' => 'system', 'name' => 'admin::app.settings.system-settings.system.title', 'info' => 'admin::app.settings.system-settings.system.info', 'sort' => 1],
@@ -26,4 +28,3 @@ it('hides a row the admin lacks permission for and shows the search box', functi
         ->assertSee('data-settings-search', false)
         ->assertDontSee(route('admin.settings.appearance.index'));
 });
-

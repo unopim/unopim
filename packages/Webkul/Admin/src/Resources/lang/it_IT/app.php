@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => 'Impostazioni di sistema',
+            'back'               => 'Indietro',
             'info'               => 'Gestisci aspetto, email (SMTP) e debug da un unico posto.',
             'search-placeholder' => 'Cerca impostazioni',
             'save-btn'           => 'Salva',

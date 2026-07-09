@@ -1656,6 +1656,7 @@ return [
         'system-settings' => [
             'info'               => 'Zarządzaj wyglądem, pocztą e-mail (SMTP) i debugowaniem w jednym miejscu.',
             'title'              => 'Ustawienia systemu',
+            'back'               => 'Wstecz',
             'search-placeholder' => 'Szukaj ustawień',
             'save-btn'           => 'Zapisz',
             'save-message'       => 'Ustawienia zostały zapisane pomyślnie.',

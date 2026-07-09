@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => 'システム設定',
+            'back'               => '戻る',
             'info'               => '外観、メール（SMTP）、デバッグの設定を一か所で管理できます。',
             'search-placeholder' => '設定を検索',
             'save-btn'           => '保存',

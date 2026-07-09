@@ -1656,6 +1656,7 @@ return [
         'system-settings' => [
             'info'               => 'Gestionează aspectul, e-mailul (SMTP) și depanarea dintr-un singur loc.',
             'title'              => 'Setări de sistem',
+            'back'               => 'Înapoi',
             'search-placeholder' => 'Caută setări',
             'save-btn'           => 'Salvează',
             'save-message'       => 'Setările au fost salvate cu succes.',

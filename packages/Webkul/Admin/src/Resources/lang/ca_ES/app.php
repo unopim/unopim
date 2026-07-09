@@ -1656,6 +1656,7 @@ return [
         'system-settings' => [
             'info'               => 'Gestiona l\'aparença, el correu electrònic (SMTP) i la depuració des d\'un sol lloc.',
             'title'              => 'Configuració del sistema',
+            'back'               => 'Enrere',
             'search-placeholder' => 'Cerca la configuració',
             'save-btn'           => 'Desa',
             'save-message'       => 'Configuració desada correctament.',

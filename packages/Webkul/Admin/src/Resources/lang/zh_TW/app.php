@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => '系統設定',
+            'back'               => '返回',
             'info'               => '在同一處管理外觀、電子郵件 (SMTP) 與除錯設定。',
             'search-placeholder' => '搜尋設定',
             'save-btn'           => '儲存',

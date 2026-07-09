@@ -1656,6 +1656,7 @@ return [
         'system-settings' => [
             'info'               => 'Beheer weergave, e-mail (SMTP) en foutopsporing vanaf één plek.',
             'title'              => 'Systeeminstellingen',
+            'back'               => 'Terug',
             'search-placeholder' => 'Instellingen zoeken',
             'save-btn'           => 'Opslaan',
             'save-message'       => 'Instellingen succesvol opgeslagen.',

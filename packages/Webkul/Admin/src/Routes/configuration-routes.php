@@ -13,8 +13,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
     Route::get('configuration/system-information', [SystemController::class, 'information'])->name('admin.configuration.system.information');
 
-    Route::get('configuration/system-settings', [SystemController::class, 'settings'])->name('admin.configuration.system.settings');
-
     /**
      * System Settings hub — extensible, config-driven grouped settings.
      */

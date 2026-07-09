@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => 'Sistem Ayarları',
+            'back'               => 'Geri',
             'info'               => 'Görünüm, e-posta (SMTP) ve hata ayıklama ayarlarını tek bir yerden yönetin.',
             'search-placeholder' => 'Ayarlarda ara',
             'save-btn'           => 'Kaydet',

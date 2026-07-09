@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => 'Systeminställningar',
+            'back'               => 'Tillbaka',
             'info'               => 'Hantera utseende, e-post (SMTP) och felsökning från ett och samma ställe.',
             'search-placeholder' => 'Sök inställningar',
             'save-btn'           => 'Spara',

@@ -1656,6 +1656,7 @@ return [
         'system-settings' => [
             'info'               => 'Administrer udseende, e-mail (SMTP) og fejlfinding fra ét sted.',
             'title'              => 'Systemindstillinger',
+            'back'               => 'Tilbage',
             'search-placeholder' => 'Søg i indstillinger',
             'save-btn'           => 'Gem',
             'save-message'       => 'Indstillinger gemt.',

@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => 'Mga Setting ng Sistema',
+            'back'               => 'Bumalik',
             'info'               => 'Pamahalaan ang hitsura, email (SMTP), at debug mula sa iisang lugar.',
             'search-placeholder' => 'Maghanap ng mga setting',
             'save-btn'           => 'I-save',

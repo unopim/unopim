@@ -15,14 +15,24 @@
         method="PUT"
     >
         <div class="flex gap-4 justify-between items-center mt-3.5 max-sm:flex-wrap">
-            <div class="flex flex-col gap-1">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                    @lang('admin::app.settings.appearance.title')
-                </p>
+            <div class="flex items-center gap-3">
+                <a
+                    href="{{ route('admin.settings.system.index') }}"
+                    class="flex items-center justify-center w-9 h-9 rounded-md border border-gray-200 dark:border-cherry-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-cherry-800 transition-all shrink-0"
+                    aria-label="{{ trans('admin::app.settings.system-settings.back') }}"
+                >
+                    <span class="icon-left rtl:rotate-180 text-xl"></span>
+                </a>
 
-                <p class="text-gray-600 dark:text-gray-300 leading-[140%] max-w-[720px]">
-                    @lang('admin::app.settings.appearance.section-info')
-                </p>
+                <div class="flex flex-col gap-1">
+                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
+                        @lang('admin::app.settings.appearance.title')
+                    </p>
+
+                    <p class="text-gray-600 dark:text-gray-300 leading-[140%] max-w-[720px]">
+                        @lang('admin::app.settings.appearance.section-info')
+                    </p>
+                </div>
             </div>
 
             <button

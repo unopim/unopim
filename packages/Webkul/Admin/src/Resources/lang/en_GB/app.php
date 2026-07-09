@@ -1656,6 +1656,7 @@ return [
         'system-settings' => [
             'info'               => 'Manage appearance, email (SMTP) and debug settings from a single place.',
             'title'              => 'System Settings',
+            'back'               => 'Back',
             'search-placeholder' => 'Search settings',
             'save-btn'           => 'Save',
             'save-message'       => 'Settings saved successfully.',

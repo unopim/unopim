@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => 'Cài đặt hệ thống',
+            'back'               => 'Quay lại',
             'info'               => 'Quản lý giao diện, email (SMTP) và gỡ lỗi từ một nơi duy nhất.',
             'search-placeholder' => 'Tìm kiếm cài đặt',
             'save-btn'           => 'Lưu',

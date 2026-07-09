@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => 'Paramètres système',
+            'back'               => 'Retour',
             'info'               => 'Gérez l\'apparence, l\'e-mail (SMTP) et le débogage depuis un seul endroit.',
             'search-placeholder' => 'Rechercher des paramètres',
             'save-btn'           => 'Enregistrer',

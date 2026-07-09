@@ -1656,6 +1656,7 @@ return [
         'system-settings' => [
             'info'               => 'Gerencie aparência, e-mail (SMTP) e depuração em um único lugar.',
             'title'              => 'Configurações do sistema',
+            'back'               => 'Voltar',
             'search-placeholder' => 'Pesquisar configurações',
             'save-btn'           => 'Salvar',
             'save-message'       => 'Configurações salvas com sucesso.',

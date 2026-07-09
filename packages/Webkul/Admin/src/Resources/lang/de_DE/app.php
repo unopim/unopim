@@ -1656,6 +1656,7 @@ return [
         'system-settings' => [
             'info'               => 'Verwalten Sie Erscheinungsbild, E-Mail (SMTP) und Debugging an einem Ort.',
             'title'              => 'Systemeinstellungen',
+            'back'               => 'Zurück',
             'search-placeholder' => 'Einstellungen durchsuchen',
             'save-btn'           => 'Speichern',
             'save-message'       => 'Einstellungen erfolgreich gespeichert.',

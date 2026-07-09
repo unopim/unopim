@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => 'Järjestelmäasetukset',
+            'back'               => 'Takaisin',
             'info'               => 'Hallitse ulkoasua, sähköpostia (SMTP) ja virheenkorjausta yhdestä paikasta.',
             'search-placeholder' => 'Hae asetuksia',
             'save-btn'           => 'Tallenna',

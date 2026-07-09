@@ -1655,6 +1655,7 @@ return [
         ],
         'system-settings' => [
             'title'              => 'Pengaturan Sistem',
+            'back'               => 'Kembali',
             'info'               => 'Kelola tampilan, email (SMTP), dan debug dari satu tempat.',
             'search-placeholder' => 'Cari pengaturan',
             'save-btn'           => 'Simpan',
