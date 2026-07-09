@@ -1,10 +1,8 @@
 <x-admin::layouts>
-    <!-- Title of the page -->
     <x-slot:title>
         @lang('admin::app.catalog.category_fields.create.title')
     </x-slot>
 
-    <!-- Create Attributes Vue Components -->
     <v-create-category-field :locales="{{ $locales->toJson() }}"></v-create-category-field>
 
     @pushOnce('scripts')
@@ -15,7 +13,6 @@
 
             {!! view_render_event('unopim.admin.catalog.category_fields.create.before') !!}
 
-            <!-- Input Form -->
             <x-admin::form
                 ajax
                 :action="route('admin.catalog.category_fields.store')"
@@ -24,14 +21,12 @@
 
                 {!! view_render_event('unopim.admin.catalog.category_fields.create.create_form_controls.before') !!}
 
-                <!-- actions buttons -->
                 <div class="flex justify-between items-center">
                     <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
                         @lang('admin::app.catalog.category_fields.create.title')
                     </p>
 
                     <div class="flex gap-x-2.5 items-center">
-                        <!-- Cancel Button -->
                         <a
                             href="{{ route('admin.catalog.category_fields.index') }}"
                             class="transparent-button"
@@ -39,7 +34,6 @@
                             @lang('admin::app.catalog.category_fields.create.back-btn')
                         </a>
 
-                        <!-- Save Button -->
                         <button
                             type="submit"
                             class="primary-button"
@@ -49,14 +43,11 @@
                     </div>
                 </div>
 
-                <!-- body content -->
                 <div class="flex gap-2.5 mt-3.5">
 
                     {!! view_render_event('unopim.admin.catalog.category_fields.create.card.label.before') !!}
 
-                    <!-- Left sub Component -->
                     <div class="flex flex-col gap-2 flex-1 overflow-auto">
-                        <!-- General -->
                         <div class="bg-white dark:bg-cherry-900 box-shadow rounded">
                             <div class="flex justify-between items-center p-1.5">
                                 <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
@@ -65,7 +56,6 @@
                             </div>
 
                             <div class="px-4 pb-4">
-                                <!-- CatgeoryField Code -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.catalog.category_fields.create.code')
@@ -94,7 +84,6 @@
                                     <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
 
-                                <!-- Category Field Type -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.catalog.category_fields.create.type')
@@ -136,7 +125,6 @@
                                     <x-admin::form.control-group.error control-name="type" />
                                 </x-admin::form.control-group>
 
-                                <!-- Textarea Switcher -->
                                 <x-admin::form.control-group v-show="selectedCategoryFieldType == 'textarea'">
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.catalog.category_fields.create.enable-wysiwyg')
@@ -152,14 +140,12 @@
                             </div>
                         </div>
 
-                        <!-- Label -->
                         <div class="p-4 bg-white dark:bg-cherry-900 box-shadow rounded">
                             <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
                                 @lang('admin::app.catalog.category_fields.create.label')
                             </p>
  
 
-                            <!-- Locales Inputs -->
                             @foreach ($locales as $locale)
                                 <x-admin::form.control-group class="last:!mb-0">
                                     <x-admin::form.control-group.label>
@@ -175,7 +161,6 @@
                             @endforeach
                         </div>
 
-                        <!-- Options -->
                         <div
                             class="p-4 bg-white dark:bg-cherry-900 box-shadow rounded"
                             v-if="selectedCategoryFieldType == 'select'
@@ -188,7 +173,6 @@
                                     @lang('admin::app.catalog.category_fields.create.options')
                                 </p>
 
-                                <!-- Add Row Button -->
                                 <div
                                     class="secondary-button text-sm"
                                     @click="$refs.addOptionsRow.toggle();swatchValue='';optionIsNew=true;"
@@ -197,34 +181,28 @@
                                 </div>
                             </div>
 
-                            <!-- For Category Field Options If Data Exist -->
                             <div class="mt-4 overflow-x-auto">
 
                                 <template v-if="this.options?.length">
-                                    <!-- Table Information -->
                                     <x-admin::table>
                                         <x-admin::table.thead class="text-sm font-medium dark:bg-gray-800">
                                             <x-admin::table.thead.tr>
                                                 <x-admin::table.th class="!p-0" />
 
-                                                <!-- Admin tables heading -->
                                                 <x-admin::table.th>
                                                     @lang('admin::app.catalog.category_fields.create.code')
                                                 </x-admin::table.th>
 
-                                                <!-- Loacles tables heading -->
                                                 @foreach ($locales as $locale)
                                                     <x-admin::table.th>
                                                         {{ $locale->name }}
                                                     </x-admin::table.th>
                                                 @endforeach
 
-                                                <!-- Action tables heading -->
                                                 <x-admin::table.th />
                                             </x-admin::table.thead.tr>
                                         </x-admin::table.thead>
 
-                                        <!-- Draggable Component -->
                                         <draggable
                                             tag="tbody"
                                             ghost-class="draggable-ghost"
@@ -235,7 +213,6 @@
                                         >
                                             <template #item="{ element, index }">
                                                 <x-admin::table.thead.tr class="hover:bg-violet-50 dark:hover:bg-cherry-800" ::data-list="JSON.stringify(options)">
-                                                    <!-- Draggable Icon -->
                                                     <x-admin::table.td class="!px-0 text-center">
                                                         <i class="icon-drag text-2xl transition-all group-hover:text-gray-700 cursor-grab"></i>
 
@@ -246,7 +223,6 @@
                                                         />
                                                     </x-admin::table.td>
 
-                                                    <!-- Admin-->
                                                     <x-admin::table.td>
                                                         <p
                                                             class="dark:text-white"
@@ -275,7 +251,6 @@
                                                         />
                                                     </x-admin::table.td>
 
-                                                    <!-- Actions button -->
                                                     <x-admin::table.td class="!px-0">
                                                         <span
                                                             class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
@@ -295,17 +270,14 @@
                                     </x-admin::table>
                                 </template>
 
-                                <!-- For Empty Category Fields Options -->
                                 <template v-else>
                                     <div class="grid gap-3.5 justify-items-center py-10 px-2.5">
-                                        <!-- Category Fields Option Image -->
                                         <img
                                             class="w-[120px] h-[120px] dark:invert dark:mix-blend-exclusion"
                                             src="{{ unopim_asset('images/icon-add-product.svg') }}"
                                             alt="@lang('admin::app.catalog.category_fields.create.add-field-options')"
                                         />
 
-                                        <!-- Add Category Fields Options Information -->
                                         <div class="flex flex-col gap-1.5 items-center">
                                             <p class="text-base text-gray-400 font-semibold">
                                                 @lang('admin::app.catalog.category_fields.create.add-field-options')
@@ -325,9 +297,7 @@
 
                     {!! view_render_event('unopim.admin.catalog.category_fields.create.card.general.before') !!}
 
-                    <!-- Right sub-component -->
                     <div class="flex flex-col gap-2 w-[360px] max-w-full">
-                        <!-- Validations -->
                         <x-admin::accordion>
                             <x-slot:header>
                                 <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
@@ -336,7 +306,6 @@
                             </x-slot>
 
                             <x-slot:content>
-                                <!-- Input Validation -->
                                 <x-admin::form.control-group v-if="selectedCategoryFieldType == 'text'">
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.catalog.category_fields.create.input-validation')
@@ -379,7 +348,6 @@
                                     <x-admin::form.control-group.error control-name="validation" />
                                 </x-admin::form.control-group>
 
-                                <!-- REGEX -->
                                 <x-admin::form.control-group v-show="'regex' == selectedValidationType">
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.catalog.category_fields.create.regex')
@@ -395,7 +363,6 @@
                                     <x-admin::form.control-group.error control-name="regex_pattern" />
                                 </x-admin::form.control-group>
 
-                                <!-- Is Required -->
                                  <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2">
 
                                     <input type="hidden" name="is_required" value="0">
@@ -417,7 +384,6 @@
                                     </label>
                                 </x-admin::form.control-group>
 
-                                <!-- Is Unique -->
                                 <x-admin::form.control-group
                                     class="flex gap-2.5 items-center !mb-0 select-none"
                                     v-if="selectedCategoryFieldType == 'text' || selectedCategoryFieldType == 'date' || selectedCategoryFieldType == 'datetime'"
@@ -443,7 +409,6 @@
                             </x-slot>
                         </x-admin::accordion>
 
-                        <!-- Configurations -->
                         <x-admin::accordion>
                             <x-slot:header>
                                 <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
@@ -452,7 +417,6 @@
                             </x-slot>
 
                             <x-slot:content>
-                                <!-- Value Per Locale -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none">
                                     <x-admin::form.control-group.control
                                         type="checkbox"
@@ -473,7 +437,6 @@
                             </x-slot>
                         </x-admin::accordion>
 
-                        <!-- Settings Section -->
                         <x-admin::accordion>
                             <x-slot:header>
                                 <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
@@ -482,7 +445,6 @@
                             </x-slot>
 
                             <x-slot:content>
-                                <!-- Enable/Disable -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.catalog.category_fields.create.status')
@@ -514,7 +476,6 @@
                                     <x-admin::form.control-group.error control-name="position" />
                                 </x-admin::form.control-group>
 
-                                <!-- Display section -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.catalog.category_fields.create.set-section')
@@ -562,7 +523,6 @@
                 {!! view_render_event('unopim.admin.catalog.category_fields.create_form_controls.after') !!}
             </x-admin::form>
 
-            <!-- Add Options Model Form -->
             <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
                 as="div"
@@ -577,20 +537,17 @@
                         @toggle="listenModal"
                         ref="addOptionsRow"
                     >
-                        <!-- Modal Header !-->
                         <x-slot:header>
                             <p class="text-lg text-gray-800 dark:text-white font-bold">
                                 @lang('admin::app.catalog.category_fields.create.add-option')
                             </p>
                         </x-slot>
 
-                        <!-- Modal Content !-->
                         <x-slot:content>
                             <div
                                 class="grid"
                                 v-if="swatchType == 'image' || swatchType == 'color'"
                             >
-                                <!-- Image Input -->
                                 <x-admin::form.control-group
                                     class="w-full"
                                     v-if="swatchType == 'image'"
@@ -618,13 +575,11 @@
                             </div>
 
                             <div class="grid grid-cols-3 gap-4">
-                                <!-- Hidden Id Input -->
                                 <x-admin::form.control-group.control
                                     type="hidden"
                                     name="id"
                                 />
 
-                                <!-- Code Input -->
                                 <x-admin::form.control-group class="w-full mb-2.5">
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.catalog.category_fields.create.code')
@@ -643,7 +598,6 @@
                                     <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
 
-                                <!-- Locales Input -->
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group class="w-full mb-2.5">
                                         <x-admin::form.control-group.label>
@@ -662,7 +616,6 @@
                             </div>
                         </x-slot>
 
-                        <!-- Modal Footer !-->
                         <x-slot:footer>
                             <button
                                 type="submit"

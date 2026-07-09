@@ -4,16 +4,12 @@
 
 <template v-else>
     <div class="mt-7 flex items-center justify-between gap-4 max-md:flex-wrap">
-        <!-- Left Toolbar -->
         <div class="flex gap-x-1">
-            <!-- Mass Actions Panel -->
             <div
                 class="flex w-full items-center gap-x-1"
                 v-if="applied.massActions.indices.length"
             >
-                <!-- Mass Action Dropdown -->
                 <x-admin::dropdown>
-                    <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <button
                             type="button"
@@ -27,7 +23,6 @@
                         </button>
                     </x-slot>
 
-                    <!-- Dropdown Content -->
                     <x-slot:menu class="!p-0 shadow-[0_5px_20px_rgba(0,0,0,0.15)] dark:border-gray-800">
                         <template v-for="massAction in available.massActions">
                             <li
@@ -87,7 +82,7 @@
 
                 <div class="ltr:pl-2.5 rtl:pr-2.5">
                     <p class="text-sm font-light text-gray-800 dark:text-white">
-                        <!-- Need to manage this translation. -->
+                        {{-- Need to manage this translation. --}}
                         @{{ "@lang('admin::app.components.datagrid.toolbar.length-of')".replace(':length', applied.massActions.indices.length) }}
 
                         @{{ "@lang('admin::app.components.datagrid.toolbar.selected')".replace(':total', available.meta.total) }}
@@ -95,12 +90,10 @@
                 </div>
             </div>
 
-            <!-- Search Panel -->
             <div
                 class="flex w-full items-center gap-x-1"
                 v-else
             >
-                <!-- Search Panel -->
                 <div class="flex max-w-[445px] items-center max-sm:w-full max-sm:max-w-full">
                     <div class="relative w-full">
                         <input
@@ -118,24 +111,20 @@
                     </div>
                 </div>
 
-                <!-- Information Panel -->
                 <div class="ltr:pl-2.5 rtl:pr-2.5">
                     <p class="text-sm font-light text-gray-800 dark:text-white">
-                        <!-- Need to manage this translation. -->
+                        {{-- Need to manage this translation. --}}
                         @{{ "@lang('admin::app.components.datagrid.toolbar.results')".replace(':total', available.meta.total) }}
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- Right Toolbar -->
         <div class="flex items-center gap-x-4">
-            <!-- Manage Columns -->
              <template v-if="available.meta.managedColumn?.enabled">
                 <x-admin::datagrid.manage-columns />
              </template>
             
-            <!-- Filters Activation Button -->
             <x-admin::drawer width="350px" ref="filterDrawer">
                 <x-slot:toggle>
                     <div>
@@ -161,7 +150,6 @@
                     </div>
                 </x-slot>
 
-                <!-- Drawer Header -->
                 <x-slot:header>
                     <div class="flex justify-between items-center p-3">
                         <p class="text-base text-gray-800 dark:text-white font-semibold">
@@ -170,11 +158,9 @@
                     </div>
                 </x-slot>
 
-                <!-- Drawer Content -->
                 <x-slot:content class="!p-5">
                     <x-admin::datagrid.filters />
 
-                    <!-- Add Filter -->
                     <div class="mb-4" v-if="getInactiveFilterColumns().length || filterAttributesSrc">
                         <button
                             type="button"
@@ -241,7 +227,6 @@
 
             <div class="flex items-center gap-x-2">
                 <x-admin::dropdown>
-                    <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <button
                             type="button"
@@ -254,7 +239,6 @@
                         </button>
                     </x-slot>
 
-                    <!-- Dropdown Content -->
                     <x-slot:menu>
                         <x-admin::dropdown.menu.item
                             v-for="perPageOption in available.meta.per_page_options"
@@ -283,7 +267,6 @@
                     <span v-text="available.meta.last_page"></span>
                 </div>
 
-                <!-- Pagination -->
                 <div class="flex items-center gap-1" role="navigation" aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.page-number')">
                     <button
                         type="button"

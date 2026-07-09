@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute group via UI and return its code.
@@ -36,7 +36,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await adminPage.getByRole('link', { name: 'Create Attribute Group' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Description');
-    await adminPage.getByRole('button', { name: 'Save Attribute Group' }).click();
+    await clickSave(adminPage, 'Save Attribute Group');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
 

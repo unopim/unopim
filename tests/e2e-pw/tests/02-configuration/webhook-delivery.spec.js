@@ -1,6 +1,6 @@
 const http = require('http');
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { clickSave, navigateTo } = require('../../utils/helpers');
 
 // Real end-to-end proof that product updates reach an external webhook.
 // Uses a local HTTP server spun up inside the test process to capture
@@ -84,7 +84,7 @@ async function configureWebhook(adminPage, url) {
   const isChecked = await checkbox.isChecked().catch(() => false);
   if (!isChecked) await toggle.click();
 
-  await adminPage.getByRole('button', { name: 'Save' }).click();
+  await clickSave(adminPage, 'Save');
   await expect(
     adminPage.locator('#app').getByText('Webhook settings saved successfully'),
   ).toBeVisible();
@@ -96,7 +96,7 @@ async function disableWebhook(adminPage) {
   const isChecked = await checkbox.isChecked().catch(() => false);
   if (isChecked) {
     await adminPage.locator('label[for="webhook_active"]').click();
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(
       adminPage.locator('#app').getByText('Webhook settings saved successfully'),
     ).toBeVisible();

@@ -3,7 +3,6 @@
 namespace Webkul\Admin\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -33,6 +32,9 @@ class AdminServiceProvider extends ServiceProvider
     {
         $this->configureRateLimiting();
 
+        // Every admin `{id}` is an auto-increment primary key, so constrain it to
+        // digits group-wide: a non-numeric id yields a clean 404 instead of a 500
+        // from the model lookup. Non-numeric identifiers use `code`/`slug` params.
         Route::middleware('web')
             ->where(['id' => '[0-9]+'])
             ->group(__DIR__.'/../Routes/web.php');
@@ -75,20 +77,16 @@ class AdminServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerConfig();
     }
 
     /**
      * Register package config.
-     *
-     * @return void
      */
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/menu.php',
@@ -118,10 +116,8 @@ class AdminServiceProvider extends ServiceProvider
 
     /**
      * Bind the data to the views.
-     *
-     * @return void
      */
-    protected function composeView()
+    protected function composeView(): void
     {
         view()->composer([
             'admin::components.layouts.header.index',
@@ -164,10 +160,8 @@ class AdminServiceProvider extends ServiceProvider
 
     /**
      * Register ACL to entire application.
-     *
-     * @return void
      */
-    protected function registerACL()
+    protected function registerACL(): void
     {
         $this->app->singleton('acl', function () {
             return $this->createACL();
@@ -176,10 +170,8 @@ class AdminServiceProvider extends ServiceProvider
 
     /**
      * Create ACL tree.
-     *
-     * @return mixed
      */
-    protected function createACL()
+    protected function createACL(): Tree
     {
         static $tree;
 
@@ -206,11 +198,7 @@ class AdminServiceProvider extends ServiceProvider
         RateLimiter::for('admin-login', function (Request $request) {
             $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
 
-            return Limit::perMinute(5)->by($key)->response(function () {
-                return new JsonResponse([
-                    'message' => trans('admin::app.users.sessions.too-many-attempts'),
-                ], JsonResponse::HTTP_TOO_MANY_REQUESTS);
-            });
+            return Limit::perMinute(5)->by($key);
         });
 
         RateLimiter::for('admin-forgot-password', function (Request $request) {

@@ -1,115 +1,9 @@
 @pushOnce('scripts')
-    <style>
-        .unsaved-root {
-            display: contents;
-        }
-
-        .unsaved-badge {
-            display: none;
-            margin-left: 0.375rem;
-            padding: 0.05rem 0.4rem;
-            font-size: 0.625rem;
-            font-weight: 600;
-            line-height: 1.2;
-            border-radius: 0.25rem;
-            color: #854d0e;
-            background: #fef9c3;
-            vertical-align: middle;
-            white-space: nowrap;
-        }
-
-        .dark .unsaved-badge {
-            color: #fde68a;
-            background: #713f12;
-        }
-
-        [data-control-group].unsaved-dirty .unsaved-badge {
-            display: inline-flex;
-            align-items: center;
-        }
-
-
-        /* Sticky action bar: align its left edge with the main content column so it lines
-           up with (and never covers) the fixed left menu. Mirrors the layout's own
-           ltr:pl-[286px] / collapsed pl-[85px] offsets. Below lg the menu is hidden
-           (max-lg:hidden), so the bar spans full width there. */
-        .unsaved-bar {
-            left: 286px;
-            right: 0;
-        }
-
-        body:has(.sidebar-collapsed) .unsaved-bar {
-            left: 85px;
-        }
-
-        [dir="rtl"] .unsaved-bar {
-            left: 0;
-            right: 286px;
-        }
-
-        [dir="rtl"] body:has(.sidebar-collapsed) .unsaved-bar,
-        body:has(.sidebar-collapsed) [dir="rtl"] .unsaved-bar {
-            right: 85px;
-        }
-
-        @media (max-width: 1024px) {
-            .unsaved-bar,
-            [dir="rtl"] .unsaved-bar {
-                left: 0;
-                right: 0;
-            }
-        }
-
-        /* Right AI drawer: while its panel is actually mounted (it is v-if'd, so the
-           node exists ONLY when open — no stale-class phantom gap), stop the bar at the
-           panel's left edge so the panel's chat composer at the bottom stays clickable.
-           Driven off :has(.ap-panel), not a body class, so it can never get stuck open. */
-        @media (min-width: 1025px) {
-            body:has(.ap-panel) .unsaved-bar,
-            [dir="rtl"] body:has(.ap-panel) .unsaved-bar,
-            body:has(.ap-panel) [dir="rtl"] .unsaved-bar {
-                right: 420px;
-            }
-        }
-
-        /* Keep page content clear of the bar so nothing is hidden behind it. */
-        body.unsaved-bar-open {
-            padding-bottom: 76px;
-        }
-
-        /* Phones: the wordy title + two buttons don't fit, so drop the text and keep
-           the warning icon + Discard / Save changes (which convey the state). */
-        @media (max-width: 524px) {
-            .unsaved-bar-text {
-                display: none;
-            }
-
-            .unsaved-bar-inner {
-                padding-left: 0.75rem;
-                padding-right: 0.75rem;
-            }
-        }
-
-        /* And when the bar is showing, lift the floating chat launcher above it so the
-           chat icon never sits over the "Save changes" button. */
-        body.unsaved-bar-open .ap-launcher {
-            bottom: 88px !important;
-        }
-
-        .unsaved-bar-enter-active,
-        .unsaved-bar-leave-active {
-            transition: transform 0.2s ease, opacity 0.2s ease;
-        }
-
-        .unsaved-bar-enter-from,
-        .unsaved-bar-leave-to {
-            transform: translateY(100%);
-            opacity: 0;
-        }
-    </style>
 
     <script type="text/x-template" id="v-unsaved-changes-template">
         <div ref="root" class="unsaved-root" :class="{ 'unsaved-hideable': hideSaveWhenTracked }">
+            {!! view_render_event('unopim.admin.components.form.unsaved_changes.before') !!}
+
             <slot></slot>
 
             <teleport to="body">
@@ -146,6 +40,8 @@
                             </div>
 
                             <div class="flex items-center gap-2.5 shrink-0">
+                                {!! view_render_event('unopim.admin.components.form.unsaved_changes.actions.before') !!}
+
                                 <button type="button" class="secondary-button" @click="discard">
                                     @lang('admin::app.components.form.unsaved-changes.discard')
                                 </button>
@@ -153,12 +49,15 @@
                                 <button type="button" class="primary-button whitespace-nowrap" @click="save">
                                     @lang('admin::app.components.form.unsaved-changes.save')
                                 </button>
+
+                                {!! view_render_event('unopim.admin.components.form.unsaved_changes.actions.after') !!}
                             </div>
                         </div>
                     </div>
                 </transition>
             </teleport>
 
+            {!! view_render_event('unopim.admin.components.form.unsaved_changes.after') !!}
         </div>
     </script>
 
@@ -215,17 +114,17 @@
 
             mounted() {
                 this.debounced = this.debounce(this.recompute, 80);
- 
+
                 this.onFormEvent = (event) => {
                     if (event.isTrusted && event.target && event.target.closest) {
                         this.hasTrusted = true;
- 
+
                         const direct = event.target.closest('[name]');
 
                         if (direct && direct.name) {
                             this.touched[direct.name] = true;
                         }
- 
+
                         const group = event.target.closest('[data-control-group]');
 
                         if (group) {
@@ -239,7 +138,7 @@
 
                     this.debounced();
                 };
- 
+
                 this.onCustomTouch = (event) => {
                     const base = event.detail && event.detail.name;
 
@@ -266,7 +165,7 @@
 
                 this.$nextTick(() => {
                     this.snapshot();
- 
+
                     ['input', 'change', 'click', 'keyup'].forEach(evt => {
                         this.$refs.root.addEventListener(evt, this.onFormEvent, true);
                     });
@@ -289,7 +188,7 @@
                         setTimeout(() => this.removeInFormSave(), 400);
                     }
                 });
- 
+
                 this.$emitter.on('form-saved', this.onFormSaved);
             },
 
@@ -389,7 +288,7 @@
                     }
 
                     this.barOpen = on;
- 
+
                     window.__unsavedBarCount = (window.__unsavedBarCount || 0) + (on ? 1 : -1);
 
                     if (window.__unsavedBarCount < 0) {
@@ -453,7 +352,7 @@
                     }
                 },
 
-                onBeforeUnload(event) { 
+                onBeforeUnload(event) {
                     if (window.__unsavedNavBypass) {
                         return;
                     }
@@ -551,7 +450,11 @@
                             return;
                         }
 
-                        btn.remove();
+                        // Hide rather than remove so the node still exists for any JS that
+                        // looks it up or a partial re-render that expects it.
+                        btn.classList.add('hidden');
+
+                        btn.setAttribute('data-unsaved-hidden', '');
                     });
                 },
 

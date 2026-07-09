@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create a category via UI.
@@ -36,7 +36,7 @@ test.describe('UnoPim Category Tests', () => {
     await adminPage.getByRole('link', { name: 'Create Category' }).click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('#name').fill('Television');
-    await adminPage.getByRole('button', { name: 'Save Category' }).click();
+    await clickSave(adminPage, 'Save Category');
     await expect(adminPage.locator('#app').getByText('The code field is required')).toBeVisible();
   });
 
@@ -46,7 +46,7 @@ test.describe('UnoPim Category Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('input[name="code"]').fill('television_empty_name');
     await adminPage.locator('#name').fill('');
-    await adminPage.getByRole('button', { name: 'Save Category' }).click();
+    await clickSave(adminPage, 'Save Category');
     await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
   });
 
@@ -56,7 +56,7 @@ test.describe('UnoPim Category Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('input[name="code"]').fill('');
     await adminPage.locator('#name').fill('');
-    await adminPage.getByRole('button', { name: 'Save Category' }).click();
+    await clickSave(adminPage, 'Save Category');
     await expect(adminPage.locator('#app').getByText('The code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
   });

@@ -66,7 +66,7 @@ class ExportController extends Controller
         $exporters = array_keys($exporterConfig);
 
         $this->validate(request(), [
-            'code'                => 'required|unique:job_instances,code',
+            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/', 'unique:job_instances,code'],
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
@@ -133,7 +133,7 @@ class ExportController extends Controller
         $export = $this->jobInstancesRepository->findOrFail($id);
 
         $this->validate(request(), [
-            'code'                => 'required',
+            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/'],
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
@@ -149,7 +149,6 @@ class ExportController extends Controller
             ]),
             [
                 'action'               => 'fetch',
-                'validation_strategy'  => '',
                 'validation_strategy'  => '',
                 'allowed_errors'       => '',
                 'state'                => 'pending',

@@ -43,7 +43,7 @@ test-results
 .codex
 .cursor
 .github/skills
-docs
+/docs/
 .mcp.json
 boost.json
 CLAUDE.md
@@ -52,3 +52,5 @@ skills-lock.json
 # Passport OAuth signing keys — generated per environment, never commit
 packages/Webkul/AdminApi/src/Secrets/Oauth/*.key
 AGENTS.md
+# OWASP ZAP scan artifacts (generated, do not commit)
+/storage/zap-report/

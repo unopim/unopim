@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an export job with given parameters.
@@ -44,7 +44,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
     await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
 
@@ -58,7 +58,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
     await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
   });
 
@@ -68,7 +68,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('link', { name: 'Create Export' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(`exp-fmt-${uid}`);
     await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The File Format field is required')).toBeVisible();
   });
 
@@ -79,7 +79,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.locator('#export-type').locator('.multiselect__single, .multiselect__placeholder').first().click();
     await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
     await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The File Format field is required')).toBeVisible();
@@ -112,7 +112,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText(/Code has already been taken|already exists/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup

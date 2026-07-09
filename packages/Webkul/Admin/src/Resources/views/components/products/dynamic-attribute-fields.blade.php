@@ -169,7 +169,7 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!-- Emoty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -200,7 +200,7 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!-- Empty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -228,7 +228,7 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!--  Emoty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -269,7 +269,7 @@
                 </div>
             @break
             @case('multiselect')
-                <!-- NO BREAK -->
+                {{-- NO BREAK --}}
                 @php
                     if (! is_array($value)) {
                         $value = str_contains((string) $value, ',')
@@ -278,7 +278,7 @@
                     }
                 @endphp
             @case('select')
-                <!-- NO BREAK -->
+                {{-- NO BREAK --}}
                 @php
                     $selectedValue = [];
                     foreach ($field->options->whereIn('code', $value) as $option) {
@@ -318,7 +318,6 @@
 
                 <x-slot:option>
                     <div class="flex items-center space-x-2">
-                        <!-- Image swatch -->
                         <div
                             v-if="option.attribute.swatch_type == 'image'"
                             class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
@@ -336,12 +335,10 @@
                             </div>
                         </div>
 
-                        <!-- Color swatch -->
                         <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
                             :style="{ backgroundColor: option.swatch_value }"
                             class="w-6 h-6 rounded border"></div>
 
-                        <!-- Label -->
                         <span>@{{ option[labelBy] }}</span>
                     </div>
                 </x-slot:option>

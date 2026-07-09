@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Delete ALL existing integrations so admin_id is free for new ones.
@@ -55,7 +55,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
     await adminPage.locator('input[name="admin_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
     await adminPage.getByRole('option').first().click();
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
   });
 
@@ -64,7 +64,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await adminPage.getByRole('link', { name: 'Create' }).click();
     await adminPage.waitForLoadState('load');
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('Validation Test');
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(adminPage.locator('#app').getByText('The Assign User field is required')).toBeVisible();
   });
 
@@ -73,7 +73,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await adminPage.getByRole('link', { name: 'Create' }).click();
     await adminPage.waitForLoadState('load');
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Assign User field is required')).toBeVisible();
   });

@@ -69,9 +69,7 @@
 
                         {!! view_render_event('unopim.admin.catalog.families.edit.card.accordion.general.before', ['attributeFamily' => $attributeFamily]) !!}
                     
-                        <!-- Right Container -->
                         <div class="flex flex-col gap-2 w-[360px] max-w-full select-none">
-                            <!-- General Pannel -->
                             <div class="relative p-[16px] bg-white dark:bg-cherry-800 rounded-[4px] box-shadow">
                                 <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
                                     @lang('admin::app.catalog.attributes.edit.general')
@@ -100,7 +98,6 @@
                                     @lang('admin::app.catalog.attributes.edit.label')
                                 </p>
                                 <x-admin::form.control-group>
-                                    <!-- Locales Inputs -->
                                     @foreach ($locales as $locale)
                                         <x-admin::form.control-group>
                                             <x-admin::form.control-group.label>
@@ -145,9 +142,7 @@
                 id="v-family-attributes-template"
             >
                 <div>
-                    <!-- Panel Header -->
                     <div class="flex flex-wrap gap-2.5 justify-between mb-2.5 p-4">
-                        <!-- Panel Header -->
                         <div class="flex flex-col gap-2">
                             <p class="text-base font-semibold text-gray-800 dark:text-white">
                                 @lang('admin::app.catalog.families.edit.attribute-groups')
@@ -158,9 +153,7 @@
                             </p>
                         </div>
                         
-                        <!-- Panel Content -->
                         <div class="flex gap-x-1 items-center">
-                            <!-- Delete Group Button -->
                             <div
                                 class="px-3 py-1.5 border-2 border-transparent rounded-md text-red-600 font-semibold whitespace-nowrap transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 cursor-pointer"
                                 @click="deleteGroup"
@@ -168,7 +161,6 @@
                                 @lang('admin::app.catalog.families.edit.delete-group-btn')
                             </div>
 
-                            <!-- Add Group Button -->
                             <div
                                 class="secondary-button"
                                 @click="$refs.assignGroupModal.open()"
@@ -177,11 +169,8 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Panel Content -->
                     <div class="grid grid-cols-2 gap-4 mb-2.5 p-4">
-                        <!-- Attributes Groups Container -->
                         <div class="">
-                            <!-- Unassigned Attribute Groups Header -->
                             <div class="flex flex-col mb-4">
                                 <p class="text-gray-600 dark:text-gray-300 font-semibold leading-6">
                                     @lang('admin::app.catalog.families.edit.main-column')
@@ -193,7 +182,6 @@
                                 </p>
                             </div>
 
-                            <!-- Draggable Unassigned Attribute Group  -->
                             <draggable
                                 id="assigned-attribute-groups"
                                 class="h-[calc(100vh-285px)] pb-[16px] overflow-auto ltr:border-r rtl:border-l border-gray-200"
@@ -206,9 +194,7 @@
                             >
                                 <template #item="{ element, index }">
                                     <div class="">
-                                        <!-- Group Container -->
                                         <div class="flex items-center group">
-                                            <!-- Toggle -->
                                             <i
                                                 class="icon-chevron-down text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 group-hover:text-gray-800"
                                                 @click="element.hide = ! element.hide"
@@ -247,7 +233,6 @@
                                                 />
                                             </div>
                                         </div>
-                                        <!-- Group Attributes -->
                                         <draggable
                                             class="ltr:ml-11 rtl:mr-11"
                                             ghost-class="draggable-ghost"
@@ -288,9 +273,7 @@
                             </draggable>
                         </div>
 
-                        <!-- Unassigned Attributes Container -->
                         <div>
-                            <!-- Unassigned Attributes Header -->
                             <div class="flex justify-between mb-4">
                                 <div>
                                     <p class="text-gray-600 dark:text-gray-300 font-semibold leading-6">
@@ -331,7 +314,6 @@
 
                                     <span class="icon-search text-2xl absolute ltr:right-5 rtl:left-3 top-1.5 flex items-center pointer-events-none"></span>
                                 </div>
-                                <!-- Draggable Unassigned Attributes -->
                                 <draggable
                                     id="unassigned-attributes"  
                                     class="h-[calc(100vh-285px)] pb-4 overflow-auto"
@@ -355,7 +337,6 @@
                                     </template>
                                 </draggable>
 
-                                <!-- Pagination -->
                                 <div class="flex gap-1 items-left justify-right mt-2.5">
                                     <a @click="changePage(currentPage - 1)">
                                         <div class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
@@ -395,18 +376,14 @@
                         as="div"
                     >
                         <form @submit.stop="handleSubmit($event, assignGroup)">
-                            <!-- Model Form -->
                             <x-admin::modal ref="assignGroupModal">
-                                <!-- Model Header -->
                                 <x-slot:header>
                                     <p class="text-lg text-gray-800 dark:text-white font-bold">
                                         @lang('admin::app.catalog.families.edit.assign-group-title')
                                     </p>
                                 </x-slot>
 
-                                <!--Model Content -->
                                 <x-slot:content>
-                                    <!-- Group List -->
                                     <x-admin::form.control-group class="mb-4">
                                         <x-admin::form.control-group.label class="required font-medium">
                                             @lang('admin::app.catalog.families.edit.groups')
@@ -427,10 +404,8 @@
                                     </x-admin::form.control-group>
                                 </x-slot>
 
-                                <!-- Model Footer -->
                                 <x-slot:footer>
                                     <div class="flex gap-x-2.5 items-center">
-                                        <!-- Add Group Button -->
                                         <button 
                                             type="submit"
                                             class="primary-button"

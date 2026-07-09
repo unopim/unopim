@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { clickSave } = require('../../utils/helpers');
 
 /**
  * Global unsaved-changes system — verified on the system-settings page, whose
@@ -37,7 +38,7 @@ test.describe('Unsaved changes bar', () => {
     // Edit again → Save changes → reload → persisted, bar gone.
     await field.fill(original + 'Y');
     await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save changes');
     await adminPage.waitForLoadState('networkidle').catch(() => {});
 
     await gotoSettings(adminPage);
@@ -46,7 +47,7 @@ test.describe('Unsaved changes bar', () => {
 
     // Cleanup: restore original.
     await firstField(adminPage).fill(original);
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save changes');
     await adminPage.waitForLoadState('networkidle').catch(() => {});
   });
 

@@ -38,6 +38,13 @@ class EnableDebugForAllowedIps
 
     /**
      * Whether IP-based debugging is enabled and the request IP is allow-listed.
+     *
+     * The client IP comes from Request::ip(), which honours the application's
+     * trusted-proxy configuration: forwarded headers (X-Forwarded-For) are read
+     * only when the request arrives from a TRUSTED_PROXIES address. A client that
+     * is not a trusted proxy cannot spoof its way onto the allow-list by sending
+     * its own X-Forwarded-For, so enabling debug (and leaking stack traces / the
+     * debug bar) stays restricted to the configured IPs.
      */
     protected function shouldEnableDebug(Request $request): bool
     {
@@ -50,62 +57,6 @@ class EnableDebugForAllowedIps
             explode(',', (string) core()->getConfigData('general.debug.settings.allowed_ips'))
         ));
 
-        return in_array($this->resolveClientIp($request), $allowedIps, true);
-    }
-
-    /**
-     * Resolve the effective client IP.
-     *
-     * Forwarded headers (X-Forwarded-For / X-Real-IP) are checked first so
-     * that proxy setups where every REMOTE_ADDR is 127.0.0.1 do not match
-     * an allowlist entry of "127.0.0.1" for every user.  The raw request IP
-     * is used only when no forwarded header is present (i.e. a direct
-     * connection from localhost).
-     */
-    protected function resolveClientIp(Request $request): string
-    {
-        foreach ($this->forwardedCandidates($request) as $candidateIp) {
-            if (filter_var($candidateIp, FILTER_VALIDATE_IP)) {
-                return $candidateIp;
-            }
-        }
-
-        return (string) $request->ip();
-    }
-
-    /**
-     * Candidate forwarded IPs in priority order.
-     *
-     * @return array<int, string>
-     */
-    protected function forwardedCandidates(Request $request): array
-    {
-        $candidates = [];
-
-        $xForwardedFor = (string) $request->headers->get('x-forwarded-for', '');
-
-        foreach (array_filter(array_map('trim', explode(',', $xForwardedFor))) as $ip) {
-            $candidates[] = $ip;
-        }
-
-        $xRealIp = (string) $request->headers->get('x-real-ip', '');
-
-        if ($xRealIp !== '') {
-            $candidates[] = trim($xRealIp);
-        }
-
-        return $candidates;
-    }
-
-    /**
-     * Validate an IP and reject loopback values.
-     */
-    protected function isValidNonLoopbackIp(string $ip): bool
-    {
-        if (! filter_var($ip, FILTER_VALIDATE_IP)) {
-            return false;
-        }
-
-        return ! in_array($ip, ['127.0.0.1', '::1'], true);
+        return in_array((string) $request->ip(), $allowedIps, true);
     }
 }

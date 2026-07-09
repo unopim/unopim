@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create a category field via UI.
@@ -40,7 +40,7 @@ test.describe('UnoPim Category Field Tests', () => {
     await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
     await adminPage.getByRole('option', { name: 'Text' }).first().click();
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
-    await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+    await clickSave(adminPage, 'Save Category Field');
     await expect(adminPage.locator('#app').getByText('The Code field is required ')).toBeVisible();
   });
 
@@ -50,7 +50,7 @@ test.describe('UnoPim Category Field Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('test_empty_type');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
-    await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+    await clickSave(adminPage, 'Save Category Field');
     await expect(adminPage.locator('#app').getByText('The Type field is required ')).toBeVisible();
   });
 
@@ -60,7 +60,7 @@ test.describe('UnoPim Category Field Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
-    await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+    await clickSave(adminPage, 'Save Category Field');
     await expect(adminPage.locator('#app').getByText('The Code field is required ')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Type field is required ')).toBeVisible();
   });

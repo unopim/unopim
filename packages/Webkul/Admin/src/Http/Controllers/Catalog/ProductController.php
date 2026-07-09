@@ -365,6 +365,10 @@ class ProductController extends Controller
 
     public function filterableAttributes(): JsonResponse
     {
+        if (! bouncer()->hasPermission('catalog.products')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $query = $this->attributeRepository->getModel()->newQuery()
             ->where('is_filterable', true)
             ->with('translations');

@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create a locale via the modal.
@@ -49,7 +49,7 @@ test.describe('Locale Management', () => {
     await adminPage.getByRole('button', { name: 'Create Locale' }).click();
     await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('');
     await adminPage.locator('label[for="status"]').click();
-    await adminPage.getByRole('button', { name: 'Save Locale' }).click();
+    await clickSave(adminPage, 'Save Locale');
     await expect(adminPage.locator('#app').getByText(/The Code field is required/i)).toBeVisible();
   });
 
@@ -58,7 +58,7 @@ test.describe('Locale Management', () => {
     await adminPage.getByRole('button', { name: 'Create Locale' }).click();
     await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('en_US');
     await adminPage.locator('label[for="status"]').click();
-    await adminPage.getByRole('button', { name: 'Save Locale' }).click();
+    await clickSave(adminPage, 'Save Locale');
     await expect(adminPage.locator('#app').getByText(/The code has already been taken/i)).toBeVisible();
   });
 

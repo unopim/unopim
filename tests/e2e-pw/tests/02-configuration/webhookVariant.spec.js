@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
 
 /**
  * Select a value from a Vue-multiselect dropdown by field name.
@@ -51,7 +51,7 @@ async function createConfigurableProduct(page, sku) {
   await selectMultiselectByField(page, 'type', 'Configurable');
   await selectMultiselectByField(page, 'attribute_family_id', 'Default');
   await page.locator('input[name="sku"]').fill(sku);
-  await page.getByRole('button', { name: 'Save Product' }).click();
+  await clickSave(page, 'Save Product');
 
   // Configurable Attributes modal opens with Color/Size/Brand pre-selected.
   // Deselect Color and Brand so only Size is the configurable axis (S/M/L/XL).
@@ -65,7 +65,7 @@ async function createConfigurableProduct(page, sku) {
       await page.waitForTimeout(150);
     }
   }
-  await page.getByRole('button', { name: 'Save Product' }).click();
+  await clickSave(page, 'Save Product');
 
   // Wait for redirect to edit page
   await page.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -165,7 +165,7 @@ test.describe('Webhook - Variant Product Create Event', () => {
     // Step 5: Save the product to trigger the update + variant creation
     await Promise.all([
       adminPage.waitForResponse(resp => /\/admin\/catalog\/products\/(edit|update)\//.test(resp.url()) && /POST|PUT/.test(resp.request().method()), { timeout: 30000 }).catch(() => null),
-      adminPage.getByRole('button', { name: 'Save Product' }).click(),
+      clickSave(adminPage, 'Save Product'),
     ]);
     await adminPage.waitForLoadState('networkidle').catch(() => {});
     // Toast may be transient; presence of edit URL still + no validation errors is OK

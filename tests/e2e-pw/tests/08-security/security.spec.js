@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { clickSave } = require('../../utils/helpers');
 
 const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
@@ -60,7 +61,7 @@ test.describe('Security Vulnerability Fixes', () => {
     await page.getByRole('textbox', { name: 'Password', exact: true }).fill('abc');
     await page.getByRole('textbox', { name: 'Confirm Password' }).fill('abc');
 
-    await page.getByRole('button', { name: 'Save User' }).click();
+    await clickSave(page, 'Save User');
 
     const errorMsg = page.locator('#app').getByText(/at least 6 characters/i);
     await expect(errorMsg.first()).toBeVisible({ timeout: 10000 });

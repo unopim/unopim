@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { navigateTo, clickSave } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -313,7 +313,7 @@ test('5.0 - Setup: Create OpenAI platform for chat tests', async ({ adminPageWit
     }
   });
 
-  await adminPageWithWidget.getByRole('button', { name: 'Save' }).click();
+  await clickSave(adminPageWithWidget, 'Save');
   await expect(adminPageWithWidget.getByText(/saved successfully|created successfully|updated successfully/i)).toBeVisible({ timeout: 30000 });
 });
 

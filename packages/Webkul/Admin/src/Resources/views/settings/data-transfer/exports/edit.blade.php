@@ -3,7 +3,6 @@
         job_instance
     </x-slot>
 
-    <!-- Page Title -->
     <x-slot:title>
         @lang('admin::app.settings.data-transfer.exports.edit.title')
     </x-slot>
@@ -37,7 +36,6 @@
                         : $savedCustomAttributes;
                 @endphp
 
-                <!-- Page Header -->
                 <div class="flex justify-between items-center">
                     <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
                         @lang('admin::app.settings.data-transfer.exports.edit.title')
@@ -57,20 +55,16 @@
                     </div>
                 </div>
 
-                <!-- Body Content -->
                 <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-                    <!-- Left Container -->
                     <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.general.before') !!}
 
-                        <!-- General -->
                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                             <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                 @lang('admin::app.settings.data-transfer.exports.edit.general')
                             </p>
 
                             <div class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5">
-                                <!-- Code -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.settings.data-transfer.exports.create.code')
@@ -95,7 +89,6 @@
                                     <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
 
-                                <!-- Type -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.settings.data-transfer.exports.edit.type')
@@ -133,7 +126,6 @@
                         @if ($scopeFields->isNotEmpty())
                             {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.scope.before') !!}
 
-                            <!-- Data to export -->
                             <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                                 <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                     @lang('admin::app.settings.data-transfer.exports.create.scope-filters')
@@ -152,7 +144,6 @@
                         @endif
 
                         @if ($productFilterFields->isNotEmpty())
-                            <!-- Product filters -->
                             <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                                 <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                     @lang('admin::app.settings.data-transfer.exports.create.product-filters')
@@ -175,7 +166,6 @@
                                 />
 
                                 @if ($supportsCategories)
-                                    <!-- Category (tree) -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label>
                                             @lang('data_transfer::app.exporters.products.filters.categories')
@@ -199,7 +189,6 @@
                         @endif
 
                         @if ($supportsConditions)
-                            <!-- Attribute Conditions -->
                             <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                                 <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                     @lang('admin::app.settings.data-transfer.exports.create.attribute-conditions')
@@ -216,11 +205,9 @@
                         @endif
                     </div>
 
-                    <!-- Right Container -->
                     <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.befor') !!}
 
-                        <!-- Output -->
                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                             <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                 @lang('admin::app.settings.data-transfer.exports.create.output')
@@ -238,7 +225,6 @@
 
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.settings.before') !!}
 
-                        <!-- Format settings -->
                         <div
                             v-if="selectedFileFormat == 'Csv'"
                             class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow"

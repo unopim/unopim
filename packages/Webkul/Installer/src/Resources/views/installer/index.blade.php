@@ -1226,7 +1226,7 @@
 
                                                 <span class="min-w-0">
                                                     <span class="block text-[14px] font-bold text-gray-800">
-                                                        @{{ pkg.label }}
+                                                        @{{ addOnLabels[key] }}
                                                     </span>
 
                                                     <span class="block text-[13px] text-gray-600 !leading-normal mt-0.5">
@@ -1416,7 +1416,7 @@
                                                 >
                                                     <span class="icon-tick text-[18px] text-green-600"></span>
 
-                                                    @{{ optionalPackages[key].label }}
+                                                    @{{ addOnLabels[key] }}
                                                 </li>
                                             </ul>
                                         </div>
@@ -1506,6 +1506,12 @@
                             selectedPackages: [],
 
                             addOnIcons: @json($addOnIcons),
+
+                            addOnLabels: {
+                                dam: "@lang('installer::app.installer.index.add-ons.packages.dam.label')",
+                                shopify: "@lang('installer::app.installer.index.add-ons.packages.shopify.label')",
+                                bagisto: "@lang('installer::app.installer.index.add-ons.packages.bagisto.label')",
+                            },
 
                             addOnDescriptions: {
                                 dam: "@lang('installer::app.installer.index.add-ons.packages.dam.description')",

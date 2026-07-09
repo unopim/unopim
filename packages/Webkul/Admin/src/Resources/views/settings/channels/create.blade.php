@@ -1,5 +1,4 @@
 <x-admin::layouts>
-    <!-- Page Title -->
     <x-slot:title>
         @lang('admin::app.settings.channels.create.title')
     </x-slot>
@@ -16,7 +15,6 @@
             </p>
 
             <div class="flex gap-x-2.5 items-center">
-                <!-- Cancel Button -->
                 <a
                     href="{{ route('admin.settings.channels.index') }}"
                     class="transparent-button"
@@ -24,7 +22,6 @@
                     @lang('admin::app.settings.channels.create.cancel')
                 </a>
 
-                <!-- Save Button -->
                 <button 
                     type="submit" 
                     class="primary-button"
@@ -34,12 +31,9 @@
             </div>
         </div>
 
-        <!-- body content -->
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-            <!-- Left sub-component -->
             <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
 
-                <!-- General Information -->
 
                 {!! view_render_event('unopim.admin.settings.channels.create.card.general.before') !!}
 
@@ -48,7 +42,6 @@
                         @lang('admin::app.settings.channels.create.general')
                     </p>
 
-                    <!-- Code -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.settings.channels.create.code')
@@ -67,7 +60,6 @@
                         <x-admin::form.control-group.error control-name="code" />
                     </x-admin::form.control-group>
  
-                    <!-- Root Category -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.settings.channels.create.root-category')
@@ -98,7 +90,6 @@
 
                 {!! view_render_event('unopim.admin.settings.channels.create.card.general.after') !!}
 
-                <!-- Name Translations -->
 
                 {!! view_render_event('unopim.admin.settings.channels.create.card.translations.before') !!}
 
@@ -128,10 +119,8 @@
 
             </div>
 
-            <!-- Right section -->
             <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
 
-                <!-- Currencies and Locales -->
 
                 {!! view_render_event('unopim.admin.settings.channels.create.card.accordion.currencies_and_locales.before') !!}
 
@@ -143,7 +132,6 @@
                     </x-slot>
             
                     <x-slot:content>
-                         <!-- Locales Checkboxes -->
                         <x-admin::form.control-group class="mb-4">
                             <x-admin::form.control-group.label class="required">
                                 @lang('admin::app.settings.channels.edit.locales')
@@ -174,7 +162,6 @@
                             <x-admin::form.control-group.error control-name="locales" />
                         </x-admin::form.control-group>
 
-                        <!-- Currencies Checkboxes -->
                         <x-admin::form.control-group class="mb-4">
                             <x-admin::form.control-group.label class="required">
                                 @lang('admin::app.settings.channels.edit.currencies')

@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute family via UI.
@@ -50,7 +50,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill('');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Header');
-    await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+    await clickSave(adminPage, 'Save Attribute Family');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
 

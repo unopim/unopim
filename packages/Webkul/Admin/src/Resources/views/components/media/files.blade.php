@@ -20,10 +20,9 @@
         type="text/x-template"
         id="v-media-files-template"
     >
-        <!-- Panel Content -->
         <div class="grid">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                <!-- Add File tile (always first; hidden once a file exists) -->
+                {{-- Add File tile (always first; hidden once a file exists) --}}
                 <label
                     class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
                     :class="[errors['inputFiles.files[0]'] ? 'border-red-500 dark:border-red-500' : '', isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : '']"
@@ -55,7 +54,6 @@
                     />
                 </label>
 
-                <!-- Uploaded Files -->
                 <draggable
                     class="contents"
                     ghost-class="draggable-ghost"
@@ -82,12 +80,10 @@
 
     <script type="text/x-template" id="v-media-files-item-template">
         <div class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-700">
-            <!-- File icon preview area -->
             <div class="relative flex flex-col items-center justify-center w-full h-[140px] bg-gray-50 dark:bg-cherry-800">
                 <span class="icon-folder text-5xl text-gray-400 dark:text-gray-500"></span>
                 <span class="mt-1 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">PDF</span>
 
-                <!-- Hover overlay with actions -->
                 <div class="absolute inset-0 flex items-end justify-center gap-2 p-2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
                     <a :href="inputFile.url" target="_blank" class="flex items-center">
                         <span class="icon-down-stat text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"></span>
@@ -114,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- Filename caption -->
             <p
                 class="px-2 py-1.5 text-xs text-gray-700 dark:text-gray-300 text-center truncate"
                 :title="inputFile?.file?.name ?? inputFile.fileName"

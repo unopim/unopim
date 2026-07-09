@@ -98,6 +98,38 @@ async function expectSuccessToast(page, pattern, timeout = 20000) {
 }
 
 /**
+ * Click a form's save action, tolerant of the global unsaved-changes bar.
+ *
+ * Forms that track changes hide their in-form submit button once dirty and move
+ * saving to the sticky "Save changes" bar. Modal sub-forms and non-tracked forms
+ * (e.g. login) keep their own button. This clicks the named button when it is
+ * actually visible, otherwise falls back to the bar.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} buttonName — the in-form save button label (e.g. 'Save Product')
+ */
+async function clickSave(page, buttonName) {
+  const named = page.getByRole('button', { name: buttonName });
+  const bar = page.getByRole('button', { name: 'Save changes' });
+
+  // Wait for whichever save affordance the form exposes: the in-form button
+  // (non-tracked / modal forms) or the unsaved-changes bar (tracked forms),
+  // which may take a moment to appear once the form is dirty.
+  await Promise.race([
+    named.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {}),
+    bar.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {}),
+  ]);
+
+  if (await named.isVisible().catch(() => false)) {
+    await named.click();
+
+    return;
+  }
+
+  await bar.click();
+}
+
+/**
  * Click Save and verify success — accepts either toast message OR URL redirect.
  * Solves the CI issue where the page redirects before the toast is visible.
  * @param {import('@playwright/test').Page} page
@@ -114,7 +146,7 @@ async function clickSaveAndExpect(page, buttonName, toastPattern, urlPattern) {
     ? page.waitForURL(urlPattern, { timeout: 20000 })
     : page.waitForURL((url) => url.toString() !== currentUrl, { timeout: 20000 });
 
-  await page.getByRole('button', { name: buttonName }).click();
+  await clickSave(page, buttonName);
 
   const toastPromise = page.locator('#app').getByText(regex).first().waitFor({ state: 'visible', timeout: 20000 });
 
@@ -140,6 +172,7 @@ module.exports = {
   clickDeleteOnRow,
   confirmDelete,
   expectSuccessToast,
+  clickSave,
   clickSaveAndExpect,
   generateUid,
 };

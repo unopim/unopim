@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid } = require('../../utils/helpers');
 
 /**
  * Helper: Create a new attribute family with a unique code and the General group assigned.
@@ -12,7 +12,7 @@ async function createFamilyWithGeneralGroup(adminPage, familyCode, familyName) {
   await adminPage.getByText('General Code').click();
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(familyCode);
   await adminPage.locator('input[name="en_US[name]"]').fill(familyName);
-  await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+  await clickSave(adminPage, 'Save Attribute Family');
   await adminPage.waitForLoadState('networkidle');
 
   // After save, navigate to families list and find the newly created family
@@ -51,7 +51,7 @@ async function createFamilyWithGeneralGroup(adminPage, familyCode, familyName) {
     }
   }
 
-  await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+  await clickSave(adminPage, 'Save Attribute Family');
   await adminPage.waitForLoadState('networkidle');
 }
 
@@ -167,7 +167,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('General Code').click();
     await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(familyCode);
     await adminPage.locator('input[name="en_US[name]"]').fill(familyName);
-    await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+    await clickSave(adminPage, 'Save Attribute Family');
     await adminPage.waitForLoadState('networkidle');
 
     // Navigate to the family and verify the Completeness tab

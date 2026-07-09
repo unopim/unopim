@@ -1,12 +1,10 @@
 <x-admin::layouts>
-    <!-- Page Title -->
     <x-slot:title>
         @lang('admin::app.settings.roles.create.title')
     </x-slot>
 
     {!! view_render_event('unopim.admin.settings.roles.create.before') !!}
 
-    <!-- Create Role for -->
     <v-create-user-role></v-create-user-role>
 
     {!! view_render_event('unopim.admin.settings.roles.create.after') !!}
@@ -26,7 +24,6 @@
                         </p>
 
                         <div class="flex gap-x-2.5 items-center">
-                            <!-- Cancel Button -->
                             <a
                                 href="{{ route('admin.settings.roles.index') }}"
                                 class="transparent-button"
@@ -34,7 +31,6 @@
                                 @lang('admin::app.settings.roles.create.back-btn')
                             </a>
 
-                            <!-- Save Button -->
                             <button
                                 type="submit"
                                 class="primary-button"
@@ -44,20 +40,16 @@
                         </div>
                     </div>
 
-                    <!-- body content -->
                     <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-                        <!-- Left sub-component -->
                         <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
 
                             {!! view_render_event('unopim.admin.settings.roles.create.card.access_control.before') !!}
 
-                            <!-- Access Control Input Fields -->
                             <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                                 <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                     @lang('admin::app.settings.roles.create.access-control')
                                 </p>
 
-                                <!-- Permission Type -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.settings.roles.create.permissions')
@@ -109,7 +101,6 @@
                             {!! view_render_event('unopim.admin.settings.roles.create.card.access_control.after') !!}
 
                         </div>
-                        <!-- Right sub-component -->
                         <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
 
                             {!! view_render_event('unopim.admin.settings.roles.create.card.accordion.general.before') !!}
@@ -124,7 +115,6 @@
                                 </x-slot>
 
                                 <x-slot:content>
-                                    <!-- Name -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.settings.roles.create.name')
@@ -143,7 +133,6 @@
                                         <x-admin::form.control-group.error control-name="name" />
                                     </x-admin::form.control-group>
 
-                                    <!-- Description -->
                                     <x-admin::form.control-group class="!mb-0">
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.settings.roles.create.description')

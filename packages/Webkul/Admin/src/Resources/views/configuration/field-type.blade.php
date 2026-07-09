@@ -45,7 +45,6 @@
         id="v-configurable-template"
     >
         <x-admin::form.control-group class="last:!mb-0">
-            <!-- Title of the input field -->
             <div    
                 v-if="field"
                 class="flex justify-between"
@@ -55,7 +54,6 @@
                 </x-admin::form.control-group.label>
             </div>
         
-            <!-- Text input -->
             <template v-if="field.type == 'text'">
                 <x-admin::form.control-group.control
                     type="text"
@@ -69,7 +67,6 @@
                 />
             </template>
         
-            <!-- Password input -->
             <template v-if="field.type == 'password'">
                 <x-admin::form.control-group.control
                     type="password"
@@ -83,7 +80,6 @@
                 />
             </template>
         
-            <!-- Number input -->
             <template v-if="field.type == 'number'">
                 <x-admin::form.control-group.control
                     type="number"
@@ -98,7 +94,6 @@
                 />
             </template>
 
-            <!-- Color Input -->
             <template v-if="field.type == 'color'">
                 <v-field
                     v-slot="{ field, errors }"
@@ -118,7 +113,6 @@
                 </v-field>
             </template>
 
-            <!-- Select input -->
             <template v-if="field.type == 'select'">
                 <x-admin::form.control-group.control
                     type="select"
@@ -135,7 +129,6 @@
                 </x-admin::form.control-group.control>
             </template>
 
-            <!-- Boolean/Switch input -->
             <template v-if="field.type == 'boolean'">
                 <input
                     type="hidden"
@@ -158,7 +151,6 @@
                 </label>
             </template>
 
-            <!-- validation message -->
             <v-error-message
                 :name="name"
                 v-slot="{ message }"

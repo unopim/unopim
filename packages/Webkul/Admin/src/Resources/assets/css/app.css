@@ -541,3 +541,117 @@
 .multiselect__content-wrapper, .multiselect__tags, .multiselect__input, .multiselect__single {
     @apply bg-violet-100 dark:bg-cherry-900 dark:!text-slate-50 dark:hover:border-slate-300 dark:border-gray-600;
 }
+
+/**
+ * Unsaved-changes bar (v-unsaved-changes component).
+ *
+ * Lives in the compiled bundle rather than an inline per-page <style> so it
+ * persists across ajax navigation and stays out of the Blade template.
+ */
+.unsaved-root {
+    display: contents;
+}
+
+.unsaved-badge {
+    @apply hidden ml-1.5 font-semibold rounded align-middle whitespace-nowrap;
+    padding: 0.05rem 0.4rem;
+    font-size: 0.625rem;
+    line-height: 1.2;
+    color: #854d0e;
+    background: #fef9c3;
+}
+
+.dark .unsaved-badge {
+    color: #fde68a;
+    background: #713f12;
+}
+
+[data-control-group].unsaved-dirty .unsaved-badge {
+    @apply inline-flex items-center;
+}
+
+/*
+ * Align the bar's left edge with the main content column so it lines up with
+ * (and never covers) the fixed left menu. Mirrors the layout's own
+ * ltr:pl-[286px] / collapsed pl-[85px] offsets. Below lg the menu is hidden
+ * (max-lg:hidden), so the bar spans full width there.
+ */
+.unsaved-bar {
+    left: 286px;
+    right: 0;
+}
+
+body:has(.sidebar-collapsed) .unsaved-bar {
+    left: 85px;
+}
+
+[dir="rtl"] .unsaved-bar {
+    left: 0;
+    right: 286px;
+}
+
+[dir="rtl"] body:has(.sidebar-collapsed) .unsaved-bar,
+body:has(.sidebar-collapsed) [dir="rtl"] .unsaved-bar {
+    right: 85px;
+}
+
+@media (max-width: 1024px) {
+    .unsaved-bar,
+    [dir="rtl"] .unsaved-bar {
+        left: 0;
+        right: 0;
+    }
+}
+
+/*
+ * Right AI drawer: while its panel is actually mounted (it is v-if'd, so the
+ * node exists ONLY when open — no stale-class phantom gap), stop the bar at the
+ * panel's left edge so the panel's chat composer at the bottom stays clickable.
+ * Driven off :has(.ap-panel), not a body class, so it can never get stuck open.
+ */
+@media (min-width: 1025px) {
+    body:has(.ap-panel) .unsaved-bar,
+    [dir="rtl"] body:has(.ap-panel) .unsaved-bar,
+    body:has(.ap-panel) [dir="rtl"] .unsaved-bar {
+        right: 420px;
+    }
+}
+
+/* Keep page content clear of the bar so nothing is hidden behind it. */
+body.unsaved-bar-open {
+    padding-bottom: 76px;
+}
+
+/*
+ * Phones: the wordy title + two buttons don't fit, so drop the text and keep
+ * the warning icon + Discard / Save changes (which convey the state).
+ */
+@media (max-width: 524px) {
+    .unsaved-bar-text {
+        display: none;
+    }
+
+    .unsaved-bar-inner {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+
+/*
+ * And when the bar is showing, lift the floating chat launcher above it so the
+ * chat icon never sits over the "Save changes" button.
+ */
+body.unsaved-bar-open .ap-launcher {
+    bottom: 88px !important;
+}
+
+.unsaved-bar-enter-active,
+.unsaved-bar-leave-active {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.unsaved-bar-enter-from,
+.unsaved-bar-leave-to {
+    transform: translateY(100%);
+    opacity: 0;
+}

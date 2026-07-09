@@ -49,7 +49,7 @@ const appOptions = {
          * FormData (so `_method` spoofing and file inputs are preserved), flashes
          * the server message, and maps Laravel 422 errors back onto the fields.
          */
-        onAjaxSubmit(values, { evt, setErrors }) {
+        onAjaxSubmit(values, { evt, setErrors, setFieldValue }) {
             const form = evt?.target;
 
             if (! form) return;
@@ -89,6 +89,13 @@ const appOptions = {
                 })
                 .catch(error => {
                     toggleButtons(false);
+
+                    // No page reload on failure, so clear the password field instead of leaving the secret on screen.
+                    form.querySelectorAll('input[autocomplete="current-password"]').forEach(input => {
+                        if (input.name) {
+                            setFieldValue(input.name, "");
+                        }
+                    });
 
                     const response = error.response;
 

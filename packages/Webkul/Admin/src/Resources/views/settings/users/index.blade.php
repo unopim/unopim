@@ -1,5 +1,4 @@
 <x-admin::layouts>
-    <!-- Title of the page -->
     <x-slot:title>
         @lang('admin::app.settings.users.index.title')
     </x-slot>
@@ -11,7 +10,6 @@
             </p>
 
             <div class="flex gap-x-2.5 items-center">
-                <!-- Create User Button -->
                 @if (bouncer()->hasPermission('settings.users.users.create'))
                     <button
                         type="button"
@@ -23,7 +21,6 @@
             </div>
         </div>
 
-        <!-- DataGrid Shimmer -->
         <x-admin::shimmer.datagrid />
     </v-users>
 
@@ -38,7 +35,6 @@
                 </p>
 
                 <div class="flex gap-x-2.5 items-center">
-                    <!-- User Create Button -->
                     @if (bouncer()->hasPermission('settings.users.users.create'))
                         <button
                             type="button"
@@ -51,7 +47,6 @@
                 </div>
             </div>
 
-            <!-- Datagrid -->
             <x-admin::datagrid
                 src="{{ route('admin.settings.users.index') }}"
                 ref="datagrid"
@@ -59,7 +54,6 @@
                 @php
                     $hasPermission = bouncer()->hasPermission('settings.users.users.edit') || bouncer()->hasPermission('settings.users.users.delete');
                 @endphp
-                <!-- DataGrid Header -->
                 <template #header="{columns, records, sortPage, applied}">
                     <div class="row grid {{ $hasPermission ? 'grid-cols-6' : 'grid-cols-5' }} grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-cherry-800 font-semibold">
                         <div
@@ -82,7 +76,6 @@
                                     </span>
                                 </span>
 
-                                <!-- Filter Arrow Icon -->
                                 <i
                                     class="ltr:ml-1.5 rtl:mr-1.5 text-base  text-gray-800 dark:text-white align-text-bottom"
                                     :class="[applied.sort.order === 'asc' ? 'icon-down-stat': 'icon-up-stat']"
@@ -91,7 +84,6 @@
                             </p>
                         </div>
 
-                        <!-- Actions -->
                         @if ($hasPermission)
                             <p class="flex gap-2.5 justify-end">
                                 @lang('admin::app.components.datagrid.table.actions')
@@ -100,7 +92,6 @@
                     </div>
                 </template>
 
-                <!-- DataGrid Body -->
                 <template #body="{ columns, records, performAction }">
                     <div
                         v-for="record in records"
@@ -108,10 +99,8 @@
                         :style="'grid-template-columns: repeat(' + (record.actions.length ? 6 : 5) + ', minmax(0, 1fr));'"
                         @click="id=1; editModal(record.actions.find(action => action.index === 'edit')?.url)"
                     >
-                        <!-- Id -->
                         <p v-text="record.user_id"></p>
 
-                        <!-- User Profile -->
                         <p>
                             <div class="flex gap-2.5 items-center">
                                 <div
@@ -146,16 +135,12 @@
                             </div>
                         </p>
 
-                        <!-- Status -->
                         <p v-html="record.status"></p>
 
-                        <!-- Email -->
                         <p class="truncate" v-text="record.email" :title="record.email"></p>
 
-                        <!-- Role -->
                         <p v-text="record.role_name" class="truncate" :title="record.role_name"></p>
 
-                        <!-- Actions -->
                         <div class="flex justify-end" @click.stop>
                             <a @click="id=1; editModal(record.actions.find(action => action.index === 'edit')?.url)">
                                 <span
@@ -179,7 +164,6 @@
                 </template>
             </x-admin::datagrid>
 
-            <!-- Modal Form -->
             <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
                 as="div"
@@ -189,9 +173,7 @@
                     @submit="handleSubmit($event, updateOrCreate)"
                     ref="userCreateForm"
                 >
-                    <!-- User Create Modal -->
                     <x-admin::modal ref="userUpdateOrCreateModal">
-                        <!-- Modal Header -->
                         <x-slot:header>
                             <p
                                 class="text-lg text-gray-800 dark:text-white font-bold"
@@ -209,9 +191,7 @@
 
                         </x-slot>
 
-                        <!-- Modal Content -->
                         <x-slot:content>
-                            <!-- Name -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.users.index.create.name')
@@ -236,7 +216,6 @@
                                 <x-admin::form.control-group.error control-name="name" />
                             </x-admin::form.control-group>
 
-                            <!-- Email -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.users.index.create.email')
@@ -256,7 +235,6 @@
                             </x-admin::form.control-group>
 
                             <div class="flex gap-4">
-                                <!-- Password -->
                                 <x-admin::form.control-group class="flex-1 mb-2.5">
                                     <x-admin::form.control-group.label ::class="isUpdating ? '' : 'required'">
                                         @lang('admin::app.settings.users.index.create.password')
@@ -276,7 +254,6 @@
                                     <x-admin::form.control-group.error control-name="password" />
                                 </x-admin::form.control-group>
 
-                                <!-- Confirm Password -->
                                 <x-admin::form.control-group class="flex-1">
                                     <x-admin::form.control-group.label ::class="isUpdating ? '' : 'required'">
                                         @lang('admin::app.settings.users.index.create.confirm-password')
@@ -323,7 +300,6 @@
                                 <x-admin::form.control-group.error control-name="ui_locale_id" />
                             </x-admin::form.control-group>
 
-                                <!-- TImezone -->
                             <x-admin::form.control-group class="mb-4">
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.users.index.create.user-timezone')
@@ -350,7 +326,6 @@
                                 <x-admin::form.control-group.error control-name="timezone" />
                             </x-admin::form.control-group>
 
-                            <!-- Role -->
                             <x-admin::form.control-group class="flex-1 w-full">
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.users.index.create.role')
@@ -427,7 +402,6 @@
                             </x-admin::form.control-group>
                         </x-slot>
 
-                        <!-- Modal Footer -->
                         <x-slot:footer>
                             <div class="flex gap-x-2.5 items-center">
                                 <button
@@ -442,7 +416,6 @@
                 </form>
             </x-admin::form>
 
-            <!-- User Delete Password Form -->
             <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
                 as="div"
@@ -452,16 +425,13 @@
                     ref="confirmPassword"
                 >
                     <x-admin::modal ref="confirmPasswordModal">
-                        <!-- Modal Header -->
                         <x-slot:header>
                             <p class="text-lg text-gray-800 dark:text-white font-bold">
                                 @lang('Confirm Password Before DELETE')
                             </p>
                         </x-slot>
 
-                        <!-- Modal Content -->
                         <x-slot:content>
-                            <!-- Password -->
                             <x-admin::form.control-group class="mb-2.5">
                                 <x-admin::form.control-group.label class="required">
                                     @lang('Enter Current Password')
@@ -480,7 +450,6 @@
                             </x-admin::form.control-group>
                         </x-slot>
 
-                        <!-- Modal Footer -->
                         <x-slot:footer>
                             <div class="flex gap-x-2.5 items-center">
                                 <button

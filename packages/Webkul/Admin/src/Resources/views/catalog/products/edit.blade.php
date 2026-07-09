@@ -18,8 +18,7 @@
 
         <input type="hidden" name="sku" value="{{ $product->sku }}">
 
-        <!-- Page Header -->
-        <div class="js-sticky-header sticky z-10 dark:bg-cherry-800 -mx-4 px-4 py-2.5 transition-shadow" style="top: 56px;">
+        <div class="js-sticky-header sticky top-[56px] z-10 dark:bg-cherry-800 -mx-4 px-4 py-2.5 transition-shadow">
             <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
                 <div class="grid gap-1.5">
                     <p class="text-xl text-gray-800 dark:text-slate-50 font-bold leading-6">
@@ -30,7 +29,6 @@
                 <div class="flex gap-x-2.5 items-center">
                     {!! view_render_event('unopim.pdf.product.edit.actions.before', ['product' => $product]) !!}
 
-                    <!-- Back Button -->
                     <a
                         href="{{ route('admin.catalog.products.index') }}"
                         class="transparent-button"
@@ -57,9 +55,7 @@
 
         <div class="flex  gap-4 justify-between items-center mt-7 max-md:flex-wrap">
             <div class="flex gap-x-1 items-center">
-                <!-- Channel Switcher -->
                 <x-admin::dropdown>
-                    <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <button
                         type="button"
@@ -76,7 +72,6 @@
                         </button>
                     </x-slot>
 
-                    <!-- Dropdown Content -->
                     <x-slot:content class="!p-0">
                         @foreach ($channels as $channel)
                             <a
@@ -89,9 +84,7 @@
                     </x-slot>
                 </x-admin::dropdown>
 
-                <!-- Locale Switcher -->
                 <x-admin::dropdown>
-                    <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <button
                             type="button"
@@ -107,7 +100,6 @@
                         </button>
                     </x-slot>
 
-                    <!-- Dropdown Content -->
                     <x-slot:content class="!p-0">
                         @foreach ($currentChannel->locales->sortBy('name') as $locale)
                             <a
@@ -121,7 +113,6 @@
                 </x-admin::dropdown>
 
                 @if (isset($score['score']))
-                    <!-- Completeness Dropdown -->
                     <x-admin::dropdown>
                         <x-slot:toggle>
                             <button
@@ -140,7 +131,6 @@
                             </button>
                         </x-slot>
 
-                        <!-- Dropdown Content -->
                         <x-slot:content class="!p-0">
                             <div class="p-2">
                                 <div class="p-2 font-semibold border-b dark:border-cherry-800">
@@ -184,7 +174,6 @@
 
         {!! view_render_event('unopim.admin.catalog.product.edit.actions.after', ['product' => $product]) !!}
 
-        <!-- body content -->
         {!! view_render_event('unopim.admin.catalog.product.edit.form.before', ['product' => $product]) !!}
 
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
@@ -224,32 +213,25 @@
                                 </div>
 
                                 {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.after', ['product' => $product]) !!}
-                                <!-- Product Type View Blade File -->
                             </div>
                         @endif
-
-                        
 
                     {!! view_render_event('unopim.admin.catalog.product.edit.form.column_after', ['product' => $product]) !!}
                 @endforeach
             </div>
             <div class="right-column flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                <!-- Product Info View Blade File -->
                 @include('admin::catalog.products.edit.product-info')
 
-                <!-- Categories View Blade File -->
                 @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->values['categories'] ?? []])
 
                 @includeIf('admin::catalog.products.edit.types.' . $product->type)
 
-                <!-- Related, Cross Sells, Up Sells View Blade File -->
                 @include('admin::catalog.products.edit.links', [
                     'upSellAssociations'    => $product->values['associations']['up_sells'] ?? [],
                     'crossSellAssociations' => $product->values['associations']['cross_sells'] ?? [],
                     'relatedAssociations'   => $product->values['associations']['related_products'] ?? [],
                 ])
 
-                <!-- Include Product Type Additional Blade Files If Any -->
                 @foreach ($product->getTypeInstance()->getAdditionalViews() as $view)
                     @includeIf($view)
                 @endforeach
@@ -281,7 +263,24 @@
                     header.classList.toggle('shadow-md', scrolled);
                 };
 
+                // The SPA re-runs pushed scripts on every ajax visit, so drop any
+                // previous listener before adding a new one and clean up on navigate —
+                // otherwise scroll handlers accumulate across visits.
+                if (window.__stickyProductHeader) {
+                    window.removeEventListener('scroll', window.__stickyProductHeader);
+                }
+
+                window.__stickyProductHeader = update;
+
                 window.addEventListener('scroll', update, { passive: true });
+
+                document.addEventListener('unopim:navigate:before', function cleanup() {
+                    window.removeEventListener('scroll', window.__stickyProductHeader);
+
+                    window.__stickyProductHeader = null;
+
+                    document.removeEventListener('unopim:navigate:before', cleanup);
+                });
 
                 setTimeout(update, 300);
             })();
