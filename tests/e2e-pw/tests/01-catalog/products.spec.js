@@ -302,7 +302,8 @@ test.describe('Simple Product CRUD', () => {
     await fillTinyMCE(adminPage, 'short_description', 'Short description text');
     await fillTinyMCE(adminPage, 'description', 'Full description text');
 
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    // Edit page saves via the global unsaved-changes bar (no in-form Save Product button).
+    await adminPage.getByRole('button', { name: 'Save changes' }).click();
     await expect(adminPage.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
@@ -387,7 +388,8 @@ test.describe('Configurable Product CRUD', () => {
     await fillTinyMCE(adminPage, 'short_description', 'Short description text');
     await fillTinyMCE(adminPage, 'description', 'Full description text');
 
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    // Edit page saves via the global unsaved-changes bar (no in-form Save Product button).
+    await adminPage.getByRole('button', { name: 'Save changes' }).click();
     await expect(adminPage.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
