@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\User;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -46,27 +47,47 @@ class SessionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(): RedirectResponse|JsonResponse
     {
         $this->validate(request(), [
             'email'    => 'required|email',
             'password' => 'required',
         ]);
 
+        $wantsJson = request()->wantsJson();
+
         $remember = request('remember');
 
         if (! auth()->guard('admin')->attempt(request(['email', 'password']), $remember)) {
-            session()->flash('error', trans('admin::app.settings.users.login-error'));
+            $message = trans('admin::app.settings.users.login-error');
+
+            if ($wantsJson) {
+                return response()->json(['message' => $message], 401);
+            }
+
+            session()->flash('error', $message);
 
             return redirect()->route('admin.session.create')->withInput(request()->only('email'));
         }
 
         if (! auth()->guard('admin')->user()->status) {
-            session()->flash('warning', trans('admin::app.settings.users.activate-warning'));
-
             auth()->guard('admin')->logout();
 
+            $message = trans('admin::app.settings.users.activate-warning');
+
+            if ($wantsJson) {
+                return response()->json(['type' => 'warning', 'message' => $message], 403);
+            }
+
+            session()->flash('warning', $message);
+
             return redirect()->route('admin.session.create')->withInput(request()->only('email'));
+        }
+
+        if ($wantsJson) {
+            return response()->json([
+                'redirect_url' => session()->pull('url.intended', $this->firstAllowedUrl()),
+            ]);
         }
 
         return redirect()->intended($this->firstAllowedUrl());

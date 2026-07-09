@@ -38,4 +38,17 @@ tests/e2e-pw/playwright-report/
 tests/e2e-pw/test-results/
 tests/e2e-pw/test-results/
 test-results
-
+.agents
+.claude
+.codex
+.cursor
+.github/skills
+docs
+.mcp.json
+boost.json
+CLAUDE.md
+opencode.json
+skills-lock.json
+# Passport OAuth signing keys — generated per environment, never commit
+packages/Webkul/AdminApi/src/Secrets/Oauth/*.key
+AGENTS.md

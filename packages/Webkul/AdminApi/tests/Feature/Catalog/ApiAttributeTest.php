@@ -693,6 +693,68 @@ it('should update attribute options for an attribute successfully', function () 
     ]);
 });
 
+it('should store a single attribute option sent as one object instead of an array', function () {
+    $attribute = Attribute::factory()->create(['code' => 'single_object_store_attribute', 'type' => 'checkbox']);
+
+    $localeCode = Locale::where('status', 1)->first()->code;
+
+    $data = [
+        'code'       => 'single_option',
+        'sort_order' => 1,
+        'labels'     => [
+            $localeCode => 'Single Option',
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.attribute_options.store_option', $attribute->code), $data)
+        ->assertCreated()
+        ->assertJsonFragment([
+            'success' => true,
+            'message' => trans('admin::app.catalog.attribute-options.create-success'),
+        ]);
+
+    $this->assertModelWise([
+        AttributeOption::class => [
+            [
+                'attribute_id' => $attribute->id,
+                'code'         => 'single_option',
+                'sort_order'   => 1,
+            ],
+        ],
+    ]);
+});
+
+it('should update a single attribute option sent as one object instead of an array', function () {
+    $attribute = Attribute::factory()->create(['code' => 'single_object_update_attribute', 'type' => 'multiselect']);
+
+    $localeCode = Locale::where('status', 1)->first()->code;
+
+    $data = [
+        'code'       => 'single_option',
+        'sort_order' => 1,
+        'labels'     => [
+            $localeCode => 'Single Option',
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.attribute_options.update_option', $attribute->code), $data)
+        ->assertOk()
+        ->assertJsonFragment([
+            'success' => true,
+            'message' => trans('admin::app.catalog.attribute-options.update-success'),
+        ]);
+
+    $this->assertModelWise([
+        AttributeOption::class => [
+            [
+                'attribute_id' => $attribute->id,
+                'code'         => 'single_option',
+                'sort_order'   => 1,
+            ],
+        ],
+    ]);
+});
+
 it('should successfully upload an image swatch', function () {
     $attribute = Attribute::factory()->create([
         'code'        => 'color_attribute',

@@ -146,8 +146,16 @@ return [
         ],
 
         'repositories' => [
+            /*
+             | Core config MUST read live. Prettus cache invalidation only works
+             | on tag-capable stores (redis/memcached); on file/database drivers
+             | a saved setting is not evicted and stays stale for the whole TTL,
+             | so a toggled setting (e.g. disabling a feature) keeps reporting the
+             | old value app-wide. Config lookups are tiny indexed reads, so we
+             | trade that micro-cache for guaranteed correctness.
+             */
             'Webkul\Core\Repositories\CoreConfigRepository' => [
-                'enabled' => true,
+                'enabled' => false,
 
                 // 'minutes'    => 10080,
 

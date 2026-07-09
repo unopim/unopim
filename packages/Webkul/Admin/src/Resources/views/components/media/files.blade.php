@@ -26,13 +26,20 @@
                 <!-- Add File tile (always first; hidden once a file exists) -->
                 <label
                     class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
-                    :class="{ 'border-red-500 dark:border-red-500': errors['inputFiles.files[0]'] }"
+                    :class="[errors['inputFiles.files[0]'] ? 'border-red-500 dark:border-red-500' : '', isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : '']"
                     :for="$.uid + '_fileInput'"
                     v-if="0 == inputFiles.length"
+                    @dragover.prevent="isDragging = true"
+                    @dragenter.prevent="isDragging = true"
+                    @dragleave.prevent="isDragging = false"
+                    @drop.prevent="onDrop"
                 >
                     <span class="icon-folder text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
                     <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
                         @lang('admin::app.components.media.files.add-file-btn')
+                    </p>
+                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                        @lang('admin::app.components.media.images.drag-drop-hint')
                     </p>
                     <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
                         @lang('admin::app.components.media.files.allowed-types')
@@ -150,6 +157,8 @@
             data() {
                 return {
                     inputFiles: [],
+
+                    isDragging: false,
                 }
             },
 
@@ -158,6 +167,35 @@
             },
 
             methods: {
+                onDrop(event) {
+                    this.isDragging = false;
+
+                    let files = event.dataTransfer ? event.dataTransfer.files : null;
+
+                    if (! files || ! files.length) {
+                        return;
+                    }
+
+                    let file = files[0];
+
+                    if (! file.type.includes('application/pdf')) {
+                        this.$emitter.emit('add-flash', {
+                            type: 'warning',
+                            message: "@lang('admin::app.components.media.files.not-allowed-error')"
+                        });
+
+                        return;
+                    }
+
+                    this.inputFiles.push({
+                        id: 'file_' + this.inputFiles.length,
+                        url: '',
+                        file: file
+                    });
+
+                    this.signalChange();
+                },
+
                 add() {
                     let inputs = this.$refs[this.$.uid + '_fileInput'];
 
@@ -183,15 +221,32 @@
                             file: file
                         });
                     });
+
+                    this.signalChange();
                 },
 
                 remove(file) {
                     let index = this.inputFiles.indexOf(file);
 
                     this.inputFiles.splice(index, 1);
+
+                    this.signalChange();
                 },
                 change(file) {
                     this.inputFiles[0].file = file;
+
+                    this.signalChange();
+                },
+
+                signalChange() {
+                    this.$nextTick(() => {
+                        if (this.$el && this.$el.dispatchEvent) {
+                            this.$el.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                                bubbles: true,
+                                detail: { name: this.name },
+                            }));
+                        }
+                    });
                 },
             }
         });

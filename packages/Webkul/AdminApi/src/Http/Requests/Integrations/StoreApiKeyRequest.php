@@ -1,0 +1,32 @@
+<?php
+
+namespace Webkul\AdminApi\Http\Requests\Integrations;
+
+use Illuminate\Database\Query\Builder;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class StoreApiKeyRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, mixed>
+     */
+    public function rules(): array
+    {
+        return [
+            'name'            => 'required',
+            'admin_id'        => ['required', Rule::unique('api_keys')->where(fn (Builder $query) => $query->where('revoked', 0))],
+            'permission_type' => 'required',
+        ];
+    }
+}

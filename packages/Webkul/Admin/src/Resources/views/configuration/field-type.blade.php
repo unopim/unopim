@@ -64,7 +64,7 @@
                     ::value="value"
                     ::rules="validations"
                     ::label="label"
-                    ::placeholder="field.placeholder || ''"
+                    ::placeholder="placeholder"
                     @input="emitChangeEvent($event.target.value, name)"
                 />
             </template>
@@ -78,6 +78,7 @@
                     ::value="maskedPassword"
                     ::rules="validations"
                     ::label="label"
+                    ::placeholder="placeholder"
                     @input="emitChangeEvent($event.target.value, name)"
                 />
             </template>
@@ -91,7 +92,7 @@
                     ::rules="validations"
                     ::value="value"
                     ::label="label"
-                    ::placeholder="field.placeholder || ''"
+                    ::placeholder="placeholder"
                     ::min="field.name == 'minimum_order_amount'"
                     @input="emitChangeEvent($event.target.value, name)"
                 />
@@ -201,8 +202,11 @@
 
                 maskedPassword() {
                     return this.value ? '*'.repeat(this.value.length) : '';
-                }
+                },
 
+                placeholder() {
+                    return this.field.placeholder || '';
+                },
             },
 
             methods: {

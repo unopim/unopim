@@ -483,6 +483,21 @@
 
                             editor.on('keyup change input', () => {
                                 this.field.onInput(editor.getContent());
+
+                                // TinyMCE lives in an iframe and only writes its hidden
+                                // <textarea> on blur, so the unsaved-changes tracker can't
+                                // see edits until then. Sync on every keystroke and notify
+                                // the tracker so the "unsaved" state matches other fields.
+                                editor.save();
+
+                                const el = editor.getElement();
+
+                                if (el && el.dispatchEvent) {
+                                    el.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                                        bubbles: true,
+                                        detail: { name: el.name },
+                                    }));
+                                }
                             });
                         },
                     });

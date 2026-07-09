@@ -110,12 +110,14 @@
                         method="DELETE"
                         action="{{ route('admin.session.destroy') }}"
                         id="adminLogout"
+                        :track-dirty="false"
                     >
                     </x-admin::form>
 
                     <a
                         class="px-5 py-2 text-base  text-gray-800 dark:text-white hover:bg-violet-50 dark:hover:bg-cherry-800 cursor-pointer"
                         href="{{ route('admin.session.destroy') }}"
+                        data-no-ajax-nav
                         onclick="event.preventDefault(); document.getElementById('adminLogout').submit();"
                     >
                         @lang('admin::app.components.layouts.header.logout')
@@ -368,11 +370,13 @@
 
             methods: {
                 toggle() {
-                    const sequence = ['auto', 'dark', 'light'];
-                    const currentIndex = sequence.indexOf(this.darkMode);
-                    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % sequence.length;
+                    // Flip the theme that is ACTUALLY on screen so the first click always
+                    // produces a visible change. A fixed auto→dark→light cycle has a dead
+                    // step whenever the next state matches the already-resolved theme
+                    // (e.g. 'auto' resolving to dark → 'dark' looks identical).
+                    const currentlyDark = document.documentElement.classList.contains('dark');
 
-                    this.darkMode = sequence[nextIndex];
+                    this.darkMode = currentlyDark ? 'light' : 'dark';
 
                     this.applyTheme(this.darkMode, true);
                 },

@@ -2,7 +2,10 @@
 
 namespace Webkul\AdminApi\Providers;
 
-use Carbon\Carbon;
+use Carbon\CarbonInterval;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\UserRepository as PassportUserRepository;
@@ -35,9 +38,12 @@ class AdminApiServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Route::middleware('web')->group(__DIR__.'/../Routes/integrations-routes.php');
+        Route::middleware('web')
+            ->where(['id' => '[0-9]+'])
+            ->group(__DIR__.'/../Routes/integrations-routes.php');
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->activateMiddlewareAliases();
+        $this->registerRateLimiter();
         $this->activatePassportApiClient();
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'admin_api');
@@ -78,6 +84,17 @@ class AdminApiServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the rate limiter guarding the REST API.
+     */
+    protected function registerRateLimiter(): void
+    {
+        RateLimiter::for('rest-api', function (Request $request) {
+            return Limit::perMinute((int) config('api.rate_limit', 120))
+                ->by($request->user()?->getAuthIdentifier() ?: $request->ip());
+        });
+    }
+
+    /**
      * Define the "api" routes for the application.
      *
      * @return void
@@ -107,7 +124,14 @@ class AdminApiServiceProvider extends ServiceProvider
      */
     protected function activatePassportApiClient(): void
     {
+        $this->ensureOauthKeys(__DIR__.'/../Secrets/Oauth');
+
         Passport::loadKeysFrom(__DIR__.'/../Secrets/Oauth');
+
+        // Keys are generated per environment (see ensureOauthKeys) and are never
+        // committed, so their on-disk permissions can vary by host umask. Skip
+        // league/oauth2-server v9's 600/660 check to keep the API bootable.
+        Passport::$validateKeyPermissions = false;
 
         Passport::$passwordGrantEnabled = true;
         Passport::useClientModel(Client::class);
@@ -121,13 +145,47 @@ class AdminApiServiceProvider extends ServiceProvider
         $accessTokenTtl = (int) config('api.access_token_ttl', 3600);
         $refreshTokenTtl = (int) config('api.refresh_token_ttl', 3600);
 
-        // Set access token TTL
-        Passport::tokensExpireIn(Carbon::now()->addSeconds($accessTokenTtl));
+        // Relative intervals keep expiry Octane-safe (absolute now() would freeze at worker boot).
+        Passport::tokensExpireIn(CarbonInterval::seconds($accessTokenTtl));
 
-        // Set refresh token TTL
-        Passport::refreshTokensExpireIn(Carbon::now()->addSeconds($refreshTokenTtl));
+        Passport::refreshTokensExpireIn(CarbonInterval::seconds($refreshTokenTtl));
 
         $this->app->bind(ClientRepository::class, \Webkul\AdminApi\Repositories\ClientRepository::class);
+    }
+
+    /**
+     * Generates a per-environment Passport signing keypair when absent so the
+     * key never has to be committed. Existing keys are left untouched.
+     */
+    protected function ensureOauthKeys(string $path): void
+    {
+        $privateKeyPath = $path.'/oauth-private.key';
+        $publicKeyPath = $path.'/oauth-public.key';
+
+        if (file_exists($privateKeyPath) && file_exists($publicKeyPath)) {
+            return;
+        }
+
+        if (! is_dir($path)) {
+            mkdir($path, 0755, true);
+        }
+
+        $resource = openssl_pkey_new([
+            'private_key_bits' => 4096,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+        ]);
+
+        if ($resource === false) {
+            return;
+        }
+
+        openssl_pkey_export($resource, $privateKey);
+
+        file_put_contents($privateKeyPath, $privateKey, LOCK_EX);
+        file_put_contents($publicKeyPath, openssl_pkey_get_details($resource)['key'], LOCK_EX);
+
+        chmod($privateKeyPath, 0600);
+        chmod($publicKeyPath, 0600);
     }
 
     /**

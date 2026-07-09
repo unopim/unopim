@@ -8,13 +8,14 @@
         <transition-group
             tag='div'
             name="flash-group"
-            enter-from-class="ltr:translate-x-full rtl:-translate-x-full"
-            enter-active-class="transform transition ease-in-out duration-200"
-            enter-to-class="ltr:translate-x-0 rtl:-translate-x-0"
-            leave-from-class="ltr:translate-x-0 rtl:-translate-x-0"
-            leave-active-class="transform transition ease-in-out duration-200"
-            leave-to-class="ltr:translate-x-full rtl:-translate-x-full"
-            class='grid gap-2.5 fixed top-5 ltr:right-5 rtl:left-5 z-[10060] justify-items-end'
+            move-class="transition-transform duration-200"
+            enter-from-class="ltr:translate-x-[120%] rtl:-translate-x-[120%] opacity-0"
+            enter-active-class="transform transition ease-out duration-300"
+            enter-to-class="translate-x-0 opacity-100"
+            leave-from-class="translate-x-0 opacity-100"
+            leave-active-class="transform transition ease-in duration-200 absolute"
+            leave-to-class="ltr:translate-x-[120%] rtl:-translate-x-[120%] opacity-0"
+            class='flex flex-col gap-2.5 fixed top-20 ltr:right-5 rtl:left-5 z-[10060] ltr:items-end rtl:items-start'
         >
             <x-admin::flash-group.item />
         </transition-group>
@@ -35,7 +36,7 @@
             created() {
                 @foreach (['success', 'warning', 'error', 'info'] as $key)
                     @if (session()->has($key))
-                        this.flashes.push({'type': '{{ $key }}', 'message': "{{ session($key) }}", 'uid':  this.uid++});
+                        this.flashes.push({'type': '{{ $key }}', 'message': @json(session($key)), 'uid':  this.uid++});
                     @endif
                 @endforeach
 

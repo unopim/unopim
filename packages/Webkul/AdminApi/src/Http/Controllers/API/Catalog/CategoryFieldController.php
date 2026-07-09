@@ -9,11 +9,10 @@ use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\CategoryFieldDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreCategoryFieldRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\UpdateCategoryFieldRequest;
 use Webkul\Category\Repositories\CategoryFieldOptionRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
-use Webkul\Category\Rules\FieldTypes;
-use Webkul\Category\Rules\NotSupportedFields;
-use Webkul\Category\Rules\ValidationTypes;
 use Webkul\Core\Rules\Code;
 
 class CategoryFieldController extends ApiController
@@ -55,35 +54,9 @@ class CategoryFieldController extends ApiController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): JsonResponse
+    public function store(StoreCategoryFieldRequest $request): JsonResponse
     {
-        $requestData = request()->all();
-
-        $rules = [
-            'type' => [
-                'required',
-                new FieldTypes,
-            ],
-            'code' => [
-                'required',
-                sprintf('unique:%s,code', 'category_fields'),
-                new Code,
-                new NotSupportedFields,
-            ],
-        ];
-
-        if (isset($requestData['validation']) && $requestData['validation']) {
-            $rules['validation'] = [new ValidationTypes];
-        }
-
-        $validator = $this->codeRequireWithUniqueValidator(
-            'category_fields',
-            $rules
-        );
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
+        $requestData = $request->all();
 
         $requestData = $this->setLabels($requestData);
         $requestData = $this->setDefaultValues($requestData);
@@ -107,7 +80,7 @@ class CategoryFieldController extends ApiController
     /**
      * Update the specified resource in storage.
      */
-    public function update(string $code): JsonResponse
+    public function update(UpdateCategoryFieldRequest $request, string $code): JsonResponse
     {
         $categoryField = $this->categoryFieldRepository->findOneByField('code', $code);
         if (! $categoryField) {
@@ -182,7 +155,7 @@ class CategoryFieldController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $fieldCode]));
         }
 
-        $requestData = request()->all();
+        $requestData = $this->normalizeOptionsPayload(request()->all());
 
         try {
             $errors = [];
@@ -225,7 +198,7 @@ class CategoryFieldController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $fieldCode]));
         }
 
-        $requestData = request()->all();
+        $requestData = $this->normalizeOptionsPayload(request()->all());
 
         try {
             $errors = [];
@@ -257,6 +230,22 @@ class CategoryFieldController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+    }
+
+    /**
+     * Normalizes the options payload so a single option object is treated the
+     * same as a list containing one option.
+     *
+     * @param  array<mixed>  $requestData
+     * @return array<int, array<string, mixed>>
+     */
+    private function normalizeOptionsPayload(array $requestData): array
+    {
+        if (empty($requestData) || array_is_list($requestData)) {
+            return $requestData;
+        }
+
+        return [$requestData];
     }
 
     /**

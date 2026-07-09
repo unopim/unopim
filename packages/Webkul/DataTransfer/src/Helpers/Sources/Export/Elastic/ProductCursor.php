@@ -124,7 +124,7 @@ class ProductCursor extends AbstractElasticCursor
      */
     protected static function resolveOptions(array $options): array
     {
-        $prefix = env('ELASTICSEARCH_INDEX_PREFIX') ?: env('APP_NAME');
+        $prefix = config('elasticsearch.prefix');
         $options['index'] = strtolower("{$prefix}_products");
         $options['sort'] ??= [];
 

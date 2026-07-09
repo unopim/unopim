@@ -21,7 +21,7 @@ class ApiController extends BaseController
      */
     protected function setLabels(array $requestData, string $labelKey = 'name')
     {
-        if (! isset($requestData['labels'])) {
+        if (! isset($requestData['labels']) || ! is_array($requestData['labels'])) {
             return $requestData;
         }
 

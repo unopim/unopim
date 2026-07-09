@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -10,7 +11,16 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Admin\Console\Commands\RefreshDashboardCacheCommand;
+use Webkul\Admin\Observers\CategoryObserver;
+use Webkul\Admin\Observers\ConfigurationObserver;
 use Webkul\Admin\Observers\ProductObserver;
+use Webkul\Attribute\Models\AttributeFamilyProxy;
+use Webkul\Attribute\Models\AttributeGroupProxy;
+use Webkul\Attribute\Models\AttributeProxy;
+use Webkul\Category\Models\CategoryProxy;
+use Webkul\Core\Models\ChannelProxy;
+use Webkul\Core\Models\CurrencyProxy;
+use Webkul\Core\Models\LocaleProxy;
 use Webkul\Core\Tree;
 use Webkul\Product\Models\ProductProxy;
 
@@ -23,7 +33,9 @@ class AdminServiceProvider extends ServiceProvider
     {
         $this->configureRateLimiting();
 
-        Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
+        Route::middleware('web')
+            ->where(['id' => '[0-9]+'])
+            ->group(__DIR__.'/../Routes/web.php');
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'admin');
 
@@ -38,6 +50,15 @@ class AdminServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
 
         ProductProxy::observe(ProductObserver::class);
+
+        CategoryProxy::observe(CategoryObserver::class);
+
+        AttributeProxy::observe(ConfigurationObserver::class);
+        AttributeGroupProxy::observe(ConfigurationObserver::class);
+        AttributeFamilyProxy::observe(ConfigurationObserver::class);
+        LocaleProxy::observe(ConfigurationObserver::class);
+        ChannelProxy::observe(ConfigurationObserver::class);
+        CurrencyProxy::observe(ConfigurationObserver::class);
 
         Event::listen('unopim.admin.layout.content.before', function ($viewRenderEventManager) {
             if (auth()->guard('admin')->check()) {
@@ -87,6 +108,11 @@ class AdminServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/help.php',
             'help'
+        );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/auth.php',
+            'admin.auth'
         );
     }
 
@@ -180,10 +206,20 @@ class AdminServiceProvider extends ServiceProvider
         RateLimiter::for('admin-login', function (Request $request) {
             $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
 
-            return Limit::perMinute(5)->by($key);
+            return Limit::perMinute(5)->by($key)->response(function () {
+                return new JsonResponse([
+                    'message' => trans('admin::app.users.sessions.too-many-attempts'),
+                ], JsonResponse::HTTP_TOO_MANY_REQUESTS);
+            });
         });
 
         RateLimiter::for('admin-forgot-password', function (Request $request) {
+            $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
+
+            return Limit::perMinute(5)->by($key);
+        });
+
+        RateLimiter::for('admin-reset-password', function (Request $request) {
             $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
 
             return Limit::perMinute(5)->by($key);

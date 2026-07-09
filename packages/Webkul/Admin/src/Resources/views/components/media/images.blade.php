@@ -6,6 +6,7 @@
     'uploadedImages'   => [],
     'width'            => '120px',
     'height'           => '120px',
+    'objectFit'        => 'cover',
     'responsive'       => false,
     'hasContext'       => false,
 ])
@@ -18,6 +19,7 @@
     :uploaded-images='{{ json_encode($uploadedImages) }}'
     width="{{ $width }}"
     height="{{ $height }}"
+    object-fit="{{ $objectFit }}"
     v-bind:responsive="{{ $responsive ? 'true' : 'false' }}"
     v-bind:has-context="{{ $hasContext ? 'true' : 'false' }}"
     :errors="errors"
@@ -34,15 +36,22 @@
                 <template v-if="allowMultiple || images.length == 0">
                     <label
                         class="group flex flex-col justify-center items-center rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
-                        :class="responsive ? 'min-h-[160px]' : ''"
-                        :style="responsive ? null : { width: width, height: height }"
+                        :class="[responsive ? 'min-h-[160px]' : '', isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : '']"
+                        :style="responsive ? null : { width: width, height: height, minWidth: '120px', minHeight: '120px' }"
                         v-if="ai.enabled"
                         :for="$.uid + '_imageInput'"
                         @click="resetAIModal(); $refs.choiceImageModal.open()"
+                        @dragover.prevent="isDragging = true"
+                        @dragenter.prevent="isDragging = true"
+                        @dragleave.prevent="isDragging = false"
+                        @drop.prevent="onDrop"
                     >
                         <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
                         <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
                             @lang('admin::app.components.media.images.add-image-btn')
+                        </p>
+                        <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                            @lang('admin::app.components.media.images.drag-drop-hint')
                         </p>
                         <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
                             @lang('admin::app.components.media.images.allowed-types')
@@ -52,13 +61,20 @@
                     <label
                         v-else
                         class="group flex flex-col justify-center items-center rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
-                        :class="responsive ? 'min-h-[160px]' : ''"
-                        :style="responsive ? null : { width: width, height: height }"
+                        :class="[responsive ? 'min-h-[160px]' : '', isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : '']"
+                        :style="responsive ? null : { width: width, height: height, minWidth: '120px', minHeight: '120px' }"
                         :for="$.uid + '_imageInput'"
+                        @dragover.prevent="isDragging = true"
+                        @dragenter.prevent="isDragging = true"
+                        @dragleave.prevent="isDragging = false"
+                        @drop.prevent="onDrop"
                     >
                         <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
                         <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
                             @lang('admin::app.components.media.images.add-image-btn')
+                        </p>
+                        <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                            @lang('admin::app.components.media.images.drag-drop-hint')
                         </p>
                         <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
                             @lang('admin::app.components.media.images.allowed-types')
@@ -92,6 +108,7 @@
                             :image="element"
                             :width="width"
                             :height="height"
+                            :objectFit="objectFit"
                             :responsive="responsive"
                             @onRemove="remove($event)"
                         >
@@ -445,16 +462,17 @@
     <script type="text/x-template" id="v-media-image-item-template">
         <div
             class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-700"
-            :style="responsive ? null : { width: width }"
+            :style="responsive ? null : { width: width, minWidth: '120px' }"
         >
             <div
                 class="relative w-full"
                 :class="responsive ? 'h-[140px]' : ''"
-                :style="responsive ? null : { height: height }"
+                :style="responsive ? null : { height: height, minHeight: '120px' }"
             >
                 <img
                     :src="image.url"
-                    class="w-full h-full object-cover bg-gray-100 dark:bg-cherry-800"
+                    class="w-full h-full bg-gray-100 dark:bg-cherry-800"
+                    :class="objectFit === 'contain' ? 'object-contain' : 'object-cover'"
                 />
 
                 <!-- Hover overlay with actions -->
@@ -552,6 +570,11 @@
                     default: '120px'
                 },
 
+                objectFit: {
+                    type: String,
+                    default: 'cover'
+                },
+
                 errors: {
                     type: Object,
                     default: () => {}
@@ -576,6 +599,8 @@
                     ],
 
                     isLoading: false,
+
+                    isDragging: false,
 
                     ai: {
                         enabled: @json(!! core()->getConfigData('general.magic_ai.image_generation.enabled') && bouncer()->hasPermission('ai-agent')),
@@ -651,7 +676,29 @@
                         return;
                     }
 
-                    const validFiles = Array.from(imageInput.files).every(file => file.type.includes('image/'));
+                    if (! this.addFiles(imageInput.files)) {
+                        return;
+                    }
+
+                    if (this.ai.enabled) {
+                        this.$refs.choiceImageModal.close()
+                    }
+                },
+
+                onDrop(event) {
+                    this.isDragging = false;
+
+                    let files = event.dataTransfer ? event.dataTransfer.files : null;
+
+                    if (! files || ! files.length) {
+                        return;
+                    }
+
+                    this.addFiles(this.allowMultiple ? files : [files[0]]);
+                },
+
+                addFiles(files) {
+                    const validFiles = Array.from(files).every(file => file.type.includes('image/'));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
@@ -659,10 +706,10 @@
                             message: "@lang('admin::app.components.media.images.not-allowed-error')"
                         });
 
-                        return;
+                        return false;
                     }
 
-                    Array.from(imageInput.files).forEach((file, index) => {
+                    Array.from(files).forEach((file) => {
                         this.images.push({
                             id: 'image_' + this.images.length,
                             url: '',
@@ -671,15 +718,31 @@
                         });
                     });
 
-                    if (this.ai.enabled) {
-                        this.$refs.choiceImageModal.close()
-                    }
+                    this.signalChange();
+
+                    return true;
                 },
 
                 remove(image) {
                     let index = this.images.indexOf(image);
 
                     this.images.splice(index, 1);
+
+                    this.signalChange();
+                },
+
+                signalChange() {
+                    // Notify any enclosing unsaved-changes tracker: media widgets mutate
+                    // file inputs programmatically (no native input/change), so without
+                    // this the "unsaved" bar would never see image add/remove/replace.
+                    this.$nextTick(() => {
+                        if (this.$el && this.$el.dispatchEvent) {
+                            this.$el.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                                bubbles: true,
+                                detail: { name: this.name },
+                            }));
+                        }
+                    });
                 },
 
                 toggleImageAIModal() {
@@ -848,6 +911,8 @@
                         });
                     });
 
+                    this.signalChange();
+
                     this.$refs.magicAIImageModal.close();
                 },
 
@@ -888,7 +953,7 @@
         app.component('v-media-image-item', {
             template: '#v-media-image-item-template',
 
-            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height', 'responsive'],
+            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height', 'objectFit', 'responsive'],
 
             mounted() {
                 if (this.image.file instanceof File) {
@@ -920,6 +985,13 @@
                     this.setFile(imageInput.files[0]);
 
                     this.readFile(imageInput.files[0]);
+
+                    if (this.$el && this.$el.dispatchEvent) {
+                        this.$el.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                            bubbles: true,
+                            detail: { name: this.name },
+                        }));
+                    }
                 },
 
                 remove() {

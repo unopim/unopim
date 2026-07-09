@@ -14,7 +14,7 @@ class EnsureAcceptsJson
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->header('Accept') !== 'application/json') {
+        if (! $request->accepts('application/json')) {
             return response()->json(['error' => 'Accept header must be application/json'], 406);
         }
 

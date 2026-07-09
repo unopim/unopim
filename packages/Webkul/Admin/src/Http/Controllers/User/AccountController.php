@@ -39,8 +39,8 @@ class AccountController extends Controller
         $this->validate(request(), [
             'name'             => 'required',
             'email'            => 'email|unique:admins,email,'.$user->id,
-            'password'         => 'nullable|min:6|confirmed',
-            'current_password' => 'required|min:6',
+            'password'         => 'nullable|confirmed|min:'.config('admin.auth.password_min'),
+            'current_password' => 'required',
             'image.*'          => 'nullable|mimes:bmp,jpeg,jpg,png,webp,svg',
             'timezone'         => 'required',
             'ui_locale_id'     => 'required',

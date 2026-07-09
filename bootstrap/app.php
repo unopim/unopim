@@ -6,8 +6,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\PostTooLargeException;
-use Illuminate\Routing\Middleware\SubstituteBindings;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Webkul\Admin\Http\Middleware\ConvertAjaxFormRedirect;
 use Webkul\Core\Http\Middleware\CheckForMaintenanceMode;
 use Webkul\Core\Http\Middleware\NoCacheMiddleware;
 use Webkul\Core\Http\Middleware\SecureHeaders;
@@ -55,8 +55,9 @@ return Application::configure(basePath: dirname(__DIR__))
             CheckForMaintenanceMode::class,
             CanInstall::class,
         ]);
-        $middleware->api(remove: [
-            SubstituteBindings::class,
+
+        $middleware->web(append: [
+            ConvertAjaxFormRedirect::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {

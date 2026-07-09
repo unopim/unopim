@@ -4,10 +4,12 @@ namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\SimpleProductDataSource;
+use Webkul\AdminApi\Http\Requests\Catalog\PartialUpdateSimpleProductRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreSimpleProductRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\UpdateSimpleProductRequest;
 use Webkul\Product\Type\AbstractType;
 
 class SimpleProductController extends ProductController
@@ -64,25 +66,9 @@ class SimpleProductController extends ProductController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): JsonResponse
+    public function store(StoreSimpleProductRequest $request): JsonResponse
     {
-        $validator = Validator::make(request()->all(), [
-            'status'            => ['nullable', 'boolean'],
-            'channel'           => ['nullable', 'string'],
-            'locale'            => ['nullable', 'string'],
-            'parent'            => ['nullable', 'string'],
-            'family'            => ['required', 'string'],
-            'additional'        => ['nullable', 'array'],
-            'values'            => ['required', 'array'],
-            'values.common.sku' => ['required', 'unique:products,sku'],
-            'variant'           => ['nullable', 'array'],
-        ]);
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
-
-        $data = request()->only([
+        $data = $request->only([
             'status',
             'parent',
             'family',
@@ -136,24 +122,9 @@ class SimpleProductController extends ProductController
     /**
      * Update the specified resource in storage.
      */
-    public function update(string $sku): JsonResponse
+    public function update(UpdateSimpleProductRequest $request, string $sku): JsonResponse
     {
-        $validator = Validator::make(request()->all(), [
-            'status'            => ['nullable', 'boolean'],
-            'channel'           => ['nullable', 'string'],
-            'locale'            => ['nullable', 'string'],
-            'parent'            => ['nullable', 'string'],
-            'family'            => ['required', 'string'],
-            'additional'        => ['nullable', 'array'],
-            'values'            => ['required', 'array'],
-            'values.common.sku' => ['required'],
-        ]);
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
-
-        $data = request()->only([
+        $data = $request->only([
             'status',
             'parent',
             'additional',
@@ -191,19 +162,9 @@ class SimpleProductController extends ProductController
     /**
      * Partial Update the specified resource in storage.
      */
-    public function partialUpdate(string $sku): JsonResponse
+    public function partialUpdate(PartialUpdateSimpleProductRequest $request, string $sku): JsonResponse
     {
-        $validator = Validator::make(request()->all(), [
-            'status'     => ['nullable', 'boolean'],
-            'additional' => ['nullable', 'array'],
-            'values'     => ['nullable', 'array'],
-        ]);
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
-
-        $data = request()->only([
+        $data = $request->only([
             'status',
             'additional',
             'values',

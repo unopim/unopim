@@ -2,12 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\ConfigurationController;
+use Webkul\Admin\Http\Controllers\SystemController;
 
 /**
  * Configuration routes.
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
     Route::get('configuration/search', [ConfigurationController::class, 'search'])->name('admin.configuration.search');
+
+    Route::get('configuration/system-information', [SystemController::class, 'information'])->name('admin.configuration.system.information');
+
+    Route::get('configuration/system-settings', [SystemController::class, 'settings'])->name('admin.configuration.system.settings');
 
     Route::controller(ConfigurationController::class)->prefix('configuration/{slug?}/{slug2?}')->group(function () {
 

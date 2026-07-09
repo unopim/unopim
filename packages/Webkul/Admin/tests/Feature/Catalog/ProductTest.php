@@ -477,3 +477,105 @@ it('should render product edit page header with sticky top offset so save button
         'Product edit page header should have sticky positioning with a top offset so the save button is visible while scrolling'
     );
 });
+
+it('should return 404 instead of 500 when the product edit id is non-numeric', function () {
+    $this->loginAsAdmin();
+
+    $this->get('admin/catalog/products/edit/303452sfsd')
+        ->assertNotFound();
+
+    $this->get('admin/catalog/products/edit/303452+123')
+        ->assertNotFound();
+});
+
+it('should return 404 when the product edit id is numeric but missing', function () {
+    $this->loginAsAdmin();
+
+    $this->get(route('admin.catalog.products.edit', 30345))
+        ->assertNotFound();
+});
+
+it('should render the product edit form with the ajax submit handler enabled', function () {
+    $this->loginAsAdmin();
+
+    $product = Product::factory()->simple()->create();
+
+    $this->get(route('admin.catalog.products.edit', $product->id))
+        ->assertOk()
+        ->assertSee('data-ajax-form="true"', false)
+        ->assertSee('submit="onAjaxSubmit"', false);
+});
+
+it('should return a json success message without redirect when updating a product via ajax', function () {
+    $this->loginAsAdmin();
+
+    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+
+    $data = [
+        'sku'    => $configurableProduct->sku,
+        'values' => $configurableProduct->values,
+    ];
+
+    $this->putJson(route('admin.catalog.products.update', $configurableProduct->id), $data, ['X-Ajax-Form' => 'true'])
+        ->assertOk()
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.products.update-success')]);
+});
+
+it('should keep the redirect behaviour when updating a product without ajax', function () {
+    $this->loginAsAdmin();
+
+    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+
+    $data = [
+        'sku'    => $configurableProduct->sku,
+        'values' => $configurableProduct->values,
+    ];
+
+    $this->put(route('admin.catalog.products.update', $configurableProduct->id), $data)
+        ->assertRedirect()
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+});
+
+it('should return json 422 validation errors when updating a product with a duplicate sku via ajax', function () {
+    $this->loginAsAdmin();
+
+    $existingProduct = Product::factory()->simple()->withInitialValues()->create();
+
+    $product = Product::factory()->simple()->withInitialValues()->create();
+
+    $values = $product->values;
+
+    $values['common']['sku'] = $existingProduct->sku;
+
+    $data = [
+        'sku'    => $existingProduct->sku,
+        'values' => $values,
+    ];
+
+    $this->putJson(route('admin.catalog.products.update', $product->id), $data)
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('sku');
+});
+
+it('should return a json message instead of redirecting when an ajax update hits the duplicate variant guard', function () {
+    $this->loginAsAdmin();
+
+    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->create();
+
+    $attribute = $configurableProduct->super_attributes->first();
+
+    $newProduct = Product::factory()->simple()->create(['parent_id' => $configurableProduct->id]);
+
+    $data = [
+        'sku'    => $newProduct->sku,
+        'values' => [
+            'common' => [
+                $attribute->code => $attribute->options->first()->code,
+            ],
+        ],
+    ];
+
+    $this->putJson(route('admin.catalog.products.update', $newProduct->id), $data, ['X-Ajax-Form' => 'true'])
+        ->assertUnprocessable()
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.products.edit.types.configurable.create.variant-already-exists')]);
+});

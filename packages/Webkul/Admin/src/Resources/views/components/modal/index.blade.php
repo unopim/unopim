@@ -79,6 +79,7 @@
             >
                 <div
                     class="fixed inset-0 z-[10002] transform transition overflow-y-auto"
+                    data-unsaved-ignore
                     v-if="isOpen"
                 >
                     <div class="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">

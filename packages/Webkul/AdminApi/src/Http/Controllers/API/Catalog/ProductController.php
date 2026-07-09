@@ -316,7 +316,7 @@ class ProductController extends ApiController
             ];
         }
 
-        $existVariants = $product->variants()->get()?->toArray();
+        $existVariants = $product->variants()->lazyById();
         foreach ($existVariants as $variant) {
             $commonValue = ['sku' => $variant['sku']];
             foreach ($data['super_attributes'] as $key => $attrCode) {

@@ -2,17 +2,19 @@
 
 namespace Webkul\AdminApi\Http\Controllers\Integrations;
 
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Token;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\AdminApi\DataGrids\Integrations\ApiKeysDataGrid;
+use Webkul\AdminApi\Http\Requests\Integrations\GenerateKeyRequest;
+use Webkul\AdminApi\Http\Requests\Integrations\RegenerateSecretKeyRequest;
+use Webkul\AdminApi\Http\Requests\Integrations\StoreApiKeyRequest;
+use Webkul\AdminApi\Http\Requests\Integrations\UpdateApiKeyRequest;
 use Webkul\AdminApi\Repositories\ApiKeyRepository;
 use Webkul\AdminApi\Traits\OauthClientGenerator;
 use Webkul\User\Repositories\AdminRepository;
@@ -62,14 +64,8 @@ class ApiKeysController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(StoreApiKeyRequest $request): RedirectResponse
     {
-        $this->validate(request(), [
-            'name'            => 'required',
-            'admin_id'        => ['required', Rule::unique('api_keys')->where(fn (Builder $query) => $query->where('revoked', 0))],
-            'permission_type' => 'required',
-        ]);
-
         Event::dispatch('user.api_integration.create.before');
 
         $data = request()->only([
@@ -104,13 +100,8 @@ class ApiKeysController extends Controller
      *
      * @throws ValidationException If the required parameters are not provided.
      */
-    public function update(int $id): RedirectResponse
+    public function update(UpdateApiKeyRequest $request, int $id): RedirectResponse
     {
-        $this->validate(request(), [
-            'name'            => 'required',
-            'permission_type' => 'required|in:all,custom',
-        ]);
-
         $data = array_merge(request()->only([
             'name',
             'permission_type',
@@ -161,14 +152,8 @@ class ApiKeysController extends Controller
      *
      * @throws ValidationException If the required parameters are not provided.
      */
-    public function generateKey(): JsonResponse
+    public function generateKey(GenerateKeyRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'name'     => 'required',
-            'admin_id' => 'required',
-            'apiId'    => 'required',
-        ]);
-
         $data = request()->only([
             'name',
             'admin_id',
@@ -204,9 +189,9 @@ class ApiKeysController extends Controller
      *
      * @return JsonResponse The JSON response containing the regenerated secret key.
      */
-    public function regenerateSecretKey(): JsonResponse
+    public function regenerateSecretKey(RegenerateSecretKeyRequest $request): JsonResponse
     {
-        $data = request()->only('oauth_client_id');
+        $data = $request->validated();
 
         $client = $this->clients->find($data['oauth_client_id']);
 

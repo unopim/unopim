@@ -11,6 +11,7 @@
     @pushOnce('scripts')
         <script type="text/x-template" id="v-export-profile-template">
             <x-admin::form
+                ajax
                 :action="route('admin.settings.data_transfer.exports.store')"
                 enctype="multipart/form-data"
                 ref="exportCreateForm"

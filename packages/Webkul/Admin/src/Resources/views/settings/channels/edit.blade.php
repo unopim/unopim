@@ -11,7 +11,8 @@
     <!-- Channel Edit Form -->
     {!! view_render_event('unopim.admin.settings.channels.edit.before') !!}
 
-    <x-admin::form  
+    <x-admin::form
+        ajax
         :action="route('admin.settings.channels.update', ['id' => $channel->id])"
     >
         @method('PUT')

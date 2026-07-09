@@ -10,6 +10,57 @@
     font-display: block;
 }
 
+@layer base {
+    /*
+     * Reserve the scrollbar gutter at the root so opening a modal (which sets
+     * body overflow:hidden and removes the page scrollbar) does not change the
+     * viewport width — kills the horizontal flicker/layout shift.
+     */
+    html {
+        scrollbar-gutter: stable;
+    }
+
+    /* Minimal, subtle scrollbars everywhere (Firefox) */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(100, 100, 120, 0.35) transparent;
+    }
+
+    /* Minimal scrollbars (WebKit/Chromium) */
+    *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: rgba(100, 100, 120, 0.35);
+        border-radius: 9999px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(100, 100, 120, 0.55);
+    }
+
+    /* Dark mode: lighter thumb for contrast */
+    .dark * {
+        scrollbar-color: rgba(200, 200, 220, 0.30) transparent;
+    }
+
+    .dark *::-webkit-scrollbar-thumb {
+        background-color: rgba(200, 200, 220, 0.30);
+    }
+
+    .dark *::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(200, 200, 220, 0.5);
+    }
+}
+
 @layer components {
     ::selection {
         background-color: rgba(0, 68, 242, .2);

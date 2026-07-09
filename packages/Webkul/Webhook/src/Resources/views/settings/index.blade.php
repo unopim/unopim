@@ -61,7 +61,7 @@
                             <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
                                 <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                                     <div class="bg-white dark:bg-cherry-900 rounded box-shadow" style="height:-webkit-fill-available">
-                                        <div class="flex items-center justify-between p-1.5">
+                                        <div class="flex items-center justify-between p-1.5 px-4">
                                             <div class="flex items-center justify-between">
                                                 <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">  @lang('webhook::app.configuration.webhook.settings.index.general')  </p>
                                             </div>

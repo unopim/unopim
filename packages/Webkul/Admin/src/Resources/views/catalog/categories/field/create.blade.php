@@ -17,6 +17,7 @@
 
             <!-- Input Form -->
             <x-admin::form
+                ajax
                 :action="route('admin.catalog.category_fields.store')"
                 enctype="multipart/form-data"
             >

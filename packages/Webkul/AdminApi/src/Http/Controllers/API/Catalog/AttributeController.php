@@ -9,12 +9,10 @@ use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\AttributeDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreAttributeRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\UpdateAttributeRequest;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Attribute\Rules\AttributeTypes;
-use Webkul\Attribute\Rules\NotSupportedAttributes;
-use Webkul\Attribute\Rules\SwatchTypes;
-use Webkul\Attribute\Rules\ValidationTypes;
 use Webkul\Attribute\Rules\ValidSwatchValue;
 use Webkul\Core\Rules\Code;
 
@@ -57,44 +55,14 @@ class AttributeController extends ApiController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): JsonResponse
+    public function store(StoreAttributeRequest $request): JsonResponse
     {
-        $requestData = request()->all();
+        $requestData = $request->all();
 
         if (array_is_list($requestData) && count($requestData) > 0) {
             return $this->validateErrorResponse([
                 'payload' => [trans('admin::app.catalog.attributes.create.single-object-only')],
             ]);
-        }
-
-        $rules = [
-            'type' => [
-                'required',
-                new AttributeTypes,
-            ],
-            'code' => [
-                'required',
-                sprintf('unique:%s,code', 'attributes'),
-                new Code,
-                new NotSupportedAttributes,
-            ],
-            'swatch_type' => [
-                'nullable',
-                new SwatchTypes,
-            ],
-        ];
-
-        if (isset($requestData['validation']) && $requestData['validation']) {
-            $rules['validation'] = [new ValidationTypes];
-        }
-
-        $validator = $this->codeRequireWithUniqueValidator(
-            'attributes',
-            $rules
-        );
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
         }
 
         $requestData = $this->setLabels($requestData);
@@ -116,21 +84,22 @@ class AttributeController extends ApiController
     /**
      * Update the specified resource in storage.
      */
-    public function update(string $code): JsonResponse
+    public function update(UpdateAttributeRequest $request, string $code): JsonResponse
     {
         $attribute = $this->attributeRepository->findOneByField('code', $code);
         if (! $attribute) {
             return $this->modelNotFoundResponse(trans('admin::app.catalog.attributes.not-found', ['code' => $code]));
         }
 
-        $immutable = array_intersect(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique'], array_keys(request()->all()));
+        $immutable = array_intersect(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique'], array_keys($request->all()));
         if (! empty($immutable)) {
             return $this->validateErrorResponse([
                 'immutable' => [trans('admin::app.catalog.attributes.immutable-fields', ['fields' => implode(', ', $immutable)])],
             ]);
         }
 
-        $requestData = request()->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
+        $requestData = $request->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
+
         $requestData = $this->setLabels($requestData);
         $id = $attribute->id;
 
@@ -170,7 +139,7 @@ class AttributeController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.attributes.not-found', ['code' => $attributeCode]));
         }
 
-        $requestData = request()->all();
+        $requestData = $this->normalizeOptionsPayload(request()->all());
 
         try {
             $errors = [];
@@ -211,7 +180,7 @@ class AttributeController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.attributes.not-found', ['code' => $attributeCode]));
         }
 
-        $requestData = request()->all();
+        $requestData = $this->normalizeOptionsPayload(request()->all());
 
         try {
             $errors = [];
@@ -245,6 +214,22 @@ class AttributeController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+    }
+
+    /**
+     * Normalizes the options payload so a single option object is treated the
+     * same as a list containing one option.
+     *
+     * @param  array<mixed>  $requestData
+     * @return array<int, array<string, mixed>>
+     */
+    private function normalizeOptionsPayload(array $requestData): array
+    {
+        if (empty($requestData) || array_is_list($requestData)) {
+            return $requestData;
+        }
+
+        return [$requestData];
     }
 
     /**

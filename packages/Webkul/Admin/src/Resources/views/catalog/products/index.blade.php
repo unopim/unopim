@@ -247,7 +247,7 @@
                         this.$axios.post("{{ route('admin.catalog.products.store') }}", formData)
                             .then((response) => {
                                 if (response.data.data.redirect_url) {
-                                    window.location.href = response.data.data.redirect_url;
+                                    this.$navigate(response.data.data.redirect_url);
                                 } else {
                                     this.attributes = response.data.data.attributes;
 

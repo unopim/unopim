@@ -4,7 +4,7 @@
     </x-slot>
 
     <!-- Input Form -->
-    <x-admin::form :action="route('admin.catalog.families.store')">
+    <x-admin::form ajax :action="route('admin.catalog.families.store')">
 
         {!! view_render_event('unopim.admin.catalog.families.create.create_form_controls.before') !!}
 
@@ -348,7 +348,7 @@
                     v-slot="{ meta, errors, handleSubmit }"
                     as="div"
                 >
-                    <form @submit="handleSubmit($event, assignGroup)">
+                    <form @submit.stop="handleSubmit($event, assignGroup)">
                         <!-- Model Form -->
                         <x-admin::modal ref="assignGroupModal">
                             <!-- Model Header -->

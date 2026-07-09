@@ -22,6 +22,7 @@
         >
             <div>
                 <x-admin::form
+                    ajax
                     method="PUT"
                     :action="route('admin.configuration.integrations.update', $apiKey->id)"
                 >
@@ -104,8 +105,6 @@
 
                         {!! view_render_event('unopim.admin.configuration.integrations.edit.card.access-control.after') !!}
                     </div>
-
-
 
                     <!-- Right sub-component -->
                     <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">

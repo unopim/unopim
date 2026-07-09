@@ -19,8 +19,9 @@
     </x-slot>
 
     <!-- Configuration form fields -->
-    <x-admin::form 
-        action="" 
+    <x-admin::form
+        ajax
+        :action="route('admin.configuration.store', ['slug' => request()->route('slug'), 'slug2' => request()->route('slug2')])"
         enctype="multipart/form-data"
     >
         <!-- Save Inventory -->

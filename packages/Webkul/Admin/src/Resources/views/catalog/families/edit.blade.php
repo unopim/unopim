@@ -26,6 +26,7 @@
         @switch($activeTab)
             @case('general')
                 <x-admin::form
+                    ajax
                     method="PUT"
                     :action="route('admin.catalog.families.update', $attributeFamily['family']->id)"
                 >
@@ -393,7 +394,7 @@
                         v-slot="{ meta, errors, handleSubmit }"
                         as="div"
                     >
-                        <form @submit="handleSubmit($event, assignGroup)">
+                        <form @submit.stop="handleSubmit($event, assignGroup)">
                             <!-- Model Form -->
                             <x-admin::modal ref="assignGroupModal">
                                 <!-- Model Header -->
@@ -503,6 +504,8 @@
                             if (this.dropReverted) {
                                 this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('admin::app.catalog.families.edit.removal-not-possible')" });
                             }
+
+                            this.signalUnsaved();
                         },
 
                         getGroupAttributes(group) {
@@ -566,6 +569,20 @@
 
                         onChange(e) {
                             this.$emitter.emit('assigned-attributes-changed', e);
+                            this.signalUnsaved();
+                        },
+
+                        signalUnsaved() {
+                            // Drag-assigning attributes/groups mutates hidden inputs without a
+                            // native input/change event, so tell the unsaved-changes tracker.
+                            this.$nextTick(() => {
+                                if (this.$el && this.$el.dispatchEvent) {
+                                    this.$el.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                                        bubbles: true,
+                                        detail: { name: 'attribute_groups' },
+                                    }));
+                                }
+                            });
                         },
 
                         changePage(page) {

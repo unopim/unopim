@@ -184,5 +184,96 @@ return [
                 ],
             ],
         ],
+    ], [
+        'key'  => 'general.debug',
+        'name' => 'admin::app.configuration.index.general.debug.title',
+        'info' => 'admin::app.configuration.index.general.debug.info',
+        'sort' => 4,
+    ], [
+        'key'    => 'general.debug.settings',
+        'name'   => 'admin::app.configuration.index.general.debug.settings.title',
+        'info'   => 'admin::app.configuration.index.general.debug.settings.info',
+        'sort'   => 1,
+        'fields' => [
+            [
+                'name'  => 'enabled',
+                'title' => 'admin::app.configuration.index.general.debug.settings.enabled',
+                'type'  => 'boolean',
+            ], [
+                'name'  => 'allowed_ips',
+                'title' => 'admin::app.configuration.index.general.debug.settings.allowed-ips',
+                'type'  => 'text',
+            ],
+        ],
+    ], [
+        'key'  => 'emails',
+        'name' => 'admin::app.configuration.index.emails.title',
+        'info' => 'admin::app.configuration.index.emails.info',
+        'sort' => 2,
+    ], [
+        'key'  => 'emails.configure',
+        'name' => 'admin::app.configuration.index.emails.configure.title',
+        'info' => 'admin::app.configuration.index.emails.configure.info',
+        'sort' => 1,
+    ], [
+        'key'    => 'emails.configure.email_settings',
+        'name'   => 'admin::app.configuration.index.emails.configure.email-settings.title',
+        'info'   => 'admin::app.configuration.index.emails.configure.email-settings.info',
+        'sort'   => 1,
+        'fields' => [
+            [
+                'name'          => 'sender_name',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.sender-name',
+                'type'          => 'text',
+                'default_value' => env('MAIL_FROM_NAME') ?: env('APP_NAME', 'UnoPim'),
+            ], [
+                'name'          => 'shop_email_from',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.sender-email',
+                'type'          => 'text',
+                'validation'    => 'email',
+                'default_value' => env('MAIL_FROM_ADDRESS'),
+            ], [
+                'name'          => 'admin_name',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.admin-name',
+                'type'          => 'text',
+                'default_value' => env('MAIL_FROM_NAME') ?: env('APP_NAME', 'UnoPim'),
+            ], [
+                'name'          => 'admin_email',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.admin-email',
+                'type'          => 'text',
+                'validation'    => 'email',
+                'default_value' => env('MAIL_FROM_ADDRESS'),
+            ], [
+                'name'          => 'mail_host',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.smtp-host',
+                'type'          => 'text',
+                'default_value' => env('MAIL_HOST'),
+            ], [
+                'name'          => 'mail_port',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.smtp-port',
+                'type'          => 'text',
+                'default_value' => env('MAIL_PORT'),
+            ], [
+                'name'          => 'mail_username',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.smtp-username',
+                'type'          => 'text',
+                'default_value' => env('MAIL_USERNAME'),
+            ], [
+                'name'        => 'mail_password',
+                'title'       => 'admin::app.configuration.index.emails.configure.email-settings.smtp-password',
+                'type'        => 'password',
+                'placeholder' => '••••••••',
+            ], [
+                'name'          => 'mail_encryption',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.smtp-encryption',
+                'type'          => 'select',
+                'default_value' => env('MAIL_ENCRYPTION', 'tls'),
+                'options'       => [
+                    ['title' => 'None', 'value' => 'none'],
+                    ['title' => 'TLS', 'value' => 'tls'],
+                    ['title' => 'SSL', 'value' => 'ssl'],
+                ],
+            ],
+        ],
     ],
 ];

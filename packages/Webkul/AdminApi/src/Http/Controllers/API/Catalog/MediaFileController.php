@@ -5,17 +5,18 @@ namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreCategoryMediaRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreProductMediaRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreSwatchMediaRequest;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryMediaValidator;
 use Webkul\Core\Filesystem\FileStorer;
-use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Validator\API\UploadMediaValidator;
 
@@ -39,14 +40,8 @@ class MediaFileController extends ApiController
     /**
      * Handles the storage of media files for products.
      */
-    public function storeProductMedia(): JsonResponse
+    public function storeProductMedia(StoreProductMediaRequest $request): JsonResponse
     {
-        request()->validate([
-            'file'      => 'required',
-            'sku'       => 'required',
-            'attribute' => 'required',
-        ]);
-
         $requestData = request()->all();
         try {
             $product = $this->findProductOr404($requestData['sku']);
@@ -100,14 +95,8 @@ class MediaFileController extends ApiController
     /**
      * Handles the storage of media files for categories.
      */
-    public function storeCategoryMedia(): JsonResponse
+    public function storeCategoryMedia(StoreCategoryMediaRequest $request): JsonResponse
     {
-        request()->validate([
-            'file'           => 'required',
-            'code'           => 'required',
-            'category_field' => 'required',
-        ]);
-
         $requestData = request()->all();
 
         $category = $this->categoryRepository->findOneByField('code', $requestData['code']);
@@ -146,29 +135,17 @@ class MediaFileController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+
+        return $this->validateErrorResponse([
+            'file' => trans('admin::app.catalog.categories.upload-failure'),
+        ]);
     }
 
     /**
      * Handles the storage of media files for swatch attribute.
      */
-    public function storeSwatchMedia(): JsonResponse
+    public function storeSwatchMedia(StoreSwatchMediaRequest $request): JsonResponse
     {
-        request()->validate([
-            'code' => [
-                'required',
-                'string',
-                Rule::exists('attribute_options', 'code'),
-                new Code,
-            ],
-            'attribute_code' => [
-                'required',
-                'string',
-                Rule::exists('attributes', 'code'),
-                new Code,
-            ],
-            'file' => 'required|file|mimes:jpeg,png,jpg,webp,svg|max:2048',
-        ]);
-
         $requestData = request()->all();
 
         $attribute = $this->attributeRepository->findOneByField('code', $requestData['attribute_code']);

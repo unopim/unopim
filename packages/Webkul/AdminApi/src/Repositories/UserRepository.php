@@ -22,9 +22,9 @@ class UserRepository extends BaseUserRepository
      * Get a user entity by user credentials.
      */
     public function getUserEntityByUserCredentials(
-        string $username,
-        string $password,
-        string $grantType,
+        $username,
+        $password,
+        $grantType,
         ClientEntityInterface $clientEntity
     ): ?UserEntityInterface {
         // Find the admin user by email

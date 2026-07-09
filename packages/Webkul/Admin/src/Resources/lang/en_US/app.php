@@ -3,6 +3,11 @@
 return [
     'users' => [
         'sessions' => [
+            'subtitle'                   => 'Sign in to your account to continue',
+            'tagline'                    => 'Manage all your product information in one place',
+            'remember-me'                => 'Remember me',
+            'toggle-password'            => 'Show or hide password',
+            'too-many-attempts'          => 'Too many login attempts. Please try again in a moment.',
             'email'                      => 'Email Address',
             'forget-password-link'       => 'Forget Password ?',
             'password'                   => 'Password',
@@ -16,6 +21,7 @@ return [
 
         'forget-password' => [
             'create' => [
+                'subtitle'               => 'Enter your email and we\'ll send you a password reset link.',
                 'email'                  => 'Registered Email',
                 'email-not-exist'        => 'Email Not Exists',
                 'page-title'             => 'Forget Password',
@@ -30,6 +36,8 @@ return [
         ],
 
         'reset-password' => [
+            'subtitle'               => 'Choose a new password for your account.',
+            'invalid-link'           => 'This password reset link is invalid or has expired.',
             'back-link-title'        => 'Back to Sign In ?',
             'confirm-password'       => 'Confirm Password',
             'email'                  => 'Registered Email',
@@ -93,7 +101,7 @@ return [
             'catalog-details'       => 'Catalog Overview',
             'total-families'        => 'Total Families',
             'total-attributes'      => 'Total Attributes',
-            'total-groups'          => 'Total Groups',
+            'total-groups'          => 'Total Attribute Groups',
             'total-categories'      => 'Total Categories',
             'total-products'        => 'Total Products',
             'settings-details'      => 'Catalog Structure',
@@ -775,6 +783,7 @@ return [
             'not-found'            => 'Category with code ":code" could not be found',
             'unknown-fields'       => 'Category Field with code ":fields" could not be found',
             'upload-success'       => 'Category file uploaded successfully.',
+            'upload-failure'       => 'Category file could not be uploaded.',
             'create-failure'       => 'Category could not be created.',
             'update-failure'       => 'Category could not be updated.',
         ],
@@ -1758,15 +1767,22 @@ return [
             'current-user-delete-error' => 'The logged in user can not be deleted.',
         ],
 
+        'system-settings' => [
+            'info' => 'Manage appearance, email (SMTP) and debug settings from a single place.',
+        ],
+
         'appearance' => [
             'title'          => 'Appearance',
             'section-title'  => 'Visual Branding',
+            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
             'logo-size'      => 'Recommended image resolution: 192px X 50px',
             'favicon'        => 'Favicon',
             'favicon-size'   => 'Recommended image resolution: 16px X 16px',
             'no-logo'        => 'No logo uploaded yet.',
             'no-favicon'     => 'No favicon uploaded yet.',
+            'upload-cta'     => 'Click to upload',
+            'upload-hint'    => ' or drag and drop',
             'save-btn'       => 'Save Appearance',
             'update-success' => 'Appearance updated successfully.',
         ],
@@ -1830,6 +1846,30 @@ return [
             'search'          => 'Search',
             'title'           => 'Configuration',
 
+            'emails' => [
+                'info'  => 'Configure the mail sender identity and SMTP transport used for outgoing emails.',
+                'title' => 'Email',
+
+                'configure' => [
+                    'info'  => '',
+                    'title' => 'Configure',
+
+                    'email-settings' => [
+                        'title'           => 'Email Settings',
+                        'info'            => 'Sender identity and SMTP server credentials for outgoing mail. Leave SMTP fields blank to keep the values from your environment file.',
+                        'sender-name'     => 'Sender Name',
+                        'sender-email'    => 'Sender Email',
+                        'admin-name'      => 'Admin Name',
+                        'admin-email'     => 'Admin Email',
+                        'smtp-host'       => 'SMTP Host',
+                        'smtp-port'       => 'SMTP Port',
+                        'smtp-username'   => 'SMTP Username',
+                        'smtp-password'   => 'SMTP Password',
+                        'smtp-encryption' => 'SMTP Encryption',
+                    ],
+                ],
+            ],
+
             'general' => [
                 'info'  => '',
                 'title' => 'General',
@@ -1837,6 +1877,18 @@ return [
                 'general' => [
                     'info'  => '',
                     'title' => 'General',
+                ],
+
+                'debug' => [
+                    'info'  => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
+                    'title' => 'Debug',
+
+                    'settings' => [
+                        'info'        => 'When enabled, requests from the allow-listed IPs render with debug output and the debug bar.',
+                        'title'       => 'Debug Settings',
+                        'enabled'     => 'Enable IP-based Debug',
+                        'allowed-ips' => 'Allowed IP Addresses (comma-separated)',
+                    ],
                 ],
 
                 'magic-ai' => [
@@ -2129,6 +2181,28 @@ return [
     ],
 
     'components' => [
+        'flash-group' => [
+            'close' => 'Close',
+        ],
+        'form' => [
+            'ajax-error'      => 'Something went wrong while saving. Please try again.',
+            'unsaved-changes' => [
+                'title'           => 'You have unsaved changes',
+                'sections'        => ':count sections modified',
+                'fields'          => ':count fields modified',
+                'section'         => ':count section modified',
+                'field'           => ':count field modified',
+                'discard'         => 'Discard',
+                'save'            => 'Save changes',
+                'field-badge'     => 'Unsaved',
+                'leave-message'   => 'Leave this page? Your unsaved changes will be lost.',
+                'stay'            => 'Stay on page',
+                'leave'           => 'Leave',
+                'discard-title'   => 'Discard changes?',
+                'discard-message' => 'This reverts all your unsaved changes on this form.',
+                'cancel'          => 'Cancel',
+            ],
+        ],
         'layouts' => [
             'header' => [
                 'account-title' => 'Account',
@@ -2169,6 +2243,11 @@ return [
                 'products'           => 'Products',
                 'roles'              => 'Roles',
                 'settings'           => 'Settings',
+                'system'             => 'System',
+                'system-information' => 'System Information',
+                'system-settings'    => 'System Settings',
+                'smtp'               => 'SMTP Configuration',
+                'debug'              => 'Debug',
                 'appearance'         => 'Appearance',
                 'themes'             => 'Themes',
                 'users'              => 'Users',
@@ -2320,6 +2399,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Add Image',
+                'drag-drop-hint'     => 'Drag & drop or click to upload',
                 'add-media-btn'      => 'Add Media',
                 'generate-with-ai'   => 'Generate with AI',
                 'upload-from-device' => 'Upload from Device',
@@ -2416,10 +2496,57 @@ return [
 
     'help' => [
         'index' => [
-            'title'     => 'Help & Resources',
-            'subtitle'  => 'Everything you need to get the most out of UnoPim — hosting, support and professional services, plus extensions and developer documentation.',
-            'services'  => 'Services',
-            'resources' => 'Resources & Documentation',
+            'title'         => 'Help & Resources',
+            'subtitle'      => 'Everything you need to get the most out of UnoPim — hosting, support and professional services, plus extensions and developer documentation.',
+            'services'      => 'Services',
+            'resources'     => 'Resources & Documentation',
+            'system-info'   => 'System Information',
+        ],
+
+        'system-info' => [
+            'title'    => 'System Information',
+            'subtitle' => 'Runtime environment, server configuration and installed packages for this UnoPim instance.',
+            'enabled'  => 'Enabled',
+            'disabled' => 'Disabled',
+            'package'  => 'Package',
+
+            'search-packages' => 'Search packages...',
+            'no-packages'     => 'No packages match your search.',
+
+            'sections' => [
+                'application' => 'Application',
+                'server'      => 'Server',
+                'database'    => 'Database',
+                'services'    => 'Services',
+                'extensions'  => 'PHP Extensions',
+                'packages'    => 'Installed Packages',
+            ],
+
+            'fields' => [
+                'unopim_version'        => 'UnoPim Version',
+                'laravel_version'       => 'Laravel Version',
+                'php_version'           => 'PHP Version',
+                'environment'           => 'Environment',
+                'debug_mode'            => 'Debug Mode',
+                'timezone'              => 'Timezone',
+                'locale'                => 'Locale',
+                'url'                   => 'Application URL',
+                'operating_system'      => 'Operating System',
+                'server_software'       => 'Server Software',
+                'php_sapi'              => 'PHP SAPI',
+                'memory_limit'          => 'Memory Limit',
+                'max_execution_time'    => 'Max Execution Time',
+                'upload_max_filesize'   => 'Upload Max Filesize',
+                'post_max_size'         => 'Post Max Size',
+                'connection'            => 'Connection',
+                'driver'                => 'Driver',
+                'version'               => 'Version',
+                'cache_driver'          => 'Cache Driver',
+                'queue_connection'      => 'Queue Connection',
+                'session_driver'        => 'Session Driver',
+                'mail_mailer'           => 'Mail Mailer',
+                'elasticsearch_enabled' => 'Elasticsearch',
+            ],
         ],
 
         'cards' => [
@@ -2521,6 +2648,11 @@ return [
         'shipments'                => 'Shipments',
         'sitemaps'                 => 'Sitemaps',
         'subscribers'              => 'Newsletter Subscribers',
+        'smtp'                     => 'SMTP Configuration',
+        'debug'                    => 'Debug',
+        'system'                   => 'System',
+        'system-information'       => 'System Information',
+        'system-settings'          => 'System Settings',
         'tax-categories'           => 'Tax Categories',
         'tax-rates'                => 'Tax Rates',
         'taxes'                    => 'Taxes',
@@ -2620,6 +2752,7 @@ return [
 
     'emails' => [
         'dear'   => 'Dear :admin_name',
+        'hello'  => 'Hello,',
         'thanks' => 'If you need any kind of help please contact us at <a href=":link" style=":style">:email</a>.<br/>Thanks!',
 
         'admin' => [

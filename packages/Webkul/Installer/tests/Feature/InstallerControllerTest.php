@@ -24,6 +24,21 @@ beforeEach(function () {
     }
 
     DB::table('core_config')->where('code', 'installer.installed')->delete();
+
+    // Fake the not-yet-installed DB state so the abortIfDatabasePopulated() guard
+    // allows the env-file-setup steps against the always-seeded test database.
+    app()->instance(DatabaseManager::class, new class extends DatabaseManager
+    {
+        public function isInstalled()
+        {
+            return false;
+        }
+
+        public function isMarkedInstalled(): bool
+        {
+            return false;
+        }
+    });
 });
 
 afterEach(function () {

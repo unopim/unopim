@@ -96,26 +96,70 @@
     </script>
 
     <script>
-        const adjustSubMenuPosition = (event) => {
-            let menuContainer = event.currentTarget;
+        const positionSubMenu = (menuContainer) => {
+            const subMenuContainer = menuContainer.lastElementChild;
 
-            let subMenuContainer = menuContainer.lastElementChild;
+            if (! subMenuContainer) {
+                return;
+            }
 
-            if (subMenuContainer) {
-                const menuTopOffset = menuContainer.getBoundingClientRect().top;
+            const menuTopOffset = menuContainer.getBoundingClientRect().top;
 
-                const subMenuHeight = subMenuContainer.offsetHeight;
+            const subMenuHeight = subMenuContainer.offsetHeight;
 
-                const availableHeight = window.innerHeight - menuTopOffset;
+            const availableHeight = window.innerHeight - menuTopOffset;
 
-                let subMenuTopOffset = menuTopOffset;
+            let subMenuTopOffset = menuTopOffset;
 
-                if (subMenuHeight > availableHeight) {
-                    subMenuTopOffset = menuTopOffset - (subMenuHeight - availableHeight);
+            if (subMenuHeight > availableHeight) {
+                subMenuTopOffset = Math.max(0, menuTopOffset - (subMenuHeight - availableHeight));
+            }
+
+            subMenuContainer.style.top = `${subMenuTopOffset}px`;
+        };
+
+        const adjustSubMenuPosition = (event) => positionSubMenu(event.currentTarget);
+
+        /**
+         * Hover-intent for the fly-out submenus. The trigger row is far shorter
+         * than the detached (fixed) fly-out, so moving the pointer diagonally onto
+         * a lower sub-item crosses a gap where neither is hovered and the pure
+         * `group-hover` submenu would close before it can be clicked. Keeping it
+         * open for a short grace period after the pointer leaves bridges that gap.
+         */
+        const SUBMENU_HIDE_DELAY = 300;
+
+        const bindSubMenuHoverIntent = () => {
+            document.querySelectorAll('nav [class*="group/item"]').forEach((menuContainer) => {
+                const subMenu = menuContainer.lastElementChild;
+
+                if (! subMenu || subMenu.tagName !== 'DIV') {
+                    return;
                 }
 
-                subMenuContainer.style.top = `${subMenuTopOffset}px`;
-            }
+                const open = () => {
+                    clearTimeout(subMenu.hideTimer);
+                    positionSubMenu(menuContainer);
+                    subMenu.style.display = 'grid';
+                };
+
+                const scheduleClose = () => {
+                    subMenu.hideTimer = setTimeout(() => {
+                        subMenu.style.display = '';
+                    }, SUBMENU_HIDE_DELAY);
+                };
+
+                menuContainer.addEventListener('mouseenter', open);
+                menuContainer.addEventListener('mouseleave', scheduleClose);
+                subMenu.addEventListener('mouseenter', () => clearTimeout(subMenu.hideTimer));
+                subMenu.addEventListener('mouseleave', scheduleClose);
+            });
         };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bindSubMenuHoverIntent);
+        } else {
+            bindSubMenuHoverIntent();
+        }
     </script>
 @endpushOnce

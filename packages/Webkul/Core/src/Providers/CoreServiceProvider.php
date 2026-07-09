@@ -7,6 +7,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
@@ -23,6 +24,7 @@ use Webkul\Core\Exceptions\Handler;
 use Webkul\Core\Facades\Core as CoreFacade;
 use Webkul\Core\Facades\ElasticSearch as ElasticSearchFacade;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
+use Webkul\Core\Http\Middleware\EnableDebugForAllowedIps;
 use Webkul\Core\View\Compilers\BladeCompiler;
 use Webkul\Theme\ViewRenderEventManager;
 
@@ -55,6 +57,10 @@ class CoreServiceProvider extends ServiceProvider
         }
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+
+        $this->overrideMailConfiguration();
+
+        $this->app['router']->pushMiddlewareToGroup('web', EnableDebugForAllowedIps::class);
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'core');
 
@@ -110,6 +116,48 @@ class CoreServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
+    /**
+     * Override the mail transport with the values saved in the admin
+     * Configuration (Email settings) when they are present, falling back to the
+     * environment-driven mail config otherwise.
+     */
+    protected function overrideMailConfiguration(): void
+    {
+        try {
+            if (! Schema::hasTable('core_config')) {
+                return;
+            }
+        } catch (\Throwable) {
+            return;
+        }
+
+        $prefix = 'emails.configure.email_settings.';
+
+        $host = core()->getConfigData($prefix.'mail_host');
+
+        if (! $host) {
+            return;
+        }
+
+        $encryption = core()->getConfigData($prefix.'mail_encryption');
+
+        config([
+            'mail.mailers.smtp.host'       => $host,
+            'mail.mailers.smtp.port'       => core()->getConfigData($prefix.'mail_port') ?: config('mail.mailers.smtp.port'),
+            'mail.mailers.smtp.username'   => core()->getConfigData($prefix.'mail_username') ?: config('mail.mailers.smtp.username'),
+            'mail.mailers.smtp.password'   => core()->getConfigData($prefix.'mail_password') ?: config('mail.mailers.smtp.password'),
+            'mail.mailers.smtp.encryption' => ($encryption && $encryption !== 'none') ? $encryption : null,
+        ]);
+
+        if ($fromAddress = core()->getConfigData($prefix.'shop_email_from')) {
+            config(['mail.from.address' => $fromAddress]);
+        }
+
+        if ($fromName = core()->getConfigData($prefix.'sender_name')) {
+            config(['mail.from.name' => $fromName]);
+        }
+    }
+
     public function register(): void
     {
         $this->app->singleton('image_manager', function ($app) {

@@ -266,7 +266,7 @@
                                         type="password"
                                         id="password"
                                         name="password"
-                                        ::rules="isUpdating ? 'min:6' : 'required|min:6'"
+                                        ::rules="isUpdating ? 'min:{{ config('admin.auth.password_min') }}' : 'required|min:{{ config('admin.auth.password_min') }}'"
                                         v-model="data.user.password"
                                         :label="trans('admin::app.settings.users.index.create.password')"
                                         :placeholder="trans('admin::app.settings.users.index.create.password')"
@@ -577,7 +577,7 @@
                             .then((response) => {
                                 this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
 
-                                window.location.href = response.data.redirectUrl;
+                                this.$navigate(response.data.redirectUrl);
                             })
                             .catch(error => {
                                 this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
