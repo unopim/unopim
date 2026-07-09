@@ -146,7 +146,7 @@ return [
     ], [
         'key'        => 'configuration.system_settings',
         'name'       => 'admin::app.components.layouts.sidebar.system-settings',
-        'route'      => 'admin.configuration.system.settings',
+        'route'      => 'admin.settings.system.index',
         'sort'       => 4,
         'icon'       => '',
     ],

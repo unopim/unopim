@@ -50,6 +50,28 @@ class SystemSettings
     }
 
     /**
+     * Resolve the field group a `fields` row edits. A row may either declare its
+     * fields inline (`fields`) or reference an existing `config('core')` group by
+     * key (`config_group`) — the latter keeps the group's config codes intact, so
+     * migrating an existing settings group into the hub never relocates saved data.
+     *
+     * @param  array<string, mixed>  $entry
+     * @return array<string, mixed>|null
+     */
+    public function formGroup(array $entry): ?array
+    {
+        if (! empty($entry['config_group'])) {
+            return collect(config('core'))->firstWhere('key', $entry['config_group']);
+        }
+
+        if (! empty($entry['fields'])) {
+            return $entry;
+        }
+
+        return null;
+    }
+
+    /**
      * Registry rows the current admin may see. Rows carrying an `acl` the admin
      * lacks are dropped; sections and acl-less rows always pass.
      *

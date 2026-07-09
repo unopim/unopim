@@ -36,9 +36,12 @@
         </div>
 
         <div class="mt-6 grid gap-1.5 p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-            @php ($item = $entry)
+            {{-- $group is the effective field group: the entry itself for inline
+                 `fields`, or the referenced config('core') group — either way its
+                 `key` drives the config codes so persistence stays stable. --}}
+            @php ($item = $group)
 
-            @foreach ($entry['fields'] as $field)
+            @foreach ($group['fields'] as $field)
                 @if ($field['type'] == 'blade' && view()->exists($path = $field['path']))
                     {!! view($path, compact('field', 'item'))->render() !!}
                 @else

@@ -23,4 +23,42 @@
 |
 */
 
-return [];
+return [
+    [
+        'key'  => 'system',
+        'name' => 'admin::app.settings.system-settings.system.title',
+        'info' => 'admin::app.settings.system-settings.system.info',
+        'sort' => 1,
+    ],
+
+    [
+        'key'   => 'system.appearance',
+        'name'  => 'admin::app.settings.appearance.title',
+        'info'  => 'admin::app.settings.appearance.info',
+        'icon'  => 'icon-image',
+        'route' => 'admin.settings.appearance.index',
+        'acl'   => 'configuration.system_settings',
+        'sort'  => 1,
+    ],
+
+    [
+        'key'          => 'system.email',
+        'name'         => 'admin::app.settings.system-settings.email.title',
+        'info'         => 'admin::app.settings.system-settings.email.info',
+        'icon'         => 'icon-notification',
+        // References the existing core-config group so saved codes stay put.
+        'config_group' => 'emails.configure.email_settings',
+        'acl'          => 'configuration.system_settings',
+        'sort'         => 2,
+    ],
+
+    [
+        'key'          => 'system.debug',
+        'name'         => 'admin::app.settings.system-settings.debug.title',
+        'info'         => 'admin::app.settings.system-settings.debug.info',
+        'icon'         => 'icon-setting',
+        'config_group' => 'general.debug.settings',
+        'acl'          => 'configuration.system_settings',
+        'sort'         => 3,
+    ],
+];

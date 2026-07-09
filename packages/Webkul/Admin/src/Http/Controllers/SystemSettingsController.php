@@ -33,11 +33,14 @@ class SystemSettingsController extends Controller
     {
         $entry = $this->systemSettings->find($key);
 
-        if (! $entry || empty($entry['fields'])) {
+        if (! $entry || ! ($group = $this->systemSettings->formGroup($entry))) {
             return redirect()->route('admin.settings.system.index');
         }
 
-        return view('admin::system.settings-edit', ['entry' => $entry]);
+        return view('admin::system.settings-edit', [
+            'entry' => $entry,
+            'group' => $group,
+        ]);
     }
 
     /**
@@ -47,7 +50,7 @@ class SystemSettingsController extends Controller
     {
         $entry = $this->systemSettings->find($key);
 
-        if (! $entry || empty($entry['fields'])) {
+        if (! $entry || ! $this->systemSettings->formGroup($entry)) {
             return redirect()->route('admin.settings.system.index');
         }
 
