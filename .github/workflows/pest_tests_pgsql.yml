@@ -38,27 +38,16 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@2.37.1
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_pgsql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
           coverage: none
 
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v5
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
         with:
-          path: |
-            vendor
-            ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+          composer-options: "--optimize-autoloader"
 
       - name: Setting Environment
         run: |
@@ -122,27 +111,16 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@2.37.1
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_pgsql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
           coverage: none
 
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v5
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
         with:
-          path: |
-            vendor
-            ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+          composer-options: "--optimize-autoloader"
 
       - name: Setting Environment
         run: |
