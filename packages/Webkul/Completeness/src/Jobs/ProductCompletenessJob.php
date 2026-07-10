@@ -79,7 +79,16 @@ class ProductCompletenessJob implements ShouldQueue
                 continue;
             }
 
-            [$rows, $avg, $deletes] = $this->computeProductCompleteness($product->toArray());
+            $productArray = $product->toArray();
+
+            // A variant's completeness is measured against its resolved values, so
+            // attributes inherited from an ancestor count as filled (read-time
+            // variant inheritance). Only variants pay the ancestor walk.
+            if (! empty($product->parent_id)) {
+                $productArray['values'] = $product->resolvedValues();
+            }
+
+            [$rows, $avg, $deletes] = $this->computeProductCompleteness($productArray);
 
             $scoreRows = array_merge($scoreRows, $rows);
             $avgScores[$id] = $avg;
