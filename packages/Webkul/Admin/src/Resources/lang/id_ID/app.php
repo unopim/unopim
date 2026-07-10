@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Jenis asosiasi berhasil dihapus',
             'delete-failed'     => 'Jenis Asosiasi Dihapus Gagal',
             'user-define-error' => 'Tidak dapat menghapus jenis asosiasi sistem',
+
+            'create' => [
+                'title'    => 'Buat Jenis Asosiasi',
+                'save-btn' => 'Simpan Jenis Asosiasi',
+            ],
+
+            'edit' => [
+                'title'    => 'Edit Jenis Asosiasi',
+                'save-btn' => 'Perbarui Jenis Asosiasi',
+            ],
+
+            'fields' => [
+                'title'           => 'Bidang',
+                'info'            => 'Tambahkan bidang khusus untuk menangkap data tambahan untuk jenis asosiasi ini.',
+                'add-field-btn'   => 'Tambah Bidang',
+                'modal-title'     => 'Tambah Bidang',
+                'save-field-btn'  => 'Simpan Bidang',
+                'same-code-error' => 'Kode bidang harus unik.',
+                'add-fields-info' => 'Untuk membuat bidang khusus untuk jenis asosiasi ini.',
+            ],
         ],
 
         'category-fields-options' => [

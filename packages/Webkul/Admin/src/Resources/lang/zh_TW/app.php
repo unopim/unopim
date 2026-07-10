@@ -926,6 +926,26 @@ return [
             'delete-success'    => '關聯類型刪除成功',
             'delete-failed'     => '關聯類型刪除失敗',
             'user-define-error' => '無法刪除系統預設關聯類型',
+
+            'create' => [
+                'title'    => '建立關聯類型',
+                'save-btn' => '儲存關聯類型',
+            ],
+
+            'edit' => [
+                'title'    => '編輯關聯類型',
+                'save-btn' => '更新關聯類型',
+            ],
+
+            'fields' => [
+                'title'           => '欄位',
+                'info'            => '新增自訂欄位以擷取此關聯類型的附加資料。',
+                'add-field-btn'   => '新增欄位',
+                'modal-title'     => '新增欄位',
+                'save-field-btn'  => '儲存欄位',
+                'same-code-error' => '欄位代碼必須是唯一的。',
+                'add-fields-info' => '為此關聯類型建立自訂欄位。',
+            ],
         ],
 
         'category-fields-options' => [

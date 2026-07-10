@@ -37,7 +37,7 @@ class AssociationTypeController extends Controller
             return app(AssociationTypeDataGrid::class)->toJson();
         }
 
-        return view('admin::catalog.association-types.index');
+        return view('admin::catalog.associations.types.index');
     }
 
     /**
@@ -45,7 +45,7 @@ class AssociationTypeController extends Controller
      */
     public function create(): View
     {
-        return view('admin::catalog.association-types.create', [
+        return view('admin::catalog.associations.types.create', [
             'locales' => $this->localeRepository->getActiveLocales(),
         ]);
     }
@@ -79,9 +79,11 @@ class AssociationTypeController extends Controller
      */
     public function edit(int $id): View
     {
-        return view('admin::catalog.association-types.edit', [
-            'associationType' => $this->associationTypeRepository->findOrFail($id),
-            'locales'         => $this->localeRepository->getActiveLocales(),
+        return view('admin::catalog.associations.types.edit', [
+            'associationType' => $this->associationTypeRepository
+                ->with(['translations', 'fields.translations', 'fields.options.translations'])
+                ->findOrFail($id),
+            'locales' => $this->localeRepository->getActiveLocales(),
         ]);
     }
 

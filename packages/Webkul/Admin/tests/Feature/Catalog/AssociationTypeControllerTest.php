@@ -15,13 +15,6 @@ function createAssociationType(array $overrides = []): AssociationType
     ], $overrides));
 }
 
-/**
- * Note: the `admin::catalog.association-types.index` and `.edit` blades are built
- * in Task 8, so the full-page (non-ajax) render of index()/edit() is not asserted
- * here. Routing/ACL/controller wiring for index() is instead proven via the ajax
- * datagrid test below (which never reaches the blade), and edit()/update() are
- * proven via the update tests further down.
- */
 it('should return the association type datagrid', function () {
     $this->loginAsAdmin();
 
@@ -265,4 +258,57 @@ it('should mass update the status of association types', function () {
     foreach ($ids as $id) {
         $this->assertDatabaseHas($this->getFullTableName(AssociationType::class), ['id' => $id, 'status' => 0]);
     }
+});
+
+it('should render the create page with the reusable field-builder component', function () {
+    $this->loginAsAdmin();
+
+    $response = $this->get(route('admin.catalog.association_types.create'));
+
+    $response->assertStatus(200);
+
+    // The field-builder component renders the "Type" field-select label
+    // (borrowed from the category field form) for every field row.
+    $response->assertSee(trans('admin::app.catalog.category_fields.create.type'), false);
+
+    // Every association-field type option (sourced from
+    // `config('association_field_types')`) must be present in the type dropdown.
+    $response->assertSee(trans('admin::app.catalog.attributes.create.text'), false);
+    $response->assertSee(trans('admin::app.catalog.attributes.create.select'), false);
+
+    $response->assertSee(trans('admin::app.catalog.association_types.fields.add-field-btn'), false);
+});
+
+it('should render the edit page with the quantity field prefilled', function () {
+    $this->loginAsAdmin();
+
+    $data = [
+        'code'     => 'edit_prefill_'.uniqid(),
+        'status'   => 1,
+        'position' => 1,
+        'en_US'    => ['name' => 'Edit Prefill'],
+        'fields'   => [
+            [
+                'code'    => 'quantity',
+                'type'    => 'text',
+                'status'  => 1,
+                'section' => 'left',
+                'en_US'   => ['name' => 'Quantity'],
+            ],
+        ],
+    ];
+
+    $this->post(route('admin.catalog.association_types.store'), $data)
+        ->assertRedirect(route('admin.catalog.association_types.index'));
+
+    $associationType = AssociationType::where('code', $data['code'])->firstOrFail();
+
+    $response = $this->get(route('admin.catalog.association_types.edit', $associationType->id));
+
+    $response->assertStatus(200);
+
+    // The `quantity` field's code is embedded server-side in the field-builder's
+    // initial Vue data payload, so it must be present in the raw HTML response.
+    $response->assertSee('quantity', false);
+    $response->assertSee($associationType->code, false);
 });

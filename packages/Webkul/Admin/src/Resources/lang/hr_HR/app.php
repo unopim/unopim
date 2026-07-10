@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Vrsta Povezivanja Izbrisana Uspješno',
             'delete-failed'     => 'Brisanje Vrste Povezivanja Nije Uspjelo',
             'user-define-error' => 'Ne možete obrisati sistemsku Vrstu Povezivanja',
+
+            'create' => [
+                'title'    => 'Izradi vrstu povezivanja',
+                'save-btn' => 'Spremi vrstu povezivanja',
+            ],
+
+            'edit' => [
+                'title'    => 'Uredi vrstu povezivanja',
+                'save-btn' => 'Ažuriraj vrstu povezivanja',
+            ],
+
+            'fields' => [
+                'title'           => 'Polja',
+                'info'            => 'Dodajte prilagođena polja za bilježenje dodatnih podataka za ovu vrstu povezivanja.',
+                'add-field-btn'   => 'Dodaj polje',
+                'modal-title'     => 'Dodaj polje',
+                'save-field-btn'  => 'Spremi polje',
+                'same-code-error' => 'Kod polja mora biti jedinstven.',
+                'add-fields-info' => 'Za izradu prilagođenih polja za ovu vrstu povezivanja.',
+            ],
         ],
 
         'category-fields-options' => [

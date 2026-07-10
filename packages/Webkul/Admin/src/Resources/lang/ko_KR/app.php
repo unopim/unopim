@@ -926,6 +926,26 @@ return [
             'delete-success'    => '연관 유형 삭제 성공',
             'delete-failed'     => '연관 유형 삭제 실패',
             'user-define-error' => '시스템 연관 유형은 삭제할 수 없습니다.',
+
+            'create' => [
+                'title'    => '연관 유형 생성',
+                'save-btn' => '연관 유형 저장',
+            ],
+
+            'edit' => [
+                'title'    => '연관 유형 편집',
+                'save-btn' => '연관 유형 업데이트',
+            ],
+
+            'fields' => [
+                'title'           => '필드',
+                'info'            => '이 연관 유형에 대한 추가 데이터를 캡처하기 위해 사용자 지정 필드를 추가하세요.',
+                'add-field-btn'   => '필드 추가',
+                'modal-title'     => '필드 추가',
+                'save-field-btn'  => '필드 저장',
+                'same-code-error' => '필드 코드는 고유해야 합니다.',
+                'add-fields-info' => '이 연관 유형에 대한 사용자 지정 필드를 만들려면.',
+            ],
         ],
 
         'category-fields-options' => [

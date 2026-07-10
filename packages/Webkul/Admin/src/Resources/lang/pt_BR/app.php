@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Tipo de associação excluído com sucesso',
             'delete-failed'     => 'Falha ao excluir tipo de associação',
             'user-define-error' => 'Não é possível excluir o tipo de associação do sistema',
+
+            'create' => [
+                'title'    => 'Criar tipo de associação',
+                'save-btn' => 'Salvar tipo de associação',
+            ],
+
+            'edit' => [
+                'title'    => 'Editar tipo de associação',
+                'save-btn' => 'Atualizar tipo de associação',
+            ],
+
+            'fields' => [
+                'title'           => 'Campos',
+                'info'            => 'Adicione campos personalizados para capturar dados adicionais para este tipo de associação.',
+                'add-field-btn'   => 'Adicionar campo',
+                'modal-title'     => 'Adicionar campo',
+                'save-field-btn'  => 'Salvar campo',
+                'same-code-error' => 'O código do campo deve ser único.',
+                'add-fields-info' => 'Para criar campos personalizados para este tipo de associação.',
+            ],
         ],
 
         'category-fields-options' => [

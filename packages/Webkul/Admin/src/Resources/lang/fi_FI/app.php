@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Assosiaatiotyyppi poistettu onnistuneesti',
             'delete-failed'     => 'Assosiaatiotyypin poistaminen epäonnistui',
             'user-define-error' => 'Ei voida poistaa järjestelmän assosiaatiotyyppiä',
+
+            'create' => [
+                'title'    => 'Luo assosiaatiotyyppi',
+                'save-btn' => 'Tallenna assosiaatiotyyppi',
+            ],
+
+            'edit' => [
+                'title'    => 'Muokkaa assosiaatiotyyppiä',
+                'save-btn' => 'Päivitä assosiaatiotyyppi',
+            ],
+
+            'fields' => [
+                'title'           => 'Kentät',
+                'info'            => 'Lisää mukautettuja kenttiä tallentaaksesi lisätietoja tälle assosiaatiotyypille.',
+                'add-field-btn'   => 'Lisää kenttä',
+                'modal-title'     => 'Lisää kenttä',
+                'save-field-btn'  => 'Tallenna kenttä',
+                'same-code-error' => 'Kentän koodin on oltava yksilöllinen.',
+                'add-fields-info' => 'Luodaksesi mukautettuja kenttiä tälle assosiaatiotyypille.',
+            ],
         ],
 
         'category-fields-options' => [

@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Tipo di Associazione Eliminato con Successo',
             'delete-failed'     => 'Eliminazione del Tipo di Associazione Non Riuscita',
             'user-define-error' => 'Non puoi eliminare il tipo di associazione di sistema',
+
+            'create' => [
+                'title'    => 'Crea tipo di associazione',
+                'save-btn' => 'Salva tipo di associazione',
+            ],
+
+            'edit' => [
+                'title'    => 'Modifica tipo di associazione',
+                'save-btn' => 'Aggiorna tipo di associazione',
+            ],
+
+            'fields' => [
+                'title'           => 'Campi',
+                'info'            => 'Aggiungi campi personalizzati per acquisire dati aggiuntivi per questo tipo di associazione.',
+                'add-field-btn'   => 'Aggiungi campo',
+                'modal-title'     => 'Aggiungi campo',
+                'save-field-btn'  => 'Salva campo',
+                'same-code-error' => 'Il codice del campo deve essere univoco.',
+                'add-fields-info' => 'Per creare campi personalizzati per questo tipo di associazione.',
+            ],
         ],
 
         'category-fields-options' => [

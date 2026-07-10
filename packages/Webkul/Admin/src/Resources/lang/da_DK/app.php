@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Associationstype Slettet Med Succes',
             'delete-failed'     => 'Associationstype Sletning Mislykkedes',
             'user-define-error' => 'Kan ikke slette system Associationstype',
+
+            'create' => [
+                'title'    => 'Opret associeringstype',
+                'save-btn' => 'Gem associeringstype',
+            ],
+
+            'edit' => [
+                'title'    => 'Rediger associeringstype',
+                'save-btn' => 'Opdater associeringstype',
+            ],
+
+            'fields' => [
+                'title'           => 'Felter',
+                'info'            => 'Tilføj brugerdefinerede felter for at fange yderligere data til denne associeringstype.',
+                'add-field-btn'   => 'Tilføj felt',
+                'modal-title'     => 'Tilføj felt',
+                'save-field-btn'  => 'Gem felt',
+                'same-code-error' => 'Feltkoden skal være unik.',
+                'add-fields-info' => 'For at oprette brugerdefinerede felter til denne associeringstype.',
+            ],
         ],
 
         'category-fields-options' => [

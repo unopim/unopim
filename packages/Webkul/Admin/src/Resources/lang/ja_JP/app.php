@@ -926,6 +926,26 @@ return [
             'delete-success'    => '関連タイプが正常に削除されました',
             'delete-failed'     => '関連タイプの削除に失敗しました',
             'user-define-error' => 'システム関連タイプを削除できません',
+
+            'create' => [
+                'title'    => '関連タイプを作成',
+                'save-btn' => '関連タイプを保存',
+            ],
+
+            'edit' => [
+                'title'    => '関連タイプを編集',
+                'save-btn' => '関連タイプを更新',
+            ],
+
+            'fields' => [
+                'title'           => 'フィールド',
+                'info'            => 'この関連タイプの追加データを取得するためにカスタムフィールドを追加します。',
+                'add-field-btn'   => 'フィールドを追加',
+                'modal-title'     => 'フィールドを追加',
+                'save-field-btn'  => 'フィールドを保存',
+                'same-code-error' => 'フィールドコードは一意である必要があります。',
+                'add-fields-info' => 'この関連タイプのカスタムフィールドを作成するには。',
+            ],
         ],
 
         'category-fields-options' => [

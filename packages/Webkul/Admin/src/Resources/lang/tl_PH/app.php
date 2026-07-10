@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Matagumpay na natanggal ang uri ng asosasyon',
             'delete-failed'     => 'Nabigong tanggalin ang uri ng asosasyon',
             'user-define-error' => 'Hindi maaaring tanggalin ang uri ng asosasyon ng sistema',
+
+            'create' => [
+                'title'    => 'Gumawa ng Uri ng Asosasyon',
+                'save-btn' => 'I-save ang Uri ng Asosasyon',
+            ],
+
+            'edit' => [
+                'title'    => 'I-edit ang Uri ng Asosasyon',
+                'save-btn' => 'I-update ang Uri ng Asosasyon',
+            ],
+
+            'fields' => [
+                'title'           => 'Mga Field',
+                'info'            => 'Magdagdag ng mga custom na field upang makuha ang karagdagang datos para sa uri ng asosasyong ito.',
+                'add-field-btn'   => 'Magdagdag ng Field',
+                'modal-title'     => 'Magdagdag ng Field',
+                'save-field-btn'  => 'I-save ang Field',
+                'same-code-error' => 'Ang code ng field ay dapat natatangi.',
+                'add-fields-info' => 'Upang lumikha ng mga custom na field para sa uri ng asosasyong ito.',
+            ],
         ],
 
         'category-fields-options' => [

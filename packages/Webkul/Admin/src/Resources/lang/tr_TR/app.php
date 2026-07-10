@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'İlişki Türü başarıyla silindi',
             'delete-failed'     => 'İlişki Türü silinemedi',
             'user-define-error' => 'Sistem tanımlı ilişki türü silinemez',
+
+            'create' => [
+                'title'    => 'İlişki Türü Oluştur',
+                'save-btn' => 'İlişki Türünü Kaydet',
+            ],
+
+            'edit' => [
+                'title'    => 'İlişki Türünü Düzenle',
+                'save-btn' => 'İlişki Türünü Güncelle',
+            ],
+
+            'fields' => [
+                'title'           => 'Alanlar',
+                'info'            => 'Bu ilişki türü için ek veri toplamak üzere özel alanlar ekleyin.',
+                'add-field-btn'   => 'Alan Ekle',
+                'modal-title'     => 'Alan Ekle',
+                'save-field-btn'  => 'Alanı Kaydet',
+                'same-code-error' => 'Alan kodu benzersiz olmalıdır.',
+                'add-fields-info' => 'Bu ilişki türü için özel alanlar oluşturmak üzere.',
+            ],
         ],
 
         'category-fields-options' => [

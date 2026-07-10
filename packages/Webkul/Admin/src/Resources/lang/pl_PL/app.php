@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Typ powiązania został pomyślnie usunięty',
             'delete-failed'     => 'Usunięcie typu powiązania nie powiodło się',
             'user-define-error' => 'Nie można usunąć systemowego typu powiązania',
+
+            'create' => [
+                'title'    => 'Utwórz typ powiązania',
+                'save-btn' => 'Zapisz typ powiązania',
+            ],
+
+            'edit' => [
+                'title'    => 'Edytuj typ powiązania',
+                'save-btn' => 'Zaktualizuj typ powiązania',
+            ],
+
+            'fields' => [
+                'title'           => 'Pola',
+                'info'            => 'Dodaj niestandardowe pola, aby przechwycić dodatkowe dane dla tego typu powiązania.',
+                'add-field-btn'   => 'Dodaj pole',
+                'modal-title'     => 'Dodaj pole',
+                'save-field-btn'  => 'Zapisz pole',
+                'same-code-error' => 'Kod pola musi być unikalny.',
+                'add-fields-info' => 'Aby utworzyć niestandardowe pola dla tego typu powiązania.',
+            ],
         ],
 
         'category-fields-options' => [

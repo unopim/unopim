@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Tip de asociere șters cu succes',
             'delete-failed'     => 'Ștergere tip de asociere eșuată',
             'user-define-error' => 'Nu se poate șterge tipul de asociere sistem',
+
+            'create' => [
+                'title'    => 'Creați tip de asociere',
+                'save-btn' => 'Salvați tipul de asociere',
+            ],
+
+            'edit' => [
+                'title'    => 'Editați tipul de asociere',
+                'save-btn' => 'Actualizați tipul de asociere',
+            ],
+
+            'fields' => [
+                'title'           => 'Câmpuri',
+                'info'            => 'Adăugați câmpuri personalizate pentru a captura date suplimentare pentru acest tip de asociere.',
+                'add-field-btn'   => 'Adăugați câmp',
+                'modal-title'     => 'Adăugați câmp',
+                'save-field-btn'  => 'Salvați câmpul',
+                'same-code-error' => 'Codul câmpului trebuie să fie unic.',
+                'add-fields-info' => 'Pentru a crea câmpuri personalizate pentru acest tip de asociere.',
+            ],
         ],
 
         'category-fields-options' => [

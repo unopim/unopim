@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Assosiasjonstype Slettet',
             'delete-failed'     => 'Assosiasjonstype Sletting Feilet',
             'user-define-error' => 'Kan ikke slette system Assosiasjonstype',
+
+            'create' => [
+                'title'    => 'Opprett assosiasjonstype',
+                'save-btn' => 'Lagre assosiasjonstype',
+            ],
+
+            'edit' => [
+                'title'    => 'Rediger assosiasjonstype',
+                'save-btn' => 'Oppdater assosiasjonstype',
+            ],
+
+            'fields' => [
+                'title'           => 'Felt',
+                'info'            => 'Legg til egendefinerte felt for å fange opp tilleggsdata for denne assosiasjonstypen.',
+                'add-field-btn'   => 'Legg til felt',
+                'modal-title'     => 'Legg til felt',
+                'save-field-btn'  => 'Lagre felt',
+                'same-code-error' => 'Feltkoden må være unik.',
+                'add-fields-info' => 'For å opprette egendefinerte felt for denne assosiasjonstypen.',
+            ],
         ],
 
         'category-fields-options' => [

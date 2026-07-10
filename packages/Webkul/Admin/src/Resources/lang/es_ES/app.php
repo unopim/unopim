@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Tipo de asociación eliminado con éxito',
             'delete-failed'     => 'Error al eliminar el tipo de asociación',
             'user-define-error' => 'No puede eliminar el tipo de asociación del sistema',
+
+            'create' => [
+                'title'    => 'Crear tipo de asociación',
+                'save-btn' => 'Guardar tipo de asociación',
+            ],
+
+            'edit' => [
+                'title'    => 'Editar tipo de asociación',
+                'save-btn' => 'Actualizar tipo de asociación',
+            ],
+
+            'fields' => [
+                'title'           => 'Campos',
+                'info'            => 'Agregue campos personalizados para capturar datos adicionales para este tipo de asociación.',
+                'add-field-btn'   => 'Agregar campo',
+                'modal-title'     => 'Agregar campo',
+                'save-field-btn'  => 'Guardar campo',
+                'same-code-error' => 'El código del campo debe ser único.',
+                'add-fields-info' => 'Para crear campos personalizados para este tipo de asociación.',
+            ],
         ],
 
         'category-fields-options' => [

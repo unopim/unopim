@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Tipus d\'Associació Eliminat Correctament',
             'delete-failed'     => 'No s\'ha pogut eliminar el Tipus d\'Associació',
             'user-define-error' => 'No es pot eliminar un Tipus d\'Associació del sistema',
+
+            'create' => [
+                'title'    => 'Crear tipus d\'associació',
+                'save-btn' => 'Desar tipus d\'associació',
+            ],
+
+            'edit' => [
+                'title'    => 'Editar tipus d\'associació',
+                'save-btn' => 'Actualitzar tipus d\'associació',
+            ],
+
+            'fields' => [
+                'title'           => 'Camps',
+                'info'            => 'Afegiu camps personalitzats per capturar dades addicionals per a aquest tipus d\'associació.',
+                'add-field-btn'   => 'Afegir camp',
+                'modal-title'     => 'Afegir camp',
+                'save-field-btn'  => 'Desar camp',
+                'same-code-error' => 'El codi del camp ha de ser únic.',
+                'add-fields-info' => 'Per crear camps personalitzats per a aquest tipus d\'associació.',
+            ],
         ],
 
         'category-fields-options' => [

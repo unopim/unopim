@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Xóa Loại Liên Kết Thành Công',
             'delete-failed'     => 'Xóa Loại Liên Kết Thất Bại',
             'user-define-error' => 'Không thể xóa Loại Liên Kết hệ thống',
+
+            'create' => [
+                'title'    => 'Tạo loại liên kết',
+                'save-btn' => 'Lưu loại liên kết',
+            ],
+
+            'edit' => [
+                'title'    => 'Chỉnh sửa loại liên kết',
+                'save-btn' => 'Cập nhật loại liên kết',
+            ],
+
+            'fields' => [
+                'title'           => 'Trường',
+                'info'            => 'Thêm các trường tùy chỉnh để thu thập dữ liệu bổ sung cho loại liên kết này.',
+                'add-field-btn'   => 'Thêm trường',
+                'modal-title'     => 'Thêm trường',
+                'save-field-btn'  => 'Lưu trường',
+                'same-code-error' => 'Mã trường phải là duy nhất.',
+                'add-fields-info' => 'Để tạo các trường tùy chỉnh cho loại liên kết này.',
+            ],
         ],
 
         'category-fields-options' => [

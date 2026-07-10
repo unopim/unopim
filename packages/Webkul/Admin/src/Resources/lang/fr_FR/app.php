@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Type d\'association supprimé avec succès',
             'delete-failed'     => 'Échec de la suppression du type d\'association',
             'user-define-error' => 'Impossible de supprimer un type d\'association système',
+
+            'create' => [
+                'title'    => 'Créer un type d\'association',
+                'save-btn' => 'Enregistrer le type d\'association',
+            ],
+
+            'edit' => [
+                'title'    => 'Modifier le type d\'association',
+                'save-btn' => 'Mettre à jour le type d\'association',
+            ],
+
+            'fields' => [
+                'title'           => 'Champs',
+                'info'            => 'Ajoutez des champs personnalisés pour capturer des données supplémentaires pour ce type d\'association.',
+                'add-field-btn'   => 'Ajouter un champ',
+                'modal-title'     => 'Ajouter un champ',
+                'save-field-btn'  => 'Enregistrer le champ',
+                'same-code-error' => 'Le code du champ doit être unique.',
+                'add-fields-info' => 'Pour créer des champs personnalisés pour ce type d\'association.',
+            ],
         ],
 
         'category-fields-options' => [

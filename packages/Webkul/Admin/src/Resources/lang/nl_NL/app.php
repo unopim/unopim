@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Associatietype succesvol verwijderd.',
             'delete-failed'     => 'Verwijderen van associatietype mislukt.',
             'user-define-error' => 'Kan het systeemassociatietype niet verwijderen.',
+
+            'create' => [
+                'title'    => 'Associatietype aanmaken',
+                'save-btn' => 'Associatietype opslaan',
+            ],
+
+            'edit' => [
+                'title'    => 'Associatietype bewerken',
+                'save-btn' => 'Associatietype bijwerken',
+            ],
+
+            'fields' => [
+                'title'           => 'Velden',
+                'info'            => 'Voeg aangepaste velden toe om extra gegevens voor dit associatietype vast te leggen.',
+                'add-field-btn'   => 'Veld toevoegen',
+                'modal-title'     => 'Veld toevoegen',
+                'save-field-btn'  => 'Veld opslaan',
+                'same-code-error' => 'De veldcode moet uniek zijn.',
+                'add-fields-info' => 'Om aangepaste velden voor dit associatietype te maken.',
+            ],
         ],
 
         'category-fields-options' => [

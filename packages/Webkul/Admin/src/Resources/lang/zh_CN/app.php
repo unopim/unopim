@@ -926,6 +926,26 @@ return [
             'delete-success'    => '关联类型成功删除',
             'delete-failed'     => '关联类型删除失败',
             'user-define-error' => '无法删除系统关联类型',
+
+            'create' => [
+                'title'    => '创建关联类型',
+                'save-btn' => '保存关联类型',
+            ],
+
+            'edit' => [
+                'title'    => '编辑关联类型',
+                'save-btn' => '更新关联类型',
+            ],
+
+            'fields' => [
+                'title'           => '字段',
+                'info'            => '添加自定义字段以捕获此关联类型的附加数据。',
+                'add-field-btn'   => '添加字段',
+                'modal-title'     => '添加字段',
+                'save-field-btn'  => '保存字段',
+                'same-code-error' => '字段代码必须唯一。',
+                'add-fields-info' => '为此关联类型创建自定义字段。',
+            ],
         ],
 
         'category-fields-options' => [

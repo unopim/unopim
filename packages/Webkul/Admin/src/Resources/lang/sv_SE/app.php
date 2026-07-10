@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Associationstyp raderades framgångsrikt',
             'delete-failed'     => 'Det gick inte att radera associationstyp',
             'user-define-error' => 'Det går inte att radera systemdefinierad associationstyp',
+
+            'create' => [
+                'title'    => 'Skapa associationstyp',
+                'save-btn' => 'Spara associationstyp',
+            ],
+
+            'edit' => [
+                'title'    => 'Redigera associationstyp',
+                'save-btn' => 'Uppdatera associationstyp',
+            ],
+
+            'fields' => [
+                'title'           => 'Fält',
+                'info'            => 'Lägg till anpassade fält för att fånga ytterligare data för denna associationstyp.',
+                'add-field-btn'   => 'Lägg till fält',
+                'modal-title'     => 'Lägg till fält',
+                'save-field-btn'  => 'Spara fält',
+                'same-code-error' => 'Fältkoden måste vara unik.',
+                'add-fields-info' => 'För att skapa anpassade fält för denna associationstyp.',
+            ],
         ],
 
         'category-fields-options' => [

@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Assoziationstyp erfolgreich gelöscht',
             'delete-failed'     => 'Assoziationstyp konnte nicht gelöscht werden',
             'user-define-error' => 'Systemassoziationstyp kann nicht gelöscht werden',
+
+            'create' => [
+                'title'    => 'Zuordnungstyp erstellen',
+                'save-btn' => 'Zuordnungstyp speichern',
+            ],
+
+            'edit' => [
+                'title'    => 'Zuordnungstyp bearbeiten',
+                'save-btn' => 'Zuordnungstyp aktualisieren',
+            ],
+
+            'fields' => [
+                'title'           => 'Felder',
+                'info'            => 'Fügen Sie benutzerdefinierte Felder hinzu, um zusätzliche Daten für diesen Zuordnungstyp zu erfassen.',
+                'add-field-btn'   => 'Feld hinzufügen',
+                'modal-title'     => 'Feld hinzufügen',
+                'save-field-btn'  => 'Feld speichern',
+                'same-code-error' => 'Der Feldcode muss eindeutig sein.',
+                'add-fields-info' => 'Um benutzerdefinierte Felder für diesen Zuordnungstyp zu erstellen.',
+            ],
         ],
 
         'category-fields-options' => [

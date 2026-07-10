@@ -926,6 +926,26 @@ return [
             'delete-success'    => 'Association Type Deleted Successfully',
             'delete-failed'     => 'Association Type Deleted Failed',
             'user-define-error' => 'Can not delete system Association Type',
+
+            'create' => [
+                'title'    => 'Create Association Type',
+                'save-btn' => 'Save Association Type',
+            ],
+
+            'edit' => [
+                'title'    => 'Edit Association Type',
+                'save-btn' => 'Update Association Type',
+            ],
+
+            'fields' => [
+                'title'           => 'Fields',
+                'info'            => 'Add custom fields to capture additional data for this association type.',
+                'add-field-btn'   => 'Add Field',
+                'modal-title'     => 'Add Field',
+                'save-field-btn'  => 'Save Field',
+                'same-code-error' => 'The field code must be unique.',
+                'add-fields-info' => 'To create custom fields for this association type.',
+            ],
         ],
 
         'category-fields-options' => [
