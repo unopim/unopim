@@ -181,7 +181,7 @@
                 </div>
 
                 <div class="mt-4 overflow-x-auto">
-                    <template v-if="fields.length">
+                    <template v-if="localFields.length">
                         <x-admin::table>
                             <x-admin::table.thead class="text-sm font-medium dark:bg-gray-800">
                                 <x-admin::table.thead.tr>
@@ -213,7 +213,7 @@
                                 ghost-class="draggable-ghost"
                                 handle=".icon-drag"
                                 v-bind="{animation: 200}"
-                                :list="fields"
+                                :list="localFields"
                                 item-key="id"
                             >
                                 <template #item="{ element, index }">
@@ -401,7 +401,7 @@
                             <div class="grid grid-cols-2 gap-4 mb-2.5">
                                 <template v-for="locale in locales" :key="'field-modal-locale-' + locale.code">
                                     <x-admin::form.control-group class="w-full mb-2.5">
-                                        <x-admin::form.control-group.label v-text="locale.name" />
+                                        <x-admin::form.control-group.label>@{{ locale.name }}</x-admin::form.control-group.label>
 
                                         <x-admin::form.control-group.control
                                             type="text"
@@ -649,7 +649,15 @@
 
             data() {
                 return {
-                    fields: JSON.parse(JSON.stringify(this.fields ?? [])),
+                    /**
+                     * Local, mutable working copy of the `fields` prop. Named
+                     * differently from the prop (rather than `fields`) because a
+                     * data property sharing a prop's name is silently dropped by
+                     * Vue during instance init — `this.fields` would keep
+                     * resolving to the read-only props proxy, so every push()/
+                     * splice() below would no-op against a readonly array.
+                     */
+                    localFields: JSON.parse(JSON.stringify(this.fields ?? [])),
 
                     draftOptions: [],
 
@@ -775,7 +783,7 @@
                 },
 
                 saveField(params, { setErrors }) {
-                    let isDuplicateCode = this.fields.some((field) => {
+                    let isDuplicateCode = this.localFields.some((field) => {
                         return ! field.isDelete
                             && field.id !== this.editingFieldId
                             && field.code === params.code;
@@ -798,7 +806,7 @@
                     let sectionValue = this.parseValue(params.section)?.id ?? 'left';
 
                     if (this.isFieldNew) {
-                        this.fields.push({
+                        this.localFields.push({
                             id: 'new_' + this.fieldSeq++,
                             isNew: true,
                             isDelete: false,
@@ -815,11 +823,11 @@
                             options: this.draftOptions,
                         });
                     } else {
-                        let foundIndex = this.fields.findIndex(item => item.id === this.editingFieldId);
+                        let foundIndex = this.localFields.findIndex(item => item.id === this.editingFieldId);
 
                         if (foundIndex !== -1) {
-                            this.fields.splice(foundIndex, 1, {
-                                ...this.fields[foundIndex],
+                            this.localFields.splice(foundIndex, 1, {
+                                ...this.localFields[foundIndex],
                                 validation: this.selectedFieldType == 'text' ? this.selectedValidationType : '',
                                 regex_pattern: params.regex_pattern ?? '',
                                 is_required: !! params.is_required,
@@ -836,16 +844,16 @@
                 },
 
                 removeField(element) {
-                    let foundIndex = this.fields.findIndex(item => item.id === element.id);
+                    let foundIndex = this.localFields.findIndex(item => item.id === element.id);
 
                     if (foundIndex === -1) {
                         return;
                     }
 
-                    if (this.fields[foundIndex].isNew) {
-                        this.fields.splice(foundIndex, 1);
+                    if (this.localFields[foundIndex].isNew) {
+                        this.localFields.splice(foundIndex, 1);
                     } else {
-                        this.fields[foundIndex].isDelete = true;
+                        this.localFields[foundIndex].isDelete = true;
                     }
                 },
 
