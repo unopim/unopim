@@ -192,7 +192,11 @@ class Configurable extends AbstractType
             'sku'                 => $data['sku'],
         ]);
 
-        $variantValues = $this->filterUniqueAttributeValues($product->values, $uniqueAttributes);
+        // Inheritance is resolved at read time (see VariantValueResolver); a
+        // variant stores only what it owns - its axis options and sku - instead
+        // of copying the parent's values. This removes storage/write duplication
+        // and keeps a single source of truth on the ancestor chain.
+        $variantValues = [];
 
         foreach ($productSuperAttributes as $attribute) {
             $attrCode = $attribute->code;
