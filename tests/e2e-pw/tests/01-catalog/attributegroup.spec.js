@@ -10,7 +10,7 @@ async function createAttributeGroup(adminPage, code, name) {
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await clickSaveAndExpect(adminPage, 'Save Attribute Group', /Attribute Group Created Successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Group Created Successfully/i);
 }
 
 /**
@@ -36,7 +36,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await adminPage.getByRole('link', { name: 'Create Attribute Group' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Description');
-    await adminPage.getByRole('button', { name: 'Save Attribute Group' }).click();
+    await adminPage.getByRole('button', { name: 'Save changes' }).click();
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
 
@@ -119,7 +119,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('After Update');
-    await clickSaveAndExpect(adminPage, 'Save Attribute Group', /Attribute Group Updated Successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Group Updated Successfully/i);
 
     // Cleanup
     await deleteAttributeGroup(adminPage, code);

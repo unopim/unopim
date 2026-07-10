@@ -12,7 +12,7 @@ async function createUserImport(adminPage, code, filePath = 'assets/users.csv') 
   const fileInput = adminPage.locator('input[type="file"]').first();
   await fileInput.setInputFiles(filePath);
   
-  await clickSaveAndExpect(adminPage, 'Save Import', /Import created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Import created successfully/i);
 }
 
 async function deleteImport(adminPage, code) {

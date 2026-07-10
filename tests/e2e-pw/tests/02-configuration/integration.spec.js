@@ -73,6 +73,11 @@ test.describe('UnoPim Integration API Keys', () => {
     await adminPage.getByRole('link', { name: 'Create' }).click();
     await adminPage.waitForLoadState('load');
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
+    // Leave both required fields empty, but dirty the form via the permission
+    // type so the global "Save changes" bar appears (the inline save button is
+    // removed on tracked forms).
+    await adminPage.locator('input[name="permission_type"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+    await adminPage.getByRole('option', { name: 'Custom' }).click();
     await adminPage.getByRole('button', { name: 'Save' }).click();
     await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Assign User field is required')).toBeVisible();

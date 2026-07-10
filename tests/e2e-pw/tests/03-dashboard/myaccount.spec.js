@@ -12,6 +12,6 @@ test('My Account', async ({ adminPage }) => {
   await fileInput.setInputFiles('assets/john doe.jpeg');
   await adminPage.getByRole('textbox', { name: 'Current Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Current Password' }).fill('admin123');
-  await adminPage.getByRole('button', { name: 'Save Account' }).click();
+  await adminPage.getByRole('button', { name: 'Save changes' }).click();
 });
 });

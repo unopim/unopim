@@ -18,7 +18,8 @@ test('1.1 - Magic AI config page loads with correct title', async ({ adminPage }
 
 test('1.2 - Magic AI config page has Save Configuration button', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
-  const saveBtn = adminPage.getByRole('button', { name: 'Save Configuration' });
+  await adminPage.locator('input[type="checkbox"]').first().click({ force: true });
+  const saveBtn = adminPage.getByRole('button', { name: 'Save changes' });
   await expect(saveBtn).toBeVisible();
   await expect(saveBtn).toBeEnabled();
 });
@@ -376,7 +377,7 @@ test('7.3 - Selecting OpenAI provider shows Label, API Key, API URL, Models, tog
   await expect(adminPage.locator('#app').getByText(/Pre-filled with the default endpoint/)).toBeVisible();
   await expect(adminPage.getByPlaceholder('Type custom model ID...')).toBeVisible();
   await expect(adminPage.getByRole('button', { name: '+ Add' })).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Set as Default', { exact: true }).last()).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Set as Default').last()).toBeVisible();
   const statusCheckboxes = adminPage.locator('input[type="checkbox"]');
   expect(await statusCheckboxes.count()).toBeGreaterThanOrEqual(2);
 });
@@ -449,7 +450,8 @@ test('8.1 - Save Configuration without changes succeeds', async ({ adminPage }) 
   test.setTimeout(30000);
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
-  await adminPage.getByRole('button', { name: 'Save Configuration' }).click();
+  await adminPage.locator('input[type="checkbox"]').first().click({ force: true });
+  await adminPage.getByRole('button', { name: 'Save changes' }).click();
   await adminPage.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
 
   await expect(adminPage.locator('#app').getByText('Agentic PIM', { exact: true })).toBeVisible();
