@@ -225,6 +225,7 @@ class ProductController extends Controller
             'validation'       => $field->validation,
             'regex_pattern'    => $field->regex_pattern,
             'section'          => $field->section,
+            'rules'            => $field->getValidationsField(),
             'options'          => $field->options
                 ->map(fn ($option) => [
                     'id'    => $option->id,

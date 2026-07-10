@@ -1,13 +1,10 @@
 @props([
-    'associationTypes'      => [],
-    'upSellAssociations'    => [],
-    'crossSellAssociations' => [],
-    'relatedAssociations'   => [],
+    'associationTypes' => [],
 ])
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.links.before', ['product' => $product]) !!}
-    
-<v-product-links></v-product-links>
+
+<v-product-links :association-types='@json($associationTypes)'></v-product-links>
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.links.after', ['product' => $product]) !!}
 
@@ -23,44 +20,41 @@
                     @lang('admin::app.catalog.products.edit.links.title')
                 </p>
 
-                <div
-                    class=""
-                    v-for="type in types"
-                >
+                @foreach ($associationTypes as $typeIndex => $type)
+                    <div class="{{ $typeIndex > 0 ? 'pt-4 border-t border-slate-200 dark:border-gray-800' : '' }}">
                     <div class="flex gap-5 justify-between items-center">
                         <div class="flex flex-col gap-2">
-                            <p
-                                class="text-gray-800 text-xs dark:text-white font-medium"
-                                v-text="type.title"
-                            >
+                            <p class="text-gray-800 text-xs dark:text-white font-medium">
+                                {{ $type['name'] }}
                             </p>
                         </div>
-                        
+
                         <!-- Add Button -->
                         <div class="flex gap-x-1 items-center">
                             <div
                                 class="secondary-button text-xs"
-                                @click="selectedType = type.key; $refs.productSearch.openDrawer()"
+                                @click="selectedTypeCode = '{{ $type['code'] }}'; $refs.productSearch.openDrawer()"
                             >
                                 @lang('admin::app.catalog.products.edit.links.add-btn')
                             </div>
                         </div>
                     </div>
-        
+
                     <!-- Product Listing -->
                     <div
                         class="grid"
-                        v-if="addedProducts[type.key]?.length"
+                        v-if="localTypes[{{ $typeIndex }}]?.links?.length"
                     >
                         <div
                             class="flex gap-2.5 justify-between p-4 border-b border-slate-300 dark:border-gray-800"
-                            v-for="product in addedProducts[type.key]"
+                            v-for="(link, index) in localTypes[{{ $typeIndex }}].links"
+                            :key="link.sku"
                         >
                             <!-- Hidden Input -->
                             <input
                                 type="hidden"
-                                :name="type.key + '[]'"
-                                :value="product.sku"
+                                :name="'associations[{{ $type['code'] }}][' + index + '][sku]'"
+                                :value="link.sku"
                             />
 
                             <!-- Information -->
@@ -68,18 +62,18 @@
                                 <!-- Image -->
                                 <div
                                     class="w-full h-[60px] max-w-[60px] max-h-[60px] relative rounded overflow-hidden"
-                                    :class="{'border border-dashed border-gray-300 dark:border-cherry-800 dark:invert dark:mix-blend-exclusion': ! product?.image, 'w-[60px]': product?.image}"
+                                    :class="{'border border-dashed border-gray-300 dark:border-cherry-800 dark:invert dark:mix-blend-exclusion': ! link?.image, 'w-[60px]': link?.image}"
                                 >
-                                    <template v-if="! product?.image">
+                                    <template v-if="! link?.image">
                                         <img src="{{ unopim_asset('images/product-placeholders/front.svg') }}">
-                                    
+
                                         <p class="w-full absolute bottom-1.5 text-[6px] text-gray-400 text-center font-semibold">
                                             @lang('admin::app.catalog.products.edit.links.image-placeholder')
                                         </p>
                                     </template>
-                
+
                                     <template v-else>
-                                        <img :src="product?.image" class="w-full h-full object-cover object-top">
+                                        <img :src="link?.image" class="w-full h-full object-cover object-top">
                                     </template>
                                 </div>
 
@@ -87,21 +81,31 @@
                                 <div class="grid gap-1.5 place-content-start">
                                     <p
                                         class="text-base text-gray-800 dark:text-white font-semibold"
-                                        v-text="product.name"
+                                        v-text="getProductName(link)"
                                     >
                                     </p>
 
                                     <p class="text-gray-600 dark:text-gray-300">
-                                        @{{ "@lang('admin::app.catalog.products.edit.links.sku')".replace(':sku', product.sku) }}
+                                        @{{ "@lang('admin::app.catalog.products.edit.links.sku')".replace(':sku', link.sku) }}
                                     </p>
                                 </div>
                             </div>
+
+                            @if (! empty($type['fields']))
+                                <!-- Custom Association Fields -->
+                                <div class="grid gap-2.5 flex-1 max-w-[280px]">
+                                    <x-admin::associations.link-fields
+                                        :fields="$type['fields']"
+                                        :type-code="$type['code']"
+                                    />
+                                </div>
+                            @endif
 
                             <!-- Actions -->
                             <div class="grid gap-1 place-content-start text-right">
                                 <p
                                     class="text-red-600 cursor-pointer transition-all"
-                                    @click="remove(type.key, product)"
+                                    @click="remove('{{ $type['code'] }}', link)"
                                     title="@lang('admin::app.catalog.products.index.datagrid.delete')"
                                 >
                                     <i class="icon-delete text-red-600 cursor-pointer transition-all text-xl"></i>
@@ -110,7 +114,7 @@
                         </div>
                     </div>
 
-                    <!-- For Empty Variations -->
+                    <!-- For Empty Links -->
                     <div
                         class="grid gap-3.5 justify-center justify-items-center py-10 px-2.5"
                         v-else
@@ -121,20 +125,19 @@
                             class="w-20 h-20 dark:invert dark:mix-blend-exclusion"
                         />
 
-                        <!-- Add Variants Information -->
+                        <!-- Add Links Information -->
                         <div class="flex flex-col gap-1.5 items-center">
                             <p class="text-base text-gray-400 font-semibold">
                                 @lang('admin::app.catalog.products.edit.links.empty-title')
                             </p>
 
-                            <p
-                                class="text-gray-400"
-                                v-text="type.empty_info"
-                            >
+                            <p class="text-gray-400">
+                                {{ trans('admin::app.catalog.products.edit.links.empty-info', ['type' => $type['name']]) }}
                             </p>
                         </div>
                     </div>
-                </div>
+                    </div>
+                @endforeach
             </div>
 
             <!-- Product Search Blade Component -->
@@ -151,38 +154,31 @@
         app.component('v-product-links', {
             template: '#v-product-links-template',
 
+            props: {
+                associationTypes: {
+                    type: Array,
+                    default: () => [],
+                },
+            },
+
             data() {
                 return {
                     currentProduct: @json($product),
 
-                    selectedType: 'related_products',
+                    selectedTypeCode: null,
 
-                    types: [
-                        {
-                            key: 'related_products',
-                            title: `@lang('admin::app.catalog.products.edit.links.related-products.title')`,
-                            info: `@lang('admin::app.catalog.products.edit.links.related-products.info')`,
-                            empty_info: `@lang('admin::app.catalog.products.edit.links.related-products.empty-info')`,
-                        }, {
-                            key: 'up_sells',
-                            title: `@lang('admin::app.catalog.products.edit.links.up-sells.title')`,
-                            info: `@lang('admin::app.catalog.products.edit.links.up-sells.info')`,
-                            empty_info: `@lang('admin::app.catalog.products.edit.links.up-sells.empty-info')`,
-                        }, {
-                            key: 'cross_sells',
-                            title: `@lang('admin::app.catalog.products.edit.links.cross-sells.title')`,
-                            info: `@lang('admin::app.catalog.products.edit.links.cross-sells.info')`,
-                            empty_info: `@lang('admin::app.catalog.products.edit.links.cross-sells.empty-info')`,
-                        }
-                    ],
+                    /**
+                     * Mutable working copy of the `associationTypes` prop. Named
+                     * differently from the prop itself: writing to
+                     * `this.associationTypes` directly would silently no-op
+                     * (Vue 3 exposes props as a readonly proxy), so add/remove
+                     * mutate `localTypes` instead.
+                     */
+                    localTypes: JSON.parse(JSON.stringify(this.associationTypes)),
 
-                    addedProducts: {
-                        'up_sells': @json($upSellAssociations ? $product->whereIn('sku', $upSellAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()) : []),
+                    currentLocaleCode: "{{ core()->getRequestedLocaleCode() }}",
 
-                        'cross_sells': @json($crossSellAssociations ? $product->whereIn('sku', $crossSellAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()) : []),
-
-                        'related_products': @json($relatedAssociations ? $product->whereIn('sku', $relatedAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()) : [])
-                    },
+                    currentChannelCode: "{{ core()->getRequestedChannelCode() }}",
 
                     queryParams: {
                         skipSku: "{{ $product->sku }}"
@@ -191,8 +187,12 @@
             },
 
             computed: {
+                selectedType() {
+                    return this.localTypes.find(type => type.code === this.selectedTypeCode);
+                },
+
                 addedProductIds() {
-                    let productIds = this.addedProducts[this.selectedType].map(product => product.sku);
+                    let productIds = (this.selectedType?.links || []).map(link => link.sku);
 
                     productIds.push(this.currentProduct.sku);
 
@@ -201,24 +201,112 @@
             },
 
             methods: {
+                /**
+                 * `Product::normalizeWithImage()` (the shape every link/searched
+                 * product here is built from) has no `name` key. Derive a
+                 * display name from `values`, following the same
+                 * common/locale_specific/channel_locale_specific resolution
+                 * order as attribute values elsewhere, falling back to the sku.
+                 */
+                getProductName(product) {
+                    let values = product?.values || {};
+
+                    let name = values.channel_locale_specific?.[this.currentChannelCode]?.[this.currentLocaleCode]?.name
+                        ?? values.locale_specific?.[this.currentLocaleCode]?.name
+                        ?? values.common?.name;
+
+                    return name || product?.sku || '';
+                },
+
                 addSelected(selectedProducts) {
-                    const existingProducts = this.addedProducts[this.selectedType] || [];
-                    const existingSkus = new Set(existingProducts.map(product => product.sku));
-                    const newProducts = selectedProducts.filter(product => !existingSkus.has(product.sku));
-                    
-                    if (newProducts.length > 0) {
-                        this.addedProducts[this.selectedType] = [...existingProducts, ...newProducts];
+                    const type = this.selectedType;
+
+                    if (! type) {
+                        return;
+                    }
+
+                    const existingSkus = new Set(type.links.map(link => link.sku));
+
+                    const newLinks = selectedProducts
+                        .filter(product => ! existingSkus.has(product.sku))
+                        .map(product => ({
+                            ...product,
+                            // A freshly added link has no stored custom-field
+                            // data yet; seed empty buckets so `assocField*`
+                            // lookups below don't have to guard against a
+                            // missing `additional_data` on new rows.
+                            additional_data: { common: {}, locale_specific: {} },
+                        }));
+
+                    if (newLinks.length > 0) {
+                        type.links = [...type.links, ...newLinks];
                     }
                 },
 
-                remove(type, product) {
+                remove(typeCode, link) {
                     this.$emitter.emit('open-delete-modal', {
                         agree: () => {
-                            this.addedProducts[type] = this.addedProducts[type].filter(item => item.sku !== product.sku);
+                            const type = this.localTypes.find(type => type.code === typeCode);
+
+                            if (type) {
+                                type.links = type.links.filter(item => item.sku !== link.sku);
+                            }
                         },
                     });
                 },
 
+                /**
+                 * Builds the bracket-path `name` for one field of one link,
+                 * e.g. `associations[bundle_kit][0][additional_data][common][quantity]`
+                 * or, for a `value_per_locale` field,
+                 * `associations[bundle_kit][0][additional_data][locale_specific][en_US][quantity]`.
+                 */
+                assocFieldName(typeCode, index, field, suffix) {
+                    const bucket = field.value_per_locale
+                        ? 'additional_data][locale_specific][' + this.currentLocaleCode
+                        : 'additional_data][common';
+
+                    return 'associations[' + typeCode + '][' + index + '][' + bucket + '][' + field.code + ']' + (suffix || '');
+                },
+
+                /**
+                 * Raw stored value for one field of one link, read from the
+                 * correct `additional_data` bucket (`common` or
+                 * `locale_specific.<currentLocaleCode>`) so every displayed
+                 * link's existing custom-field values are pre-filled (and, since
+                 * the inputs are part of the submitted form, resubmitted as-is
+                 * for links the user doesn't touch).
+                 */
+                assocFieldValue(link, field) {
+                    const bucket = field.value_per_locale
+                        ? (link.additional_data?.locale_specific?.[this.currentLocaleCode] || {})
+                        : (link.additional_data?.common || {});
+
+                    return bucket[field.code] ?? '';
+                },
+
+                assocFieldBoolean(link, field) {
+                    return String(this.assocFieldValue(link, field)).toLowerCase() === 'true';
+                },
+
+                assocFieldChecked(link, field, optionCode) {
+                    const raw = String(this.assocFieldValue(link, field) || '');
+
+                    return raw.split(',').includes(optionCode);
+                },
+
+                assocFieldOption(link, field) {
+                    const raw = this.assocFieldValue(link, field);
+
+                    return (field.options || []).find(option => option.code === raw) || null;
+                },
+
+                assocFieldOptions(link, field) {
+                    const raw = String(this.assocFieldValue(link, field) || '');
+                    const codes = raw ? raw.split(',') : [];
+
+                    return (field.options || []).filter(option => codes.includes(option.code));
+                },
             }
         });
     </script>
