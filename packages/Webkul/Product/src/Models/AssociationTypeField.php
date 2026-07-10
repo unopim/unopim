@@ -57,7 +57,7 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
      *
      * @var array
      */
-    public $categoryTypeFields = [
+    public $associationTypeFields = [
         'text'        => 'text_value',
         'textarea'    => 'text_value',
         'boolean'     => 'boolean_value',
@@ -91,7 +91,7 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
      */
     protected function getColumnNameField(): string
     {
-        return $this->categoryTypeFields[$this->type];
+        return $this->associationTypeFields[$this->type];
     }
 
     /**

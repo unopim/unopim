@@ -7,19 +7,6 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class AssociationFieldTypes implements ValidationRule
 {
-    const FILED_TYPES = [
-        'text',
-        'textarea',
-        'boolean',
-        'select',
-        'multiselect',
-        'datetime',
-        'date',
-        'image',
-        'file',
-        'checkbox',
-    ];
-
     /**
      * Run the validation rule.
      */

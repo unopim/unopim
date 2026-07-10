@@ -53,7 +53,7 @@ class AssociationTypeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(AssociationTypeRequest $associationTypeRequest): RedirectResponse
+    public function store(AssociationTypeRequest $associationTypeRequest): RedirectResponse|JsonResponse
     {
         $requestData = $associationTypeRequest->all();
 
@@ -90,7 +90,7 @@ class AssociationTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(AssociationTypeRequest $associationTypeRequest, int $id): RedirectResponse
+    public function update(AssociationTypeRequest $associationTypeRequest, int $id): RedirectResponse|JsonResponse
     {
         /**
          * `code` and `is_user_defined` are immutable once an association type is
