@@ -4,6 +4,7 @@ namespace Webkul\Product\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Product\Console\ResyncVariantsCommand;
 use Webkul\Product\Console\StripRedundantVariantValuesCommand;
 use Webkul\Product\Contracts\VariantValueResolver as VariantValueResolverContract;
 use Webkul\Product\Facades\ProductImage as ProductImageFacade;
@@ -62,6 +63,7 @@ class ProductServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 StripRedundantVariantValuesCommand::class,
+                ResyncVariantsCommand::class,
             ]);
         }
     }
