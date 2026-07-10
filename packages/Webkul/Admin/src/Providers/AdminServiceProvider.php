@@ -208,7 +208,9 @@ class AdminServiceProvider extends ServiceProvider
             // No ->response() override: let the throttle middleware throw a real 429
             // so the Core exception handler renders the branded 429 page (HTML) or a
             // {error, description} 429 payload (JSON) — see LoginThrottleErrorPageTest.
-            return Limit::perMinute((int) config('admin.auth.login_rate_limit', 5))->by($key);
+            $maxAttempts = config('admin.auth.login_rate_limit', 5);
+
+            return Limit::perMinute(is_numeric($maxAttempts) ? (int) $maxAttempts : 5)->by($key);
         });
 
         RateLimiter::for('admin-forgot-password', function (Request $request) {
