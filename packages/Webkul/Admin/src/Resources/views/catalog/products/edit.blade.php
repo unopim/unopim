@@ -244,6 +244,7 @@
 
                 <!-- Related, Cross Sells, Up Sells View Blade File -->
                 @include('admin::catalog.products.edit.links', [
+                    'associationTypes'      => $associationTypes,
                     'upSellAssociations'    => $product->values['associations']['up_sells'] ?? [],
                     'crossSellAssociations' => $product->values['associations']['cross_sells'] ?? [],
                     'relatedAssociations'   => $product->values['associations']['related_products'] ?? [],

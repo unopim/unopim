@@ -1,4 +1,5 @@
 @props([
+    'associationTypes'      => [],
     'upSellAssociations'    => [],
     'crossSellAssociations' => [],
     'relatedAssociations'   => [],

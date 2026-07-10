@@ -19,7 +19,12 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Sku;
+use Webkul\Product\Contracts\AssociationTypeField as AssociationTypeFieldContract;
+use Webkul\Product\Contracts\Product as ProductContract;
+use Webkul\Product\Contracts\ProductAssociation as ProductAssociationContract;
 use Webkul\Product\Helpers\ProductType;
+use Webkul\Product\Repositories\AssociationTypeRepository;
+use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Type\AbstractType;
 use Webkul\Product\Validator\ProductValuesValidator;
@@ -44,6 +49,8 @@ class ProductController extends Controller
         protected ProductValuesValidator $valuesValidator,
         protected ChannelRepository $channelRepository,
         protected AttributeRepository $attributeRepository,
+        protected AssociationTypeRepository $associationTypeRepository,
+        protected ProductAssociationRepository $productAssociationRepository,
     ) {}
 
     /**
@@ -150,7 +157,101 @@ class ProductController extends Controller
 
         $averageScore = count($scores) ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null;
 
-        return view('admin::catalog.products.edit', compact('product', 'requiredAttributes', 'scores', 'averageScore'));
+        $associationTypes = $this->getAssociationTypesForView($product);
+
+        return view('admin::catalog.products.edit', compact('product', 'requiredAttributes', 'scores', 'averageScore', 'associationTypes'));
+    }
+
+    /**
+     * Builds the payload the product edit "Links" panel needs to render every
+     * active association type dynamically: for each active type, its
+     * (locale-resolved) field definitions and this product's existing links
+     * for that type, with the related product's display data (via the same
+     * `normalizeWithImage()` used elsewhere) plus the link's `additional_data`.
+     *
+     * Eager loading is done up front (`getActiveTypes()` for
+     * types/fields/field-options, `getLinksForProduct()` for links +
+     * associationType + relatedProduct) so building this structure performs a
+     * fixed, small number of queries regardless of how many types/links exist.
+     *
+     * @return array<int, array{code: string, name: string, fields: array, links: array}>
+     */
+    private function getAssociationTypesForView(ProductContract $product): array
+    {
+        $activeAssociationTypes = $this->associationTypeRepository->getActiveTypes();
+
+        $linksByAssociationTypeId = $this->productAssociationRepository
+            ->getLinksForProduct($product->id)
+            ->groupBy('association_type_id');
+
+        return $activeAssociationTypes
+            ->map(function ($associationType) use ($linksByAssociationTypeId) {
+                $links = $linksByAssociationTypeId->get($associationType->id, collect());
+
+                return [
+                    'code'   => $associationType->code,
+                    'name'   => $associationType->getTranslatedValueWithFallback('name') ?? "[{$associationType->code}]",
+                    'fields' => $associationType->fields
+                        ->map(fn ($field) => $this->getAssociationTypeFieldForView($field))
+                        ->values()
+                        ->all(),
+                    'links' => $links
+                        ->map(fn ($link) => $this->getAssociationLinkForView($link))
+                        ->values()
+                        ->all(),
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Normalizes an `AssociationTypeField` into the compact shape the Links
+     * panel's Vue component consumes: code/type/validation metadata plus a
+     * locale-resolved label and, for choice fields, locale-resolved option
+     * labels.
+     */
+    private function getAssociationTypeFieldForView(AssociationTypeFieldContract $field): array
+    {
+        return [
+            'id'               => $field->id,
+            'code'             => $field->code,
+            'type'             => $field->type,
+            'label'            => $field->getTranslatedValueWithFallback('name') ?? "[{$field->code}]",
+            'is_required'      => (bool) $field->is_required,
+            'is_unique'        => (bool) $field->is_unique,
+            'value_per_locale' => (bool) $field->value_per_locale,
+            'validation'       => $field->validation,
+            'regex_pattern'    => $field->regex_pattern,
+            'section'          => $field->section,
+            'options'          => $field->options
+                ->map(fn ($option) => [
+                    'id'    => $option->id,
+                    'code'  => $option->code,
+                    'label' => $option->getTranslatedValueWithFallback('label') ?? "[{$option->code}]",
+                ])
+                ->values()
+                ->all(),
+        ];
+    }
+
+    /**
+     * Normalizes a `ProductAssociation` link into the compact shape the Links
+     * panel needs: the related product's display data (resolved via the same
+     * `normalizeWithImage()` the legacy Links view already uses) plus the
+     * link's stored `additional_data`.
+     */
+    private function getAssociationLinkForView(ProductAssociationContract $link): array
+    {
+        $relatedProduct = $link->relatedProduct;
+
+        $normalizedRelatedProduct = $relatedProduct
+            ? $relatedProduct->normalizeWithImage()
+            : ['sku' => null, 'image' => null];
+
+        return array_merge($normalizedRelatedProduct, [
+            'additional_data' => $link->additional_data,
+        ]);
     }
 
     /**

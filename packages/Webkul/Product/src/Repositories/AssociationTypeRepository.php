@@ -81,11 +81,17 @@ class AssociationTypeRepository extends Repository
     }
 
     /**
-     * Retrieves active association types with translations and fields eager loaded
+     * Retrieves active association types with translations, fields (with their
+     * translations), and field options (with their translations) eager loaded,
+     * so consumers (e.g. the product edit page) can resolve translated
+     * names/labels for every type/field/option without triggering N+1 queries.
      */
     public function getActiveTypes(): Collection
     {
-        return $this->where(['status' => 1])->with(['translations', 'fields'])->orderBy('position')->get();
+        return $this->where(['status' => 1])
+            ->with(['translations', 'fields.translations', 'fields.options.translations'])
+            ->orderBy('position')
+            ->get();
     }
 
     public function queryBuilder()
