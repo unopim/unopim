@@ -22,6 +22,7 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\BooleanPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Contracts\Product as ProductContract;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Database\Factories\ProductFactory;
 use Webkul\Product\Presenters\ProductValuesPresenter;
@@ -212,6 +213,16 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
         return CompletenessSetting::where('family_id', $this->attribute_family_id)
             ->where('channel_id', $channelId)
             ->get();
+    }
+
+    /**
+     * Resolve this product's `values` across its ancestor chain (read-time
+     * variant inheritance). Returns the effective values array: the product's
+     * own values overlaid on every ancestor's, root -> leaf.
+     */
+    public function resolvedValues(): array
+    {
+        return app(VariantValueResolver::class)->resolve($this);
     }
 
     /**
