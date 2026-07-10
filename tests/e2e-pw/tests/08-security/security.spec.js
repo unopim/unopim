@@ -103,6 +103,14 @@ test.describe('Security Vulnerability Fixes', () => {
   test('Login should be rate limited after multiple failed attempts', async ({ browser }) => {
     const { page, context } = await createGuestPage(browser);
 
+    // The limit is env-configurable (config admin.auth.login_rate_limit); test
+    // environments raise it via ADMIN_LOGIN_RATE_LIMIT so back-to-back logins by
+    // the rest of the suite are not throttled. Probe with a generous fixed count
+    // that exceeds the test-env limit — the loop stops as soon as a 429 arrives,
+    // so this asserts throttling at any configured threshold up to ~30/min.
+    const maxAttempts = 30;
+    test.setTimeout((maxAttempts + 5) * 1500);
+
     await page.goto('/admin/login', { waitUntil: 'networkidle' });
 
     // The login form submits via AJAX, so a 429 does not navigate the page —
@@ -118,7 +126,7 @@ test.describe('Security Vulnerability Fixes', () => {
 
     const email = `ratelimit_probe_${Date.now()}@example.com`;
 
-    for (let i = 0; i < 8 && !rateLimited; i++) {
+    for (let i = 0; i < maxAttempts && !rateLimited; i++) {
       const emailInput = page.locator('input[name=email]');
       if (!(await emailInput.isVisible({ timeout: 3000 }).catch(() => false))) {
         break;

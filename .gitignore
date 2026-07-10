@@ -57,3 +57,7 @@ AGENTS.md
 
 # local-only E2E secrets (never commit)
 tests/e2e-pw/.secrets.local
+
+.env.e2e
+
+.env.live-backup

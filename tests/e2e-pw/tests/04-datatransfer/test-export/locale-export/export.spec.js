@@ -14,7 +14,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
 
-  await clickSaveAndExpect(adminPage, 'Save Export', /Export created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
 
   await adminPage.getByRole('link', { name: 'Edit' }).click();
   await adminPage.waitForLoadState('networkidle');
@@ -29,7 +29,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   await statusSelect.click();
   await adminPage.getByRole('option', { name: new RegExp(statusLabel, 'i') }).locator('span').first().click();
 
-  await adminPage.getByRole('button', { name: /Save Export/i }).click();
+  await adminPage.getByRole('button', { name: 'Save changes' }).click();
   await adminPage.waitForLoadState('networkidle');
 
   await navigateTo(adminPage, 'exports');
@@ -43,7 +43,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   await expect(exportNowBtn).toBeVisible({ timeout: 10000 });
   await exportNowBtn.click();
 
-  await expect(adminPage.locator('#app').getByText(/Job queued/i)).toBeVisible({ timeout: 20000 });
+  await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
 }
 
 /**

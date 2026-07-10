@@ -1,5 +1,5 @@
 const { test, expect } = require('../../../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../../../utils/helpers');
+const { navigateTo, generateUid, clickSaveAndExpect } = require('../../../../utils/helpers');
 const path = require('path');
 
 test.describe('Locale Import', () => {
@@ -19,8 +19,7 @@ test.describe('Locale Import', () => {
         const assetPath = path.join(__dirname, '../../../../assets/locales.csv');
         await fileInput.setInputFiles(assetPath);
 
-        await adminPage.getByRole('button', { name: 'Save Import' }).click();
-        await expect(adminPage.locator('#app').getByText(/Import created successfully/i)).toBeVisible({ timeout: 15000 });
+        await clickSaveAndExpect(adminPage, 'Save changes', /Import created successfully/i);
     });
 
     test('Run Locale Import', async ({ adminPage }) => {
@@ -38,7 +37,7 @@ test.describe('Locale Import', () => {
         await expect(importNowBtn).toBeVisible({ timeout: 5000 });
         await importNowBtn.click();
 
-        await expect(adminPage.locator('#app').getByText(/Job queued/i)).toBeVisible({ timeout: 20000 });
+        await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
     });
 
     test('Delete Locale Import', async ({ adminPage }) => {

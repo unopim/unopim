@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, clickEditOnRow } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -701,25 +701,39 @@ test('5.2 - Edit the default channel and save via the unsaved-changes bar', asyn
   test.setTimeout(30000);
   await navigateTo(adminPage, 'channels');
 
-  // Click the first Edit button on the channels page (default channel)
-  const editBtn = adminPage.locator('span[title="Edit"]').first();
-  test.skip(!(await editBtn.isVisible({ timeout: 5000 }).catch(() => false)), 'No channels available to edit');
-  await editBtn.click();
-  await adminPage.waitForLoadState('networkidle');
+  // Target the default channel explicitly — other channels may exist and the
+  // datagrid does not guarantee it renders first.
+  await searchInDataGrid(adminPage, 'default');
+  await clickEditOnRow(adminPage, 'default');
 
   // Edit a tracked field to dirty the form so the redesigned "Save changes" bar
   // appears, then save. (The locales vue-multiselect dropdown is unreliable in
-  // headless; the German name translation is a stable edit that exercises the
-  // same channel edit → global-save-bar → persist flow.)
+  // headless; the name translation is a stable edit that exercises the same
+  // channel edit → global-save-bar → persist flow.)
   // Wait for the form to hydrate (English name populated) before editing, then
-  // change it to a unique value so the dirty tracker reliably reveals the save bar.
+  // change it so the dirty tracker reliably reveals the save bar. Capture the
+  // original name first so it can be restored — the default channel is shared
+  // state that later tests (e.g. dashboard completeness) assert on by name.
   const nameField = adminPage.locator('input[name="en_US\\[name\\]"]').first();
   await expect(nameField).toHaveValue(/.+/, { timeout: 10000 });
-  await nameField.fill(`Sales ${generateUid()}`);
+  const originalName = await nameField.inputValue();
+  await nameField.fill(`${originalName} ${generateUid()}`);
 
   const saveBtn = adminPage.getByRole('button', { name: 'Save changes' });
   await expect(saveBtn).toBeVisible({ timeout: 10000 });
   await saveBtn.click();
+  await expect(adminPage.locator('#app').getByText(/Update Channel Successfully/i)).toBeVisible({ timeout: 20000 });
+
+  // Restore the original name so the edit does not pollute shared state.
+  await navigateTo(adminPage, 'channels');
+  await searchInDataGrid(adminPage, 'default');
+  await clickEditOnRow(adminPage, 'default');
+  const nameFieldRestore = adminPage.locator('input[name="en_US\\[name\\]"]').first();
+  await expect(nameFieldRestore).toHaveValue(/.+/, { timeout: 10000 });
+  await nameFieldRestore.fill(originalName);
+  const saveBtnRestore = adminPage.getByRole('button', { name: 'Save changes' });
+  await expect(saveBtnRestore).toBeVisible({ timeout: 10000 });
+  await saveBtnRestore.click();
   await expect(adminPage.locator('#app').getByText(/Update Channel Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
@@ -1010,9 +1024,7 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
   // Step 1: Assign hi_IN to default channel if not assigned
   await navigateTo(adminPage, 'channels');
   await searchInDataGrid(adminPage, 'default');
-  const channelRow = adminPage.locator('#app div').filter({ hasText: 'default' }).first();
-  await channelRow.locator('span[title="Edit"]').first().click();
-  await adminPage.waitForLoadState('networkidle');
+  await clickEditOnRow(adminPage, 'default');
 
   // Check if Hindi is already in the locales multiselect
   const hindiTag = adminPage.locator('#locales .multiselect__tag', { hasText: 'Hindi' });

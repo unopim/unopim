@@ -289,12 +289,14 @@ test('6.8 - AI Platforms datagrid shows all column headers', async ({ adminPage 
   await adminPage.locator('.icon-cancel').click().catch(() => {});
   await expect(adminPage.locator('.icon-cancel')).not.toBeVisible().catch(() => {});
 
-  await expect(adminPage.locator('#app').getByText('Label').first()).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Provider').first()).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Models').first()).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Default').first()).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Status').first()).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Created At').first()).toBeVisible();
+  // Column headers render as datagrid header spans with a matching title attribute
+  // (span[title="..."]); scope to those to avoid matching hidden manage-columns entries.
+  await expect(adminPage.locator('span[title="Label"]')).toBeVisible();
+  await expect(adminPage.locator('span[title="Provider"]')).toBeVisible();
+  await expect(adminPage.locator('span[title="Models"]')).toBeVisible();
+  await expect(adminPage.locator('span[title="Default"]')).toBeVisible();
+  await expect(adminPage.locator('span[title="Status"]')).toBeVisible();
+  await expect(adminPage.locator('span[title="Created At"]')).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Actions').first()).toBeVisible();
 });
 

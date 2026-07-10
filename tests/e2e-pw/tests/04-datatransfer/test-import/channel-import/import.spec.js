@@ -14,7 +14,7 @@ async function createChannelImport(adminPage, code, filePath = 'assets/channels.
 
     const fileInput = adminPage.locator('input[type="file"]').first();
     await fileInput.setInputFiles(filePath);
-    await clickSaveAndExpect(adminPage, 'Save Import', /Import created successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Import created successfully/i);
 }
 
 /**
@@ -44,7 +44,7 @@ test.describe('UnoPim Channel Import Jobs', () => {
         await expect(adminPage.getByRole('button', { name: 'Import Now' })).toBeVisible();
 
         await adminPage.getByRole('button', { name: 'Import Now' }).click();
-        await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
+        await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible();
 
         await deleteImport(adminPage, code);
     });

@@ -110,6 +110,11 @@ jobs:
           # The API E2E specs fire many requests back-to-back; lift the REST rate
           # limit for the test server so they don't trip the 120/min throttle (429).
           echo "REST_API_RATE_LIMIT=100000" >> .env
+          # Login-heavy shards (loginpage, notifications re-auth, ajax-nav, security)
+          # sign in as the same admin many times within a minute; raise the admin
+          # login throttle so those legitimate logins don't cascade into 429s. The
+          # rate-limit security spec reads this same value to still assert throttling.
+          echo "ADMIN_LOGIN_RATE_LIMIT=20" >> .env
 
       - name: Running UnoPim Installer & Start Server
         env:

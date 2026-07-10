@@ -100,12 +100,12 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
       await unassignedSelect.click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
     } else {
-      // All already assigned — toggle one by removing and re-adding
-      await adminPage.locator('.multiselect__tag-icon').first().click();
+      // All already assigned — toggle the first select by removing a tag then re-adding
+      const firstSelect = adminPage.locator('.multiselect__tags').first();
+      await firstSelect.locator('.multiselect__tag-icon').first().click();
       await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
-      // Wait for Vue to re-render the multiselect placeholder after tag removal
-      await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().waitFor({ state: 'visible', timeout: 10000 });
-      await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().click();
+      // Re-open the same multiselect and assign a channel back
+      await firstSelect.click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
     }
     await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
