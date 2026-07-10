@@ -40,6 +40,25 @@ Two independent axes:
 | Migration | Migrate all types to tables incl. the 3 defaults; compat layer re-emits old JSON |
 | Product-type restriction | Skipped (YAGNI) |
 
+## Cross-cutting constraints (apply to every plan)
+
+- **Laravel 13** best practices (repo already on L13 — commit `43d2e1b7`).
+- **Component-first UI:** never write raw form markup; reuse existing `x-admin::*`
+  components, or build a reusable component first and consume it. Reuse the
+  category `dynamic-fields` component for link values.
+- **No custom one-off code:** follow UnoPim standards; reuse existing rules,
+  repositories, traits, components. Add new only where no equivalent exists.
+- **Extendability:** Concord proxy models only (never concrete refs); field types
+  in mergeable config; fire before/after events around every mutation so plugins
+  hook without patching core.
+- **Performance:** indexes on all FK/lookup/status/position columns; eager-load to
+  avoid N+1; parameterized DataGrid queries.
+- **Security:** ACL via `bouncer()` on every action; type-hinted FormRequests (no
+  inline validation); `$fillable` mass-assignment guards; escape output; protect
+  `is_user_defined = 0` defaults server-side.
+- **Backward compatibility:** preserve behavior; where impossible, ship an
+  upgrade migration from the old JSON shape to the new tables (Plan 2).
+
 ## Field engine — why Category-field, not Attributes
 
 UnoPim has two field systems: the full **Attribute** system (channel+locale
