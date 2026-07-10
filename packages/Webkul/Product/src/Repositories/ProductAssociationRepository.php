@@ -50,12 +50,53 @@ class ProductAssociationRepository extends Repository
      *
      * Rows no longer present in `$links` are deleted, changed rows are
      * updated, and new rows are inserted, all inside a single transaction.
+     *
+     * The caller is authoritative for `additional_data`: surviving rows have
+     * it overwritten with whatever the payload provides (null clears it).
+     * This is the rich, UI-facing entry point; kept as `syncType` for
+     * backward compatibility alongside `syncTypeWithData` below.
      */
     public function syncType(int $productId, int $associationTypeId, array $links): void
     {
+        $this->syncLinks($productId, $associationTypeId, $links, preserveAdditionalData: false);
+    }
+
+    /**
+     * Rich sync used by the association UI: writes `additional_data` for
+     * each link from the payload (the UI is authoritative for a type it
+     * submitted). Functionally identical to `syncType` today, exposed under
+     * its own name so call sites can be explicit about intent.
+     *
+     * Each link is `['related_product_id' => int, 'position' => ?int, 'additional_data' => ?array]`.
+     */
+    public function syncTypeWithData(int $productId, int $associationTypeId, array $links): void
+    {
+        $this->syncLinks($productId, $associationTypeId, $links, preserveAdditionalData: false);
+    }
+
+    /**
+     * Shared transactional core for `syncType`/`syncTypeWithData` and the
+     * legacy `syncFromSkuList` path.
+     *
+     * Rows no longer present in `$links` are deleted, new rows are
+     * inserted, and surviving rows have their `position` updated. Whether
+     * `additional_data` is also overwritten on surviving rows depends on
+     * `$preserveAdditionalData`:
+     *
+     * - `false` (default): the payload is authoritative — surviving rows'
+     *   `additional_data` is set to whatever `$links` provides (including
+     *   null, which clears it). Used by the rich UI sync path.
+     * - `true`: surviving rows' existing `additional_data` is left
+     *   untouched, since the caller (the legacy dual-write path) never
+     *   carries per-link custom-field data and must not wipe out values the
+     *   UI previously wrote. New rows are still inserted with whatever
+     *   `additional_data` the payload provides (typically null).
+     */
+    protected function syncLinks(int $productId, int $associationTypeId, array $links, bool $preserveAdditionalData): void
+    {
         Event::dispatch('product_association.sync.before', [$productId, $associationTypeId, $links]);
 
-        DB::transaction(function () use ($productId, $associationTypeId, $links) {
+        DB::transaction(function () use ($productId, $associationTypeId, $links, $preserveAdditionalData) {
             $existingLinks = $this->model
                 ->where('product_id', $productId)
                 ->where('association_type_id', $associationTypeId)
@@ -82,14 +123,18 @@ class ProductAssociationRepository extends Repository
                 $existingLink = $existingLinks->get($relatedProductId);
 
                 if ($existingLink) {
-                    if (
-                        $existingLink->position !== $position
-                        || $existingLink->additional_data !== $additionalData
-                    ) {
-                        $existingLink->update([
-                            'position'        => $position,
-                            'additional_data' => $additionalData,
-                        ]);
+                    $attributesToUpdate = [];
+
+                    if ($existingLink->position !== $position) {
+                        $attributesToUpdate['position'] = $position;
+                    }
+
+                    if (! $preserveAdditionalData && $existingLink->additional_data !== $additionalData) {
+                        $attributesToUpdate['additional_data'] = $additionalData;
+                    }
+
+                    if (! empty($attributesToUpdate)) {
+                        $existingLink->update($attributesToUpdate);
                     }
 
                     continue;
@@ -111,7 +156,14 @@ class ProductAssociationRepository extends Repository
     /**
      * Convenience wrapper used by the legacy dual-write path: resolves the
      * association type code and each SKU to their ids (skipping unresolved
-     * SKUs and self-links), then delegates to `syncType`.
+     * SKUs and self-links), then delegates to the shared sync core.
+     *
+     * Unlike `syncType`/`syncTypeWithData`, this path never carries
+     * per-link `additional_data` (ordinary product saves only know SKU
+     * membership), so surviving rows have their existing `additional_data`
+     * PRESERVED rather than overwritten to null — otherwise a plain product
+     * save would silently wipe out custom-field values (e.g. quantity) the
+     * association UI previously wrote for that link.
      *
      * Reuses the same SKU -> id resolution mechanism as the product
      * importer (`ProductRepository::findWhereIn('sku', ...)`, the same
@@ -150,6 +202,6 @@ class ProductAssociationRepository extends Repository
             ];
         }
 
-        $this->syncType($productId, $associationType->id, $links);
+        $this->syncLinks($productId, $associationType->id, $links, preserveAdditionalData: true);
     }
 }
