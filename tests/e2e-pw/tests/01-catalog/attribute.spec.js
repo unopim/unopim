@@ -19,7 +19,7 @@ async function createAttribute(adminPage, code, name, type = 'Text') {
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
   await Promise.all([
     adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
-    adminPage.getByRole('button', { name: 'Save Attribute' }).click(),
+    adminPage.getByRole('button', { name: 'Save changes' }).click(),
   ]);
   await expect(adminPage.locator('#app').getByText('Edit Attribute')).toBeVisible();
 }
@@ -47,7 +47,7 @@ async function createSelectSwatchAttribute(adminPage, code, name, swatchType = '
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
   await Promise.all([
     adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
-    adminPage.getByRole('button', { name: 'Save Attribute' }).click(),
+    adminPage.getByRole('button', { name: 'Save changes' }).click(),
   ]);
   await expect(adminPage.locator('#app').getByText('Edit Attribute')).toBeVisible();
 }
@@ -99,8 +99,9 @@ async function addOption(adminPage, optionCode, optionLabel) {
   await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').fill(optionCode);
   await adminPage.locator('input[name="locales.en_US"]').fill(optionLabel);
   await adminPage.getByRole('button', { name: 'Save Option' }).click();
-  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully')).toBeVisible();
-  await adminPage.getByText('Close').first().click();
+  // Modal auto-closes on successful save (storeOption toggles addOptionsRow); no manual Close needed.
+  // Success toasts stack, so assert the most recent one to avoid strict-mode multi-match.
+  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
 }
 
 /**
@@ -112,7 +113,7 @@ async function addColorSwatchOption(adminPage, optionCode, optionLabel, color) {
   await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').fill(optionCode);
   await adminPage.locator('input[name="locales\\.en_US"]').fill(optionLabel);
   await adminPage.getByRole('button', { name: 'Save Option' }).click();
-  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
 }
 
 /**
@@ -124,7 +125,7 @@ async function addTextSwatchOption(adminPage, optionCode, optionLabel) {
   await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').fill(optionCode);
   await adminPage.locator('input[name="locales.en_US"]').fill(optionLabel);
   await adminPage.getByRole('button', { name: 'Save Option' }).click();
-  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
 }
 
 /**
@@ -154,7 +155,7 @@ test.describe('UnoPim Attribute', () => {
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'Text' }).first().click();
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Name');
-    await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Save changes' }).click();
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
 
@@ -166,7 +167,7 @@ test.describe('UnoPim Attribute', () => {
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Name');
-    await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Save changes' }).click();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
   });
 
@@ -176,7 +177,7 @@ test.describe('UnoPim Attribute', () => {
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Name');
-    await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Save changes' }).click();
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
   });
@@ -253,7 +254,7 @@ test.describe('UnoPim Attribute', () => {
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('prudact nem');
     await adminPage.locator('#is_required').nth(1).click();
-    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Updated Successfully/i);
 
     // Cleanup
     await deleteAttribute(adminPage, code);
@@ -731,7 +732,9 @@ test.describe('Swatch Type Attribute Option', () => {
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
     await addTextSwatchOption(adminPage, `red_${uid}`, 'Red');
     await addTextSwatchOption(adminPage, `blue_${uid}`, 'Blue');
-    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
+    // Options persist via AJAX; dirty the main form so the unsaved-changes bar appears, then save.
+    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Text Swatch Updated');
+    await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Updated Successfully/i);
     // Cleanup
     await deleteAttribute(adminPage, code);
   });
@@ -771,7 +774,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Color Swatch');
     await Promise.all([
       adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
-      adminPage.getByRole('button', { name: 'Save Attribute' }).click(),
+      adminPage.getByRole('button', { name: 'Save changes' }).click(),
     ]);
     await expect(adminPage.locator('#app').getByText('Edit Attribute')).toBeVisible();
     // Cleanup
@@ -802,7 +805,9 @@ test.describe('Swatch Type Attribute Option', () => {
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
     await addColorSwatchOption(adminPage, `red_${uid}`, 'Red', '#ff0000');
     await addColorSwatchOption(adminPage, `aqua_${uid}`, 'Aqua Blue', '#00faf6');
-    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
+    // Options persist via AJAX; dirty the main form so the unsaved-changes bar appears, then save.
+    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Color Swatch Updated');
+    await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Updated Successfully/i);
     // Cleanup
     await deleteAttribute(adminPage, code);
   });
@@ -842,7 +847,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Image Swatch');
     await Promise.all([
       adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
-      adminPage.getByRole('button', { name: 'Save Attribute' }).click(),
+      adminPage.getByRole('button', { name: 'Save changes' }).click(),
     ]);
     await expect(adminPage.locator('#app').getByText('Edit Attribute')).toBeVisible();
     // Cleanup
@@ -875,7 +880,9 @@ test.describe('Swatch Type Attribute Option', () => {
     await addImageSwatchOption(adminPage, `stripes_${uid}`, 'Stripes Pattern', 'assets/stripes.jpg');
     await addImageSwatchOption(adminPage, `dots_${uid}`, 'Dots Pattern', 'assets/dotted.png');
     await addImageSwatchOption(adminPage, `checked_${uid}`, 'Checked Pattern', 'assets/check.jpeg');
-    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
+    // Options persist via AJAX; dirty the main form so the unsaved-changes bar appears, then save.
+    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Image Swatch Updated');
+    await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Updated Successfully/i);
     // Cleanup
     await deleteAttribute(adminPage, code);
   });
