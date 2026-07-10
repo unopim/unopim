@@ -107,6 +107,32 @@ it('should create an association type with fields successfully', function () {
     ]);
 });
 
+it('should reject creating an association type when a fields entry omits code or type', function () {
+    $this->loginAsAdmin();
+
+    $data = [
+        'code'     => 'bypass_test_'.uniqid(),
+        'status'   => 1,
+        'position' => 1,
+        'en_US'    => ['name' => 'Bypass Test'],
+        'fields'   => [
+            [
+                'status'  => 1,
+                'section' => 'left',
+                'en_US'   => ['name' => 'No Code Field'],
+            ],
+        ],
+    ];
+
+    $this->post(route('admin.catalog.association_types.store'), $data)
+        ->assertRedirect()
+        ->assertInvalid(['fields.0.code', 'fields.0.type']);
+
+    $this->assertDatabaseMissing($this->getFullTableName(AssociationType::class), ['code' => $data['code']]);
+
+    $this->assertDatabaseMissing($this->getFullTableName(AssociationTypeField::class), ['code' => '']);
+});
+
 it('converts the create redirect into a json redirect_url for an ajax-form submit', function () {
     $this->loginAsAdmin();
 
@@ -212,6 +238,20 @@ it('should not mass delete default association types', function () {
         ->assertBadRequest();
 
     $this->assertDatabaseHas($this->getFullTableName(AssociationType::class), ['id' => $default->id]);
+});
+
+it('should delete only the user-defined association type in a mixed massDestroy batch and keep the default type', function () {
+    $this->loginAsAdmin();
+
+    $default = createAssociationType(['code' => 'mixed_default_test', 'is_user_defined' => 0]);
+    $userDefined = createAssociationType(['is_user_defined' => 1]);
+
+    $this->post(route('admin.catalog.association_types.mass_delete'), [
+        'indices' => [$default->id, $userDefined->id],
+    ])->assertOk();
+
+    $this->assertDatabaseHas($this->getFullTableName(AssociationType::class), ['id' => $default->id]);
+    $this->assertDatabaseMissing($this->getFullTableName(AssociationType::class), ['id' => $userDefined->id]);
 });
 
 it('should mass update the status of association types', function () {
