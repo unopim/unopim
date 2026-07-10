@@ -4,6 +4,7 @@ namespace Webkul\Product\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Product\Contracts\VariantValueResolver as VariantValueResolverContract;
 use Webkul\Product\Facades\ProductImage as ProductImageFacade;
 use Webkul\Product\Facades\ProductVideo as ProductVideoFacade;
 use Webkul\Product\Facades\ValueSetter as ProductValueSetter;
@@ -37,6 +38,7 @@ use Webkul\Product\Observers\ProductObserver;
 use Webkul\Product\ProductImage;
 use Webkul\Product\ProductVideo;
 use Webkul\Product\Services\ProductValueMapper;
+use Webkul\Product\Services\VariantValueResolver;
 use Webkul\Product\ValueSetter;
 
 class ProductServiceProvider extends ServiceProvider
@@ -67,6 +69,16 @@ class ProductServiceProvider extends ServiceProvider
         $this->registerFacades();
 
         $this->registerTags();
+
+        $this->registerBindings();
+    }
+
+    /**
+     * Register overridable service bindings.
+     */
+    protected function registerBindings(): void
+    {
+        $this->app->bind(VariantValueResolverContract::class, VariantValueResolver::class);
     }
 
     /**

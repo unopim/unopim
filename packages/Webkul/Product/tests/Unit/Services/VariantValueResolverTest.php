@@ -45,3 +45,9 @@ it('preserves the leaf non-common scopes untouched', function () {
 
     expect($resolved['channel_specific'])->toBe(['default' => ['seo_title' => 'Red S']]);
 });
+
+it('binds the resolver contract to the implementation in the container', function () {
+    $resolved = app(\Webkul\Product\Contracts\VariantValueResolver::class);
+
+    expect($resolved)->toBeInstanceOf(\Webkul\Product\Services\VariantValueResolver::class);
+});
