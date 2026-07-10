@@ -1,8 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\AssociationTypeRepository;
 use Webkul\Product\Repositories\ProductAssociationRepository;
+use Webkul\Product\Repositories\ProductRepository;
 
 it('supplies active association types with fields and this product\'s existing links (with additional_data) to the product edit view', function () {
     $this->loginAsAdmin();
@@ -624,4 +626,180 @@ it('persists a boolean association field as a "true"/"false" string via the real
 
     expect($link)->not->toBeNull()
         ->and($link->additional_data)->toBe(['common' => ['is_featured' => 'true']]);
+});
+
+it('emits an `associations[<typeCode>][__present]=1` sentinel input for EVERY active association type, regardless of link count (Important 2)', function () {
+    $this->loginAsAdmin();
+
+    $associationTypeRepository = app(AssociationTypeRepository::class);
+    $productAssociationRepository = app(ProductAssociationRepository::class);
+
+    // A custom type WITH an existing link.
+    $customType = $associationTypeRepository->create([
+        'code'            => 'bundle_kit_'.uniqid(),
+        'status'          => 1,
+        'position'        => 1,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Bundle Kit'],
+        'fields'          => [],
+    ]);
+
+    $product = Product::factory()->withInitialValues()->create();
+    $relatedProduct = Product::factory()->withInitialValues()->create();
+
+    $productAssociationRepository->syncTypeWithData($product->id, $customType->id, [
+        ['related_product_id' => $relatedProduct->id, 'position' => 1, 'additional_data' => null],
+    ]);
+
+    $response = $this->get(route('admin.catalog.products.edit', $product->id));
+
+    $response->assertOk();
+
+    // The sentinel is emitted for the type WITH links...
+    $response->assertSee('name="associations['.$customType->code.'][__present]"', false);
+
+    // ...and, since `up_sells` (a legacy section, also always in
+    // `associationTypes`) has NO links for this fresh product, for a type
+    // with ZERO links too -- proving it's unconditional, not gated on
+    // `links.length`.
+    $response->assertSee('name="associations[up_sells][__present]"', false);
+});
+
+it('prunes all `product_associations` rows for a CUSTOM type via the real update route when the submitted payload carries only the `__present` sentinel (Important 2, remove-last-link)', function () {
+    $this->loginAsAdmin();
+
+    $associationTypeRepository = app(AssociationTypeRepository::class);
+    $productAssociationRepository = app(ProductAssociationRepository::class);
+
+    $customType = $associationTypeRepository->create([
+        'code'            => 'bundle_kit_'.uniqid(),
+        'status'          => 1,
+        'position'        => 1,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Bundle Kit'],
+        'fields'          => [],
+    ]);
+
+    $product = Product::factory()->simple()->withInitialValues()->create();
+    $relatedProduct = Product::factory()->withInitialValues()->create();
+
+    $productAssociationRepository->syncTypeWithData($product->id, $customType->id, [
+        ['related_product_id' => $relatedProduct->id, 'position' => 1, 'additional_data' => null],
+    ]);
+
+    expect($productAssociationRepository->getLinksForProduct($product->id))->toHaveCount(1);
+
+    // Emulates the browser submitting `links.blade.php`'s form after the
+    // user removed the only link of this type in the UI: no numeric link
+    // rows are present for the type, only the always-present sentinel.
+    $data = [
+        'sku'          => $product->sku,
+        'values'       => $product->values,
+        'associations' => [
+            $customType->code => ['__present' => '1'],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertRedirect()
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    expect($productAssociationRepository->getLinksForProduct($product->id))->toHaveCount(0);
+});
+
+it('prunes rows AND clears the legacy JSON list for a LEGACY section (up_sells) via the real update route when present-but-empty (Important 2, remove-last-link)', function () {
+    $this->loginAsAdmin();
+
+    $associationTypeRepository = app(AssociationTypeRepository::class);
+    $productAssociationRepository = app(ProductAssociationRepository::class);
+    $productRepository = app(ProductRepository::class);
+
+    $upSellsType = $associationTypeRepository->findByCode('up_sells');
+
+    $product = Product::factory()->simple()->withInitialValues()->create();
+    $relatedProduct = Product::factory()->withInitialValues()->create();
+
+    $productAssociationRepository->syncTypeWithData($product->id, $upSellsType->id, [
+        ['related_product_id' => $relatedProduct->id, 'position' => 1, 'additional_data' => null],
+    ]);
+    $product->values = array_merge($product->values, ['associations' => ['up_sells' => [$relatedProduct->sku]]]);
+    $product->save();
+
+    $data = [
+        'sku'          => $product->sku,
+        'values'       => $product->values,
+        'associations' => [
+            'up_sells' => ['__present' => '1'],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertRedirect()
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $reloaded = $productRepository->find($product->id);
+
+    expect($reloaded->values['associations']['up_sells'] ?? null)->toBe([]);
+
+    $row = DB::table('product_associations')
+        ->where('product_id', $product->id)
+        ->where('association_type_id', $upSellsType->id)
+        ->first();
+
+    expect($row)->toBeNull();
+});
+
+it('drops the redundant empty-value fallback hidden input for checkbox association fields, keeping only the authoritative comma-joined one (Minor 3)', function () {
+    $this->loginAsAdmin();
+
+    $associationTypeRepository = app(AssociationTypeRepository::class);
+    $productAssociationRepository = app(ProductAssociationRepository::class);
+
+    $customType = $associationTypeRepository->create([
+        'code'            => 'bundle_kit_'.uniqid(),
+        'status'          => 1,
+        'position'        => 1,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Bundle Kit'],
+        'fields'          => [
+            [
+                'code'        => 'flavor',
+                'type'        => 'checkbox',
+                'validation'  => null,
+                'is_required' => 0,
+                'status'      => 1,
+                'section'     => 'left',
+                'en_US'       => ['name' => 'Flavor'],
+                'options'     => [
+                    ['code' => 'red', 'sort_order' => 1, 'en_US' => ['label' => 'Red']],
+                ],
+            ],
+        ],
+    ]);
+
+    $product = Product::factory()->withInitialValues()->create();
+    $relatedProduct = Product::factory()->withInitialValues()->create();
+
+    $productAssociationRepository->syncTypeWithData($product->id, $customType->id, [
+        [
+            'related_product_id' => $relatedProduct->id,
+            'position'           => 1,
+            'additional_data'    => ['common' => ['flavor' => 'red']],
+        ],
+    ]);
+
+    $response = $this->get(route('admin.catalog.products.edit', $product->id));
+
+    $response->assertOk();
+
+    $content = $response->getContent();
+    $templateStart = strpos($content, 'id="v-product-links-template"');
+    $templateEnd = strpos($content, '</script>', $templateStart);
+    $template = substr($content, $templateStart, $templateEnd - $templateStart);
+
+    // Before the fix, the checkbox case emitted a redundant, always-present
+    // `value=""` hidden fallback input (relying on PHP's last-key-wins for a
+    // duplicate `name`) in addition to the authoritative comma-joined hidden
+    // input. Only the latter should remain.
+    expect($template)->not->toContain('value=""');
 });

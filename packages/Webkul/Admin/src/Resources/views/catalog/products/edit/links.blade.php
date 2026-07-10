@@ -22,6 +22,26 @@
 
                 @foreach ($associationTypes as $typeIndex => $type)
                     <div class="{{ $typeIndex > 0 ? 'pt-4 border-t border-slate-200 dark:border-gray-800' : '' }}">
+                    {{--
+                        Presence sentinel: emitted once per active type,
+                        UNCONDITIONALLY (regardless of link count), so the
+                        `associations[<typeCode>]` key always survives form
+                        submission -- even after the user removes every link
+                        of this type, when no other input below would carry
+                        that key at all. `AbstractType::prepareRichAssociations()`
+                        treats any type key present in the submitted
+                        `associations` payload as authoritative for that type
+                        (an empty/sentinel-only value prunes all its
+                        `product_associations` rows, and for the 3 legacy
+                        sections also clears the legacy JSON list), and strips
+                        this sentinel before processing link rows.
+                    --}}
+                    <input
+                        type="hidden"
+                        name="associations[{{ $type['code'] }}][__present]"
+                        value="1"
+                    />
+
                     <div class="flex gap-5 justify-between items-center">
                         <div class="flex flex-col gap-2">
                             <p class="text-gray-800 text-xs dark:text-white font-medium">

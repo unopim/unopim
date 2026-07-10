@@ -216,6 +216,21 @@ abstract class AbstractType
      * same way `ProductAssociationRepository::syncFromSkuList` does for the
      * legacy path.
      *
+     * A type key present in `$associations` is treated as AUTHORITATIVE for
+     * that association type, even when it carries zero link rows: the
+     * product edit UI (`links.blade.php`) always submits an
+     * `associations[<typeCode>][__present]=1` sentinel for every active type
+     * it renders, precisely so removing the last link of a type still keeps
+     * that type's key in the payload (native form submission otherwise omits
+     * a key with no rows, which used to leave that type's `product_associations`
+     * rows — and, for the 3 legacy sections, the legacy JSON list — stale).
+     * The sentinel itself is stripped below before link rows are processed,
+     * and never resolved as a link/sku. This authoritative-when-present
+     * behavior only ever triggers from the `associations` key existing at
+     * all: the REST/import write path never sends that key, so it keeps
+     * relying on the legacy `! empty($data[section])` fallback in `update()`
+     * unchanged.
+     *
      * Returns a two-element tuple:
      * - `[0]` legacy section (up_sells/cross_sells/related_products) => sku
      *   list, for mirroring into the legacy `values['associations']` JSON.
@@ -238,6 +253,13 @@ abstract class AbstractType
             if (! is_array($links)) {
                 continue;
             }
+
+            // Strip the UI's presence-only sentinel (see docblock above) so
+            // it's never mistaken for a link row below; its sole purpose was
+            // to force this typeCode's key to survive form submission even
+            // when the user removed every link, so this loop -- and
+            // therefore pruning -- still runs for it.
+            unset($links['__present']);
 
             $associationType = $associationTypeRepository->findByCode($typeCode);
 

@@ -62,22 +62,6 @@
 
         @switch ($field['type'])
             @case ('checkbox')
-                {{--
-                    Always-present fallback: guarantees this field's key is
-                    submitted (as an explicit empty string) even when every
-                    option ends up unchecked, mirroring
-                    `dynamic-fields.blade.php`'s empty-value hidden input for
-                    the same reason -- an absent key (vs. an explicitly empty
-                    one) can be treated differently by the storage layer, so
-                    clearing all checkboxes must persist as empty, not
-                    missing.
-                --}}
-                <input
-                    type="hidden"
-                    ::name="{{ $nameExpr }}"
-                    value=""
-                />
-
                 @foreach ($field['options'] ?? [] as $option)
                     <div class="flex py-2 items-center gap-2">
                         {{--

@@ -117,6 +117,18 @@ class AssociationValidator
 
     /**
      * Builds validation rules for the given fields, keyed on the `additional_data` json paths.
+     *
+     * Intentionally never emits the DB-level `unique:product_associations,...`
+     * rule (`withUniqueValidation: false`): that rule is scoped globally
+     * across the whole `product_associations` table, which is the wrong
+     * semantic for a per-link field value (it has no notion of the
+     * `(product, association_type)` pair a link belongs to), and validation
+     * here always runs BEFORE the product/link rows are saved, so there is
+     * no row id yet to `ignore` on a re-save -- meaning an `is_unique`
+     * field's own previously-persisted value would match itself and abort
+     * every subsequent save of that same link. Per-link uniqueness is not
+     * enforced in this iteration; a proper per-(product, association_type)
+     * scoped check can be added later if needed.
      */
     protected function inputFieldsRules(QueueableCollection $existsFields, array $requestData, ?int $id = null): array
     {
@@ -132,7 +144,7 @@ class AssociationValidator
                 foreach (array_keys($localeSpecificData) as $locale) {
                     $fieldNameKey = sprintf('additional_data.locale_specific.%s.%s', $locale, $fieldName);
 
-                    $ruleFormat = $field->getValidationRules($locale, $id);
+                    $ruleFormat = $field->getValidationRules($locale, $id, withUniqueValidation: false);
                     $ruleFormat = array_merge($ruleFormat, $this->fieldTypeRules($field));
 
                     if (! empty($ruleFormat)) {
@@ -142,7 +154,7 @@ class AssociationValidator
             } else {
                 $fieldNameKey = sprintf('additional_data.common.%s', $fieldName);
 
-                $ruleFormat = $field->getValidationRules(null, $id);
+                $ruleFormat = $field->getValidationRules(null, $id, withUniqueValidation: false);
                 $ruleFormat = array_merge($ruleFormat, $this->fieldTypeRules($field));
 
                 if (! empty($ruleFormat)) {
