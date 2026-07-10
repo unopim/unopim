@@ -92,4 +92,12 @@ class AssociationTypeRepository extends Repository
     {
         return $this->with(['translations']);
     }
+
+    /**
+     * Find an association type by its unique code.
+     */
+    public function findByCode(string $code): ?AssociationType
+    {
+        return $this->findOneByField('code', $code);
+    }
 }
