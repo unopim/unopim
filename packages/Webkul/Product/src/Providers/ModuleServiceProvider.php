@@ -10,6 +10,7 @@ use Webkul\Product\Models\AssociationTypeFieldOptionTranslation;
 use Webkul\Product\Models\AssociationTypeFieldTranslation;
 use Webkul\Product\Models\AssociationTypeTranslation;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductAssociation;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
@@ -21,5 +22,6 @@ class ModuleServiceProvider extends CoreModuleServiceProvider
         AssociationTypeFieldTranslation::class,
         AssociationTypeFieldOption::class,
         AssociationTypeFieldOptionTranslation::class,
+        ProductAssociation::class,
     ];
 }
