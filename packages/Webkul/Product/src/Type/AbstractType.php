@@ -12,6 +12,7 @@ use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Product\Contracts\Product;
+use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
 
 abstract class AbstractType
@@ -158,7 +159,35 @@ abstract class AbstractType
             $product->save();
         }
 
+        if ($product->id) {
+            $this->syncAssociationLinks($product, $productValues);
+        }
+
         return $product;
+    }
+
+    /**
+     * Mirrors the legacy JSON `values['associations']` into the
+     * `product_associations` link table (dual-write).
+     *
+     * Kept resilient: a sync failure is logged but must not abort the
+     * product save that has already happened.
+     */
+    protected function syncAssociationLinks(Product $product, array $productValues): void
+    {
+        $associationRepository = app(ProductAssociationRepository::class);
+
+        foreach (self::ASSOCIATION_SECTIONS as $section) {
+            try {
+                $associationRepository->syncFromSkuList(
+                    $product->id,
+                    $section,
+                    $productValues[self::ASSOCIATION_VALUES_KEY][$section] ?? []
+                );
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
+        }
     }
 
     /**
