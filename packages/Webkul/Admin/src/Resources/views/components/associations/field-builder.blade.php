@@ -774,7 +774,21 @@
                     }
                 },
 
-                saveField(params) {
+                saveField(params, { setErrors }) {
+                    let isDuplicateCode = this.fields.some((field) => {
+                        return ! field.isDelete
+                            && field.id !== this.editingFieldId
+                            && field.code === params.code;
+                    });
+
+                    if (isDuplicateCode) {
+                        setErrors({
+                            code: "@lang('admin::app.catalog.association_types.fields.same-code-error')",
+                        });
+
+                        return;
+                    }
+
                     let locales = {};
 
                     this.locales.forEach((locale) => {

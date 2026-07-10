@@ -78,4 +78,43 @@ class AssociationTypeRequest extends FormRequest
 
         return $rules;
     }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $fields = (array) $this->input('fields', []);
+
+            $seenCodes = [];
+
+            foreach ($fields as $key => $field) {
+                $field = (array) $field;
+
+                if (filter_var($field['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                    continue;
+                }
+
+                $code = $field['code'] ?? null;
+
+                if (blank($code)) {
+                    continue;
+                }
+
+                if (isset($seenCodes[$code])) {
+                    $validator->errors()->add(
+                        "fields.{$key}.code",
+                        trans('admin::app.catalog.association_types.fields.same-code-error')
+                    );
+
+                    continue;
+                }
+
+                $seenCodes[$code] = true;
+            }
+        });
+    }
 }

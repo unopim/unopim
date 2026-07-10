@@ -100,6 +100,85 @@ it('should create an association type with fields successfully', function () {
     ]);
 });
 
+it('should reject creating an association type with duplicate field codes with a validation error, not a 500', function () {
+    $this->loginAsAdmin();
+
+    $data = [
+        'code'     => 'dup_code_test_'.uniqid(),
+        'status'   => 1,
+        'position' => 1,
+        'en_US'    => ['name' => 'Duplicate Code Test'],
+        'fields'   => [
+            [
+                'code'    => 'note',
+                'type'    => 'text',
+                'status'  => 1,
+                'section' => 'left',
+                'en_US'   => ['name' => 'Note'],
+            ],
+            [
+                'code'    => 'note',
+                'type'    => 'text',
+                'status'  => 1,
+                'section' => 'left',
+                'en_US'   => ['name' => 'Note Duplicate'],
+            ],
+        ],
+    ];
+
+    $this->post(route('admin.catalog.association_types.store'), $data)
+        ->assertRedirect()
+        ->assertInvalid(['fields.1.code']);
+
+    $this->assertDatabaseMissing($this->getFullTableName(AssociationType::class), ['code' => $data['code']]);
+
+    $this->assertDatabaseMissing($this->getFullTableName(AssociationTypeField::class), ['code' => 'note']);
+});
+
+it('should create an association type when field codes are all distinct', function () {
+    $this->loginAsAdmin();
+
+    $data = [
+        'code'     => 'distinct_code_test_'.uniqid(),
+        'status'   => 1,
+        'position' => 1,
+        'en_US'    => ['name' => 'Distinct Code Test'],
+        'fields'   => [
+            [
+                'code'    => 'note',
+                'type'    => 'text',
+                'status'  => 1,
+                'section' => 'left',
+                'en_US'   => ['name' => 'Note'],
+            ],
+            [
+                'code'    => 'remark',
+                'type'    => 'text',
+                'status'  => 1,
+                'section' => 'left',
+                'en_US'   => ['name' => 'Remark'],
+            ],
+        ],
+    ];
+
+    $response = $this->post(route('admin.catalog.association_types.store'), $data);
+
+    $response->assertRedirect(route('admin.catalog.association_types.index'));
+    $response->assertSessionHas('success');
+
+    $associationType = AssociationType::where('code', $data['code'])->firstOrFail();
+
+    $this->assertDatabaseHas($this->getFullTableName(AssociationTypeField::class), [
+        'association_type_id' => $associationType->id,
+        'code'                => 'note',
+    ]);
+
+    $this->assertDatabaseHas($this->getFullTableName(AssociationTypeField::class), [
+        'association_type_id' => $associationType->id,
+        'code'                => 'remark',
+    ]);
+});
+
 it('should reject creating an association type when a fields entry omits code or type', function () {
     $this->loginAsAdmin();
 
