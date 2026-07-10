@@ -19,7 +19,7 @@ return new class extends Migration
 
             $table->unique(['code', 'association_type_field_id'], 'unique_code_assoc_field_id');
 
-            $table->foreign('association_type_field_id')->references('id')->on('association_type_fields')->onDelete('cascade');
+            $table->foreign('association_type_field_id', 'assoc_field_options_field_id_foreign')->references('id')->on('association_type_fields')->onDelete('cascade');
         });
     }
 

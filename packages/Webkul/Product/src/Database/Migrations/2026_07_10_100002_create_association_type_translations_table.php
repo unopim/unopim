@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('association_type_translations', function (Blueprint $table) {
@@ -14,12 +17,15 @@ return new class extends Migration
             $table->string('locale');
             $table->string('name')->nullable();
 
-            $table->unique(['association_type_id', 'locale']);
+            $table->unique(['association_type_id', 'locale'], 'assoc_type_translations_type_id_locale_unique');
             $table->foreign('association_type_id')->references('id')->on('association_types')->onDelete('cascade');
             $table->index('association_type_id');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('association_type_translations');
