@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Поле категорії ":code" не знайдено',
             'immutable-fields'  => 'Наступні поля не можна змінювати: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Типи асоціацій',
+
+                'datagrid' => [
+                    'code'          => 'Код',
+                    'name'          => 'Назва',
+                    'status'        => 'Статус',
+                    'position'      => 'Позиція',
+                    'edit'          => 'Редагувати',
+                    'delete'        => 'Видалити',
+                    'activated'     => 'Активовано',
+                    'disabled'      => 'Вимкнено',
+                    'active'        => 'Активне',
+                    'disable'       => 'Вимкнути',
+                    'update-status' => 'Оновити статус',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Опцію категорії створено успішно',
             'update-success'      => 'Опцію категорії оновлено успішно',

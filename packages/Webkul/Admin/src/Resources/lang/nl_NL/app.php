@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Categorieveld met code ":code" kon niet worden gevonden.',
             'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Associatietypen',
+
+                'datagrid' => [
+                    'code'          => 'Code',
+                    'name'          => 'Naam',
+                    'status'        => 'Status',
+                    'position'      => 'Positie',
+                    'edit'          => 'Bewerken',
+                    'delete'        => 'Verwijderen',
+                    'activated'     => 'Ingeschakeld',
+                    'disabled'      => 'Uitgeschakeld',
+                    'active'        => 'Inschakelen',
+                    'disable'       => 'Uitschakelen',
+                    'update-status' => 'Status bijwerken',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Categorieveldoptie succesvol aangemaakt.',
             'update-success'      => 'Categorieveldoptie succesvol bijgewerkt.',

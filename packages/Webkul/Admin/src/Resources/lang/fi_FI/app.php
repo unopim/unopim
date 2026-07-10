@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Kategoria kenttää koodilla ":code" ei löydy',
             'immutable-fields'  => 'Seuraavia kenttiä ei voi muokata: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Assosiaatiotyypit',
+
+                'datagrid' => [
+                    'code'          => 'Koodi',
+                    'name'          => 'Nimi',
+                    'status'        => 'Tila',
+                    'position'      => 'Sijainti',
+                    'edit'          => 'Muokkaa',
+                    'delete'        => 'Poista',
+                    'activated'     => 'Otetaan käyttöön',
+                    'disabled'      => 'Poistettu käytöstä',
+                    'active'        => 'Ota käyttöön',
+                    'disable'       => 'Poista käytöstä',
+                    'update-status' => 'Päivitä tila',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Kategoriakenttävaihtoehto luotu onnistuneesti',
             'update-success'      => 'Kategoriakenttävaihtoehto päivitetty onnistuneesti',

@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Bidang kategori dengan kode ":code" tidak dapat ditemukan',
             'immutable-fields'  => 'Field berikut tidak dapat diubah: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Jenis Asosiasi',
+
+                'datagrid' => [
+                    'code'          => 'Kode',
+                    'name'          => 'Nama',
+                    'status'        => 'Status',
+                    'position'      => 'Posisi',
+                    'edit'          => 'Edit',
+                    'delete'        => 'Menghapus',
+                    'activated'     => 'Diaktifkan',
+                    'disabled'      => 'Dengan disabilitas',
+                    'active'        => 'Memungkinkan',
+                    'disable'       => 'Cacat',
+                    'update-status' => 'Memperbaharui status',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Opsi bidang kategori berhasil dibuat',
             'update-success'      => 'Opsi bidang kategori berhasil diperbarui',

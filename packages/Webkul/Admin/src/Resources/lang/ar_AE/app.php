@@ -896,6 +896,26 @@ return [
             'not-found'         => 'لم يتم العثور على عائلة السمات برمز ":code"',
             'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'أنواع الارتباط',
+
+                'datagrid' => [
+                    'code'          => 'شفرة',
+                    'name'          => 'اسم',
+                    'status'        => 'حالة',
+                    'position'      => 'موضع',
+                    'edit'          => 'يحرر',
+                    'delete'        => 'يمسح',
+                    'activated'     => 'تمكين',
+                    'disabled'      => 'عاجز',
+                    'active'        => 'يُمكَِن',
+                    'disable'       => 'إبطال',
+                    'update-status' => 'تحديث الحالة',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'خيار حقل الفئة تم إنشاؤه بنجاح',
             'update-success'      => 'تم تحديث خيار حقل الفئة بنجاح',

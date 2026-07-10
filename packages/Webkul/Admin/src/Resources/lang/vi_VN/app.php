@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Không tìm thấy Trường Danh Mục với mã ":code"',
             'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Loại liên kết',
+
+                'datagrid' => [
+                    'code'          => 'Mã',
+                    'name'          => 'Tên',
+                    'status'        => 'Trạng Thái',
+                    'position'      => 'Vị Trí',
+                    'edit'          => 'Chỉnh Sửa',
+                    'delete'        => 'Xóa',
+                    'activated'     => 'Đã Kích Hoạt',
+                    'disabled'      => 'Đã Vô Hiệu Hóa',
+                    'active'        => 'Kích Hoạt',
+                    'disable'       => 'Vô Hiệu Hóa',
+                    'update-status' => 'Cập Nhật Trạng Thái',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Tùy chọn trường danh mục đã được tạo thành công',
             'update-success'      => 'Tùy chọn trường danh mục đã được cập nhật thành công',

@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Category Field with code ":code" not found',
             'immutable-fields'  => 'The following fields cannot be modified: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Association Types',
+
+                'datagrid' => [
+                    'code'          => 'Code',
+                    'name'          => 'Name',
+                    'status'        => 'Status',
+                    'position'      => 'Position',
+                    'edit'          => 'Edit',
+                    'delete'        => 'Delete',
+                    'activated'     => 'Enabled',
+                    'disabled'      => 'Disabled',
+                    'active'        => 'Enable',
+                    'disable'       => 'Disable',
+                    'update-status' => 'Update Status',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Category Field Option Created Successfully',
             'update-success'      => 'Category Field Option Updated Successfully',

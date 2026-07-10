@@ -896,6 +896,26 @@ return [
             'not-found'         => 'No s\'ha trobat el Camp de Categoria amb el codi ":code"',
             'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Tipus d\'associació',
+
+                'datagrid' => [
+                    'code'          => 'Codi',
+                    'name'          => 'Nom',
+                    'status'        => 'Estat',
+                    'position'      => 'Posició',
+                    'edit'          => 'Editar',
+                    'delete'        => 'Eliminar',
+                    'activated'     => 'Activat',
+                    'disabled'      => 'Desactivat',
+                    'active'        => 'Activar',
+                    'disable'       => 'Desactivar',
+                    'update-status' => 'Actualitzar Estat',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Opció de Camp de Categoria Creada Correctament',
             'update-success'      => 'Opció de Camp de Categoria Actualitzada Correctament',

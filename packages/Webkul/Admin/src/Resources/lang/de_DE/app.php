@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Kategoriefeld mit Code „:code“ konnte nicht gefunden werden',
             'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Assoziationstypen',
+
+                'datagrid' => [
+                    'code'          => 'Code',
+                    'name'          => 'Name',
+                    'status'        => 'Status',
+                    'position'      => 'Position',
+                    'edit'          => 'Bearbeiten',
+                    'delete'        => 'Löschen',
+                    'activated'     => 'Aktiviert',
+                    'disabled'      => 'Deaktiviert',
+                    'active'        => 'Aktivieren',
+                    'disable'       => 'Deaktivieren',
+                    'update-status' => 'Aktualisierungsstatus',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Kategoriefeldoption erfolgreich erstellt',
             'update-success'      => 'Kategoriefeldoption erfolgreich aktualisiert',

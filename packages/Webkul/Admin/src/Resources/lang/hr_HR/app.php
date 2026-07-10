@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Polje Kategorije s kodom ":code" nije pronađeno',
             'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Vrste povezivanja',
+
+                'datagrid' => [
+                    'code'          => 'Kod',
+                    'name'          => 'Ime',
+                    'status'        => 'Status',
+                    'position'      => 'Pozicija',
+                    'edit'          => 'Uredi',
+                    'delete'        => 'Izbriši',
+                    'activated'     => 'Omogućeno',
+                    'disabled'      => 'Onemogućeno',
+                    'active'        => 'Omogući',
+                    'disable'       => 'Onemogući',
+                    'update-status' => 'Ažuriraj Status',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Opcija polja kategorije uspješno stvorena',
             'update-success'      => 'Opcija polja kategorije uspješno ažurirana',

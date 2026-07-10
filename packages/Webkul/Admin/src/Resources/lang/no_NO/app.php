@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Kategorifelt med kode ":code" ble ikke funnet',
             'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Assosiasjonstyper',
+
+                'datagrid' => [
+                    'code'          => 'Kode',
+                    'name'          => 'Navn',
+                    'status'        => 'Status',
+                    'position'      => 'Posisjon',
+                    'edit'          => 'Rediger',
+                    'delete'        => 'Slett',
+                    'activated'     => 'Aktivert',
+                    'disabled'      => 'Deaktivert',
+                    'active'        => 'Aktiver',
+                    'disable'       => 'Deaktiver',
+                    'update-status' => 'Oppdater status',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Kategori feltalternativ opprettet',
             'update-success'      => 'Kategori feltalternativ oppdatert',

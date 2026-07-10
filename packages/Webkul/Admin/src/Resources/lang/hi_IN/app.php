@@ -896,6 +896,26 @@ return [
             'not-found'         => 'कोड के साथ श्रेणी फ़ील्ड ":code" नहीं मिला',
             'immutable-fields'  => 'निम्न फ़ील्ड्स संशोधित नहीं की जा सकतीं: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'एसोसिएशन प्रकार',
+
+                'datagrid' => [
+                    'code'          => 'कोड',
+                    'name'          => 'नाम',
+                    'status'        => 'स्थिति',
+                    'position'      => 'पद',
+                    'edit'          => 'संपादन करना',
+                    'delete'        => 'मिटाना',
+                    'activated'     => 'सक्रिय',
+                    'disabled'      => 'अक्षम',
+                    'active'        => 'सक्षम',
+                    'disable'       => 'अक्षम करना',
+                    'update-status' => 'अद्यतन स्थिति',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'श्रेणी फ़ील्ड विकल्प सफलतापूर्वक बनाया गया',
             'update-success'      => 'श्रेणी फ़ील्ड विकल्प सफलतापूर्वक अपडेट किया गया',

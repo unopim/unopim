@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Kategori fält med kod ":code" kunde inte hittas',
             'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Associationstyper',
+
+                'datagrid' => [
+                    'code'          => 'Kod',
+                    'name'          => 'Namn',
+                    'status'        => 'Status',
+                    'position'      => 'Position',
+                    'edit'          => 'Redigera',
+                    'delete'        => 'Radera',
+                    'activated'     => 'Aktiverad',
+                    'disabled'      => 'Inaktiverad',
+                    'active'        => 'Aktivera',
+                    'disable'       => 'Inaktivera',
+                    'update-status' => 'Uppdatera status',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Kategoriens fältalternativ skapades',
             'update-success'      => 'Kategoriens fältalternativ uppdaterades',

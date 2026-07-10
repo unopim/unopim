@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Le champ de catégorie avec le code ":code" est introuvable',
             'immutable-fields'  => 'Les champs suivants ne peuvent pas être modifiés : :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Types d\'association',
+
+                'datagrid' => [
+                    'code'          => 'Code',
+                    'name'          => 'Nom',
+                    'status'        => 'Statut',
+                    'position'      => 'Position',
+                    'edit'          => 'Modifier',
+                    'delete'        => 'Supprimer',
+                    'activated'     => 'Activé',
+                    'disabled'      => 'Désactivé',
+                    'active'        => 'Activer',
+                    'disable'       => 'Désactiver',
+                    'update-status' => 'Statut',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Option de champ de catégorie créée avec succès',
             'update-success'      => 'Option de champ de catégorie mise à jour avec succès',

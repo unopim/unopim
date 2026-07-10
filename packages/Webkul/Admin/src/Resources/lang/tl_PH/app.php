@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Hindi natagpuan ang field ng kategorya na may code ":code"',
             'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Mga Uri ng Asosasyon',
+
+                'datagrid' => [
+                    'code'          => 'Code',
+                    'name'          => 'Pangalan',
+                    'status'        => 'Katayuan',
+                    'position'      => 'Posisyon',
+                    'edit'          => 'I-edit',
+                    'delete'        => 'Tanggalin',
+                    'activated'     => 'Na-activate',
+                    'disabled'      => 'Na-disable',
+                    'active'        => 'Aktibo',
+                    'disable'       => 'I-disable',
+                    'update-status' => 'I-update ang status',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Nagtagumpay ang paglikha ng opsyon ng kategorya',
             'update-success'      => 'Na-update ang opsyon ng kategorya',

@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Nie znaleziono pola kategorii o kodzie ":code"',
             'immutable-fields'  => 'Następujących pól nie można zmodyfikować: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Typy powiązań',
+
+                'datagrid' => [
+                    'code'          => 'Kod',
+                    'name'          => 'Nazwa',
+                    'status'        => 'Status',
+                    'position'      => 'Pozycja',
+                    'edit'          => 'Edytuj',
+                    'delete'        => 'Usuń',
+                    'activated'     => 'Aktywowane',
+                    'disabled'      => 'Wyłączone',
+                    'active'        => 'Aktywne',
+                    'disable'       => 'Wyłącz',
+                    'update-status' => 'Aktualizuj status',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Opcja pola kategorii została utworzona',
             'update-success'      => 'Opcja pola kategorii została zaktualizowana',

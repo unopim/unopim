@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Поле категории с кодом ":code" не найдено',
             'immutable-fields'  => 'Следующие поля нельзя изменить: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Типы связей',
+
+                'datagrid' => [
+                    'code'          => 'Код',
+                    'name'          => 'Имя',
+                    'status'        => 'Положение дел',
+                    'position'      => 'Позиция',
+                    'edit'          => 'Редактировать',
+                    'delete'        => 'Удалить',
+                    'activated'     => 'Включено',
+                    'disabled'      => 'Неполноценный',
+                    'active'        => 'Давать возможность',
+                    'disable'       => 'Запрещать',
+                    'update-status' => 'Обновить состояние',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Вариант поля категории создан успешно',
             'update-success'      => 'Параметр поля категории успешно обновлена',

@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Kategori Alanı ":code" bulunamadı',
             'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'İlişki Türleri',
+
+                'datagrid' => [
+                    'code'          => 'Kod',
+                    'name'          => 'İsim',
+                    'status'        => 'Durum',
+                    'position'      => 'Pozisyon',
+                    'edit'          => 'Düzenle',
+                    'delete'        => 'Sil',
+                    'activated'     => 'Aktif Edildi',
+                    'disabled'      => 'Devre Dışı Bırakıldı',
+                    'active'        => 'Aktif',
+                    'disable'       => 'Devre Dışı Bırak',
+                    'update-status' => 'Durum Güncelle',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Kategori alanı seçeneği başarıyla oluşturuldu',
             'update-success'      => 'Kategori alanı seçeneği başarıyla güncellendi',

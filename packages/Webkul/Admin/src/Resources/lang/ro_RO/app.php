@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Câmp de categorie cu codul ":code" nu a fost găsit',
             'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Tipuri de asociere',
+
+                'datagrid' => [
+                    'code'          => 'Cod',
+                    'name'          => 'Nume',
+                    'status'        => 'Statut',
+                    'position'      => 'Poziție',
+                    'edit'          => 'Editează',
+                    'delete'        => 'Șterge',
+                    'activated'     => 'Activat',
+                    'disabled'      => 'Dezactivat',
+                    'active'        => 'Activează',
+                    'disable'       => 'Dezactivează',
+                    'update-status' => 'Actualizează statutul',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Opțiune câmp categorie creată',
             'update-success'      => 'Opțiune câmp categorie actualizată',

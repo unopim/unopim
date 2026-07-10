@@ -896,6 +896,26 @@ return [
             'not-found'         => 'Campo de categoria com o código ":code" não encontrado',
             'immutable-fields'  => 'Os seguintes campos não podem ser modificados: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => 'Tipos de associação',
+
+                'datagrid' => [
+                    'code'          => 'Código',
+                    'name'          => 'Nome',
+                    'status'        => 'Status',
+                    'position'      => 'Posição',
+                    'edit'          => 'Editar',
+                    'delete'        => 'Excluir',
+                    'activated'     => 'Ativado',
+                    'disabled'      => 'Desativado',
+                    'active'        => 'Ativo',
+                    'disable'       => 'Desativar',
+                    'update-status' => 'Atualizar Status',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'Opção de campo da categoria criada',
             'update-success'      => 'Opção de campo da categoria atualizada',

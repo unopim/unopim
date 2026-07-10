@@ -896,6 +896,26 @@ return [
             'not-found'         => '找不到代碼為 ":code" 的類別欄位',
             'immutable-fields'  => '以下欄位無法修改：:fields。',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => '關聯類型',
+
+                'datagrid' => [
+                    'code'          => '代碼',
+                    'name'          => '名稱',
+                    'status'        => '狀態',
+                    'position'      => '位置',
+                    'edit'          => '編輯',
+                    'delete'        => '刪除',
+                    'activated'     => '已啟用',
+                    'disabled'      => '已禁用',
+                    'active'        => '啟用',
+                    'disable'       => '禁用',
+                    'update-status' => '更新狀態',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => '類別欄位選項建立成功',
             'update-success'      => '類別欄位選項更新成功',

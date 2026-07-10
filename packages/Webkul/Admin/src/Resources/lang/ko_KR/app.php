@@ -896,6 +896,26 @@ return [
             'not-found'         => '코드 ":code"의 카테고리 필드를 찾을 수 없습니다.',
             'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => '연관 유형',
+
+                'datagrid' => [
+                    'code'          => '코드',
+                    'name'          => '이름',
+                    'status'        => '상태',
+                    'position'      => '위치',
+                    'edit'          => '수정',
+                    'delete'        => '삭제',
+                    'activated'     => '활성화됨',
+                    'disabled'      => '비활성화됨',
+                    'active'        => '활성화',
+                    'disable'       => '비활성화',
+                    'update-status' => '상태 업데이트',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => '카테고리 필드 옵션이 성공적으로 생성되었습니다.',
             'update-success'      => '카테고리 필드 옵션이 성공적으로 업데이트되었습니다.',

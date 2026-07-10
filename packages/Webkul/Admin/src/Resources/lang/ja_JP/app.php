@@ -896,6 +896,26 @@ return [
             'not-found'         => 'コード ":code" のカテゴリ フィールドが見つかりませんでした',
             'immutable-fields'  => '次のフィールドは変更できません: :fields。',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => '関連タイプ',
+
+                'datagrid' => [
+                    'code'          => 'コード',
+                    'name'          => '名前',
+                    'status'        => 'ステータス',
+                    'position'      => '位置',
+                    'edit'          => '編集',
+                    'delete'        => '削除',
+                    'activated'     => '有効',
+                    'disabled'      => '無効',
+                    'active'        => '有効',
+                    'disable'       => '無効',
+                    'update-status' => '更新ステータス',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => 'カテゴリ フィールド オプションが正常に作成されました',
             'update-success'      => 'カテゴリ フィールド オプションが正常に更新されました',

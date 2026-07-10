@@ -896,6 +896,26 @@ return [
             'not-found'         => '无法找到代码为“:code”的类别字段',
             'immutable-fields'  => '以下字段无法修改：:fields。',
         ],
+        'association_types' => [
+            'index' => [
+                'title' => '关联类型',
+
+                'datagrid' => [
+                    'code'          => '代码',
+                    'name'          => '姓名',
+                    'status'        => '地位',
+                    'position'      => '位置',
+                    'edit'          => '编辑',
+                    'delete'        => '删除',
+                    'activated'     => '启用',
+                    'disabled'      => '禁用',
+                    'active'        => '使能够',
+                    'disable'       => '禁用',
+                    'update-status' => '更新状态',
+                ],
+            ],
+        ],
+
         'category-fields-options' => [
             'create-success'      => '类别字段选项成功创建了',
             'update-success'      => '类别字段选项成功更新',
