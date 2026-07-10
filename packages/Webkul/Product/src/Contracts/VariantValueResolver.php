@@ -2,6 +2,8 @@
 
 namespace Webkul\Product\Contracts;
 
+use Webkul\Product\Models\Product;
+
 interface VariantValueResolver
 {
     /**
@@ -13,4 +15,9 @@ interface VariantValueResolver
      * @param  array<int, array>  $chainRootToLeaf
      */
     public function mergeChain(array $chainRootToLeaf): array;
+
+    /**
+     * Fully resolve a product's `values` by walking its ancestor chain.
+     */
+    public function resolve(Product $product): array;
 }
