@@ -12,8 +12,10 @@ use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Product\Contracts\Product;
+use Webkul\Product\Repositories\AssociationTypeRepository;
 use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Validator\AssociationValidator;
 
 abstract class AbstractType
 {
@@ -135,15 +137,49 @@ abstract class AbstractType
             $productValues[self::CATEGORY_VALUES_KEY] = $data[self::CATEGORY_VALUES_KEY];
         }
 
-        if (! empty($data[self::UP_SELLS_ASSOCIATION_KEY])) {
+        /**
+         * Optional unified associations payload: `associations => { <typeCode> => [ { sku, additional_data? }, ... ] }`.
+         *
+         * When present, it supersedes the legacy flat keys (`up_sells`, etc.) for
+         * any type it submits: validation happens here, BEFORE the product is
+         * saved, so an invalid link aborts the whole update with nothing
+         * persisted; sku -> related product id resolution also happens here so
+         * the rich sync after save has everything it needs.
+         */
+        $unifiedAssociations = $data[self::ASSOCIATION_VALUES_KEY] ?? [];
+
+        if (! is_array($unifiedAssociations)) {
+            $unifiedAssociations = [];
+        }
+
+        $resolvedRichAssociations = [];
+
+        if (! empty($unifiedAssociations)) {
+            [$legacySkuLists, $resolvedRichAssociations] = $this->prepareRichAssociations($unifiedAssociations, $product);
+
+            foreach ($legacySkuLists as $section => $skus) {
+                $productValues[self::ASSOCIATION_VALUES_KEY][$section] = $skus;
+            }
+        }
+
+        if (
+            ! array_key_exists(self::UP_SELLS_ASSOCIATION_KEY, $unifiedAssociations)
+            && ! empty($data[self::UP_SELLS_ASSOCIATION_KEY])
+        ) {
             $productValues[self::ASSOCIATION_VALUES_KEY][self::UP_SELLS_ASSOCIATION_KEY] = $data[self::UP_SELLS_ASSOCIATION_KEY];
         }
 
-        if (! empty($data[self::CROSS_SELLS_ASSOCIATION_KEY])) {
+        if (
+            ! array_key_exists(self::CROSS_SELLS_ASSOCIATION_KEY, $unifiedAssociations)
+            && ! empty($data[self::CROSS_SELLS_ASSOCIATION_KEY])
+        ) {
             $productValues[self::ASSOCIATION_VALUES_KEY][self::CROSS_SELLS_ASSOCIATION_KEY] = $data[self::CROSS_SELLS_ASSOCIATION_KEY];
         }
 
-        if (! empty($data[self::RELATED_ASSOCIATION_KEY])) {
+        if (
+            ! array_key_exists(self::RELATED_ASSOCIATION_KEY, $unifiedAssociations)
+            && ! empty($data[self::RELATED_ASSOCIATION_KEY])
+        ) {
             $productValues[self::ASSOCIATION_VALUES_KEY][self::RELATED_ASSOCIATION_KEY] = $data[self::RELATED_ASSOCIATION_KEY];
         }
 
@@ -160,10 +196,138 @@ abstract class AbstractType
         }
 
         if ($product->id) {
-            $this->syncAssociationLinks($product, $productValues);
+            $this->syncAssociationLinks($product, $productValues, array_keys($unifiedAssociations));
+
+            if (! empty($resolvedRichAssociations)) {
+                $this->syncRichAssociations($product->id, $resolvedRichAssociations);
+            }
         }
 
         return $product;
+    }
+
+    /**
+     * Resolves and validates the optional unified `associations` payload
+     * (Plan 3): for each submitted type, validates every link's
+     * `additional_data` against that type's custom fields via
+     * `AssociationValidator` (Task 2) — a failure throws `ValidationException`
+     * here, BEFORE the product is saved — then resolves each link's `sku` to
+     * a `related_product_id` (skipping unresolved SKUs and self-links), the
+     * same way `ProductAssociationRepository::syncFromSkuList` does for the
+     * legacy path.
+     *
+     * Returns a two-element tuple:
+     * - `[0]` legacy section (up_sells/cross_sells/related_products) => sku
+     *   list, for mirroring into the legacy `values['associations']` JSON.
+     * - `[1]` typeCode => `['association_type_id' => int, 'links' => resolved rows]`,
+     *   ready for `syncRichAssociations()`.
+     *
+     * @return array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}
+     */
+    protected function prepareRichAssociations(array $associations, Product $product): array
+    {
+        $associationTypeRepository = app(AssociationTypeRepository::class);
+
+        $associationValidator = app(AssociationValidator::class);
+
+        $legacySkuLists = [];
+
+        $resolvedAssociations = [];
+
+        foreach ($associations as $typeCode => $links) {
+            if (! is_array($links)) {
+                continue;
+            }
+
+            $associationType = $associationTypeRepository->findByCode($typeCode);
+
+            if (! $associationType) {
+                continue;
+            }
+
+            $skus = [];
+
+            $additionalDataBySku = [];
+
+            foreach ($links as $link) {
+                $sku = $link['sku'] ?? null;
+
+                if (! is_string($sku) || $sku === '') {
+                    continue;
+                }
+
+                $additionalData = $link['additional_data'] ?? [];
+
+                $associationValidator->validate((int) $associationType->id, $additionalData);
+
+                $skus[] = $sku;
+
+                $additionalDataBySku[$sku] = empty($additionalData) ? null : $additionalData;
+            }
+
+            $skus = array_values(array_unique($skus));
+
+            if (in_array($typeCode, self::ASSOCIATION_SECTIONS, true)) {
+                $legacySkuLists[$typeCode] = $skus;
+            }
+
+            $resolvedProducts = empty($skus)
+                ? collect()
+                : $this->productRepository->findWhereIn('sku', $skus, ['id', 'sku']);
+
+            $resolvedLinks = [];
+
+            foreach ($resolvedProducts as $resolvedProduct) {
+                $relatedProductId = (int) $resolvedProduct->id;
+
+                if ($relatedProductId === (int) $product->id) {
+                    continue;
+                }
+
+                $resolvedLinks[] = [
+                    'related_product_id' => $relatedProductId,
+                    'position'           => null,
+                    'additional_data'    => $additionalDataBySku[$resolvedProduct->sku] ?? null,
+                ];
+            }
+
+            $resolvedAssociations[$typeCode] = [
+                'association_type_id' => (int) $associationType->id,
+                'links'               => $resolvedLinks,
+            ];
+        }
+
+        return [$legacySkuLists, $resolvedAssociations];
+    }
+
+    /**
+     * Rich, per-link sync for the unified `associations` payload (Plan 3):
+     * writes `additional_data` for each link via
+     * `ProductAssociationRepository::syncTypeWithData` (Task 1), preserving
+     * per-link custom-field values instead of only SKU membership like
+     * `syncAssociationLinks()`'s legacy path does.
+     *
+     * Kept resilient like `syncAssociationLinks()`: a sync failure for one
+     * type is reported, not rethrown, and must not affect the others or the
+     * product save that already happened.
+     *
+     * @param  array<string,array{association_type_id:int,links:array}>  $resolvedAssociations
+     */
+    protected function syncRichAssociations(int $productId, array $resolvedAssociations): void
+    {
+        $associationRepository = app(ProductAssociationRepository::class);
+
+        foreach ($resolvedAssociations as $associationData) {
+            try {
+                $associationRepository->syncTypeWithData(
+                    $productId,
+                    $associationData['association_type_id'],
+                    $associationData['links']
+                );
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
+        }
     }
 
     /**
@@ -177,12 +341,20 @@ abstract class AbstractType
      * controllers, which persist `values` directly on the model instead of
      * going through this class's `update()` — can also mirror the link
      * table after they save.
+     *
+     * `$excludeSections` skips sections already handled by the unified
+     * `associations` payload's rich sync (`syncRichAssociations()`), so a
+     * type is never synced twice for the same `update()` call.
      */
-    public function syncAssociationLinks(Product $product, array $productValues): void
+    public function syncAssociationLinks(Product $product, array $productValues, array $excludeSections = []): void
     {
         $associationRepository = app(ProductAssociationRepository::class);
 
         foreach (self::ASSOCIATION_SECTIONS as $section) {
+            if (in_array($section, $excludeSections, true)) {
+                continue;
+            }
+
             try {
                 $associationRepository->syncFromSkuList(
                     $product->id,
