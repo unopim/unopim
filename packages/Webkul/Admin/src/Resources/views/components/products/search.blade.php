@@ -62,7 +62,7 @@
                                 />
 
                                 <label
-                                    class="icon-checkbox-normal text-2xl peer-checked:icon-checkbox-check peer-checked:text-violet-700  cursor-pointer"
+                                    class="icon-checkbox-normal text-2xl peer-checked:icon-checkbox-check peer-checked:text-primary-700  cursor-pointer"
                                     :for="'searched-product' + product.id"
                                 >
                                 </label>

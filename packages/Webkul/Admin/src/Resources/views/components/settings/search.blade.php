@@ -1,6 +1,5 @@
 <div class="mt-5 max-w-[720px]">
-    <x-admin::form.control-group.control
-        type="text"
+    <x-admin::search
         name="settings_search"
         data-settings-search
         :placeholder="trans('admin::app.settings.system-settings.search-placeholder')"
@@ -18,6 +17,8 @@
 
             const query = event.target.value.trim().toLowerCase();
 
+            let totalVisible = 0;
+
             document.querySelectorAll('[data-settings-section]').forEach((section) => {
                 let anyVisible = false;
 
@@ -28,11 +29,19 @@
 
                     if (match) {
                         anyVisible = true;
+                        totalVisible++;
                     }
                 });
 
                 section.style.display = anyVisible ? '' : 'none';
             });
+
+            // Show the empty state only when a query matches nothing (never blank).
+            const empty = document.querySelector('[data-settings-empty]');
+
+            if (empty) {
+                empty.classList.toggle('hidden', ! (query !== '' && totalVisible === 0));
+            }
         });
     </script>
 @endPushOnce

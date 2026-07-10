@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Modifier l\'utilisateur',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Confirmer le mot de passe avant la suppression',
+                    'enter-current-password' => 'Saisir le mot de passe actuel',
+                    'password'               => 'Mot de passe',
+                    'confirm-delete'         => 'Confirmer la suppression de ce compte',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Retour',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => 'Paramètres système',
             'back'               => 'Retour',
-            'info'               => 'Gérez l\'apparence, l\'e-mail (SMTP) et le débogage depuis un seul endroit.',
+            'info'               => 'Gérez les paramètres du système depuis un seul endroit.',
             'search-placeholder' => 'Rechercher des paramètres',
             'save-btn'           => 'Enregistrer',
             'save-message'       => 'Paramètres enregistrés avec succès.',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'supprimer',
             ],
             'create' => [
-                'title'        => 'Prompt système',
-                'create-btn'   => 'Créer un prompt système',
-                'edit-title'   => 'Modifier le prompt système',
-                'create-title' => 'Créer un nouveau prompt système',
-                'label-title'  => 'Titre',
-                'max-tokens'   => 'Jetons de sortie max.',
-                'temperature'  => 'Température',
-                'type'         => 'Type',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Enregistrer le prompt',
-                'prompt-tone'  => 'Ton du prompt',
+                'title'               => 'Prompt système',
+                'create-btn'          => 'Créer un prompt système',
+                'edit-title'          => 'Modifier le prompt système',
+                'create-title'        => 'Créer un nouveau prompt système',
+                'label-title'         => 'Titre',
+                'max-tokens'          => 'Jetons de sortie max.',
+                'temperature'         => 'Température',
+                'type'                => 'Type',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Enregistrer le prompt',
+                'prompt-tone'         => 'Ton du prompt',
+                'max-tokens-tooltip'  => 'Plage autorisée de jetons de sortie maximaux : 100 à 5000 jetons',
+                'temperature-tooltip' => 'La température contrôle la créativité. Plage : 0 à 2. Des valeurs plus faibles (par ex. 0,4) donnent des réponses plus précises et ciblées.',
             ],
             'message' => [
                 'save-success'   => 'Prompt système enregistré avec succès.',

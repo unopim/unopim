@@ -9,11 +9,7 @@
     {{ $attributes->merge(['class' => 'bg-white dark:bg-cherry-800 rounded-2xl border border-gray-100 dark:border-cherry-700 overflow-hidden']) }}
 >
     <div class="p-4 border-b border-gray-200 dark:border-cherry-700">
-        <p class="text-base font-semibold text-gray-800 dark:text-white">{{ $title }}</p>
-
-        @if ($info)
-            <p class="text-sm text-gray-600 dark:text-gray-300 mt-0.5">{{ $info }}</p>
-        @endif
+        <x-admin::heading :title="$title" :subtitle="$info" as="h3" size="md" />
     </div>
 
     {{-- Extension point: plugins inject rows into this section with zero core edits. --}}

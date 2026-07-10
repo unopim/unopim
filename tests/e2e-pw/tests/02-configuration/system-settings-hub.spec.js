@@ -2,7 +2,7 @@ const { test, expect } = require('../../utils/fixtures');
 
 test.describe('System Settings hub', () => {
     test('lists grouped rows, filters on search, and navigates into a row', async ({ adminPage }) => {
-        await adminPage.goto('/admin/settings/system');
+        await adminPage.goto('/admin/configuration/system');
 
         const appearance = adminPage.getByRole('link', { name: /Appearance/i });
         await expect(appearance).toBeVisible();
@@ -20,12 +20,12 @@ test.describe('System Settings hub', () => {
     });
 
     test('opens the generic fields editor for the debug row', async ({ adminPage }) => {
-        await adminPage.goto('/admin/settings/system');
+        await adminPage.goto('/admin/configuration/system');
 
         await adminPage.getByRole('link', { name: /Debug/i }).click();
 
         // Lands on the generic editor for the debug group and renders its field.
-        await expect(adminPage).toHaveURL(/\/admin\/settings\/system\/system\.debug/);
+        await expect(adminPage).toHaveURL(/\/admin\/configuration\/system\/system\.debug/);
         await expect(adminPage.getByText(/Debug/i).first()).toBeVisible();
     });
 });

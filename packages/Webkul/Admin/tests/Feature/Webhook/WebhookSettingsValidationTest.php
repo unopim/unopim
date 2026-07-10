@@ -25,7 +25,7 @@ afterEach(function () {
 function storeWebhookSettings(array $payload): mixed
 {
     $controller = app(WebhookSettingsController::class);
-    $request = Request::create('/admin/webhook/settings', 'POST', $payload);
+    $request = Request::create('/admin/configuration/webhook', 'POST', $payload);
 
     return $controller->store($request);
 }

@@ -18,7 +18,7 @@
                 {{ $header }}
 
                 <span
-                    class="icon-cancel text-3xl  cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                    class="icon-cancel text-3xl  cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                     @click="toggle"
                 >
                 </span>

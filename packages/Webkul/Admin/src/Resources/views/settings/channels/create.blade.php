@@ -9,12 +9,8 @@
 
         {!! view_render_event('admin.settings.channels.create.create_form_controls.before') !!}
 
-        <div class="flex justify-between items-center">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.settings.channels.create.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
+        <x-admin::page-header :title="trans('admin::app.settings.channels.create.title')">
+            <x-slot:actions>
                 <a
                     href="{{ route('admin.settings.channels.index') }}"
                     class="transparent-button"
@@ -22,14 +18,14 @@
                     @lang('admin::app.settings.channels.create.cancel')
                 </a>
 
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     class="primary-button"
                 >
                     @lang('admin::app.settings.channels.create.save-btn')
                 </button>
-            </div>
-        </div>
+            </x-slot>
+        </x-admin::page-header>
 
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">

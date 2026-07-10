@@ -22,20 +22,16 @@
         :action="route('admin.configuration.store', ['slug' => request()->route('slug'), 'slug2' => request()->route('slug2')])"
         enctype="multipart/form-data"
     >
-        <div class="flex gap-4 justify-between items-center mt-3.5 max-sm:flex-wrap">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                {{ $title }}
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
-                <button 
+        <x-admin::page-header :title="$title">
+            <x-slot:actions>
+                <button
                     type="submit"
                     class="primary-button"
                 >
                     @lang('admin::app.configuration.index.save-btn')
                 </button>
-            </div>
-        </div>
+            </x-slot>
+        </x-admin::page-header>
         @if ($groups)
             <div class="grid grid-cols-[1fr_2fr] gap-10 mt-6 max-xl:flex-wrap">
                 @foreach ($groups as $key => $item)

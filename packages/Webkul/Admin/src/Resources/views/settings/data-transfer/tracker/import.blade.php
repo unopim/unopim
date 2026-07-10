@@ -7,7 +7,7 @@
         <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
             <a
                 href="{{ route('admin.settings.data_transfer.imports.index') }}"
-                class="text-gray-600 hover:bg-violet-100 dark:hover:bg-gray-800 dark:text-white"
+                class="text-gray-600 hover:bg-primary-100 dark:hover:bg-gray-800 dark:text-white"
             >
                 @lang('admin::app.settings.data-transfer.tracker.index.title')
             </a>
@@ -44,7 +44,7 @@
                             </div>
                             <span class="text-xs mt-2 font-semibold text-orange-600 text-center leading-tight">@lang('admin::app.settings.data-transfer.imports.import.pending-step-queue')</span>
                         </div>
-                        <div class="flex-1 h-0.5 mt-5 mx-2" style="background: linear-gradient(to right, #22c55e, #f97316)"></div>
+                        <div class="flex-1 h-0.5 mt-5 mx-2 bg-gradient-to-r from-green-500 to-orange-500"></div>
                         <div class="flex flex-col items-center flex-shrink-0">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 border-2 border-gray-300 dark:bg-gray-700 dark:border-gray-600">
                                 <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 000 4h6a2 2 0 000-4M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
@@ -134,13 +134,13 @@
                         </div>
                         <div class="flex-1 h-0.5 bg-green-400 mt-5 mx-2"></div>
                         <div class="flex flex-col items-center flex-shrink-0">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-violet-600 ring-4 ring-violet-200 animate-pulse">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-primary-600 ring-4 ring-primary-200 animate-pulse">
                                 <svg class="w-4 h-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                             </div>
-                            <span class="text-xs mt-2 font-semibold text-violet-700 text-center leading-tight">@lang('admin::app.settings.data-transfer.imports.import.pending-step-validate')</span>
+                            <span class="text-xs mt-2 font-semibold text-primary-700 text-center leading-tight">@lang('admin::app.settings.data-transfer.imports.import.pending-step-validate')</span>
                         </div>
                         <div class="flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mt-5 mx-2"></div>
                         <div class="flex flex-col items-center flex-shrink-0">
@@ -158,16 +158,16 @@
                         </div>
                     </div>
 
-                    <div class="rounded-lg bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 p-4 mb-4">
+                    <div class="rounded-lg bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 p-4 mb-4">
                         <div class="flex items-center justify-between">
                             <div class="flex items-start gap-3">
-                                <svg class="w-5 h-5 mt-0.5 animate-spin text-violet-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 mt-0.5 animate-spin text-primary-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                                 <div>
-                                    <p class="font-semibold text-violet-700 dark:text-violet-300">@lang('admin::app.settings.data-transfer.imports.import.validating-info')</p>
-                                    <p class="text-sm text-violet-600/80 dark:text-violet-400/80 mt-0.5">@lang('admin::app.settings.data-transfer.imports.import.validating-info-sub')</p>
+                                    <p class="font-semibold text-primary-700 dark:text-primary-300">@lang('admin::app.settings.data-transfer.imports.import.validating-info')</p>
+                                    <p class="text-sm text-primary-600/80 dark:text-primary-400/80 mt-0.5">@lang('admin::app.settings.data-transfer.imports.import.validating-info-sub')</p>
                                 </div>
                             </div>
                             <div class="flex gap-2 items-center flex-shrink-0 ml-4">
@@ -225,7 +225,7 @@
 
                     <div class="flex justify-between items-center mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
                         <span class="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
-                            <span class="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span>
+                            <span class="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
                             @lang('admin::app.settings.data-transfer.tracker.live') &middot; @lang('admin::app.settings.data-transfer.imports.import.pending-step-validate')
                         </span>
                     </div>
@@ -249,7 +249,7 @@
                             </div>
                             <span class="text-xs mt-2 font-semibold text-green-600 text-center leading-tight">@lang('admin::app.settings.data-transfer.imports.import.pending-step-validate')</span>
                         </div>
-                        <div class="flex-1 h-0.5 mt-5 mx-2" style="background: linear-gradient(to right, #22c55e, #f97316)"></div>
+                        <div class="flex-1 h-0.5 mt-5 mx-2 bg-gradient-to-r from-green-500 to-orange-500"></div>
                         <div class="flex flex-col items-center flex-shrink-0">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-orange-500 ring-4 ring-orange-200 animate-pulse">
                                 <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l3.5 2"/></svg>
@@ -618,7 +618,7 @@
                             </div>
                             <span class="text-xs mt-2 font-semibold text-green-600 text-center leading-tight"><template v-if="jobInstance.type == 'export'">@lang('admin::app.settings.data-transfer.imports.import.pending-step-export')</template><template v-else>@lang('admin::app.settings.data-transfer.imports.import.pending-step-import')</template></span>
                         </div>
-                        <div class="flex-1 h-0.5 mt-5 mx-2" style="background: linear-gradient(to right, #22c55e, #f97316)"></div>
+                        <div class="flex-1 h-0.5 mt-5 mx-2 bg-gradient-to-r from-green-500 to-orange-500"></div>
                         <div class="flex flex-col items-center flex-shrink-0">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-orange-500 ring-4 ring-orange-200 animate-pulse">
                                 <svg class="w-4 h-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -730,7 +730,7 @@
                             </div>
                             <span class="text-xs mt-2 font-semibold text-green-600 text-center leading-tight"><template v-if="jobInstance.type == 'export'">@lang('admin::app.settings.data-transfer.imports.import.pending-step-export')</template><template v-else>@lang('admin::app.settings.data-transfer.imports.import.pending-step-import')</template></span>
                         </div>
-                        <div class="flex-1 h-0.5 mt-5 mx-2" style="background: linear-gradient(to right, #22c55e, #f97316)"></div>
+                        <div class="flex-1 h-0.5 mt-5 mx-2 bg-gradient-to-r from-green-500 to-orange-500"></div>
                         <div class="flex flex-col items-center flex-shrink-0">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-orange-500 ring-4 ring-orange-200 animate-pulse">
                                 <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -896,7 +896,7 @@
                         </div>
                         <div class="p-3 bg-white dark:bg-cherry-900 border-l border-gray-200 dark:border-gray-700">
                             <p class="text-[10px] font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">@lang('admin::app.settings.data-transfer.tracker.total-duration')</p>
-                            <p class="text-xl font-bold text-violet-600 dark:text-violet-400 mt-1">@{{ totalDuration() }}</p>
+                            <p class="text-xl font-bold text-primary-600 dark:text-primary-400 mt-1">@{{ totalDuration() }}</p>
                         </div>
                     </div>
 

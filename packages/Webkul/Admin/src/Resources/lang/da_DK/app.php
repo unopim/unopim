@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Rediger Bruger',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Bekræft adgangskode før sletning',
+                    'enter-current-password' => 'Indtast nuværende adgangskode',
+                    'password'               => 'Adgangskode',
+                    'confirm-delete'         => 'Bekræft sletning af denne konto',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Tilbage',
@@ -1654,7 +1661,7 @@ return [
             'current-user-delete-error' => 'Den loggede bruger kan ikke slettes.',
         ],
         'system-settings' => [
-            'info'               => 'Administrer udseende, e-mail (SMTP) og fejlfinding fra ét sted.',
+            'info'               => 'Administrer systemindstillinger fra ét sted.',
             'title'              => 'Systemindstillinger',
             'back'               => 'Tilbage',
             'search-placeholder' => 'Søg i indstillinger',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'slet',
             ],
             'create' => [
-                'title'        => 'Systemprompt',
-                'create-btn'   => 'Opret systemprompt',
-                'edit-title'   => 'Rediger systemprompt',
-                'create-title' => 'Opret ny systemprompt',
-                'label-title'  => 'Titel',
-                'max-tokens'   => 'Maks. output-tokens',
-                'temperature'  => 'Temperatur',
-                'type'         => 'Type',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Gem prompt',
-                'prompt-tone'  => 'Prompttone',
+                'title'               => 'Systemprompt',
+                'create-btn'          => 'Opret systemprompt',
+                'edit-title'          => 'Rediger systemprompt',
+                'create-title'        => 'Opret ny systemprompt',
+                'label-title'         => 'Titel',
+                'max-tokens'          => 'Maks. output-tokens',
+                'temperature'         => 'Temperatur',
+                'type'                => 'Type',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Gem prompt',
+                'prompt-tone'         => 'Prompttone',
+                'max-tokens-tooltip'  => 'Tilladt interval for maksimale output-tokens: 100 til 5000 tokens',
+                'temperature-tooltip' => 'Temperatur styrer kreativiteten. Interval: 0 til 2. Lavere værdier (f.eks. 0,4) giver mere præcise og fokuserede svar.',
             ],
             'message' => [
                 'save-success'   => 'Systemprompt gemt med succes.',

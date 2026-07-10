@@ -32,7 +32,7 @@
                     <div
                         v-for="record in records"
                         :key="record.id"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
                     >
                         <!-- Mass action checkbox (matches header checkbox column) -->
@@ -46,7 +46,7 @@
                                     :id="`mass_action_select_record_${record[$refs.datagrid.available.meta.primary_column]}`"
                                     v-model="$refs.datagrid.applied.massActions.indices"
                                 >
-                                <span class="icon-checkbox-normal peer-checked:icon-checkbox-check peer-checked:text-violet-700 cursor-pointer rounded-md text-2xl"></span>
+                                <span class="icon-checkbox-normal peer-checked:icon-checkbox-check peer-checked:text-primary-700 cursor-pointer rounded-md text-2xl"></span>
                             </label>
                         </p>
 
@@ -62,13 +62,13 @@
 
                         <div class="flex justify-end">
                             <span
-                                class="icon-view cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                class="icon-view cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 :title="'@lang('webhook::app.configuration.webhook.logs.index.datagrid.view')'"
                                 @click="openLog(record.actions.find(a => a.index === 'view')?.url)"
                             ></span>
 
                             <span
-                                class="icon-delete cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                class="icon-delete cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 :title="'@lang('webhook::app.configuration.webhook.logs.index.datagrid.delete')'"
                                 @click="performAction(record.actions.find(a => a.index === 'delete'))"
                             ></span>
@@ -95,7 +95,7 @@
                                     </p>
 
                                     <span
-                                        class="icon-cancel text-3xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                        class="icon-cancel text-3xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                                         @click="closeLog"
                                     ></span>
                                 </div>

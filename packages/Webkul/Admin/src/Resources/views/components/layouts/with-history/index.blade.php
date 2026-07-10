@@ -126,7 +126,7 @@
                             {{-- First: default tabs --}}
                             @foreach ($items as $item)
                                 <a href="{{ $item['url'] }}">
-                                    <div class="{{ $item['active'] ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
+                                    <div class="{{ $item['active'] ? '-mb-px border-primary-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
                                         @lang($item['name'])
                                     </div>
                                 </a>
@@ -136,7 +136,7 @@
 
                             @if ($hasPermission)
                                 <a href="?history">
-                                    <div class="{{ $activeTab === 'history' ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
+                                    <div class="{{ $activeTab === 'history' ? '-mb-px border-primary-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
                                         @lang('admin::app.components.layouts.sidebar.history')
                                     </div>
                                 </a>

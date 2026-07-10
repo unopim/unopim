@@ -8,8 +8,8 @@ use Webkul\Webhook\Http\Controllers\WebhookSettingsController;
  * Catalog routes.
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
-    Route::prefix('webhook')->group(function () {
-        Route::controller(WebhookSettingsController::class)->prefix('settings')->group(function () {
+    Route::prefix('configuration/webhook')->group(function () {
+        Route::controller(WebhookSettingsController::class)->group(function () {
             Route::get('', 'index')->name('webhook.settings.index');
             Route::post('/', 'store')->name('webhook.settings.store');
             Route::get('form-data', 'listSettings')->name('webhook.settings.get');

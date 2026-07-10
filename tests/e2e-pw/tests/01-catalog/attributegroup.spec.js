@@ -88,7 +88,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Edit"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attributegroups\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-groups\/edit/);
 
     // Go back and verify Delete action shows confirmation
     await navigateTo(adminPage, 'attributeGroups');

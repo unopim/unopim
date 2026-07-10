@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Redigera Användare',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Bekräfta lösenord före borttagning',
+                    'enter-current-password' => 'Ange nuvarande lösenord',
+                    'password'               => 'Lösenord',
+                    'confirm-delete'         => 'Bekräfta borttagning av detta konto',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Tillbaka',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => 'Systeminställningar',
             'back'               => 'Tillbaka',
-            'info'               => 'Hantera utseende, e-post (SMTP) och felsökning från ett och samma ställe.',
+            'info'               => 'Hantera systeminställningar från ett och samma ställe.',
             'search-placeholder' => 'Sök inställningar',
             'save-btn'           => 'Spara',
             'save-message'       => 'Inställningarna har sparats.',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'radera',
             ],
             'create' => [
-                'title'        => 'Systemprompt',
-                'create-btn'   => 'Skapa systemprompt',
-                'edit-title'   => 'Redigera systemprompt',
-                'create-title' => 'Skapa ny systemprompt',
-                'label-title'  => 'Titel',
-                'max-tokens'   => 'Max utdata-tokens',
-                'temperature'  => 'Temperatur',
-                'type'         => 'Typ',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Spara prompt',
-                'prompt-tone'  => 'Promptton',
+                'title'               => 'Systemprompt',
+                'create-btn'          => 'Skapa systemprompt',
+                'edit-title'          => 'Redigera systemprompt',
+                'create-title'        => 'Skapa ny systemprompt',
+                'label-title'         => 'Titel',
+                'max-tokens'          => 'Max utdata-tokens',
+                'temperature'         => 'Temperatur',
+                'type'                => 'Typ',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Spara prompt',
+                'prompt-tone'         => 'Promptton',
+                'max-tokens-tooltip'  => 'Tillåtet intervall för maximala utdata-tokens: 100 till 5000 tokens',
+                'temperature-tooltip' => 'Temperatur styr kreativiteten. Intervall: 0 till 2. Lägre värden (t.ex. 0,4) ger mer exakta och fokuserade svar.',
             ],
             'message' => [
                 'save-success'   => 'Systemprompt sparad framgångsrikt.',

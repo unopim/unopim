@@ -25,12 +25,8 @@
                 
                 {!! view_render_event('unopim.admin.catalog.attributes.create._form_controls.before') !!}
 
-                <div class="flex justify-between items-center">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.catalog.attributes.edit.title')
-                    </p>
-
-                    <div class="flex gap-x-2.5 items-center">
+                <x-admin::page-header :title="trans('admin::app.catalog.attributes.edit.title')">
+                    <x-slot:actions>
                         <a
                             href="{{ route('admin.catalog.attributes.index') }}"
                             class="transparent-button"
@@ -44,8 +40,8 @@
                         >
                             @lang('admin::app.catalog.attributes.edit.save-btn')
                         </button>
-                    </div>
-                </div>
+                    </x-slot>
+                </x-admin::page-header>
 
                 <div class="flex gap-2.5 mt-3.5">
                     <div class="flex flex-col flex-1 gap-2 overflow-auto">
@@ -254,7 +250,7 @@
                                     <template #header="{ columns, records, sortPage, selectAllRecords, applied, isLoading, actions}">
                                         <template v-if="! isLoading">
                                             <div
-                                                class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-violet-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
+                                                class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-primary-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
                                                 :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType == 'color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                             >
                                             {{-- Empty div to manage layout --}}
@@ -311,7 +307,7 @@
                                         <template v-if="! isLoading">
                                             <div
                                                 v-for="(record, index) in records"
-                                                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                                                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                                                 :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType=='color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                                 :draggable="isSortable"
                                                 @dragstart="onDragStart(index)"
@@ -355,7 +351,7 @@
 
                                                 <div class="flex justify-end">
                                                     <span
-                                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                                         :class="action.icon"
                                                         v-text="!action.icon ? action.title : ''"
                                                         v-for="action in record.actions"

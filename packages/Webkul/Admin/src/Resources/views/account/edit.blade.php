@@ -8,27 +8,21 @@
         :action="route('admin.account.update')"
         enctype="multipart/form-data"
         method="PUT">
-        <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.account.edit.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
+        <x-admin::page-header :title="trans('admin::app.account.edit.title')">
+            <x-slot:actions>
                 <a
                     href="{{ route('admin.dashboard.index') }}"
                     class="transparent-button">
                     @lang('admin::app.account.edit.back-btn')
                 </a>
 
-                <div class="flex gap-x-2.5 items-center">
-                    <button
-                        type="submit"
-                        class="primary-button">
-                        @lang('admin::app.account.edit.save-btn')
-                    </button>
-                </div>
-            </div>
-        </div>
+                <button
+                    type="submit"
+                    class="primary-button">
+                    @lang('admin::app.account.edit.save-btn')
+                </button>
+            </x-slot>
+        </x-admin::page-header>
 
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <div class="flex flex-col gap-2 flex-1">

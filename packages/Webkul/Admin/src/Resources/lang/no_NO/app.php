@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Rediger Bruker',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Bekreft passord før sletting',
+                    'enter-current-password' => 'Skriv inn nåværende passord',
+                    'password'               => 'Passord',
+                    'confirm-delete'         => 'Bekreft sletting av denne kontoen',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Tilbake',
@@ -1654,7 +1661,7 @@ return [
             'current-user-delete-error' => 'Innlogget bruker kan ikke slettes.',
         ],
         'system-settings' => [
-            'info'               => 'Administrer utseende, e-post (SMTP) og feilsøking fra ett sted.',
+            'info'               => 'Administrer systeminnstillinger fra ett sted.',
             'title'              => 'Systeminnstillinger',
             'back'               => 'Tilbake',
             'search-placeholder' => 'Søk i innstillinger',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'slett',
             ],
             'create' => [
-                'title'        => 'Systemprompt',
-                'create-btn'   => 'Opprett systemprompt',
-                'edit-title'   => 'Rediger systemprompt',
-                'create-title' => 'Opprett ny systemprompt',
-                'label-title'  => 'Tittel',
-                'max-tokens'   => 'Maks. utdata-tokens',
-                'temperature'  => 'Temperatur',
-                'type'         => 'Type',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Lagre prompt',
-                'prompt-tone'  => 'Prompttone',
+                'title'               => 'Systemprompt',
+                'create-btn'          => 'Opprett systemprompt',
+                'edit-title'          => 'Rediger systemprompt',
+                'create-title'        => 'Opprett ny systemprompt',
+                'label-title'         => 'Tittel',
+                'max-tokens'          => 'Maks. utdata-tokens',
+                'temperature'         => 'Temperatur',
+                'type'                => 'Type',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Lagre prompt',
+                'prompt-tone'         => 'Prompttone',
+                'max-tokens-tooltip'  => 'Tillatt område for maksimale utdata-tokens: 100 til 5000 tokens',
+                'temperature-tooltip' => 'Temperatur styrer kreativiteten. Område: 0 til 2. Lavere verdier (f.eks. 0,4) gir mer nøyaktige og fokuserte svar.',
             ],
             'message' => [
                 'save-success'   => 'Systemprompt lagret vellykket.',

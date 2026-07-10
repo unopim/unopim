@@ -176,7 +176,7 @@ test.describe('UnoPim Export Jobs', () => {
 
     // Test Export action
     await itemRow.locator('span[title="Export"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/exports\/export/);
+    await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/exports\/export/);
     await adminPage.goBack();
     await adminPage.waitForLoadState('networkidle');
 
@@ -188,7 +188,7 @@ test.describe('UnoPim Export Jobs', () => {
     // Test Edit action
     const itemRow2 = adminPage.locator('div', { hasText: code });
     await itemRow2.locator('span[title="Edit"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/exports\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/exports\/edit/);
     await adminPage.goBack();
     await adminPage.waitForLoadState('networkidle');
 

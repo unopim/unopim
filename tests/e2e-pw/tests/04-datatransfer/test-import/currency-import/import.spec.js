@@ -43,7 +43,7 @@ test.describe('Currency Import', () => {
         // would hit the code cell instead of the action icon.
         await itemRow.getByTitle('Import', { exact: true }).click();
 
-        await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports\/import/);
+        await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports\/import/);
 
         const importNowBtn = adminPage.getByRole('button', { name: 'Import Now' });
         await expect(importNowBtn).toBeVisible({ timeout: 5000 });

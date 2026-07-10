@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Editar Usuari',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Confirmeu la contrasenya abans de suprimir',
+                    'enter-current-password' => 'Introduïu la contrasenya actual',
+                    'password'               => 'Contrasenya',
+                    'confirm-delete'         => 'Confirmeu la supressió d\'aquest compte',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Tornar',
@@ -1654,7 +1661,7 @@ return [
             'current-user-delete-error' => 'L\'usuari connectat no es pot eliminar.',
         ],
         'system-settings' => [
-            'info'               => 'Gestiona l\'aparença, el correu electrònic (SMTP) i la depuració des d\'un sol lloc.',
+            'info'               => 'Gestiona la configuració del sistema des d\'un sol lloc.',
             'title'              => 'Configuració del sistema',
             'back'               => 'Enrere',
             'search-placeholder' => 'Cerca la configuració',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'eliminar',
             ],
             'create' => [
-                'title'        => 'Indicació del sistema',
-                'create-btn'   => 'Crea una indicació del sistema',
-                'edit-title'   => 'Edita la indicació del sistema',
-                'create-title' => 'Crea una nova indicació del sistema',
-                'label-title'  => 'Títol',
-                'max-tokens'   => 'Fitxes de sortida màximes',
-                'temperature'  => 'Temperatura',
-                'type'         => 'Tipus',
-                'prompt'       => 'Indicació',
-                'save-btn'     => 'Desa la indicació',
-                'prompt-tone'  => 'To de la indicació',
+                'title'               => 'Indicació del sistema',
+                'create-btn'          => 'Crea una indicació del sistema',
+                'edit-title'          => 'Edita la indicació del sistema',
+                'create-title'        => 'Crea una nova indicació del sistema',
+                'label-title'         => 'Títol',
+                'max-tokens'          => 'Fitxes de sortida màximes',
+                'temperature'         => 'Temperatura',
+                'type'                => 'Tipus',
+                'prompt'              => 'Indicació',
+                'save-btn'            => 'Desa la indicació',
+                'prompt-tone'         => 'To de la indicació',
+                'max-tokens-tooltip'  => 'Interval permès de tokens de sortida màxims: de 100 a 5000 tokens',
+                'temperature-tooltip' => 'La temperatura controla la creativitat. Interval: de 0 a 2. Els valors més baixos (p. ex., 0,4) donen respostes més precises i enfocades.',
             ],
             'message' => [
                 'save-success'   => 'Indicació del sistema desada correctament.',

@@ -3,13 +3,8 @@
         @lang('admin::app.catalog.attributes.index.title')
     </x-slot>
 
-    <div class="flex items-center justify-between gap-4 max-sm:flex-wrap">
-        <!-- Title -->
-        <p class="text-xl font-bold text-gray-800 dark:text-white">
-            @lang('admin::app.catalog.attributes.index.title')
-        </p>
-
-        <div class="flex items-center gap-x-2.5">
+    <x-admin::page-header :title="trans('admin::app.catalog.attributes.index.title')">
+        <x-slot:actions>
             @if (bouncer()->hasPermission('catalog.attributes.create'))
                 <a href="{{ route('admin.catalog.attributes.create') }}">
                     <div class="primary-button">
@@ -17,8 +12,8 @@
                     </div>
                 </a>
             @endif
-        </div>
-    </div>
+        </x-slot>
+    </x-admin::page-header>
 
     {!! view_render_event('unopim.admin.catalog.attributes.list.before') !!}
 

@@ -3,7 +3,7 @@
         @lang('admin::app.users.forget-password.create.page-title')
     </x-slot>
 
-    <div class="flex min-h-screen w-full items-center justify-center p-6 bg-gradient-to-b from-violet-50 to-gray-50 dark:from-cherry-900 dark:to-cherry-900">
+    <div class="flex min-h-screen w-full items-center justify-center p-6 bg-gradient-to-b from-primary-50 to-gray-50 dark:from-cherry-900 dark:to-cherry-900">
         <div class="w-full max-w-[400px]">
             <div class="mb-8 flex justify-center">
                 @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
@@ -68,7 +68,7 @@
                     </button>
 
                     <a
-                        class="mt-4 block text-center text-sm text-violet-700 dark:text-violet-400 font-semibold hover:underline"
+                        class="mt-4 block text-center text-sm text-primary-700 dark:text-primary-400 font-semibold hover:underline"
                         href="{{ route('admin.session.create') }}"
                     >
                         @lang('admin::app.users.forget-password.create.sign-in-link')
@@ -79,12 +79,12 @@
             <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
                 <div>
                     @lang('admin::app.users.forget-password.create.powered-by', [
-                        'unopim' => '<a class="text-violet-700 dark:text-violet-400 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>',
+                        'unopim' => '<a class="text-primary-700 dark:text-primary-400 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>',
                     ])
                 </div>
                 <div>
                     @lang('admin::app.users.forget-password.create.open-source-project-by', [
-                        'webkul' => '<a class="text-violet-700 dark:text-violet-400 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
+                        'webkul' => '<a class="text-primary-700 dark:text-primary-400 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
                     ])
                 </div>
             </div>

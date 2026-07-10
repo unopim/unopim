@@ -12,12 +12,8 @@
     >
         {!! view_render_event('unopim.admin.catalog.categories.create.create_form_controls.before') !!}
 
-        <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.catalog.categories.create.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
+        <x-admin::page-header :title="trans('admin::app.catalog.categories.create.title')">
+            <x-slot:actions>
                 <a
                     href="{{ route('admin.catalog.categories.index') }}"
                     class="transparent-button"
@@ -31,8 +27,8 @@
                 >
                     @lang('admin::app.catalog.categories.create.save-btn')
                 </button>
-            </div>
-        </div>
+            </x-slot>
+        </x-admin::page-header>
 
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
 

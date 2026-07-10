@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Edytuj użytkownika',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Potwierdź hasło przed usunięciem',
+                    'enter-current-password' => 'Wprowadź bieżące hasło',
+                    'password'               => 'Hasło',
+                    'confirm-delete'         => 'Potwierdź usunięcie tego konta',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Wróć',
@@ -1654,7 +1661,7 @@ return [
             'current-user-delete-error' => 'Nie można usunąć zalogowanego użytkownika.',
         ],
         'system-settings' => [
-            'info'               => 'Zarządzaj wyglądem, pocztą e-mail (SMTP) i debugowaniem w jednym miejscu.',
+            'info'               => 'Zarządzaj ustawieniami systemu w jednym miejscu.',
             'title'              => 'Ustawienia systemu',
             'back'               => 'Wstecz',
             'search-placeholder' => 'Szukaj ustawień',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'usuń',
             ],
             'create' => [
-                'title'        => 'Prompt systemowy',
-                'create-btn'   => 'Utwórz prompt systemowy',
-                'edit-title'   => 'Edytuj prompt systemowy',
-                'create-title' => 'Utwórz nowy prompt systemowy',
-                'label-title'  => 'Tytuł',
-                'max-tokens'   => 'Maks. tokeny wyjściowe',
-                'temperature'  => 'Temperatura',
-                'type'         => 'Typ',
-                'prompt'       => 'Podpowiedź',
-                'save-btn'     => 'Zapisz prompt',
-                'prompt-tone'  => 'Ton promptu',
+                'title'               => 'Prompt systemowy',
+                'create-btn'          => 'Utwórz prompt systemowy',
+                'edit-title'          => 'Edytuj prompt systemowy',
+                'create-title'        => 'Utwórz nowy prompt systemowy',
+                'label-title'         => 'Tytuł',
+                'max-tokens'          => 'Maks. tokeny wyjściowe',
+                'temperature'         => 'Temperatura',
+                'type'                => 'Typ',
+                'prompt'              => 'Podpowiedź',
+                'save-btn'            => 'Zapisz prompt',
+                'prompt-tone'         => 'Ton promptu',
+                'max-tokens-tooltip'  => 'Dozwolony zakres maksymalnych tokenów wyjściowych: od 100 do 5000 tokenów',
+                'temperature-tooltip' => 'Temperatura kontroluje kreatywność. Zakres: od 0 do 2. Niższe wartości (np. 0,4) dają dokładniejsze i bardziej precyzyjne odpowiedzi.',
             ],
             'message' => [
                 'save-success'   => 'Prompt systemowy został zapisany pomyślnie.',

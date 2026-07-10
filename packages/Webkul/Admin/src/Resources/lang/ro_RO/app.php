@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Editează Utilizator',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Confirmați parola înainte de ștergere',
+                    'enter-current-password' => 'Introduceți parola curentă',
+                    'password'               => 'Parolă',
+                    'confirm-delete'         => 'Confirmați ștergerea acestui cont',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Înapoi',
@@ -1654,7 +1661,7 @@ return [
             'current-user-delete-error' => 'Nu se poate șterge utilizatorul conectat.',
         ],
         'system-settings' => [
-            'info'               => 'Gestionează aspectul, e-mailul (SMTP) și depanarea dintr-un singur loc.',
+            'info'               => 'Gestionează setările sistemului dintr-un singur loc.',
             'title'              => 'Setări de sistem',
             'back'               => 'Înapoi',
             'search-placeholder' => 'Caută setări',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'șterge',
             ],
             'create' => [
-                'title'        => 'Prompt de sistem',
-                'create-btn'   => 'Creează prompt de sistem',
-                'edit-title'   => 'Editează prompt de sistem',
-                'create-title' => 'Creează un nou prompt de sistem',
-                'label-title'  => 'Titlu',
-                'max-tokens'   => 'Tokeni de ieșire maximi',
-                'temperature'  => 'Temperatură',
-                'type'         => 'Tip',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Salvează prompt',
-                'prompt-tone'  => 'Tonul promptului',
+                'title'               => 'Prompt de sistem',
+                'create-btn'          => 'Creează prompt de sistem',
+                'edit-title'          => 'Editează prompt de sistem',
+                'create-title'        => 'Creează un nou prompt de sistem',
+                'label-title'         => 'Titlu',
+                'max-tokens'          => 'Tokeni de ieșire maximi',
+                'temperature'         => 'Temperatură',
+                'type'                => 'Tip',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Salvează prompt',
+                'prompt-tone'         => 'Tonul promptului',
+                'max-tokens-tooltip'  => 'Interval permis pentru numărul maxim de tokenuri de ieșire: 100 până la 5000 de tokenuri',
+                'temperature-tooltip' => 'Temperatura controlează creativitatea. Interval: 0 până la 2. Valorile mai mici (de ex., 0,4) oferă răspunsuri mai precise și mai concentrate.',
             ],
             'message' => [
                 'save-success'   => 'Promptul de sistem a fost salvat cu succes.',

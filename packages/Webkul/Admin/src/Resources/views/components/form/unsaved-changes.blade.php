@@ -16,8 +16,7 @@
                             <div class="flex items-center gap-3 min-w-0">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
-                                    class="w-6 h-6 shrink-0"
-                                    style="color: #eab308;"
+                                    class="w-6 h-6 shrink-0 text-yellow-500"
                                     viewBox="0 0 24 24"
                                     fill="none"
                                     stroke="currentColor"
@@ -439,7 +438,9 @@
                     // Action-only forms (no editable fields — e.g. an "Export Now" / "Import Now"
                     // PUT trigger) can never turn the bar dirty, so their submit button is the ONLY
                     // way to act. Never strip it; the bar would leave the user with no button at all.
-                    if (this.controls().length === 0) {
+                    // A media widget counts as content: it has no named field but marks the form
+                    // dirty via `unsaved-changes:touch`, so a media-only form still uses the bar.
+                    if (this.controls().length === 0 && ! form.querySelector('[data-media-control]')) {
                         return;
                     }
 

@@ -16,12 +16,8 @@
             >
             {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.create_form_controls.before') !!}
 
-            <div class="flex justify-between items-center">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                    @lang('admin::app.settings.data-transfer.imports.create.title')
-                </p>
-
-                <div class="flex gap-x-2.5 items-center">
+            <x-admin::page-header :title="trans('admin::app.settings.data-transfer.imports.create.title')">
+                <x-slot:actions>
                     <a
                         href="{{ route('admin.settings.data_transfer.imports.index') }}"
                         class="transparent-button"
@@ -35,8 +31,8 @@
                     >
                         @lang('admin::app.settings.data-transfer.imports.create.save-btn')
                     </button>
-                </div>
-            </div>
+                </x-slot>
+            </x-admin::page-header>
 
             <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
                 <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
@@ -125,7 +121,7 @@
                                     :href="'{{ route('admin.settings.data_transfer.imports.download_sample') }}/' + $refs['importType'].selectedOption"
                                     target="_blank"
                                     id="source-sample-link"
-                                    class="text-sm text-violet-700 dark:text-sky-500 cursor-pointer transition-all hover:underline mt-1"
+                                    class="text-sm text-primary-700 dark:text-sky-500 cursor-pointer transition-all hover:underline mt-1"
                                 >
 
                                     @{{ "@lang('admin::app.settings.data-transfer.imports.create.download-sample')".replace(':resource', $refs['importType'].selectedOption.replace(/^\w/, (c) => c.toUpperCase())) }}
@@ -326,7 +322,7 @@
                     @lang('admin::app.settings.data-transfer.imports.edit.images-directory')
                 </label>
 
-                <div class="flex items-center gap-0 rounded-sm border dark:border-gray-800 overflow-hidden focus-within:border-violet-500 transition-colors">
+                <div class="flex items-center gap-0 rounded-sm border dark:border-gray-800 overflow-hidden focus-within:border-primary-500 transition-colors">
                     <span class="px-2.5 py-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-cherry-800 border-r dark:border-gray-700 shrink-0 select-none">
                         storage/app/public/
                     </span>
@@ -374,10 +370,10 @@
 
                     <x-slot:content>
                         <div
-                            class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center cursor-pointer hover:border-violet-500 transition-colors"
+                            class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center cursor-pointer hover:border-primary-500 transition-colors"
                             @click="$refs.zipFileInput.click()"
-                            @dragover.prevent="$event.currentTarget.classList.add('border-violet-500')"
-                            @dragleave.prevent="$event.currentTarget.classList.remove('border-violet-500')"
+                            @dragover.prevent="$event.currentTarget.classList.add('border-primary-500')"
+                            @dragleave.prevent="$event.currentTarget.classList.remove('border-primary-500')"
                             @drop.prevent="onDrop($event)"
                         >
                             <input type="file" ref="zipFileInput" accept=".zip" class="hidden" @change="onFileChange" />
@@ -389,14 +385,14 @@
                             </div>
 
                             <div v-else>
-                                <span class="icon-product text-4xl text-violet-500 mb-2 block"></span>
+                                <span class="icon-product text-4xl text-primary-500 mb-2 block"></span>
                                 <p class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-xs mx-auto">@{{ selectedFile.name }}</p>
                                 <p class="text-xs text-gray-400 mt-1">@{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</p>
                             </div>
                         </div>
 
                         <div v-if="modalUploading" class="flex items-center gap-2 mt-4 text-sm text-gray-500 dark:text-gray-400">
-                            <svg class="w-4 h-4 shrink-0 text-violet-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <svg class="w-4 h-4 shrink-0 text-primary-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 16 0"/>
                             </svg>
                             <span>@{{ uploadingLabel }}</span>
@@ -478,7 +474,7 @@
                     },
 
                     onDrop(e) {
-                        e.currentTarget.classList.remove('border-violet-500');
+                        e.currentTarget.classList.remove('border-primary-500');
                         const file = e.dataTransfer?.files?.[0];
                         if (file) this.selectFile(file);
                     },

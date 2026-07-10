@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Edit pengguna',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Konfirmasi kata sandi sebelum menghapus',
+                    'enter-current-password' => 'Masukkan kata sandi saat ini',
+                    'password'               => 'Kata Sandi',
+                    'confirm-delete'         => 'Konfirmasi hapus akun ini',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Kembali',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => 'Pengaturan Sistem',
             'back'               => 'Kembali',
-            'info'               => 'Kelola tampilan, email (SMTP), dan debug dari satu tempat.',
+            'info'               => 'Kelola pengaturan sistem dari satu tempat.',
             'search-placeholder' => 'Cari pengaturan',
             'save-btn'           => 'Simpan',
             'save-message'       => 'Pengaturan berhasil disimpan.',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'hapus',
             ],
             'create' => [
-                'title'        => 'Prompt Sistem',
-                'create-btn'   => 'Buat Prompt Sistem',
-                'edit-title'   => 'Edit Prompt Sistem',
-                'create-title' => 'Buat Prompt Sistem Baru',
-                'label-title'  => 'Judul',
-                'max-tokens'   => 'Token Output Maksimum',
-                'temperature'  => 'Suhu',
-                'type'         => 'Tipe',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Simpan Prompt',
-                'prompt-tone'  => 'Nada Prompt',
+                'title'               => 'Prompt Sistem',
+                'create-btn'          => 'Buat Prompt Sistem',
+                'edit-title'          => 'Edit Prompt Sistem',
+                'create-title'        => 'Buat Prompt Sistem Baru',
+                'label-title'         => 'Judul',
+                'max-tokens'          => 'Token Output Maksimum',
+                'temperature'         => 'Suhu',
+                'type'                => 'Tipe',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Simpan Prompt',
+                'prompt-tone'         => 'Nada Prompt',
+                'max-tokens-tooltip'  => 'Rentang token keluaran maksimum yang diizinkan: 100 hingga 5000 token',
+                'temperature-tooltip' => 'Temperatur mengontrol kreativitas. Rentang: 0 hingga 2. Nilai yang lebih rendah (mis. 0,4) memberikan respons yang lebih akurat dan fokus.',
             ],
             'message' => [
                 'save-success'   => 'Prompt Sistem berhasil disimpan.',

@@ -87,7 +87,7 @@ test.describe('UnoPim Channel Import Jobs', () => {
 
         // Test Import action icon
         await itemRow.locator('span[title="Import"]').first().click();
-        await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports\/import/);
+        await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports\/import/);
         await adminPage.goBack();
         await adminPage.waitForLoadState('networkidle');
 
@@ -99,7 +99,7 @@ test.describe('UnoPim Channel Import Jobs', () => {
         // Test Edit action icon
         const itemRow2 = adminPage.locator('div', { hasText: code });
         await itemRow2.locator('span[title="Edit"]').first().click();
-        await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports\/edit/);
+        await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports\/edit/);
         await adminPage.goBack();
         await adminPage.waitForLoadState('networkidle');
 

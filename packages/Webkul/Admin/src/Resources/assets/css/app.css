@@ -2,6 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design tokens: single source for brand + status colour. R G B channels so
+   `/opacity` modifiers work. Re-skin by overriding a token, e.g. --c-primary-600. */
+@layer base {
+    :root {
+        --c-primary-50: 245 243 255;
+        --c-primary-100: 237 233 254;
+        --c-primary-200: 221 214 254;
+        --c-primary-300: 196 181 253;
+        --c-primary-400: 167 139 250;
+        --c-primary-500: 139 92 246;
+        --c-primary-600: 124 58 237;
+        --c-primary-700: 109 40 217;
+        --c-primary-800: 91 33 182;
+        --c-primary-900: 76 29 149;
+
+        --c-success: 16 185 129;
+        --c-warning: 245 158 11;
+        --c-danger: 239 68 68;
+        --c-info: 12 140 233;
+
+        /* Semantic chart hues reuse the tokens above; categorical hues are their own. */
+        --chart-1: rgb(var(--c-primary-600));
+        --chart-2: #0ea5e9;
+        --chart-3: #14b8a6;
+        --chart-4: #f97316;
+        --chart-5: #ec4899;
+        --chart-6: #6366f1;
+        --chart-success: rgb(var(--c-success));
+        --chart-warning: rgb(var(--c-warning));
+        --chart-danger: rgb(var(--c-danger));
+        --chart-muted: #a1a1aa;
+    }
+
+    /* Brand ramp is constant; only status + categorical chart hues shift for dark. */
+    .dark {
+        --c-success: 52 211 153;
+        --c-warning: 251 191 36;
+        --c-danger: 248 113 113;
+        --c-info: 56 189 248;
+
+        --chart-2: #38bdf8;
+        --chart-3: #2dd4bf;
+        --chart-4: #fb923c;
+        --chart-5: #f472b6;
+        --chart-6: #818cf8;
+        --chart-muted: #d4d4d8;
+    }
+}
+
 @font-face {
     font-family: "unopim-admin";
     src: url("../fonts/unopim-admin.woff?jwnnow") format("woff");
@@ -18,6 +67,11 @@
      */
     html {
         scrollbar-gutter: stable;
+    }
+
+    /* Kill the default black tap-highlight on mobile (menu items etc.); hover/active styles convey feedback. */
+    * {
+        -webkit-tap-highlight-color: transparent;
     }
 
     /* Minimal, subtle scrollbars everywhere (Firefox) */
@@ -67,7 +121,7 @@
     }
 
     body {
-        @apply bg-violet-50 bg-opacity-50 font-inter;
+        @apply bg-primary-50 bg-opacity-50 font-inter;
     }
 
     button:disabled {
@@ -77,6 +131,30 @@
     button:disabled:hover {
         @apply cursor-not-allowed opacity-50;
     }
+
+    /* Prose styles for AI rich-text previews (v-html content, unreachable by utilities). */
+    .rich-content-preview h1,
+    .rich-content-preview h2,
+    .rich-content-preview h3,
+    .rich-content-preview h4 { font-weight: 700; margin: 0.5em 0 0.25em; }
+    .rich-content-preview h1 { font-size: 1.5em; }
+    .rich-content-preview h2 { font-size: 1.25em; }
+    .rich-content-preview h3 { font-size: 1.1em; }
+    .rich-content-preview p { margin: 0.4em 0; }
+    .rich-content-preview strong,
+    .rich-content-preview b { font-weight: 700; }
+    .rich-content-preview em,
+    .rich-content-preview i { font-style: italic; }
+    .rich-content-preview ul,
+    .rich-content-preview ol { padding-left: 1.5em; margin: 0.4em 0; }
+    .rich-content-preview ul { list-style-type: disc; }
+    .rich-content-preview ol { list-style-type: decimal; }
+    .rich-content-preview li { margin: 0.2em 0; }
+    .rich-content-preview a { color: rgb(var(--c-primary-700)); text-decoration: underline; }
+    .rich-content-preview table { border-collapse: collapse; width: 100%; margin: 0.5em 0; }
+    .rich-content-preview th,
+    .rich-content-preview td { border: 1px solid theme('colors.gray.200'); padding: 0.4em 0.6em; text-align: left; }
+    .rich-content-preview th { background: theme('colors.gray.100'); font-weight: 600; }
 
     .direction-ltr {
         direction: ltr;
@@ -88,7 +166,7 @@
 
     .draggable-ghost {
         opacity: 0.5;
-        background: #e0e7ff;
+        background: theme('colors.violet.100');
     }
 
     [class^="icon-"],
@@ -116,7 +194,7 @@
 
     html.dark .active [class^="icon-"],
     html.dark .active [class*=" icon-"]{
-        @apply text-violet-700;
+        @apply text-primary-700;
     }
 
     .box-shadow {
@@ -146,15 +224,15 @@
     }
 
     .primary-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 bg-violet-600 border border-violet-700 hover:bg-violet-500 hover:border-violet-500 rounded-md text-gray-50 font-semibold cursor-pointer transition-all hover:opacity-[0.9] focus:opacity-[0.9];
+        @apply flex gap-x-1 items-center px-3 py-1.5 bg-primary-600 border border-primary-700 hover:bg-primary-500 hover:border-primary-500 rounded-md text-gray-50 font-semibold cursor-pointer transition-all hover:opacity-[0.9] focus:opacity-[0.9];
     }
 
     .secondary-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 bg-white border-2 border-violet-600 text-violet-600 rounded-md font-semibold whitespace-nowrap cursor-pointer transition-all hover:text-violet-500 hover:border-violet-500 hover:bg-violet-100 dark:bg-cherry-900 dark:border-violet-400 dark:text-violet-200 dark:hover:bg-cherry-800 dark:hover:border-violet-300 dark:hover:text-violet-100;
+        @apply flex gap-x-1 items-center px-3 py-1.5 bg-white border-2 border-primary-600 text-primary-600 rounded-md font-semibold whitespace-nowrap cursor-pointer transition-all hover:text-primary-500 hover:border-primary-500 hover:bg-primary-100 dark:bg-cherry-900 dark:border-primary-400 dark:text-primary-200 dark:hover:bg-cherry-800 dark:hover:border-primary-300 dark:hover:text-primary-100;
     }
 
     .transparent-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md text-violet-600 font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:text-violet-500 hover:bg-violet-50 dark:hover:bg-cherry-900  dark:text-slate-50 ;
+        @apply flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md text-primary-600 font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-cherry-900  dark:text-slate-50 ;
     }
 
     .danger-button {
@@ -487,17 +565,17 @@
     }
 
     .highlighted-tribute-item {
-        @apply bg-violet-100 dark:bg-cherry-600 rounded-md;
+        @apply bg-primary-100 dark:bg-cherry-600 rounded-md;
     }
 }
 
 .tox .tox-toolbar__group:last-child button {
     padding: 6px 8px;
-    @apply text-violet-700 bg-violet-100;
+    @apply text-primary-700 bg-primary-100;
 }
 
 .tox .tox-toolbar__group:last-child button:hover {
-    @apply bg-violet-200;
+    @apply bg-primary-200;
 }
 
 
@@ -506,40 +584,40 @@
 }
 
 .tox .tox-tbtn:hover {
-    @apply !bg-violet-100;
+    @apply !bg-primary-100;
 }
 
 .multiselect__option--highlight,
 .multiselect__tag,
 .multiselect__spinner:after {
-    @apply !bg-violet-100 dark:!bg-cherry-600;
-    @apply !text-violet-600 dark:!text-slate-50;
+    @apply !bg-primary-100 dark:!bg-cherry-600;
+    @apply !text-primary-600 dark:!text-slate-50;
 }
 
 .multiselect__option--selected.multiselect__option--highlight,
 .multiselect__option--highlight:after {
-    @apply !bg-violet-100 dark:!bg-cherry-600;;
-    @apply !text-violet-600 dark:!text-slate-50;
+    @apply !bg-primary-100 dark:!bg-cherry-600;;
+    @apply !text-primary-600 dark:!text-slate-50;
 }
 
 .multiselect__option--highlight {
-    @apply !bg-violet-100 dark:!bg-cherry-600;
-    @apply !text-violet-600 dark:!text-slate-50;;
+    @apply !bg-primary-100 dark:!bg-cherry-600;
+    @apply !text-primary-600 dark:!text-slate-50;;
 
 }
 
 .multiselect__option--highlight.multiselect__option--selected.multiselect__option,
 .multiselect__option--selected.multiselect__option--highlight {
-    @apply !bg-violet-100 dark:!bg-cherry-600;
+    @apply !bg-primary-100 dark:!bg-cherry-600;
     @apply !text-red-600 dark:!text-red-600;
 }
 
 .multiselect__tag-icon:after {
-    @apply !text-violet-600 dark:!bg-cherry-600 dark:!text-slate-50;
+    @apply !text-primary-600 dark:!bg-cherry-600 dark:!text-slate-50;
 }
 
 .multiselect__content-wrapper, .multiselect__tags, .multiselect__input, .multiselect__single {
-    @apply bg-violet-100 dark:bg-cherry-900 dark:!text-slate-50 dark:hover:border-slate-300 dark:border-gray-600;
+    @apply bg-primary-100 dark:bg-cherry-900 dark:!text-slate-50 dark:hover:border-slate-300 dark:border-gray-600;
 }
 
 /**

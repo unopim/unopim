@@ -110,7 +110,7 @@ async function clearWebhookLogs(adminPage) {
   const result = await adminPage.evaluate(async () => {
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
 
-    const listing = await fetch('/admin/webhook/logs', {
+    const listing = await fetch('/admin/configuration/webhook/logs', {
       credentials: 'same-origin',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
@@ -125,7 +125,7 @@ async function clearWebhookLogs(adminPage) {
 
     if (ids.length === 0) return { ok: true, deleted: 0 };
 
-    const del = await fetch('/admin/webhook/logs/mass-delete', {
+    const del = await fetch('/admin/configuration/webhook/logs/mass-delete', {
       method:      'POST',
       credentials: 'same-origin',
       headers: {

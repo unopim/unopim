@@ -29,13 +29,13 @@
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-media-images-template">
-        <div class="grid">
+        <div class="grid" data-media-control>
             <div :class="responsive ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3' : 'flex flex-wrap gap-3'">
                 {{-- Add Image tile (always first; hidden when single-image and one is uploaded) --}}
                 <template v-if="allowMultiple || images.length == 0">
                     <label
-                        class="group flex flex-col justify-center items-center rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
-                        :class="[responsive ? 'min-h-[160px]' : '', isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : '']"
+                        class="group flex flex-col justify-center items-center rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-primary-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-primary-500 dark:hover:border-primary-400 hover:shadow-md"
+                        :class="[responsive ? 'min-h-[160px]' : '', isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : '']"
                         :style="responsive ? null : { width: width, height: height, minWidth: '120px', minHeight: '120px' }"
                         v-if="ai.enabled"
                         :for="$.uid + '_imageInput'"
@@ -45,7 +45,7 @@
                         @dragleave.prevent="isDragging = false"
                         @drop.prevent="onDrop"
                     >
-                        <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
+                        <span class="icon-image text-3xl text-gray-400 group-hover:text-primary-600 transition-colors"></span>
                         <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
                             @lang('admin::app.components.media.images.add-image-btn')
                         </p>
@@ -59,8 +59,8 @@
 
                     <label
                         v-else
-                        class="group flex flex-col justify-center items-center rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
-                        :class="[responsive ? 'min-h-[160px]' : '', isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : '']"
+                        class="group flex flex-col justify-center items-center rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-primary-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-primary-500 dark:hover:border-primary-400 hover:shadow-md"
+                        :class="[responsive ? 'min-h-[160px]' : '', isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : '']"
                         :style="responsive ? null : { width: width, height: height, minWidth: '120px', minHeight: '120px' }"
                         :for="$.uid + '_imageInput'"
                         @dragover.prevent="isDragging = true"
@@ -68,7 +68,7 @@
                         @dragleave.prevent="isDragging = false"
                         @drop.prevent="onDrop"
                     >
-                        <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
+                        <span class="icon-image text-3xl text-gray-400 group-hover:text-primary-600 transition-colors"></span>
                         <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
                             @lang('admin::app.components.media.images.add-image-btn')
                         </p>
@@ -209,7 +209,7 @@
                                 <template v-else>
                                     <p class="text-lg text-gray-800 truncate dark:text-white font-bold">
                                         <span
-                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                                             @click="ai.images = []"
                                         ></span>
 
@@ -351,7 +351,7 @@
                                     <div class="grid grid-cols-4 gap-5">
                                         <div
                                             class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
-                                            :class="{'!border-violet-700 ': image.selected}"
+                                            :class="{'!border-primary-700 ': image.selected}"
                                             v-for="image in ai.images"
                                             @click="selectImage(image, allowMultiple)"
                                         >
@@ -393,14 +393,14 @@
                                             :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
                                             <template v-if="isLoading">
                                                 <img
-                                                    class="animate-spin h-5 w-5 text-violet-700"
+                                                    class="animate-spin h-5 w-5 text-primary-700"
                                                     src="{{ unopim_asset('images/spinner.svg') }}"
                                                 />
                                                 @lang('admin::app.components.tinymce.ai-generation.generating')
                                             </template>
 
                                             <template v-else>
-                                                <span class="icon-magic text-2xl text-violet-700"></span>
+                                                <span class="icon-magic text-2xl text-primary-700"></span>
                                                 @lang('admin::app.components.tinymce.ai-generation.generate')
                                             </template>
                                         </button>
@@ -413,14 +413,14 @@
                                             :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
                                             <template v-if="isLoading">
                                                 <img
-                                                    class="animate-spin h-5 w-5 text-violet-700"
+                                                    class="animate-spin h-5 w-5 text-primary-700"
                                                     src="{{ unopim_asset('images/spinner.svg') }}"
                                                 />
                                                 @lang('admin::app.components.media.images.ai-generation.regenerating')
                                             </template>
 
                                             <template v-else>
-                                                <span class="icon-magic text-2xl text-violet-700"></span>
+                                                <span class="icon-magic text-2xl text-primary-700"></span>
                                                 @lang('admin::app.components.media.images.ai-generation.regenerate')
                                             </template>
                                         </button>
@@ -446,7 +446,7 @@
 
     <script type="text/x-template" id="v-media-image-item-template">
         <div
-            class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-700"
+            class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700"
             :style="responsive ? null : { width: width, minWidth: '120px' }"
         >
             <div

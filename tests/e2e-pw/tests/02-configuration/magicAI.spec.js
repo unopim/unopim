@@ -3,10 +3,10 @@ const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
-const MAGIC_AI_CONFIG_URL = '/admin/configuration/general/magic_ai';
-const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platform';
-const MAGIC_AI_PROMPT_URL = '/admin/magic-ai/prompt';
-const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/system-prompt';
+const MAGIC_AI_CONFIG_URL = '/admin/magic-ai/settings';
+const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platforms';
+const MAGIC_AI_PROMPT_URL = '/admin/magic-ai/prompts';
+const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/system-prompts';
 
 async function ensureMagicAITextEnabled(adminPage) {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
@@ -176,7 +176,7 @@ test.describe('UnoPim Magic AI Test Cases', () => {
 
 test('1.1 - Verify AI Platforms page opens with onboarding', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage).toHaveURL(/.*\/admin\/magic-ai\/platform/);
+  await expect(adminPage).toHaveURL(/.*\/admin\/magic-ai\/platforms/);
   await expect(adminPage.locator('#app').getByText('AI Platforms', { exact: true })).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Add Platform' })).toBeVisible();
 });
@@ -260,7 +260,7 @@ test('2.1 - Verify Magic AI is visible in sidebar', async ({ adminPage }) => {
 
 test('2.2 - Verify config page opens with three sections', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage).toHaveURL(/.*\/admin\/configuration\/general\/magic_ai/);
+  await expect(adminPage).toHaveURL(/.*\/admin\/magic-ai\/settings/);
   await expect(adminPage.locator('#app').getByText('Text Generation', { exact: true })).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Image Generation', { exact: true })).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Translation', { exact: true })).toBeVisible();
@@ -367,7 +367,7 @@ test('2.9 - Save Configuration without any changes', async ({ adminPage }) => {
 
 test('3.1 - Verify System Prompt page opens', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage).toHaveURL(/.*admin\/system-prompt.*/);
+  await expect(adminPage).toHaveURL(/.*admin\/system-prompts.*/);
   await expect(adminPage.getByRole('button', { name: 'Create System Prompt' })).toBeVisible();
 });
 
@@ -509,7 +509,7 @@ test('3.10 - Search system prompts in datagrid', async ({ adminPage }) => {
 
 test('4.1 - Verify Prompt page opens', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PROMPT_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage).toHaveURL(/.*admin\/magic-ai\/prompt.*/);
+  await expect(adminPage).toHaveURL(/.*admin\/magic-ai\/prompts.*/);
   await expect(adminPage.getByRole('button', { name: 'Create Prompt' })).toBeVisible();
 });
 

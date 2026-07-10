@@ -5,7 +5,7 @@ const { clickSave } = require('../../utils/helpers');
  * Helper: Navigate to the Default family's Completeness tab with all rows visible.
  */
 async function goToDefaultFamilyCompleteness(adminPage) {
-  await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+  await adminPage.goto('/admin/catalog/attribute-families', { waitUntil: 'load' });
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('default');
   await adminPage.keyboard.press('Enter');

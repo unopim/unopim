@@ -16,7 +16,7 @@
 
     <x-slot:tabs>
         <a href="?completeness">
-            <div class="{{  $activeTab === 'completeness' ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
+            <div class="{{  $activeTab === 'completeness' ? '-mb-px border-primary-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
                 @lang('completeness::app.components.layouts.sidebar.completeness')
             </div>
         </a>
@@ -33,12 +33,8 @@
 
                     {!! view_render_event('unopim.admin.catalog.families.edit.edit_form_control.before', ['attributeFamily' => $attributeFamily]) !!}
 
-                    <div class="flex justify-between items-center">
-                        <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                            @lang('admin::app.catalog.families.edit.title')
-                        </p>
-
-                        <div class="flex gap-x-2.5 items-center">
+                    <x-admin::page-header :title="trans('admin::app.catalog.families.edit.title')">
+                        <x-slot:actions>
                             <a
                                 href="{{ route('admin.catalog.families.index') }}"
                                 class="transparent-button"
@@ -46,14 +42,14 @@
                                 @lang('admin::app.catalog.families.edit.back-btn')
                             </a>
 
-                            <button 
-                                type="submit" 
+                            <button
+                                type="submit"
                                 class="primary-button"
                             >
                                 @lang('admin::app.catalog.families.edit.save-btn')
                             </button>
-                        </div>
-                    </div>
+                        </x-slot>
+                    </x-admin::page-header>
 
                     <div class="flex gap-2.5 mt-3.5">
 
@@ -155,7 +151,7 @@
                         
                         <div class="flex gap-x-1 items-center">
                             <div
-                                class="px-3 py-1.5 border-2 border-transparent rounded-md text-red-600 font-semibold whitespace-nowrap transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 cursor-pointer"
+                                class="px-3 py-1.5 border-2 border-transparent rounded-md text-red-600 font-semibold whitespace-nowrap transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 cursor-pointer"
                                 @click="deleteGroup"
                             >
                                 @lang('admin::app.catalog.families.edit.delete-group-btn')
@@ -196,13 +192,13 @@
                                     <div class="">
                                         <div class="flex items-center group">
                                             <i
-                                                class="icon-chevron-down text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 group-hover:text-gray-800"
+                                                class="icon-chevron-down text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 group-hover:text-gray-800"
                                                 @click="element.hide = ! element.hide"
                                             >
                                             </i>
                                             <div
                                                 class="group_node flex gap-[6px] max-w-max py-[6px] ltr:pr-[6px] rtl:pl-[6px] rounded transition-all text-gray-600 dark:text-gray-300 group cursor-pointer"
-                                                :class="{'bg-violet-100 dark:text-violet-800 text-violet-600 group-hover:text-gray-800 dark:group-hover:text-violet-800': selectedGroup.id == element.id}"
+                                                :class="{'bg-primary-100 dark:text-primary-800 text-primary-600 group-hover:text-gray-800 dark:group-hover:text-primary-800': selectedGroup.id == element.id}"
                                                 @click="groupSelected(element)"
                                             >
                                                 <i class="icon-drag text-xl transition-all group-hover:text-gray-800 dark:group-hover:text-white cursor-grab"></i>
@@ -215,7 +211,7 @@
 
                                                 <span
                                                     class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs"
-                                                    :class="{'bg-violet-100 dark:text-violet-800 text-violet-600 group-hover:text-gray-800 dark:group-hover:text-gray-800': selectedGroup.id == element.id}"
+                                                    :class="{'bg-primary-100 dark:text-primary-800 text-primary-600 group-hover:text-gray-800 dark:group-hover:text-gray-800': selectedGroup.id == element.id}"
                                                     v-text="element?.label ?? element.name"
                                                 >
                                                 </span>
@@ -339,14 +335,14 @@
 
                                 <div class="flex gap-1 items-left justify-right mt-2.5">
                                     <a @click="changePage(currentPage - 1)">
-                                        <div class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
+                                        <div class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-primary-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
                                             <span class="icon-chevron-left text-2xl"></span>
                                         </div>
                                     </a>
 
                                     <a @click="changePage(currentPage + 1)">
                                         <div
-                                            class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
+                                            class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-primary-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
                                             <span class="icon-chevron-right text-2xl"></span>
                                         </div>
                                     </a>

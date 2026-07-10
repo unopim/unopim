@@ -8,7 +8,12 @@ import.meta.glob(["../images/**", "../fonts/**"]);
  */
 import { createApp } from "vue/dist/vue.esm-bundler";
 
+import DOMPurify from "dompurify";
+
 import { HEADERS, EMITTER_EVENTS } from "./constants";
+
+// Expose DOMPurify for inline component scripts (e.g. AI chat widget); no CDN.
+window.DOMPurify = DOMPurify;
 
 /**
  * Main root application registry.

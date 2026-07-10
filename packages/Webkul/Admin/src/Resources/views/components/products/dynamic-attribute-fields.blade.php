@@ -328,7 +328,7 @@
                             <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                 <div class="flex justify-between">
                                     <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                         @click.stop.prevent="previewImage(option)"
                                     ></span>
                                 </div>
@@ -355,7 +355,7 @@
                             <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                 <div class="flex justify-between">
                                     <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                         @mousedown.stop.prevent="previewImage(option)"
                                     ></span>
                                 </div>
@@ -382,7 +382,7 @@
                                 <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                     <div class="flex justify-between">
                                         <span
-                                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                             @mousedown.stop.prevent="previewImage(option)"
                                         ></span>
                                     </div>

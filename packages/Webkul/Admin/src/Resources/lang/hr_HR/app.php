@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Uredi korisnika',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Potvrdite lozinku prije brisanja',
+                    'enter-current-password' => 'Unesite trenutnu lozinku',
+                    'password'               => 'Lozinka',
+                    'confirm-delete'         => 'Potvrdite brisanje ovog računa',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Natrag',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => 'Postavke sustava',
             'back'               => 'Natrag',
-            'info'               => 'Upravljajte izgledom, e-poštom (SMTP) i ispravljanjem pogrešaka s jednog mjesta.',
+            'info'               => 'Upravljajte postavkama sustava s jednog mjesta.',
             'search-placeholder' => 'Pretraži postavke',
             'save-btn'           => 'Spremi',
             'save-message'       => 'Postavke su uspješno spremljene.',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'obriši',
             ],
             'create' => [
-                'title'        => 'Sistemski prompt',
-                'create-btn'   => 'Stvori sistemski prompt',
-                'edit-title'   => 'Uredi sistemski prompt',
-                'create-title' => 'Stvori novi sistemski prompt',
-                'label-title'  => 'Naslov',
-                'max-tokens'   => 'Maks. izlazni tokeni',
-                'temperature'  => 'Temperatura',
-                'type'         => 'Tip',
-                'prompt'       => 'Upit',
-                'save-btn'     => 'Spremi prompt',
-                'prompt-tone'  => 'Ton prompta',
+                'title'               => 'Sistemski prompt',
+                'create-btn'          => 'Stvori sistemski prompt',
+                'edit-title'          => 'Uredi sistemski prompt',
+                'create-title'        => 'Stvori novi sistemski prompt',
+                'label-title'         => 'Naslov',
+                'max-tokens'          => 'Maks. izlazni tokeni',
+                'temperature'         => 'Temperatura',
+                'type'                => 'Tip',
+                'prompt'              => 'Upit',
+                'save-btn'            => 'Spremi prompt',
+                'prompt-tone'         => 'Ton prompta',
+                'max-tokens-tooltip'  => 'Dopušteni raspon najviše izlaznih tokena: 100 do 5000 tokena',
+                'temperature-tooltip' => 'Temperatura kontrolira kreativnost. Raspon: 0 do 2. Niže vrijednosti (npr. 0,4) daju točnije i usredotočenije odgovore.',
             ],
             'message' => [
                 'save-success'   => 'Sistemski prompt uspješno spremljen.',

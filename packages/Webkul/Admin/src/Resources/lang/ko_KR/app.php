@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => '사용자 편집',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => '삭제하기 전에 비밀번호 확인',
+                    'enter-current-password' => '현재 비밀번호 입력',
+                    'password'               => '비밀번호',
+                    'confirm-delete'         => '이 계정 삭제 확인',
+                ],
             ],
             'edit' => [
                 'back-btn'         => '뒤로',
@@ -1654,7 +1661,7 @@ return [
             'current-user-delete-error' => '로그인한 사용자는 삭제할 수 없습니다.',
         ],
         'system-settings' => [
-            'info'               => '모양, 이메일(SMTP), 디버그 설정을 한 곳에서 관리하세요.',
+            'info'               => '시스템 설정을 한 곳에서 관리하세요.',
             'title'              => '시스템 설정',
             'back'               => '뒤로',
             'search-placeholder' => '설정 검색',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => '삭제',
             ],
             'create' => [
-                'title'        => '시스템 프롬프트',
-                'create-btn'   => '시스템 프롬프트 만들기',
-                'edit-title'   => '시스템 프롬프트 편집',
-                'create-title' => '새 시스템 프롬프트 만들기',
-                'label-title'  => '제목',
-                'max-tokens'   => '최대 출력 토큰 수',
-                'temperature'  => '온도',
-                'type'         => '유형',
-                'prompt'       => '프롬프트',
-                'save-btn'     => '프롬프트 저장',
-                'prompt-tone'  => '프롬프트 톤',
+                'title'               => '시스템 프롬프트',
+                'create-btn'          => '시스템 프롬프트 만들기',
+                'edit-title'          => '시스템 프롬프트 편집',
+                'create-title'        => '새 시스템 프롬프트 만들기',
+                'label-title'         => '제목',
+                'max-tokens'          => '최대 출력 토큰 수',
+                'temperature'         => '온도',
+                'type'                => '유형',
+                'prompt'              => '프롬프트',
+                'save-btn'            => '프롬프트 저장',
+                'prompt-tone'         => '프롬프트 톤',
+                'max-tokens-tooltip'  => '허용되는 최대 출력 토큰 범위: 100~5000 토큰',
+                'temperature-tooltip' => '온도는 창의성을 제어합니다. 범위: 0~2. 낮은 값(예: 0.4)일수록 더 정확하고 집중된 응답을 제공합니다.',
             ],
             'message' => [
                 'save-success'   => '시스템 프롬프트가 성공적으로 저장되었습니다.',

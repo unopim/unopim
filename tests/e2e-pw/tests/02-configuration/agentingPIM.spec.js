@@ -277,7 +277,7 @@ test('5.0 - Setup: Create OpenAI platform for chat tests', async ({ adminPageWit
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — skipping platform setup');
   test.setTimeout(60000);
 
-  await adminPageWithWidget.goto('/admin/magic-ai/platform', { waitUntil: 'networkidle' });
+  await adminPageWithWidget.goto('/admin/magic-ai/platforms', { waitUntil: 'networkidle' });
 
   // Check if platform already exists in the datagrid (before opening modal)
   const existingPlatform = adminPageWithWidget.locator('span[title="Edit"]');

@@ -7,12 +7,12 @@ use Webkul\AdminApi\Http\Controllers\Integrations\ApiKeysController;
  * Settings routes.
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
-    Route::prefix('integrations')->group(function () {
+    Route::prefix('configuration/integrations')->group(function () {
 
         /**
          * API keys routes.
          */
-        Route::controller(ApiKeysController::class)->prefix('api-keys')->group(function () {
+        Route::controller(ApiKeysController::class)->group(function () {
             Route::get('', 'index')->name('admin.configuration.integrations.index');
 
             Route::get('create', 'create')->name('admin.configuration.integrations.create');

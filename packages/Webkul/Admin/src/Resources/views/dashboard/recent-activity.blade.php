@@ -155,7 +155,7 @@
 
                 getEntityBadgeColor(entityType) {
                     const colors = {
-                        'product':          'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400',
+                        'product':          'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400',
                         'category':         'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400',
                         'attribute':        'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
                         'attributeFamily':  'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',

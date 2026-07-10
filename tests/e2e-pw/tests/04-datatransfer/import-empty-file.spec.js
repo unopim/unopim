@@ -42,7 +42,7 @@ test.describe('Import Empty File Validation (Issue #696)', () => {
 
     // Step 2: Click Import Now — should redirect to tracker page
     await adminPage.getByRole('button', { name: 'Import Now' }).click();
-    await adminPage.waitForURL(/\/admin\/settings\/data-transfer\/tracker/, { timeout: 30000 });
+    await adminPage.waitForURL(/\/admin\/data-transfer\/job-tracker/, { timeout: 30000 });
 
     // Step 3: Verify tracker page loaded with the import code (no PHP crash)
     await expect(adminPage.getByText(new RegExp(code, 'i'))).toBeVisible({ timeout: 10000 });

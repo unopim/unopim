@@ -38,6 +38,6 @@ test.describe('Sidebar fly-out submenu hover', () => {
 
     await families.click();
 
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families/);
   });
 });

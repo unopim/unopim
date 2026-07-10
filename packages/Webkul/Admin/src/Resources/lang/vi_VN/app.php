@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Chỉnh sửa người dùng',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Xác nhận mật khẩu trước khi xóa',
+                    'enter-current-password' => 'Nhập mật khẩu hiện tại',
+                    'password'               => 'Mật khẩu',
+                    'confirm-delete'         => 'Xác nhận xóa tài khoản này',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Quay lại',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => 'Cài đặt hệ thống',
             'back'               => 'Quay lại',
-            'info'               => 'Quản lý giao diện, email (SMTP) và gỡ lỗi từ một nơi duy nhất.',
+            'info'               => 'Quản lý cài đặt hệ thống từ một nơi duy nhất.',
             'search-placeholder' => 'Tìm kiếm cài đặt',
             'save-btn'           => 'Lưu',
             'save-message'       => 'Đã lưu cài đặt thành công.',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'xóa',
             ],
             'create' => [
-                'title'        => 'Lệnh hệ thống',
-                'create-btn'   => 'Tạo lệnh hệ thống',
-                'edit-title'   => 'Sửa lệnh hệ thống',
-                'create-title' => 'Tạo lệnh hệ thống mới',
-                'label-title'  => 'Tiêu đề',
-                'max-tokens'   => 'Token đầu ra tối đa',
-                'temperature'  => 'Nhiệt độ',
-                'type'         => 'Loại',
-                'prompt'       => 'Lệnh',
-                'save-btn'     => 'Lưu lệnh',
-                'prompt-tone'  => 'Giọng điệu lệnh',
+                'title'               => 'Lệnh hệ thống',
+                'create-btn'          => 'Tạo lệnh hệ thống',
+                'edit-title'          => 'Sửa lệnh hệ thống',
+                'create-title'        => 'Tạo lệnh hệ thống mới',
+                'label-title'         => 'Tiêu đề',
+                'max-tokens'          => 'Token đầu ra tối đa',
+                'temperature'         => 'Nhiệt độ',
+                'type'                => 'Loại',
+                'prompt'              => 'Lệnh',
+                'save-btn'            => 'Lưu lệnh',
+                'prompt-tone'         => 'Giọng điệu lệnh',
+                'max-tokens-tooltip'  => 'Phạm vi token đầu ra tối đa được phép: 100 đến 5000 token',
+                'temperature-tooltip' => 'Nhiệt độ kiểm soát khả năng sáng tạo. Phạm vi: 0 đến 2. Giá trị thấp hơn (ví dụ: 0,4) cho phản hồi chính xác và tập trung hơn.',
             ],
             'message' => [
                 'save-success'   => 'Lệnh hệ thống đã được lưu thành công.',

@@ -6,9 +6,9 @@
     $currentLocale = core()->getRequestedLocale();
 @endphp
 
-<x-admin::settings.page
+<x-admin::page
     :title="trans($entry['name'])"
-    :info="isset($entry['info']) ? trans($entry['info']) : ''"
+    :subtitle="isset($entry['info']) ? trans($entry['info']) : ''"
     :back="route('admin.settings.system.index')"
     :action="route('admin.settings.system.update', $entry['key'])"
     method="PUT"
@@ -38,4 +38,4 @@
     </div>
 
     {!! view_render_event('unopim.admin.system_settings.edit.'.$entry['key'].'.after', ['entry' => $entry]) !!}
-</x-admin::settings.page>
+</x-admin::page>

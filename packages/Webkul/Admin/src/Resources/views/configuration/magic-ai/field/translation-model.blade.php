@@ -55,7 +55,7 @@
                 @input="handleModelChange"
             />
 
-            <p v-if="loading" class="mt-1 text-xs text-violet-600">
+            <p v-if="loading" class="mt-1 text-xs text-primary-600">
                 @lang('admin::app.configuration.prompt.create.loading-models')
             </p>
             <p v-if="!currentOptions.length && !loading" class="mt-1 text-xs text-gray-400">

@@ -28,12 +28,8 @@
                 
                 {!! view_render_event('unopim.admin.catalog.attribute.groups.create._form_controls.before') !!}
 
-                <div class="flex justify-between items-center">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.catalog.attribute-groups.edit.title')
-                    </p>
-
-                    <div class="flex gap-x-2.5 items-center">
+                <x-admin::page-header :title="trans('admin::app.catalog.attribute-groups.edit.title')">
+                    <x-slot:actions>
                         <!-- Back Button -->
                         <a
                             href="{{ route('admin.catalog.attribute.groups.index') }}"
@@ -49,8 +45,8 @@
                         >
                             @lang('admin::app.catalog.attribute-groups.edit.save-btn')
                         </button>
-                    </div>
-                </div>
+                    </x-slot>
+                </x-admin::page-header>
 
                 <!-- body content -->
                 <div class="flex gap-2.5 mt-3.5">

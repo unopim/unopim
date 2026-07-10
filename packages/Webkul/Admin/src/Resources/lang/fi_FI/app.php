@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Muokkaa Käyttäjää',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Vahvista salasana ennen poistamista',
+                    'enter-current-password' => 'Anna nykyinen salasana',
+                    'password'               => 'Salasana',
+                    'confirm-delete'         => 'Vahvista tämän tilin poistaminen',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Takaisin',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => 'Järjestelmäasetukset',
             'back'               => 'Takaisin',
-            'info'               => 'Hallitse ulkoasua, sähköpostia (SMTP) ja virheenkorjausta yhdestä paikasta.',
+            'info'               => 'Hallitse järjestelmäasetuksia yhdestä paikasta.',
             'search-placeholder' => 'Hae asetuksia',
             'save-btn'           => 'Tallenna',
             'save-message'       => 'Asetukset tallennettu onnistuneesti.',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'poista',
             ],
             'create' => [
-                'title'        => 'Järjestelmäkehote',
-                'create-btn'   => 'Luo järjestelmäkehote',
-                'edit-title'   => 'Muokkaa järjestelmäkehotetta',
-                'create-title' => 'Luo uusi järjestelmäkehote',
-                'label-title'  => 'Otsikko',
-                'max-tokens'   => 'Maks. tulostokenit',
-                'temperature'  => 'Lämpötila',
-                'type'         => 'Tyyppi',
-                'prompt'       => 'Kehote',
-                'save-btn'     => 'Tallenna kehote',
-                'prompt-tone'  => 'Kehotteen sävy',
+                'title'               => 'Järjestelmäkehote',
+                'create-btn'          => 'Luo järjestelmäkehote',
+                'edit-title'          => 'Muokkaa järjestelmäkehotetta',
+                'create-title'        => 'Luo uusi järjestelmäkehote',
+                'label-title'         => 'Otsikko',
+                'max-tokens'          => 'Maks. tulostokenit',
+                'temperature'         => 'Lämpötila',
+                'type'                => 'Tyyppi',
+                'prompt'              => 'Kehote',
+                'save-btn'            => 'Tallenna kehote',
+                'prompt-tone'         => 'Kehotteen sävy',
+                'max-tokens-tooltip'  => 'Sallittu enimmäistulostetokenien alue: 100–5000 tokenia',
+                'temperature-tooltip' => 'Lämpötila säätelee luovuutta. Alue: 0–2. Pienemmät arvot (esim. 0,4) antavat tarkempia ja kohdennetumpia vastauksia.',
             ],
             'message' => [
                 'save-success'   => 'Järjestelmäkehote tallennettu onnistuneesti.',

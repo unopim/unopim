@@ -572,7 +572,7 @@
                         eventKey = `spreadsheet-cell-paste-${row}-${col}`;
                         let cell = this.$el.querySelector(`[data-row="${row}"][data-col="${col}"]`);
                         if (cell) {
-                            cell.classList.remove('bg-violet-50', 'dark:bg-violet-900/30');
+                            cell.classList.remove('bg-primary-50', 'dark:bg-primary-900/30');
                         }
                         this.$emitter.emit(eventKey, value);
                     }
@@ -582,7 +582,7 @@
                     const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
 
                     if (cell) {
-                        cell.classList.add('bg-violet-50', 'dark:bg-violet-900/30');
+                        cell.classList.add('bg-primary-50', 'dark:bg-primary-900/30');
                     }
                 },
 
@@ -590,7 +590,7 @@
                     const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
 
                     if (cell) {
-                        cell.classList.remove('bg-violet-50', 'dark:bg-violet-900/30');
+                        cell.classList.remove('bg-primary-50', 'dark:bg-primary-900/30');
                     }
                 },
 
@@ -772,14 +772,14 @@
                     toUnselect.forEach(row => {
                         const cell = this.$el.querySelector(`[data-row="${row}"][data-col="${col}"]`);
                         if (cell) {
-                            cell.classList.remove('bg-violet-50', 'dark:bg-violet-900/30');
+                            cell.classList.remove('bg-primary-50', 'dark:bg-primary-900/30');
                         }
                     });
 
                     toSelect.forEach(row => {
                         const cell = this.$el.querySelector(`[data-row="${row}"][data-col="${col}"]`);
                         if (cell) {
-                            cell.classList.add('bg-violet-50', 'dark:bg-violet-900/30');
+                            cell.classList.add('bg-primary-50', 'dark:bg-primary-900/30');
                         }
                     });
 

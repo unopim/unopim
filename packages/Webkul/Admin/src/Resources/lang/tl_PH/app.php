@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'I-edit ang Gumagamit',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Kumpirmahin ang password bago mag-delete',
+                    'enter-current-password' => 'Ilagay ang kasalukuyang password',
+                    'password'               => 'Password',
+                    'confirm-delete'         => 'Kumpirmahin ang pag-delete ng account na ito',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Bumalik',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => 'Mga Setting ng Sistema',
             'back'               => 'Bumalik',
-            'info'               => 'Pamahalaan ang hitsura, email (SMTP), at debug mula sa iisang lugar.',
+            'info'               => 'Pamahalaan ang mga setting ng sistema mula sa iisang lugar.',
             'search-placeholder' => 'Maghanap ng mga setting',
             'save-btn'           => 'I-save',
             'save-message'       => 'Matagumpay na na-save ang mga setting.',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'burahin',
             ],
             'create' => [
-                'title'        => 'System Prompt',
-                'create-btn'   => 'Lumikha ng System Prompt',
-                'edit-title'   => 'I-edit ang System Prompt',
-                'create-title' => 'Lumikha ng Bagong System Prompt',
-                'label-title'  => 'Pamagat',
-                'max-tokens'   => 'Pinakamataas na Output Tokens',
-                'temperature'  => 'Temperatura',
-                'type'         => 'Uri',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'I-save ang Prompt',
-                'prompt-tone'  => 'Tono ng Prompt',
+                'title'               => 'System Prompt',
+                'create-btn'          => 'Lumikha ng System Prompt',
+                'edit-title'          => 'I-edit ang System Prompt',
+                'create-title'        => 'Lumikha ng Bagong System Prompt',
+                'label-title'         => 'Pamagat',
+                'max-tokens'          => 'Pinakamataas na Output Tokens',
+                'temperature'         => 'Temperatura',
+                'type'                => 'Uri',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'I-save ang Prompt',
+                'prompt-tone'         => 'Tono ng Prompt',
+                'max-tokens-tooltip'  => 'Pinahihintulutang saklaw ng maximum na output token: 100 hanggang 5000 token',
+                'temperature-tooltip' => 'Kinokontrol ng temperatura ang pagkamalikhain. Saklaw: 0 hanggang 2. Ang mas mababang halaga (hal. 0.4) ay nagbibigay ng mas tumpak at nakatuong sagot.',
             ],
             'message' => [
                 'save-success'   => 'Matagumpay na na-save ang System Prompt.',

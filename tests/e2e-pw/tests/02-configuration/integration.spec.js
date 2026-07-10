@@ -31,7 +31,7 @@ async function createIntegration(adminPage, name) {
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
   await adminPage.locator('input[name="admin_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option').first().click();
-  await clickSaveAndExpect(adminPage, 'Save', /API Integration is created successfully/i, /\/admin\/integrations\/api-keys\/edit\//);
+  await clickSaveAndExpect(adminPage, 'Save', /API Integration is created successfully/i, /\/admin\/configuration\/integrations\/edit\//);
 }
 
 /**
@@ -126,7 +126,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await searchInDataGrid(adminPage, name);
     const row = adminPage.locator('div', { hasText: name });
     await row.locator('span[title="Edit"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/integrations\/api-keys\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/configuration\/integrations\/edit/);
 
     await deleteIntegration(adminPage, name);
   });

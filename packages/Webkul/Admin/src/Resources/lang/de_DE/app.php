@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Benutzer bearbeiten',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Passwort vor dem Löschen bestätigen',
+                    'enter-current-password' => 'Aktuelles Passwort eingeben',
+                    'password'               => 'Passwort',
+                    'confirm-delete'         => 'Löschen dieses Kontos bestätigen',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Zurück',
@@ -1654,7 +1661,7 @@ return [
             'current-user-delete-error' => 'Der angemeldete Benutzer kann nicht gelöscht werden.',
         ],
         'system-settings' => [
-            'info'               => 'Verwalten Sie Erscheinungsbild, E-Mail (SMTP) und Debugging an einem Ort.',
+            'info'               => 'Verwalten Sie die Systemeinstellungen an einem Ort.',
             'title'              => 'Systemeinstellungen',
             'back'               => 'Zurück',
             'search-placeholder' => 'Einstellungen durchsuchen',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'löschen',
             ],
             'create' => [
-                'title'        => 'System-Prompt',
-                'create-btn'   => 'System-Prompt erstellen',
-                'edit-title'   => 'System-Prompt bearbeiten',
-                'create-title' => 'Neuen System-Prompt erstellen',
-                'label-title'  => 'Titel',
-                'max-tokens'   => 'Max. Ausgabe-Token',
-                'temperature'  => 'Temperatur',
-                'type'         => 'Typ',
-                'prompt'       => 'Eingabeaufforderung',
-                'save-btn'     => 'Prompt speichern',
-                'prompt-tone'  => 'Prompt-Ton',
+                'title'               => 'System-Prompt',
+                'create-btn'          => 'System-Prompt erstellen',
+                'edit-title'          => 'System-Prompt bearbeiten',
+                'create-title'        => 'Neuen System-Prompt erstellen',
+                'label-title'         => 'Titel',
+                'max-tokens'          => 'Max. Ausgabe-Token',
+                'temperature'         => 'Temperatur',
+                'type'                => 'Typ',
+                'prompt'              => 'Eingabeaufforderung',
+                'save-btn'            => 'Prompt speichern',
+                'prompt-tone'         => 'Prompt-Ton',
+                'max-tokens-tooltip'  => 'Zulässiger Bereich für maximale Ausgabe-Token: 100 bis 5000 Token',
+                'temperature-tooltip' => 'Die Temperatur steuert die Kreativität. Bereich: 0 bis 2. Niedrigere Werte (z. B. 0,4) liefern genauere und fokussiertere Antworten.',
             ],
             'message' => [
                 'save-success'   => 'System-Prompt erfolgreich gespeichert.',

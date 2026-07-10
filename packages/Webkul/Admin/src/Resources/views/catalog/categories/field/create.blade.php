@@ -21,12 +21,8 @@
 
                 {!! view_render_event('unopim.admin.catalog.category_fields.create.create_form_controls.before') !!}
 
-                <div class="flex justify-between items-center">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.catalog.category_fields.create.title')
-                    </p>
-
-                    <div class="flex gap-x-2.5 items-center">
+                <x-admin::page-header :title="trans('admin::app.catalog.category_fields.create.title')">
+                    <x-slot:actions>
                         <a
                             href="{{ route('admin.catalog.category_fields.index') }}"
                             class="transparent-button"
@@ -40,8 +36,8 @@
                         >
                             @lang('admin::app.catalog.category_fields.create.save-btn')
                         </button>
-                    </div>
-                </div>
+                    </x-slot>
+                </x-admin::page-header>
 
                 <div class="flex gap-2.5 mt-3.5">
 
@@ -212,7 +208,7 @@
                                             item-key="id"
                                         >
                                             <template #item="{ element, index }">
-                                                <x-admin::table.thead.tr class="hover:bg-violet-50 dark:hover:bg-cherry-800" ::data-list="JSON.stringify(options)">
+                                                <x-admin::table.thead.tr class="hover:bg-primary-50 dark:hover:bg-cherry-800" ::data-list="JSON.stringify(options)">
                                                     <x-admin::table.td class="!px-0 text-center">
                                                         <i class="icon-drag text-2xl transition-all group-hover:text-gray-700 cursor-grab"></i>
 
@@ -253,13 +249,13 @@
 
                                                     <x-admin::table.td class="!px-0">
                                                         <span
-                                                            class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                                            class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                                             @click="editModal(element)"
                                                         >
                                                         </span>
 
                                                         <span
-                                                            class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                                            class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                                             @click="removeOption(element.id)"
                                                         >
                                                         </span>

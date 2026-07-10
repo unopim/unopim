@@ -80,7 +80,7 @@
                                 @change="toggleCategory(result.code)"
                             />
 
-                            <span class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"></span>
+                            <span class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-primary-700"></span>
 
                             <span
                                 class="text-sm text-gray-600 dark:text-gray-300 group-hover:text-gray-800 dark:group-hover:text-white"

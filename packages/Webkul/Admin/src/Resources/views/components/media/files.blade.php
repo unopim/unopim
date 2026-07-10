@@ -24,8 +24,8 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 {{-- Add File tile (always first; hidden once a file exists) --}}
                 <label
-                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
-                    :class="[errors['inputFiles.files[0]'] ? 'border-red-500 dark:border-red-500' : '', isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : '']"
+                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-primary-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-primary-500 dark:hover:border-primary-400 hover:shadow-md"
+                    :class="[errors['inputFiles.files[0]'] ? 'border-red-500 dark:border-red-500' : '', isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : '']"
                     :for="$.uid + '_fileInput'"
                     v-if="0 == inputFiles.length"
                     @dragover.prevent="isDragging = true"
@@ -33,7 +33,7 @@
                     @dragleave.prevent="isDragging = false"
                     @drop.prevent="onDrop"
                 >
-                    <span class="icon-folder text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
+                    <span class="icon-folder text-3xl text-gray-400 group-hover:text-primary-600 transition-colors"></span>
                     <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
                         @lang('admin::app.components.media.files.add-file-btn')
                     </p>
@@ -79,7 +79,7 @@
     </script>
 
     <script type="text/x-template" id="v-media-files-item-template">
-        <div class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-700">
+        <div class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700">
             <div class="relative flex flex-col items-center justify-center w-full h-[140px] bg-gray-50 dark:bg-cherry-800">
                 <span class="icon-folder text-5xl text-gray-400 dark:text-gray-500"></span>
                 <span class="mt-1 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">PDF</span>

@@ -97,7 +97,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
 
     // Edit action
     await searchAndEditFamily(adminPage, code);
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families\/edit/);
 
     // Copy action
     await navigateTo(adminPage, 'attributeFamilies');
@@ -106,7 +106,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Copy"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/copy/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families\/copy/);
 
     // Delete action — shows confirmation
     await navigateTo(adminPage, 'attributeFamilies');

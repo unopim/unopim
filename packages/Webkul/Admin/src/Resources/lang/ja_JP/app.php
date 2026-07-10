@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'ユーザーを編集',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => '削除する前にパスワードを確認',
+                    'enter-current-password' => '現在のパスワードを入力',
+                    'password'               => 'パスワード',
+                    'confirm-delete'         => 'このアカウントの削除を確認',
+                ],
             ],
             'edit' => [
                 'back-btn'         => '戻る',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => 'システム設定',
             'back'               => '戻る',
-            'info'               => '外観、メール（SMTP）、デバッグの設定を一か所で管理できます。',
+            'info'               => 'システム設定を一か所で管理できます。',
             'search-placeholder' => '設定を検索',
             'save-btn'           => '保存',
             'save-message'       => '設定が正常に保存されました。',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => '削除',
             ],
             'create' => [
-                'title'        => 'システムプロンプト',
-                'create-btn'   => 'システムプロンプトを作成',
-                'edit-title'   => 'システムプロンプトを編集',
-                'create-title' => '新しいシステムプロンプトを作成',
-                'label-title'  => 'タイトル',
-                'max-tokens'   => '最大出力トークン数',
-                'temperature'  => '温度',
-                'type'         => 'タイプ',
-                'prompt'       => 'プロンプト',
-                'save-btn'     => 'プロンプトを保存',
-                'prompt-tone'  => 'プロンプトトーン',
+                'title'               => 'システムプロンプト',
+                'create-btn'          => 'システムプロンプトを作成',
+                'edit-title'          => 'システムプロンプトを編集',
+                'create-title'        => '新しいシステムプロンプトを作成',
+                'label-title'         => 'タイトル',
+                'max-tokens'          => '最大出力トークン数',
+                'temperature'         => '温度',
+                'type'                => 'タイプ',
+                'prompt'              => 'プロンプト',
+                'save-btn'            => 'プロンプトを保存',
+                'prompt-tone'         => 'プロンプトトーン',
+                'max-tokens-tooltip'  => '許可される最大出力トークンの範囲：100〜5000トークン',
+                'temperature-tooltip' => '温度は創造性を制御します。範囲：0〜2。低い値（例：0.4）ほど、より正確で焦点の絞られた応答になります。',
             ],
             'message' => [
                 'save-success'   => 'システムプロンプトが正常に保存されました。',

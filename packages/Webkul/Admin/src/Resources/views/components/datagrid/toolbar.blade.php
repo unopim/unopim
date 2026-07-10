@@ -30,7 +30,7 @@
                                 v-if="massAction?.options?.length"
                             >
                                 <a
-                                    class="flex gap-1.5 justify-between whitespace-no-wrap cursor-not-allowed rounded-t px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-cherry-800"
+                                    class="flex gap-1.5 justify-between whitespace-no-wrap cursor-not-allowed rounded-t px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-cherry-800"
                                     href="javascript:void(0);"
                                 >
                                     <i
@@ -50,7 +50,7 @@
                                 <ul class="absolute ltr:left-full rtl:right-full top-0 z-10 hidden w-max min-w-[150px] border dark:border-cherry-800 rounded bg-white dark:bg-cherry-800 shadow-[0_5px_20px_rgba(0,0,0,0.15)] group-hover/item:block">
                                     <li v-for="option in massAction.options">
                                         <a
-                                            class="whitespace-no-wrap block rounded-t px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-cherry-800"
+                                            class="whitespace-no-wrap block rounded-t px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-cherry-800"
                                             href="javascript:void(0);"
                                             v-text="option.label"
                                             @click="performMassAction(massAction, option)"
@@ -62,7 +62,7 @@
 
                             <li v-else>
                                 <a
-                                    class="flex gap-1.5 whitespace-no-wrap rounded-b px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-cherry-800"
+                                    class="flex gap-1.5 whitespace-no-wrap rounded-b px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-cherry-800"
                                     href="javascript:void(0);"
                                     @click="performMassAction(massAction)"
                                 >
@@ -95,20 +95,12 @@
                 v-else
             >
                 <div class="flex max-w-[445px] items-center max-sm:w-full max-sm:max-w-full">
-                    <div class="relative w-full">
-                        <input
-                            type="text"
-                            name="search"
-                            :value="getAppliedColumnValues('all')"
-                            class="block w-full rounded-lg border dark:border-cherry-800 bg-white dark:bg-cherry-900 py-1.5 ltr:pl-3 rtl:pr-3 ltr:pr-10 rtl:pl-10 leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400  dark:focus:border-gray-400"
-                            :placeholder="available.searchPlaceholder"
-                            autocomplete="off"
-                            @keydown.enter.prevent="filterPage"
-                        >
-
-                        <div class="icon-search pointer-events-none absolute ltr:right-2.5 rtl:left-2.5 top-2 flex items-center text-2xl" aria-hidden="true">
-                        </div>
-                    </div>
+                    <x-admin::search
+                        name="search"
+                        ::value="getAppliedColumnValues('all')"
+                        ::placeholder="available.searchPlaceholder"
+                        @keydown.enter.prevent="filterPage"
+                    />
                 </div>
 
                 <div class="ltr:pl-2.5 rtl:pr-2.5">
@@ -130,7 +122,7 @@
                     <div>
                         <div
                             class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
-                            :class="{'[&>*]:text-violet-700 [&>*]:dark:text-white': applied.filters.columns.length > 1}"
+                            :class="{'[&>*]:text-primary-700 [&>*]:dark:text-white': applied.filters.columns.length > 1}"
                             v-if="available?.columns?.filter(col => col?.filterable == true)?.length"
                         >
                             <span class="icon-filter text-2xl" aria-hidden="true"></span>
@@ -164,7 +156,7 @@
                     <div class="mb-4" v-if="getInactiveFilterColumns().length || filterAttributesSrc">
                         <button
                             type="button"
-                            class="flex items-center gap-1.5 w-full justify-center rounded-md border border-dashed border-gray-300 dark:border-cherry-800 px-3 py-2 text-sm font-medium text-violet-700 dark:text-violet-400 transition-all hover:border-violet-400 hover:bg-violet-50 dark:hover:border-violet-400 dark:hover:bg-cherry-800"
+                            class="flex items-center gap-1.5 w-full justify-center rounded-md border border-dashed border-gray-300 dark:border-cherry-800 px-3 py-2 text-sm font-medium text-primary-700 dark:text-primary-400 transition-all hover:border-primary-400 hover:bg-primary-50 dark:hover:border-primary-400 dark:hover:bg-cherry-800"
                             @click="toggleFilterPicker()"
                         >
                             <span class="icon-add text-lg"></span>
@@ -194,7 +186,7 @@
                                 <p
                                     v-for="column in filterPickerList()"
                                     :key="column.index"
-                                    class="cursor-pointer px-3 py-2 text-sm text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-900"
+                                    class="cursor-pointer px-3 py-2 text-sm text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 dark:hover:bg-cherry-900"
                                     v-text="column.label"
                                     @click="selectFilterAttribute(column)"
                                 ></p>
@@ -270,7 +262,7 @@
                 <div class="flex items-center gap-1" role="navigation" aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.page-number')">
                     <button
                         type="button"
-                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                         @click="changePage('first')"
                         title="@lang('admin::app.components.datagrid.toolbar.pagination.first-page')"
                         aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.first-page')"
@@ -279,7 +271,7 @@
                     </button>
                     <button
                         type="button"
-                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                         @click="changePage('previous')"
                         title="@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')"
                         aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')"
@@ -289,7 +281,7 @@
 
                     <button
                         type="button"
-                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                         @click="changePage('next')"
                         title="@lang('admin::app.components.datagrid.toolbar.pagination.next-page')"
                         aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.next-page')"
@@ -298,7 +290,7 @@
                     </button>
                     <button
                         type="button"
-                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                         @click="changePage('last')"
                         title="@lang('admin::app.components.datagrid.toolbar.pagination.last-page')"
                         aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.last-page')"

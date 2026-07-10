@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => '編輯用戶',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => '刪除前確認密碼',
+                    'enter-current-password' => '輸入目前的密碼',
+                    'password'               => '密碼',
+                    'confirm-delete'         => '確認刪除此帳戶',
+                ],
             ],
             'edit' => [
                 'back-btn'         => '返回',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => '系統設定',
             'back'               => '返回',
-            'info'               => '在同一處管理外觀、電子郵件 (SMTP) 與除錯設定。',
+            'info'               => '在同一處管理所有系統設定。',
             'search-placeholder' => '搜尋設定',
             'save-btn'           => '儲存',
             'save-message'       => '設定已成功儲存。',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => '刪除',
             ],
             'create' => [
-                'title'        => '系統提示詞',
-                'create-btn'   => '建立系統提示詞',
-                'edit-title'   => '編輯系統提示詞',
-                'create-title' => '建立新系統提示詞',
-                'label-title'  => '標題',
-                'max-tokens'   => '最大輸出權杖數',
-                'temperature'  => '溫度',
-                'type'         => '類型',
-                'prompt'       => '提示詞',
-                'save-btn'     => '儲存提示詞',
-                'prompt-tone'  => '提示詞語氣',
+                'title'               => '系統提示詞',
+                'create-btn'          => '建立系統提示詞',
+                'edit-title'          => '編輯系統提示詞',
+                'create-title'        => '建立新系統提示詞',
+                'label-title'         => '標題',
+                'max-tokens'          => '最大輸出權杖數',
+                'temperature'         => '溫度',
+                'type'                => '類型',
+                'prompt'              => '提示詞',
+                'save-btn'            => '儲存提示詞',
+                'prompt-tone'         => '提示詞語氣',
+                'max-tokens-tooltip'  => '允許的最大輸出權杖範圍：100 到 5000 個權杖',
+                'temperature-tooltip' => '溫度控制創造力。範圍：0 到 2。較低的值（例如 0.4）會給出更準確、更聚焦的回覆。',
             ],
             'message' => [
                 'save-success'   => '系統提示詞儲存成功。',

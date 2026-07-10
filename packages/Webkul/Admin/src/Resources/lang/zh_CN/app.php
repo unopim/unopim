@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => '编辑用户',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => '删除前确认密码',
+                    'enter-current-password' => '输入当前密码',
+                    'password'               => '密码',
+                    'confirm-delete'         => '确认删除此账户',
+                ],
             ],
             'edit' => [
                 'back-btn'         => '后退',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => '系统设置',
             'back'               => '返回',
-            'info'               => '在一个地方管理外观、电子邮件 (SMTP) 和调试设置。',
+            'info'               => '在一个地方管理所有系统设置。',
             'search-placeholder' => '搜索设置',
             'save-btn'           => '保存',
             'save-message'       => '设置已成功保存。',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => '删除',
             ],
             'create' => [
-                'title'        => '系统提示词',
-                'create-btn'   => '创建系统提示词',
-                'edit-title'   => '编辑系统提示词',
-                'create-title' => '创建新系统提示词',
-                'label-title'  => '标题',
-                'max-tokens'   => '最大输出令牌数',
-                'temperature'  => '温度',
-                'type'         => '类型',
-                'prompt'       => '提示词',
-                'save-btn'     => '保存提示词',
-                'prompt-tone'  => '提示词语气',
+                'title'               => '系统提示词',
+                'create-btn'          => '创建系统提示词',
+                'edit-title'          => '编辑系统提示词',
+                'create-title'        => '创建新系统提示词',
+                'label-title'         => '标题',
+                'max-tokens'          => '最大输出令牌数',
+                'temperature'         => '温度',
+                'type'                => '类型',
+                'prompt'              => '提示词',
+                'save-btn'            => '保存提示词',
+                'prompt-tone'         => '提示词语气',
+                'max-tokens-tooltip'  => '允许的最大输出令牌范围：100 到 5000 个令牌',
+                'temperature-tooltip' => '温度控制创造力。范围：0 到 2。较低的值（例如 0.4）会给出更准确、更聚焦的回复。',
             ],
             'message' => [
                 'save-success'   => '系统提示词保存成功。',

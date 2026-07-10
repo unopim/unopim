@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Kullanıcıyı Düzenle',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Silmeden önce parolayı onaylayın',
+                    'enter-current-password' => 'Mevcut parolayı girin',
+                    'password'               => 'Parola',
+                    'confirm-delete'         => 'Bu hesabın silinmesini onaylayın',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Geri',
@@ -1656,7 +1663,7 @@ return [
         'system-settings' => [
             'title'              => 'Sistem Ayarları',
             'back'               => 'Geri',
-            'info'               => 'Görünüm, e-posta (SMTP) ve hata ayıklama ayarlarını tek bir yerden yönetin.',
+            'info'               => 'Sistem ayarlarını tek bir yerden yönetin.',
             'search-placeholder' => 'Ayarlarda ara',
             'save-btn'           => 'Kaydet',
             'save-message'       => 'Ayarlar başarıyla kaydedildi.',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'sil',
             ],
             'create' => [
-                'title'        => 'Sistem Komutu',
-                'create-btn'   => 'Sistem Komutu Oluştur',
-                'edit-title'   => 'Sistem Komutunu Düzenle',
-                'create-title' => 'Yeni Sistem Komutu Oluştur',
-                'label-title'  => 'Başlık',
-                'max-tokens'   => 'Maksimum Çıktı Token',
-                'temperature'  => 'Sıcaklık',
-                'type'         => 'Tür',
-                'prompt'       => 'Komut',
-                'save-btn'     => 'Komutu Kaydet',
-                'prompt-tone'  => 'Komut Tonu',
+                'title'               => 'Sistem Komutu',
+                'create-btn'          => 'Sistem Komutu Oluştur',
+                'edit-title'          => 'Sistem Komutunu Düzenle',
+                'create-title'        => 'Yeni Sistem Komutu Oluştur',
+                'label-title'         => 'Başlık',
+                'max-tokens'          => 'Maksimum Çıktı Token',
+                'temperature'         => 'Sıcaklık',
+                'type'                => 'Tür',
+                'prompt'              => 'Komut',
+                'save-btn'            => 'Komutu Kaydet',
+                'prompt-tone'         => 'Komut Tonu',
+                'max-tokens-tooltip'  => 'İzin verilen maksimum çıkış belirteci aralığı: 100 ile 5000 belirteç',
+                'temperature-tooltip' => 'Sıcaklık yaratıcılığı kontrol eder. Aralık: 0 ile 2. Daha düşük değerler (örneğin 0,4) daha doğru ve odaklı yanıtlar verir.',
             ],
             'message' => [
                 'save-success'   => 'Sistem komutu başarıyla kaydedildi.',

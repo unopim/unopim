@@ -19,7 +19,7 @@
     <x-slot:tabs>
         @if (bouncer()->hasPermission('configuration.webhook.logs'))
             <a href="?logs">
-                <div class="{{ $activeTab === 'logs' ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
+                <div class="{{ $activeTab === 'logs' ? '-mb-px border-primary-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
                     @lang('webhook::app.configuration.webhook.settings.index.logs-title')
                 </div>
             </a>
@@ -60,12 +60,12 @@
 
                             <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
                                 <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                                    <div class="bg-white dark:bg-cherry-900 rounded box-shadow" style="height:-webkit-fill-available">
+                                    <div class="h-full bg-white dark:bg-cherry-900 rounded box-shadow">
                                         <div class="flex items-center justify-between p-1.5 px-4">
                                             <div class="flex items-center justify-between">
                                                 <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">  @lang('webhook::app.configuration.webhook.settings.index.general')  </p>
                                             </div>
-                                            <span class="text-2xl p-1.5 rounded-md cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 icon-arrow-up"></span>
+                                            <span class="text-2xl p-1.5 rounded-md cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 icon-arrow-up"></span>
                                         </div>
                                         <div class="px-4 pb-4">
                                             <div class="mb-4 !mb-0">

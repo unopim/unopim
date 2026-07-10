@@ -4,9 +4,9 @@
     $favicon = core()->getConfigData('general.design.admin_logo.favicon');
 @endphp
 
-<x-admin::settings.page
+<x-admin::page
     :title="trans('admin::app.settings.appearance.title')"
-    :info="trans('admin::app.settings.appearance.section-info')"
+    :subtitle="trans('admin::app.settings.appearance.section-info')"
     :back="route('admin.settings.system.index')"
     :action="route('admin.settings.appearance.update')"
     method="PUT"
@@ -21,11 +21,11 @@
     <div class="mt-6 grid grid-cols-1 gap-6 p-4 bg-white dark:bg-cherry-900 box-shadow rounded sm:grid-cols-2">
         {{-- Logo --}}
         <div class="flex gap-4 flex-col">
-            <p class="text-sm font-semibold text-gray-800 dark:text-slate-50">
-                @lang('admin::app.settings.appearance.logo')
-            </p>
-
             <x-admin::form.control-group class="!mb-0 shrink-0">
+                <x-admin::form.control-group.label>
+                    @lang('admin::app.settings.appearance.logo')
+                </x-admin::form.control-group.label>
+
                 <x-admin::media.images
                     name="logo_image"
                     :allow-multiple="false"
@@ -46,11 +46,11 @@
 
         {{-- Favicon --}}
         <div class="flex gap-4 flex-col">
-            <p class="text-sm font-semibold text-gray-800 dark:text-slate-50">
-                @lang('admin::app.settings.appearance.favicon')
-            </p>
-
             <x-admin::form.control-group class="!mb-0 shrink-0">
+                <x-admin::form.control-group.label>
+                    @lang('admin::app.settings.appearance.favicon')
+                </x-admin::form.control-group.label>
+
                 <x-admin::media.images
                     name="favicon"
                     :allow-multiple="false"
@@ -69,4 +69,4 @@
             </p>
         </div>
     </div>
-</x-admin::settings.page>
+</x-admin::page>

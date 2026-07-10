@@ -1627,6 +1627,13 @@ return [
                 'edit' => [
                     'title' => 'Editar Utilizador',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Confirmar palavra-passe antes de eliminar',
+                    'enter-current-password' => 'Introduza a palavra-passe atual',
+                    'password'               => 'Palavra-passe',
+                    'confirm-delete'         => 'Confirmar eliminação desta conta',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Voltar',
@@ -1654,7 +1661,7 @@ return [
             'current-user-delete-error' => 'Não é possível eliminar o utilizador em sessão.',
         ],
         'system-settings' => [
-            'info'               => 'Faça a gestão da aparência, e-mail (SMTP) e depuração num único local.',
+            'info'               => 'Faça a gestão das configurações do sistema num único local.',
             'title'              => 'Definições do sistema',
             'back'               => 'Voltar',
             'search-placeholder' => 'Pesquisar definições',
@@ -1951,17 +1958,19 @@ return [
                 'delete'      => 'eliminar',
             ],
             'create' => [
-                'title'        => 'Prompt do sistema',
-                'create-btn'   => 'Criar prompt do sistema',
-                'edit-title'   => 'Editar prompt do sistema',
-                'create-title' => 'Criar novo prompt do sistema',
-                'label-title'  => 'Título',
-                'max-tokens'   => 'Tokens de saída máximos',
-                'temperature'  => 'Temperatura',
-                'type'         => 'Tipo',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Guardar prompt',
-                'prompt-tone'  => 'Tom do prompt',
+                'title'               => 'Prompt do sistema',
+                'create-btn'          => 'Criar prompt do sistema',
+                'edit-title'          => 'Editar prompt do sistema',
+                'create-title'        => 'Criar novo prompt do sistema',
+                'label-title'         => 'Título',
+                'max-tokens'          => 'Tokens de saída máximos',
+                'temperature'         => 'Temperatura',
+                'type'                => 'Tipo',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Guardar prompt',
+                'prompt-tone'         => 'Tom do prompt',
+                'max-tokens-tooltip'  => 'Intervalo permitido de tokens de saída máximos: de 100 a 5000 tokens',
+                'temperature-tooltip' => 'A temperatura controla a criatividade. Intervalo: de 0 a 2. Valores mais baixos (por ex., 0,4) fornecem respostas mais precisas e focadas.',
             ],
             'message' => [
                 'save-success'   => 'Prompt do sistema guardado com sucesso.',

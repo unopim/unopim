@@ -28,8 +28,8 @@
                 <template v-if="allowMultiple || images.length == 0">
                     <!-- AI Image Generation Button -->
                     <label
-                        class="grid justify-items-center items-center w-full h-[120px] max-w-[120px] min-w-[110px] max-h-[120px] min-h-[110px] border border-dashed border-violet-300 rounded cursor-pointer transition-all hover:border-violet-700  dark:invert dark:mix-blend-exclusion"
-                        :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : ''"
+                        class="grid justify-items-center items-center w-full h-[120px] max-w-[120px] min-w-[110px] max-h-[120px] min-h-[110px] border border-dashed border-primary-300 rounded cursor-pointer transition-all hover:border-primary-700  dark:invert dark:mix-blend-exclusion"
+                        :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : ''"
                         :style="{'max-width': this.width, 'max-height': this.height}"
                         v-if="ai.enabled"
                         @click="resetAIModal(); $refs.magicAIImageModal.open()"
@@ -39,9 +39,9 @@
                         @drop.prevent="onDrop"
                     >
                         <div class="flex flex-col items-center">
-                            <span class="icon-magic text-2xl text-violet-700"></span>
+                            <span class="icon-magic text-2xl text-primary-700"></span>
 
-                            <p class="grid text-sm text-violet-700 font-semibold text-center">
+                            <p class="grid text-sm text-primary-700 font-semibold text-center">
                                 @lang('admin::app.components.media.images.ai-add-image-btn')
                                 
                                 <span class="text-xs">
@@ -54,7 +54,7 @@
                     <!-- Upload Image Button -->
                     <label
                         class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300 dark:border-gray-300"
-                        :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : ''"
+                        :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : ''"
                         :style="{'max-width': this.width, 'max-height': this.height}"
                         :for="$.uid + '_imageInput'"
                         @dragover.prevent="isDragging = true"
@@ -131,7 +131,7 @@
                                 <template v-else>
                                     <p class="text-lg text-gray-800 truncate dark:text-white font-bold">
                                         <span
-                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                                             @click="ai.images = []"
                                         ></span>
 
@@ -259,7 +259,7 @@
                                     <div class="grid grid-cols-4 gap-5">
                                         <div
                                             class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
-                                            :class="{'!border-violet-700 ': image.selected}"
+                                            :class="{'!border-primary-700 ': image.selected}"
                                             v-for="image in ai.images"
                                             @click="image.selected = ! image.selected"
                                         >
@@ -281,7 +281,7 @@
                                             <!-- Spinner -->
                                             <template v-if="isLoading">
                                                 <img
-                                                    class="animate-spin h-5 w-5 text-violet-700"
+                                                    class="animate-spin h-5 w-5 text-primary-700"
                                                     src="{{ unopim_asset('images/spinner.svg') }}"
                                                 />
 
@@ -289,7 +289,7 @@
                                             </template>
 
                                             <template v-else>
-                                                <span class="icon-magic  text-violet-700"></span>
+                                                <span class="icon-magic  text-primary-700"></span>
                                                 
                                                 @lang('admin::app.components.media.images.ai-generation.generate')
                                             </template>
@@ -301,7 +301,7 @@
                                             <!-- Spinner -->
                                             <template v-if="isLoading">
                                                 <img
-                                                    class="animate-spin h-5 w-5 text-violet-700"
+                                                    class="animate-spin h-5 w-5 text-primary-700"
                                                     src="{{ unopim_asset('images/spinner.svg') }}"
                                                 />
 
@@ -309,7 +309,7 @@
                                             </template>
 
                                             <template v-else>
-                                                <span class="icon-magic text-2xl text-violet-700"></span>
+                                                <span class="icon-magic text-2xl text-primary-700"></span>
                                                 
                                                 @lang('admin::app.components.media.images.ai-generation.regenerate')
                                             </template>
@@ -348,12 +348,12 @@
                 <!-- Actions -->
                 <div class="flex justify-between">
                     <span
-                        class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                        class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                         @click="remove"
                     ></span>
 
                     <label
-                        class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                        class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                         :for="$.uid + '_imageInput_' + index"
                     ></label>
 

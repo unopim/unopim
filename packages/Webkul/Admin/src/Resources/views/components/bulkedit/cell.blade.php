@@ -5,9 +5,9 @@
             class="relative text-sm border border-gray-200 dark:border-cherry-700 whitespace-nowrap focus:outline-none"
             :class="{
                 'z-[2]': isActive,
-                'bg-violet-50 dark:bg-violet-900/30': isSelected && !isActive
+                'bg-primary-50 dark:bg-primary-900/30': isSelected && !isActive
             }"
-            :style="isActive ? 'box-shadow: inset 0 0 0 2px var(--active-cell-color, #7c3aed); outline: none;' : ''"
+            :style="isActive ? 'box-shadow: inset 0 0 0 2px var(--active-cell-color, rgb(var(--c-primary-600))); outline: none;' : ''"
             :data-row="rowId"
             :data-col="colId"
             @click="onClick"
@@ -29,7 +29,7 @@
             />
             <div
                 v-if="isActive"
-                class="absolute bottom-[-4px] right-[-4px] w-[8px] h-[8px] bg-violet-600 dark:bg-violet-400 cursor-crosshair z-10 rounded-sm"
+                class="absolute bottom-[-4px] right-[-4px] w-[8px] h-[8px] bg-primary-600 dark:bg-primary-400 cursor-crosshair z-10 rounded-sm"
                 @mousedown.stop.prevent="onDragHandleDown($event)"
             ></div>
         </td>

@@ -172,7 +172,7 @@ test.describe('Webhook - Variant Product Create Event', () => {
     await expect(adminPage.locator('text=The Name field is required')).toHaveCount(0);
 
     // Step 6: Check webhook logs for variant SKU entry
-    await adminPage.goto('/admin/webhook/settings?logs', { waitUntil: 'networkidle', timeout: 30000 }).catch(async () => {
+    await adminPage.goto('/admin/configuration/webhook?logs', { waitUntil: 'networkidle', timeout: 30000 }).catch(async () => {
       await adminPage.waitForLoadState('load', { timeout: 10000 }).catch(() => {});
     });
 

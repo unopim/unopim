@@ -157,7 +157,7 @@
                                 </label>
 
                                 <label v-if="contentHasHtml" class="flex items-center gap-1.5 cursor-pointer text-xs text-gray-600 dark:text-gray-300">
-                                    <input type="checkbox" v-model="showRichPreview" class="rounded text-violet-600" />
+                                    <input type="checkbox" v-model="showRichPreview" class="rounded text-primary-600" />
                                     @lang('admin::app.components.tinymce.ai-generation.rich-preview')
                                 </label>
                             </div>
@@ -169,23 +169,7 @@
                                 v-html="ai.content"
                             ></div>
 
-                            <style>
-                                .rich-content-preview h1, .rich-content-preview h2, .rich-content-preview h3, .rich-content-preview h4 { font-weight: 700; margin: 0.5em 0 0.25em; }
-                                .rich-content-preview h1 { font-size: 1.5em; }
-                                .rich-content-preview h2 { font-size: 1.25em; }
-                                .rich-content-preview h3 { font-size: 1.1em; }
-                                .rich-content-preview p { margin: 0.4em 0; }
-                                .rich-content-preview strong, .rich-content-preview b { font-weight: 700; }
-                                .rich-content-preview em, .rich-content-preview i { font-style: italic; }
-                                .rich-content-preview ul, .rich-content-preview ol { padding-left: 1.5em; margin: 0.4em 0; }
-                                .rich-content-preview ul { list-style-type: disc; }
-                                .rich-content-preview ol { list-style-type: decimal; }
-                                .rich-content-preview li { margin: 0.2em 0; }
-                                .rich-content-preview a { color: #6d28d9; text-decoration: underline; }
-                                .rich-content-preview table { border-collapse: collapse; width: 100%; margin: 0.5em 0; }
-                                .rich-content-preview th, .rich-content-preview td { border: 1px solid #e5e7eb; padding: 0.4em 0.6em; text-align: left; }
-                                .rich-content-preview th { background: #f3f4f6; font-weight: 600; }
-                            </style>
+                            {{-- .rich-content-preview prose styles live in assets/css/app.css --}}
 
                             <!-- Plain text editor -->
                             <textarea
@@ -234,14 +218,14 @@
                                 >
                                     <template v-if="isLoading">
                                         <img
-                                            class="animate-spin h-5 w-5 text-violet-700"
+                                            class="animate-spin h-5 w-5 text-primary-700"
                                             src="{{ unopim_asset('images/spinner.svg') }}"
                                         />
                                         @lang('admin::app.components.tinymce.ai-generation.generating')
                                     </template>
 
                                     <template v-else>
-                                        <span class="icon-magic text-2xl text-violet-700"></span>
+                                        <span class="icon-magic text-2xl text-primary-700"></span>
                                         @lang('admin::app.components.tinymce.ai-generation.generate')
                                     </template>
                                 </button>
@@ -255,14 +239,14 @@
                                 >
                                     <template v-if="isLoading">
                                         <img
-                                            class="animate-spin h-5 w-5 text-violet-700"
+                                            class="animate-spin h-5 w-5 text-primary-700"
                                             src="{{ unopim_asset('images/spinner.svg') }}"
                                         />
                                         @lang('admin::app.components.media.images.ai-generation.regenerating')
                                     </template>
 
                                     <template v-else>
-                                        <span class="icon-magic text-2xl text-violet-700"></span>
+                                        <span class="icon-magic text-2xl text-primary-700"></span>
                                         @lang('admin::app.components.media.images.ai-generation.regenerate')
                                     </template>
                                 </button>
