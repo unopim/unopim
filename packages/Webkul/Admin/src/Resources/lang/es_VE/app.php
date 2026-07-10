@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Tipo de Asociación Eliminado Exitosamente',
             'delete-failed'     => 'Error al Eliminar el Tipo de Asociación',
             'user-define-error' => 'No se puede eliminar un Tipo de Asociación del sistema',
+            'unknown-fields'    => 'No se pudo encontrar el campo del tipo de asociación con código ":fields"',
 
             'create' => [
                 'title'    => 'Crear tipo de asociación',

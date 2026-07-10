@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Tipus d\'Associació Eliminat Correctament',
             'delete-failed'     => 'No s\'ha pogut eliminar el Tipus d\'Associació',
             'user-define-error' => 'No es pot eliminar un Tipus d\'Associació del sistema',
+            'unknown-fields'    => 'No s\'ha pogut trobar el camp de tipus d\'associació amb codi ":fields"',
 
             'create' => [
                 'title'    => 'Crear tipus d\'associació',

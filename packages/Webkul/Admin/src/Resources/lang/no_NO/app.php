@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Assosiasjonstype Slettet',
             'delete-failed'     => 'Assosiasjonstype Sletting Feilet',
             'user-define-error' => 'Kan ikke slette system Assosiasjonstype',
+            'unknown-fields'    => 'Assosiasjonstype-felt med kode ":fields" ble ikke funnet',
 
             'create' => [
                 'title'    => 'Opprett assosiasjonstype',

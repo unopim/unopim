@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Tipo di Associazione Eliminato con Successo',
             'delete-failed'     => 'Eliminazione del Tipo di Associazione Non Riuscita',
             'user-define-error' => 'Non puoi eliminare il tipo di associazione di sistema',
+            'unknown-fields'    => 'Campo del tipo di associazione con codice ":fields" non trovato',
 
             'create' => [
                 'title'    => 'Crea tipo di associazione',

@@ -926,6 +926,7 @@ return [
             'delete-success'    => '关联类型成功删除',
             'delete-failed'     => '关联类型删除失败',
             'user-define-error' => '无法删除系统关联类型',
+            'unknown-fields'    => '无法找到代码为":fields"的关联类型字段',
 
             'create' => [
                 'title'    => '创建关联类型',

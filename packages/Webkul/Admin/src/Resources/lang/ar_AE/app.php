@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'تم حذف نوع الارتباط بنجاح',
             'delete-failed'     => 'فشل حذف نوع الارتباط',
             'user-define-error' => 'لا يمكن حذف نوع ارتباط النظام',
+            'unknown-fields'    => 'لم يتم العثور على حقل نوع الارتباط برمز ":fields"',
 
             'create' => [
                 'title'    => 'إنشاء نوع ارتباط',

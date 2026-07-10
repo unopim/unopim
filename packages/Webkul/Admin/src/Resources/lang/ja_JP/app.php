@@ -926,6 +926,7 @@ return [
             'delete-success'    => '関連タイプが正常に削除されました',
             'delete-failed'     => '関連タイプの削除に失敗しました',
             'user-define-error' => 'システム関連タイプを削除できません',
+            'unknown-fields'    => 'コード ":fields" の関連タイプフィールドが見つかりませんでした',
 
             'create' => [
                 'title'    => '関連タイプを作成',

@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Assoziationstyp erfolgreich gelöscht',
             'delete-failed'     => 'Assoziationstyp konnte nicht gelöscht werden',
             'user-define-error' => 'Systemassoziationstyp kann nicht gelöscht werden',
+            'unknown-fields'    => 'Assoziationstyp-Feld mit Code „:fields“ konnte nicht gefunden werden',
 
             'create' => [
                 'title'    => 'Zuordnungstyp erstellen',

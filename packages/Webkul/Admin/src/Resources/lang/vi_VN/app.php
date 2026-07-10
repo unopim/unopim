@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Xóa Loại Liên Kết Thành Công',
             'delete-failed'     => 'Xóa Loại Liên Kết Thất Bại',
             'user-define-error' => 'Không thể xóa Loại Liên Kết hệ thống',
+            'unknown-fields'    => 'Không tìm thấy trường Loại Liên Kết với mã ":fields"',
 
             'create' => [
                 'title'    => 'Tạo loại liên kết',

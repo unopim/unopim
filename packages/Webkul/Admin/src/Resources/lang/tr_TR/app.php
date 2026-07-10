@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'İlişki Türü başarıyla silindi',
             'delete-failed'     => 'İlişki Türü silinemedi',
             'user-define-error' => 'Sistem tanımlı ilişki türü silinemez',
+            'unknown-fields'    => '":fields" koduna sahip ilişki türü alanı bulunamadı',
 
             'create' => [
                 'title'    => 'İlişki Türü Oluştur',

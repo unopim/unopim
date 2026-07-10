@@ -926,6 +926,7 @@ return [
             'delete-success'    => '關聯類型刪除成功',
             'delete-failed'     => '關聯類型刪除失敗',
             'user-define-error' => '無法刪除系統預設關聯類型',
+            'unknown-fields'    => '找不到代碼為":fields"的關聯類型欄位',
 
             'create' => [
                 'title'    => '建立關聯類型',

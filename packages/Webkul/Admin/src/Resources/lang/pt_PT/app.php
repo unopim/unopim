@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Tipo de Associação Excluído com Sucesso',
             'delete-failed'     => 'Falha ao Excluir Tipo de Associação',
             'user-define-error' => 'Não é possível excluir um Tipo de Associação do sistema',
+            'unknown-fields'    => 'Campo do tipo de associação com código ":fields" não encontrado',
 
             'create' => [
                 'title'    => 'Criar tipo de associação',

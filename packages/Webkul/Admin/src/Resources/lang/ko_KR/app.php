@@ -926,6 +926,7 @@ return [
             'delete-success'    => '연관 유형 삭제 성공',
             'delete-failed'     => '연관 유형 삭제 실패',
             'user-define-error' => '시스템 연관 유형은 삭제할 수 없습니다.',
+            'unknown-fields'    => '필드 코드 ":fields"인 연관 유형 필드를 찾을 수 없습니다.',
 
             'create' => [
                 'title'    => '연관 유형 생성',

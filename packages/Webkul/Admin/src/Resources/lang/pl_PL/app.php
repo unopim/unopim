@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Typ powiązania został pomyślnie usunięty',
             'delete-failed'     => 'Usunięcie typu powiązania nie powiodło się',
             'user-define-error' => 'Nie można usunąć systemowego typu powiązania',
+            'unknown-fields'    => 'Nie znaleziono pola typu powiązania o kodzie ":fields"',
 
             'create' => [
                 'title'    => 'Utwórz typ powiązania',

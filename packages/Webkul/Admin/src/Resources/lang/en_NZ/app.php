@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Association Type Deleted Successfully',
             'delete-failed'     => 'Association Type Deleted Failed',
             'user-define-error' => 'Can not delete system Association Type',
+            'unknown-fields'    => 'Association Type Field with code ":fields" could not be found',
 
             'create' => [
                 'title'    => 'Create Association Type',

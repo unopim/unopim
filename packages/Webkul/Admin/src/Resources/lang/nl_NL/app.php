@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Associatietype succesvol verwijderd.',
             'delete-failed'     => 'Verwijderen van associatietype mislukt.',
             'user-define-error' => 'Kan het systeemassociatietype niet verwijderen.',
+            'unknown-fields'    => 'Associatietype-veld met code ":fields" kon niet worden gevonden.',
 
             'create' => [
                 'title'    => 'Associatietype aanmaken',

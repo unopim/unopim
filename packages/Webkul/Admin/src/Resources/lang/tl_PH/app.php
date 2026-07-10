@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Matagumpay na natanggal ang uri ng asosasyon',
             'delete-failed'     => 'Nabigong tanggalin ang uri ng asosasyon',
             'user-define-error' => 'Hindi maaaring tanggalin ang uri ng asosasyon ng sistema',
+            'unknown-fields'    => 'Hindi natagpuan ang field ng uri ng asosasyon na may kodigong ":fields"',
 
             'create' => [
                 'title'    => 'Gumawa ng Uri ng Asosasyon',

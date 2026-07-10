@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Vrsta Povezivanja Izbrisana Uspješno',
             'delete-failed'     => 'Brisanje Vrste Povezivanja Nije Uspjelo',
             'user-define-error' => 'Ne možete obrisati sistemsku Vrstu Povezivanja',
+            'unknown-fields'    => 'Polje vrste povezivanja s kodom ":fields" nije pronađeno',
 
             'create' => [
                 'title'    => 'Izradi vrstu povezivanja',

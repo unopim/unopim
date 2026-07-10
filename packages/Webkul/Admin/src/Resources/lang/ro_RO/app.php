@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Tip de asociere șters cu succes',
             'delete-failed'     => 'Ștergere tip de asociere eșuată',
             'user-define-error' => 'Nu se poate șterge tipul de asociere sistem',
+            'unknown-fields'    => 'Câmpul tipului de asociere cu codul ":fields" nu a fost găsit',
 
             'create' => [
                 'title'    => 'Creați tip de asociere',

@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Assosiaatiotyyppi poistettu onnistuneesti',
             'delete-failed'     => 'Assosiaatiotyypin poistaminen epäonnistui',
             'user-define-error' => 'Ei voida poistaa järjestelmän assosiaatiotyyppiä',
+            'unknown-fields'    => 'Assosiaatiotyypin kenttää koodilla ":fields" ei löytynyt',
 
             'create' => [
                 'title'    => 'Luo assosiaatiotyyppi',

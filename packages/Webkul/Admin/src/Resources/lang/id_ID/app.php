@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Jenis asosiasi berhasil dihapus',
             'delete-failed'     => 'Jenis Asosiasi Dihapus Gagal',
             'user-define-error' => 'Tidak dapat menghapus jenis asosiasi sistem',
+            'unknown-fields'    => 'Bidang jenis asosiasi dengan kode ":fields" tidak dapat ditemukan',
 
             'create' => [
                 'title'    => 'Buat Jenis Asosiasi',

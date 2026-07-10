@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Associationstyp raderades framgångsrikt',
             'delete-failed'     => 'Det gick inte att radera associationstyp',
             'user-define-error' => 'Det går inte att radera systemdefinierad associationstyp',
+            'unknown-fields'    => 'Fält för associationstyp med kod ":fields" kunde inte hittas',
 
             'create' => [
                 'title'    => 'Skapa associationstyp',

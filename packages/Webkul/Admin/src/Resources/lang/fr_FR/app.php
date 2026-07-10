@@ -926,6 +926,7 @@ return [
             'delete-success'    => 'Type d\'association supprimé avec succès',
             'delete-failed'     => 'Échec de la suppression du type d\'association',
             'user-define-error' => 'Impossible de supprimer un type d\'association système',
+            'unknown-fields'    => 'Le champ de type d\'association avec le code ":fields" est introuvable',
 
             'create' => [
                 'title'    => 'Créer un type d\'association',
