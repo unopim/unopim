@@ -172,8 +172,13 @@ abstract class AbstractType
      *
      * Kept resilient: a sync failure is logged but must not abort the
      * product save that has already happened.
+     *
+     * Public so that write paths other than `update()` — e.g. the AdminApi
+     * controllers, which persist `values` directly on the model instead of
+     * going through this class's `update()` — can also mirror the link
+     * table after they save.
      */
-    protected function syncAssociationLinks(Product $product, array $productValues): void
+    public function syncAssociationLinks(Product $product, array $productValues): void
     {
         $associationRepository = app(ProductAssociationRepository::class);
 
@@ -455,6 +460,10 @@ abstract class AbstractType
 
         $copiedProduct->save();
 
+        if ($copiedProduct->id) {
+            $this->syncAssociationLinks($copiedProduct, $values);
+        }
+
         $this->copyRelationships($copiedProduct);
 
         return $copiedProduct;
@@ -697,6 +706,10 @@ abstract class AbstractType
 
         if ($product->isDirty()) {
             $product->save();
+        }
+
+        if ($product->id) {
+            $this->syncAssociationLinks($product, $product->values ?? []);
         }
 
         return $product;

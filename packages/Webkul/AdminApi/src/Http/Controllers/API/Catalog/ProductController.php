@@ -100,6 +100,10 @@ class ProductController extends ApiController
 
         $product->refresh();
 
+        if ($product->id) {
+            $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? []);
+        }
+
         if ($wasDirty) {
             Event::dispatch('catalog.product.update.after', $product);
         }
@@ -173,6 +177,10 @@ class ProductController extends ApiController
         $wasDirty = $product->isDirty();
 
         $product->saveOrFail();
+
+        if ($product->id) {
+            $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? []);
+        }
 
         if ($wasDirty) {
             Event::dispatch('catalog.product.update.after', $product);
