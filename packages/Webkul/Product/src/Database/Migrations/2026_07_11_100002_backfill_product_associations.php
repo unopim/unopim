@@ -56,12 +56,16 @@ return new class extends Migration
      *   (not Eloquent) to avoid the memory/hydration overhead of Product
      *   models for a migration.
      *
-     * - Rows are written with a single bulk `upsert()` per chunk, keyed on
-     *   the `(product_id, association_type_id, related_product_id)` unique
-     *   index (`product_assoc_unique_link`). This is the batched
-     *   equivalent of `updateOrInsert` — same idempotency guarantee (a
-     *   second run overwrites in place instead of duplicating), but one
-     *   query per chunk instead of one query per link.
+     * - Rows are written with a single bulk `insertOrIgnore()` per chunk,
+     *   relying on the `(product_id, association_type_id,
+     *   related_product_id)` unique index (`product_assoc_unique_link`) to
+     *   silently skip rows that already exist. This backfill's only job is
+     *   to INSERT links that are missing from `product_associations`; it
+     *   must never touch `position`/`additional_data` on an existing row,
+     *   since those may already hold real, user-set values (e.g. from
+     *   Task 4's dual-write or manual edits) that a second run must not
+     *   clobber back to `null`. `insertOrIgnore` gives idempotency (no
+     *   duplicates on re-run) without ever issuing an UPDATE.
      */
     public function up(): void
     {
@@ -160,11 +164,10 @@ return new class extends Migration
             return;
         }
 
-        DB::table('product_associations')->upsert(
-            $rows,
-            ['product_id', 'association_type_id', 'related_product_id'],
-            ['position', 'additional_data', 'updated_at']
-        );
+        // insertOrIgnore (not upsert): a re-run must add missing links
+        // only, never overwrite `position`/`additional_data` on rows that
+        // already exist — see the up() docblock.
+        DB::table('product_associations')->insertOrIgnore($rows);
     }
 
     /**

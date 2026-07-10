@@ -72,3 +72,47 @@ it('backfills product_associations from legacy JSON, skipping ghost SKUs and sel
 
     expect($totalAfter)->toBe($totalBefore);
 });
+
+it('does not overwrite additional_data on an existing product_associations row when re-run', function () {
+    $upSell = Product::factory()->create();
+
+    $source = Product::factory()->create();
+
+    $source->values = [
+        'common'       => ['sku' => $source->sku],
+        'associations' => [
+            'up_sells' => [$upSell->sku],
+        ],
+    ];
+    $source->save();
+
+    $associationTypeId = DB::table('association_types')->where('code', 'up_sells')->value('id');
+
+    // Pre-create the corresponding link row with real, user-set
+    // additional_data (e.g. a Task 3 per-link quantity), simulating a row
+    // that already exists alongside the legacy JSON counterpart.
+    DB::table('product_associations')->insert([
+        'product_id'          => $source->id,
+        'association_type_id' => $associationTypeId,
+        'related_product_id'  => $upSell->id,
+        'position'            => 3,
+        'additional_data'     => json_encode(['common' => ['quantity' => '5']]),
+        'created_at'          => now(),
+        'updated_at'          => now(),
+    ]);
+
+    runProductAssociationBackfill();
+
+    $rows = DB::table('product_associations')
+        ->where('product_id', $source->id)
+        ->where('association_type_id', $associationTypeId)
+        ->where('related_product_id', $upSell->id)
+        ->get();
+
+    expect($rows)->toHaveCount(1);
+
+    $row = $rows->first();
+
+    expect($row->position)->toBe(3)
+        ->and(json_decode($row->additional_data, true))->toBe(['common' => ['quantity' => '5']]);
+});
