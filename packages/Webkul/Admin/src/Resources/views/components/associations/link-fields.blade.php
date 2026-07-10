@@ -62,17 +62,51 @@
 
         @switch ($field['type'])
             @case ('checkbox')
+                {{--
+                    Always-present fallback: guarantees this field's key is
+                    submitted (as an explicit empty string) even when every
+                    option ends up unchecked, mirroring
+                    `dynamic-fields.blade.php`'s empty-value hidden input for
+                    the same reason -- an absent key (vs. an explicitly empty
+                    one) can be treated differently by the storage layer, so
+                    clearing all checkboxes must persist as empty, not
+                    missing.
+                --}}
+                <input
+                    type="hidden"
+                    ::name="{{ $nameExpr }}"
+                    value=""
+                />
+
                 @foreach ($field['options'] ?? [] as $option)
                     <div class="flex py-2 items-center gap-2">
+                        {{--
+                            NOTE: this checkbox is UI-only. Its `::name` is
+                            deliberately NOT the real `associations[...]`
+                            field path (and never carries a `[]` suffix) --
+                            native `FormData(form)` submission (see
+                            `packages/Webkul/Admin/src/Resources/assets/js/app.js`'s
+                            `onAjaxSubmit`) would otherwise turn N checked
+                            boxes sharing one array-style name into a PHP
+                            ARRAY for `additional_data.common.<field>`, which
+                            `AssociationValidator::fieldTypeRules()`'s
+                            `'string'` rule rejects, throwing a
+                            `ValidationException` that aborts the entire
+                            product save. The single hidden input below is
+                            the ONLY input that carries the real field name;
+                            `toggleAssocCheckboxOption()` keeps its
+                            comma-joined value in sync as options are
+                            (un)checked.
+                        --}}
                         <x-admin::form.control-group.control
                             type="checkbox"
                             ::id="{{ $nameExpr }} + '_{{ $option['code'] }}_' + index"
-                            ::name="({{ $nameExpr }}) + '[]'"
+                            ::name="'_assoc_checkbox_ui_' + index + '_{{ $option['code'] }}'"
                             :value="$option['code']"
-                            ::rules="{{ $field['rules'] }}"
                             :label="$field['label']"
                             ::for="{{ $nameExpr }} + '_{{ $option['code'] }}_' + index"
                             ::checked="assocFieldChecked(link, {{ $fieldJson }}, '{{ $option['code'] }}')"
+                            @change="toggleAssocCheckboxOption(link, {{ $fieldJson }}, '{{ $option['code'] }}', $event.target.checked)"
                         />
 
                         <label
@@ -83,6 +117,14 @@
                         </label>
                     </div>
                 @endforeach
+
+                <x-admin::form.control-group.control
+                    type="hidden"
+                    ::name="{{ $nameExpr }}"
+                    ::rules="{{ $field['rules'] }}"
+                    :label="$field['label']"
+                    ::value="assocFieldValue(link, {{ $fieldJson }})"
+                />
 
                 @break
 

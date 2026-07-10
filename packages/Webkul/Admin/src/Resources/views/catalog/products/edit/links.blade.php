@@ -261,12 +261,12 @@
                  * or, for a `value_per_locale` field,
                  * `associations[bundle_kit][0][additional_data][locale_specific][en_US][quantity]`.
                  */
-                assocFieldName(typeCode, index, field, suffix) {
+                assocFieldName(typeCode, index, field) {
                     const bucket = field.value_per_locale
                         ? 'additional_data][locale_specific][' + this.currentLocaleCode
                         : 'additional_data][common';
 
-                    return 'associations[' + typeCode + '][' + index + '][' + bucket + '][' + field.code + ']' + (suffix || '');
+                    return 'associations[' + typeCode + '][' + index + '][' + bucket + '][' + field.code + ']';
                 },
 
                 /**
@@ -306,6 +306,52 @@
                     const codes = raw ? raw.split(',') : [];
 
                     return (field.options || []).filter(option => codes.includes(option.code));
+                },
+
+                /**
+                 * Toggles one option of a checkbox field, mutating
+                 * `link.additional_data`'s comma-joined string directly (the
+                 * same bucket `assocFieldValue()`/`assocFieldChecked()` read
+                 * from) so the single authoritative hidden input for this
+                 * field always carries the up-to-date, comma-joined string
+                 * of checked option codes -- never a bracket-array `name[]`.
+                 */
+                toggleAssocCheckboxOption(link, field, optionCode, isChecked) {
+                    if (! link.additional_data) {
+                        link.additional_data = { common: {}, locale_specific: {} };
+                    }
+
+                    let bucket;
+
+                    if (field.value_per_locale) {
+                        if (! link.additional_data.locale_specific) {
+                            link.additional_data.locale_specific = {};
+                        }
+
+                        if (! link.additional_data.locale_specific[this.currentLocaleCode]) {
+                            link.additional_data.locale_specific[this.currentLocaleCode] = {};
+                        }
+
+                        bucket = link.additional_data.locale_specific[this.currentLocaleCode];
+                    } else {
+                        if (! link.additional_data.common) {
+                            link.additional_data.common = {};
+                        }
+
+                        bucket = link.additional_data.common;
+                    }
+
+                    let codes = String(bucket[field.code] || '').split(',').filter(Boolean);
+
+                    if (isChecked) {
+                        if (! codes.includes(optionCode)) {
+                            codes.push(optionCode);
+                        }
+                    } else {
+                        codes = codes.filter(code => code !== optionCode);
+                    }
+
+                    bucket[field.code] = codes.join(',');
                 },
             }
         });
