@@ -40,22 +40,28 @@ return [
         'sort'       => 3,
         'icon'       => '',
     ], [
+        'key'        => 'catalog.association_types',
+        'name'       => 'admin::app.components.layouts.sidebar.association_types',
+        'route'      => 'admin.catalog.association_types.index',
+        'sort'       => 4,
+        'icon'       => '',
+    ], [
         'key'        => 'catalog.attributes',
         'name'       => 'admin::app.components.layouts.sidebar.attributes',
         'route'      => 'admin.catalog.attributes.index',
-        'sort'       => 4,
+        'sort'       => 5,
         'icon'       => '',
     ], [
         'key'        => 'catalog.attribute_groups',
         'name'       => 'admin::app.components.layouts.sidebar.attribute-groups',
         'route'      => 'admin.catalog.attribute.groups.index',
-        'sort'       => 5,
+        'sort'       => 6,
         'icon'       => '',
     ], [
         'key'        => 'catalog.families',
         'name'       => 'admin::app.components.layouts.sidebar.attribute-families',
         'route'      => 'admin.catalog.families.index',
-        'sort'       => 6,
+        'sort'       => 7,
         'icon'       => '',
     ],
 

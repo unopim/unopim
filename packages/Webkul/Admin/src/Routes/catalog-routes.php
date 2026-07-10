@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Webkul\Admin\Http\Controllers\Catalog\AssociationTypeController;
 use Webkul\Admin\Http\Controllers\Catalog\AttributeController;
 use Webkul\Admin\Http\Controllers\Catalog\AttributeFamilyController;
 use Webkul\Admin\Http\Controllers\Catalog\AttributeGroupController;
@@ -139,6 +140,27 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::get('{id}/options', 'getCategoryFieldOptions')->name('admin.catalog.category_fields.options');
 
             Route::get('tree', 'tree')->name('admin.catalog.category_fields.tree');
+        });
+
+        /**
+         * Association types routes.
+         */
+        Route::controller(AssociationTypeController::class)->prefix('association-types')->group(function () {
+            Route::get('', 'index')->name('admin.catalog.association_types.index');
+
+            Route::get('create', 'create')->name('admin.catalog.association_types.create');
+
+            Route::post('create', 'store')->name('admin.catalog.association_types.store');
+
+            Route::get('edit/{id}', 'edit')->name('admin.catalog.association_types.edit');
+
+            Route::put('edit/{id}', 'update')->name('admin.catalog.association_types.update');
+
+            Route::delete('{id}', 'destroy')->name('admin.catalog.association_types.delete');
+
+            Route::post('mass-delete', 'massDestroy')->name('admin.catalog.association_types.mass_delete');
+
+            Route::post('mass-update', 'massUpdate')->name('admin.catalog.association_types.mass_update');
         });
 
         Route::controller(AjaxOptionsController::class)->prefix('ajax-options')->group(function () {
