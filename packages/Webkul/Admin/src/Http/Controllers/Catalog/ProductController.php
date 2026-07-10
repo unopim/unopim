@@ -192,6 +192,7 @@ class ProductController extends Controller
                     'code'   => $associationType->code,
                     'name'   => $associationType->getTranslatedValueWithFallback('name') ?? "[{$associationType->code}]",
                     'fields' => $associationType->fields
+                        ->where('status', 1)
                         ->map(fn ($field) => $this->getAssociationTypeFieldForView($field))
                         ->values()
                         ->all(),
