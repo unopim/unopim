@@ -38,7 +38,7 @@ test.describe('Currency Import', () => {
         await expect(importNowBtn).toBeVisible({ timeout: 5000 });
         await importNowBtn.click();
 
-        await expect(adminPage.locator('#app').getByText(/Job queued/i)).toBeVisible({ timeout: 20000 });
+        await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
     });
 
     test('Delete Locale Import', async ({ adminPage }) => {

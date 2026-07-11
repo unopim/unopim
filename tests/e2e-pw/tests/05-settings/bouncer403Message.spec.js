@@ -18,7 +18,7 @@ async function createEmptyRole(adminPage, roleName) {
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(roleName);
   await adminPage.getByRole('textbox', { name: 'Description' }).fill('Test role with minimal permissions for 403 message test');
 
-  await clickSaveAndExpect(adminPage, 'Save Role', /Roles Created Successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Roles Created Successfully/i);
 }
 
 /**
@@ -30,10 +30,12 @@ async function createEmptyRole(adminPage, roleName) {
 async function stripRolePermissions(adminPage, roleName, baseURL) {
   await navigateTo(adminPage, 'roles');
   await searchInDataGrid(adminPage, roleName);
+  // The datagrid Edit action is a <span> that navigates asynchronously,
+  // so wait for the edit URL explicitly instead of relying on networkidle.
   await adminPage.locator('span[title="Edit"]').first().click();
-  await adminPage.waitForLoadState('networkidle').catch(() => {});
+  await adminPage.waitForURL(/\/roles\/edit\/\d+/, { timeout: 15000 });
 
-  const roleId = adminPage.url().match(/\/(\d+)$/)?.[1];
+  const roleId = adminPage.url().match(/\/edit\/(\d+)/)?.[1];
   if (!roleId) return;
 
   // Use fetch() inside the browser context so the request carries the admin

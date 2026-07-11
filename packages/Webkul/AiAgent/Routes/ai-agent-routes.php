@@ -31,13 +31,16 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             ->name('agents.get');
 
         Route::get('agents/{id}/edit', [AgentController::class, 'edit'])
-            ->name('agents.edit');
+            ->name('agents.edit')
+            ->whereNumber('id');
 
         Route::put('agents/{id}', [AgentController::class, 'update'])
-            ->name('agents.update');
+            ->name('agents.update')
+            ->whereNumber('id');
 
         Route::delete('agents/{id}', [AgentController::class, 'destroy'])
-            ->name('agents.destroy');
+            ->name('agents.destroy')
+            ->whereNumber('id');
 
         // ── Generate (Image → Product) ─────────────────────
         Route::get('generate', [GenerateController::class, 'index'])
@@ -71,13 +74,15 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             ->name('conversations.index');
 
         Route::get('conversations/{id}', [ConversationController::class, 'show'])
-            ->name('conversations.show');
+            ->name('conversations.show')
+            ->whereNumber('id');
 
         Route::post('conversations', [ConversationController::class, 'store'])
             ->name('conversations.store');
 
         Route::delete('conversations/{id}', [ConversationController::class, 'destroy'])
-            ->name('conversations.destroy');
+            ->name('conversations.destroy')
+            ->whereNumber('id');
 
         // ── Dashboard & Analytics ──────────────────────────
         Route::middleware('throttle:60,1')->group(function () {
@@ -88,13 +93,15 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
                 ->name('dashboard.audit-trail');
 
             Route::post('dashboard/rollback/{id}', [DashboardController::class, 'rollback'])
-                ->name('dashboard.rollback');
+                ->name('dashboard.rollback')
+                ->whereNumber('id');
 
             Route::get('dashboard/notifications', [DashboardController::class, 'notifications'])
                 ->name('dashboard.notifications');
 
             Route::post('dashboard/notifications/{id}/dismiss', [DashboardController::class, 'dismissNotification'])
-                ->name('dashboard.notifications.dismiss');
+                ->name('dashboard.notifications.dismiss')
+                ->whereNumber('id');
         });
 
     });

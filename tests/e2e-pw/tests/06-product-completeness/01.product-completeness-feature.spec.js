@@ -12,7 +12,7 @@ async function createFamilyWithGeneralGroup(adminPage, familyCode, familyName) {
   await adminPage.getByText('General Code').click();
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(familyCode);
   await adminPage.locator('input[name="en_US[name]"]').fill(familyName);
-  await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+  await adminPage.getByRole('button', { name: 'Save changes' }).click();
   await adminPage.waitForLoadState('networkidle');
 
   // After save, navigate to families list and find the newly created family
@@ -51,7 +51,7 @@ async function createFamilyWithGeneralGroup(adminPage, familyCode, familyName) {
     }
   }
 
-  await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+  await adminPage.getByRole('button', { name: 'Save changes' }).click();
   await adminPage.waitForLoadState('networkidle');
 }
 
@@ -167,7 +167,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('General Code').click();
     await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(familyCode);
     await adminPage.locator('input[name="en_US[name]"]').fill(familyName);
-    await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+    await adminPage.getByRole('button', { name: 'Save changes' }).click();
     await adminPage.waitForLoadState('networkidle');
 
     // Navigate to the family and verify the Completeness tab
@@ -216,7 +216,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     // Search for an attribute that should be present (name is always assigned via General group)
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('name');
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
-    await adminPage.waitForLoadState('networkidle');
     // Should find at least 1 result matching "name"
     await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
 
@@ -257,7 +256,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('name');
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
-    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
   });
 
@@ -270,7 +268,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('xyz');
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
-    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/0 Results?/)).toBeVisible({ timeout: 20000 });
   });
 
@@ -283,7 +280,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Required in Channels' }).fill('xyz');
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
-    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/0 Results?/)).toBeVisible({ timeout: 20000 });
   });
 
@@ -300,7 +296,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
       await adminPage.locator('input[name="channel_requirements"]').locator('..').locator('.multiselect__tags').first().click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
     }
-    await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/Completeness updated successfully/i)).toBeVisible({ timeout: 20000 });
   });
 
   // ── Default family: Filter by Required in Channels after assignment ──
@@ -314,7 +310,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
       await unassignedSelect.click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
       await expect(adminPage.locator('#app').getByText(/Completeness updated successfully/i)).toBeVisible({ timeout: 20000 });
-      await adminPage.waitForLoadState('networkidle');
     }
 
     // Now apply the filter
@@ -323,7 +318,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Required in Channels' }).fill('default');
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
-    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
   });
 

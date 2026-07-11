@@ -39,8 +39,8 @@ test.describe('UnoPim Export Jobs', () => {
       .first()
       .click();
 
-    // Save Export
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    // Save Export via the global unsaved-changes bar
+    await adminPage.getByRole('button', { name: 'Save changes' }).first().click();
 
     await expect(
       adminPage.locator('#app').getByText(/Export created successfully/i)
@@ -70,7 +70,7 @@ test.describe('UnoPim Export Jobs', () => {
       .first()
       .click();
 
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await adminPage.getByRole('button', { name: 'Save changes' }).first().click();
 
     await expect(
       adminPage.locator('#app').getByText(/Export updated successfully/i)

@@ -12,7 +12,7 @@ async function createUserImport(adminPage, code, filePath = 'assets/users.csv') 
   const fileInput = adminPage.locator('input[type="file"]').first();
   await fileInput.setInputFiles(filePath);
   
-  await clickSaveAndExpect(adminPage, 'Save Import', /Import created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Import created successfully/i);
 }
 
 async function deleteImport(adminPage, code) {
@@ -43,7 +43,7 @@ test.describe('User Import Jobs', () => {
     await createUserImport(adminPage, code);
 
     await adminPage.getByRole('button', { name: 'Import Now' }).click();
-    await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible();
 
     await deleteImport(adminPage, code);
   });

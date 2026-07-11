@@ -12,7 +12,7 @@ test.describe('Attribute Family Import', () => {
         const path = require('path');
         const assetPath = path.join(__dirname, '../../../../assets/attribute-families.csv');
         await fileInput.setInputFiles(assetPath);
-        await adminPage.getByRole('button', { name: 'Save Import' }).click();
+        await adminPage.getByRole('button', { name: 'Save changes' }).click();
         await expect(adminPage.locator('#app').getByText(/Import created successfully/i)).toBeVisible({ timeout: 15000 });
     });
 

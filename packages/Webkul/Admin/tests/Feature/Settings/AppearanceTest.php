@@ -6,12 +6,11 @@ use Illuminate\Support\Facades\Storage;
 use function Pest\Laravel\get;
 use function Pest\Laravel\put;
 
-it('shows appearance settings page', function () {
+it('redirects the legacy appearance settings route to the combined system settings page', function () {
     $this->loginAsAdmin();
 
     get(route('admin.settings.appearance.index'))
-        ->assertStatus(200)
-        ->assertSeeText(trans('admin::app.settings.appearance.title'));
+        ->assertRedirect(route('admin.configuration.system.settings'));
 });
 
 it('updates logo and favicon from appearance settings', function () {

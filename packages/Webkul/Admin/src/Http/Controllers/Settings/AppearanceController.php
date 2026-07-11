@@ -5,7 +5,6 @@ namespace Webkul\Admin\Http\Controllers\Settings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\View\View;
 use Prettus\Repository\Events\RepositoryEntityUpdated;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Filesystem\FileStorer;
@@ -23,11 +22,12 @@ class AppearanceController extends Controller
     ) {}
 
     /**
-     * Display appearance settings page.
+     * The standalone appearance page was consolidated into the combined system
+     * settings page; redirect the legacy route there.
      */
-    public function index(): View
+    public function index(): RedirectResponse
     {
-        return view('admin::settings.appearance.index');
+        return redirect()->route('admin.configuration.system.settings');
     }
 
     /**

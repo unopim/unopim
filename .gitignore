@@ -52,3 +52,12 @@ skills-lock.json
 # Passport OAuth signing keys — generated per environment, never commit
 packages/Webkul/AdminApi/src/Secrets/Oauth/*.key
 AGENTS.md
+# OWASP ZAP scan artifacts (generated, do not commit)
+/storage/zap-report/
+
+# local-only E2E secrets (never commit)
+tests/e2e-pw/.secrets.local
+
+.env.e2e
+
+.env.live-backup

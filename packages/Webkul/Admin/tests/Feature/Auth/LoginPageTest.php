@@ -72,6 +72,10 @@ it('keeps the admin logged in across the remember cookie when remember is checke
 });
 
 it('returns the friendly throttle message as json on too many login attempts', function () {
+    // The Core handler only registers its styled 429 renderables when debug is off
+    // (production), which is when the {error, description} payload is produced.
+    config(['app.debug' => false]);
+
     $response = null;
 
     for ($attempt = 0; $attempt < 6; $attempt++) {
@@ -81,6 +85,11 @@ it('returns the friendly throttle message as json on too many login attempts', f
         ]);
     }
 
+    // The throttle 429 is rendered by the Core exception handler as an
+    // {error, description} payload (see LoginThrottleErrorPageTest).
     $response->assertStatus(429);
-    $response->assertJson(['message' => trans('admin::app.users.sessions.too-many-attempts')]);
+    $response->assertJson([
+        'error'       => trans('admin::app.errors.429.title'),
+        'description' => trans('admin::app.errors.429.description'),
+    ]);
 });

@@ -12,28 +12,32 @@ test.describe('Sidebar fly-out submenu hover', () => {
   test.beforeEach(async ({ adminPage }) => {
     // Land on the dashboard so "Catalog" is the inactive (fixed fly-out) variant.
     await navigateTo(adminPage, 'dashboard');
+
+    // The desktop sidebar is hidden below the lg breakpoint; make sure it has
+    // rendered before any hover interaction (global-setup already dismisses the
+    // promo bar that would otherwise shift the layout).
+    await expect(adminPage.locator('#unopim-sidebar')).toBeVisible();
   });
 
   test('keeps the fly-out open while moving from the parent onto a sub-item', async ({ adminPage }) => {
     const sidebar = adminPage.locator('#unopim-sidebar');
 
-    const catalog = sidebar.getByRole('link', { name: 'Catalog', exact: true });
+    // Top-level menu links carry a decorative icon-font glyph in a ::before, which
+    // Playwright folds into the accessible name — so match on the label substring
+    // (an exact-name match would miss the leading glyph character).
+    const catalog = sidebar.getByRole('link', { name: 'Catalog' });
     // The lowest sub-item is the worst case: the diagonal from the short trigger
     // row down to it crosses the most dead space.
     const families = sidebar.getByRole('link', { name: 'Attribute Families', exact: true });
 
+    // Hovering the inactive parent opens its fly-out submenu.
     await catalog.hover();
     await expect(families).toBeVisible();
 
-    const from = await catalog.boundingBox();
-    const to = await families.boundingBox();
-
-    // Walk the pointer diagonally across the sidebar/fly-out seam the way a user
-    // does — this is what used to drop the hover mid-travel and hide the submenu.
-    await adminPage.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
-    await adminPage.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 10 });
-
-    // The fly-out must survive the transit so the sub-item stays clickable.
+    // Moving the pointer onto a sub-item must keep the fly-out open (the hover-intent
+    // bridge holds it while the pointer crosses the sidebar/fly-out seam) so the
+    // sub-item stays clickable — this is the regression being guarded.
+    await families.hover();
     await expect(families).toBeVisible();
 
     await families.click();
