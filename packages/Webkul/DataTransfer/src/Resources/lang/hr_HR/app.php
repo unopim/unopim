@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Povezanosti proizvoda',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Polje \'%s\' je obavezno.',
+                    'self-link-not-allowed'       => 'Proizvod \'%s\' ne može biti povezan sam sa sobom.',
+                    'sku-not-found'               => 'Proizvod sa SKU-om \'%s\' nije pronađen.',
+                    'related-sku-not-found'       => 'Povezani proizvod sa SKU-om \'%s\' nije pronađen.',
+                    'association-type-not-found'  => 'Vrsta povezanosti \'%s\' ne postoji ili nije aktivna.',
+                    'invalid-field-value'         => 'Navedena je nevažeća vrijednost za polje povezanosti.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Grupe značajki',
             'validation' => [

@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => '產品關聯',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '「%s」欄位為必填項目。',
+                    'self-link-not-allowed'       => '產品「%s」不能與自身建立關聯。',
+                    'sku-not-found'               => '找不到 SKU 為「%s」的產品。',
+                    'related-sku-not-found'       => '找不到 SKU 為「%s」的關聯產品。',
+                    'association-type-not-found'  => '關聯類型「%s」不存在或未啟用。',
+                    'invalid-field-value'         => '關聯欄位提供了無效的值。',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => '屬性組',
             'validation' => [

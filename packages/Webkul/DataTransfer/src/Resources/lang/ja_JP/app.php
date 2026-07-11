@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => '商品関連付け',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' フィールドは必須です。',
+                    'self-link-not-allowed'       => '商品 \'%s\' は自分自身と関連付けることはできません。',
+                    'sku-not-found'               => 'SKU \'%s\' の商品が見つかりません。',
+                    'related-sku-not-found'       => 'SKU \'%s\' の関連商品が見つかりません。',
+                    'association-type-not-found'  => '関連付けタイプ \'%s\' は存在しないか無効です。',
+                    'invalid-field-value'         => '関連付けフィールドに無効な値が指定されました。',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => '属性グループ',
             'validation' => [

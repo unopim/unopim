@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Associazioni prodotto',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Il campo \'%s\' è obbligatorio.',
+                    'self-link-not-allowed'       => 'Il prodotto \'%s\' non può essere associato a se stesso.',
+                    'sku-not-found'               => 'Prodotto con SKU \'%s\' non trovato.',
+                    'related-sku-not-found'       => 'Prodotto correlato con SKU \'%s\' non trovato.',
+                    'association-type-not-found'  => 'Il tipo di associazione \'%s\' non esiste o non è attivo.',
+                    'invalid-field-value'         => 'Valore non valido fornito per un campo di associazione.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Gruppi di attributi',
             'validation' => [

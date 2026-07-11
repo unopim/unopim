@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => '产品关联',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' 字段为必填项。',
+                    'self-link-not-allowed'       => '产品 \'%s\' 不能与自身关联。',
+                    'sku-not-found'               => '未找到 SKU 为 \'%s\' 的产品。',
+                    'related-sku-not-found'       => '未找到 SKU 为 \'%s\' 的关联产品。',
+                    'association-type-not-found'  => '关联类型 \'%s\' 不存在或未启用。',
+                    'invalid-field-value'         => '关联字段提供了无效的值。',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => '属性组',
             'validation' => [

@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Liên kết sản phẩm',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Trường \'%s\' là bắt buộc.',
+                    'self-link-not-allowed'       => 'Sản phẩm \'%s\' không thể tự liên kết với chính nó.',
+                    'sku-not-found'               => 'Không tìm thấy sản phẩm có SKU \'%s\'.',
+                    'related-sku-not-found'       => 'Không tìm thấy sản phẩm liên kết có SKU \'%s\'.',
+                    'association-type-not-found'  => 'Loại liên kết \'%s\' không tồn tại hoặc không hoạt động.',
+                    'invalid-field-value'         => 'Giá trị không hợp lệ được cung cấp cho trường liên kết.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Nhóm thuộc tính',
             'validation' => [

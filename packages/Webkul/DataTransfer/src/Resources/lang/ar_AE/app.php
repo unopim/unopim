@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'ارتباطات المنتج',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'الحقل \'%s\' مطلوب.',
+                    'self-link-not-allowed'       => 'لا يمكن ربط المنتج \'%s\' بنفسه.',
+                    'sku-not-found'               => 'لم يتم العثور على منتج بوحدة SKU \'%s\'.',
+                    'related-sku-not-found'       => 'لم يتم العثور على المنتج المرتبط بوحدة SKU \'%s\'.',
+                    'association-type-not-found'  => 'نوع الارتباط \'%s\' غير موجود أو غير نشط.',
+                    'invalid-field-value'         => 'قيمة غير صالحة لحقل الارتباط.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'مجموعات السمات',
             'validation' => [

@@ -1,0 +1,3 @@
+sku,association_type,related_sku,quantity
+SKU001,bundle_kit,SKU002,2
+SKU001,bundle_kit,SKU003,3

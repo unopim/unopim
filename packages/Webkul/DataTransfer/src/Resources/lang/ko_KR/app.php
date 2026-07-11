@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => '제품 연관 관계',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' 필드는 필수입니다.',
+                    'self-link-not-allowed'       => '제품 \'%s\'은(는) 자기 자신과 연결할 수 없습니다.',
+                    'sku-not-found'               => 'SKU \'%s\'에 해당하는 제품을 찾을 수 없습니다.',
+                    'related-sku-not-found'       => 'SKU \'%s\'에 해당하는 연관 제품을 찾을 수 없습니다.',
+                    'association-type-not-found'  => '연관 유형 \'%s\'이(가) 존재하지 않거나 비활성 상태입니다.',
+                    'invalid-field-value'         => '연관 필드에 유효하지 않은 값이 지정되었습니다.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => '속성 그룹',
             'validation' => [

@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Зв\'язки товарів',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Поле \'%s\' є обов\'язковим.',
+                    'self-link-not-allowed'       => 'Товар \'%s\' не може бути пов\'язаний сам із собою.',
+                    'sku-not-found'               => 'Товар з артикулом (SKU) \'%s\' не знайдено.',
+                    'related-sku-not-found'       => 'Пов\'язаний товар з артикулом (SKU) \'%s\' не знайдено.',
+                    'association-type-not-found'  => 'Тип зв\'язку \'%s\' не існує або є неактивним.',
+                    'invalid-field-value'         => 'Вказано неприпустиме значення для поля зв\'язку.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Групи атрибутів',
             'validation' => [

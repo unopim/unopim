@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Бүтээгдэхүүний холбоо',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' талбарыг бөглөх шаардлагатай.',
+                    'self-link-not-allowed'       => '\'%s\' бүтээгдэхүүнийг өөртэй нь холбох боломжгүй.',
+                    'sku-not-found'               => 'SKU \'%s\' бүхий бүтээгдэхүүн олдсонгүй.',
+                    'related-sku-not-found'       => 'SKU \'%s\' бүхий холбогдох бүтээгдэхүүн олдсонгүй.',
+                    'association-type-not-found'  => '\'%s\' холбооны төрөл байхгүй эсвэл идэвхгүй байна.',
+                    'invalid-field-value'         => 'Холбооны талбарт буруу утга оруулсан байна.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Шинж чанарын бүлгүүд',
             'validation' => [

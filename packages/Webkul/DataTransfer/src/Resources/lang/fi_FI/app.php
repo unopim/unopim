@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Tuoteyhdistelmät',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Kenttä \'%s\' on pakollinen.',
+                    'self-link-not-allowed'       => 'Tuotetta \'%s\' ei voi yhdistää itseensä.',
+                    'sku-not-found'               => 'Tuotetta SKU-koodilla \'%s\' ei löytynyt.',
+                    'related-sku-not-found'       => 'Liittyvää tuotetta SKU-koodilla \'%s\' ei löytynyt.',
+                    'association-type-not-found'  => 'Yhdistelmätyyppiä \'%s\' ei ole olemassa tai se ei ole aktiivinen.',
+                    'invalid-field-value'         => 'Yhdistelmäkentälle annettiin virheellinen arvo.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Attribuuttiryhmät',
             'validation' => [

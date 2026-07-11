@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Ürün İlişkilendirmeleri',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' alanı zorunludur.',
+                    'self-link-not-allowed'       => '\'%s\' ürünü kendisiyle ilişkilendirilemez.',
+                    'sku-not-found'               => 'SKU \'%s\' olan ürün bulunamadı.',
+                    'related-sku-not-found'       => 'SKU \'%s\' olan ilişkili ürün bulunamadı.',
+                    'association-type-not-found'  => '\'%s\' ilişki türü mevcut değil veya pasif.',
+                    'invalid-field-value'         => 'İlişki alanı için geçersiz bir değer girildi.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Nitelik Grupları',
             'validation' => [

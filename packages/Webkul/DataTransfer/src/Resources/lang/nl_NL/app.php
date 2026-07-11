@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Productassociaties',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Het veld \'%s\' is verplicht.',
+                    'self-link-not-allowed'       => 'Product \'%s\' kan niet aan zichzelf worden gekoppeld.',
+                    'sku-not-found'               => 'Product met SKU \'%s\' niet gevonden.',
+                    'related-sku-not-found'       => 'Gekoppeld product met SKU \'%s\' niet gevonden.',
+                    'association-type-not-found'  => 'Het associatietype \'%s\' bestaat niet of is inactief.',
+                    'invalid-field-value'         => 'Ongeldige waarde opgegeven voor een associatieveld.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Attribuutgroepen',
             'validation' => [

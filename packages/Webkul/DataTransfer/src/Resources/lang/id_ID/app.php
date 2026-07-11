@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Asosiasi Produk',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Kolom \'%s\' wajib diisi.',
+                    'self-link-not-allowed'       => 'Produk \'%s\' tidak dapat diasosiasikan dengan dirinya sendiri.',
+                    'sku-not-found'               => 'Produk dengan SKU \'%s\' tidak ditemukan.',
+                    'related-sku-not-found'       => 'Produk terkait dengan SKU \'%s\' tidak ditemukan.',
+                    'association-type-not-found'  => 'Jenis asosiasi \'%s\' tidak ada atau tidak aktif.',
+                    'invalid-field-value'         => 'Nilai tidak valid diberikan untuk kolom asosiasi.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Grup Atribut',
             'validation' => [

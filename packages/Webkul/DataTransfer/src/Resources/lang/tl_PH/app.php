@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Mga Asosasyon ng Produkto',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Kinakailangan ang field na \'%s\'.',
+                    'self-link-not-allowed'       => 'Hindi maaaring iugnay ang produktong \'%s\' sa sarili nito.',
+                    'sku-not-found'               => 'Hindi natagpuan ang produktong may SKU na \'%s\'.',
+                    'related-sku-not-found'       => 'Hindi natagpuan ang kaugnay na produktong may SKU na \'%s\'.',
+                    'association-type-not-found'  => 'Ang uri ng asosasyon na \'%s\' ay hindi umiiral o hindi aktibo.',
+                    'invalid-field-value'         => 'May ibinigay na di-wastong halaga para sa field ng asosasyon.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Mga Grupo ng Tampok',
             'validation' => [

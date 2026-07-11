@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'उत्पाद संबंध',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' फ़ील्ड आवश्यक है।',
+                    'self-link-not-allowed'       => 'उत्पाद \'%s\' को स्वयं से संबद्ध नहीं किया जा सकता।',
+                    'sku-not-found'               => 'SKU \'%s\' वाला उत्पाद नहीं मिला।',
+                    'related-sku-not-found'       => 'SKU \'%s\' वाला संबंधित उत्पाद नहीं मिला।',
+                    'association-type-not-found'  => 'संबंध प्रकार \'%s\' मौजूद नहीं है या निष्क्रिय है।',
+                    'invalid-field-value'         => 'संबंध फ़ील्ड के लिए अमान्य मान प्रदान किया गया।',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'विशेषता समूह',
             'validation' => [

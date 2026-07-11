@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Product Associations',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'The \'%s\' field is required.',
+                    'self-link-not-allowed'       => 'Product \'%s\' cannot be associated with itself.',
+                    'sku-not-found'               => 'Product with SKU \'%s\' not found.',
+                    'related-sku-not-found'       => 'Related product with SKU \'%s\' not found.',
+                    'association-type-not-found'  => 'Association type \'%s\' does not exist or is inactive.',
+                    'invalid-field-value'         => 'Invalid value provided for an association field.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Attribute Groups',
             'validation' => [

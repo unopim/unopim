@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Produktassociationer',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Feltet \'%s\' er påkrævet.',
+                    'self-link-not-allowed'       => 'Produktet \'%s\' kan ikke tilknyttes sig selv.',
+                    'sku-not-found'               => 'Produkt med SKU \'%s\' blev ikke fundet.',
+                    'related-sku-not-found'       => 'Relateret produkt med SKU \'%s\' blev ikke fundet.',
+                    'association-type-not-found'  => 'Associationstypen \'%s\' findes ikke eller er inaktiv.',
+                    'invalid-field-value'         => 'Ugyldig værdi angivet for et associationsfelt.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Attributgrupper',
             'validation' => [

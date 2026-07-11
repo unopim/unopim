@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Associacions de productes',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'El camp \'%s\' és obligatori.',
+                    'self-link-not-allowed'       => 'El producte \'%s\' no es pot associar amb si mateix.',
+                    'sku-not-found'               => 'No s\'ha trobat cap producte amb l\'SKU \'%s\'.',
+                    'related-sku-not-found'       => 'No s\'ha trobat el producte relacionat amb l\'SKU \'%s\'.',
+                    'association-type-not-found'  => 'El tipus d\'associació \'%s\' no existeix o no està actiu.',
+                    'invalid-field-value'         => 'Valor no vàlid per a un camp d\'associació.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Grups d\'Atributs',
             'validation' => [

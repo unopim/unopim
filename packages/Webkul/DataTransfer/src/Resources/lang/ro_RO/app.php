@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Asocieri de produse',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Câmpul \'%s\' este obligatoriu.',
+                    'self-link-not-allowed'       => 'Produsul \'%s\' nu poate fi asociat cu el însuși.',
+                    'sku-not-found'               => 'Produsul cu SKU \'%s\' nu a fost găsit.',
+                    'related-sku-not-found'       => 'Produsul asociat cu SKU \'%s\' nu a fost găsit.',
+                    'association-type-not-found'  => 'Tipul de asociere \'%s\' nu există sau este inactiv.',
+                    'invalid-field-value'         => 'Valoare nevalidă furnizată pentru un câmp de asociere.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Grupuri de atribute',
             'validation' => [

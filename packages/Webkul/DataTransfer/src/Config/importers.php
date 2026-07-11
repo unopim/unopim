@@ -33,6 +33,14 @@ return [
         'has_file_options' => true,
     ],
 
+    'product-associations' => [
+        'title'            => 'data_transfer::app.importers.product-associations.title',
+        'importer'         => 'Webkul\DataTransfer\Helpers\Importers\ProductAssociation\Importer',
+        'sample_path'      => 'data-transfer/samples/product-associations.csv',
+        'validator'        => 'Webkul\DataTransfer\Validators\JobInstances\Import\ProductAssociationJobValidator',
+        'has_file_options' => true,
+    ],
+
     'attribute-groups' => [
         'title'            => 'data_transfer::app.importers.attribute-groups.title',
         'importer'         => 'Webkul\DataTransfer\Helpers\Importers\AttributeGroup\Importer',

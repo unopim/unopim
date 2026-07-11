@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Связи товаров',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Поле \'%s\' обязательно для заполнения.',
+                    'self-link-not-allowed'       => 'Товар \'%s\' не может быть связан сам с собой.',
+                    'sku-not-found'               => 'Товар с артикулом (SKU) \'%s\' не найден.',
+                    'related-sku-not-found'       => 'Связанный товар с артикулом (SKU) \'%s\' не найден.',
+                    'association-type-not-found'  => 'Тип связи \'%s\' не существует или неактивен.',
+                    'invalid-field-value'         => 'Указано недопустимое значение для поля связи.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Группы атрибутов',
             'validation' => [
