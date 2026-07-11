@@ -33,6 +33,12 @@ return [
                     'required' => false,
                     'type'     => 'boolean',
                 ], [
+                    'name'     => 'with_associations',
+                    'title'    => 'data_transfer::app.exporters.fields.with-associations',
+                    'info'     => 'data_transfer::app.exporters.fields.with-associations-info',
+                    'required' => false,
+                    'type'     => 'boolean',
+                ], [
                     'name'     => 'header_row',
                     'title'    => 'data_transfer::app.exporters.fields.header-row',
                     'info'     => 'data_transfer::app.exporters.fields.header-row-info',

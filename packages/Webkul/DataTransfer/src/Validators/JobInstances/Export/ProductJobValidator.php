@@ -18,13 +18,14 @@ class ProductJobValidator extends JobValidator
      * Stores validation rules for data
      */
     protected array $rules = [
-        'filters.file_format' => 'required',
-        'filters.with_media'  => 'in:1,0',
-        'filters.header_row'  => 'nullable|in:1,0',
-        'filters.use_labels'  => 'nullable|in:1,0',
-        'filters.date_format' => 'nullable|in:Y-m-d,d-m-Y,d/m/Y,m/d/Y',
-        'filters.file_path'   => 'nullable|string|max:255',
-        'filters.sku'         => 'nullable|string',
+        'filters.file_format'       => 'required',
+        'filters.with_media'        => 'in:1,0',
+        'filters.with_associations' => 'nullable|in:1,0',
+        'filters.header_row'        => 'nullable|in:1,0',
+        'filters.use_labels'        => 'nullable|in:1,0',
+        'filters.date_format'       => 'nullable|in:Y-m-d,d-m-Y,d/m/Y,m/d/Y',
+        'filters.file_path'         => 'nullable|string|max:255',
+        'filters.sku'               => 'nullable|string',
     ];
 
     public function __construct(protected ChannelRepository $channelRepository)
@@ -37,19 +38,20 @@ class ProductJobValidator extends JobValidator
         $this->rules['filters.time_date_end'] = 'nullable|date|after_or_equal:filters.time_date|required_if:filters.time_condition,'.TimeCondition::BETWEEN_DATES->value;
 
         $this->attributeNames = [
-            'filters.file_format'    => trans('data_transfer::app.exporters.fields.file-format'),
-            'filters.with_media'     => trans('data_transfer::app.exporters.fields.with-media'),
-            'filters.header_row'     => trans('data_transfer::app.exporters.fields.header-row'),
-            'filters.use_labels'     => trans('data_transfer::app.exporters.fields.use-labels'),
-            'filters.date_format'    => trans('data_transfer::app.exporters.fields.date-format'),
-            'filters.file_path'      => trans('data_transfer::app.exporters.fields.file-path'),
-            'filters.status'         => trans('data_transfer::app.exporters.fields.status'),
-            'filters.sku'            => trans('data_transfer::app.exporters.products.filters.identifiers'),
-            'filters.completeness'   => trans('data_transfer::app.exporters.products.filters.completeness'),
-            'filters.time_condition' => trans('data_transfer::app.exporters.products.filters.time-condition'),
-            'filters.time_value'     => trans('data_transfer::app.exporters.products.filters.time-value'),
-            'filters.time_date'      => trans('data_transfer::app.exporters.products.filters.time-date'),
-            'filters.time_date_end'  => trans('data_transfer::app.exporters.products.filters.time-date-end'),
+            'filters.file_format'       => trans('data_transfer::app.exporters.fields.file-format'),
+            'filters.with_media'        => trans('data_transfer::app.exporters.fields.with-media'),
+            'filters.with_associations' => trans('data_transfer::app.exporters.fields.with-associations'),
+            'filters.header_row'        => trans('data_transfer::app.exporters.fields.header-row'),
+            'filters.use_labels'        => trans('data_transfer::app.exporters.fields.use-labels'),
+            'filters.date_format'       => trans('data_transfer::app.exporters.fields.date-format'),
+            'filters.file_path'         => trans('data_transfer::app.exporters.fields.file-path'),
+            'filters.status'            => trans('data_transfer::app.exporters.fields.status'),
+            'filters.sku'               => trans('data_transfer::app.exporters.products.filters.identifiers'),
+            'filters.completeness'      => trans('data_transfer::app.exporters.products.filters.completeness'),
+            'filters.time_condition'    => trans('data_transfer::app.exporters.products.filters.time-condition'),
+            'filters.time_value'        => trans('data_transfer::app.exporters.products.filters.time-value'),
+            'filters.time_date'         => trans('data_transfer::app.exporters.products.filters.time-date'),
+            'filters.time_date_end'     => trans('data_transfer::app.exporters.products.filters.time-date-end'),
         ];
     }
 

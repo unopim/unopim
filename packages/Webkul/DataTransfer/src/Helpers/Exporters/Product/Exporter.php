@@ -387,6 +387,11 @@ class Exporter extends AbstractExporter
 
         $productsByIds = $this->getItemsFromIds($flatIds);
 
+        // Legacy `up_sells`/`cross_sells`/`related_products` SKU-list columns are opt-in
+        // (default off) so the product export stays clean by default. The dedicated
+        // association export job is the rich, row-per-link alternative for this data.
+        $withAssociations = (bool) ($this->getFilters()['with_associations'] ?? false);
+
         foreach ($productsByIds as $product) {
             // Build rowData directly from model properties instead of calling toArray().
             // Calling $product->toArray() triggers attribute_family->toArray() which invokes
@@ -415,9 +420,12 @@ class Exporter extends AbstractExporter
             $status = $product->status ? 'true' : 'false';
             $configurableAttributes = $this->getSuperAttributes($rowData);
             $categories = $this->getCategories($rowData);
-            $upSells = $this->getAssociations($rowData, 'up_sells');
-            $crossSells = $this->getAssociations($rowData, 'cross_sells');
-            $relatedProducts = $this->getAssociations($rowData, 'related_products');
+
+            $associationFields = $withAssociations ? [
+                'up_sells'         => $this->getAssociations($rowData, 'up_sells'),
+                'cross_sells'      => $this->getAssociations($rowData, 'cross_sells'),
+                'related_products' => $this->getAssociations($rowData, 'related_products'),
+            ] : [];
 
             $commonFields = $this->getCommonFields($rowData);
             unset($commonFields['sku']);
@@ -447,10 +455,7 @@ class Exporter extends AbstractExporter
                         'attribute_family'        => $family,
                         'configurable_attributes' => $configurableAttributes,
                         'categories'              => $categories,
-                        'up_sells'                => $upSells,
-                        'cross_sells'             => $crossSells,
-                        'related_products'        => $relatedProducts,
-                    ], $values);
+                    ], $associationFields, $values);
 
                     $this->exportBuffer->write([$row]);
                 }
