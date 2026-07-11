@@ -32,6 +32,7 @@ use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
 use Webkul\Product\Models\Product as ProductModel;
+use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Type\AbstractType;
 
@@ -1405,7 +1406,73 @@ class Importer extends AbstractImporter
             $this->bulkInsertProducts($products['insert'], $ids);
         }
 
+        /**
+         * Mirror the legacy association sections (related_products/up_sells/cross_sells)
+         * written above into the `product_associations` link table.
+         *
+         * `bulkUpdateProducts()`/`bulkInsertProducts()` write `values['associations']`
+         * straight to the DB via `DB::table('products')`, bypassing Eloquent entirely,
+         * so this is the only place that can mirror bulk-imported products into the
+         * link table like admin/API/copy already do.
+         */
+        $this->syncProductAssociationLinks($products);
+
         Event::dispatch('data_transfer.imports.batch.product.save.after', ['product_id' => $ids]);
+    }
+
+    /**
+     * Sync the legacy association sections from the just-saved batch's
+     * `values['associations']` into the `product_associations` link table.
+     *
+     * Product ids are resolved from `skuStorage` (already populated by
+     * `bulkUpdateProducts()`/`bulkInsertProducts()` above), so no extra
+     * per-row DB query is needed to find the id. The actual SKU -> id
+     * resolution for the *related* products is delegated to
+     * `ProductAssociationRepository::syncFromSkuList()`, reusing the exact
+     * same sync core the admin/API save path already relies on instead of
+     * rebuilding it here.
+     *
+     * Resilient: a sync failure for one product/section is reported, not
+     * thrown, so it never aborts the batch — the product rows have already
+     * been saved by the bulk write above.
+     */
+    protected function syncProductAssociationLinks(array $products): void
+    {
+        $associationRepository = app(ProductAssociationRepository::class);
+
+        foreach (['update', 'insert'] as $mode) {
+            if (empty($products[$mode])) {
+                continue;
+            }
+
+            foreach ($products[$mode] as $sku => $productData) {
+                $associations = $productData['values'][AbstractType::ASSOCIATION_VALUES_KEY] ?? [];
+
+                if (empty($associations)) {
+                    continue;
+                }
+
+                $skuInfo = $this->skuStorage->get((string) $sku);
+
+                if (empty($skuInfo['id'])) {
+                    continue;
+                }
+
+                $productId = (int) $skuInfo['id'];
+
+                foreach (AbstractType::ASSOCIATION_SECTIONS as $section) {
+                    if (empty($associations[$section])) {
+                        continue;
+                    }
+
+                    try {
+                        $associationRepository->syncFromSkuList($productId, $section, $associations[$section]);
+                    } catch (\Throwable $exception) {
+                        report($exception);
+                    }
+                }
+            }
+        }
     }
 
     /**
