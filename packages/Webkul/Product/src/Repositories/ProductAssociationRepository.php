@@ -206,4 +206,51 @@ class ProductAssociationRepository extends Repository
 
         $this->syncLinks($productId, $associationType->id, $links, preserveAdditionalData: true);
     }
+
+    /**
+     * Insert-or-update a SINGLE link identified by the unique triple
+     * `(product_id, association_type_id, related_product_id)`.
+     *
+     * Unlike `syncType`/`syncTypeWithData`/`syncFromSkuList`, this does NOT
+     * replace the whole set of links for the type — other links of that
+     * type are left untouched. This is the primitive the row-per-link
+     * association IMPORT job uses, since it accumulates links across
+     * batched rows and must never prune links written by a previous batch.
+     *
+     * Idempotent: calling it again for the same triple updates the same
+     * row (position/additional_data) rather than creating a duplicate.
+     *
+     * This is a low-level single-row operation and intentionally does NOT
+     * fire the `product_association.sync.before`/`after` events — those
+     * are for whole-type sync operations.
+     */
+    public function upsertLink(int $productId, int $associationTypeId, int $relatedProductId, ?int $position, ?array $additionalData): void
+    {
+        $this->model->updateOrCreate(
+            [
+                'product_id'          => $productId,
+                'association_type_id' => $associationTypeId,
+                'related_product_id'  => $relatedProductId,
+            ],
+            [
+                'position'        => $position,
+                'additional_data' => $additionalData,
+            ]
+        );
+    }
+
+    /**
+     * Delete a SINGLE link identified by the unique triple
+     * `(product_id, association_type_id, related_product_id)`, if present.
+     *
+     * Like `upsertLink`, this does not touch any other links of that type.
+     */
+    public function deleteLink(int $productId, int $associationTypeId, int $relatedProductId): void
+    {
+        $this->model
+            ->where('product_id', $productId)
+            ->where('association_type_id', $associationTypeId)
+            ->where('related_product_id', $relatedProductId)
+            ->delete();
+    }
 }
