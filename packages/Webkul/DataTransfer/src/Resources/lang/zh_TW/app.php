@@ -244,6 +244,9 @@ return [
         'attributes' => [
             'title' => '屬性',
         ],
+        'product-associations' => [
+            'title' => '產品關聯',
+        ],
         'attribute-groups' => [
             'title' => '屬性組',
         ],

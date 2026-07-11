@@ -244,6 +244,9 @@ return [
         'attributes' => [
             'title' => 'Značajke',
         ],
+        'product-associations' => [
+            'title' => 'Povezanosti proizvoda',
+        ],
         'attribute-groups' => [
             'title' => 'Grupe značajki',
         ],

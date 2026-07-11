@@ -244,6 +244,9 @@ return [
         'attributes' => [
             'title' => '속성',
         ],
+        'product-associations' => [
+            'title' => '제품 연관 관계',
+        ],
         'attribute-groups' => [
             'title' => '속성 그룹',
         ],

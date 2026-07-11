@@ -324,6 +324,37 @@ return [
         ],
     ],
 
+    'product-associations' => [
+        'title'       => 'data_transfer::app.exporters.product-associations.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\ProductAssociation\Exporter',
+        'source'      => 'Webkul\Product\Repositories\ProductAssociationRepository',
+        'sample_path' => 'data-transfer/samples/product-associations.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\ProductAssociationJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'attribute-groups' => [
         'title'       => 'data_transfer::app.exporters.attribute-groups.title',
         'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\AttributeGroup\Exporter',

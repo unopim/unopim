@@ -244,6 +244,9 @@ return [
         'attributes' => [
             'title' => 'Thuộc tính',
         ],
+        'product-associations' => [
+            'title' => 'Liên kết sản phẩm',
+        ],
         'attribute-groups' => [
             'title' => 'Nhóm thuộc tính',
         ],

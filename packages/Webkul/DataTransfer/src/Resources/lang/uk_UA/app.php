@@ -244,6 +244,9 @@ return [
         'attributes' => [
             'title' => 'Атрибути',
         ],
+        'product-associations' => [
+            'title' => 'Зв\'язки товарів',
+        ],
         'attribute-groups' => [
             'title' => 'Групи атрибутів',
         ],

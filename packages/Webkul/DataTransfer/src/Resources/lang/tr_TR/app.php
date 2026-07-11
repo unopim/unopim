@@ -244,6 +244,9 @@ return [
         'attributes' => [
             'title' => 'Nitelikler',
         ],
+        'product-associations' => [
+            'title' => 'Ürün İlişkilendirmeleri',
+        ],
         'attribute-groups' => [
             'title' => 'Nitelik Grupları',
         ],

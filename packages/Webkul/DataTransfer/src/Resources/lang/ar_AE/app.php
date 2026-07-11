@@ -244,6 +244,9 @@ return [
         'attributes' => [
             'title' => 'السمات',
         ],
+        'product-associations' => [
+            'title' => 'ارتباطات المنتج',
+        ],
         'attribute-groups' => [
             'title' => 'مجموعات السمات',
         ],

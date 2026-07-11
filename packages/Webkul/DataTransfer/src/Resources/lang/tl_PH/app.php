@@ -244,6 +244,9 @@ return [
         'attributes' => [
             'title' => 'Mga Tampok',
         ],
+        'product-associations' => [
+            'title' => 'Mga Asosasyon ng Produkto',
+        ],
         'attribute-groups' => [
             'title' => 'Mga Grupo ng Tampok',
         ],

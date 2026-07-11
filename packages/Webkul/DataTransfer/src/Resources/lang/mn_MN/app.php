@@ -244,6 +244,9 @@ return [
         'attributes' => [
             'title' => 'Шинж чанарууд',
         ],
+        'product-associations' => [
+            'title' => 'Бүтээгдэхүүний холбоо',
+        ],
         'attribute-groups' => [
             'title' => 'Шинж чанарын бүлгүүд',
         ],

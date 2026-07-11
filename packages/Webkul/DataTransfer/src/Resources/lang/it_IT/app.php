@@ -244,6 +244,9 @@ return [
         'attributes' => [
             'title' => 'Attributi',
         ],
+        'product-associations' => [
+            'title' => 'Associazioni prodotto',
+        ],
         'attribute-groups' => [
             'title' => 'Gruppi di attributi',
         ],
