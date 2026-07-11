@@ -44,10 +44,17 @@ class AssociationValidator
      *                                 'common' => ['code' => 'value'],
      *                                 'locale_specific' => ['en_US' => ['code' => 'value']],
      *                                 ]
+     * @param  bool  $skipLocaleSpecific  When true, locale-specific (`value_per_locale = 1`)
+     *                                    fields are excluded from rule-building entirely (no
+     *                                    required/type/regex check). Used by callers — such as
+     *                                    the row-per-link association import — whose input
+     *                                    format does not support locale-specific values, so a
+     *                                    locale field must be neither validated nor able to
+     *                                    block the row via a phantom `required` failure.
      *
      * @throws ValidationException
      */
-    public function validate(int $associationTypeId, array $additionalData, ?int $ignoreId = null): void
+    public function validate(int $associationTypeId, array $additionalData, ?int $ignoreId = null, bool $skipLocaleSpecific = false): void
     {
         $requestData = ['additional_data' => $additionalData];
 
@@ -55,7 +62,7 @@ class AssociationValidator
 
         $this->unknownFieldsValidate($requestData, $existsFields);
 
-        $rules = $this->inputFieldsRules($existsFields, $requestData, $ignoreId);
+        $rules = $this->inputFieldsRules($existsFields, $requestData, $ignoreId, $skipLocaleSpecific);
 
         Validator::make($requestData, $rules)->validate();
     }
@@ -130,7 +137,7 @@ class AssociationValidator
      * enforced in this iteration; a proper per-(product, association_type)
      * scoped check can be added later if needed.
      */
-    protected function inputFieldsRules(QueueableCollection $existsFields, array $requestData, ?int $id = null): array
+    protected function inputFieldsRules(QueueableCollection $existsFields, array $requestData, ?int $id = null, bool $skipLocaleSpecific = false): array
     {
         $rules = [];
         $defaultLocale = core()->getRequestedLocaleCode();
@@ -139,6 +146,10 @@ class AssociationValidator
             $fieldName = $field->code;
 
             if ($field->isLocaleBasedField()) {
+                if ($skipLocaleSpecific) {
+                    continue;
+                }
+
                 $localeSpecificData = $requestData['additional_data']['locale_specific'] ?? [$defaultLocale => ''];
 
                 foreach (array_keys($localeSpecificData) as $locale) {

@@ -24,10 +24,18 @@ use Webkul\Product\Validator\AssociationValidator;
  * `(sku, association_type)` pair add up rather than overwrite each other.
  *
  * Field columns are validated/persisted as the `common` bucket only.
- * Locale-specific association fields (`value_per_locale = 1`) are not
- * addressable from this row-per-link format yet — a locale-qualified
- * column convention (e.g. `quantity[en_US]`) is a documented later
- * extension, not implemented here.
+ * Locale-specific association fields (`value_per_locale = 1`) are IGNORED
+ * on import: the column is accepted (so the file does not fail column
+ * validation) but its value is neither validated nor persisted, and it can
+ * never block the row (e.g. via a `required` rule on a value it can't
+ * provide). `buildAdditionalData()` never places a locale field's value
+ * into `common`, and `AssociationValidator::validate()` is called with
+ * `skipLocaleSpecific: true` so it does not build rules for locale fields
+ * at all here — writing the value to `common` would otherwise persist an
+ * unvalidated value (that rule only ever targets
+ * `locale_specific.<locale>.<code>`). A locale-qualified column convention
+ * (e.g. `quantity[en_US]`) is a documented later extension, not
+ * implemented here.
  */
 class Importer extends AbstractImporter
 {
@@ -202,7 +210,7 @@ class Importer extends AbstractImporter
             $additionalData = $this->buildAdditionalData($rowData, $typeId);
 
             try {
-                $this->associationValidator->validate($typeId, $additionalData);
+                $this->associationValidator->validate($typeId, $additionalData, skipLocaleSpecific: true);
             } catch (ValidationException $e) {
                 foreach ($e->errors() as $field => $fieldMessages) {
                     $this->skipRow($rowNumber, self::ERROR_FIELD_VALIDATION, $field, current($fieldMessages));
@@ -330,12 +338,24 @@ class Importer extends AbstractImporter
      * limited to the fields that belong to the given association type
      * (fields of other types present in the CSV header are ignored for
      * this row). Only the `common` bucket is populated — see class docblock.
+     *
+     * Locale-specific fields (`value_per_locale = 1`) are intentionally
+     * SKIPPED here: `AssociationValidator` only builds rules for locale
+     * fields under `additional_data.locale_specific.<locale>.<code>`, never
+     * under `common.<code>`, so persisting them into `common` would write
+     * an unvalidated value. The column is still accepted (see
+     * `initValidColumnNames()`), it is simply ignored on import until a
+     * locale-qualified column convention is implemented.
      */
     protected function buildAdditionalData(array $rowData, int $typeId): array
     {
         $common = [];
 
         foreach ($this->getFieldsForType($typeId) as $field) {
+            if ($field->value_per_locale) {
+                continue;
+            }
+
             $code = $field->code;
 
             if (

@@ -47,6 +47,41 @@ function createBundleKitTypeWithQuantityField(): int
     return $type->id;
 }
 
+function createTypeWithLocaleAndCommonField(): int
+{
+    $repository = app(AssociationTypeRepository::class);
+
+    $type = $repository->create([
+        'code'            => 'kit_with_locale',
+        'status'          => 1,
+        'position'        => 1,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Kit With Locale'],
+        'fields'          => [
+            [
+                'code'        => 'quantity',
+                'type'        => 'text',
+                'validation'  => 'number',
+                'is_required' => 1,
+                'status'      => 1,
+                'section'     => 'left',
+                'en_US'       => ['name' => 'Quantity'],
+            ],
+            [
+                'code'             => 'locale_note',
+                'type'             => 'text',
+                'is_required'      => 1,
+                'value_per_locale' => 1,
+                'status'           => 1,
+                'section'          => 'left',
+                'en_US'            => ['name' => 'Locale Note'],
+            ],
+        ],
+    ]);
+
+    return $type->id;
+}
+
 function makeAssociationImporter(string $action): array
 {
     $importer = app(Importer::class);
@@ -254,5 +289,52 @@ describe('ProductAssociation import — validation', function () {
         $row = ['sku' => $p1->sku, 'association_type' => 'bundle_kit', 'related_sku' => 'MISSING-SKU', 'quantity' => '1'];
 
         expect($importer->validateRow($row, 1))->toBeFalse();
+    });
+});
+
+describe('ProductAssociation import — locale-specific fields are ignored', function () {
+    it('imports the row successfully, persists the common field, and does not persist the required locale-specific field anywhere', function () {
+        $typeId = createTypeWithLocaleAndCommonField();
+
+        $p1 = Product::factory()->create();
+        $p2 = Product::factory()->create();
+
+        [$importer, $jobTrack] = makeAssociationImporter(Import::ACTION_APPEND);
+
+        // `locale_note` is a required, locale-specific (`value_per_locale = 1`)
+        // field. Plan 4 only supports the `common` bucket, so this column
+        // must be ignored: it must not block the row, must not be validated,
+        // and must not be persisted (neither under `common` nor under a
+        // `locale_specific` bucket).
+        $row = [
+            'sku'              => $p1->sku,
+            'association_type' => 'kit_with_locale',
+            'related_sku'      => $p2->sku,
+            'quantity'         => '7',
+            'locale_note'      => 'a locale specific note',
+        ];
+
+        expect($importer->validateRow($row, 1))->toBeTrue();
+
+        $batch = JobTrackBatch::factory()->create([
+            'data'         => [$row],
+            'job_track_id' => $jobTrack->id,
+        ]);
+
+        $importer->importBatch($batch);
+
+        $link = DB::table('product_associations')
+            ->where('product_id', $p1->id)
+            ->where('association_type_id', $typeId)
+            ->where('related_product_id', $p2->id)
+            ->first();
+
+        expect($link)->not->toBeNull();
+
+        $additionalData = json_decode($link->additional_data, true);
+
+        expect($additionalData['common']['quantity'] ?? null)->toBe('7');
+        expect($additionalData['common'])->not->toHaveKey('locale_note');
+        expect($additionalData)->not->toHaveKey('locale_specific');
     });
 });

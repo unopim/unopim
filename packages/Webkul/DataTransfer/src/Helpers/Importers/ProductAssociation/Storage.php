@@ -126,12 +126,4 @@ class Storage
 
         return $this->typeItems[$code]['id'];
     }
-
-    /**
-     * Is storage empty (no products loaded)
-     */
-    public function isEmpty(): bool
-    {
-        return empty($this->productItems);
-    }
 }
