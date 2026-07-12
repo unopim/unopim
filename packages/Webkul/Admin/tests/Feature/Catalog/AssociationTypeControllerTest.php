@@ -1,5 +1,6 @@
 <?php
 
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Webkul\Product\Models\AssociationType;
 use Webkul\Product\Models\AssociationTypeField;
 use Webkul\Product\Repositories\AssociationTypeRepository;
@@ -42,8 +43,7 @@ it('should show validation errors when creating an association type without requ
 
     $this->post(route('admin.catalog.association_types.store'))
         ->assertRedirect()
-        ->assertInvalid('code')
-        ->assertInvalid('en_US.name');
+        ->assertInvalid('code');
 });
 
 it('should show a validation error when creating an association type with a not-allowed code', function () {
@@ -83,15 +83,15 @@ it('should create an association type with fields successfully', function () {
 
     $response = $this->post(route('admin.catalog.association_types.store'), $data);
 
-    $response->assertRedirect(route('admin.catalog.association_types.index'));
-    $response->assertSessionHas('success');
-
     $this->assertDatabaseHas($this->getFullTableName(AssociationType::class), [
         'code'            => $data['code'],
         'is_user_defined' => 1,
     ]);
 
     $associationType = AssociationType::where('code', $data['code'])->firstOrFail();
+
+    $response->assertRedirect(route('admin.catalog.association_types.edit', $associationType->id));
+    $response->assertSessionHas('success');
 
     $this->assertDatabaseHas($this->getFullTableName(AssociationTypeField::class), [
         'association_type_id' => $associationType->id,
@@ -163,10 +163,10 @@ it('should create an association type when field codes are all distinct', functi
 
     $response = $this->post(route('admin.catalog.association_types.store'), $data);
 
-    $response->assertRedirect(route('admin.catalog.association_types.index'));
-    $response->assertSessionHas('success');
-
     $associationType = AssociationType::where('code', $data['code'])->firstOrFail();
+
+    $response->assertRedirect(route('admin.catalog.association_types.edit', $associationType->id));
+    $response->assertSessionHas('success');
 
     $this->assertDatabaseHas($this->getFullTableName(AssociationTypeField::class), [
         'association_type_id' => $associationType->id,
@@ -214,14 +214,15 @@ it('converts the create redirect into a json redirect_url for an ajax-form submi
         'en_US'  => ['name' => 'Ajax Type'],
     ];
 
-    $this->withHeader('X-Ajax-Form', 'true')
+    $response = $this->withHeader('X-Ajax-Form', 'true')
         ->post(route('admin.catalog.association_types.store'), $data)
-        ->assertOk()
-        ->assertJson([
-            'redirect_url' => route('admin.catalog.association_types.index'),
-        ]);
+        ->assertOk();
 
-    $this->assertDatabaseHas($this->getFullTableName(AssociationType::class), ['code' => $data['code']]);
+    $associationType = AssociationType::where('code', $data['code'])->firstOrFail();
+
+    $response->assertJson([
+        'redirect_url' => route('admin.catalog.association_types.edit', $associationType->id),
+    ]);
 });
 
 it('should update the association type successfully', function () {
@@ -339,10 +340,86 @@ it('should mass update the status of association types', function () {
     }
 });
 
-it('should render the create page with the reusable field-builder component', function () {
+it('creates a type from a code-only modal submit and redirects to its edit page', function () {
     $this->loginAsAdmin();
 
-    $response = $this->get(route('admin.catalog.association_types.create'));
+    $code = 'code_only_'.uniqid();
+
+    $this->post(route('admin.catalog.association_types.store'), ['code' => $code])
+        ->assertRedirect();
+
+    $associationType = AssociationType::where('code', $code)->firstOrFail();
+
+    $this->post(route('admin.catalog.association_types.store'), ['code' => $code.'_b'])
+        ->assertRedirect(route(
+            'admin.catalog.association_types.edit',
+            AssociationType::where('code', $code.'_b')->firstOrFail()->id
+        ));
+
+    $this->assertDatabaseHas($this->getFullTableName(AssociationType::class), [
+        'id'              => $associationType->id,
+        'code'            => $code,
+        'status'          => 1,
+        'is_user_defined' => 1,
+    ]);
+
+    expect($associationType->position)->toBeGreaterThan(0);
+});
+
+it('seeds the requested-locale label to the code when the modal sends no label', function () {
+    $this->loginAsAdmin();
+
+    $code = 'seed_label_'.uniqid();
+
+    $this->post(route('admin.catalog.association_types.store'), ['code' => $code])
+        ->assertRedirect();
+
+    $associationType = AssociationType::where('code', $code)->firstOrFail();
+
+    expect($associationType->translate(core()->getRequestedLocaleCode())?->name)->toBe($code);
+});
+
+it('no longer requires a label when creating an association type', function () {
+    $this->loginAsAdmin();
+
+    $this->post(route('admin.catalog.association_types.store'), ['code' => 'no_label_'.uniqid()])
+        ->assertValid('en_US.name');
+});
+
+it('auto-increments position so a new type sorts after existing ones', function () {
+    $this->loginAsAdmin();
+
+    createAssociationType(['position' => 7]);
+
+    $code = 'auto_pos_'.uniqid();
+
+    $this->post(route('admin.catalog.association_types.store'), ['code' => $code])
+        ->assertRedirect();
+
+    expect(AssociationType::where('code', $code)->firstOrFail()->position)->toBeGreaterThan(7);
+});
+
+it('no longer exposes a full-page create route', function () {
+    expect(fn () => route('admin.catalog.association_types.create'))
+        ->toThrow(RouteNotFoundException::class);
+});
+
+it('renders the code-only create modal on the index page', function () {
+    $this->loginAsAdmin();
+
+    $response = $this->get(route('admin.catalog.association_types.index'));
+
+    $response->assertStatus(200);
+    $response->assertSee(trans('admin::app.catalog.association_types.create.title'), false);
+    $response->assertSee('name="code"', false);
+});
+
+it('should render the edit page with the reusable field-builder component', function () {
+    $this->loginAsAdmin();
+
+    $associationType = createAssociationType();
+
+    $response = $this->get(route('admin.catalog.association_types.edit', $associationType->id));
 
     $response->assertStatus(200);
 
@@ -377,8 +454,7 @@ it('should render the edit page with the quantity field prefilled', function () 
         ],
     ];
 
-    $this->post(route('admin.catalog.association_types.store'), $data)
-        ->assertRedirect(route('admin.catalog.association_types.index'));
+    $this->post(route('admin.catalog.association_types.store'), $data);
 
     $associationType = AssociationType::where('code', $data['code'])->firstOrFail();
 

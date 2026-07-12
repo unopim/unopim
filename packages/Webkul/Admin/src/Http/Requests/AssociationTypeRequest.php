@@ -67,13 +67,22 @@ class AssociationTypeRequest extends FormRequest
                 new AssociationNotSupportedFields,
                 Rule::unique('association_types', 'code')->ignore($this->route('id')),
             ];
+
+            /**
+             * The create modal collects the code only. Labels are per-locale and
+             * are configured on the edit page, so they stay optional on create
+             * (the controller seeds the requested-locale label to the code).
+             */
+            foreach ($this->localeRepository->getActiveLocales() as $locale) {
+                $rules[$locale->code.'.name'] = ['sometimes', 'nullable', 'string'];
+            }
         } else {
             $rules['fields.*.code'] = ['sometimes', 'required', new AssociationNotSupportedFields];
             $rules['fields.*.type'] = ['sometimes', 'required', new AssociationFieldTypes];
-        }
 
-        foreach ($this->localeRepository->getActiveLocales() as $locale) {
-            $rules[$locale->code.'.name'] = ['required', 'string'];
+            foreach ($this->localeRepository->getActiveLocales() as $locale) {
+                $rules[$locale->code.'.name'] = ['required', 'string'];
+            }
         }
 
         return $rules;

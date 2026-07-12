@@ -10,14 +10,7 @@
             @lang('admin::app.catalog.association_types.index.title')
         </p>
 
-        @if (bouncer()->hasPermission('catalog.association_types.create'))
-            <a
-                href="{{ route('admin.catalog.association_types.create') }}"
-                class="primary-button"
-            >
-                @lang('admin::app.catalog.association_types.index.create-btn')
-            </a>
-        @endif
+        @include('admin::catalog.associations.types.create')
     </div>
 
     <x-admin::datagrid :src="route('admin.catalog.association_types.index')" />

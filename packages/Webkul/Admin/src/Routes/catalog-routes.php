@@ -148,8 +148,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::controller(AssociationTypeController::class)->prefix('association-types')->group(function () {
             Route::get('', 'index')->name('admin.catalog.association_types.index');
 
-            Route::get('create', 'create')->name('admin.catalog.association_types.create');
-
             Route::post('create', 'store')->name('admin.catalog.association_types.store');
 
             Route::get('edit/{id}', 'edit')->name('admin.catalog.association_types.edit');

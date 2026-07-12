@@ -42,8 +42,8 @@ async function saveViaUnsavedChangesBar(page, toastPattern) {
 
 	await page.getByRole('button', { name: 'Save changes' }).click();
 
-	// Either the toast appears OR the page redirects (create redirects to the
-	// index listing) — fails only if BOTH time out.
+	// Either the toast appears OR the page redirects — fails only if BOTH
+	// time out.
 	await Promise.any([navPromise, toastPromise]);
 }
 
@@ -118,17 +118,32 @@ test.describe('UnoPim Association Type Tests', () => {
 	test('creates a custom association type with a field-builder field, persists it across reload, and deletes it', async ({ adminPage }) => {
 		await ensureAssociationTypeAbsent(adminPage, 'bundle_kit');
 
-		await test.step('create bundle_kit with a required quantity field', async () => {
+		await test.step('create bundle_kit via the code-only modal', async () => {
 			await adminPage.goto(INDEX_URL, { waitUntil: 'load' });
-			await adminPage.getByRole('link', { name: 'Create Association Type' }).click();
-			await adminPage.waitForLoadState('load');
 
-			await adminPage.getByRole('textbox', { name: 'Code' }).fill('bundle_kit');
+			// Create is now a code-only modal on the index page, not a full page.
+			await adminPage.getByRole('button', { name: 'Create Association Type' }).click();
 
+			// Scope to the modal's own form (identified by its "Save Association
+			// Type" button) so its "Code" field is unambiguous.
+			const createModal = adminPage.locator('form')
+				.filter({ has: adminPage.getByRole('button', { name: 'Save Association Type' }) })
+				.last();
+
+			await createModal.getByRole('textbox', { name: 'Code' }).fill('bundle_kit');
+			await createModal.getByRole('button', { name: 'Save Association Type' }).click();
+
+			// Saving the code-only modal redirects to the edit page to configure
+			// the rest.
+			await expect(adminPage).toHaveURL(/\/admin\/catalog\/association-types\/edit\//);
+		});
+
+		await test.step('configure labels and a required quantity field on the edit page', async () => {
 			// Locale name inputs have no accessible label (matches the pattern
 			// used for category fields); fill every active locale so the
 			// per-locale `required` name rule passes regardless of how many
-			// locales are active.
+			// locales are active. They are seeded to the code on create and are
+			// overwritten here.
 			const nameInputs = adminPage.locator('input[name$="\\[name\\]"]');
 			const localeCount = await nameInputs.count();
 
@@ -144,7 +159,7 @@ test.describe('UnoPim Association Type Tests', () => {
 				section: 'General Section',
 			});
 
-			await saveViaUnsavedChangesBar(adminPage, /Association Type Created Successfully/i);
+			await saveViaUnsavedChangesBar(adminPage, /Association Type Updated Successfully/i);
 		});
 
 		await test.step('quantity field persists after reloading the edit page', async () => {

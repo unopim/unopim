@@ -188,11 +188,6 @@ return [
     ], [
         'key'   => 'catalog.association_types.create',
         'name'  => 'admin::app.acl.create',
-        'route' => 'admin.catalog.association_types.create',
-        'sort'  => 1,
-    ], [
-        'key'   => 'catalog.association_types.create',
-        'name'  => 'admin::app.acl.create',
         'route' => 'admin.catalog.association_types.store',
         'sort'  => 1,
     ], [
