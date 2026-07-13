@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -60,6 +61,38 @@ class ProductController extends ApiController
         }
 
         return $product->getTypeInstance()->prepareRichAssociations($associations, $product);
+    }
+
+    /**
+     * Validates the rich `associations` payload BEFORE any product row is
+     * written by a CREATE-path caller (`SimpleProductController::store()`
+     * -- both its plain-create branch and its `parent`-variant branch that
+     * persists via `createOrUpdateVariant()` -- and
+     * `ConfigurableProductController::store()`). Without this, an invalid
+     * link's `additional_data` would only be caught later, inside
+     * `updateProduct()`'s own `resolveRichAssociations()` call, by which
+     * point `$this->productRepository->create($data)` (or the variant
+     * create) has already committed a bare sku/type/family row -- and
+     * since `StoreSimpleProductRequest`/`StoreConfigurableProductRequest`
+     * enforce `values.common.sku` unique, the client can't even retry the
+     * same sku, permanently locking it.
+     *
+     * Reuses the existing `resolveRichAssociations()` (and therefore
+     * `AbstractType::prepareRichAssociations()`) against a throwaway,
+     * unsaved `Product` -- with only `type` set, which is all
+     * `getTypeInstance()` needs to resolve the type class. Safe because
+     * `prepareRichAssociations()` only dereferences `$product->id` for
+     * self-link exclusion (`$relatedProductId === (int) $product->id`),
+     * a harmless no-op when `id` is null. When the payload carries no
+     * non-empty rich `associations` key, `resolveRichAssociations()`
+     * short-circuits before ever touching `$product`, so this is a no-op
+     * for the legacy create path -- byte-unchanged.
+     *
+     * @throws ValidationException
+     */
+    protected function validateRichAssociationsBeforeCreate(array $data): void
+    {
+        $this->resolveRichAssociations($data, new Product(['type' => $data['type'] ?? null]));
     }
 
     /**

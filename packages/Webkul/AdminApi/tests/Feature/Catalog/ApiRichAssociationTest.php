@@ -217,6 +217,58 @@ it('returns the bundle_kit association with its quantity in the GET product resp
     expect($links[0]['additional_data'])->toBe(['common' => ['quantity' => '9']]);
 });
 
+it('returns a 422 and creates no orphaned product row when a rich association link has an invalid field value on POST create', function () {
+    $bundleKitType = seedBundleKitAssociationType();
+
+    $family = AttributeFamily::first();
+    $sku = 'API-RICH-CREATE-INVALID-'.uniqid();
+
+    $related = Product::factory()->simple()->create();
+
+    $payload = [
+        'sku'          => $sku,
+        'parent'       => null,
+        'family'       => $family->code,
+        'values'       => [
+            'common' => ['sku' => $sku],
+        ],
+        'associations' => [
+            $bundleKitType->code => [
+                [
+                    'sku'             => $related->sku,
+                    'additional_data' => ['common' => ['quantity' => 'abc']],
+                ],
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.products.store'), $payload)
+        ->assertStatus(422)
+        ->assertJsonFragment(['success' => false]);
+
+    // The orphaned-row defect: the bare sku/type/family product row must
+    // NOT have been created before validation ran, otherwise the sku is
+    // permanently locked (StoreSimpleProductRequest enforces
+    // `values.common.sku` unique) and the client could never retry it.
+    $this->assertDatabaseMissing('products', ['sku' => $sku]);
+
+    $this->assertDatabaseCount('product_associations', 0);
+
+    // Prove the sku is free to reuse: a valid retry with the same sku
+    // must succeed.
+    $payload['associations'][$bundleKitType->code][0]['additional_data'] = ['common' => ['quantity' => '3']];
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.products.store'), $payload)
+        ->assertStatus(201)
+        ->assertJsonFragment(['success' => true]);
+
+    $created = Product::where('sku', $sku)->firstOrFail();
+
+    assertRichAssociationRow($created->id, $bundleKitType->id, $related->id, ['common' => ['quantity' => '3']]);
+});
+
 it('returns a 422 (not a 500) and persists nothing when a rich association link has an invalid field value', function () {
     $bundleKitType = seedBundleKitAssociationType();
 
