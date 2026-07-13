@@ -27,8 +27,8 @@ class ProductAssociationJobValidator extends JobValidator
      * Stores validation rules for data
      */
     protected array $rules = [
-        'action'              => 'required:in:append,delete',
-        'validation_strategy' => 'required:in:stop-on-errors,skip-errors',
+        'action'              => 'required|in:append,delete',
+        'validation_strategy' => 'required|in:stop-on-errors,skip-errors',
         'allowed_errors'      => 'required|integer|min:0',
     ];
 
