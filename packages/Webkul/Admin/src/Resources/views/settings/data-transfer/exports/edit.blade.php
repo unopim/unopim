@@ -142,7 +142,7 @@
                                 <x-admin::data-transfer.filter-fields
                                     :entity-type="$export->entity_type"
                                     :values="$exportFilters"
-                                    :exporter-config="json_encode($exporterConfig)"
+                                    :exporter-config="$exporterConfig"
                                     only="channels,locales,currencies,attributes"
                                     grid-class="grid grid-cols-1"
                                 />
@@ -161,7 +161,7 @@
                                 <x-admin::data-transfer.filter-fields
                                     :entity-type="$export->entity_type"
                                     :values="$exportFilters"
-                                    :exporter-config="json_encode($exporterConfig)"
+                                    :exporter-config="$exporterConfig"
                                     only="attribute_families,status"
                                     grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
                                 />
@@ -169,7 +169,7 @@
                                 <x-admin::data-transfer.filter-fields
                                     :entity-type="$export->entity_type"
                                     :values="$exportFilters"
-                                    :exporter-config="json_encode($exporterConfig)"
+                                    :exporter-config="$exporterConfig"
                                     only="completeness,time_condition,time_value,time_date,time_date_end"
                                     grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
                                 />
@@ -190,7 +190,7 @@
                                 <x-admin::data-transfer.filter-fields
                                     :entity-type="$export->entity_type"
                                     :values="$exportFilters"
-                                    :exporter-config="json_encode($exporterConfig)"
+                                    :exporter-config="$exporterConfig"
                                     only="sku"
                                     grid-class="grid grid-cols-1"
                                 />
@@ -229,7 +229,7 @@
                             <x-admin::data-transfer.filter-fields
                                 :entity-type="$export->entity_type"
                                 :values="$exportFilters"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="file_format,with_media,header_row,use_labels,date_format,file_path"
                             />
                         </div>

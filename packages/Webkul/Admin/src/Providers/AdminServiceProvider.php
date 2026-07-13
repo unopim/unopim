@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Admin\Console\Commands\RefreshDashboardCacheCommand;
+use Webkul\Admin\Fields\FieldConfig;
 use Webkul\Admin\Observers\CategoryObserver;
 use Webkul\Admin\Observers\ConfigurationObserver;
 use Webkul\Admin\Observers\ProductObserver;
@@ -80,6 +81,8 @@ class AdminServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerConfig();
+
+        $this->app->singleton(FieldConfig::class);
     }
 
     /**

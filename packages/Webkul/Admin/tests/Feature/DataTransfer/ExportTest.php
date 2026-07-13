@@ -310,27 +310,19 @@ it('keeps the selected entity type filter fields after a validation error reload
      * hardcoded entity. Otherwise every product/scope/condition card (each `v-if`-gated on
      * `filterFields`) stays hidden and the user's still-present old() input looks wiped.
      */
-    $start = strpos($content, 'filterFields:');
+    preg_match('/filterFields: \(window\.unopim\?\.fieldSets\?\.\[setsKey\] \?\? \{\}\)\[("[a-z-]+")\]/', $content, $seed);
 
-    expect($start)->not->toBeFalse();
+    expect($seed[1] ?? null)->toBe('"products"');
 
-    $arrayStart = strpos($content, '[', $start);
-    $depth = 0;
-    $end = null;
+    // ...and the set it seeds from must actually be published on the page, with the product fields in it.
+    preg_match("/window\.unopim\.fieldSets\['([a-f0-9]+)'\] = (\{.*?\});/s", $content, $registry);
+    preg_match('/const setsKey = "([a-f0-9]+)"/', $content, $key);
 
-    for ($i = $arrayStart, $len = strlen($content); $i < $len; $i++) {
-        if ($content[$i] === '[') {
-            $depth++;
-        } elseif ($content[$i] === ']' && --$depth === 0) {
-            $end = $i;
+    expect($key[1] ?? null)->toBe($registry[1] ?? null);
 
-            break;
-        }
-    }
+    $sets = json_decode($registry[2], true);
 
-    $filterFields = substr($content, $arrayStart, $end - $arrayStart + 1);
-
-    expect($filterFields)->toContain('"name":"sku"');
+    expect(array_column($sets['products'], 'name'))->toContain('sku');
 });
 
 it('stores the new output options on the export job', function () {

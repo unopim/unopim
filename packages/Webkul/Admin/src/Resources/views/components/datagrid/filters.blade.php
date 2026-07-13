@@ -510,14 +510,11 @@
             </div>
 
             <div class="mb-2 mt-1.5 grid">
-                <input
-                    type="number"
-                    class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
-                    :name="column.index"
-                    :placeholder="column.label"
-                    @blur="filterPage($event, column)"
-                    @keyup.enter="filterPage($event, column)"
-                    @wheel="$event.target.blur()"
+                <v-form-field
+                    :field="filterFields[column.index]"
+                    context="filter"
+                    model-value=""
+                    @update:model-value="filterPage($event, column)"
                 />
             </div>
 
@@ -565,12 +562,11 @@
             </div>
 
             <div class="mb-2 mt-1.5 grid">
-                <input
-                    type="text"
-                    class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
-                    :name="column.index"
-                    :placeholder="column.label"
-                    @change="filterPage($event, column)"
+                <v-form-field
+                    :field="filterFields[column.index]"
+                    context="filter"
+                    model-value=""
+                    @update:model-value="filterPage($event, column)"
                 />
             </div>
 

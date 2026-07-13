@@ -322,7 +322,7 @@
                         <x-admin::data-transfer.import-setting-fields
                             :entity-type="$import->entity_type"
                             :values="$filters"
-                            :importer-config="json_encode($importerConfig)"
+                            :importer-config="$importerConfig"
                         >
                         </x-admin::data-transfer.import-setting-fields>
                     </x-slot>

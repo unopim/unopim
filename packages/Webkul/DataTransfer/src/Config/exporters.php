@@ -93,6 +93,7 @@ return [
                     'list_route' => 'admin.settings.data_transfer.exports.filters.locales',
                     'track_by'   => 'code',
                     'label_by'   => 'label',
+                    'depends_on' => ['field' => 'channels', 'as' => 'channels'],
                 ], [
                     'name'       => 'currencies',
                     'title'      => 'data_transfer::app.exporters.products.filters.currencies',
@@ -103,6 +104,7 @@ return [
                     'list_route' => 'admin.settings.data_transfer.exports.filters.currencies',
                     'track_by'   => 'code',
                     'label_by'   => 'label',
+                    'depends_on' => ['field' => 'channels', 'as' => 'channels'],
                 ], [
                     'name'       => 'attributes',
                     'title'      => 'data_transfer::app.exporters.products.filters.attributes',

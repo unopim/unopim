@@ -1,5 +1,7 @@
 @props(['isMultiRow' => false])
 
+<x-admin::form.fields.load :types="['text', 'number']" />
+
 <v-datagrid {{ $attributes }}>
     <x-admin::shimmer.datagrid :isMultiRow="$isMultiRow" />
 
@@ -155,6 +157,28 @@
                 if (this._onShareLinkChanged) {
                     this.$emitter.off('share-link-changed', this._onShareLinkChanged);
                 }
+            },
+
+            computed: {
+                filterFields() {
+                    const types = {
+                        string:  'text',
+                        integer: 'number',
+                    };
+
+                    return (this.available.columns ?? []).reduce((fields, column) => {
+                        fields[column.index] = {
+                            name:        column.index,
+                            type:        types[column.type] ?? 'text',
+                            label:       column.label,
+                            placeholder: column.label,
+                            options:     [],
+                            async:       false,
+                        };
+
+                        return fields;
+                    }, {});
+                },
             },
 
             watch: {
