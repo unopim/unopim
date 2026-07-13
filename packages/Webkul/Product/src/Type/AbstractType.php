@@ -237,9 +237,16 @@ abstract class AbstractType
      * - `[1]` typeCode => `['association_type_id' => int, 'links' => resolved rows]`,
      *   ready for `syncRichAssociations()`.
      *
+     * Public (not just used by `update()`): write paths that persist product
+     * data directly instead of going through `update()` — currently the
+     * AdminApi product controllers (`Webkul\AdminApi\...\ProductController`)
+     * — call this directly so they can validate + resolve a rich
+     * `associations` payload BEFORE writing anything to the database, same
+     * as `update()` does.
+     *
      * @return array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}
      */
-    protected function prepareRichAssociations(array $associations, Product $product): array
+    public function prepareRichAssociations(array $associations, Product $product): array
     {
         $associationTypeRepository = app(AssociationTypeRepository::class);
 
@@ -333,9 +340,14 @@ abstract class AbstractType
      * type is reported, not rethrown, and must not affect the others or the
      * product save that already happened.
      *
+     * Public for the same reason as `prepareRichAssociations()` above: write
+     * paths that bypass `update()` (the AdminApi product controllers) call
+     * this directly, after they've saved the product row, to persist the
+     * resolved links.
+     *
      * @param  array<string,array{association_type_id:int,links:array}>  $resolvedAssociations
      */
-    protected function syncRichAssociations(int $productId, array $resolvedAssociations): void
+    public function syncRichAssociations(int $productId, array $resolvedAssociations): void
     {
         $associationRepository = app(ProductAssociationRepository::class);
 

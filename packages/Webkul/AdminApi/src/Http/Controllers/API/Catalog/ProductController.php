@@ -34,6 +34,57 @@ class ProductController extends ApiController
     ) {}
 
     /**
+     * Resolves + validates the optional rich, unified `associations` payload
+     * (same shape `AbstractType::prepareRichAssociations()` consumes: `{
+     * <typeCode>: [ {sku, additional_data?} ] }`) via the product's type
+     * instance, BEFORE any product row is written by the caller. An invalid
+     * link's `additional_data` throws a `ValidationException` right here --
+     * caught by the caller's existing `catch (\Exception $e) {
+     * storeExceptionLog($e) }` as a 422, with nothing persisted -- mirroring
+     * `AbstractType::update()`'s "validate before save" guarantee for this
+     * write path, which persists product data directly on the model instead
+     * of going through that method.
+     *
+     * Returns null when the payload carries no non-empty rich `associations`
+     * key: callers keep relying on the legacy ValueSetter +
+     * `syncAssociationLinks()` path, byte-unchanged.
+     *
+     * @return array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}|null
+     */
+    protected function resolveRichAssociations(array $data, Product $product): ?array
+    {
+        $associations = $data[ProductAbstractType::ASSOCIATION_VALUES_KEY] ?? null;
+
+        if (! is_array($associations) || empty($associations)) {
+            return null;
+        }
+
+        return $product->getTypeInstance()->prepareRichAssociations($associations, $product);
+    }
+
+    /**
+     * Rich-syncs the resolved unified `associations` payload (from
+     * `resolveRichAssociations()`) to `product_associations` AFTER the
+     * product row has been saved. The caller must pass the SAME sections
+     * (`array_keys($data['associations'])`) to `syncAssociationLinks()`'s
+     * `$excludeSections` so a type is never synced twice for the same
+     * request -- mirroring `AbstractType::update()`'s `$excludeSections`
+     * handling.
+     *
+     * @param  array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}|null  $richAssociations
+     */
+    protected function applyRichAssociations(Product $product, ?array $richAssociations): void
+    {
+        if (! $richAssociations || ! $product->id) {
+            return;
+        }
+
+        [, $resolvedRichAssociations] = $richAssociations;
+
+        $product->getTypeInstance()->syncRichAssociations($product->id, $resolvedRichAssociations);
+    }
+
+    /**
      * Updates a product in the system using the provided data and ID.
      *
      * @param  array  $data  The data to be used for updating the product.
@@ -88,6 +139,11 @@ class ProductController extends ApiController
             $product->status = (int) $data['status'];
         }
 
+        // Resolved + validated BEFORE the product row is touched below, so an
+        // invalid link's `additional_data` aborts here with nothing
+        // persisted (see `resolveRichAssociations()`).
+        $richAssociations = $this->resolveRichAssociations($data, $product);
+
         $wasDirty = $product->isDirty();
 
         if ($wasDirty) {
@@ -101,7 +157,11 @@ class ProductController extends ApiController
         $product->refresh();
 
         if ($product->id) {
-            $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? []);
+            $excludedSections = $richAssociations ? array_keys($data[ProductAbstractType::ASSOCIATION_VALUES_KEY]) : [];
+
+            $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? [], $excludedSections);
+
+            $this->applyRichAssociations($product, $richAssociations);
         }
 
         if ($wasDirty) {
@@ -174,12 +234,21 @@ class ProductController extends ApiController
             $product->values = $updatedValues;
         }
 
+        // Resolved + validated BEFORE `saveOrFail()` below, so an invalid
+        // link's `additional_data` aborts here with nothing persisted (see
+        // `resolveRichAssociations()`).
+        $richAssociations = $this->resolveRichAssociations($data, $product);
+
         $wasDirty = $product->isDirty();
 
         $product->saveOrFail();
 
         if ($product->id) {
-            $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? []);
+            $excludedSections = $richAssociations ? array_keys($data[ProductAbstractType::ASSOCIATION_VALUES_KEY]) : [];
+
+            $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? [], $excludedSections);
+
+            $this->applyRichAssociations($product, $richAssociations);
         }
 
         if ($wasDirty) {

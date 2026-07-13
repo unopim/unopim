@@ -52,6 +52,7 @@ class ConfigurableProductController extends ProductController
             'values',
             'super_attributes',
             'variants',
+            'associations',
         ]);
 
         try {
@@ -104,6 +105,7 @@ class ConfigurableProductController extends ProductController
             'additional',
             'values',
             'variants',
+            'associations',
         ]);
 
         try {
@@ -144,6 +146,7 @@ class ConfigurableProductController extends ProductController
             'status',
             'additional',
             'values',
+            'associations',
         ]);
 
         try {

@@ -75,6 +75,7 @@ class SimpleProductController extends ProductController
             'additional',
             'values',
             'variant',
+            'associations',
         ]);
 
         try {
@@ -129,6 +130,7 @@ class SimpleProductController extends ProductController
             'parent',
             'additional',
             'values',
+            'associations',
         ]);
 
         try {
@@ -168,6 +170,7 @@ class SimpleProductController extends ProductController
             'status',
             'additional',
             'values',
+            'associations',
         ]);
 
         try {

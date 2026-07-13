@@ -8,6 +8,7 @@ use Webkul\AdminApi\ApiDataSource;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
 use Webkul\Product\Database\Eloquent\Builder;
+use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
 
 class ProductDataSource extends ApiDataSource
@@ -27,7 +28,8 @@ class ProductDataSource extends ApiDataSource
     public function __construct(
         protected ProductRepository $productRepository,
         protected AttributeFamilyRepository $attributeFamilyRepository,
-        protected ProductCompletenessScoreRepository $productCompletenessScoreRepository
+        protected ProductCompletenessScoreRepository $productCompletenessScoreRepository,
+        protected ProductAssociationRepository $productAssociationRepository
     ) {}
 
     /**
@@ -93,7 +95,13 @@ class ProductDataSource extends ApiDataSource
 
         $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
-        return $this->normalizeProduct($product, $withCompleteness);
+        // Single-product GET always includes the `associations` block (all
+        // types, including custom ones + `additional_data`) — unlike
+        // `with_completeness`, this isn't behind an opt-in flag since a
+        // single extra query per request (vs. per-row on a listing) is
+        // negligible; `formatData()` (the listing) does NOT request it, to
+        // avoid an N+1 query per row there.
+        return $this->normalizeProduct($product, $withCompleteness, true);
     }
 
     public function getSuperAttributes($data)
@@ -244,7 +252,7 @@ class ProductDataSource extends ApiDataSource
     /**
      * Normalize product data for API response
      */
-    protected function normalizeProduct(array $product, bool $withCompleteness = false): array
+    protected function normalizeProduct(array $product, bool $withCompleteness = false, bool $withAssociations = false): array
     {
         $responseData = [
             'sku'        => $product['sku'],
@@ -269,7 +277,46 @@ class ProductDataSource extends ApiDataSource
             $responseData['completeness'] = $this->getCompletenessScores($product['id']) ?? 'N/A';
         }
 
+        if ($withAssociations) {
+            $responseData['associations'] = $this->getAssociationsForProduct($product['id']);
+        }
+
         return $responseData;
+    }
+
+    /**
+     * Builds the `associations` response block for a single product: every
+     * link the product has, across ALL association types (the 3 legacy
+     * sections AND custom types alike), grouped by the type's `code`, each
+     * carrying the related product's `sku` and the link's `additional_data`
+     * (e.g. `quantity`) -- the rich, per-link data the legacy
+     * `values.associations.<section>` flat SKU lists don't carry.
+     *
+     * This is purely additive: the legacy `values.associations` output
+     * above is untouched, so existing API consumers keep working.
+     *
+     * @return array<string, array<int, array{related_sku: ?string, additional_data: ?array}>>
+     */
+    protected function getAssociationsForProduct(int $productId): array
+    {
+        $links = $this->productAssociationRepository->getLinksForProduct($productId);
+
+        $grouped = [];
+
+        foreach ($links as $link) {
+            $typeCode = $link->associationType?->code;
+
+            if (! $typeCode) {
+                continue;
+            }
+
+            $grouped[$typeCode][] = [
+                'related_sku'     => $link->relatedProduct?->sku,
+                'additional_data' => $link->additional_data,
+            ];
+        }
+
+        return $grouped;
     }
 
     protected function getCompletenessScores(string $id): array
