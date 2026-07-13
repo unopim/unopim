@@ -233,6 +233,105 @@ it('returns a tool error and persists nothing when additional_data fails validat
     )->toBeFalse();
 });
 
+it('replace mode does not wipe an association type\'s existing links when every requested SKU is invalid', function () {
+    $product = Product::factory()->simple()->create();
+    $existingUpSell = Product::factory()->simple()->create();
+
+    $context = buildManageAssociationsChatContext(adminWithProductEditPermissionForAiTool(), $product->sku);
+
+    // Establish an existing up_sells link via append.
+    decodeManageAssociationsResult(
+        app(ManageAssociations::class)->register($context)->handle(new Request([
+            'sku'      => $product->sku,
+            'up_sells' => $existingUpSell->sku,
+            'mode'     => 'append',
+        ]))
+    );
+
+    $upSellsType = app(AssociationTypeRepository::class)->findByCode('up_sells');
+
+    $existingLinkExists = fn () => DB::table('product_associations')
+        ->where('product_id', $product->id)
+        ->where('association_type_id', $upSellsType->id)
+        ->where('related_product_id', $existingUpSell->id)
+        ->exists();
+
+    expect($existingLinkExists())->toBeTrue();
+
+    // Replace with a bogus/nonexistent SKU: must NOT wipe the existing link.
+    $result = decodeManageAssociationsResult(
+        app(ManageAssociations::class)->register($context)->handle(new Request([
+            'sku'      => $product->sku,
+            'up_sells' => 'NONEXISTENT-SKU-XYZ',
+            'mode'     => 'replace',
+        ]))
+    );
+
+    expect($result['error'] ?? null)->not->toBeNull();
+    expect($result['error'])->toContain('NONEXISTENT-SKU-XYZ');
+
+    // Existing link must still be present -- not wiped by the failed replace.
+    expect($existingLinkExists())->toBeTrue();
+
+    $product->refresh();
+
+    expect($product->values['associations']['up_sells'] ?? [])->not->toContain('NONEXISTENT-SKU-XYZ');
+});
+
+it('replace mode keeps only the valid resolved link when the request mixes a valid and an invalid SKU', function () {
+    $product = Product::factory()->simple()->create();
+    $oldUpSell = Product::factory()->simple()->create();
+    $newUpSell = Product::factory()->simple()->create();
+
+    $context = buildManageAssociationsChatContext(adminWithProductEditPermissionForAiTool(), $product->sku);
+
+    // First call (append) establishes an existing link.
+    decodeManageAssociationsResult(
+        app(ManageAssociations::class)->register($context)->handle(new Request([
+            'sku'      => $product->sku,
+            'up_sells' => $oldUpSell->sku,
+            'mode'     => 'append',
+        ]))
+    );
+
+    // Replace with one valid SKU and one nonexistent SKU.
+    $result = decodeManageAssociationsResult(
+        app(ManageAssociations::class)->register($context)->handle(new Request([
+            'sku'      => $product->sku,
+            'up_sells' => $newUpSell->sku.',NONEXISTENT-SKU-ABC',
+            'mode'     => 'replace',
+        ]))
+    );
+
+    expect($result['error'] ?? null)->toBeNull();
+    expect($result['result']['errors'] ?? [])->not->toBeEmpty();
+    expect(implode(' ', $result['result']['errors']))->toContain('NONEXISTENT-SKU-ABC');
+
+    $upSellsType = app(AssociationTypeRepository::class)->findByCode('up_sells');
+
+    // Old link is gone (replace semantics for the valid set)...
+    expect(
+        DB::table('product_associations')
+            ->where('product_id', $product->id)
+            ->where('association_type_id', $upSellsType->id)
+            ->where('related_product_id', $oldUpSell->id)
+            ->exists()
+    )->toBeFalse();
+
+    // ...and only the valid new link persists.
+    expect(
+        DB::table('product_associations')
+            ->where('product_id', $product->id)
+            ->where('association_type_id', $upSellsType->id)
+            ->where('related_product_id', $newUpSell->id)
+            ->exists()
+    )->toBeTrue();
+
+    $product->refresh();
+
+    expect($product->values['associations']['up_sells'] ?? null)->toBe([$newUpSell->sku]);
+});
+
 it('denies the tool when the user lacks catalog.products.edit permission', function () {
     $product = Product::factory()->simple()->create();
     $related = Product::factory()->simple()->create();

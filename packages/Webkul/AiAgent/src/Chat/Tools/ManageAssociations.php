@@ -59,7 +59,7 @@ class ManageAssociations implements PimTool
                     return json_encode(['error' => "SKU not found: {$sku}"]);
                 }
 
-                [$linksByType, $decodeError] = $this->collectRequestedLinks($request);
+                [$linksByType, $decodeError, $itemErrors] = $this->collectRequestedLinks($request);
 
                 if ($decodeError) {
                     return json_encode(['error' => $decodeError]);
@@ -69,7 +69,7 @@ class ManageAssociations implements PimTool
                     return json_encode(['error' => 'No valid associations to apply.']);
                 }
 
-                $errors = [];
+                $errors = $itemErrors;
 
                 $associationTypeRepository = app(AssociationTypeRepository::class);
 
@@ -117,6 +117,38 @@ class ManageAssociations implements PimTool
 
                 if (empty($resolvedAssociations)) {
                     return json_encode(['error' => 'No valid associations to apply. Errors: '.implode('; ', $errors)]);
+                }
+
+                // Drop any type whose resolved `links` came back empty (every
+                // related_sku requested for it was invalid/self-referencing).
+                // `prepareRichAssociations()` still returns such a type with
+                // an empty `links` array, so the earlier `empty($resolvedAssociations)`
+                // guard misses it; left as-is, `syncRichAssociations()` would
+                // call `syncTypeWithData($productId, $typeId, [])` in replace
+                // mode, which DELETES the type's existing links. Treat it as
+                // a per-type failure instead: report it, and don't sync or
+                // dual-write it at all, so existing links for that type are
+                // left completely untouched.
+                foreach ($resolvedAssociations as $typeCode => $associationData) {
+                    if (! empty($associationData['links'])) {
+                        continue;
+                    }
+
+                    $errors[] = "No valid SKUs resolved for association type '{$typeCode}'; its existing associations were left unchanged.";
+
+                    unset($resolvedAssociations[$typeCode], $legacySkuLists[$typeCode]);
+                }
+
+                if (empty($resolvedAssociations)) {
+                    return json_encode(['error' => 'No valid associations to apply. Errors: '.implode('; ', $errors)]);
+                }
+
+                // Keep the legacy JSON list in sync with what actually made
+                // it into the link table: filter out any requested SKU that
+                // didn't resolve (nonexistent or self-referencing) so the
+                // dual-write below never records a SKU the table doesn't have.
+                foreach ($legacySkuLists as $section => $skus) {
+                    $legacySkuLists[$section] = array_values(array_intersect($skus, $validSkus));
                 }
 
                 if ($mode === 'replace') {
@@ -185,11 +217,13 @@ class ManageAssociations implements PimTool
              * `{ <typeCode>: [ {sku, additional_data?}, ... ] }` shape consumed
              * by `AbstractType::prepareRichAssociations()`.
              *
-             * @return array{0: array<string, array<int, array{sku: string, additional_data?: array}>>, 1: string|null}
+             * @return array{0: array<string, array<int, array{sku: string, additional_data?: array}>>, 1: string|null, 2: array<int, string>}
              */
             protected function collectRequestedLinks(Request $request): array
             {
                 $linksByType = [];
+
+                $itemErrors = [];
 
                 $legacyInputs = [
                     'related_products' => $request->string('related')->toString(),
@@ -213,21 +247,24 @@ class ManageAssociations implements PimTool
                     $decoded = json_decode($associationsJson, true);
 
                     if (json_last_error() !== JSON_ERROR_NONE || ! is_array($decoded)) {
-                        return [[], 'associations_json must be a valid JSON array'];
+                        return [[], 'associations_json must be a valid JSON array', []];
                     }
 
-                    foreach ($decoded as $item) {
+                    foreach ($decoded as $index => $item) {
                         if (
                             ! is_array($item)
                             || empty($item['association_type'])
                             || empty($item['related_sku'])
+                            || (isset($item['additional_data']) && ! is_array($item['additional_data']))
                         ) {
+                            $itemErrors[] = "associations_json item at index {$index} is malformed (missing/invalid association_type, related_sku, or additional_data) and was skipped.";
+
                             continue;
                         }
 
                         $link = ['sku' => (string) $item['related_sku']];
 
-                        if (! empty($item['additional_data']) && is_array($item['additional_data'])) {
+                        if (! empty($item['additional_data'])) {
                             $link['additional_data'] = ['common' => $item['additional_data']];
                         }
 
@@ -235,7 +272,7 @@ class ManageAssociations implements PimTool
                     }
                 }
 
-                return [$linksByType, null];
+                return [$linksByType, null, $itemErrors];
             }
         };
     }
