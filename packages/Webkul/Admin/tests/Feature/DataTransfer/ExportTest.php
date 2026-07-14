@@ -114,6 +114,36 @@ it('stores attribute condition operators on the export job', function () {
         ->and($conditions[3])->toMatchArray(['attribute' => 'brand', 'operator' => 'empty']);
 });
 
+it('seeds saved attribute conditions into the edit page field set', function () {
+    $this->loginAsAdmin();
+
+    $conditions = [
+        ['attribute' => 'color', 'operator' => 'in', 'value' => ['red']],
+        ['attribute' => 'brand', 'operator' => 'empty'],
+    ];
+
+    $exportJob = JobInstances::factory()->exportJob()->entityProduct()->create([
+        'filters' => [
+            'file_format'       => 'Csv',
+            'custom_attributes' => json_encode($conditions),
+        ],
+    ]);
+
+    $html = get(route('admin.settings.data_transfer.exports.edit', ['id' => $exportJob->id]))
+        ->assertOk()
+        ->assertSee("app.component('v-field-attribute-conditions'", false)
+        ->getContent();
+
+    preg_match_all("/:saved-values='(\{.*?\})'/s", $html, $matches);
+
+    $seeded = collect($matches[1])
+        ->map(fn ($json) => json_decode($json, true))
+        ->first(fn ($values) => isset($values['custom_attributes']));
+
+    expect($seeded)->not->toBeNull()
+        ->and(json_decode($seeded['custom_attributes'], true))->toBe($conditions);
+});
+
 it('should create the category export job', function () {
     $this->loginAsAdmin();
 
@@ -305,16 +335,10 @@ it('keeps the selected entity type filter fields after a validation error reload
         ->assertStatus(200)
         ->getContent();
 
-    /**
-     * The Vue component must seed `filterFields` from old('entity_type') (products), not a
-     * hardcoded entity. Otherwise every product/scope/condition card (each `v-if`-gated on
-     * `filterFields`) stays hidden and the user's still-present old() input looks wiped.
-     */
     preg_match('/filterFields: \(window\.unopim\?\.fieldSets\?\.\[setsKey\] \?\? \{\}\)\[("[a-z-]+")\]/', $content, $seed);
 
     expect($seed[1] ?? null)->toBe('"products"');
 
-    // ...and the set it seeds from must actually be published on the page, with the product fields in it.
     preg_match("/window\.unopim\.fieldSets\['([a-f0-9]+)'\] = (\{.*?\});/s", $content, $registry);
     preg_match('/const setsKey = "([a-f0-9]+)"/', $content, $key);
 

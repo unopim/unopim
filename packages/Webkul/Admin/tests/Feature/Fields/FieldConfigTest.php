@@ -33,6 +33,25 @@ it('carries depends_on through, so scoping stays config driven', function () {
         ->and($byName['channels']['depends_on'])->toBeNull();
 });
 
+it('declares attribute conditions as an ordinary config field, route and exclusions resolved', function () {
+    $payload = app(FieldConfig::class)->payload(config('exporters'));
+
+    $field = collect($payload['sets']['products'])->firstWhere('name', 'custom_attributes');
+
+    expect($field)->not->toBeNull()
+        ->and($field['type'])->toBe('attribute-conditions')
+        ->and($field['list_route'])->toStartWith('http')
+        ->and($field['list_route'])->toContain('filters/attributes')
+        ->and($field['query_params'])->toBe(['exclude' => ['sku']])
+        ->and($payload['types'])->toContain('attribute-conditions');
+});
+
+it('keeps attribute conditions off the entities whose config does not ask for them', function () {
+    $sets = app(FieldConfig::class)->payload(config('exporters'))['sets'];
+
+    expect(array_column($sets['categories'], 'name'))->not->toContain('custom_attributes');
+});
+
 it('memoizes the payload, so five cards do not rebuild it five times', function () {
     $config = app(FieldConfig::class);
 

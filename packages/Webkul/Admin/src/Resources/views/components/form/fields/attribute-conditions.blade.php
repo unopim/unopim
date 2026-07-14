@@ -169,19 +169,13 @@
 
             mixins: [window.unopim.fieldBase],
 
-            props: {
-                attributeRoute:    { type: String, default: '' },
-                excludeAttributes: { type: [String, Array], default: () => ([]) },
-                operators:         { type: [String, Object], default: () => ({}) },
-            },
-
             data() {
                 return {
                     rows: [],
                     sequence: 0,
                     hydrated: false,
                     savedSignatures: {},
-                    operatorsMap: this.decode(this.operators, {}),
+                    operatorsMap: @json(\Webkul\DataTransfer\Helpers\Sources\Export\Filters\AttributeConditionOperators::frontendMap()),
                     numberPlaceholder: "@lang('admin::app.settings.data-transfer.exports.create.value-number-placeholder')",
                     valueText: "@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-value')",
                     booleanOptionsJson: JSON.stringify([
@@ -192,10 +186,6 @@
             },
 
             computed: {
-                /**
-                 * Every per-row lookup the template needs, resolved once per change instead of
-                 * once per binding: the markup reads `control` from up to eight places per row.
-                 */
                 decoratedRows() {
                     return this.rows.map(row => {
                         const operators = this.operatorsForType(row.type);
@@ -229,10 +219,12 @@
                     return JSON.stringify(rows);
                 },
 
-                attributeQueryParams() {
-                    const exclude = this.decode(this.excludeAttributes, []);
+                attributeRoute() {
+                    return this.field.list_route ?? '';
+                },
 
-                    return Array.isArray(exclude) && exclude.length ? { exclude } : {};
+                attributeQueryParams() {
+                    return this.field.query_params ?? {};
                 },
             },
 

@@ -315,7 +315,6 @@
     </script>
 @endPushOnce
 
-{{-- A page only pays for the widgets its fields actually use. --}}
 @foreach (array_unique((array) $types) as $type)
     @pushOnce('scripts', 'v-field-'.$type)
         @switch($type)
@@ -367,7 +366,6 @@
             @case('boolean')
                 <script type="text/x-template" id="v-field-boolean-template">
                     <div>
-                        {{-- Unchecked boxes are dropped from FormData; this guarantees a "0". --}}
                         <input type="hidden" :name="name" value="0" />
 
                         <label class="relative inline-flex items-center cursor-pointer">
@@ -460,7 +458,6 @@
                             @input="setValue(parseJson($event) ?? '')"
                         ></v-async-select-handler>
 
-                        {{-- v-multiselect-handler emits the whole option array, not a scalar. --}}
                         <v-multiselect-handler
                             v-else
                             :name="name"

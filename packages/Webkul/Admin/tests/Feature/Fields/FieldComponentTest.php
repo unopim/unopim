@@ -109,6 +109,43 @@ it('renders the export create page through the shared components', function () {
         ->assertSee("app.component('v-field-attribute-conditions'", false);
 });
 
+it('takes the attribute conditions route and exclusions off the field, not off bespoke props', function () use ($fields) {
+    $component = file_get_contents($fields.'/attribute-conditions.blade.php');
+
+    expect($component)->toContain('this.field.list_route')
+        ->and($component)->toContain('this.field.query_params')
+        ->and($component)->not->toContain('attributeRoute:')
+        ->and($component)->not->toContain('excludeAttributes');
+});
+
+it('renders attribute conditions from the exporter config, with no wrapper component left', function () use ($views) {
+    expect(file_exists($views.'/components/data-transfer/attribute-conditions.blade.php'))->toBeFalse();
+
+    foreach (['create', 'edit'] as $page) {
+        $blade = file_get_contents($views."/settings/data-transfer/exports/{$page}.blade.php");
+
+        expect($blade)->not->toContain('<x-admin::data-transfer.attribute-conditions')
+            ->and($blade)->toContain('only="custom_attributes"');
+    }
+});
+
+it('publishes the attribute condition field to the browser with its route and exclusions', function () {
+    $html = $this->get(route('admin.settings.data_transfer.exports.create'))->getContent();
+
+    preg_match("/window\.unopim\.fieldSets\['[a-f0-9]+'\] = (\{.*?\});/s", $html, $registry);
+
+    $sets = json_decode($registry[1] ?? '{}', true);
+
+    $field = collect($sets['products'] ?? [])->firstWhere('name', 'custom_attributes');
+
+    expect($field)->not->toBeNull()
+        ->and($field['type'])->toBe('attribute-conditions')
+        ->and($field['list_route'])->toContain('filters/attributes')
+        ->and($field['query_params'])->toBe(['exclude' => ['sku']]);
+
+    expect($html)->toContain("app.component('v-field-attribute-conditions'");
+});
+
 it('ships a template for every field type the exporter config can reach', function () {
     $html = $this->get(route('admin.settings.data_transfer.exports.create'))->getContent();
 
@@ -199,7 +236,6 @@ it('renders every type standalone', function () {
             ->and($html)->toContain("app.component('v-field-".$type."'");
     }
 
-    // the calendar picker must survive on the date widgets
     foreach (['date', 'datetime', 'date-range', 'datetime-range'] as $type) {
         $html = Blade::render('<x-admin::form.field :type="$type" name="x" />@stack(\'scripts\')', ['type' => $type]);
 

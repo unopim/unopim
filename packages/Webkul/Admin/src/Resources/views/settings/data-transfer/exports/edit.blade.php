@@ -28,13 +28,8 @@
                     $fieldNames = collect($exporterConfig[$export->entity_type]['filters']['fields'] ?? [])->pluck('name');
                     $scopeFields = $fieldNames->intersect(['channels', 'locales', 'currencies', 'attributes']);
                     $productFilterFields = $fieldNames->intersect(['attribute_families', 'categories', 'completeness', 'time_condition', 'status', 'sku']);
-                    $supportsConditions = $fieldNames->contains('attributes');
+                    $supportsConditions = $fieldNames->contains('custom_attributes');
                     $supportsCategories = $fieldNames->contains('categories');
-
-                    $savedCustomAttributes = $exportFilters['custom_attributes'] ?? [];
-                    $savedCustomAttributes = is_string($savedCustomAttributes)
-                        ? (json_decode($savedCustomAttributes, true) ?? [])
-                        : $savedCustomAttributes;
                 @endphp
 
                 <!-- Page Header -->
@@ -205,13 +200,13 @@
                                     @lang('admin::app.settings.data-transfer.exports.create.attribute-conditions')
                                 </p>
 
-                                <x-admin::data-transfer.attribute-conditions
-                                    :values="$savedCustomAttributes"
-                                    :attribute-route="route('admin.settings.data_transfer.exports.filters.attributes')"
-                                    :exclude-attributes="[\Webkul\DataTransfer\Enums\ProductFilter::SKU->value]"
-                                    :operators="\Webkul\DataTransfer\Helpers\Sources\Export\Filters\AttributeConditionOperators::frontendMap()"
-                                >
-                                </x-admin::data-transfer.attribute-conditions>
+                                <x-admin::data-transfer.filter-fields
+                                    :entity-type="$export->entity_type"
+                                    :values="$exportFilters"
+                                    :exporter-config="$exporterConfig"
+                                    only="custom_attributes"
+                                    grid-class="grid grid-cols-1"
+                                />
                             </div>
                         @endif
                     </div>

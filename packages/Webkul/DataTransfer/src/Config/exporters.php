@@ -1,5 +1,7 @@
 <?php
 
+use Webkul\DataTransfer\Enums\ProductFilter;
+
 return [
     'products' => [
         'title'       => 'data_transfer::app.exporters.products.title',
@@ -223,6 +225,14 @@ return [
                     'required'   => false,
                     'type'       => 'tags',
                     'full_width' => true,
+                ], [
+                    'name'         => 'custom_attributes',
+                    'required'     => false,
+                    'type'         => 'attribute-conditions',
+                    'full_width'   => true,
+                    'async'        => true,
+                    'list_route'   => 'admin.settings.data_transfer.exports.filters.attributes',
+                    'query_params' => ['exclude' => [ProductFilter::SKU->value]],
                 ],
             ],
         ],

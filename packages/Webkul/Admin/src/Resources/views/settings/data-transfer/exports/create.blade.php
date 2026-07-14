@@ -176,12 +176,12 @@
                                     @lang('admin::app.settings.data-transfer.exports.create.attribute-conditions')
                                 </p>
 
-                                <x-admin::data-transfer.attribute-conditions
-                                    :attribute-route="route('admin.settings.data_transfer.exports.filters.attributes')"
-                                    :exclude-attributes="[\Webkul\DataTransfer\Enums\ProductFilter::SKU->value]"
-                                    :operators="\Webkul\DataTransfer\Helpers\Sources\Export\Filters\AttributeConditionOperators::frontendMap()"
-                                >
-                                </x-admin::data-transfer.attribute-conditions>
+                                <x-admin::data-transfer.filter-fields
+                                    ::entity-type="entityType"
+                                    :exporter-config="$exporterConfig"
+                                    only="custom_attributes"
+                                    grid-class="grid grid-cols-1"
+                                />
                             </div>
                         </template>
                     </div>
@@ -282,7 +282,7 @@
                     },
 
                     supportsConditions() {
-                        return this.filterFields.some(field => field.name === 'attributes');
+                        return this.filterFields.some(field => field.name === 'custom_attributes');
                     },
 
                     supportsCategories() {
