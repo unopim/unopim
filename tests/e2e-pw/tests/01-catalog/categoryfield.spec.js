@@ -12,7 +12,7 @@ async function createCategoryField(adminPage, code, name, type = 'Text') {
   await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
   await adminPage.getByRole('option', { name: type }).first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await clickSaveAndExpect(adminPage, 'Save Category Field', /Category Field Created Successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Category Field Created Successfully/i);
 }
 
 /**
@@ -150,7 +150,7 @@ test.describe('UnoPim Category Field Tests', () => {
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('After Update');
-    await clickSaveAndExpect(adminPage, 'Save Category Field', /Category Field Updated Successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Category Field Updated Successfully/i);
 
     // Cleanup
     await deleteCategoryField(adminPage, code);

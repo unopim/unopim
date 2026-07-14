@@ -719,6 +719,16 @@ return [
         'route' => 'admin.settings.system.index',
         'sort'  => 5,
     ], [
+        'key'   => 'configuration.system_settings',
+        'name'  => 'admin::app.acl.system-settings',
+        'route' => 'admin.settings.system.edit',
+        'sort'  => 5,
+    ], [
+        'key'   => 'configuration.system_settings',
+        'name'  => 'admin::app.acl.system-settings',
+        'route' => 'admin.settings.system.update',
+        'sort'  => 5,
+    ], [
         'key'   => 'configuration.system_settings.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.settings.appearance.update',

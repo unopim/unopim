@@ -12,6 +12,11 @@ test.describe('Sidebar fly-out submenu hover', () => {
   test.beforeEach(async ({ adminPage }) => {
     // Land on the dashboard so "Catalog" is the inactive (fixed fly-out) variant.
     await navigateTo(adminPage, 'dashboard');
+
+    // The desktop sidebar is hidden below the lg breakpoint; make sure it has
+    // rendered before any hover interaction (global-setup already dismisses the
+    // promo bar that would otherwise shift the layout).
+    await expect(adminPage.locator('#unopim-sidebar')).toBeVisible();
   });
 
   test('keeps the fly-out open while moving from the parent onto a sub-item', async ({ adminPage }) => {

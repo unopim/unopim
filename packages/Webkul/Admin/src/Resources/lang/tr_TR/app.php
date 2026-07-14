@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Tüm ürün bilgilerinizi tek bir yerden yönetin',
             'remember-me'                => 'Beni hatırla',
             'toggle-password'            => 'Parolayı göster veya gizle',
+            'too-many-attempts'          => 'Çok fazla giriş denemesi. Lütfen birazdan tekrar deneyin.',
             'email'                      => 'E-posta Adresi',
             'forget-password-link'       => 'Şifreyi Unuttunuz mu?',
             'password'                   => 'Şifre',

@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Mga Field ng Kategorya',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Ang code ng field ng kategorya :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng field ng kategorya para burahin.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Mga Tampok',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Ang code ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete'             => 'Hindi natagpuan ang code ng tampok para burahin.',
+                    'code_is_system_and_cannot_be_deleted' => 'Hindi maaaring burahin ang system feature.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Mga Grupo ng Tampok',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Ang code ng grupo ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete'             => 'Hindi natagpuan ang code ng grupo ng tampok para burahin.',
+                    'code_is_system_and_cannot_be_deleted' => 'Hindi maaaring burahin ang system feature group.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Mga Pamilya ng Tampok',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Ang code ng pamilya ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng pamilya ng tampok para burahin.',
+                    'invalid-attribute-group'  => 'Ang grupo ng tampok na ":code" ay hindi umiiral.',
+                    'invalid-attribute'        => 'Ang tampok na ":code" ay hindi umiiral.',
+                    'invalid-channel'          => 'Ang channel na ":code" ay hindi umiiral.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Mga Pagpipilian sa Tampok',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Ang code ng opsyon ng tampok na :code ay ginagamit na.',
+                    'code_not_found_to_delete' => 'Hindi natagpuan ang code ng opsyon ng tampok para burahin.',
+                    'locale-not-exist'         => 'Ang locale na ":code" ay hindi umiiral.',
+                    'invalid-attribute'        => 'Ang tampok na ":code" ay hindi umiiral.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Mga Wika',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Ang code ng wika \'%s\' ay na-import na sa batch na ito.',
+                    'code-not-found-to-delete'    => 'Ang wikang may code \'%s\' ay hindi natagpuan sa system.',
+                    'invalid-status'              => 'Ang status ay dapat 0 o 1 (o walang laman para sa default na naka-enable).',
+                    'channel-related-locale-root' => 'Hindi mo maaaring tanggalin ang wikang may code :code dahil ito ay naka-ugnay sa isang channel.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Mga Channel',
             'validation' => [
@@ -45,18 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Mga Pera',
+            'filters' => [
+                'status' => 'Katayuan',
+                'enable' => 'I-enable',
+                'all'    => 'Lahat',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Ang status ay dapat 0 o 1 (o walang laman para sa default na naka-enable).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Mga Tungkulin',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Mga Gumagamit',
+            'filters' => [
+                'status' => 'Katayuan',
+                'active' => 'Aktibo',
+                'all'    => 'Lahat',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -91,9 +164,9 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Daan ng File',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
-            'status'         => 'Status',
+            'status'         => 'Katayuan',
             'enable'         => 'Naka-enable',
             'all'            => 'Lahat',
         ],
@@ -128,7 +201,7 @@ return [
                 'time-value'     => 'Bilang ng mga araw',
                 'time-date'      => 'Petsa ng simula',
                 'time-date-end'  => 'Petsa ng pagtatapos',
-                'status'         => 'Status',
+                'status'         => 'Katayuan',
                 'status-options' => [
                     'enable'  => 'Naka-enable',
                     'disable' => 'Naka-disable',
@@ -152,20 +225,38 @@ return [
         'categories' => [
             'title' => 'Mga Kategorya',
         ],
+        'category-fields' => [
+            'title' => 'Mga Field ng Kategorya',
+        ],
+        'attributes' => [
+            'title' => 'Mga Tampok',
+        ],
+        'attribute-groups' => [
+            'title' => 'Mga Grupo ng Tampok',
+        ],
+        'attribute-families' => [
+            'title' => 'Mga Pamilya ng Tampok',
+        ],
+        'attribute-options' => [
+            'title' => 'Mga Pagpipilian sa Tampok',
+        ],
+        'locales' => [
+            'title' => 'Mga Wika',
+        ],
         'channels' => [
             'title' => 'Mga Channel',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Mga Pera',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Mga Tungkulin',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Mga Gumagamit',
             'filters' => [
-                'status' => 'Status',
-                'active' => 'Active',
+                'status' => 'Katayuan',
+                'active' => 'Aktibo',
                 'all'    => 'Lahat',
             ],
         ],

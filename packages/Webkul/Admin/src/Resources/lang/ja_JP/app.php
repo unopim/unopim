@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'すべての製品情報を一か所で管理',
             'remember-me'                => 'ログイン状態を保存する',
             'toggle-password'            => 'パスワードを表示または非表示',
+            'too-many-attempts'          => 'ログイン試行回数が多すぎます。しばらくしてからもう一度お試しください。',
             'email'                      => 'メールアドレス',
             'forget-password-link'       => 'パスワードを忘れましたか?',
             'password'                   => 'パスワード',

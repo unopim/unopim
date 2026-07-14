@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Gestiona tota la informació dels teus productes en un sol lloc',
             'remember-me'                => 'Recorda\'m',
             'toggle-password'            => 'Mostra o amaga la contrasenya',
+            'too-many-attempts'          => 'Massa intents d\'inici de sessió. Torna-ho a provar d\'aquí a un moment.',
             'email'                      => 'Adreça electrònica',
             'forget-password-link'       => 'Oblidar contrasenya?',
             'password'                   => 'Contrasenya',

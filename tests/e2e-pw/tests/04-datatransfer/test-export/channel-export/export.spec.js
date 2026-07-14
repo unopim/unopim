@@ -10,21 +10,16 @@ async function createChannelExport(adminPage, code, format = 'CSV') {
   await adminPage.getByRole('link', { name: 'Create Export' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
 
-  // Select Type: Channels
-  // The locator for the Type field might vary, but based on export.spec.js:
   await adminPage.locator('#export-type').locator('.multiselect__single, .multiselect__placeholder').first().click();
   await adminPage.getByRole('option', { name: 'Channels' }).locator('span').first().click();
 
-  // Select File Format
   await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: format }).locator('span').first().click();
 
-  await clickSaveAndExpect(adminPage, 'Save Export', /Export created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
 }
 
-/**
- * Helper: Delete an export job by code via search + delete action.
- */
+
 async function deleteExport(adminPage, code) {
   await navigateTo(adminPage, 'exports');
   await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
@@ -45,7 +40,6 @@ test.describe('Channel Export Jobs', () => {
     const code = `chan-csv-${uid}`;
     await createChannelExport(adminPage, code, 'CSV');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
   
@@ -55,7 +49,6 @@ test.describe('Channel Export Jobs', () => {
     const code = `chan-xls-${uid}`;
     await createChannelExport(adminPage, code, 'XLS');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 
@@ -64,7 +57,6 @@ test.describe('Channel Export Jobs', () => {
     const code = `chan-xlsx-${uid}`;
     await createChannelExport(adminPage, code, 'XLSX');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 
@@ -75,9 +67,8 @@ test.describe('Channel Export Jobs', () => {
     await createChannelExport(adminPage, code, 'CSV');
     await expect(adminPage.getByRole('button', { name: 'Export Now' })).toBeVisible();
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
-    await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible();
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 });

@@ -1,0 +1,213 @@
+code,name,status
+af_ZA,"Afrikaans (South Africa)",0
+am_ET,"Amharic (Ethiopia)",0
+ar_AE,"Arabic (United Arab Emirates)",0
+ar_BH,"Arabic (Bahrain)",0
+5,ar_DZ,"Arabic (Algeria)",0
+6,ar_EG,"Arabic (Egypt)",0
+7,ar_IQ,"Arabic (Iraq)",0
+8,ar_JO,"Arabic (Jordan)",0
+9,ar_KW,"Arabic (Kuwait)",0
+10,ar_LB,"Arabic (Lebanon)",0
+11,ar_LY,"Arabic (Libya)",0
+12,ar_MA,"Arabic (Morocco)",0
+13,arn_CL,"Mapuche (Chile)",0
+14,ar_OM,"Arabic (Oman)",0
+15,ar_QA,"Arabic (Qatar)",0
+16,ar_SA,"Arabic (Saudi Arabia)",0
+17,ar_SY,"Arabic (Syria)",0
+18,ar_TN,"Arabic (Tunisia)",0
+19,ar_YE,"Arabic (Yemen)",0
+20,as_IN,"Assamese (India)",0
+21,az_Cyrl_AZ,"Azerbaijani (Cyrillic, Azerbaijan)",0
+22,az_Latn_AZ,"Azerbaijani (Latin, Azerbaijan)",0
+23,ba_RU,"Bashkir (Russia)",0
+24,be_BY,"Belarusian (Belarus)",0
+25,bg_BG,"Bulgarian (Bulgaria)",0
+26,bn_BD,"Bangla (Bangladesh)",0
+27,bn_IN,"Bangla (India)",0
+28,bo_CN,"Tibetan (China)",0
+29,br_FR,"Breton (France)",0
+30,bs_Cyrl_BA,"Bosnian (Cyrillic, Bosnia & Herzegovina)",0
+31,bs_Latn_BA,"Bosnian (Latin, Bosnia & Herzegovina)",0
+32,ca_ES,"Catalan (Spain)",0
+33,co_FR,"Corsican (France)",0
+34,cs_CZ,"Czech (Czechia)",0
+35,cy_GB,"Welsh (United Kingdom)",0
+36,da_DK,"Danish (Denmark)",0
+37,de_AT,"German (Austria)",0
+38,de_CH,"German (Switzerland)",0
+39,de_DE,"German (Germany)",1
+40,de_LI,"German (Liechtenstein)",0
+41,de_LU,"German (Luxembourg)",0
+42,dsb_DE,"Lower Sorbian (Germany)",0
+43,dv_MV,"Divehi (Maldives)",0
+44,el_GR,"Greek (Greece)",0
+45,en_029,"English (Caribbean)",0
+46,en_AU,"English (Australia)",0
+47,en_BZ,"English (Belize)",0
+48,en_CA,"English (Canada)",0
+49,en_GB,"English (United Kingdom)",0
+50,en_IE,"English (Ireland)",0
+51,en_IN,"English (India)",0
+52,en_JM,"English (Jamaica)",0
+53,en_MY,"English (Malaysia)",0
+54,en_NZ,"English (New Zealand)",0
+55,en_PH,"English (Philippines)",0
+56,en_SG,"English (Singapore)",0
+57,en_TT,"English (Trinidad & Tobago)",0
+58,en_US,"English (United States)",1
+59,en_ZA,"English (South Africa)",0
+60,en_ZW,"English (Zimbabwe)",0
+61,es_AR,"Spanish (Argentina)",0
+62,es_BO,"Spanish (Bolivia)",0
+63,es_CL,"Spanish (Chile)",0
+64,es_CO,"Spanish (Colombia)",0
+65,es_CR,"Spanish (Costa Rica)",0
+66,es_DO,"Spanish (Dominican Republic)",0
+67,es_EC,"Spanish (Ecuador)",0
+68,es_ES,"Spanish (Spain)",0
+69,es_GT,"Spanish (Guatemala)",0
+70,es_HN,"Spanish (Honduras)",0
+71,es_MX,"Spanish (Mexico)",0
+72,es_NI,"Spanish (Nicaragua)",0
+73,es_PA,"Spanish (Panama)",0
+74,es_PE,"Spanish (Peru)",0
+75,es_PR,"Spanish (Puerto Rico)",0
+76,es_PY,"Spanish (Paraguay)",0
+77,es_SV,"Spanish (El Salvador)",0
+78,es_US,"Spanish (United States)",0
+79,es_UY,"Spanish (Uruguay)",0
+80,es_VE,"Spanish (Venezuela)",0
+81,et_EE,"Estonian (Estonia)",0
+82,eu_ES,"Basque (Spain)",0
+83,fa_IR,"Persian (Iran)",0
+84,fi_FI,"Finnish (Finland)",0
+85,fil_PH,"Filipino (Philippines)",0
+86,fo_FO,"Faroese (Faroe Islands)",0
+87,fr_BE,"French (Belgium)",0
+88,fr_CA,"French (Canada)",0
+89,fr_CH,"French (Switzerland)",0
+90,fr_FR,"French (France)",1
+91,fr_LU,"French (Luxembourg)",0
+92,fr_MC,"French (Monaco)",0
+93,fy_NL,"Western Frisian (Netherlands)",0
+94,ga_IE,"Irish (Ireland)",0
+95,gd_GB,"Scottish Gaelic (United Kingdom)",0
+96,gl_ES,"Galician (Spain)",0
+97,gsw_FR,"Swiss German (France)",0
+98,gu_IN,"Gujarati (India)",0
+99,ha_Latn_NG,"Hausa (Latin, Nigeria)",0
+100,he_IL,"Hebrew (Israel)",0
+101,hi_IN,"Hindi (India)",0
+102,hr_BA,"Croatian (Bosnia & Herzegovina)",0
+103,hr_HR,"Croatian (Croatia)",0
+104,hsb_DE,"Upper Sorbian (Germany)",0
+105,hu_HU,"Hungarian (Hungary)",0
+106,hy_AM,"Armenian (Armenia)",0
+107,id_ID,"Indonesian (Indonesia)",0
+108,ig_NG,"Igbo (Nigeria)",0
+109,ii_CN,"Sichuan Yi (China)",0
+110,is_IS,"Icelandic (Iceland)",0
+111,it_CH,"Italian (Switzerland)",0
+112,it_IT,"Italian (Italy)",0
+113,iu_Cans_CA,"Inuktitut (Unified Canadian Aboriginal Syllabics, Canada)",0
+114,iu_Latn_CA,"Inuktitut (Latin, Canada)",0
+115,ja_JP,"Japanese (Japan)",0
+116,ka_GE,"Georgian (Georgia)",0
+117,kk_KZ,"Kazakh (Kazakhstan)",0
+118,kl_GL,"Kalaallisut (Greenland)",0
+119,km_KH,"Khmer (Cambodia)",0
+120,kn_IN,"Kannada (India)",0
+121,kok_IN,"Konkani (India)",0
+122,ko_KR,"Korean (South Korea)",0
+123,ky_KG,"Kyrgyz (Kyrgyzstan)",0
+124,lb_LU,"Luxembourgish (Luxembourg)",0
+125,lo_LA,"Lao (Laos)",0
+126,lt_LT,"Lithuanian (Lithuania)",0
+127,lv_LV,"Latvian (Latvia)",0
+128,mi_NZ,"Māori (New Zealand)",0
+129,mk_MK,"Macedonian (North Macedonia)",0
+130,ml_IN,"Malayalam (India)",0
+131,mn_MN,"Mongolian (Mongolia)",0
+132,mn_Mong_CN,"Mongolian (Mongolian, China)",0
+133,moh_CA,"Mohawk (Canada)",0
+134,mr_IN,"Marathi (India)",0
+135,ms_BN,"Malay (Brunei)",0
+136,ms_MY,"Malay (Malaysia)",0
+137,mt_MT,"Maltese (Malta)",0
+138,nb_NO,"Norwegian Bokmål (Norway)",0
+139,ne_NP,"Nepali (Nepal)",0
+140,nl_BE,"Dutch (Belgium)",0
+141,nl_NL,"Dutch (Netherlands)",0
+142,nn_NO,"Norwegian Nynorsk (Norway)",0
+143,no_NO,"Norwegian (Norway)",0
+144,nso_ZA,"Northern Sotho (South Africa)",0
+145,oc_FR,"Occitan (France)",0
+146,or_IN,"Odia (India)",0
+147,pa_IN,"Punjabi (India)",0
+148,pl_PL,"Polish (Poland)",0
+149,prs_AF,"Dari (Afghanistan)",0
+150,ps_AF,"Pashto (Afghanistan)",0
+151,pt_BR,"Portuguese (Brazil)",0
+152,pt_PT,"Portuguese (Portugal)",0
+153,qut_GT,"qut (Guatemala)",0
+154,quz_BO,"Quechua (Bolivia)",0
+155,quz_EC,"Quechua (Ecuador)",0
+156,quz_PE,"Quechua (Peru)",0
+157,rm_CH,"Romansh (Switzerland)",0
+158,ro_RO,"Romanian (Romania)",0
+159,ru_RU,"Russian (Russia)",0
+160,rw_RW,"Kinyarwanda (Rwanda)",0
+161,sah_RU,"Sakha (Russia)",0
+162,sa_IN,"Sanskrit (India)",0
+163,se_FI,"Northern Sami (Finland)",0
+164,se_NO,"Northern Sami (Norway)",0
+165,se_SE,"Northern Sami (Sweden)",0
+166,si_LK,"Sinhala (Sri Lanka)",0
+167,sk_SK,"Slovak (Slovakia)",0
+168,sl_SI,"Slovenian (Slovenia)",0
+169,sma_NO,"Southern Sami (Norway)",0
+170,sma_SE,"Southern Sami (Sweden)",0
+171,smj_NO,"Lule Sami (Norway)",0
+172,smj_SE,"Lule Sami (Sweden)",0
+173,smn_FI,"Inari Sami (Finland)",0
+174,sms_FI,"Skolt Sami (Finland)",0
+175,sq_AL,"Albanian (Albania)",0
+176,sr_Cyrl_BA,"Serbian (Cyrillic, Bosnia & Herzegovina)",0
+177,sr_Cyrl_CS,"Serbian (Cyrillic, Serbia)",0
+178,sr_Cyrl_ME,"Serbian (Cyrillic, Montenegro)",0
+179,sr_Cyrl_RS,"Serbian (Cyrillic, Serbia)",0
+180,sr_Latn_BA,"Serbian (Latin, Bosnia & Herzegovina)",0
+181,sr_Latn_CS,"Serbian (Latin, Serbia)",0
+182,sr_Latn_ME,"Serbian (Latin, Montenegro)",0
+183,sr_Latn_RS,"Serbian (Latin, Serbia)",0
+184,sv_FI,"Swedish (Finland)",0
+185,sv_SE,"Swedish (Sweden)",0
+186,sw_KE,"Swahili (Kenya)",0
+187,syr_SY,"Syriac (Syria)",0
+188,ta_IN,"Tamil (India)",0
+189,te_IN,"Telugu (India)",0
+190,tg_Cyrl_TJ,"Tajik (Cyrillic, Tajikistan)",0
+191,th_TH,"Thai (Thailand)",0
+192,tk_TM,"Turkmen (Turkmenistan)",0
+193,tl_PH,"Tagalog (Philippines)",0
+194,tn_ZA,"Tswana (South Africa)",0
+195,tr_TR,"Turkish (Turkey)",0
+196,tt_RU,"Tatar (Russia)",0
+197,tzm_Latn_DZ,"Central Atlas Tamazight (Latin, Algeria)",0
+198,ug_CN,"Uyghur (China)",0
+199,uk_UA,"Ukrainian (Ukraine)",0
+200,ur_PK,"Urdu (Pakistan)",0
+201,uz_Cyrl_UZ,"Uzbek (Cyrillic, Uzbekistan)",1
+202,uz_Latn_UZ,"Uzbek (Latin, Uzbekistan)",0
+203,vi_VN,"Vietnamese (Vietnam)",0
+204,wo_SN,"Wolof (Senegal)",0
+205,xh_ZA,"Xhosa (South Africa)",0
+206,yo_NG,"Yoruba (Nigeria)",0
+207,zh_CN,"Chinese (China)",0
+208,zh_HK,"Chinese (Hong Kong SAR China)",0
+209,zh_MO,"Chinese (Macao SAR China)",0
+210,zh_SG,"Chinese (Singapore)",0
+211,zh_TW,"Chinese (Taiwan)",0
+212,zu_ZA,"Zulu (South Africa)",0

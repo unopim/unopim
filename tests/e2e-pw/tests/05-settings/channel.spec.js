@@ -55,7 +55,7 @@ async function createChannel(adminPage, code, name) {
   await navigateTo(adminPage, 'channels');
   await adminPage.getByRole('link', { name: 'Create Channel' }).click();
   await fillChannelForm(adminPage, { code, name });
-  await clickSaveAndExpect(adminPage, 'Save Channel', /Channel created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Channel created successfully/i);
 }
 
 /**
@@ -148,7 +148,7 @@ test.describe('Channel Management', () => {
     await navigateTo(adminPage, 'channels');
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code, name: '' });
-    await clickSaveAndExpect(adminPage, 'Save Channel', /Channel created successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Channel created successfully/i);
 
     // Cleanup
     await deleteChannel(adminPage, code);
@@ -194,7 +194,7 @@ test.describe('Channel Management', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill(`${uid} Updated`);
-    await clickSaveAndExpect(adminPage, 'Save Channel', /Update Channel Successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Update Channel Successfully/i);
 
     // Cleanup
     await deleteChannel(adminPage, code);

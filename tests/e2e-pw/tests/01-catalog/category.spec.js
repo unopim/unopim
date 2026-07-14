@@ -2,15 +2,36 @@ const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
- * Helper: Create a category via UI.
+ * Helper: Open the Create Category form and let the unsaved-changes tracker
+ * snapshot the pristine form. The redesigned forms save via the global
+ * "Save changes" bar, which only appears once a field actually changes — so
+ * fields must be edited AFTER the initial snapshot settles.
  */
-async function createCategory(adminPage, code, name) {
+async function openCreateForm(adminPage) {
   await navigateTo(adminPage, 'categories');
   await adminPage.getByRole('link', { name: 'Create Category' }).click();
   await adminPage.waitForLoadState('networkidle');
+  await adminPage.locator('input[name="code"]').waitFor({ state: 'visible' });
+  await adminPage.waitForTimeout(1200);
+}
+
+/**
+ * Helper: Click the global "Save changes" bar button.
+ */
+async function clickSaveChanges(adminPage) {
+  const saveBtn = adminPage.getByRole('button', { name: 'Save changes' });
+  await saveBtn.first().waitFor({ state: 'visible', timeout: 10000 });
+  await saveBtn.first().click();
+}
+
+/**
+ * Helper: Create a category via UI.
+ */
+async function createCategory(adminPage, code, name) {
+  await openCreateForm(adminPage);
   await adminPage.locator('input[name="code"]').fill(code);
   await adminPage.locator('#name').fill(name);
-  await clickSaveAndExpect(adminPage, 'Save Category', /category created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /category created successfully/i);
 }
 
 /**
@@ -32,18 +53,14 @@ async function deleteCategory(adminPage, code) {
 test.describe('UnoPim Category Tests', () => {
 
   test('Create Categories with empty Code field', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'categories');
-    await adminPage.getByRole('link', { name: 'Create Category' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await openCreateForm(adminPage);
     await adminPage.locator('#name').fill('Television');
     await clickSave(adminPage, 'Save Category');
     await expect(adminPage.locator('#app').getByText('The code field is required')).toBeVisible();
   });
 
   test('Create Categories with empty Name field', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'categories');
-    await adminPage.getByRole('link', { name: 'Create Category' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await openCreateForm(adminPage);
     await adminPage.locator('input[name="code"]').fill('television_empty_name');
     await adminPage.locator('#name').fill('');
     await clickSave(adminPage, 'Save Category');
@@ -146,8 +163,10 @@ test.describe('UnoPim Category Tests', () => {
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
+    await adminPage.locator('#name').waitFor({ state: 'visible' });
+    await adminPage.waitForTimeout(1200);
     await adminPage.locator('#name').fill(`Updated ${uid}`);
-    await clickSaveAndExpect(adminPage, 'Save Category', /category updated successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /category updated successfully/i);
 
     // Cleanup
     await deleteCategory(adminPage, code);

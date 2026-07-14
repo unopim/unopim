@@ -12,12 +12,15 @@ const STORAGE_STATE = path.resolve(__dirname, '../../.state/admin-auth.json');
 async function navigateToNotifications(page) {
   await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
 
-  // If redirected to login, re-auth and save fresh state for other tests
+  // If redirected to login, re-auth and save fresh state for other tests.
+  // Use the field names and submit button class directly — the "Sign In" role
+  // name also substring-matches the "Sign in with Microsoft" SSO button, which
+  // makes getByRole('button', { name: 'Sign In' }) ambiguous.
   if (page.url().includes('/admin/login')) {
-    await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
-    await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
-    await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.waitForLoadState('networkidle');
+    await page.locator('input[name="email"]').fill('admin@example.com');
+    await page.locator('input[name="password"]').fill('admin123');
+    await page.locator('.primary-button').click();
+    await page.waitForURL(/\/admin\/(?!login)/, { timeout: 15000 });
     await page.context().storageState({ path: STORAGE_STATE });
     await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
   }

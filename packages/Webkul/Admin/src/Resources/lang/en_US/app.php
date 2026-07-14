@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Manage all your product information in one place',
             'remember-me'                => 'Remember me',
             'toggle-password'            => 'Show or hide password',
+            'too-many-attempts'          => 'Too many login attempts. Please try again in a moment.',
             'email'                      => 'Email Address',
             'forget-password-link'       => 'Forget Password ?',
             'password'                   => 'Password',

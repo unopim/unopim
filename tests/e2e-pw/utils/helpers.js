@@ -61,7 +61,10 @@ async function searchInDataGrid(page, text, placeholder = 'Search') {
  * @param {string} rowText — text to identify the row
  */
 async function clickEditOnRow(page, rowText) {
-  const row = page.locator('#app div').filter({ hasText: rowText }).first();
+  // Scope to an actual DataGrid record row (div.row.grid.cursor-pointer) so the
+  // Edit icon belongs to the matched row and not to some earlier row folded into
+  // a broader container match.
+  const row = page.locator('div.row.grid.cursor-pointer').filter({ hasText: rowText }).first();
   await row.locator('span[title="Edit"]').first().click();
   await page.waitForLoadState('networkidle');
 }
@@ -72,7 +75,7 @@ async function clickEditOnRow(page, rowText) {
  * @param {string} rowText — text to identify the row
  */
 async function clickDeleteOnRow(page, rowText) {
-  const row = page.locator('#app div').filter({ hasText: rowText }).first();
+  const row = page.locator('div.row.grid.cursor-pointer').filter({ hasText: rowText }).first();
   await row.locator('span[title="Delete"]').first().click();
 }
 

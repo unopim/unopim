@@ -12,9 +12,9 @@ async function createExport(adminPage, code, format = 'CSV', withMedia = true) {
   await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: format }).locator('span').first().click();
   if (withMedia) {
-    await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
+    await adminPage.locator('#with_media + div').click();
   }
-  await clickSaveAndExpect(adminPage, 'Save Export', /Export created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
 }
 
 /**
@@ -180,7 +180,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.goBack();
     await adminPage.waitForLoadState('networkidle');
 
-    // Search again after going back
+    // Search again after returning to the listing
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
@@ -192,7 +192,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.goBack();
     await adminPage.waitForLoadState('networkidle');
 
-    // Search again after going back
+    // Search again after returning to the listing
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
@@ -216,7 +216,7 @@ test.describe('UnoPim Export Jobs', () => {
     await createExport(adminPage, code, 'XLS', false);
     await expect(adminPage.getByRole('button', { name: 'Export Now' })).toBeVisible();
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
-    await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
+    await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/tracker\/track\//);
 
     // Cleanup
     await deleteExport(adminPage, code);

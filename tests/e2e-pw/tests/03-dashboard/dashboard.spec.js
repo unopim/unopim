@@ -127,9 +127,9 @@ test('4.3 - Total Attributes links to attributes page', async ({ adminPage }) =>
 });
 
 test('4.4 - Total Groups card shows icon and numeric count', async ({ adminPage }) => {
-  const link = adminPage.getByRole('link', { name: /Total Groups Total Groups/ });
+  const link = adminPage.getByRole('link', { name: /Total Attribute Groups Total Attribute Groups/ });
   await expect(link).toBeVisible();
-  await expect(link.locator('img[title="Total Groups"]')).toBeVisible();
+  await expect(link.locator('img[title="Total Attribute Groups"]')).toBeVisible();
   const numberText = await link.locator('p.text-3xl').innerText();
   expect(numberText.trim()).toMatch(/^\d+$/);
 });

@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Quản lý mọi thông tin sản phẩm của bạn ở một nơi',
             'remember-me'                => 'Ghi nhớ tôi',
             'toggle-password'            => 'Hiện hoặc ẩn mật khẩu',
+            'too-many-attempts'          => 'Quá nhiều lần đăng nhập. Vui lòng thử lại sau giây lát.',
             'email'                      => 'Địa chỉ Email',
             'forget-password-link'       => 'Quên mật khẩu?',
             'password'                   => 'Mật khẩu',

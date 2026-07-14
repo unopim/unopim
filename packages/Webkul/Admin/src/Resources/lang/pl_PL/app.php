@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Zarządzaj wszystkimi informacjami o produktach w jednym miejscu',
             'remember-me'                => 'Zapamiętaj mnie',
             'toggle-password'            => 'Pokaż lub ukryj hasło',
+            'too-many-attempts'          => 'Zbyt wiele prób logowania. Spróbuj ponownie za chwilę.',
             'email'                      => 'Adres e-mail',
             'forget-password-link'       => 'Zapomniałeś hasła?',
             'password'                   => 'Hasło',

@@ -10,7 +10,7 @@ async function createFamily(adminPage, code, name) {
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(code);
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Family created successfully/i);
 }
 
 /**
@@ -155,7 +155,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
       await adminPage.mouse.up();
     }
 
-    await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family updated successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Family updated successfully/i);
 
     // Cleanup
     await deleteFamily(adminPage, code);

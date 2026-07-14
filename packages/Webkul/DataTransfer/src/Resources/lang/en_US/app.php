@@ -3,8 +3,7 @@
 return [
     'importers' => [
         'products' => [
-            'title' => 'Products',
-
+            'title'      => 'Products',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'URL key: \'%s\' was already generated for an item with the SKU: \'%s\'.',
@@ -33,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Category Fields',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Category field code :code is already in use.',
+                    'code_not_found_to_delete' => 'Category field code not found for deletion.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attributes',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribute code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
+                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attribute Groups',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribute group code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute group code not found for deletion.',
+                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attribute Families',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribute family code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
+                    'invalid-attribute-group'  => 'Attribute group ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                    'invalid-channel'          => 'Channel ":code" does not exist.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attribute Options',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribute option code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
+                    'locale-not-exist'         => 'Locale ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Locales',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Locale code \'%s\' has already been imported in this batch.',
+                    'code-not-found-to-delete'    => 'Locale with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'channel-related-locale-root' => 'You cannot delete locale with code :code that is associated with a channel.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Channels',
             'validation' => [
@@ -46,7 +108,12 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Currencies',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Enable',
+                'all'    => 'All',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
@@ -66,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Users',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Active',
+                'all'    => 'All',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -76,11 +148,9 @@ return [
             ],
         ],
     ],
-
     'exporters' => [
         'export-too-large' => 'This export is too large to run: an estimated :rows rows × :columns columns (~:estimated) exceeds the available space (~:available). Narrow the export by selecting fewer channels/locales (and attributes) and try again.',
-
-        'fields' => [
+        'fields'           => [
             'file-format'         => 'File Format',
             'with-media'          => 'With Media',
             'header-row'          => 'Header Row',
@@ -100,14 +170,11 @@ return [
             'enable'         => 'Enable',
             'all'            => 'All',
         ],
-
         'products' => [
-            'title' => 'Products',
-
+            'title'              => 'Products',
             'invalid-locales'    => 'The selected locales are not all available for the selected channels.',
             'invalid-currencies' => 'The selected currencies are not all available for the selected channels.',
-
-            'filters' => [
+            'filters'            => [
                 'channels'             => 'Channels',
                 'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
                 'currencies'           => 'Currencies',
@@ -145,7 +212,6 @@ return [
                 'identifiers'      => 'Identifiers',
                 'identifiers-info' => 'Paste one SKU / identifier per line to export only those products. Leave empty to export every product.',
             ],
-
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL key: \'%s\' was already generated for an item with the SKU: \'%s\'.',
@@ -159,6 +225,24 @@ return [
         'categories' => [
             'title' => 'Categories',
         ],
+        'category-fields' => [
+            'title' => 'Category Fields',
+        ],
+        'attributes' => [
+            'title' => 'Attributes',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attribute Groups',
+        ],
+        'attribute-families' => [
+            'title' => 'Attribute Families',
+        ],
+        'attribute-options' => [
+            'title' => 'Attribute Options',
+        ],
+        'locales' => [
+            'title' => 'Locales',
+        ],
         'channels' => [
             'title' => 'Channels',
         ],
@@ -170,7 +254,6 @@ return [
         ],
         'users' => [
             'title'   => 'Users',
-
             'filters' => [
                 'status' => 'Status',
                 'active' => 'Active',
@@ -178,7 +261,6 @@ return [
             ],
         ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Columns number "%s" have empty headers.',
@@ -191,7 +273,6 @@ return [
             'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
-
     'job' => [
         'started'   => 'Job execution started',
         'completed' => 'Job execution completed',

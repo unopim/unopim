@@ -18,7 +18,6 @@ test.describe('Currency Import', () => {
         await typeWrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
         await adminPage.getByRole('option', { name: 'Currencies' }).first().click();
 
-        // Upload File
         const fileInput = adminPage.locator('input[type="file"][name="file"]');
         const assetPath = path.join(__dirname, '../../../../assets/currencies.csv');
         await fileInput.setInputFiles(assetPath);
@@ -49,7 +48,7 @@ test.describe('Currency Import', () => {
         await expect(importNowBtn).toBeVisible({ timeout: 5000 });
         await importNowBtn.click();
 
-        await expect(adminPage.locator('#app').getByText(/Job queued/i)).toBeVisible({ timeout: 20000 });
+        await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
     });
 
     test('Delete Currency Import', async ({ adminPage }) => {

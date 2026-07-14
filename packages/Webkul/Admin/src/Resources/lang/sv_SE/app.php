@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Hantera all din produktinformation på ett ställe',
             'remember-me'                => 'Kom ihåg mig',
             'toggle-password'            => 'Visa eller dölj lösenord',
+            'too-many-attempts'          => 'För många inloggningsförsök. Försök igen om en stund.',
             'email'                      => 'E-postadress',
             'forget-password-link'       => 'Glömt lösenord?',
             'password'                   => 'Lösenord',

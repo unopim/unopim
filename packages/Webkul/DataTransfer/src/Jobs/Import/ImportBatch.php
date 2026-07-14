@@ -16,6 +16,13 @@ class ImportBatch implements ShouldQueue
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 900;
+
+    /**
      * Create a new job instance.
      *
      * @param  mixed  $importBatch

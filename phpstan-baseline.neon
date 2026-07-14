@@ -19,6 +19,12 @@ parameters:
 			path: packages/Webkul/Admin/src/Config/system.php
 
 		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 1
+			path: packages/Webkul/Admin/src/Config/auth.php
+
+		-
 			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 2
@@ -1173,7 +1179,7 @@ parameters:
 		-
 			message: '#^Cannot call method whereIn\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 1
+			count: 2
 			path: packages/Webkul/Admin/src/DataGrids/Catalog/ProductDataGrid.php
 
 		-
@@ -1533,7 +1539,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$array of function array_keys expects array, mixed given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 3
 			path: packages/Webkul/Admin/src/DataGrids/Catalog/ProductDataGrid.php
 
 		-
@@ -1706,6 +1712,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#3 \$perPage of class Illuminate\\Pagination\\LengthAwarePaginator constructor expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/Admin/src/DataGrids/Catalog/ProductDataGrid.php
+
+		-
+			message: '#^Parameter \#3 of function array_diff expects an array of values castable to string, array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: packages/Webkul/Admin/src/DataGrids/Catalog/ProductDataGrid.php
@@ -5125,12 +5137,6 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/Settings/AppearanceController.php
 
 		-
-			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/Settings/AppearanceController.php
-
-		-
 			message: '#^Parameter \#2 \$model of class Prettus\\Repository\\Events\\RepositoryEntityUpdated constructor expects Illuminate\\Database\\Eloquent\\Model\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -6673,6 +6679,12 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/TinyMCEController.php
 
 		-
+			message: '#^Binary operation "\." between ''nullable\|confirmed…'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: packages/Webkul/Admin/src/Http/Controllers/User/AccountController.php
+
+		-
 			message: '#^Cannot access property \$id on Webkul\\User\\Models\\Admin\|null\.$#'
 			identifier: property.nonObject
 			count: 2
@@ -6745,6 +6757,12 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/User/ResetPasswordController.php
 
 		-
+			message: '#^Binary operation "\." between ''required\|confirmed…'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: packages/Webkul/Admin/src/Http/Controllers/User/ResetPasswordController.php
+
+		-
 			message: '#^PHPDoc tag @return with type Illuminate\\Contracts\\View\\Factory\|Illuminate\\View\\View is not subtype of native type Illuminate\\View\\View\.$#'
 			identifier: return.phpDocType
 			count: 1
@@ -6752,12 +6770,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$admin of method Webkul\\Admin\\Http\\Controllers\\User\\ResetPasswordController\:\:resetPassword\(\) expects Illuminate\\Contracts\\Auth\\CanResetPassword, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/User/ResetPasswordController.php
-
-		-
-			message: '#^Parameter \#1 \$key of function trans expects string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: packages/Webkul/Admin/src/Http/Controllers/User/ResetPasswordController.php
@@ -7531,6 +7543,12 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Requests/TinyMCEUploadRequest.php
 
 		-
+			message: '#^Binary operation "\." between ''nullable\|min\:'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: packages/Webkul/Admin/src/Http/Requests/UserForm.php
+
+		-
 			message: '#^Method Webkul\\Admin\\Http\\Requests\\UserForm\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -7621,6 +7639,48 @@ parameters:
 			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
 
 		-
+			message: '#^Call to an undefined static method Webkul\\Attribute\\Models\\AttributeFamilyProxy\:\:observe\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
+
+		-
+			message: '#^Call to an undefined static method Webkul\\Attribute\\Models\\AttributeGroupProxy\:\:observe\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
+
+		-
+			message: '#^Call to an undefined static method Webkul\\Attribute\\Models\\AttributeProxy\:\:observe\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
+
+		-
+			message: '#^Call to an undefined static method Webkul\\Category\\Models\\CategoryProxy\:\:observe\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
+
+		-
+			message: '#^Call to an undefined static method Webkul\\Core\\Models\\ChannelProxy\:\:observe\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
+
+		-
+			message: '#^Call to an undefined static method Webkul\\Core\\Models\\CurrencyProxy\:\:observe\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
+
+		-
+			message: '#^Call to an undefined static method Webkul\\Core\\Models\\LocaleProxy\:\:observe\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
+
+		-
 			message: '#^Call to an undefined static method Webkul\\Product\\Models\\ProductProxy\:\:observe\(\)\.$#'
 			identifier: staticMethod.notFound
 			count: 1
@@ -7665,7 +7725,7 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
-			count: 2
+			count: 3
 			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
 
 		-
@@ -7739,102 +7799,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: packages/Webkul/Admin/src/Validations/ConfigurableUniqueSku.php
-
-		-
-			message: '#^Comparison operation "\<" between int\<80300, 80599\> and 50600 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: packages/Webkul/Admin/vendor/autoload.php
-
-		-
-			message: '#^Method Composer\\Autoload\\ClassLoader\:\:findFile\(\) should return string\|false but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/ClassLoader.php
-
-		-
-			message: '#^Method Composer\\Autoload\\ClassLoader\:\:getPrefixes\(\) should return array\<string, list\<string\>\> but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/ClassLoader.php
-
-		-
-			message: '#^Parameter \#1 \$callback of function spl_autoload_register expects \(callable\(string\)\: void\)\|null, array\{\$this\(Composer\\Autoload\\ClassLoader\), ''loadClass''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/ClassLoader.php
-
-		-
-			message: '#^Method ComposerAutoloaderInit303e985f8e197647f4e1b81c97b54d60\:\:getLoader\(\) should return Composer\\Autoload\\ClassLoader but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_real.php
-
-		-
-			message: '#^Method ComposerAutoloaderInit303e985f8e197647f4e1b81c97b54d60\:\:loadClassLoader\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_real.php
-
-		-
-			message: '#^Method ComposerAutoloaderInit303e985f8e197647f4e1b81c97b54d60\:\:loadClassLoader\(\) has parameter \$class with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_real.php
-
-		-
-			message: '#^Parameter \#1 \$callback of function call_user_func expects callable\(\)\: mixed, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_real.php
-
-		-
-			message: '#^Property ComposerAutoloaderInit303e985f8e197647f4e1b81c97b54d60\:\:\$loader has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_real.php
-
-		-
-			message: '#^Method Composer\\Autoload\\ComposerStaticInit303e985f8e197647f4e1b81c97b54d60\:\:getInitializer\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_static.php
-
-		-
-			message: '#^Property Composer\\Autoload\\ClassLoader\:\:\$classMap \(array\<string, string\>\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_static.php
-
-		-
-			message: '#^Property Composer\\Autoload\\ClassLoader\:\:\$prefixDirsPsr4 \(array\<string, list\<string\>\>\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_static.php
-
-		-
-			message: '#^Property Composer\\Autoload\\ClassLoader\:\:\$prefixLengthsPsr4 \(array\<string, array\<string, int\>\>\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_static.php
-
-		-
-			message: '#^Property Composer\\Autoload\\ComposerStaticInit303e985f8e197647f4e1b81c97b54d60\:\:\$classMap has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_static.php
-
-		-
-			message: '#^Property Composer\\Autoload\\ComposerStaticInit303e985f8e197647f4e1b81c97b54d60\:\:\$prefixDirsPsr4 has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_static.php
-
-		-
-			message: '#^Property Composer\\Autoload\\ComposerStaticInit303e985f8e197647f4e1b81c97b54d60\:\:\$prefixLengthsPsr4 has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: packages/Webkul/Admin/vendor/composer/autoload_static.php
 
 		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
@@ -28570,6 +28534,534 @@ parameters:
 			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
 			identifier: property.notFound
 			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Call to method all\(\) on an unknown class Webkul\\DataTransfer\\Helpers\\Source\.$#'
+			identifier: class.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''ai_translate'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''enable_wysiwyg'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''is_filterable'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''is_required'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''is_unique'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''position'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''regex_pattern'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''swatch_type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''translations'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''validation'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''value_per_channel'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''value_per_locale'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot call method getIterator\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Cannot call method write\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\Attribute\\Exporter\:\:exportBatch\(\) has parameter \$filePath with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\Attribute\\Exporter\:\:getResults\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\Attribute\\Exporter\:\:prepareAttributes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Exporters\\Attribute\\Exporter\:\:productCountsByAttribute\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$id of method Webkul\\DataTransfer\\Helpers\\Exporters\\AbstractExporter\:\:updateBatchState\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect expects Illuminate\\Contracts\\Support\\Arrayable\<\(int\|string\), mixed\>\|iterable\<\(int\|string\), mixed\>\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Attribute/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Binary operation "\." between mixed and ''_'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Call to method all\(\) on an unknown class Webkul\\DataTransfer\\Helpers\\Source\.$#'
+			identifier: class.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''translations'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Cannot call method getIterator\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Cannot call method write\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\AttributeFamily\\Exporter\:\:exportBatch\(\) has parameter \$filePath with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\AttributeFamily\\Exporter\:\:getResults\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\AttributeFamily\\Exporter\:\:prepareAttributeFamilies\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$id of method Webkul\\DataTransfer\\Helpers\\Exporters\\AbstractExporter\:\:updateBatchState\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$key of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Support\\Collection\<int, stdClass\>\>\:\:get\(\) expects int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect expects Illuminate\\Contracts\\Support\\Arrayable\<\(int\|string\), mixed\>\|iterable\<\(int\|string\), mixed\>\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeFamily/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Call to method all\(\) on an unknown class Webkul\\DataTransfer\\Helpers\\Source\.$#'
+			identifier: class.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''translations'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Cannot call method getIterator\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Cannot call method write\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\AttributeGroup\\Exporter\:\:exportBatch\(\) has parameter \$filePath with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\AttributeGroup\\Exporter\:\:getResults\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\AttributeGroup\\Exporter\:\:prepareAttributeGroups\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$id of method Webkul\\DataTransfer\\Helpers\\Exporters\\AbstractExporter\:\:updateBatchState\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect expects Illuminate\\Contracts\\Support\\Arrayable\<\(int\|string\), mixed\>\|iterable\<\(int\|string\), mixed\>\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeGroup/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Call to method with\(\) on an unknown class Webkul\\DataTransfer\\Helpers\\Source\.$#'
+			identifier: class.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''attribute'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''label'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''sort_order'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''swatch_value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''translations'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Cannot call method get\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Cannot call method getIterator\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Cannot call method write\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\AttributeOption\\Exporter\:\:exportBatch\(\) has parameter \$filePath with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\AttributeOption\\Exporter\:\:getResults\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\AttributeOption\\Exporter\:\:prepareAttributeOptions\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$id of method Webkul\\DataTransfer\\Helpers\\Exporters\\AbstractExporter\:\:updateBatchState\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect expects Illuminate\\Contracts\\Support\\Arrayable\<\(int\|string\), mixed\>\|iterable\<\(int\|string\), mixed\>\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/AttributeOption/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 1
 			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Category/Exporter.php
 
 		-
@@ -28816,6 +29308,168 @@ parameters:
 			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
 			identifier: property.notFound
 			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Call to method all\(\) on an unknown class Webkul\\DataTransfer\\Helpers\\Source\.$#'
+			identifier: class.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''enable_wysiwyg'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''is_required'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''is_unique'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''position'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''regex_pattern'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''section'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''translations'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''validation'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''value_per_locale'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot call method getIterator\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Cannot call method write\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\CategoryField\\Exporter\:\:exportBatch\(\) has parameter \$filePath with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\CategoryField\\Exporter\:\:getResults\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\CategoryField\\Exporter\:\:prepareCategoryFields\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$id of method Webkul\\DataTransfer\\Helpers\\Exporters\\AbstractExporter\:\:updateBatchState\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect expects Illuminate\\Contracts\\Support\\Arrayable\<\(int\|string\), mixed\>\|iterable\<\(int\|string\), mixed\>\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/CategoryField/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 1
 			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Channel/Exporter.php
 
 		-
@@ -29009,6 +29663,66 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Currency/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Locale/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Locale/Exporter.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Locale/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Locale/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Locale/Exporter.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Locale/Exporter.php
+
+		-
+			message: '#^Cannot call method write\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Locale/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\Locale\\Exporter\:\:exportBatch\(\) has parameter \$filePath with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Locale/Exporter.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Exporters\\Locale\\Exporter\:\:prepareLocales\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Locale/Exporter.php
+
+		-
+			message: '#^Parameter \#1 \$id of method Webkul\\DataTransfer\\Helpers\\Exporters\\AbstractExporter\:\:updateBatchState\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Locale/Exporter.php
 
 		-
 			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrack\:\:\$id\.$#'
@@ -29947,12 +30661,6 @@ parameters:
 			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Role/Exporter.php
 
 		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/Role/Exporter.php
-
-		-
 			message: '#^Cannot access offset ''name'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -30032,12 +30740,6 @@ parameters:
 
 		-
 			message: '#^Cannot access offset ''email'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/User/Exporter.php
-
-		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: packages/Webkul/DataTransfer/src/Helpers/Exporters/User/Exporter.php
@@ -30877,6 +31579,1422 @@ parameters:
 			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AbstractImporter.php
 
 		-
+			message: '#^Access to an undefined property Webkul\\Attribute\\Contracts\\Attribute\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrack\:\:\$action\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$jobTrack\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Cannot access offset mixed on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Cannot access property \$action on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Cannot call method pluck\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Cannot call method toArray\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:prepareAttributes\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:prepareAttributes\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:saveAttributes\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:validateRow\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_first expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of static method Illuminate\\Support\\Arr\:\:pluck\(\) expects iterable, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:isAttributeExist\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:get\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:has\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$data of method Webkul\\Attribute\\Repositories\\AttributeRepository\:\:create\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$data of method Webkul\\Attribute\\Repositories\\AttributeRepository\:\:update\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$key of function trans expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$rowData of method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:prepareAttributes\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$value of function count expects array\|Countable, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$errorCode of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\Attribute\\Repositories\\AttributeRepository\:\:update\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:set\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#3 \$columnName of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Parameter \#4 \$errorMessage of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string\|null, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: array.invalidKey
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:\$attributeCodesInBatch type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:\$codes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:\$locales \(array\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:\$locales type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:\$messages type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:\$permanentAttributes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Importer\:\:\$validColumnNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Call to an undefined method Webkul\\Attribute\\Repositories\\AttributeRepository\:\:query\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Cannot access property \$code on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Cannot call method get\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Cannot call method select\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Cannot call method whereIn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:get\(\) should return int\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:isEmpty\(\) should return int but returns bool\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:load\(\) has parameter \$codes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:set\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:\$items type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:\$selectColumns type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Attribute/Storage.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\Attribute\\Contracts\\AttributeFamily\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrack\:\:\$action\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$jobTrack\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 9
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Call to an undefined method Webkul\\Attribute\\Repositories\\AttributeGroupRepository\:\:query\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Call to an undefined method Webkul\\Attribute\\Repositories\\AttributeRepository\:\:query\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot access an offset on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot access offset ''attribute_groups'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot access offset ''completeness'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot access offset ''translations'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot access offset int\<min, \-1\>\|int\<1, max\> on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot access offset mixed on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 7
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot access property \$action on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot call method get\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot call method pluck\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot call method select\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Cannot call method toArray\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:buildRepositoryPayload\(\) has parameter \$familyData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:buildRepositoryPayload\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:prepareAttributeFamilies\(\) has parameter \$families with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:prepareAttributeFamilies\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:saveAttributeFamilies\(\) has parameter \$families with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:syncCompletenessSettings\(\) has parameter \$attributeGroups with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:validateRow\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_first expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_unique expects an array of values castable to string, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of static method Illuminate\\Support\\Arr\:\:pluck\(\) expects iterable, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Storage\:\:get\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Storage\:\:has\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Storage\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$familyData of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:buildRepositoryPayload\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$familyId of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:syncCompletenessSettings\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$familyId of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:syncCompletenessSettings\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$key of function trans expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 5
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$rowData of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:prepareAttributeFamilies\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$value of function count expects array\|Countable, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#1 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$attributeGroups of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:syncCompletenessSettings\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$errorCode of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$haystack of function in_array expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\Attribute\\Repositories\\AttributeFamilyRepository\:\:update\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Storage\:\:set\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$string of function explode expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Parameter \#4 \$errorMessage of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string\|null, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 7
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:\$attributeCache \(array\<string, int\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:\$attributeGroupCache \(array\<string, int\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:\$channelCache \(array\<string, int\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:\$familyCodesInBatch \(array\<string\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:\$locales \(array\<string\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:\$messages type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:\$permanentAttributes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Importer\:\:\$validColumnNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Call to an undefined method Webkul\\Attribute\\Repositories\\AttributeFamilyRepository\:\:query\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Cannot access property \$code on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Cannot call method get\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Cannot call method select\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Cannot call method whereIn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Storage\:\:get\(\) should return int\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Storage\:\:load\(\) has parameter \$codes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Storage\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Storage\:\:set\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Storage\:\:\$items type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeFamily\\Storage\:\:\$selectColumns type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeFamily/Storage.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrack\:\:\$action\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$jobTrack\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Cannot access offset mixed on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Cannot access property \$action on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Cannot call method pluck\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Cannot call method toArray\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:prepareAttributeGroups\(\) has parameter \$attributeGroups with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:prepareAttributeGroups\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:saveAttributeGroups\(\) has parameter \$attributeGroups with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:validateRow\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_first expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of static method Illuminate\\Support\\Arr\:\:pluck\(\) expects iterable, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$attributes of method Prettus\\Repository\\Eloquent\\BaseRepository\:\:create\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$attributes of method Prettus\\Repository\\Eloquent\\BaseRepository\:\:update\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:isAttributeGroupExist\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Storage\:\:get\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Storage\:\:has\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Storage\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$key of function trans expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$rowData of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:prepareAttributeGroups\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$value of function count expects array\|Countable, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$errorCode of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Storage\:\:set\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#3 \$columnName of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Parameter \#4 \$errorMessage of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string\|null, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: array.invalidKey
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:\$attributeGroupCodesInBatch type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:\$locales \(array\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:\$locales type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:\$messages type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:\$permanentAttributes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Importer\:\:\$validColumnNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Call to an undefined method Webkul\\Attribute\\Repositories\\AttributeGroupRepository\:\:query\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Cannot access property \$code on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Cannot call method get\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Cannot call method select\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Cannot call method whereIn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Storage\:\:get\(\) should return int\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Storage\:\:load\(\) has parameter \$codes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Storage\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Storage\:\:set\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Storage\:\:\$items type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeGroup\\Storage\:\:\$selectColumns type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeGroup/Storage.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\Attribute\\Contracts\\AttributeOption\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrack\:\:\$action\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$jobTrack\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Cannot access offset mixed on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Cannot access property \$action on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Cannot call method pluck\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Cannot call method toArray\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:prepareAttributeOptions\(\) has parameter \$attributeOptions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:prepareAttributeOptions\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:saveAttributeOptions\(\) has parameter \$attributeOptions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:validateRow\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_first expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of static method Illuminate\\Support\\Arr\:\:pluck\(\) expects iterable, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:isAttributeOptionExist\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:get\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:has\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:get\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\Attribute\\Storage\:\:has\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$data of method Webkul\\Attribute\\Repositories\\AttributeOptionRepository\:\:create\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$data of method Webkul\\Attribute\\Repositories\\AttributeOptionRepository\:\:update\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$key of function trans expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$rowData of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:prepareAttributeOptions\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$value of function count expects array\|Countable, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$errorCode of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\Attribute\\Repositories\\AttributeOptionRepository\:\:update\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:set\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$replace of function trans expects array\<string, bool\|float\|int\|string\|null\>, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#3 \$columnName of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Parameter \#4 \$errorMessage of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string\|null, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: array.invalidKey
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:\$attributeOptionCodesInBatch type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:\$locales \(array\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:\$locales type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:\$messages type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:\$permanentAttributes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Importer\:\:\$validColumnNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Call to an undefined method Webkul\\Attribute\\Repositories\\AttributeOptionRepository\:\:query\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Cannot access property \$code on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Cannot call method get\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Cannot call method select\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Cannot call method whereIn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:get\(\) should return int\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:isEmpty\(\) should return int but returns bool\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:load\(\) has parameter \$codes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:set\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:\$items type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\AttributeOption\\Storage\:\:\$selectColumns type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/AttributeOption/Storage.php
+
+		-
 			message: '#^Access to an undefined property Webkul\\Category\\Contracts\\Category\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -31555,6 +33673,330 @@ parameters:
 			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Category/Storage.php
 
 		-
+			message: '#^Access to an undefined property Webkul\\Category\\Contracts\\CategoryField\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrack\:\:\$action\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$jobTrack\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Cannot access offset mixed on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Cannot access property \$action on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Cannot call method pluck\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Cannot call method toArray\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:prepareCategoryFields\(\) has parameter \$categoryFields with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:prepareCategoryFields\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:saveCategoryFields\(\) has parameter \$categoryFields with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:validateRow\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_first expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of static method Illuminate\\Support\\Arr\:\:pluck\(\) expects iterable, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:isCategoryFieldExist\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Storage\:\:get\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Storage\:\:has\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Storage\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$data of method Webkul\\Category\\Repositories\\CategoryFieldRepository\:\:create\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$data of method Webkul\\Category\\Repositories\\CategoryFieldRepository\:\:update\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$key of function trans expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$rowData of method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:prepareCategoryFields\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$value of function count expects array\|Countable, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$errorCode of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\Category\\Repositories\\CategoryFieldRepository\:\:update\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Storage\:\:set\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#3 \$columnName of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Parameter \#4 \$errorMessage of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string\|null, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: array.invalidKey
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:\$categoryFieldCodesInBatch type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:\$locales \(array\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:\$locales type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:\$messages type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:\$permanentAttributes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Importer\:\:\$validColumnNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Call to an undefined method Webkul\\Category\\Repositories\\CategoryFieldRepository\:\:query\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Cannot access property \$code on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Cannot call method get\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Cannot call method select\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Cannot call method whereIn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Storage\:\:get\(\) should return int\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Storage\:\:load\(\) has parameter \$codes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Storage\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Parameter \#2 \$id of method Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Storage\:\:set\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Storage\:\:\$items type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\CategoryField\\Storage\:\:\$selectColumns type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/CategoryField/Storage.php
+
+		-
 			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrack\:\:\$action\.$#'
 			identifier: property.notFound
 			count: 1
@@ -32027,6 +34469,168 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: packages/Webkul/DataTransfer/src/Helpers/Importers/FieldProcessor.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrack\:\:\$action\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$data\.$#'
+			identifier: property.notFound
+			count: 4
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Access to an undefined property Webkul\\DataTransfer\\Contracts\\JobTrackBatch\:\:\$jobTrack\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Cannot access offset ''code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Cannot access property \$action on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Cannot access property \$filters on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:getFilters\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:getFilters\(\) should return array but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:validateRow\(\) has parameter \$rowData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_column expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_key_first expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$code of method Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:localeExists\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$codes of method Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:loadExistingLocales\(\) expects array\<string\>, list given\.$#'
+			identifier: argument.type
+			count: 2
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Parameter \#1 \$key of function trans expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Parameter \#2 \$errorCode of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Parameter \#4 \$errorMessage of method Webkul\\DataTransfer\\Helpers\\Importers\\AbstractImporter\:\:skipRow\(\) expects string\|null, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 5
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:\$codesSeenInBatch type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:\$existingLocales \(array\<string, int\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:\$existingLocales \(array\<string, int\>\) does not accept array\<string, mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:\$messages type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:\$permanentAttributes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Helpers\\Importers\\Locale\\Importer\:\:\$validColumnNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Importers/Locale/Importer.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sku\.$#'
@@ -34299,6 +36903,12 @@ parameters:
 		-
 			message: '#^Cannot call method getValue\(\) on mixed\.$#'
 			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Helpers/Sources/Excel.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
 			count: 1
 			path: packages/Webkul/DataTransfer/src/Helpers/Sources/Excel.php
 
@@ -37237,6 +39847,66 @@ parameters:
 			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Default/JobValidator.php
 
 		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\AttributeFamilyJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/AttributeFamilyJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\AttributeFamilyJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/AttributeFamilyJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\AttributeGroupJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/AttributeGroupJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\AttributeGroupJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/AttributeGroupJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\AttributeJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/AttributeJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\AttributeJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/AttributeJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\AttributeOptionJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/AttributeOptionJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\AttributeOptionJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/AttributeOptionJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\CategoryFieldJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/CategoryFieldJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\CategoryFieldJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/CategoryFieldJobValidator.php
+
+		-
 			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\CategoryJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -37271,6 +39941,18 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/CurrencyJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\LocaleJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/LocaleJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Export\\LocaleJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/LocaleJobValidator.php
 
 		-
 			message: '#^Cannot call method pluck\(\) on mixed\.$#'
@@ -37405,6 +40087,186 @@ parameters:
 			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Export/UserJobValidator.php
 
 		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeFamilyJobValidator\:\:getMessages\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeFamilyJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeFamilyJobValidator\:\:getMessages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeFamilyJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeFamilyJobValidator\:\:getRules\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeFamilyJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeFamilyJobValidator\:\:getRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeFamilyJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeFamilyJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeFamilyJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeFamilyJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeFamilyJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeGroupJobValidator\:\:getMessages\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeGroupJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeGroupJobValidator\:\:getMessages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeGroupJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeGroupJobValidator\:\:getRules\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeGroupJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeGroupJobValidator\:\:getRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeGroupJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeGroupJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeGroupJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeGroupJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeGroupJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeJobValidator\:\:getMessages\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeJobValidator\:\:getMessages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeJobValidator\:\:getRules\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeJobValidator\:\:getRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeOptionJobValidator\:\:getMessages\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeOptionJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeOptionJobValidator\:\:getMessages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeOptionJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeOptionJobValidator\:\:getRules\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeOptionJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeOptionJobValidator\:\:getRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeOptionJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeOptionJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeOptionJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\AttributeOptionJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/AttributeOptionJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\CategoryFieldJobValidator\:\:getMessages\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/CategoryFieldJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\CategoryFieldJobValidator\:\:getMessages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/CategoryFieldJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\CategoryFieldJobValidator\:\:getRules\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/CategoryFieldJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\CategoryFieldJobValidator\:\:getRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/CategoryFieldJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\CategoryFieldJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/CategoryFieldJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\CategoryFieldJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/CategoryFieldJobValidator.php
+
+		-
 			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\CategoryJobValidator\:\:getMessages\(\) has parameter \$options with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -37511,6 +40373,42 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/CurrencyJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\LocaleJobValidator\:\:getMessages\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/LocaleJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\LocaleJobValidator\:\:getMessages\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/LocaleJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\LocaleJobValidator\:\:getRules\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/LocaleJobValidator.php
+
+		-
+			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\LocaleJobValidator\:\:getRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/LocaleJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\LocaleJobValidator\:\:\$attributeNames type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/LocaleJobValidator.php
+
+		-
+			message: '#^Property Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\LocaleJobValidator\:\:\$rules type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/DataTransfer/src/Validators/JobInstances/Import/LocaleJobValidator.php
 
 		-
 			message: '#^Method Webkul\\DataTransfer\\Validators\\JobInstances\\Import\\ProductJobValidator\:\:getMessages\(\) has parameter \$options with no value type specified in iterable type array\.$#'

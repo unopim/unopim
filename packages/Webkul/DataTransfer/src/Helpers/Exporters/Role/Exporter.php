@@ -32,9 +32,6 @@ class Exporter extends AbstractExporter
 
         $this->exportBuffer->write($roles);
 
-        /**
-         * Update export batch process state summary
-         */
         $this->updateBatchState($batch->id, Export::STATE_PROCESSED);
 
         Event::dispatch('data_transfer.exports.batch.export.after', $batch);
@@ -50,7 +47,6 @@ class Exporter extends AbstractExporter
         $roles = [];
         foreach ($batch->data as $rowData) {
             $roles[] = [
-                'id'              => $rowData['id'],
                 'name'            => EscapeFormulaOperators::escapeValue($rowData['name']),
                 'description'     => EscapeFormulaOperators::escapeValue($rowData['description']),
                 'permission_type' => $rowData['permission_type'],

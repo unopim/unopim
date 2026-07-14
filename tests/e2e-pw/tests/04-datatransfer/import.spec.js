@@ -12,7 +12,7 @@ async function createProductImport(adminPage, code, filePath = 'assets/1k_produc
   await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"]').first();
   await fileInput.setInputFiles(filePath);
-  await clickSaveAndExpect(adminPage, 'Save Import', /Import created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Import created successfully/i);
 }
 
 /**
@@ -24,7 +24,7 @@ async function createCategoryImport(adminPage, code, filePath = 'assets/1k_produ
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   const fileInput = adminPage.locator('input[type="file"]').first();
   await fileInput.setInputFiles(filePath);
-  await clickSaveAndExpect(adminPage, 'Save Import', /Import created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Import created successfully/i);
 }
 
 /**
@@ -170,7 +170,12 @@ test.describe('UnoPim Import Jobs', () => {
 
     await createProductImport(adminPage, code);
     await adminPage.getByRole('button', { name: 'Import Now' }).click();
-    await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
+    // The progress tracker starts at "Job queued" but a running queue worker
+    // advances it to Queued/Processing/Completed almost immediately, so accept
+    // any of the tracker states rather than only the transient pending text.
+    await expect(
+      adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()
+    ).toBeVisible();
 
     // Cleanup
     await deleteImport(adminPage, code);
@@ -261,6 +266,7 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.waitForLoadState('networkidle');
 
     // Search again
+    await navigateTo(adminPage, 'imports');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');

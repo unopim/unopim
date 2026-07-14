@@ -19,11 +19,11 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::post('create', 'store')->name('admin.configuration.integrations.store');
 
-            Route::get('edit/{id}', 'edit')->name('admin.configuration.integrations.edit');
+            Route::get('edit/{id}', 'edit')->name('admin.configuration.integrations.edit')->whereNumber('id');
 
-            Route::put('edit/{id}', 'update')->name('admin.configuration.integrations.update');
+            Route::put('edit/{id}', 'update')->name('admin.configuration.integrations.update')->whereNumber('id');
 
-            Route::delete('edit/{id}', 'destroy')->name('admin.configuration.integrations.delete');
+            Route::delete('edit/{id}', 'destroy')->name('admin.configuration.integrations.delete')->whereNumber('id');
 
             Route::post('generate', 'generateKey')->name('admin.configuration.integrations.generate_key');
 

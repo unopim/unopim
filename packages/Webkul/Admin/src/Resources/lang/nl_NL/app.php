@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Beheer al uw productinformatie op één plek',
             'remember-me'                => 'Onthoud mij',
             'toggle-password'            => 'Wachtwoord tonen of verbergen',
+            'too-many-attempts'          => 'Te veel inlogpogingen. Probeer het over een moment opnieuw.',
             'email'                      => 'E-mailadres',
             'forget-password-link'       => 'Wachtwoord vergeten?',
             'password'                   => 'Wachtwoord',

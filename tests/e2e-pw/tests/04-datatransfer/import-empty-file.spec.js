@@ -12,7 +12,7 @@ async function createProductImport(adminPage, code, filePath) {
   await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"]').first();
   await fileInput.setInputFiles(filePath);
-  await clickSaveAndExpect(adminPage, 'Save Import', /Import created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Import created successfully/i);
 }
 
 /**

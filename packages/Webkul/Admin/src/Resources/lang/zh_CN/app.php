@@ -7,6 +7,7 @@ return [
             'tagline'                    => '在一处管理您所有的产品信息',
             'remember-me'                => '记住我',
             'toggle-password'            => '显示或隐藏密码',
+            'too-many-attempts'          => '登录尝试次数过多，请稍后再试。',
             'email'                      => '电子邮件地址',
             'forget-password-link'       => '忘记密码 ？',
             'password'                   => '密码',

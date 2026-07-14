@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Hallitse kaikkia tuotetietojasi yhdessä paikassa',
             'remember-me'                => 'Muista minut',
             'toggle-password'            => 'Näytä tai piilota salasana',
+            'too-many-attempts'          => 'Liian monta kirjautumisyritystä. Yritä hetken kuluttua uudelleen.',
             'email'                      => 'Sähköpostiosoite',
             'forget-password-link'       => 'Unohtuiko salasana?',
             'password'                   => 'Salasana',

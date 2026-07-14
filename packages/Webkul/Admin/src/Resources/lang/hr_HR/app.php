@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Upravljajte svim informacijama o proizvodima na jednom mjestu',
             'remember-me'                => 'Zapamti me',
             'toggle-password'            => 'Prikaži ili sakrij lozinku',
+            'too-many-attempts'          => 'Previše pokušaja prijave. Pokušajte ponovno za trenutak.',
             'email'                      => 'Adresa e-pošte',
             'forget-password-link'       => 'Zaboravili ste lozinku?',
             'password'                   => 'Lozinka',

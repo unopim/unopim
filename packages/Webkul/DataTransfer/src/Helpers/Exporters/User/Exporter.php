@@ -57,9 +57,6 @@ class Exporter extends AbstractExporter
 
         $this->exportBuffer->write($users);
 
-        /**
-         * Update export batch process state summary
-         */
         $this->updateBatchState($batch->id, Export::STATE_PROCESSED);
 
         Event::dispatch('data_transfer.exports.batch.export.after', $batch);
@@ -94,7 +91,6 @@ class Exporter extends AbstractExporter
             }
 
             $users[] = [
-                'id'              => $rowData['id'],
                 'name'            => EscapeFormulaOperators::escapeValue($rowData['name']),
                 'email'           => $rowData['email'],
                 'image'           => $exportedImage,

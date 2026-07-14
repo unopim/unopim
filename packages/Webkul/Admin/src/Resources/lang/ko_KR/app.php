@@ -7,6 +7,7 @@ return [
             'tagline'                    => '모든 제품 정보를 한곳에서 관리하세요',
             'remember-me'                => '로그인 상태 유지',
             'toggle-password'            => '비밀번호 표시 또는 숨기기',
+            'too-many-attempts'          => '로그인 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.',
             'email'                      => '이메일 주소',
             'forget-password-link'       => '비밀번호를 잊으셨나요?',
             'password'                   => '비밀번호',

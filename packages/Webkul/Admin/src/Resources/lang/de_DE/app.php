@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Verwalten Sie alle Ihre Produktinformationen an einem Ort',
             'remember-me'                => 'Angemeldet bleiben',
             'toggle-password'            => 'Passwort anzeigen oder ausblenden',
+            'too-many-attempts'          => 'Zu viele Anmeldeversuche. Bitte versuchen Sie es in Kürze erneut.',
             'email'                      => 'E-Mail-Adresse',
             'forget-password-link'       => 'Passwort vergessen?',
             'password'                   => 'Passwort',

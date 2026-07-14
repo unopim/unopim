@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Gestiona toda la información de tus productos en un solo lugar',
             'remember-me'                => 'Recuérdame',
             'toggle-password'            => 'Mostrar u ocultar la contraseña',
+            'too-many-attempts'          => 'Demasiados intentos de inicio de sesión. Inténtalo de nuevo en un momento.',
             'email'                      => 'Dirección de correo electrónico',
             'forget-password-link'       => 'Contraseña olvidada ?',
             'password'                   => 'Contraseña',

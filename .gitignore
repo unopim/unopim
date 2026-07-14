@@ -43,7 +43,7 @@ test-results
 .codex
 .cursor
 .github/skills
-/docs/
+docs
 .mcp.json
 boost.json
 CLAUDE.md
@@ -54,3 +54,10 @@ packages/Webkul/AdminApi/src/Secrets/Oauth/*.key
 AGENTS.md
 # OWASP ZAP scan artifacts (generated, do not commit)
 /storage/zap-report/
+
+# local-only E2E secrets (never commit)
+tests/e2e-pw/.secrets.local
+
+.env.e2e
+
+.env.live-backup

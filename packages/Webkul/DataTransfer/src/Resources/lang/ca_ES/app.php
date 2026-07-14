@@ -25,10 +25,73 @@ return [
             ],
         ],
         'categories' => [
-            'title'      => 'Categories',
+            'title'      => 'Categorías',
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'No pots eliminar la categoria arrel associada amb un canal',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => 'Camps de categoria',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El codi del camp de categoria :code ja està en ús.',
+                    'code_not_found_to_delete' => 'No s\'ha trobat el codi del camp de categoria per eliminar.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atributs',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'El codi d\'atribut :code ja està en ús.',
+                    'code_not_found_to_delete'             => 'Codi d\'atribut no trobat per a supressió.',
+                    'code_is_system_and_cannot_be_deleted' => 'L\'atribut del sistema no es pot eliminar.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grups d\'Atributs',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'El codi de grup d\'atributs :code ja està en ús.',
+                    'code_not_found_to_delete'             => 'Codi de grup d\'atributs no trobat per a supressió.',
+                    'code_is_system_and_cannot_be_deleted' => 'El grup d\'atributs del sistema no es pot eliminar.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Famílies d\'Atributs',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El codi de família d\'atributs :code ja està en ús.',
+                    'code_not_found_to_delete' => 'Codi de família d\'atributs no trobat per a supressió.',
+                    'invalid-attribute-group'  => 'El grup d\'atributs ":code" no existeix.',
+                    'invalid-attribute'        => 'L\'atribut ":code" no existeix.',
+                    'invalid-channel'          => 'El canal ":code" no existeix.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opcions d\'Atribut',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'El codi d\'opció d\'atribut :code ja està en ús.',
+                    'code_not_found_to_delete' => 'Codi d\'opció d\'atribut no trobat per a supressió.',
+                    'locale-not-exist'         => 'L\'idioma ":code" no existeix.',
+                    'invalid-attribute'        => 'L\'atribut ":code" no existeix.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Idiomes',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'El codi d\'idioma \'%s\' ja s\'ha importat en aquest lot.',
+                    'code-not-found-to-delete'    => 'No s\'ha trobat cap idioma amb el codi \'%s\' al sistema.',
+                    'invalid-status'              => 'L\'estat ha de ser 0 o 1 (o buit per defecte activat).',
+                    'channel-related-locale-root' => 'No podeu eliminar l\'idioma amb el codi :code perquè està associat a un canal.',
                 ],
             ],
         ],
@@ -45,18 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Monedes',
+            'filters' => [
+                'status' => 'Estat',
+                'enable' => 'Activar',
+                'all'    => 'Tot',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'L\'estat ha de ser 0 o 1 (o buit per defecte activat).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Rols',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Usuaris',
+            'filters' => [
+                'status' => 'Estat',
+                'active' => 'Actiu',
+                'all'    => 'Tot',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -91,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Camí del Fitxer',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Estat',
             'enable'         => 'Activat',
@@ -111,7 +184,7 @@ return [
                 'attributes'           => 'Atributs',
                 'attributes-info'      => 'Només s\'exporten els atributs seleccionats. Deixeu-ho buit per exportar tots els atributs de la família.',
                 'attribute-families'   => 'Famílies d\'atributs',
-                'categories'           => 'Categories',
+                'categories'           => 'Categorías',
                 'completeness'         => 'Completesa',
                 'completeness-options' => [
                     'none'         => 'Sense condició de completesa',
@@ -150,22 +223,40 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Categories',
+            'title' => 'Categorías',
+        ],
+        'category-fields' => [
+            'title' => 'Camps de categoria',
+        ],
+        'attributes' => [
+            'title' => 'Atributs',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grups d\'Atributs',
+        ],
+        'attribute-families' => [
+            'title' => 'Famílies d\'Atributs',
+        ],
+        'attribute-options' => [
+            'title' => 'Opcions d\'Atribut',
+        ],
+        'locales' => [
+            'title' => 'Idiomes',
         ],
         'channels' => [
             'title' => 'Canals',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Monedes',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Rols',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Usuaris',
             'filters' => [
                 'status' => 'Estat',
-                'active' => 'Active',
+                'active' => 'Actiu',
                 'all'    => 'Tots',
             ],
         ],

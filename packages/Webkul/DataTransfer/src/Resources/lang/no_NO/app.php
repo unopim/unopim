@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Kategorifelter',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategorifeltskode :code er allerede i bruk.',
+                    'code_not_found_to_delete' => 'Kategorifeltskode ble ikke funnet for sletting.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attributter',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributtkoden :code er allerede i bruk.',
+                    'code_not_found_to_delete'             => 'Attributtkoden ble ikke funnet for sletting.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributt kan ikke slettes.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attributtgrupper',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributtgruppekoden :code er allerede i bruk.',
+                    'code_not_found_to_delete'             => 'Attributtgruppekoden ble ikke funnet for sletting.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributtgruppe kan ikke slettes.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attributtfamilier',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributtfamiliekoden :code er allerede i bruk.',
+                    'code_not_found_to_delete' => 'Attributtfamiliekoden ble ikke funnet for sletting.',
+                    'invalid-attribute-group'  => 'Attributtgruppen ":code" eksisterer ikke.',
+                    'invalid-attribute'        => 'Attributtet ":code" eksisterer ikke.',
+                    'invalid-channel'          => 'Kanalen ":code" eksisterer ikke.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attributtalternativer',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributtalternativkoden :code er allerede i bruk.',
+                    'code_not_found_to_delete' => 'Attributtalternativkoden ble ikke funnet for sletting.',
+                    'locale-not-exist'         => 'Språket ":code" eksisterer ikke.',
+                    'invalid-attribute'        => 'Attributtet ":code" eksisterer ikke.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Språk',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Språkkoden \'%s\' er allerede importert i denne batchen.',
+                    'code-not-found-to-delete'    => 'Språk med koden \'%s\' ble ikke funnet i systemet.',
+                    'invalid-status'              => 'Status må være 0 eller 1 (eller tom for standard aktivert).',
+                    'channel-related-locale-root' => 'Du kan ikke slette språket med koden :code fordi det er knyttet til en kanal.',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'Kanaler',
             'validation' => [
@@ -45,18 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Valutaer',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Aktiver',
+                'all'    => 'Alle',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status må være 0 eller 1 (eller tom for standard aktivert).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Roller',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Brukere',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alle',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -91,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'Filsti',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Aktivert',
@@ -152,20 +225,38 @@ return [
         'categories' => [
             'title' => 'Kategorier',
         ],
+        'category-fields' => [
+            'title' => 'Kategorifelter',
+        ],
+        'attributes' => [
+            'title' => 'Attributter',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attributtgrupper',
+        ],
+        'attribute-families' => [
+            'title' => 'Attributtfamilier',
+        ],
+        'attribute-options' => [
+            'title' => 'Attributtalternativer',
+        ],
+        'locales' => [
+            'title' => 'Språk',
+        ],
         'channels' => [
             'title' => 'Kanaler',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valutaer',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Roller',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Brukere',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Aktiv',
                 'all'    => 'Alle',
             ],
         ],

@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Administrer alle dine produktoplysninger ét sted',
             'remember-me'                => 'Husk mig',
             'toggle-password'            => 'Vis eller skjul adgangskode',
+            'too-many-attempts'          => 'For mange loginforsøg. Prøv igen om et øjeblik.',
             'email'                      => 'E-mailadresse',
             'forget-password-link'       => 'Glemt adgangskode?',
             'password'                   => 'Adgangskode',

@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Kelola semua informasi produk Anda di satu tempat',
             'remember-me'                => 'Ingat saya',
             'toggle-password'            => 'Tampilkan atau sembunyikan kata sandi',
+            'too-many-attempts'          => 'Terlalu banyak percobaan masuk. Silakan coba lagi sebentar.',
             'email'                      => 'Alamat email',
             'forget-password-link'       => 'Lupa Password ?',
             'password'                   => 'Kata sandi',

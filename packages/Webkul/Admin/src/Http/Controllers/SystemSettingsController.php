@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Webkul\Admin\SystemSettings;
 use Webkul\Core\Repositories\CoreConfigRepository;
@@ -50,14 +51,53 @@ class SystemSettingsController extends Controller
     {
         $entry = $this->systemSettings->find($key);
 
-        if (! $entry || ! $this->systemSettings->formGroup($entry)) {
+        if (! $entry || ! ($group = $this->systemSettings->formGroup($entry))) {
             return redirect()->route('admin.settings.system.index');
         }
 
-        $this->coreConfigRepository->create($request->except(['_token', 'admin_locale']));
+        $this->coreConfigRepository->create($this->allowedConfig($request, $group));
 
         session()->flash('success', trans('admin::app.settings.system-settings.save-message'));
 
         return redirect()->route('admin.settings.system.index');
+    }
+
+    /**
+     * Restrict the posted payload to the config codes this group actually declares.
+     * Without this, `create()` would persist any code posted (unknown codes are
+     * stored verbatim), letting a crafted request write arbitrary core-config
+     * outside the edited group — e.g. SMTP creds, AI keys or the debug allow-list.
+     *
+     * @param  array<string, mixed>  $group
+     * @return array<string, mixed>
+     */
+    protected function allowedConfig(Request $request, array $group): array
+    {
+        $allowed = collect($group['fields'] ?? [])
+            ->pluck('name')
+            ->filter()
+            ->map(fn ($name) => $group['key'].'.'.$name)
+            ->all();
+
+        $payload = [];
+
+        foreach (Arr::dot($request->except(['_token', 'admin_locale'])) as $code => $value) {
+            $matches = collect($allowed)->contains(
+                fn ($allowedCode) => $code === $allowedCode || str_starts_with($code, $allowedCode.'.')
+            );
+
+            if ($matches) {
+                Arr::set($payload, $code, $value);
+            }
+        }
+
+        // Preserve the channel/locale scope keys the repository understands.
+        foreach (['locale', 'channel'] as $scope) {
+            if ($request->filled($scope)) {
+                $payload[$scope] = $request->input($scope);
+            }
+        }
+
+        return $payload;
     }
 }

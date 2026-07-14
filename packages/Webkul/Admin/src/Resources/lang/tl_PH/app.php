@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Pamahalaan ang lahat ng impormasyon ng iyong produkto sa isang lugar',
             'remember-me'                => 'Tandaan ako',
             'toggle-password'            => 'Ipakita o itago ang password',
+            'too-many-attempts'          => 'Masyadong maraming pagtatangkang mag-log in. Pakisubukang muli mamaya.',
             'email'                      => 'Email Address',
             'forget-password-link'       => 'Nakalimutan ang password?',
             'password'                   => 'Password',

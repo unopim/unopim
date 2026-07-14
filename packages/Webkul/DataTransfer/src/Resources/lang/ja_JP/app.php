@@ -32,6 +32,69 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'カテゴリフィールド',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'カテゴリフィールドコード :code は既に使用されています。',
+                    'code_not_found_to_delete' => '削除するカテゴリフィールドコードが見つかりません。',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => '属性',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '属性コード :code はすでに使用されています。',
+                    'code_not_found_to_delete'             => '削除する属性コードが見つかりません。',
+                    'code_is_system_and_cannot_be_deleted' => 'システム属性は削除できません。',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => '属性グループ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '属性グループコード :code はすでに使用されています。',
+                    'code_not_found_to_delete'             => '削除する属性グループコードが見つかりません。',
+                    'code_is_system_and_cannot_be_deleted' => 'システム属性グループは削除できません。',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => '属性ファミリー',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '属性ファミリーコード :code はすでに使用されています。',
+                    'code_not_found_to_delete' => '削除する属性ファミリーコードが見つかりません。',
+                    'invalid-attribute-group'  => '属性グループ ":code" は存在しません。',
+                    'invalid-attribute'        => '属性 ":code" は存在しません。',
+                    'invalid-channel'          => 'チャネル ":code" は存在しません。',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => '属性オプション',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '属性オプションコード :code はすでに使用されています。',
+                    'code_not_found_to_delete' => '削除する属性オプションコードが見つかりません。',
+                    'locale-not-exist'         => 'ロケール ":code" は存在しません。',
+                    'invalid-attribute'        => '属性 ":code" は存在しません。',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'ロケール',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'ロケールコード \'%s\' はこのバッチですでにインポートされています。',
+                    'code-not-found-to-delete'    => 'コード \'%s\' のロケールがシステムに見つかりません。',
+                    'invalid-status'              => 'ステータスは0または1である必要があります（またはデフォルト有効の場合は空）。',
+                    'channel-related-locale-root' => 'コード :code のロケールはチャネルに関連付けられているため削除できません。',
+                ],
+            ],
+        ],
         'channels' => [
             'title'      => 'チャネル',
             'validation' => [
@@ -45,18 +108,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => '通貨',
+            'filters' => [
+                'status' => 'ステータス',
+                'enable' => '有効',
+                'all'    => 'すべて',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'ステータスは0または1である必要があります（またはデフォルト有効の場合は空）。',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'ロール',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +133,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'ユーザー',
+            'filters' => [
+                'status' => 'ステータス',
+                'active' => 'アクティブ',
+                'all'    => 'すべて',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -91,7 +164,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
+            'file-path'      => 'ファイル パス',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'ステータス',
             'enable'         => '有効',
@@ -152,20 +225,38 @@ return [
         'categories' => [
             'title' => 'カテゴリー',
         ],
+        'category-fields' => [
+            'title' => 'カテゴリフィールド',
+        ],
+        'attributes' => [
+            'title' => '属性',
+        ],
+        'attribute-groups' => [
+            'title' => '属性グループ',
+        ],
+        'attribute-families' => [
+            'title' => '属性ファミリー',
+        ],
+        'attribute-options' => [
+            'title' => '属性オプション',
+        ],
+        'locales' => [
+            'title' => 'ロケール',
+        ],
         'channels' => [
             'title' => 'チャネル',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => '通貨',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'ロール',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'ユーザー',
             'filters' => [
                 'status' => 'ステータス',
-                'active' => 'Active',
+                'active' => '有効',
                 'all'    => 'すべて',
             ],
         ],

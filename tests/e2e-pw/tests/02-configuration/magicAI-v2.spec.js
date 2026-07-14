@@ -18,7 +18,8 @@ test('1.1 - Magic AI config page loads with correct title', async ({ adminPage }
 
 test('1.2 - Magic AI config page has Save Configuration button', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
-  const saveBtn = adminPage.getByRole('button', { name: 'Save Configuration' });
+  await adminPage.locator('input[type="checkbox"]').first().click({ force: true });
+  const saveBtn = adminPage.getByRole('button', { name: 'Save changes' });
   await expect(saveBtn).toBeVisible();
   await expect(saveBtn).toBeEnabled();
 });
@@ -288,12 +289,14 @@ test('6.8 - AI Platforms datagrid shows all column headers', async ({ adminPage 
   await adminPage.locator('.icon-cancel').click().catch(() => {});
   await expect(adminPage.locator('.icon-cancel')).not.toBeVisible().catch(() => {});
 
-  await expect(adminPage.locator('#app').getByText('Label').first()).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Provider').first()).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Models').first()).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Default').first()).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Status').first()).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Created At').first()).toBeVisible();
+  // Column headers render as datagrid header spans with a matching title attribute
+  // (span[title="..."]); scope to those to avoid matching hidden manage-columns entries.
+  await expect(adminPage.locator('span[title="Label"]')).toBeVisible();
+  await expect(adminPage.locator('span[title="Provider"]')).toBeVisible();
+  await expect(adminPage.locator('span[title="Models"]')).toBeVisible();
+  await expect(adminPage.locator('span[title="Default"]')).toBeVisible();
+  await expect(adminPage.locator('span[title="Status"]')).toBeVisible();
+  await expect(adminPage.locator('span[title="Created At"]')).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Actions').first()).toBeVisible();
 });
 
@@ -376,7 +379,7 @@ test('7.3 - Selecting OpenAI provider shows Label, API Key, API URL, Models, tog
   await expect(adminPage.locator('#app').getByText(/Pre-filled with the default endpoint/)).toBeVisible();
   await expect(adminPage.getByPlaceholder('Type custom model ID...')).toBeVisible();
   await expect(adminPage.getByRole('button', { name: '+ Add' })).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Set as Default', { exact: true }).last()).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Set as Default').last()).toBeVisible();
   const statusCheckboxes = adminPage.locator('input[type="checkbox"]');
   expect(await statusCheckboxes.count()).toBeGreaterThanOrEqual(2);
 });

@@ -12,7 +12,7 @@ async function createExport(adminPage, code, format = 'CSV') {
   await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: format }).locator('span').first().click();
   
-  await clickSaveAndExpect(adminPage, 'Save Export', /Export created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
 }
 
 async function deleteExport(adminPage, code) {
@@ -34,7 +34,6 @@ test.describe('Role Export Jobs', () => {
     const code = `role-csv-${uid}`;
     await createExport(adminPage, code, 'CSV');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 
@@ -43,7 +42,6 @@ test.describe('Role Export Jobs', () => {
     const code = `role-xls-${uid}`;
     await createExport(adminPage, code, 'XLS');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 
@@ -52,7 +50,6 @@ test.describe('Role Export Jobs', () => {
     const code = `role-xlsx-${uid}`;
     await createExport(adminPage, code, 'XLSX');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 });

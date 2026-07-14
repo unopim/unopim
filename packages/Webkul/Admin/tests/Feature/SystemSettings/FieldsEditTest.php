@@ -5,7 +5,7 @@ beforeEach(fn () => $this->loginAsAdmin());
 it('renders a fields edit page and persists to core config', function () {
     config(['system_settings' => [
         ['key' => 'system', 'name' => 'admin::app.settings.system-settings.system.title', 'info' => 'admin::app.settings.system-settings.system.info', 'sort' => 1],
-        ['key' => 'system.debug', 'name' => 'admin::app.settings.system-settings.debug.title', 'info' => 'admin::app.settings.system-settings.debug.info', 'sort' => 1,
+        ['key'       => 'system.debug', 'name' => 'admin::app.settings.system-settings.debug.title', 'info' => 'admin::app.settings.system-settings.debug.info', 'sort' => 1,
             'fields' => [['name' => 'enabled', 'title' => 'admin::app.settings.system-settings.debug.title', 'type' => 'boolean']]],
     ]]);
 

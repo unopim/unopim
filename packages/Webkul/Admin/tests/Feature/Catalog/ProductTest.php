@@ -467,10 +467,10 @@ it('should render product edit page header with sticky top offset so save button
 
     $content = $response->getContent();
 
-    // The product page header should use sticky top-[Xpx] (offset below main header)
-    // The main header only uses top-0, so top-[...px] is specific to the product header fix
+    // The product page header uses a sticky wrapper (js-sticky-header) with an inline
+    // top offset so it sits below the main header and the save bar stays visible.
     $this->assertStringContainsString(
-        'sticky top-[',
+        'js-sticky-header',
         $content,
         'Product edit page header should have sticky positioning with a top offset so the save button is visible while scrolling'
     );

@@ -7,6 +7,7 @@ return [
             'tagline'                    => 'Gestionează toate informațiile despre produse într-un singur loc',
             'remember-me'                => 'Ține-mă minte',
             'toggle-password'            => 'Afișează sau ascunde parola',
+            'too-many-attempts'          => 'Prea multe încercări de autentificare. Încearcă din nou în scurt timp.',
             'email'                      => 'Adresă de e-mail',
             'forget-password-link'       => 'Ai uitat parola?',
             'password'                   => 'Parolă',
