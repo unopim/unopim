@@ -238,7 +238,10 @@ test.describe('UnoPim Import Jobs', () => {
     await navigateTo(adminPage, 'imports');
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await perPageBtn.click();
-    await adminPage.locator('#app').getByText('20', { exact: true }).click();
+    await adminPage
+      .locator('div.relative').filter({ has: perPageBtn }).last()
+      .getByRole('listitem').filter({ hasText: /^20$/ })
+      .click();
     await expect(perPageBtn).toContainText('20');
   });
 
