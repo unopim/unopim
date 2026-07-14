@@ -44,14 +44,25 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
      */
     Route::get('configuration/general/magic_ai', fn () => redirect()->route('admin.magic_ai.settings.index', [], 301));
 
-    Route::controller(ConfigurationController::class)->prefix('configuration/{slug?}/{slug2?}')->group(function () {
+    /**
+     * The configuration editor is a two-level wildcard, so it also matches paths
+     * that belong to sibling packages mounted under `configuration/` (the Webhook
+     * and Integrations admin screens). Because this group is registered before
+     * those package routes, an unconstrained wildcard would shadow them and send
+     * their pages to the Configuration hub (a redirect). Excluding the reserved
+     * first-level slugs keeps those pages reachable while leaving every genuine
+     * configuration section untouched.
+     */
+    Route::controller(ConfigurationController::class)
+        ->prefix('configuration/{slug?}/{slug2?}')
+        ->where(['slug' => '(?!(?:webhook|integrations)(?:/|$))[^/]+'])
+        ->group(function () {
+            Route::get('', 'index')->name('admin.configuration.edit');
 
-        Route::get('', 'index')->name('admin.configuration.edit');
+            Route::post('', 'store')->name('admin.configuration.store');
 
-        Route::post('', 'store')->name('admin.configuration.store');
-
-        Route::get('{path}', 'download')->defaults('_config', [
-            'redirect' => 'admin.configuration.index',
-        ])->name('admin.configuration.download');
-    });
+            Route::get('{path}', 'download')->defaults('_config', [
+                'redirect' => 'admin.configuration.index',
+            ])->name('admin.configuration.download');
+        });
 });
