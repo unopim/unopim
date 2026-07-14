@@ -645,6 +645,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $column = reset($column);
 
+        /**
+         * Attribute filters added from the datagrid's "Add Filter" carry the operator the
+         * user picked. Everything else keeps deriving it from the column type.
+         */
+        if ($condition = $this->getRequestedCondition($value)) {
+            return $this->resolveCondition($column, $condition);
+        }
+
         switch ($column->type) {
             case 'datetime_range':
             case 'date_range':
@@ -666,6 +674,60 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return [$operator, $value];
+    }
+
+    /**
+     * Pull the {operator, value, value2, currency} payload sent by an attribute filter,
+     * or null when the request uses the plain value format.
+     */
+    protected function getRequestedCondition($value): ?array
+    {
+        $condition = is_array($value) ? reset($value) : null;
+
+        if (! is_array($condition) || empty($condition['operator'])) {
+            return null;
+        }
+
+        return $condition;
+    }
+
+    /**
+     * Turn an attribute filter's condition into the [operator, value] pair its filter expects.
+     */
+    protected function resolveCondition($column, array $condition): array
+    {
+        $operator = FilterOperators::tryFrom($condition['operator']);
+
+        if (! $operator) {
+            return [null, null];
+        }
+
+        $value = $condition['value'] ?? '';
+
+        /**
+         * Empty checks carry no value, so short-circuit before the per-type shaping —
+         * a price still needs its currency to resolve the JSON path.
+         */
+        if (in_array($operator, [FilterOperators::IS_EMPTY, FilterOperators::IS_NOT_EMPTY], true)) {
+            return [
+                $operator,
+                $column->type === 'price' ? [$condition['currency'] ?? '', ''] : [''],
+            ];
+        }
+
+        if ($column->type === 'price') {
+            return [$operator, [$condition['currency'] ?? '', $value, $condition['value2'] ?? '']];
+        }
+
+        if ($operator === FilterOperators::RANGE) {
+            return [$operator, [$value, $condition['value2'] ?? '']];
+        }
+
+        if (in_array($operator, [FilterOperators::IN, FilterOperators::NOT_IN], true)) {
+            return [$operator, is_array($value) ? array_values($value) : array_filter(explode(',', (string) $value))];
+        }
+
+        return [$operator, is_array($value) ? array_values($value) : [$value]];
     }
 
     /**

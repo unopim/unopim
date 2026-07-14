@@ -87,6 +87,8 @@
 
                     addedFilterColumns: {},
 
+                    attributeConditions: {},
+
                     filterPickerPage: 1,
 
                     filterPickerLastPage: 1,
@@ -369,6 +371,8 @@
 
                                 this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index === 'all' || (filterableColumns.includes(column.index)));
                             }
+
+                            this.syncAttributeConditions();
 
                             this.setCurrentSelectionMode();
 
@@ -1207,6 +1211,207 @@
                     this.showFilterPicker = false;
 
                     this.addActiveFilter(column.index);
+
+                    this.syncAttributeConditions();
+                },
+
+                //================================================================
+                // Attribute filters (operator + value), added via "Add Filter".
+                //================================================================
+
+                /**
+                 * An attribute filter renders operator + value inputs instead of the
+                 * plain type-based input the default columns use.
+                 */
+                isAttributeFilter(column) {
+                    return !! column.attribute_type
+                        && ! this.defaultFilterIndices.includes(column.index);
+                },
+
+                attributeCondition(columnIndex) {
+                    if (! this.attributeConditions[columnIndex]) {
+                        this.attributeConditions[columnIndex] = {
+                            operator: '',
+                            value:    '',
+                            value2:   '',
+                            currency: '',
+                        };
+                    }
+
+                    return this.attributeConditions[columnIndex];
+                },
+
+                attributeOperators(column) {
+                    return column.operators ?? [];
+                },
+
+                /**
+                 * Which value input the selected operator needs — 'none' for the empty
+                 * checks, a pair of inputs for ranges, and so on.
+                 */
+                attributeValueControl(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    const operator = this.attributeOperators(column)
+                        .find(operator => operator.value === condition.operator);
+
+                    return operator ? operator.control : 'text';
+                },
+
+                /**
+                 * Boolean columns carry their options inline; option-type attributes fetch
+                 * theirs from column.options.route, so they never reach here.
+                 */
+                attributeValueOptions(column) {
+                    return Array.isArray(column.options) ? column.options : (column.options?.params?.options ?? []);
+                },
+
+                setAttributeOptionValue(column, event) {
+                    const option = event?.target?.value ?? event;
+
+                    this.attributeCondition(column.index).value = option?.code ?? option ?? '';
+
+                    this.applyAttributeCondition(column);
+                },
+
+                /**
+                 * The dropdowns show a label but store a value, so each needs its selected
+                 * label resolved back from the option list.
+                 */
+                attributeOperatorLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeOperators(column)
+                        .find(operator => operator.value === condition.operator)?.label ?? '';
+                },
+
+                attributeCurrencyLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeValueOptions(column)
+                        .find(option => option.value === condition.currency)?.label ?? '';
+                },
+
+                attributeValueLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeValueOptions(column)
+                        .find(option => `${option.value}` === `${condition.value}`)?.label ?? '';
+                },
+
+                setAttributeCurrency(column, currency) {
+                    this.attributeCondition(column.index).currency = currency;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                setAttributeValue(column, value) {
+                    this.attributeCondition(column.index).value = value;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                /**
+                 * Rebuild the operator/value inputs from whatever is already applied, so
+                 * filters survive a reload or a trip through the URL/localStorage.
+                 */
+                syncAttributeConditions() {
+                    (this.available.columns ?? []).forEach(column => {
+                        if (! this.isAttributeFilter(column)) {
+                            return;
+                        }
+
+                        const condition = this.attributeCondition(column.index);
+                        const applied = this.findAppliedColumn(column.index)?.value?.[0];
+
+                        if (applied && typeof applied === 'object') {
+                            condition.operator = applied.operator ?? '';
+                            condition.value    = applied.value ?? '';
+                            condition.value2   = applied.value2 ?? '';
+                            condition.currency = applied.currency ?? '';
+                        }
+
+                        if (! condition.operator) {
+                            condition.operator = this.attributeOperators(column)[0]?.value ?? '';
+                        }
+                    });
+                },
+
+                /**
+                 * Reset the value when the operator switches to a different input, so a
+                 * range's second value cannot leak into a single-value operator.
+                 */
+                setAttributeOperator(column, operator) {
+                    const condition = this.attributeCondition(column.index);
+                    const previous = this.attributeValueControl(column);
+
+                    condition.operator = operator;
+
+                    if (this.attributeValueControl(column) !== previous) {
+                        condition.value = '';
+                        condition.value2 = '';
+                    }
+
+                    this.applyAttributeCondition(column);
+                },
+
+                hasConditionValue(value) {
+                    return Array.isArray(value) ? value.length > 0 : `${value ?? ''}`.length > 0;
+                },
+
+                /**
+                 * An incomplete condition is dropped rather than sent, otherwise the grid
+                 * would filter on a half-filled row.
+                 */
+                isConditionComplete(column, condition, control) {
+                    if (! condition.operator) {
+                        return false;
+                    }
+
+                    if (column.type === 'price' && ! condition.currency) {
+                        return false;
+                    }
+
+                    if (control === 'none') {
+                        return true;
+                    }
+
+                    if (control === 'number_range' || control === 'date_range') {
+                        return this.hasConditionValue(condition.value) && this.hasConditionValue(condition.value2);
+                    }
+
+                    return this.hasConditionValue(condition.value);
+                },
+
+                applyAttributeCondition(column) {
+                    const condition = this.attributeCondition(column.index);
+                    const control = this.attributeValueControl(column);
+
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        appliedColumn => appliedColumn.index !== column.index
+                    );
+
+                    if (! this.isConditionComplete(column, condition, control)) {
+                        return;
+                    }
+
+                    const payload = {
+                        operator: condition.operator,
+                        value:    control === 'none' ? '' : condition.value,
+                    };
+
+                    if (control === 'number_range' || control === 'date_range') {
+                        payload.value2 = condition.value2;
+                    }
+
+                    if (column.type === 'price') {
+                        payload.currency = condition.currency;
+                    }
+
+                    this.applied.filters.columns.push({
+                        index: column.index,
+                        value: [payload],
+                    });
                 },
 
                 loadFilterAttributes(reset = false) {

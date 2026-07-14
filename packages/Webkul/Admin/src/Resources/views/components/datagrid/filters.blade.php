@@ -1,7 +1,165 @@
 <div v-for="column in available.columns">
     <div v-if="column.filterable && activeFilterIndices.includes(column.index)">
+        <!-- Attribute condition (operator + value), for attributes added via "Add Filter" -->
+        <div v-if="isAttributeFilter(column)">
+            <div class="flex items-center justify-between">
+                <p
+                    class="text-sm font-medium leading-6 dark:text-white text-gray-800"
+                    v-text="column.label"
+                >
+                </p>
+
+                <span
+                    class="icon-cancel cursor-pointer text-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                    @click="removeActiveFilter(column.index)"
+                    title="@lang('admin::app.components.datagrid.filters.remove-filter')"
+                ></span>
+            </div>
+
+            <div class="mb-4 mt-1.5 grid gap-2">
+                <!-- Currency, only a price needs one to resolve its value -->
+                <x-admin::dropdown v-if="column.type === 'price'">
+                    <x-slot:toggle>
+                        <button
+                            type="button"
+                            class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                        >
+                            <span
+                                class="text-sm"
+                                :class="attributeCondition(column.index).currency ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400'"
+                                v-text="attributeCurrencyLabel(column) || '@lang('admin::app.components.datagrid.filters.select')'"
+                            >
+                            </span>
+
+                            <span class="icon-chevron-down text-2xl"></span>
+                        </button>
+                    </x-slot>
+
+                    <x-slot:menu>
+                        <x-admin::dropdown.menu.item
+                            v-for="option in attributeValueOptions(column)"
+                            v-text="option.label"
+                            @click="setAttributeCurrency(column, option.value)"
+                        >
+                        </x-admin::dropdown.menu.item>
+                    </x-slot>
+                </x-admin::dropdown>
+
+                <!-- Operator -->
+                <x-admin::dropdown>
+                    <x-slot:toggle>
+                        <button
+                            type="button"
+                            class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                        >
+                            <span
+                                class="text-sm"
+                                :class="attributeCondition(column.index).operator ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400'"
+                                v-text="attributeOperatorLabel(column) || '@lang('admin::app.components.datagrid.filters.select')'"
+                            >
+                            </span>
+
+                            <span class="icon-chevron-down text-2xl"></span>
+                        </button>
+                    </x-slot>
+
+                    <x-slot:menu>
+                        <x-admin::dropdown.menu.item
+                            v-for="operator in attributeOperators(column)"
+                            v-text="operator.label"
+                            @click="setAttributeOperator(column, operator.value)"
+                        >
+                        </x-admin::dropdown.menu.item>
+                    </x-slot>
+                </x-admin::dropdown>
+
+                <!-- Value -->
+                <template v-if="attributeValueControl(column) === 'none'">
+                    <p class="py-1.5 text-sm italic text-gray-400 dark:text-gray-300">
+                        @lang('admin::app.settings.data-transfer.exports.create.no-value-needed')
+                    </p>
+                </template>
+
+                <!-- Boolean values ship with the column; option values are fetched on demand -->
+                <template v-else-if="attributeValueControl(column) === 'boolean'">
+                    <x-admin::dropdown>
+                        <x-slot:toggle>
+                            <button
+                                type="button"
+                                class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                            >
+                                <span
+                                    class="text-sm"
+                                    :class="hasConditionValue(attributeCondition(column.index).value) ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400'"
+                                    v-text="attributeValueLabel(column) || '@lang('admin::app.components.datagrid.filters.select')'"
+                                >
+                                </span>
+
+                                <span class="icon-chevron-down text-2xl"></span>
+                            </button>
+                        </x-slot>
+
+                        <x-slot:menu>
+                            <x-admin::dropdown.menu.item
+                                v-for="option in attributeValueOptions(column)"
+                                v-text="option.label"
+                                @click="setAttributeValue(column, option.value)"
+                            >
+                            </x-admin::dropdown.menu.item>
+                        </x-slot>
+                    </x-admin::dropdown>
+                </template>
+
+                <template v-else-if="attributeValueControl(column) === 'options'">
+                    <x-admin::form.control-group.control
+                        type="select"
+                        ::name="'condition_' + column.index"
+                        ::label="column.label"
+                        track-by="code"
+                        label-by="label"
+                        async="true"
+                        ::list-route="column.options.route"
+                        ::query-params="column.options.params"
+                        @select-option="setAttributeOptionValue(column, $event)"
+                    />
+                </template>
+
+                <template v-else-if="attributeValueControl(column) === 'number_range' || attributeValueControl(column) === 'date_range'">
+                    <div class="flex items-center gap-2">
+                        <input
+                            :type="attributeValueControl(column) === 'date_range' ? 'date' : 'number'"
+                            class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                            v-model="attributeCondition(column.index).value"
+                            placeholder="@lang('admin::app.settings.data-transfer.exports.create.range-from')"
+                            @change="applyAttributeCondition(column)"
+                        />
+
+                        <span class="text-gray-400">&ndash;</span>
+
+                        <input
+                            :type="attributeValueControl(column) === 'date_range' ? 'date' : 'number'"
+                            class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                            v-model="attributeCondition(column.index).value2"
+                            placeholder="@lang('admin::app.settings.data-transfer.exports.create.range-to')"
+                            @change="applyAttributeCondition(column)"
+                        />
+                    </div>
+                </template>
+
+                <template v-else>
+                    <input
+                        :type="attributeValueControl(column)"
+                        class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                        v-model="attributeCondition(column.index).value"
+                        :placeholder="column.label"
+                        @change="applyAttributeCondition(column)"
+                    />
+                </template>
+            </div>
+        </div>
+
         <!-- Boolean -->
-        <div v-if="column.type === 'boolean'">
+        <div v-else-if="column.type === 'boolean'">
             <div class="flex items-center justify-between">
                 <p
                     class="text-sm font-medium leading-6 dark:text-white text-gray-800"

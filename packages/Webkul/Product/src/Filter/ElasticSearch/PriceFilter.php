@@ -15,7 +15,17 @@ class PriceFilter extends AbstractElasticSearchAttributeFilter
      */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::PRICE_FIELD_TYPE],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::EQUAL]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::EQUAL,
+            FilterOperators::LESS_THAN,
+            FilterOperators::LESS_THAN_OR_EQUAL,
+            FilterOperators::GREATER_THAN,
+            FilterOperators::GREATER_THAN_OR_EQUAL,
+            FilterOperators::RANGE,
+            FilterOperators::IS_EMPTY,
+            FilterOperators::IS_NOT_EMPTY,
+        ]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -37,18 +47,48 @@ class PriceFilter extends AbstractElasticSearchAttributeFilter
         }
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
-        if (is_numeric($value[1])) {
-            switch ($operator) {
-                case FilterOperators::EQUAL:
-                    $clause = [
-                        'term' => [
-                            sprintf('%s.%s', $attributePath, $value[0]) => $value[1],
-                        ],
-                    ];
+        $field = sprintf('%s.%s', $attributePath, $value[0]);
 
-                    $this->queryBuilder::where($clause);
-                    break;
-            }
+        switch ($operator) {
+            case FilterOperators::IS_EMPTY:
+                $this->queryBuilder::whereNot(['exists' => ['field' => $field]]);
+
+                return $this;
+
+            case FilterOperators::IS_NOT_EMPTY:
+                $this->queryBuilder::where(['exists' => ['field' => $field]]);
+
+                return $this;
+        }
+
+        if (! is_numeric($value[1])) {
+            return $this;
+        }
+
+        switch ($operator) {
+            case FilterOperators::EQUAL:
+                $this->queryBuilder::where([
+                    'term' => [$field => $value[1]],
+                ]);
+
+                break;
+
+            case FilterOperators::LESS_THAN:
+            case FilterOperators::LESS_THAN_OR_EQUAL:
+            case FilterOperators::GREATER_THAN:
+            case FilterOperators::GREATER_THAN_OR_EQUAL:
+                $this->queryBuilder::where([
+                    'range' => [$field => [$operator->value => $value[1]]],
+                ]);
+
+                break;
+
+            case FilterOperators::RANGE:
+                $this->queryBuilder::where([
+                    'range' => [$field => ['gte' => $value[1], 'lte' => $value[2] ?? $value[1]]],
+                ]);
+
+                break;
         }
 
         return $this;

@@ -17,7 +17,14 @@ class DateFilter extends AbstractElasticSearchAttributeFilter
      */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::DATE_FIELD_TYPE],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::RANGE]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::RANGE,
+            FilterOperators::LESS_THAN,
+            FilterOperators::GREATER_THAN,
+            FilterOperators::IS_EMPTY,
+            FilterOperators::IS_NOT_EMPTY,
+        ]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -67,6 +74,24 @@ class DateFilter extends AbstractElasticSearchAttributeFilter
                 ];
 
                 $this->queryBuilder::where($clause);
+                break;
+
+            case FilterOperators::LESS_THAN:
+            case FilterOperators::GREATER_THAN:
+                $this->queryBuilder::where([
+                    'range' => [$attributePath => [$operator->value => current((array) $value)]],
+                ]);
+
+                break;
+
+            case FilterOperators::IS_EMPTY:
+                $this->queryBuilder::whereNot(['exists' => ['field' => $attributePath]]);
+
+                break;
+
+            case FilterOperators::IS_NOT_EMPTY:
+                $this->queryBuilder::where(['exists' => ['field' => $attributePath]]);
+
                 break;
         }
 

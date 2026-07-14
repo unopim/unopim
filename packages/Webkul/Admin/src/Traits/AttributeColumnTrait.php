@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Traits;
 
 use Illuminate\Support\Facades\Storage;
+use Webkul\Admin\Filters\ProductFilterOperators;
 
 trait AttributeColumnTrait
 {
@@ -25,6 +26,9 @@ trait AttributeColumnTrait
             'searchable' => false,
             'filterable' => $attributeArray['is_filterable'] ?? false,
             'sortable'   => true,
+            // Drives the operator + value inputs in the datagrid's attribute filters.
+            'attribute_type' => $attributeArray['type'] ?? null,
+            'operators'      => ProductFilterOperators::optionsForType($attributeArray['type'] ?? null),
         ];
 
         return $this->applyFilterTypeOptions($column, $attribute);

@@ -36,6 +36,12 @@ class Column
         public bool $sortable = false,
         public mixed $closure = null,
         public bool $visible = true,
+        /**
+         * Set for columns backed by an attribute. The datagrid's filter drawer uses these
+         * to offer operator + value inputs instead of a plain type-based input.
+         */
+        public ?string $attribute_type = null,
+        public ?array $operators = null,
     ) {
         $this->init();
     }
