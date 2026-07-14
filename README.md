@@ -43,7 +43,7 @@
   🇮🇹 🇯🇵 🇰🇷 🇦🇲 🇳🇱 🇵🇱 🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇹🇼
 </p>
 
-UnoPim is an open-source Product Information Management (PIM) system built on Laravel 12. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.
+UnoPim is a free and open-source **Agentic PIM** (Product Information Management) solution built on Laravel that helps businesses manage, enrich, and scale product data for catalogs with over 10 million products.
 
 ---
 
