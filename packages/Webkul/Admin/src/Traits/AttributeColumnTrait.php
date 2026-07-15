@@ -24,13 +24,12 @@ trait AttributeColumnTrait
             : null;
 
         $column = [
-            'index'      => $attributeArray['code'],
-            'label'      => ! empty($label) ? $label : '['.$attributeArray['code'].']',
-            'type'       => $attribute->getFilterType(),
-            'searchable' => false,
-            'filterable' => $attributeArray['is_filterable'] ?? false,
-            'sortable'   => true,
-            // Drives the operator + value inputs in the datagrid's attribute filters.
+            'index'          => $attributeArray['code'],
+            'label'          => ! empty($label) ? $label : '['.$attributeArray['code'].']',
+            'type'           => $attribute->getFilterType(),
+            'searchable'     => false,
+            'filterable'     => $attributeArray['is_filterable'] ?? false,
+            'sortable'       => true,
             'attribute_type' => $attributeType,
             'operators'      => ProductFilterOperators::optionsForType($attributeType),
         ];

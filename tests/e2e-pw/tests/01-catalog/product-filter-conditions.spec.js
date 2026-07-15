@@ -1,14 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo } = require('../../utils/helpers');
 
-/**
- * Product datagrid attribute filters: attributes added from "Add Filter" render an
- * operator + value condition (and a currency for a price) instead of a plain input.
- *
- * `price` is filterable in the seeded data, so these tests need no fixture setup.
- */
-
-/** Open the filter drawer from a clean slate — stored filters would hide the picker. */
 async function openFilterDrawer(adminPage) {
   await navigateTo(adminPage, 'products');
   await adminPage.evaluate(() => localStorage.removeItem('datagrids'));
@@ -16,7 +8,6 @@ async function openFilterDrawer(adminPage) {
   await adminPage.getByText('Filter', { exact: true }).click();
 }
 
-/** Add an attribute filter by label and return its block. */
 async function addAttributeFilter(adminPage, index, label) {
   await adminPage.getByRole('button', { name: 'Add Filter' }).click();
   await adminPage.locator('p').filter({ hasText: new RegExp(`^${label}$`) }).first().click();
@@ -24,7 +15,6 @@ async function addAttributeFilter(adminPage, index, label) {
   return adminPage.locator(`[data-attribute-filter="${index}"]`);
 }
 
-/** Pick an option from one of the condition's dropdowns. */
 async function chooseFromDropdown(block, hook, optionLabel) {
   await block.locator(hook).click();
   await block.getByRole('listitem').filter({ hasText: new RegExp(`^${optionLabel}$`) }).click();
@@ -46,7 +36,6 @@ test.describe('Product DataGrid attribute filters', () => {
     await expect(price.locator('[data-filter-operator]')).toBeVisible();
     await expect(price.locator('[data-filter-value]')).toBeVisible();
 
-    // A price also needs a currency to resolve its value.
     await expect(price.locator('[data-filter-currency]')).toBeVisible();
   });
 
@@ -90,7 +79,6 @@ test.describe('Product DataGrid attribute filters', () => {
 
     const after = await resultCount(adminPage);
 
-    // The seeded catalogue has products both above and below 100 USD.
     expect(after).toBeGreaterThan(0);
     expect(after).toBeLessThan(before);
   });
@@ -111,7 +99,6 @@ test.describe('Product DataGrid attribute filters', () => {
 
     const after = await resultCount(adminPage);
 
-    // The same catalogue that has products above 100 USD also has some below it.
     expect(after).toBeGreaterThan(0);
     expect(after).toBeLessThan(before);
   });
@@ -135,7 +122,6 @@ test.describe('Product DataGrid attribute filters', () => {
     await chooseFromDropdown(price, '[data-filter-operator]', 'Between');
     await expect(price.locator('[data-filter-value2]')).toBeVisible();
 
-    // The range template owns value2, so a non-range operator must remove it entirely.
     await chooseFromDropdown(price, '[data-filter-operator]', 'Greater than');
 
     await expect(price.locator('[data-filter-value]')).toBeVisible();
@@ -171,8 +157,6 @@ test.describe('Product DataGrid attribute filters', () => {
 
     const reopened = adminPage.locator('[data-attribute-filter="price"]');
 
-    // Regression: the column dropped attribute_type on reload, which fell back to the
-    // plain price input and crashed on the applied value.
     await expect(reopened.locator('[data-filter-operator]')).toContainText('Greater than');
     await expect(reopened.locator('[data-filter-currency]')).toContainText('US Dollar');
     await expect(reopened.locator('[data-filter-value]')).toHaveValue('100');

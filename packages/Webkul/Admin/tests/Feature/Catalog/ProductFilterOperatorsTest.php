@@ -106,10 +106,6 @@ describe('the value input follows the chosen operator', function () {
 
 describe('the datagrid column carries the attribute type and its operators', function () {
 
-    /**
-     * Regression: Column dropped these keys, so the filter drawer lost the operator inputs
-     * on reload and fell back to the plain price input, which then crashed on the applied value.
-     */
     it('keeps attribute_type and operators on the column', function () {
         $column = new Column(
             index: 'price',

@@ -646,10 +646,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $column = reset($column);
 
-        /**
-         * Attribute filters added from the datagrid's "Add Filter" carry the operator the
-         * user picked. Everything else keeps deriving it from the column type.
-         */
         if ($column instanceof Column && $condition = $this->getRequestedCondition($value)) {
             return $this->resolveCondition($column, $condition);
         }
@@ -712,10 +708,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $value = $condition['value'] ?? '';
 
-        /**
-         * Empty checks carry no value, so short-circuit before the per-type shaping —
-         * a price still needs its currency to resolve the JSON path.
-         */
         if (in_array($operator, [FilterOperators::IS_EMPTY, FilterOperators::IS_NOT_EMPTY], true)) {
             return [
                 $operator,

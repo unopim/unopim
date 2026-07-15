@@ -5,13 +5,6 @@ namespace Webkul\Admin\Filters;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
-/**
- * Operators offered by the product datagrid's attribute filters.
- *
- * Values are FilterOperators cases, so the datagrid can hand what the user picked
- * straight to the query builder. Only operators the product filters implement are
- * listed here — anything else would resolve to no filter at query time.
- */
 class ProductFilterOperators
 {
     const OPTION_TYPES = [
@@ -36,9 +29,6 @@ class ProductFilterOperators
         Attribute::TEXTAREA_TYPE,
     ];
 
-    /**
-     * Every type the picker can surface, so the frontend gets a complete map.
-     */
     const KNOWN_TYPES = [
         ...self::TEXT_TYPES,
         ...self::NUMERIC_TYPES,
@@ -100,9 +90,6 @@ class ProductFilterOperators
         ];
     }
 
-    /**
-     * Which value input the operator needs.
-     */
     public static function valueControl(?string $type, FilterOperators $operator): string
     {
         if (in_array($operator, [FilterOperators::IS_EMPTY, FilterOperators::IS_NOT_EMPTY], true)) {

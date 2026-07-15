@@ -11,9 +11,6 @@ beforeEach(function () {
     config(['elasticsearch.enabled' => false]);
 });
 
-/**
- * A bare attribute is enough: the filters only read `code`, `type` and the two scope flags.
- */
 function conditionAttribute(string $code, string $type): Attribute
 {
     $attribute = new Attribute;
