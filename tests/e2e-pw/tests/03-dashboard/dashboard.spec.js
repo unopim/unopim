@@ -135,7 +135,7 @@ test('4.4 - Total Groups card shows icon and numeric count', async ({ adminPage 
 });
 
 test('4.5 - Total Groups links to attribute groups page', async ({ adminPage }) => {
-  const link = adminPage.getByRole('link', { name: /Total Groups Total Groups/ });
+  const link = adminPage.getByRole('link', { name: /Total Attribute Groups/ });
   await expect(link).toHaveAttribute('href', /\/admin\/catalog\/attribute-groups/);
 });
 
