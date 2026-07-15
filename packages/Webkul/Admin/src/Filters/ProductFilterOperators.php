@@ -15,26 +15,50 @@ class ProductFilterOperators
     {
         $operators = self::groupForType($type)['operators'] ?? [];
 
-        return array_values(array_filter(array_map(function (array $entry) {
-            $operator = FilterOperators::tryFrom($entry['operator'] ?? '');
+        if (! is_array($operators)) {
+            return [];
+        }
 
-            return $operator ? ['operator' => $operator, 'label' => $entry['label']] : null;
-        }, $operators)));
+        $mapped = array_map(function ($entry) {
+            if (! is_array($entry)) {
+                return null;
+            }
+
+            $value = $entry['operator'] ?? null;
+
+            $operator = is_string($value) ? FilterOperators::tryFrom($value) : null;
+
+            $label = $entry['label'] ?? '';
+
+            return $operator
+                ? ['operator' => $operator, 'label' => is_string($label) ? $label : '']
+                : null;
+        }, $operators);
+
+        return array_values(array_filter($mapped));
     }
 
     public static function valueControl(?string $type, FilterOperators $operator): string
     {
-        if (in_array($operator->value, self::config('valueless_operators', []), true)) {
+        $valueless = self::config('valueless_operators', []);
+
+        if (is_array($valueless) && in_array($operator->value, $valueless, true)) {
             return 'none';
         }
 
         $group = self::groupForType($type);
 
-        if ($operator === FilterOperators::RANGE && ! empty($group['range_control'])) {
-            return $group['range_control'];
+        if ($operator === FilterOperators::RANGE) {
+            $rangeControl = $group['range_control'] ?? null;
+
+            if (is_string($rangeControl) && $rangeControl !== '') {
+                return $rangeControl;
+            }
         }
 
-        return $group['control'] ?? 'text';
+        $control = $group['control'] ?? 'text';
+
+        return is_string($control) ? $control : 'text';
     }
 
     /**
@@ -75,19 +99,33 @@ class ProductFilterOperators
      * The config group whose `types` include the given attribute type,
      * falling back to the configured default group.
      *
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      */
     protected static function groupForType(?string $type): array
     {
         $groups = self::config('groups', []);
 
+        if (! is_array($groups)) {
+            return [];
+        }
+
         foreach ($groups as $group) {
-            if (in_array($type, $group['types'] ?? [], true)) {
+            if (! is_array($group)) {
+                continue;
+            }
+
+            $types = $group['types'] ?? [];
+
+            if (is_array($types) && in_array($type, $types, true)) {
                 return $group;
             }
         }
 
-        return $groups[self::config('default_group', 'text')] ?? [];
+        $default = self::config('default_group', 'text');
+
+        $fallback = is_string($default) ? ($groups[$default] ?? []) : [];
+
+        return is_array($fallback) ? $fallback : [];
     }
 
     /**
@@ -97,11 +135,29 @@ class ProductFilterOperators
      */
     protected static function knownTypes(): array
     {
+        $groups = self::config('groups', []);
+
+        if (! is_array($groups)) {
+            return [];
+        }
+
         $types = [];
 
-        foreach (self::config('groups', []) as $group) {
-            foreach ($group['types'] ?? [] as $type) {
-                $types[] = $type;
+        foreach ($groups as $group) {
+            if (! is_array($group)) {
+                continue;
+            }
+
+            $groupTypes = $group['types'] ?? [];
+
+            if (! is_array($groupTypes)) {
+                continue;
+            }
+
+            foreach ($groupTypes as $type) {
+                if (is_string($type)) {
+                    $types[] = $type;
+                }
             }
         }
 
