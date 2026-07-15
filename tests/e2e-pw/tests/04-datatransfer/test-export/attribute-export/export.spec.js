@@ -5,9 +5,9 @@ test.describe('UnoPim Export Jobs', () => {
 
   test('create attribute export with CSV, switch to XLS, then delete', async ({ adminPage }) => {
 
-    const uniqueCode = 'Attribute Export CSV ' + Math.random().toString(36).slice(2, 6);
+    const uniqueCode = 'Attribute_Export_CSV_' + Math.random().toString(36).slice(2, 6);
 
-    await adminPage.goto('/admin/settings/data-transfer/exports/create', { waitUntil: 'networkidle' });
+    await adminPage.goto('/admin/data-transfer/exports/create', { waitUntil: 'networkidle' });
 
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(uniqueCode);
 
