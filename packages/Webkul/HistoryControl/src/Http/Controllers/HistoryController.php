@@ -57,11 +57,21 @@ class HistoryController extends Controller
     protected function normalize(Collection $items): array
     {
         $normalizedData = [
-            'version'        => $items[0]->version_id,
-            'dateTime'       => core()->formatDateWithTimeZone($items[0]->updated_at, 'D, d-m-Y H:i:s'),
-            'user'           => $items[0]->user,
+            'version'        => null,
+            'dateTime'       => null,
+            'user'           => null,
             'versionHistory' => [],
         ];
+
+        $first = $items->first();
+
+        if (! $first) {
+            return $normalizedData;
+        }
+
+        $normalizedData['version'] = $first->version_id;
+        $normalizedData['dateTime'] = core()->formatDateWithTimeZone($first->updated_at, 'D, d-m-Y H:i:s');
+        $normalizedData['user'] = $first->user;
 
         foreach ($items as $item) {
             $oldValues = $item->old_values;

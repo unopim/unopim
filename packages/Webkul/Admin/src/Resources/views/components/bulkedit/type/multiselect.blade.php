@@ -6,8 +6,7 @@
         <input
           ref="nativeUndoInput"
           type="text"
-          :name="`${entityId}_${column.code}`"
-          style="opacity: 0; height: 0; width: 0;"
+          :name="`${entityId}_${column.code}`" class="opacity-0 h-0 w-0"
           @input="update"
           autocomplete="off"
         />
@@ -15,7 +14,7 @@
           <span
             v-for="option in selectedOptions"
             :key="option[valueKey]"
-            class="inline-flex items-center gap-1 max-w-full truncate bg-violet-100 dark:bg-cherry-700 text-violet-700 dark:text-white px-2 py-0.5 rounded"
+            class="inline-flex items-center gap-1 max-w-full truncate bg-primary-100 dark:bg-cherry-700 text-primary-700 dark:text-white px-2 py-0.5 rounded"
           >
             @{{ option[labelKey] || option[valueKey] }}
             <button
@@ -55,7 +54,7 @@
           :key="option[valueKey]"
           class="flex items-center justify-between px-2 py-1 hover:bg-gray-100 dark:hover:bg-cherry-700 cursor-pointer"
           :class="[
-            selectedOptions.some(o => o[valueKey] === option[valueKey]) ? 'font-semibold text-violet-700' : '',
+            selectedOptions.some(o => o[valueKey] === option[valueKey]) ? 'font-semibold text-primary-700' : '',
             index === highlightedIndex ? 'font-semibold bg-gray-100 dark:bg-cherry-700' : ''
           ]"
           :title="option[labelKey]"

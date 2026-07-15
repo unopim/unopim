@@ -17,4 +17,17 @@ return [
     |
     */
     'password_min' => 8,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Login Rate Limit
+    |--------------------------------------------------------------------------
+    |
+    | Maximum admin login attempts allowed per minute, keyed per email + IP.
+    | Defaults to a strict 5 for production. Automated test environments that
+    | log in repeatedly within a minute can raise it via ADMIN_LOGIN_RATE_LIMIT
+    | so the throttle does not turn legitimate back-to-back logins into 429s.
+    |
+    */
+    'login_rate_limit' => (int) env('ADMIN_LOGIN_RATE_LIMIT', 5),
 ];

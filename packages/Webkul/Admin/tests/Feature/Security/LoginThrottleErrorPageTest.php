@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 
 describe('Login throttle error page', function () {
@@ -7,6 +8,10 @@ describe('Login throttle error page', function () {
         config(['app.url' => 'http://localhost']);
 
         URL::forceRootUrl(config('app.url'));
+
+        // The login throttle is backed by the cache; flush it so rate-limit state
+        // from an earlier test in the same process cannot trip the limiter early.
+        Cache::flush();
     });
 
     /**

@@ -16,7 +16,14 @@ class DateFilter extends AbstractDatabaseAttributeFilter
      */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::DATE_FIELD_TYPE, Attribute::DATETIME_FIELD_TYPE],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::RANGE]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::RANGE,
+            FilterOperators::LESS_THAN,
+            FilterOperators::GREATER_THAN,
+            FilterOperators::IS_EMPTY,
+            FilterOperators::IS_NOT_EMPTY,
+        ]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -60,6 +67,32 @@ class DateFilter extends AbstractDatabaseAttributeFilter
                         ($value[1] ?? '').' 23:59:59',
                     ]
                 );
+
+                break;
+
+            case FilterOperators::LESS_THAN:
+                $this->queryBuilder->whereRaw(
+                    $searchPath.' < ?',
+                    [$this->scalarValue($value).' 00:00:01']
+                );
+
+                break;
+
+            case FilterOperators::GREATER_THAN:
+                $this->queryBuilder->whereRaw(
+                    $searchPath.' > ?',
+                    [$this->scalarValue($value).' 23:59:59']
+                );
+
+                break;
+
+            case FilterOperators::IS_EMPTY:
+                $this->queryBuilder->whereRaw("COALESCE($searchPath, '') = ''");
+
+                break;
+
+            case FilterOperators::IS_NOT_EMPTY:
+                $this->queryBuilder->whereRaw("COALESCE($searchPath, '') != ''");
 
                 break;
         }

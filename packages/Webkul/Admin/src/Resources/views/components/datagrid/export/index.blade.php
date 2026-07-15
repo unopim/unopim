@@ -15,7 +15,7 @@
                 <!-- Modal Toggle -->
                 <x-slot:toggle>
                     <button class="transparent-button">
-                        <span class="icon-export  text-2xl text-violet-700"></span>
+                        <span class="icon-export  text-2xl text-primary-700"></span>
                         @lang('admin::app.export.export')
                     </button>
                 </x-slot>

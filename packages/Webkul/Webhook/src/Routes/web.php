@@ -8,8 +8,8 @@ use Webkul\Webhook\Http\Controllers\WebhookSettingsController;
  * Catalog routes.
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
-    Route::prefix('webhook')->group(function () {
-        Route::controller(WebhookSettingsController::class)->prefix('settings')->group(function () {
+    Route::prefix('configuration/webhook')->group(function () {
+        Route::controller(WebhookSettingsController::class)->group(function () {
             Route::get('', 'index')->name('webhook.settings.index');
             Route::post('/', 'store')->name('webhook.settings.store');
             Route::get('form-data', 'listSettings')->name('webhook.settings.get');
@@ -17,8 +17,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::controller(WebhookLogsController::class)->prefix('logs')->group(function () {
             Route::get('', 'index')->name('webhook.logs.index');
-            Route::get('show/{id}', 'show')->name('webhook.logs.show');
-            Route::delete('delete/{id}', 'destroy')->name('webhook.logs.delete');
+            Route::get('show/{id}', 'show')->name('webhook.logs.show')->whereNumber('id');
+            Route::delete('delete/{id}', 'destroy')->name('webhook.logs.delete')->whereNumber('id');
             Route::post('mass-delete', 'massDestroy')->name('webhook.logs.mass_delete');
         });
     });

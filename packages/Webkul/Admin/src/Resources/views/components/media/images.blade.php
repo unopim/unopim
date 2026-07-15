@@ -41,14 +41,13 @@
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-media-images-template">
-        <!-- Panel Content -->
-        <div class="grid">
+        <div class="grid" data-media-control>
             <div :class="responsive ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3' : 'flex flex-wrap gap-3'">
-                <!-- Add Image tile (always first; hidden when single-image and one is uploaded) -->
+                {{-- Add Image tile (always first; hidden when single-image and one is uploaded) --}}
                 <template v-if="allowMultiple || images.length == 0">
                     <label
                         class="group flex flex-col justify-center items-center rounded-md border border-dashed border-gray-300 bg-white text-center cursor-pointer transition-colors hover:border-unopim-primary hover:bg-gray-50 dark:border-cherry-700 dark:bg-cherry-900 dark:hover:border-unopim-primary dark:hover:bg-cherry-800"
-                        :class="[responsive ? 'min-h-[160px]' : '', isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800' : '']"
+                        :class="[responsive ? 'min-h-[160px]' : '', isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : '']"
                         :style="tileStyle"
                         v-if="ai.enabled"
                         :for="$.uid + '_imageInput'"
@@ -86,7 +85,7 @@
                     <label
                         v-else
                         class="group flex flex-col justify-center items-center rounded-md border border-dashed border-gray-300 bg-white text-center cursor-pointer transition-colors hover:border-unopim-primary hover:bg-gray-50 dark:border-cherry-700 dark:bg-cherry-900 dark:hover:border-unopim-primary dark:hover:bg-cherry-800"
-                        :class="[responsive ? 'min-h-[160px]' : '', isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800' : '']"
+                        :class="[responsive ? 'min-h-[160px]' : '', isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : '']"
                         :style="tileStyle"
                         :for="$.uid + '_imageInput'"
                         aria-label="@lang('admin::app.components.media.images.add-image-btn')"
@@ -130,7 +129,6 @@
                     </label>
                 </template>
 
-                <!-- Uploaded Images -->
                 <draggable
                     class="contents"
                     ghost-class="draggable-ghost"
@@ -159,16 +157,13 @@
                     as="div"
                 >
                     <form>
-                        <!-- AI Content Generation Modal -->
                         <x-admin::modal ref="choiceImageModal">
-                            <!-- Modal Header -->
                             <x-slot:header>
                                 <p class="grid text-base text-gray-800 dark:text-gray-300 font-semibold text-center">
                                     @lang('admin::app.components.media.images.add-image-btn')
                                 </p>
                             </x-slot>
 
-                            <!-- Modal Content -->
                             <x-slot:content>
                                 <div class="mb-4">
                                     <label
@@ -223,7 +218,6 @@
                                 </div>
                             </x-slot>
 
-                            <!-- Modal Footer -->
                             <x-slot:footer>
                                 <div class="flex gap-x-2.5 items-center">
                                     <a href="#" @click="$refs.choiceImageModal.close()" class="secondary-button">
@@ -240,9 +234,7 @@
                     as="div"
                 >
                     <form @submit="handleSubmit($event, generate)">
-                        <!-- AI Content Generation Modal -->
                         <x-admin::modal ref="magicAIImageModal">
-                            <!-- Modal Header -->
                             <x-slot:header>
                                 <template v-if="! ai.images.length">
                                     <p class="flex gap-2.5 items-center text-lg text-gray-800 dark:text-white font-bold">
@@ -255,7 +247,7 @@
                                 <template v-else>
                                     <p class="text-lg text-gray-800 truncate dark:text-white font-bold">
                                         <span
-                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                                             @click="ai.images = []"
                                         ></span>
 
@@ -266,10 +258,8 @@
                                 </template>
                             </x-slot>
 
-                            <!-- Modal Content -->
                             <x-slot:content>
                                 <div v-show="! ai.images.length">
-                                    <!-- Default Image Prompt -->
                                     <x-admin::form.control-group v-if="imagePrompts.length">
                                         <x-admin::form.control-group.label>
                                             @lang('admin::app.components.tinymce.ai-generation.default-prompt')
@@ -283,7 +273,6 @@
                                         </select>
                                     </x-admin::form.control-group>
 
-                                    <!-- Prompt -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.components.media.images.ai-generation.prompt')
@@ -300,7 +289,7 @@
                                                 :label="trans('admin::app.components.media.images.ai-generation.prompt')"
                                             />
 
-                                            <!-- Icon inside textarea (only when there's a resource context to interpolate from) -->
+                                            {{-- Icon inside textarea (only when there's a resource context to interpolate from) --}}
                                             <div
                                                 v-if="hasContext && showSuggestions"
                                                 class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
@@ -400,12 +389,11 @@
                                     <div class="grid grid-cols-4 gap-5">
                                         <div
                                             class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
-                                            :class="{'!border-violet-700 ': image.selected}"
+                                            :class="{'!border-primary-700 ': image.selected}"
                                             v-for="image in ai.images"
                                             :key="image.url"
                                             @click="selectImage(image, allowMultiple)"
                                         >
-                                            <!-- Image Preview -->
                                             <img
                                                 class="w-[120px] h-[120px]"
                                                 :src="image.url"
@@ -415,10 +403,8 @@
                                 </div>
                             </x-slot>
 
-                            <!-- Modal Footer -->
                             <x-slot:footer>
                                 <div class="flex items-center justify-between w-full">
-                                    <!-- Platform & Model compact selectors (left side) -->
                                     <div class="flex items-center gap-2" v-if="!ai.images.length">
                                         <select
                                             v-model="ai.platform_id"
@@ -438,7 +424,6 @@
                                     </div>
                                     <div v-else></div>
 
-                                    <!-- Action buttons (right side) -->
                                     <div class="flex gap-x-2.5 items-center">
                                     <template v-if="! ai.images.length">
                                         <button
@@ -447,14 +432,14 @@
                                             :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
                                             <template v-if="isLoading">
                                                 <img
-                                                    class="animate-spin h-5 w-5 text-violet-700"
+                                                    class="animate-spin h-5 w-5 text-primary-700"
                                                     src="{{ unopim_asset('images/spinner.svg') }}"
                                                 />
                                                 @lang('admin::app.components.tinymce.ai-generation.generating')
                                             </template>
 
                                             <template v-else>
-                                                <span class="icon-magic text-2xl text-violet-700"></span>
+                                                <span class="icon-magic text-2xl text-primary-700"></span>
                                                 @lang('admin::app.components.tinymce.ai-generation.generate')
                                             </template>
                                         </button>
@@ -467,14 +452,14 @@
                                             :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
                                             <template v-if="isLoading">
                                                 <img
-                                                    class="animate-spin h-5 w-5 text-violet-700"
+                                                    class="animate-spin h-5 w-5 text-primary-700"
                                                     src="{{ unopim_asset('images/spinner.svg') }}"
                                                 />
                                                 @lang('admin::app.components.media.images.ai-generation.regenerating')
                                             </template>
 
                                             <template v-else>
-                                                <span class="icon-magic text-2xl text-violet-700"></span>
+                                                <span class="icon-magic text-2xl text-primary-700"></span>
                                                 @lang('admin::app.components.media.images.ai-generation.regenerate')
                                             </template>
                                         </button>
@@ -500,7 +485,7 @@
 
     <script type="text/x-template" id="v-media-image-item-template">
         <div
-            class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-700"
+            class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700"
             :style="responsive ? null : { width: width, minWidth: '120px' }"
         >
             <div
@@ -514,7 +499,6 @@
                     :class="objectFit === 'contain' ? 'object-contain' : 'object-cover'"
                 />
 
-                <!-- Hover overlay with actions -->
                 <div class="absolute inset-0 flex items-end justify-center gap-2 p-2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
                     <span
                         class="icon-view text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
@@ -570,7 +554,6 @@
                 </x-slot>
             </x-admin::modal>
 
-            <!-- Filename caption -->
             <p
                 class="px-2 py-1.5 text-xs text-gray-700 dark:text-gray-300 text-center truncate"
                 :title="getDisplayFileName(image)"

@@ -12,15 +12,23 @@ test.describe('Sidebar fly-out submenu hover', () => {
   test.beforeEach(async ({ adminPage }) => {
     // Land on the dashboard so "Catalog" is the inactive (fixed fly-out) variant.
     await navigateTo(adminPage, 'dashboard');
+
+    // The desktop sidebar is hidden below the lg breakpoint; make sure it has
+    // rendered before any hover interaction (global-setup already dismisses the
+    // promo bar that would otherwise shift the layout).
+    await expect(adminPage.locator('#unopim-sidebar')).toBeVisible();
   });
 
   test('keeps the fly-out open while moving from the parent onto a sub-item', async ({ adminPage }) => {
     const sidebar = adminPage.locator('#unopim-sidebar');
 
-    const catalog = sidebar.getByRole('link', { name: 'Catalog', exact: true });
+    // Sidebar labels render as `<p> Label </p>`, so the accessible name carries
+    // surrounding whitespace; anchor with a regex to stay exact without depending
+    // on that padding.
+    const catalog = sidebar.getByRole('link', { name: /^\s*Catalog\s*$/ });
     // The lowest sub-item is the worst case: the diagonal from the short trigger
     // row down to it crosses the most dead space.
-    const families = sidebar.getByRole('link', { name: 'Attribute Families', exact: true });
+    const families = sidebar.getByRole('link', { name: /^\s*Attribute Families\s*$/ });
 
     await catalog.hover();
     await expect(families).toBeVisible();
@@ -38,6 +46,6 @@ test.describe('Sidebar fly-out submenu hover', () => {
 
     await families.click();
 
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families/);
   });
 });

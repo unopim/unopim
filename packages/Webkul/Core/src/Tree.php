@@ -9,9 +9,9 @@ class Tree
     /**
      * Contains tree item
      *
-     * @var array
+     * @var array<int|string, mixed>
      */
-    public $items = [];
+    public array $items = [];
 
     /**
      * Contains acl roles
@@ -48,10 +48,9 @@ class Tree
      * Shortcut method for create a Config with a callback.
      * This will allow you to do things like fire an event on creation.
      *
-     * @param  callable  $callback  Callback to use after the Config creation
-     * @return object
+     * @param  callable|null  $callback  Callback to use after the Config creation
      */
-    public static function create($callback = null)
+    public static function create($callback = null): self
     {
         $tree = new Tree;
 
@@ -65,10 +64,9 @@ class Tree
     /**
      * Add a Config item to the item stack
      *
-     * @param  string  $item
-     * @return void
+     * @param  array<string, mixed>  $item
      */
-    public function add($item, $type = '')
+    public function add($item, $type = ''): void
     {
         $item['children'] = [];
 

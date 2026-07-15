@@ -2,7 +2,7 @@
     $darkModePreference = request()->cookie('dark_mode', 'auto');
 @endphp
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="ltr" class="{{ $darkModePreference === 'dark' || $darkModePreference === '1' ? 'dark' : '' }}">
+<html lang="{{ app()->getLocale() }}" dir="{{ in_array(app()->getLocale(), ['ar_AE']) ? 'rtl' : 'ltr' }}" class="{{ $darkModePreference === 'dark' || $darkModePreference === '1' ? 'dark' : '' }}">
     <head>
         <title>{{ $title ?? '' }}</title>
 
@@ -52,7 +52,6 @@
             rel="stylesheet"
         />
         
-        <!-- <link rel="preload" as="image" href="{{ url('cache/logo/pim.png') }}"> -->
 
         @if ($favicon = core()->getConfigData('general.design.admin_logo.favicon'))
             <link
@@ -86,35 +85,29 @@
         {!! view_render_event('unopim.admin.layout.head') !!}
     </head>
 
-    <body class="h-full bg-unopim-primary-soft bg-opacity-30 dark:bg-cherry-800 font-inter" style="font-family: inter;">
+    <body class="h-full bg-unopim-primary-soft bg-primary-50 bg-opacity-30 dark:bg-cherry-800 font-inter" style="font-family: inter;">
         {!! view_render_event('unopim.admin.layout.body.before') !!}
 
         <div id="app" class="h-full">
-            <!-- Flash Message Blade Component -->
             <x-admin::flash-group />
 
-            <!-- Confirm Modal Blade Component -->
             <x-admin::modal.confirm />
 
             {!! view_render_event('unopim.admin.layout.content.before') !!}
 
-            <!-- Page Header Blade Component -->
             <x-admin::layouts.header />
 
             <div
                 class="flex gap-4 group/container {{ (request()->cookie('sidebar_collapsed') ?? 0) ? 'sidebar-collapsed' : 'sidebar-not-collapsed' }}"
                 ref="appLayout"
             >
-                <!-- Page Sidebar Blade Component -->
                 <x-admin::layouts.sidebar />
 
                 <div class="flex-1 max-w-full px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 ltr:pl-[286px] rtl:pr-[286px] max-lg:!px-4 transition-all duration-300 group-[.sidebar-collapsed]/container:ltr:pl-[85px] group-[.sidebar-collapsed]/container:rtl:pr-[85px]">
-                    <!-- Added dynamic tabs for third level menus  -->
                     @if (! request()->routeIs('admin.configuration.index'))
                         <x-admin::layouts.tabs />
                     @endif
 
-                    <!-- Page Content Blade Component -->
                     {{ $slot }}
                 </div>
             </div>

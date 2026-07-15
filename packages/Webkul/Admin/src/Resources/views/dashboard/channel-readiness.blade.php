@@ -33,7 +33,7 @@
                             </div>
 
                             <div class="flex items-center gap-3">
-                                <div class="flex-1 rounded-full h-2.5 overflow-hidden" style="background: #f4f4f5;">
+                                <div class="flex-1 rounded-full h-2.5 overflow-hidden bg-gray-100">
                                     <div
                                         class="h-full rounded-full transition-all duration-700 ease-out"
                                         :style="{ width: Math.max(ch.percentage, 1) + '%', background: getColor(ch.percentage) }"
@@ -94,11 +94,21 @@
                         });
                 },
 
-                getColor(percentage) {
-                    if (percentage >= 80) return '#10b981';
-                    if (percentage >= 50) return '#f59e0b';
+                /**
+                 * Read a live CSS custom property off :root so the theme and
+                 * dark-mode overrides drive chart colours from one place.
+                 * Called at render-time (not cached) so toggling dark-mode
+                 * reflects immediately.
+                 */
+                cssVar(name) {
+                    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+                },
 
-                    return '#ef4444';
+                getColor(percentage) {
+                    if (percentage >= 80) return this.cssVar('--chart-success');
+                    if (percentage >= 50) return this.cssVar('--chart-warning');
+
+                    return this.cssVar('--chart-danger');
                 }
             }
         });

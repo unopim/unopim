@@ -241,7 +241,7 @@
             </div>
         </div>
 
-        <div class="h-[calc(100vh-170px)] mb-16 overflow-auto rounded-md shadow-sm border border-gray-200 dark:border-cherry-700 bg-white dark:bg-cherry-900" style="--active-cell-color: #7c3aed;">
+        <div class="h-[calc(100vh-170px)] mb-16 overflow-auto rounded-md shadow-sm border border-gray-200 dark:border-cherry-700 bg-white dark:bg-cherry-900 [--active-cell-color:rgb(var(--c-primary-600))]">
             <table class="table-fixed border border-gray-200 border-collapse w-full dark:border-cherry-700">
                 <v-spreadsheet-header 
                     :columns="columns" 

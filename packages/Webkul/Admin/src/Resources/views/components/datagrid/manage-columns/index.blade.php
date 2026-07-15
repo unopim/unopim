@@ -109,7 +109,7 @@
                                                     <!-- Group Container -->
                                                     <div class="flex items-center group">
                                                         <div
-                                                            class="text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 group-hover:text-gray-800 w-full"
+                                                            class="text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 group-hover:text-gray-800 w-full"
                                                         >
                                                             <div
                                                                 class="flex items-center gap-[6px] w-full py-[6px] ltr:pr-[6px] rtl:pl-[6px] rounded transition-all text-gray-600 dark:text-gray-300 group cursor-pointer"
@@ -149,7 +149,7 @@
                                             <div class="flex items-center gap-1" role="navigation" aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.page-number')">
                                                 <button
                                                     type="button"
-                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                                                     @click="changePage(1)"
                                                     title="@lang('admin::app.components.datagrid.toolbar.pagination.first-page')"
                                                     aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.first-page')"
@@ -159,7 +159,7 @@
 
                                                 <button
                                                     type="button"
-                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                                                     @click="changePage(currentPage - 1)"
                                                     title="@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')"
                                                     aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')"
@@ -169,7 +169,7 @@
 
                                                 <button
                                                     type="button"
-                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                                                     @click="changePage(currentPage + 1)"
                                                     title="@lang('admin::app.components.datagrid.toolbar.pagination.next-page')"
                                                     aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.next-page')"
@@ -179,7 +179,7 @@
 
                                                 <button
                                                     type="button"
-                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                                                     @click="changePage(totalPages)"
                                                     title="@lang('admin::app.components.datagrid.toolbar.pagination.last-page')"
                                                     aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.last-page')"
@@ -212,7 +212,7 @@
                                                 <!-- Group Container -->
                                                 <div class="flex items-center group">
                                                     <div
-                                                        class="text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 group-hover:text-gray-800 w-full"
+                                                        class="text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 group-hover:text-gray-800 w-full"
                                                     >
                                                         <div
                                                             class="flex items-center gap-[6px] w-full py-[6px] ltr:pr-[6px] rtl:pl-[6px] rounded transition-all text-gray-600 dark:text-gray-300 group cursor-pointer"

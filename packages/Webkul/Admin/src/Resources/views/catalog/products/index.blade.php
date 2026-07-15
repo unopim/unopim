@@ -4,12 +4,8 @@
         @lang('admin::app.catalog.products.index.title')
         </x-slot>
 
-        <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.catalog.products.index.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
+        <x-admin::page-header :title="trans('admin::app.catalog.products.index.title')">
+            <x-slot:actions>
                 <!-- Export Modal -->
                 <x-admin::datagrid.export src="{{ route('admin.catalog.products.index') }}" />
 
@@ -26,8 +22,8 @@
                 @endif
 
                 {!! view_render_event('unopim.admin.catalog.products.create.after') !!}
-            </div>
-        </div>
+            </x-slot>
+        </x-admin::page-header>
 
         {!! view_render_event('unopim.admin.catalog.products.list.before') !!}
 
@@ -171,13 +167,13 @@
 
                                         <div class="flex flex-wrap gap-1 min-h-[38px] p-1.5 border dark:border-cherry-800 rounded-md">
                                             <p
-                                                class="flex items-center py-1 px-2 bg-violet-100 rounded text-violet-700 font-semibold"
+                                                class="flex items-center py-1 px-2 bg-primary-100 rounded text-primary-700 font-semibold"
                                                 v-for="attribute in attributes"
                                             >
                                                 @{{ attribute.name || '[' + attribute.code + ']' }}
 
                                                 <span
-                                                    class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
+                                                    class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
                                                     @click="removeAttribute(attribute)"
                                                 >
                                                 </span>
@@ -195,7 +191,7 @@
                                 <div class="flex gap-x-2.5 items-center">
                                     <button
                                         type="button"
-                                        class="transparent-button hover:bg-violet-100 dark:hover:bg-gray-800 dark:text-white"
+                                        class="transparent-button hover:bg-primary-100 dark:hover:bg-gray-800 dark:text-white"
                                         v-if="attributes.length"
                                         @click="attributes = []"
                                     >

@@ -10,7 +10,7 @@
     @endphp
 
     <!-- Error page Information -->
-	<div class="flex justify-center items-center h-[100vh] bg-violet-50 dark:bg-cherry-800">
+	<div class="flex justify-center items-center h-[100vh] bg-primary-50 dark:bg-cherry-800">
         <div class="flex gap-5 items-center max-w-[900px]">
             <div class="w-full">
                 <img
@@ -32,7 +32,7 @@
                         <button
                             type="button"
                             onclick="history.back()"
-                            class="text-sm text-violet-700 font-semibold transition-all hover:underline cursor-pointer"
+                            class="text-sm text-primary-700 font-semibold transition-all hover:underline cursor-pointer"
                         >
                             @lang('admin::app.errors.go-back')
                         </button>
@@ -45,7 +45,7 @@
 
                         <a
                             href="{{ route('admin.dashboard.index') }}"
-                            class="text-sm text-violet-700 font-semibold transition-all hover:underline"
+                            class="text-sm text-primary-700 font-semibold transition-all hover:underline"
                         >
                             @lang('admin::app.errors.dashboard')
                         </a>
@@ -56,7 +56,7 @@
                 @lang('admin::app.errors.support', [
                     'link'  => 'mailto:' . $supportEmail,
                     'email' => $supportEmail,
-                    'class' => 'text-violet-700 font-semibold transition-all hover:underline',
+                    'class' => 'text-primary-700 font-semibold transition-all hover:underline',
                     ])
                 </p>
             </div>

@@ -49,7 +49,7 @@ class AppearanceController extends Controller
         $this->flushConfigCache();
 
         return redirect()
-            ->route('admin.configuration.system.settings')
+            ->route('admin.settings.system.index')
             ->with('success', trans('admin::app.settings.appearance.update-success'));
     }
 

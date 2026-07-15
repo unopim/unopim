@@ -8,7 +8,7 @@
         <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
             <a
                 href="{{ route('admin.settings.data_transfer.exports.index') }}"
-                class="text-gray-600 hover:bg-violet-100 dark:hover:bg-gray-800 dark:text-white"
+                class="text-gray-600 hover:bg-primary-100 dark:hover:bg-gray-800 dark:text-white"
             >
                 @lang('admin::app.settings.data-transfer.exports.export.title')
             </a>

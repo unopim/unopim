@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute family via the create-family modal on the index
@@ -16,7 +16,7 @@ async function createFamily(adminPage, code) {
     adminPage,
     'Save Attribute Family',
     /Family created successfully/i,
-    /\/admin\/catalog\/families\/edit\/\d+/
+    /\/admin\/catalog\/attribute-families\/edit\/\d+/
   );
 }
 
@@ -99,11 +99,11 @@ test.describe('UnoPim Attribute Family Tests', () => {
 
     // Create test data — modal creation lands directly on the edit page
     await createFamily(adminPage, code);
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families\/edit/);
 
     // Edit action (from the datagrid)
     await searchAndEditFamily(adminPage, code);
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families\/edit/);
 
     // Delete action — shows confirmation
     await navigateTo(adminPage, 'attributeFamilies');

@@ -7,7 +7,6 @@
 @endphp
 
 <x-admin::layouts>
-    <!-- Title of the page -->
     <x-slot:title>
         @if ($items = Arr::get($config->items, request()->route('slug') . '.children'))
             @foreach ($items as $key => $item)
@@ -18,7 +17,6 @@
         @endif
     </x-slot>
 
-    <!-- Configuration form fields -->
     <x-admin::form
         id="configuration-edit-form"
         ajax
@@ -28,7 +26,9 @@
         <x-admin::layouts.edit-page-header
             :title="$title"
             form="configuration-edit-form"
+            :save-label="trans('admin::app.configuration.index.save-btn')"
         />
+
 
         @if ($groups)
             <div class="grid grid-cols-[1fr_2fr] gap-10 mt-6 max-xl:flex-wrap">

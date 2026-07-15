@@ -11,7 +11,7 @@ it('stores an uploaded logo submitted by the media component into core config', 
 
     $this->put(route('admin.settings.appearance.update'), [
         'logo_image' => [UploadedFile::fake()->image('logo.png', 192, 50)],
-    ])->assertRedirect(route('admin.configuration.system.settings'));
+    ])->assertRedirect(route('admin.settings.system.index'));
 
     $config = CoreConfig::query()
         ->where('code', 'general.design.admin_logo.logo_image')
@@ -39,7 +39,7 @@ it('invalidates the cached core config so an uploaded logo reflects immediately 
 
     $this->put(route('admin.settings.appearance.update'), [
         'logo_image' => [UploadedFile::fake()->image('logo.png', 192, 50)],
-    ])->assertRedirect(route('admin.configuration.system.settings'));
+    ])->assertRedirect(route('admin.settings.system.index'));
 
     $stored = CoreConfig::query()
         ->where('code', 'general.design.admin_logo.logo_image')
@@ -56,7 +56,7 @@ it('stores a replacement logo under a unique path so the browser never serves a 
 
     $this->put(route('admin.settings.appearance.update'), [
         'logo_image' => [UploadedFile::fake()->image('logo.png', 192, 50)],
-    ])->assertRedirect(route('admin.configuration.system.settings'));
+    ])->assertRedirect(route('admin.settings.system.index'));
 
     $firstPath = CoreConfig::query()
         ->where('code', 'general.design.admin_logo.logo_image')
@@ -64,7 +64,7 @@ it('stores a replacement logo under a unique path so the browser never serves a 
 
     $this->put(route('admin.settings.appearance.update'), [
         'logo_image' => [UploadedFile::fake()->image('logo.png', 192, 50)],
-    ])->assertRedirect(route('admin.configuration.system.settings'));
+    ])->assertRedirect(route('admin.settings.system.index'));
 
     $secondPath = CoreConfig::query()
         ->where('code', 'general.design.admin_logo.logo_image')
@@ -91,7 +91,7 @@ it('keeps the existing logo when the media component resubmits it as an unchange
         'favicon'    => [UploadedFile::fake()->image('favicon.png', 16, 16)],
     ])
         ->assertSessionHasNoErrors()
-        ->assertRedirect(route('admin.configuration.system.settings'));
+        ->assertRedirect(route('admin.settings.system.index'));
 
     expect(CoreConfig::query()->where('code', 'general.design.admin_logo.logo_image')->first()->value)
         ->toBe('configuration/existing-logo.png');
@@ -114,7 +114,7 @@ it('clears the logo config and stored file when the image is removed, reverting 
 
     $this->put(route('admin.settings.appearance.update'), [])
         ->assertSessionHasNoErrors()
-        ->assertRedirect(route('admin.configuration.system.settings'));
+        ->assertRedirect(route('admin.settings.system.index'));
 
     expect(CoreConfig::query()->where('code', 'general.design.admin_logo.logo_image')->exists())->toBeFalse();
 

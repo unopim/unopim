@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Webkul\User\Models\Admin;
 
@@ -72,6 +73,13 @@ it('keeps the admin logged in across the remember cookie when remember is checke
 });
 
 it('returns the friendly throttle message as json on too many login attempts', function () {
+    // The styled 429 body is produced by the exception handler, which only
+    // registers its renderable when debug is off (production behaviour).
+    config(['app.debug' => false]);
+
+    // The throttle is cache-backed; clear it so prior tests can't trip it early.
+    Cache::flush();
+
     $response = null;
 
     for ($attempt = 0; $attempt < 6; $attempt++) {
@@ -82,5 +90,8 @@ it('returns the friendly throttle message as json on too many login attempts', f
     }
 
     $response->assertStatus(429);
-    $response->assertJson(['message' => trans('admin::app.users.sessions.too-many-attempts')]);
+    $response->assertJson([
+        'error'       => trans('admin::app.errors.429.title'),
+        'description' => trans('admin::app.errors.429.description'),
+    ]);
 });

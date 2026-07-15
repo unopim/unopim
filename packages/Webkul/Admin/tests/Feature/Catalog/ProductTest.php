@@ -159,7 +159,6 @@ it('should return the edit page for simple product successfully', function () {
     $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.products.edit.title'))
-        ->assertSeeText(trans('admin::app.catalog.products.edit.save-btn'))
         ->assertSeeText(trans('admin::app.catalog.products.edit.categories.title'))
         ->assertSeeText(trans('admin::app.catalog.products.edit.links.title'))
         ->assertDontSeeText(trans('admin::app.catalog.products.edit.types.configurable.empty-title'));
@@ -173,7 +172,6 @@ it('should return the edit page for configurable product successfully', function
     $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.products.edit.title'))
-        ->assertSeeText(trans('admin::app.catalog.products.edit.save-btn'))
         ->assertSeeText(trans('admin::app.catalog.products.edit.categories.title'))
         ->assertSeeText(trans('admin::app.catalog.products.edit.links.title'))
         ->assertSeeText(trans('admin::app.catalog.products.edit.types.configurable.empty-title'));
@@ -469,10 +467,10 @@ it('should render product edit page header with sticky top offset so save button
 
     $content = $response->getContent();
 
-    // The product page header should use sticky top-[Xpx] (offset below main header)
-    // The main header only uses top-0, so top-[...px] is specific to the product header fix
+    // The product page header uses a sticky wrapper (js-sticky-header) with an inline
+    // top offset so it sits below the main header and the save bar stays visible.
     $this->assertStringContainsString(
-        'sticky top-[',
+        'js-sticky-header',
         $content,
         'Product edit page header should have sticky positioning with a top offset so the save button is visible while scrolling'
     );

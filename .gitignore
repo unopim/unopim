@@ -47,3 +47,13 @@ skills-lock.json
 packages/Webkul/AdminApi/src/Secrets/Oauth/*.key
 AGENTS.md
 .playwright-cli
+
+# OWASP ZAP scan artifacts (generated, do not commit)
+/storage/zap-report/
+
+# local-only E2E secrets (never commit)
+tests/e2e-pw/.secrets.local
+
+.env.e2e
+
+.env.live-backup

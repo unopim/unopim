@@ -6,12 +6,8 @@
     {!! view_render_event('unopim.admin.settings.locales.create.before') !!}
 
     <v-locales>
-        <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.settings.locales.index.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
+        <x-admin::page-header :title="trans('admin::app.settings.locales.index.title')">
+            <x-slot:actions>
                 @if (bouncer()->hasPermission('settings.locales.create'))
                     <button
                         type="button"
@@ -20,8 +16,8 @@
                         @lang('admin::app.settings.locales.index.create-btn')
                     </button>
                 @endif
-            </div>
-        </div>
+            </x-slot>
+        </x-admin::page-header>
 
         <!-- DataGrid Shimmer -->
         <x-admin::shimmer.datagrid />
@@ -34,12 +30,8 @@
             type="text/x-template"
             id="v-locales-template"
         >
-            <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                    @lang('admin::app.settings.locales.index.title')
-                </p>
-
-                <div class="flex gap-x-2.5 items-center">
+            <x-admin::page-header :title="trans('admin::app.settings.locales.index.title')">
+                <x-slot:actions>
                     <!-- Locale Create Button -->
                     @if (bouncer()->hasPermission('settings.locales.create'))
                         <button
@@ -50,8 +42,8 @@
                             @lang('admin::app.settings.locales.index.create-btn')
                         </button>
                     @endif
-                </div>
-            </div>
+                </x-slot>
+            </x-admin::page-header>
 
             @php
                 $hasDeletePermission = bouncer()->hasPermission('settings.locales.delete');
@@ -65,7 +57,7 @@
                 <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                         @click="selectedLocales=1; editModal(record.actions.find(action => action.index === 'edit')?.url)"
                     >
@@ -83,7 +75,7 @@
                                 >
 
                                 <label
-                                    class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
+                                    class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-primary-700"
                                     :for="`mass_action_select_record_${record.id}`"
                                 ></label>
                             </div>
@@ -107,7 +99,7 @@
                                     <span
                                         :class="record.actions.find(action => action.index === 'edit')?.icon"
                                         title="@lang('admin::app.settings.locales.index.datagrid.edit')"
-                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                     >
                                     </span>
                                 </a>
@@ -118,7 +110,7 @@
                                     <span
                                         :class="record.actions.find(action => action.index === 'delete')?.icon"
                                         title="@lang('admin::app.settings.locales.index.datagrid.delete')"
-                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                     >
                                     </span>
                                 </a>

@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Traits;
 
 use Illuminate\Support\Facades\Storage;
+use Webkul\Admin\Filters\ProductFilterOperators;
 
 trait AttributeColumnTrait
 {
@@ -18,13 +19,19 @@ trait AttributeColumnTrait
 
         $label = $attribute->getTranslatedValueWithFallback('name');
 
+        $attributeType = is_array($attributeArray) && isset($attributeArray['type']) && is_string($attributeArray['type'])
+            ? $attributeArray['type']
+            : null;
+
         $column = [
-            'index'      => $attributeArray['code'],
-            'label'      => ! empty($label) ? $label : '['.$attributeArray['code'].']',
-            'type'       => $attribute->getFilterType(),
-            'searchable' => false,
-            'filterable' => $attributeArray['is_filterable'] ?? false,
-            'sortable'   => true,
+            'index'          => $attributeArray['code'],
+            'label'          => ! empty($label) ? $label : '['.$attributeArray['code'].']',
+            'type'           => $attribute->getFilterType(),
+            'searchable'     => false,
+            'filterable'     => $attributeArray['is_filterable'] ?? false,
+            'sortable'       => true,
+            'attribute_type' => $attributeType,
+            'operators'      => ProductFilterOperators::optionsForType($attributeType),
         ];
 
         return $this->applyFilterTypeOptions($column, $attribute);

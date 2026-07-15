@@ -71,9 +71,7 @@
 
                         {!! view_render_event('unopim.admin.catalog.families.edit.card.accordion.general.before', ['attributeFamily' => $attributeFamily]) !!}
                     
-                        <!-- Right Container -->
                         <div class="flex flex-col gap-2 w-[360px] max-w-full select-none">
-                            <!-- General Pannel -->
                             <div class="relative p-[16px] bg-white dark:bg-cherry-800 rounded-[4px] box-shadow">
                                 <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
                                     @lang('admin::app.catalog.attributes.edit.general')
@@ -102,7 +100,6 @@
                                     @lang('admin::app.catalog.attributes.edit.label')
                                 </p>
                                 <x-admin::form.control-group>
-                                    <!-- Locales Inputs -->
                                     @foreach ($locales as $locale)
                                         <x-admin::form.control-group>
                                             <x-admin::form.control-group.label
@@ -167,7 +164,6 @@
 
                     <!-- Panel Header -->
                     <div class="flex flex-wrap gap-2.5 justify-between mb-2.5 p-4">
-                        <!-- Panel Header -->
                         <div class="flex flex-col gap-2">
                             <p class="text-base font-semibold text-gray-800 dark:text-white">
                                 @lang('admin::app.catalog.families.edit.attribute-groups')
@@ -178,7 +174,6 @@
                             </p>
                         </div>
                         
-                        <!-- Panel Content -->
                         <div class="flex gap-x-1 items-center">
                             <!-- Add Group Button -->
                             <div
@@ -189,9 +184,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Panel Content -->
                     <div class="grid grid-cols-2 gap-4 mb-2.5 p-4">
-                        <!-- Attributes Groups Container -->
                         <div class="">
                             <!-- Unassigned Attribute Groups Header -->
                             <x-admin::list.panel-header
@@ -270,7 +263,6 @@
                             </draggable>
                         </div>
 
-                        <!-- Unassigned Attributes Container -->
                         <div>
                             <!-- Unassigned Attributes Header -->
                             <x-admin::list.panel-header
@@ -380,18 +372,14 @@
                         as="div"
                     >
                         <form @submit.stop="handleSubmit($event, assignGroup)">
-                            <!-- Model Form -->
                             <x-admin::modal ref="assignGroupModal">
-                                <!-- Model Header -->
                                 <x-slot:header>
                                     <p class="text-lg text-gray-800 dark:text-white font-bold">
                                         @lang('admin::app.catalog.families.edit.assign-group-title')
                                     </p>
                                 </x-slot>
 
-                                <!--Model Content -->
                                 <x-slot:content>
-                                    <!-- Group List -->
                                     <x-admin::form.control-group class="mb-4">
                                         <x-admin::form.control-group.label class="required font-medium">
                                             @lang('admin::app.catalog.families.edit.groups')
@@ -416,10 +404,8 @@
                                     </x-admin::form.control-group>
                                 </x-slot>
 
-                                <!-- Model Footer -->
                                 <x-slot:footer>
                                     <div class="flex gap-x-2.5 items-center">
-                                        <!-- Add Group Button -->
                                         <button 
                                             type="submit"
                                             class="primary-button"

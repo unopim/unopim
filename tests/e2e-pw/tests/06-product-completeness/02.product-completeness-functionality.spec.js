@@ -1,10 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
+const { clickSave } = require('../../utils/helpers');
 
 /**
  * Helper: Navigate to the Default family's Completeness tab with all rows visible.
  */
 async function goToDefaultFamilyCompleteness(adminPage) {
-  await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+  await adminPage.goto('/admin/catalog/attribute-families', { waitUntil: 'load' });
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('default');
   await adminPage.keyboard.press('Enter');
@@ -33,7 +34,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
       await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
       await adminPage.locator('input[name="sku"]').fill(`completeness_na_${Date.now()}`);
-      await adminPage.getByRole('button', { name: 'Save Product' }).click();
+      await clickSave(adminPage, 'Save Product');
       await adminPage.waitForURL(/\/admin\/catalog\/products/, { timeout: 20000 });
       await adminPage.goto('/admin/catalog/products', { waitUntil: 'networkidle', timeout: 60000 });
     }
@@ -60,7 +61,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
       await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
       await adminPage.locator('input[name="sku"]').fill(`completeness_edit_${Date.now()}`);
-      await adminPage.getByRole('button', { name: 'Save Product' }).click();
+      await clickSave(adminPage, 'Save Product');
       await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
     } else {
       await editBtn.click();
@@ -70,8 +71,8 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage).toHaveURL(/.*\/edit\/.*/);
 
-    // Verify the product edit page rendered successfully (has the Save Product button)
-    await expect(adminPage.getByRole('button', { name: 'Save Product' })).toBeVisible();
+    // Verify the product edit page rendered successfully (header shows the SKU)
+    await expect(adminPage.getByText(/SKU:/).first()).toBeVisible();
 
     // Verify the product edit page has NO completeness score when no required channel is configured.
     // If completeness IS configured in the seeded environment, at least one indicator should be visible.
@@ -100,15 +101,15 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
       await unassignedSelect.click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
     } else {
-      // All already assigned — toggle one by removing and re-adding
-      await adminPage.locator('.multiselect__tag-icon').first().click();
-      await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
-      // Wait for Vue to re-render the multiselect placeholder after tag removal
-      await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().waitFor({ state: 'visible', timeout: 10000 });
-      await adminPage.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().click();
+      // All already assigned — toggle the first select by removing a tag then re-adding
+      const firstSelect = adminPage.locator('.multiselect__tags').first();
+      await firstSelect.locator('.multiselect__tag-icon').first().click();
+      await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
+      // Re-open the same multiselect and assign a channel back
+      await firstSelect.click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
     }
-    await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
   });
 
   test('Verify channel can be deselected for specific attribute in completeness settings', async ({ adminPage }) => {
@@ -123,16 +124,16 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     const hasAssignment = await tagIcon.isVisible({ timeout: 3000 }).catch(() => false);
     if (hasAssignment) {
       await tagIcon.click();
-      await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
+      await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
     } else {
       // Assign one first, then deselect
       const unassignedSelect = adminPage.locator('.multiselect__tags', { hasText: 'Select option' }).first();
       await unassignedSelect.click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
-      await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
+      await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
       // Now deselect
       await adminPage.locator('.multiselect__tag-icon').first().click();
-      await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
+      await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
     }
   });
 
@@ -149,7 +150,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     const defaultOption = adminPage.getByRole('option', { name: 'Default' }).first();
     if (await defaultOption.isVisible({ timeout: 2000 }).catch(() => false)) {
       await defaultOption.click();
-      await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
+      await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
     } else {
       // Default already assigned — close the dropdown and try a different channel
       await adminPage.keyboard.press('Escape');

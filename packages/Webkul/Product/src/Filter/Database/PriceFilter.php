@@ -16,7 +16,17 @@ class PriceFilter extends AbstractDatabaseAttributeFilter
      */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::PRICE_FIELD_TYPE],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::EQUAL]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::EQUAL,
+            FilterOperators::LESS_THAN,
+            FilterOperators::LESS_THAN_OR_EQUAL,
+            FilterOperators::GREATER_THAN,
+            FilterOperators::GREATER_THAN_OR_EQUAL,
+            FilterOperators::RANGE,
+            FilterOperators::IS_EMPTY,
+            FilterOperators::IS_NOT_EMPTY,
+        ]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -60,6 +70,35 @@ class PriceFilter extends AbstractDatabaseAttributeFilter
                     "CAST($searchPath AS DECIMAL(8,2)) = ?",
                     $value[1]
                 );
+
+                break;
+
+            case FilterOperators::LESS_THAN:
+            case FilterOperators::LESS_THAN_OR_EQUAL:
+            case FilterOperators::GREATER_THAN:
+            case FilterOperators::GREATER_THAN_OR_EQUAL:
+                $this->queryBuilder->whereRaw(
+                    "CAST($searchPath AS DECIMAL(8,2)) ".self::COMPARISONS[$operator->value].' ?',
+                    $value[1]
+                );
+
+                break;
+
+            case FilterOperators::RANGE:
+                $this->queryBuilder->whereRaw(
+                    "CAST($searchPath AS DECIMAL(8,2)) BETWEEN ? AND ?",
+                    [$value[1], $value[2] ?? $value[1]]
+                );
+
+                break;
+
+            case FilterOperators::IS_EMPTY:
+                $this->queryBuilder->whereRaw("COALESCE($searchPath, '') = ''");
+
+                break;
+
+            case FilterOperators::IS_NOT_EMPTY:
+                $this->queryBuilder->whereRaw("COALESCE($searchPath, '') != ''");
 
                 break;
         }

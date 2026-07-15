@@ -22,8 +22,8 @@
                 v-show="slideIndex === idx"
                 class="flex items-center gap-4 px-5 h-12 text-[13.5px]"
                 :class="slide.key === 'cloud'
-                    ? 'bg-gradient-to-r from-[#5B41D6] to-[#8367F0] text-white'
-                    : 'bg-gradient-to-r from-[#211B40] to-[#2E2658] text-[#E9E5F8]'"
+                    ? 'bg-gradient-to-r from-primary-700 to-primary-500 text-white'
+                    : 'bg-gradient-to-r from-cherry-800 to-cherry-600 text-primary-100'"
             >
                 <div class="flex items-center gap-3 min-w-0 flex-1">
                     <span
@@ -35,7 +35,7 @@
                         class="inline-flex items-center h-5 px-[9px] rounded-full text-[10px] font-extrabold tracking-[0.06em] uppercase shrink-0"
                         :class="slide.key === 'cloud'
                             ? 'bg-white/[0.18] text-white'
-                            : 'bg-white/[0.14] text-[#C8BEF6]'"
+                            : 'bg-white/[0.14] text-primary-200'"
                     >@{{ slide.tag }}</span>
 
                     <span
@@ -49,10 +49,10 @@
                         :href="slide.url"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center gap-1.5 h-[30px] px-[14px] rounded-lg text-[12.5px] font-bold no-underline whitespace-nowrap transition-all hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(0,0,0,0.18)]"
+                        class="inline-flex items-center gap-1.5 h-[30px] px-[14px] rounded-lg text-[12.5px] font-bold no-underline whitespace-nowrap transition-all hover:-translate-y-px hover:shadow-lg"
                         :class="slide.key === 'cloud'
-                            ? 'bg-white text-[#5B41D6]'
-                            : 'bg-[#8367F0] text-white'"
+                            ? 'bg-white text-primary-700'
+                            : 'bg-primary-500 text-white'"
                     >
                         @{{ slide.cta }}
 

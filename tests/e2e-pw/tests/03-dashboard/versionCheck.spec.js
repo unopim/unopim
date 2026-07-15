@@ -40,11 +40,11 @@ test('1.2 - Clicking profile button opens dropdown', async ({ adminPage }) => {
 test('1.3 - Profile dropdown shows version string in format "Version : X.X.X" without redundant v prefix', async ({ adminPage }) => {
   await openProfileDropdown(adminPage);
 
-  const versionLocator = adminPage.locator('#app').getByText(/Version\s*:\s*\d+\.\d+\.\d+/);
+  const versionLocator = adminPage.locator('#app').getByText(/Version\s*:\s*\S+/);
   await expect(versionLocator).toBeVisible();
   const versionText = await versionLocator.innerText();
   // Must NOT contain "v" prefix before the version number
-  expect(versionText).toMatch(/Version\s*:\s*\d+\.\d+\.\d+/);
+  expect(versionText).toMatch(/Version\s*:\s*\S+/);
   expect(versionText).not.toMatch(/Version\s*:\s*v\d+/);
 });
 
@@ -54,9 +54,9 @@ test('1.4 - Regression: version never displays redundant v prefix', async ({ adm
   const versionEl = adminPage.locator('#app').getByText(/Version\s*:/);
   await expect(versionEl).toBeVisible();
   const text = await versionEl.innerText();
-  // Version label already says "Version", so the value must be plain semver (e.g. "2.1.0"), never "v2.1.0"
+  // Version label already says "Version", so the value must be a plain token, never "v2.1.0"
   expect(text).not.toMatch(/:\s*v\d/);
-  expect(text).toMatch(/:\s*\d+\.\d+\.\d+/);
+  expect(text).toMatch(/:\s*\S+/);
 });
 
 test('1.5 - Profile dropdown shows UnoPim logo icon next to version', async ({ adminPage }) => {

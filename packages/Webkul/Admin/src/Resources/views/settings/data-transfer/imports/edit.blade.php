@@ -3,7 +3,6 @@
         job_instance
     </x-slot>
 
-    <!-- Page Title -->
     <x-slot:title>
         @lang('admin::app.settings.data-transfer.imports.edit.title')
     </x-slot>
@@ -13,6 +12,7 @@
             :title="trans('admin::app.settings.data-transfer.imports.edit.title')"
             :back-url="route('admin.settings.data_transfer.imports.index')"
             :back-label="trans('admin::app.settings.data-transfer.imports.edit.back-btn')"
+            :save-label="trans('admin::app.settings.data-transfer.imports.edit.save-btn')"
             form="import-profile-edit-form"
             :sticky="false"
         />
@@ -31,17 +31,14 @@
 
         <!-- Body Content -->
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-            <!-- Left Container -->
             <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
                 {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.card.general.before') !!}
 
-                <!-- Setup Import Panel -->
                 <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                     <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                         @lang('admin::app.settings.data-transfer.imports.edit.general')
                     </p>
 
-                    <!-- Code -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.settings.data-transfer.imports.create.code')
@@ -66,7 +63,6 @@
                         <x-admin::form.control-group.error control-name="code" />
                     </x-admin::form.control-group>
 
-                    <!-- Type -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.settings.data-transfer.imports.edit.type')
@@ -115,7 +111,6 @@
                         @lang('admin::app.settings.data-transfer.imports.create.media')
                     </p>
 
-                    <!-- File Path -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label>
                             @lang('admin::app.settings.data-transfer.imports.edit.file')
@@ -134,13 +129,12 @@
                         />
                         <x-admin::form.control-group.error control-name="file" />
 
-                        <!-- Source Sample Download Links -->
                         <template v-if="$refs['importType'] && $refs['importType'].selectedOption">
                             <a
                                 :href="'{{ route('admin.settings.data_transfer.imports.download_sample') }}/' + $refs['importType'].selectedOption"
                                 target="_blank"
                                 id="source-sample-link"
-                                class="text-sm text-violet-700 dark:text-sky-500 cursor-pointer transition-all hover:underline mt-1"
+                                class="text-sm text-primary-700 dark:text-sky-500 cursor-pointer transition-all hover:underline mt-1"
                             >
                             
                                 @{{ "@lang('admin::app.settings.data-transfer.imports.create.download-sample')".replace(':resource', $refs['importType'].selectedOption.replace(/^\w/, (c) => c.toUpperCase())) }}
@@ -172,11 +166,9 @@
                 {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.card.general.after') !!}
             </div>
 
-            <!-- Right Container -->
             <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                 {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.card.accordion.settings.before') !!}
 
-                <!-- Settings Panel -->
                 <x-admin::accordion>
                     <x-slot:header>
                         <div class="flex items-center justify-between">
@@ -229,7 +221,6 @@
                                 <x-admin::form.control-group.error control-name="action" />
                             </x-admin::form.control-group>
 
-                            <!-- Validation Strategy -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.data-transfer.imports.edit.validation-strategy')
@@ -263,7 +254,6 @@
                                 <x-admin::form.control-group.error control-name="validation_strategy" />
                             </x-admin::form.control-group>
 
-                            <!-- Allowed Errors -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.data-transfer.imports.edit.allowed-errors')
@@ -281,7 +271,6 @@
                                 <x-admin::form.control-group.error control-name="allowed_errors" />
                             </x-admin::form.control-group>
 
-                            <!-- CSV Field Separator -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label>
                                     @lang('admin::app.settings.data-transfer.imports.edit.field-separator')
@@ -308,7 +297,7 @@
                         <x-admin::data-transfer.import-setting-fields
                             :entity-type="$import->entity_type"
                             :values="$filters"
-                            :importer-config="json_encode($importerConfig)"
+                            :importer-config="$importerConfig"
                         >
                         </x-admin::data-transfer.import-setting-fields>
                     </x-slot>
@@ -324,13 +313,11 @@
     @pushOnce('scripts')
         <script type="text/x-template" id="v-edit-zip-uploader-template">
             <div class="flex flex-col gap-2">
-                <!-- Label -->
                 <label class="text-sm text-gray-600 dark:text-gray-300 font-medium">
                     @lang('admin::app.settings.data-transfer.imports.edit.images-directory')
                 </label>
 
-                <!-- Path input + Upload button -->
-                <div class="flex items-center gap-0 rounded-sm border dark:border-gray-800 overflow-hidden focus-within:border-violet-500 transition-colors">
+                <div class="flex items-center gap-0 rounded-sm border dark:border-gray-800 overflow-hidden focus-within:border-primary-500 transition-colors">
                     <span class="px-2.5 py-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-cherry-800 border-r dark:border-gray-700 shrink-0 select-none">
                         storage/app/public/
                     </span>
@@ -354,7 +341,6 @@
 
                 <p class="text-xs text-gray-400 dark:text-gray-500">@{{ fileInfoExample }}</p>
 
-                <!-- Inline success indicator -->
                 <div
                     v-if="uploadedPath"
                     class="flex items-center justify-between gap-2 px-3 py-2 rounded-sm bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
@@ -374,19 +360,17 @@
                     ></button>
                 </div>
 
-                <!-- ZIP upload modal -->
                 <x-admin::modal ref="zipModal">
                     <x-slot:header>
                         <p class="text-base font-semibold text-gray-800 dark:text-white">@{{ uploadBtnLabel }}</p>
                     </x-slot>
 
                     <x-slot:content>
-                        <!-- Dropzone -->
                         <div
-                            class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center cursor-pointer hover:border-violet-500 transition-colors"
+                            class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center cursor-pointer hover:border-primary-500 transition-colors"
                             @click="$refs.zipFileInput.click()"
-                            @dragover.prevent="$event.currentTarget.classList.add('border-violet-500')"
-                            @dragleave.prevent="$event.currentTarget.classList.remove('border-violet-500')"
+                            @dragover.prevent="$event.currentTarget.classList.add('border-primary-500')"
+                            @dragleave.prevent="$event.currentTarget.classList.remove('border-primary-500')"
                             @drop.prevent="onDrop($event)"
                         >
                             <input
@@ -404,21 +388,19 @@
                             </div>
 
                             <div v-else>
-                                <span class="icon-product text-4xl text-violet-500 mb-2 block"></span>
+                                <span class="icon-product text-4xl text-primary-500 mb-2 block"></span>
                                 <p class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-xs mx-auto">@{{ selectedFile.name }}</p>
                                 <p class="text-xs text-gray-400 mt-1">@{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</p>
                             </div>
                         </div>
 
-                        <!-- Uploading progress -->
                         <div v-if="modalUploading" class="flex items-center gap-2 mt-4 text-sm text-gray-500 dark:text-gray-400">
-                            <svg class="w-4 h-4 shrink-0 text-violet-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <svg class="w-4 h-4 shrink-0 text-primary-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 16 0"/>
                             </svg>
                             <span>@{{ uploadingLabel }}</span>
                         </div>
 
-                        <!-- Error -->
                         <div
                             v-if="modalError"
                             class="flex items-center gap-2 mt-4 px-3 py-2 rounded-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-xs text-red-600 dark:text-red-400"
@@ -505,7 +487,7 @@
                     },
 
                     onDrop(e) {
-                        e.currentTarget.classList.remove('border-violet-500');
+                        e.currentTarget.classList.remove('border-primary-500');
 
                         const file = e.dataTransfer?.files?.[0];
 

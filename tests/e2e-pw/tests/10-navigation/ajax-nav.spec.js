@@ -95,7 +95,7 @@ test.describe('admin ajax navigation', () => {
     });
 
     // Regression: a GET link that server-side 302-redirects (ai-agent/settings
-    // → configuration/general/magic_ai) must update the address bar to the FINAL
+    // → magic-ai/settings) must update the address bar to the FINAL
     // url. If it stays on the source url, a form with `action=""` on the landed
     // page posts back to the redirect-only route → 405 Method Not Allowed.
     test('ajax nav syncs the address bar to the final redirected url', async ({ page }) => {
@@ -112,7 +112,7 @@ test.describe('admin ajax navigation', () => {
         });
 
         // Address bar must land on the redirect TARGET, not the source route.
-        await page.waitForURL(/\/admin\/configuration\/general\/magic_ai/, { timeout: 20000 });
+        await page.waitForURL(/\/admin\/magic-ai\/settings/, { timeout: 20000 });
         expect(new URL(page.url()).pathname).not.toContain('/ai-agent/settings');
 
         // Saving the landed configuration form must not 405 (posts to the

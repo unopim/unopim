@@ -17,14 +17,14 @@
                 <!-- Legend -->
                 <div class="flex items-center gap-4 mb-3">
                     <div class="flex items-center gap-1.5">
-                        <span class="w-3 h-3 rounded-sm" style="background: #7c3aed;"></span>
+                        <span class="w-3 h-3 rounded-sm bg-primary"></span>
                         <span class="text-xs text-zinc-600 dark:text-slate-400">
                             @lang('admin::app.dashboard.index.legend-created')
                         </span>
                     </div>
 
                     <div class="flex items-center gap-1.5">
-                        <span class="w-3 h-3 rounded-sm" style="background: #0ea5e9;"></span>
+                        <span class="w-3 h-3 rounded-sm bg-sky-500"></span>
                         <span class="text-xs text-zinc-600 dark:text-slate-400">
                             @lang('admin::app.dashboard.index.legend-updated')
                         </span>
@@ -42,7 +42,7 @@
                         <div class="flex items-end gap-0.5 mb-1">
                             <span
                                 class="text-[10px] font-bold"
-                                :style="{ color: created[date] > 0 ? '#7c3aed' : '#a1a1aa' }"
+                                :class="created[date] > 0 ? 'text-primary' : 'text-gray-400'"
                             >
                                 @{{ created[date] }}
                             </span>
@@ -51,7 +51,7 @@
 
                             <span
                                 class="text-[10px] font-bold"
-                                :style="{ color: updated[date] > 0 ? '#0ea5e9' : '#a1a1aa' }"
+                                :class="updated[date] > 0 ? 'text-sky-500' : 'text-gray-400'"
                             >
                                 @{{ updated[date] }}
                             </span>
@@ -62,13 +62,15 @@
                             <!-- Created Bar -->
                             <div
                                 class="flex-1 max-w-[20px] rounded-t-md transition-all duration-700 ease-out"
-                                :style="{ height: getBarHeight(created[date]) + 'px', background: created[date] > 0 ? '#7c3aed' : '#f4f4f5' }"
+                                :class="created[date] > 0 ? 'bg-primary' : 'bg-gray-100'"
+                                :style="{ height: getBarHeight(created[date]) + 'px' }"
                             ></div>
 
                             <!-- Updated Bar -->
                             <div
                                 class="flex-1 max-w-[20px] rounded-t-md transition-all duration-700 ease-out"
-                                :style="{ height: getBarHeight(updated[date]) + 'px', background: updated[date] > 0 ? '#0ea5e9' : '#f4f4f5' }"
+                                :class="updated[date] > 0 ? 'bg-sky-500' : 'bg-gray-100'"
+                                :style="{ height: getBarHeight(updated[date]) + 'px' }"
                             ></div>
                         </div>
                     </div>
@@ -95,12 +97,12 @@
                     <div class="flex items-center gap-4">
                         <span class="text-xs text-zinc-500 dark:text-slate-400">
                             @lang('admin::app.dashboard.index.legend-created'):
-                            <span class="font-bold" style="color: #7c3aed;">@{{ totalCreated }}</span>
+                            <span class="font-bold text-primary-600">@{{ totalCreated }}</span>
                         </span>
 
                         <span class="text-xs text-zinc-500 dark:text-slate-400">
                             @lang('admin::app.dashboard.index.legend-updated'):
-                            <span class="font-bold" style="color: #0ea5e9;">@{{ totalUpdated }}</span>
+                            <span class="font-bold text-sky-500">@{{ totalUpdated }}</span>
                         </span>
                     </div>
 

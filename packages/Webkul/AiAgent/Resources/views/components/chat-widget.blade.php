@@ -60,7 +60,7 @@
                 class="ap-panel"
             >
                 {{-- Header --}}
-                <div class="flex items-center justify-between px-4 py-2.5 flex-shrink-0" style="background:linear-gradient(135deg,#6d28d9 0%,#7c3aed 50%,#8b5cf6 100%);">
+                <div class="flex items-center justify-between px-4 py-2.5 flex-shrink-0" style="background:linear-gradient(135deg,rgb(var(--c-primary-700)) 0%,rgb(var(--c-primary-600)) 50%,rgb(var(--c-primary-500)) 100%);">
                     <div class="flex items-center gap-2.5">
                         <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
                             <svg width="14" height="14" style="color:#fff;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
@@ -102,14 +102,14 @@
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                         @lang('ai-agent::app.widget.chat')
                         <span v-if="messages.filter(m => m.role === 'assistant').length > 0"
-                            style="min-width:16px;height:16px;background:#ede9fe;color:#7c3aed;border-radius:9999px;font-size:8px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 3px;"
+                            style="min-width:16px;height:16px;background:rgb(var(--c-primary-100));color:rgb(var(--c-primary-600));border-radius:9999px;font-size:8px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 3px;"
                             v-text="messages.filter(m => m.role === 'assistant').length"></span>
                     </button>
                     <button @click="activeTab = 'sessions'" class="ap-tab-btn" :class="{ 'ap-tab-active': activeTab === 'sessions' }">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
                         @lang('ai-agent::app.widget.sessions')
                         <span v-if="sessions.length > 0"
-                            style="min-width:16px;height:16px;background:#ede9fe;color:#7c3aed;border-radius:9999px;font-size:8px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 3px;"
+                            style="min-width:16px;height:16px;background:rgb(var(--c-primary-100));color:rgb(var(--c-primary-600));border-radius:9999px;font-size:8px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 3px;"
                             v-text="sessions.length"></span>
                     </button>
                 </div>
@@ -124,7 +124,7 @@
                             type="text"
                             :placeholder="trans.searchCapabilities"
                             class="ap-search-input"
-                            @focus="$event.target.style.borderColor='#7c3aed'"
+                            @focus="$event.target.style.borderColor='rgb(var(--c-primary-600))'"
                             @blur="$event.target.style.borderColor='#e5e7eb'"
                         />
                     </div>
@@ -132,12 +132,12 @@
                     {{-- Capability tiles --}}
                     <div v-if="filteredCapabilities.length" class="grid grid-cols-2 gap-2.5">
                         <button v-for="cap in filteredCapabilities" :key="cap.key" @click="activateCapability(cap)"
-                            class="flex flex-col items-start gap-2 p-3 rounded-lg border border-gray-200 dark:border-cherry-700 hover:border-violet-300 dark:hover:border-violet-600 hover:bg-violet-50 dark:hover:bg-cherry-800 transition-all text-left group">
+                            class="flex flex-col items-start gap-2 p-3 rounded-lg border border-gray-200 dark:border-cherry-700 hover:border-primary-300 dark:hover:border-primary-600 hover:bg-primary-50 dark:hover:bg-cherry-800 transition-all text-left group">
                             <div class="w-8 h-8 rounded-lg flex items-center justify-center" :style="{ background: cap.color + '15' }">
                                 <span v-html="sanitizeSvg(cap.iconSvg)" :style="{ color: cap.color }"></span>
                             </div>
                             <div>
-                                <p class="text-xs font-semibold text-gray-700 dark:text-gray-200 group-hover:text-violet-700 dark:group-hover:text-violet-400 leading-tight" v-text="cap.label"></p>
+                                <p class="text-xs font-semibold text-gray-700 dark:text-gray-200 group-hover:text-primary-700 dark:group-hover:text-primary-400 leading-tight" v-text="cap.label"></p>
                                 <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5 leading-snug" v-text="cap.description"></p>
                             </div>
                         </button>
@@ -164,7 +164,7 @@
                             :class="{ 'ap-session-card-active': session.id === activeSessionId }">
                             {{-- Session icon --}}
                             <div class="ap-session-icon"
-                                :style="{ background: session.id === activeSessionId ? '#7c3aed' : '#f3f4f6' }">
+                                :style="{ background: session.id === activeSessionId ? 'rgb(var(--c-primary-600))' : '#f3f4f6' }">
                                 <svg width="14" height="14" fill="none" :stroke="session.id === activeSessionId ? '#fff' : '#9ca3af'" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                             </div>
 
@@ -179,13 +179,13 @@
 
                             {{-- Active indicator --}}
                             <div v-if="session.id === activeSessionId"
-                                style="width:8px;height:8px;border-radius:50%;background:#7c3aed;flex-shrink:0;"></div>
+                                style="width:8px;height:8px;border-radius:50%;background:rgb(var(--c-primary-600));flex-shrink:0;"></div>
 
                             {{-- Delete button --}}
                             <button v-else @click.stop="deleteSession(session.id)"
                                 :title="trans.deleteSession"
                                 class="ap-session-delete"
-                                @mouseenter="$event.currentTarget.style.color='#ef4444'"
+                                @mouseenter="$event.currentTarget.style.color='rgb(var(--c-danger))'"
                                 @mouseleave="$event.currentTarget.style.color='#9ca3af'"
                             >
                                 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
@@ -226,13 +226,13 @@
                     <div ref="messagesEl" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:18px;min-height:0;">
                         {{-- Empty state --}}
                         <div v-if="messages.length === 0 && !isLoading" class="flex flex-col items-center justify-center h-full text-center py-8">
-                            <svg class="w-10 h-10 text-violet-200 dark:text-violet-800 mb-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                            <svg class="w-10 h-10 text-primary-200 dark:text-primary-800 mb-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
                             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                                <template v-if="activeCapability"><span v-text="trans.readyFor"></span> <strong class="text-violet-600 dark:text-violet-400" v-text="activeCapability.label"></strong></template>
+                                <template v-if="activeCapability"><span v-text="trans.readyFor"></span> <strong class="text-primary-600 dark:text-primary-400" v-text="activeCapability.label"></strong></template>
                                 <template v-else><span v-text="trans.catalogHelp"></span></template>
                             </p>
                             <p v-if="activeCapability" class="text-[11px] text-gray-400 dark:text-gray-500 mt-1.5 max-w-[260px] leading-relaxed" v-text="activeCapability.hint"></p>
-                            <p v-if="productContext" class="text-[11px] text-violet-500 dark:text-violet-400 mt-2"><span v-text="trans.context"></span>: <strong v-text="productContext.sku || trans.product + ' #' + productContext.id"></strong></p>
+                            <p v-if="productContext" class="text-[11px] text-primary-500 dark:text-primary-400 mt-2"><span v-text="trans.context"></span>: <strong v-text="productContext.sku || trans.product + ' #' + productContext.id"></strong></p>
                         </div>
 
                         <template v-for="(msg, idx) in messages" :key="idx">
@@ -242,13 +242,13 @@
                                     <div v-if="msg.files && msg.files.length" class="flex flex-wrap gap-1.5 justify-end">
                                         <template v-for="(f, fi) in msg.files" :key="fi">
                                             <img v-if="f.type === 'image'" :src="f.preview" class="w-20 h-20 rounded-lg object-cover border border-gray-200 dark:border-cherry-700"/>
-                                            <div v-else class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 text-violet-600 dark:text-violet-400">
+                                            <div v-else class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 text-primary-600 dark:text-primary-400">
                                                 <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                                                 <span class="max-w-[100px] truncate font-medium" v-text="f.name"></span>
                                             </div>
                                         </template>
                                     </div>
-                                    <div v-if="msg.content" style="background:#7c3aed;color:#fff;font-size:13px;padding:10px 14px;border-radius:14px 14px 4px 14px;white-space:pre-wrap;line-height:1.55;max-width:100%;word-break:break-word;" v-text="msg.content"></div>
+                                    <div v-if="msg.content" style="background:rgb(var(--c-primary-600));color:#fff;font-size:13px;padding:10px 14px;border-radius:14px 14px 4px 14px;white-space:pre-wrap;line-height:1.55;max-width:100%;word-break:break-word;" v-text="msg.content"></div>
                                 </div>
                             </div>
 
@@ -261,14 +261,14 @@
                                     </div>
 
                                     {{-- Result details card --}}
-                                    <div v-if="msg.result && Object.keys(msg.result).length" class="rounded-xl border border-violet-200 dark:border-cherry-700 overflow-hidden">
-                                        <div class="px-4 py-2 border-b border-violet-100 dark:border-cherry-700" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);">
-                                            <p class="text-[10px] font-bold text-violet-500 dark:text-violet-400 uppercase tracking-wider" v-text="trans.result"></p>
+                                    <div v-if="msg.result && Object.keys(msg.result).length" class="rounded-xl border border-primary-200 dark:border-cherry-700 overflow-hidden">
+                                        <div class="px-4 py-2 border-b border-primary-100 dark:border-cherry-700" style="background:linear-gradient(135deg,rgb(var(--c-primary-50)),rgb(var(--c-primary-100)));">
+                                            <p class="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wider" v-text="trans.result"></p>
                                         </div>
                                         <div class="px-4 py-3 space-y-2 bg-white dark:bg-cherry-800">
                                             <template v-for="(val, key) in msg.result" :key="key">
                                                 <div v-if="val !== null && val !== ''" class="text-xs leading-relaxed">
-                                                    <span class="text-violet-400 dark:text-violet-500 capitalize font-semibold" v-text="String(key).replace(/_/g, ' ') + ': '"></span>
+                                                    <span class="text-primary-400 dark:text-primary-500 capitalize font-semibold" v-text="String(key).replace(/_/g, ' ') + ': '"></span>
                                                     {{-- Boolean --}}
                                                     <span v-if="typeof val === 'boolean'" class="inline-flex items-center gap-1 font-semibold" :class="val ? 'text-emerald-600' : 'text-red-400'">
                                                         <span v-text="val ? '✓ Yes' : '✗ No'"></span>
@@ -277,7 +277,7 @@
                                                     <template v-else-if="Array.isArray(val)">
                                                         <div v-if="val.length === 0" class="mt-0.5 text-gray-400 italic">None</div>
                                                         <div v-else class="mt-1 flex flex-wrap gap-1">
-                                                            <span v-for="(item, i) in val" :key="i" class="inline-block px-2 py-0.5 rounded-md text-[11px] font-medium bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 border border-violet-100 dark:border-violet-800" v-text="item"></span>
+                                                            <span v-for="(item, i) in val" :key="i" class="inline-block px-2 py-0.5 rounded-md text-[11px] font-medium bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-800" v-text="item"></span>
                                                         </div>
                                                     </template>
                                                     {{-- Number --}}
@@ -291,7 +291,7 @@
 
                                     {{-- Action buttons --}}
                                     <div class="flex gap-2.5 flex-wrap mt-3 mb-1">
-                                        <a v-if="msg.product_url" :href="msg.product_url" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);">
+                                        <a v-if="msg.product_url" :href="msg.product_url" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md" style="background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                                             @lang('ai-agent::app.widget.view-product')
                                         </a>
@@ -300,7 +300,7 @@
                                             @click="downloadFile(msg.download_url)"
                                             type="button"
                                             class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md"
-                                            style="background:linear-gradient(135deg,#059669,#10b981);border:none;cursor:pointer;"
+                                            style="background:linear-gradient(135deg,rgb(var(--c-success)),rgb(var(--c-success)));border:none;cursor:pointer;"
                                         >
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                             @lang('ai-agent::app.widget.download')
@@ -314,7 +314,7 @@
                                         </button>
                                         <button @click="copyMessage(idx)" :title="msg._copied ? 'Copied!' : 'Copy'" class="ap-action-btn">
                                             <svg v-if="!msg._copied" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                            <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                            <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--c-success))" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                         </button>
                                         <button @click="rateMessage(idx, 'helpful')" title="Helpful" class="ap-action-btn" :class="{ 'ap-action-active': msg._rating === 'helpful' }">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
@@ -326,7 +326,7 @@
 
                                     {{-- Confirmation buttons — at the very bottom --}}
                                     <div v-if="needsConfirmation(msg, idx)" class="flex gap-2 mt-1">
-                                        <button @click="confirmAction('yes', idx)" :disabled="isLoading" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);">
+                                        <button @click="confirmAction('yes', idx)" :disabled="isLoading" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md" style="background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                             Yes, proceed
                                         </button>
@@ -343,10 +343,10 @@
                         <div v-if="isLoading">
                             <div style="padding:2px 0;">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-1.5 h-1.5 bg-violet-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
-                                    <span class="w-1.5 h-1.5 bg-violet-400 rounded-full animate-bounce" style="animation-delay:150ms"></span>
-                                    <span class="w-1.5 h-1.5 bg-violet-400 rounded-full animate-bounce" style="animation-delay:300ms"></span>
-                                    <span v-if="streamingStatus" class="text-xs text-violet-500 dark:text-violet-400 ml-1 font-medium" v-text="streamingStatus"></span>
+                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
+                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:150ms"></span>
+                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:300ms"></span>
+                                    <span v-if="streamingStatus" class="text-xs text-primary-500 dark:text-primary-400 ml-1 font-medium" v-text="streamingStatus"></span>
                                 </div>
                             </div>
                         </div>
@@ -398,7 +398,7 @@
                                 :placeholder="inputPlaceholder"
                                 :disabled="isLoading"
                                 @input="autoResize"
-                                @focus="$event.target.parentElement.style.border='1.5px solid #7c3aed'"
+                                @focus="$event.target.parentElement.style.border='1.5px solid rgb(var(--c-primary-600))'"
                                 @blur="$event.target.parentElement.style.border='1.5px solid #d1d5db'"
                             ></textarea>
 
@@ -438,7 +438,7 @@
                                 <button
                                     @click="send"
                                     :disabled="isLoading || (!inputText.trim() && pendingFiles.length === 0)"
-                                    style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#8b5cf6);transition:opacity 0.2s,transform 0.1s;"
+                                    style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));transition:opacity 0.2s,transform 0.1s;"
                                     :style="{ opacity: (isLoading || (!inputText.trim() && pendingFiles.length === 0)) ? '0.35' : '1', cursor: (isLoading || (!inputText.trim() && pendingFiles.length === 0)) ? 'not-allowed' : 'pointer' }"
                                     :title="isLoading ? trans.sending : trans.send"
                                 >
@@ -459,9 +459,9 @@
             v-show="!isOpen"
             @click="toggle"
             :title="trans.openPanel"
-            style="position:fixed;bottom:24px;right:24px;z-index:10002;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(124,58,237,0.4);border:none;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;"
-            @mouseenter="$event.currentTarget.style.transform='scale(1.1)';$event.currentTarget.style.boxShadow='0 6px 20px rgba(124,58,237,0.5)'"
-            @mouseleave="$event.currentTarget.style.transform='';$event.currentTarget.style.boxShadow='0 4px 15px rgba(124,58,237,0.4)'"
+            style="position:fixed;bottom:24px;right:24px;z-index:10002;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgb(var(--c-primary-600) / 0.4);border:none;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;"
+            @mouseenter="$event.currentTarget.style.transform='scale(1.1)';$event.currentTarget.style.boxShadow='0 6px 20px rgb(var(--c-primary-600) / 0.5)'"
+            @mouseleave="$event.currentTarget.style.transform='';$event.currentTarget.style.boxShadow='0 4px 15px rgb(var(--c-primary-600) / 0.4)'"
         >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
         </button>
@@ -510,12 +510,12 @@
 
 /* AI response text styling */
 .ap-ai-response { word-break: break-word; }
-.ap-ai-response strong { color: #5b21b6; font-weight: 700; }
-.dark .ap-ai-response strong { color: #c4b5fd; }
-.ap-ai-response code { background: #ede9fe; color: #6d28d9; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: 500; }
-.dark .ap-ai-response code { background: rgba(139,92,246,0.15); color: #a78bfa; }
-.ap-ai-response a { color: #7c3aed; text-decoration: underline; text-underline-offset: 2px; }
-.ap-ai-response a:hover { color: #6d28d9; text-decoration: none; }
+.ap-ai-response strong { color: rgb(var(--c-primary-800)); font-weight: 700; }
+.dark .ap-ai-response strong { color: rgb(var(--c-primary-300)); }
+.ap-ai-response code { background: rgb(var(--c-primary-100)); color: rgb(var(--c-primary-700)); padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: 500; }
+.dark .ap-ai-response code { background: rgb(var(--c-primary-500) / 0.15); color: rgb(var(--c-primary-400)); }
+.ap-ai-response a { color: rgb(var(--c-primary-600)); text-decoration: underline; text-underline-offset: 2px; }
+.ap-ai-response a:hover { color: rgb(var(--c-primary-700)); text-decoration: none; }
 
 /* Bullet and numbered list spacing */
 .ap-ai-response p { margin-bottom: 2px; }
@@ -530,28 +530,28 @@
 }
 .ap-action-btn:hover { background: #f3f4f6; color: #6b7280; }
 .dark .ap-action-btn:hover { background: rgba(255,255,255,0.08); color: #d1d5db; }
-.ap-action-btn.ap-action-active { color: #7c3aed; }
-.dark .ap-action-btn.ap-action-active { color: #a78bfa; }
+.ap-action-btn.ap-action-active { color: rgb(var(--c-primary-600)); }
+.dark .ap-action-btn.ap-action-active { color: rgb(var(--c-primary-400)); }
 .ap-msg-actions { opacity: 0.4; transition: opacity 0.2s; }
 .ap-msg-actions:hover { opacity: 1; }
 
 .ap-context-banner {
     display:flex; align-items:center; gap:8px; padding:6px 16px;
-    background:#f5f3ff; border-bottom:1px solid #e9d5ff; flex-shrink:0;
+    background:rgb(var(--c-primary-50)); border-bottom:1px solid #e9d5ff; flex-shrink:0;
 }
 .dark .ap-context-banner { background:#2b223d; border-bottom-color:#5b4a80; }
-.ap-context-icon { flex-shrink:0; color:#7c3aed; }
-.dark .ap-context-icon { color:#c4b5fd; }
+.ap-context-icon { flex-shrink:0; color:rgb(var(--c-primary-600)); }
+.dark .ap-context-icon { color:rgb(var(--c-primary-300)); }
 .ap-context-text {
-    font-size:11px; color:#5b21b6; font-weight:500; flex:1;
+    font-size:11px; color:rgb(var(--c-primary-800)); font-weight:500; flex:1;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
-.dark .ap-context-text { color:#ddd6fe; }
+.dark .ap-context-text { color:rgb(var(--c-primary-200)); }
 .ap-context-close {
-    color:#8b5cf6; background:none; border:none; cursor:pointer; padding:0;
+    color:rgb(var(--c-primary-500)); background:none; border:none; cursor:pointer; padding:0;
     display:flex; align-items:center;
 }
-.dark .ap-context-close { color:#c4b5fd; }
+.dark .ap-context-close { color:rgb(var(--c-primary-300)); }
 
 .ap-tab-bar {
     display:flex; border-bottom:1px solid #e5e7eb; background:#f9fafb; flex-shrink:0;
@@ -564,9 +564,9 @@
 }
 .dark .ap-tab-btn { color:#b9b4cb; }
 .ap-tab-btn.ap-tab-active {
-    border-bottom:2px solid #7c3aed; color:#7c3aed; font-weight:600; background:#fff;
+    border-bottom:2px solid rgb(var(--c-primary-600)); color:rgb(var(--c-primary-600)); font-weight:600; background:#fff;
 }
-.dark .ap-tab-btn.ap-tab-active { background:#1f1b2d; color:#c4b5fd; border-bottom-color:#a78bfa; }
+.dark .ap-tab-btn.ap-tab-active { background:#1f1b2d; color:rgb(var(--c-primary-300)); border-bottom-color:rgb(var(--c-primary-400)); }
 
 .ap-search-input {
     width:100%; padding:7px 10px 7px 32px; font-size:12px;
@@ -579,12 +579,12 @@
 .dark .ap-session-new-wrap { border-bottom-color:#453c5f; }
 .ap-session-new-btn {
     width:100%; display:flex; align-items:center; justify-content:center; gap:6px;
-    padding:8px; font-size:12px; font-weight:600; color:#7c3aed;
-    background:#f5f3ff; border:1.5px dashed #c4b5fd; border-radius:8px;
+    padding:8px; font-size:12px; font-weight:600; color:rgb(var(--c-primary-600));
+    background:rgb(var(--c-primary-50)); border:1.5px dashed rgb(var(--c-primary-300)); border-radius:8px;
     cursor:pointer; transition:all 0.15s;
 }
-.ap-session-new-btn:hover { background:#ede9fe; }
-.dark .ap-session-new-btn { background:#2b223d; border-color:#6d5c94; color:#c4b5fd; }
+.ap-session-new-btn:hover { background:rgb(var(--c-primary-100)); }
+.dark .ap-session-new-btn { background:#2b223d; border-color:#6d5c94; color:rgb(var(--c-primary-300)); }
 .dark .ap-session-new-btn:hover { background:#34284b; }
 
 .ap-session-card {
@@ -595,7 +595,7 @@
 .dark .ap-session-card { background:#1f1b2d; border-color:#453c5f; }
 .ap-session-card:hover:not(.ap-session-card-active) { background:#fafafa; }
 .dark .ap-session-card:hover:not(.ap-session-card-active) { background:#2a233c; }
-.ap-session-card-active { background:#f5f3ff; border-color:#c4b5fd; }
+.ap-session-card-active { background:rgb(var(--c-primary-50)); border-color:rgb(var(--c-primary-300)); }
 .dark .ap-session-card-active { background:#2b223d; border-color:#8b7bb8; }
 .ap-session-icon {
     width:32px; height:32px; border-radius:8px; display:flex; align-items:center;
@@ -621,7 +621,7 @@
 .ap-chat-meta { font-size:10px; color:#9ca3af; font-weight:500; }
 .dark .ap-chat-meta { color:#b9b4cb; }
 .ap-clear-chat-btn {
-    display:flex; align-items:center; gap:4px; font-size:10px; color:#ef4444;
+    display:flex; align-items:center; gap:4px; font-size:10px; color:rgb(var(--c-danger));
     padding:3px 8px; border-radius:6px; border:1px solid #fecaca;
     background:#fff5f5; cursor:pointer; transition:all 0.15s;
 }
@@ -668,9 +668,9 @@
 
 .ap-pending-chip-icon {
     width:14px; height:14px; flex-shrink:0;
-    color:#7c3aed;
+    color:rgb(var(--c-primary-600));
 }
-.dark .ap-pending-chip-icon { color:#a78bfa; }
+.dark .ap-pending-chip-icon { color:rgb(var(--c-primary-400)); }
 
 .ap-pending-chip-name {
     min-width:0; max-width:160px;
@@ -705,23 +705,22 @@
     padding:4px 8px; border-radius:6px; border:1px solid #e5e7eb; background:#fff;
     cursor:pointer; transition:background 0.15s; flex-shrink:0;
 }
-.ap-input-chip:hover { background:#f5f0ff; color:#7c3aed; border-color:#c4b5fd; }
+.ap-input-chip:hover { background:#f5f0ff; color:rgb(var(--c-primary-600)); border-color:rgb(var(--c-primary-300)); }
 .dark .ap-input-chip { background:#1f1b2d; border-color:#5b4a80; color:#d1d5db; }
-.dark .ap-input-chip:hover { background:#34284b; color:#ddd6fe; border-color:#8b7bb8; }
+.dark .ap-input-chip:hover { background:#34284b; color:rgb(var(--c-primary-200)); border-color:#8b7bb8; }
 .ap-input-select {
     font-size:10px; color:#6b7280; background:#fff; border:1px solid #e5e7eb;
     border-radius:6px; padding:3px 6px; cursor:pointer; outline:none;
     max-width:120px; min-width:0; flex-shrink:1;
 }
 .dark .ap-input-select { background:#1f1b2d; border-color:#5b4a80; color:#f3f4f6; }
-.ap-input-select:focus { border-color:#7c3aed; }
-.dark .ap-input-select:focus { border-color:#a78bfa; }
+.ap-input-select:focus { border-color:rgb(var(--c-primary-600)); }
+.dark .ap-input-select:focus { border-color:rgb(var(--c-primary-400)); }
 .ap-input-footnote { font-size:10px; color:#9ca3af; text-align:center; margin-top:6px; }
 .dark .ap-input-footnote { color:#9f97b8; }
 </style>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.0/purify.min.js" integrity="sha384-/knAMB4gMqm3mPGf8xMfFjCF0Fw3GMdmF6Bj25kjGp9TzFKGefvtsYzn/7BNEUU" crossorigin="anonymous"></script>
-
+{{-- DOMPurify is bundled with the admin app (window.DOMPurify) — no external CDN. --}}
 <script type="module">
 // Mirrors Webkul\MagicAI\Support\ModelRecommender::pickTextModel().
 // The chat widget must never auto-select an image-only model
@@ -830,11 +829,11 @@ app.component('v-agenting-pim', {
                 // Row 1: Product creation & updates
                 { key: 'create_from_image', label: `@lang('ai-agent::app.widget.capabilities-list.create-from-image')`, description: `@lang('ai-agent::app.widget.capabilities-list.create-from-image-desc')`,
                   iconSvg: svg('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'),
-                  color: '#7C3AED', hint: `@lang('ai-agent::app.widget.capabilities-list.create-from-image-hint')`, acceptsImages: true, acceptsSpreadsheet: false,
+                  color: 'rgb(var(--c-primary-600))', hint: `@lang('ai-agent::app.widget.capabilities-list.create-from-image-hint')`, acceptsImages: true, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.create-from-image-prompt')`, autoFileUpload: true },
                 { key: 'update_products', label: `@lang('ai-agent::app.widget.capabilities-list.update-products')`, description: `@lang('ai-agent::app.widget.capabilities-list.update-products-desc')`,
                   iconSvg: svg('<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>'),
-                  color: '#059669', hint: `@lang('ai-agent::app.widget.capabilities-list.update-products-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
+                  color: 'rgb(var(--c-success))', hint: `@lang('ai-agent::app.widget.capabilities-list.update-products-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.update-products-prompt')`, autoFileUpload: false },
                 // Row 2: Search & explore
                 { key: 'search_products', label: `@lang('ai-agent::app.widget.capabilities-list.search-products')`, description: `@lang('ai-agent::app.widget.capabilities-list.search-products-desc')`,
@@ -843,7 +842,7 @@ app.component('v-agenting-pim', {
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.search-products-prompt')`, autoFileUpload: false },
                 { key: 'find_similar', label: `@lang('ai-agent::app.widget.capabilities-list.find-similar')`, description: `@lang('ai-agent::app.widget.capabilities-list.find-similar-desc')`,
                   iconSvg: svg('<path d="M16 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="12" height="12" rx="2"/>'),
-                  color: '#8B5CF6', hint: `@lang('ai-agent::app.widget.capabilities-list.find-similar-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
+                  color: 'rgb(var(--c-primary-500))', hint: `@lang('ai-agent::app.widget.capabilities-list.find-similar-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.find-similar-prompt')`, autoFileUpload: false },
                 // Row 3: Content & AI generation
                 { key: 'generate_content', label: `@lang('ai-agent::app.widget.capabilities-list.generate-content')`, description: `@lang('ai-agent::app.widget.capabilities-list.generate-content-desc')`,
@@ -888,7 +887,7 @@ app.component('v-agenting-pim', {
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.create-category-prompt')`, autoFileUpload: false },
                 { key: 'category_tree', label: `@lang('ai-agent::app.widget.capabilities-list.category-tree')`, description: `@lang('ai-agent::app.widget.capabilities-list.category-tree-desc')`,
                   iconSvg: svg('<path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>'),
-                  color: '#8B5CF6', hint: `@lang('ai-agent::app.widget.capabilities-list.category-tree-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
+                  color: 'rgb(var(--c-primary-500))', hint: `@lang('ai-agent::app.widget.capabilities-list.category-tree-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.category-tree-prompt')`, autoFileUpload: false },
                 // Row 8: Attribute management
                 { key: 'create_attribute', label: `@lang('ai-agent::app.widget.capabilities-list.create-attribute')`, description: `@lang('ai-agent::app.widget.capabilities-list.create-attribute-desc')`,
@@ -902,7 +901,7 @@ app.component('v-agenting-pim', {
                 // Row 9: Families & bulk ops
                 { key: 'manage_families', label: `@lang('ai-agent::app.widget.capabilities-list.manage-families')`, description: `@lang('ai-agent::app.widget.capabilities-list.manage-families-desc')`,
                   iconSvg: svg('<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>'),
-                  color: '#7C3AED', hint: `@lang('ai-agent::app.widget.capabilities-list.manage-families-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
+                  color: 'rgb(var(--c-primary-600))', hint: `@lang('ai-agent::app.widget.capabilities-list.manage-families-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.manage-families-prompt')`, autoFileUpload: false },
                 { key: 'bulk_edit', label: `@lang('ai-agent::app.widget.capabilities-list.bulk-edit')`, description: `@lang('ai-agent::app.widget.capabilities-list.bulk-edit-desc')`,
                   iconSvg: svg('<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/><line x1="4" y1="20" x2="20" y2="20"/>'),
@@ -911,7 +910,7 @@ app.component('v-agenting-pim', {
                 // Row 10: System & admin
                 { key: 'catalog_summary', label: `@lang('ai-agent::app.widget.capabilities-list.catalog-summary')`, description: `@lang('ai-agent::app.widget.capabilities-list.catalog-summary-desc')`,
                   iconSvg: svg('<path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>'),
-                  color: '#059669', hint: `@lang('ai-agent::app.widget.capabilities-list.catalog-summary-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
+                  color: 'rgb(var(--c-success))', hint: `@lang('ai-agent::app.widget.capabilities-list.catalog-summary-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.catalog-summary-prompt')`, autoFileUpload: false },
                 { key: 'manage_channels', label: `@lang('ai-agent::app.widget.capabilities-list.manage-channels')`, description: `@lang('ai-agent::app.widget.capabilities-list.manage-channels-desc')`,
                   iconSvg: svg('<path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/>'),
@@ -1621,18 +1620,18 @@ app.component('v-agenting-pim', {
             const html = text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/`([^`]+)`/g, '<code class="bg-gray-100 dark:bg-cherry-800 px-1 py-0.5 rounded text-xs font-mono text-violet-700 dark:text-violet-400">$1</code>')
+                .replace(/`([^`]+)`/g, '<code class="bg-gray-100 dark:bg-cherry-800 px-1 py-0.5 rounded text-xs font-mono text-primary-700 dark:text-primary-400">$1</code>')
                 .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
                     const isInternal = url.includes('/admin/');
                     return isInternal
-                        ? `<a href="${url}" data-internal-link class="text-violet-600 underline hover:no-underline">${label}</a>`
-                        : `<a href="${url}" class="text-violet-600 underline hover:no-underline" target="_blank">${label}</a>`;
+                        ? `<a href="${url}" data-internal-link class="text-primary-600 underline hover:no-underline">${label}</a>`
+                        : `<a href="${url}" class="text-primary-600 underline hover:no-underline" target="_blank">${label}</a>`;
                 })
                 .replace(/^### (.+)$/gm, '<p class="font-semibold text-sm mt-2 mb-1">$1</p>')
                 .replace(/^## (.+)$/gm, '<p class="font-bold text-sm mt-2 mb-1">$1</p>')
                 .replace(/^# (.+)$/gm, '<p class="font-bold text-base mt-2 mb-1">$1</p>')
-                .replace(/^- (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-violet-400 font-bold flex-shrink-0">&bull;</span><span>$1</span></p>')
-                .replace(/^(\d+)\. (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-violet-400 font-bold flex-shrink-0">$1.</span><span>$2</span></p>')
+                .replace(/^- (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">&bull;</span><span>$1</span></p>')
+                .replace(/^(\d+)\. (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">$1.</span><span>$2</span></p>')
                 .replace(/\n\n/g, '<br><br>')
                 .replace(/\n/g, '<br>');
 
@@ -1644,7 +1643,11 @@ app.component('v-agenting-pim', {
                     ADD_ATTR: ['data-internal-link'],
                 });
             }
-            return html;
+
+            // Fail SAFE, not open: with no sanitizer available this string still
+            // flows into v-html, so returning it raw is an XSS sink. Strip every
+            // tag to plain (escaped) text instead — formatting is lost, safety isn't.
+            return this.stripToText(html);
         },
 
         sanitizeSvg(svgHtml) {
@@ -1655,7 +1658,20 @@ app.component('v-agenting-pim', {
                     ALLOWED_ATTR: ['d', 'fill', 'stroke', 'viewBox', 'width', 'height', 'xmlns', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'cx', 'cy', 'r', 'x', 'y', 'rx', 'ry', 'points', 'x1', 'y1', 'x2', 'y2'],
                 });
             }
-            return svgHtml;
+
+            // No sanitizer: never inject untrusted SVG (script/foreignObject vectors).
+            return '';
+        },
+
+        // HTML-escape to inert text — used only as the no-DOMPurify fallback.
+        // The return value flows back into v-html (innerHTML), so it must be an
+        // ESCAPED string: assign as textContent (browser encodes < & etc), then
+        // read innerHTML to get the encoded form. Never parse the input as HTML
+        // (innerHTML-in decodes entities / completes unterminated tags → XSS).
+        stripToText(html) {
+            const el = document.createElement('div');
+            el.textContent = String(html);
+            return el.innerHTML;
         },
 
         saveState() {

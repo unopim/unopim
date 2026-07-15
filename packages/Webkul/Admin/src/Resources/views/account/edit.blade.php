@@ -1,5 +1,4 @@
 <x-admin::layouts>
-    <!-- Title of the page -->
     <x-slot:title>
         @lang('admin::app.account.edit.title')
     </x-slot>
@@ -20,14 +19,11 @@
         method="PUT">
         <!-- Full Panel -->
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-            <!-- Left sub Component -->
             <div class="flex flex-col gap-2 flex-1">
-                <!-- General -->
                 <div class="p-4 bg-white dark:bg-cherry-900 box-shadow rounded">
                     <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
                         @lang('admin::app.account.edit.general')
                     </p>
-                    <!-- Image -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label>
                             @lang('admin::app.account.edit.profile-image')
@@ -44,7 +40,6 @@
                         </p>
                     </x-admin::form.control-group>
 
-                    <!-- Name -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.account.edit.name')
@@ -62,7 +57,6 @@
                         <x-admin::form.control-group.error control-name="name" />
                     </x-admin::form.control-group>
 
-                    <!-- Email -->
                     <x-admin::form.control-group class="mb-4">
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.account.edit.email')
@@ -179,7 +173,6 @@
                 </div>
             </div>
 
-            <!-- Right sub-component -->
             <div class="flex flex-col gap-2 w-[360px] max-w-full max-md:w-full">
                 <x-admin::accordion>
                     <x-slot:header>
@@ -188,9 +181,7 @@
                         </p>
                     </x-slot>
 
-                    <!-- Change Account Password -->
                     <x-slot:content>
-                        <!-- Current Password -->
                         <x-admin::form.control-group>
                             <x-admin::form.control-group.label class="required">
                                 @lang('admin::app.account.edit.current-password')
@@ -208,7 +199,6 @@
                             <x-admin::form.control-group.error control-name="current_password" />
                         </x-admin::form.control-group>
 
-                        <!-- Password -->
                         <x-admin::form.control-group>
                             <x-admin::form.control-group.label>
                                 @lang('admin::app.account.edit.password')
@@ -226,7 +216,6 @@
                             <x-admin::form.control-group.error control-name="password" />
                         </x-admin::form.control-group>
 
-                        <!-- Confirm Password -->
                         <x-admin::form.control-group class="!mb-0">
                             <x-admin::form.control-group.label>
                                 @lang('admin::app.account.edit.confirm-password')

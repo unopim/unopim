@@ -12,6 +12,7 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Enums\FilterOperators;
@@ -645,6 +646,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $column = reset($column);
 
+        if ($column instanceof Column && $condition = $this->getRequestedCondition($value)) {
+            return $this->resolveCondition($column, $condition);
+        }
+
         switch ($column->type) {
             case 'datetime_range':
             case 'date_range':
@@ -666,6 +671,67 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return [$operator, $value];
+    }
+
+    /**
+     * Pull the {operator, value, value2, currency} payload sent by an attribute filter,
+     * or null when the request uses the plain value format.
+     *
+     * @return array<array-key, mixed>|null
+     */
+    protected function getRequestedCondition(mixed $value): ?array
+    {
+        $condition = is_array($value) ? reset($value) : null;
+
+        if (! is_array($condition) || empty($condition['operator'])) {
+            return null;
+        }
+
+        return $condition;
+    }
+
+    /**
+     * Turn an attribute filter's condition into the [operator, value] pair its filter expects.
+     *
+     * @param  array<array-key, mixed>  $condition
+     * @return array{0: FilterOperators|null, 1: mixed}
+     */
+    protected function resolveCondition(Column $column, array $condition): array
+    {
+        $operator = is_string($condition['operator'])
+            ? FilterOperators::tryFrom($condition['operator'])
+            : null;
+
+        if (! $operator) {
+            return [null, null];
+        }
+
+        $value = $condition['value'] ?? '';
+
+        if (in_array($operator, [FilterOperators::IS_EMPTY, FilterOperators::IS_NOT_EMPTY], true)) {
+            return [
+                $operator,
+                $column->type === 'price' ? [$condition['currency'] ?? '', ''] : [''],
+            ];
+        }
+
+        if ($column->type === 'price') {
+            return [$operator, [$condition['currency'] ?? '', $value, $condition['value2'] ?? '']];
+        }
+
+        if ($operator === FilterOperators::RANGE) {
+            return [$operator, [$value, $condition['value2'] ?? '']];
+        }
+
+        if (in_array($operator, [FilterOperators::IN, FilterOperators::NOT_IN], true)) {
+            if (is_array($value)) {
+                return [$operator, array_values($value)];
+            }
+
+            return [$operator, array_filter(explode(',', is_scalar($value) ? (string) $value : ''))];
+        }
+
+        return [$operator, is_array($value) ? array_values($value) : [$value]];
     }
 
     /**

@@ -20,37 +20,34 @@
                         <!-- Total Products Card -->
                         <a
                             href="{{ route('admin.catalog.products.index') }}"
-                            class="flex-1 rounded-lg p-4 no-underline hover:opacity-90 transition-opacity"
-                            style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);"
+                            class="flex-1 rounded-lg p-4 no-underline hover:opacity-90 transition-opacity bg-gradient-to-br from-primary-600 to-primary-700"
                         >
-                            <p class="text-xs text-violet-200 mb-1">@lang('admin::app.dashboard.index.total-products')</p>
+                            <p class="text-xs text-primary-200 mb-1">@lang('admin::app.dashboard.index.total-products')</p>
                             <p class="text-3xl font-bold text-white leading-none">@{{ totalProducts }}</p>
                         </a>
 
                         <!-- Active Card -->
                         <a
                             href="{{ route('admin.catalog.products.index') }}?filters[status][]=1"
-                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity"
-                            style="border-color: #d1fae5; background: #ecfdf5;"
+                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity border-emerald-100 bg-emerald-50"
                         >
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="w-2 h-2 rounded-full" style="background: #10b981;"></span>
-                                <p class="text-xs" style="color: #065f46;">@lang('admin::app.dashboard.index.active')</p>
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <p class="text-xs text-emerald-800">@lang('admin::app.dashboard.index.active')</p>
                             </div>
-                            <p class="text-2xl font-bold leading-none" style="color: #065f46;">@{{ stats.statusBreakdown.active || 0 }}</p>
+                            <p class="text-2xl font-bold leading-none text-emerald-800">@{{ stats.statusBreakdown.active || 0 }}</p>
                         </a>
 
                         <!-- Inactive Card -->
                         <a
                             href="{{ route('admin.catalog.products.index') }}?filters[status][]=0"
-                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity"
-                            style="border-color: #fef3c7; background: #fffbeb;"
+                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity border-amber-100 bg-amber-50"
                         >
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="w-2 h-2 rounded-full" style="background: #f59e0b;"></span>
-                                <p class="text-xs" style="color: #92400e;">@lang('admin::app.dashboard.index.inactive')</p>
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                <p class="text-xs text-amber-800">@lang('admin::app.dashboard.index.inactive')</p>
                             </div>
-                            <p class="text-2xl font-bold leading-none" style="color: #92400e;">@{{ stats.statusBreakdown.inactive || 0 }}</p>
+                            <p class="text-2xl font-bold leading-none text-amber-800">@{{ stats.statusBreakdown.inactive || 0 }}</p>
                         </a>
                     </div>
 
@@ -127,7 +124,7 @@
                                     <span
                                         v-if="stats.enrichedThisWeek !== stats.enrichedLastWeek"
                                         class="text-[10px] ml-0.5"
-                                        :style="{ color: stats.enrichedThisWeek >= stats.enrichedLastWeek ? '#10b981' : '#ef4444' }"
+                                        :class="stats.enrichedThisWeek >= stats.enrichedLastWeek ? 'text-success' : 'text-danger'"
                                     >
                                         @{{ stats.enrichedThisWeek >= stats.enrichedLastWeek ? '▲' : '▼' }}
                                     </span>
@@ -209,25 +206,35 @@
                     return Math.round(((this.stats.statusBreakdown[status] || 0) / this.totalProducts) * 100);
                 },
 
+                /**
+                 * Read a live CSS custom property off :root so the theme and
+                 * dark-mode overrides drive chart colours from one place.
+                 * Called at render-time (not cached) so toggling dark-mode
+                 * reflects immediately.
+                 */
+                cssVar(name) {
+                    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+                },
+
                 getTypeHex(type) {
                     const colors = {
-                        'simple': '#7c3aed',
-                        'configurable': '#0ea5e9',
-                        'virtual': '#14b8a6',
-                        'bundle': '#f97316',
-                        'grouped': '#ec4899',
-                        'downloadable': '#6366f1',
+                        'simple': this.cssVar('--chart-1'),
+                        'configurable': this.cssVar('--chart-2'),
+                        'virtual': this.cssVar('--chart-3'),
+                        'bundle': this.cssVar('--chart-4'),
+                        'grouped': this.cssVar('--chart-5'),
+                        'downloadable': this.cssVar('--chart-6'),
                     };
 
-                    return colors[type] || '#7c3aed';
+                    return colors[type] || this.cssVar('--chart-1');
                 },
 
                 getCompletenessColor(score) {
-                    if (score === null) return '#a1a1aa';
-                    if (score >= 80) return '#10b981';
-                    if (score >= 50) return '#f59e0b';
+                    if (score === null) return this.cssVar('--chart-muted');
+                    if (score >= 80) return this.cssVar('--chart-success');
+                    if (score >= 50) return this.cssVar('--chart-warning');
 
-                    return '#ef4444';
+                    return this.cssVar('--chart-danger');
                 },
 
                 /**

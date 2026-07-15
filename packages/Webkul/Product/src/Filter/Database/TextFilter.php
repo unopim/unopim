@@ -17,7 +17,14 @@ class TextFilter extends AbstractDatabaseAttributeFilter
      */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::TEXT_TYPE, Attribute::TEXTAREA_TYPE, Attribute::SELECT_FIELD_TYPE, Attribute::MULTISELECT_FIELD_TYPE, Attribute::IMAGE_ATTRIBUTE_TYPE, Attribute::FILE_ATTRIBUTE_TYPE, Attribute::CHECKBOX_FIELD_TYPE, Attribute::GALLERY_ATTRIBUTE_TYPE],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::NOT_IN,
+            FilterOperators::CONTAINS,
+            FilterOperators::EQUAL,
+            FilterOperators::IS_EMPTY,
+            FilterOperators::IS_NOT_EMPTY,
+        ]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -64,6 +71,32 @@ class TextFilter extends AbstractDatabaseAttributeFilter
                         );
                     }
                 });
+
+                break;
+
+            case FilterOperators::NOT_IN:
+                $this->queryBuilder->whereRaw(
+                    $searchPath.' NOT '.$grammar->getRegexOperator().' ?',
+                    is_array($value) ? implode('|', $value) : $value
+                );
+
+                break;
+
+            case FilterOperators::EQUAL:
+                $this->queryBuilder->whereRaw(
+                    "LOWER($searchPath) = ?",
+                    strtolower((string) $this->scalarValue($value))
+                );
+
+                break;
+
+            case FilterOperators::IS_EMPTY:
+                $this->queryBuilder->whereRaw("COALESCE($searchPath, '') = ''");
+
+                break;
+
+            case FilterOperators::IS_NOT_EMPTY:
+                $this->queryBuilder->whereRaw("COALESCE($searchPath, '') != ''");
 
                 break;
         }

@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid } = require('../../utils/helpers');
 
 /**
  * Helper: Create a new attribute family with a unique code and the General group assigned.
@@ -7,16 +7,16 @@ const { navigateTo, generateUid } = require('../../utils/helpers');
  */
 async function createFamilyWithGeneralGroup(adminPage, familyCode, familyName) {
   // Create the family
-  await adminPage.goto('/admin/catalog/families/create', { waitUntil: 'networkidle', timeout: 60000 });
+  await adminPage.goto('/admin/catalog/attribute-families/create', { waitUntil: 'networkidle', timeout: 60000 });
   await adminPage.getByText('General Code').waitFor({ state: 'visible', timeout: 30000 });
   await adminPage.getByText('General Code').click();
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(familyCode);
   await adminPage.locator('input[name="en_US[name]"]').fill(familyName);
-  await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+  await clickSave(adminPage, 'Save Attribute Family');
   await adminPage.waitForLoadState('networkidle');
 
   // After save, navigate to families list and find the newly created family
-  await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+  await adminPage.goto('/admin/catalog/attribute-families', { waitUntil: 'load' });
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(familyCode);
   await adminPage.keyboard.press('Enter');
@@ -51,7 +51,7 @@ async function createFamilyWithGeneralGroup(adminPage, familyCode, familyName) {
     }
   }
 
-  await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+  await clickSave(adminPage, 'Save Attribute Family');
   await adminPage.waitForLoadState('networkidle');
 }
 
@@ -61,12 +61,12 @@ async function createFamilyWithGeneralGroup(adminPage, familyCode, familyName) {
 async function goToFamilyCompletenessTab(adminPage, familyCode) {
   if (familyCode === 'default') {
     // For default family, go directly to edit page (ID=1) — avoids slow listing page
-    await adminPage.goto('/admin/catalog/families/edit/1', { waitUntil: 'load', timeout: 60000 });
+    await adminPage.goto('/admin/catalog/attribute-families/edit/1', { waitUntil: 'load', timeout: 60000 });
     await adminPage.getByRole('link', { name: 'Completeness' }).waitFor({ state: 'visible', timeout: 30000 });
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
   } else {
     // For custom families, search in listing
-    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load', timeout: 60000 });
+    await adminPage.goto('/admin/catalog/attribute-families', { waitUntil: 'load', timeout: 60000 });
     const searchInput = adminPage.getByRole('textbox', { name: 'Search' }).first();
     await searchInput.waitFor({ state: 'visible', timeout: 60000 });
     await searchInput.fill(familyCode);
@@ -85,7 +85,7 @@ async function goToFamilyCompletenessTab(adminPage, familyCode) {
  * Helper: Delete a family by code using search.
  */
 async function deleteFamilyByCode(adminPage, familyCode) {
-  await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+  await adminPage.goto('/admin/catalog/attribute-families', { waitUntil: 'load' });
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(familyCode);
   await adminPage.keyboard.press('Enter');
@@ -103,16 +103,16 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
   // ── Default family tests (read-only, no test data dependency) ──
 
   test('Verify "Completeness" tab is displayed in Default Family Edit page', async ({ adminPage }) => {
-    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.goto('/admin/catalog/attribute-families', { waitUntil: 'load' });
     await adminPage.waitForLoadState('networkidle');
     const editBtn = adminPage.locator('span[title="Edit"]').first();
     await editBtn.click();
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit\/\d+$/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families\/edit\/\d+$/);
     await expect(adminPage.getByRole('link', { name: 'Completeness' })).toBeVisible();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit\/\d+\?completeness/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families\/edit\/\d+\?completeness/);
     // Verify we're on the completeness page via the grid header columns
     // (the page title "Completeness" appears in toast notifications too, making
     // a plain `p` selector unreliable)
@@ -162,16 +162,16 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     const familyCode = `compfam${uid}`;
     const familyName = `CompFamily ${uid}`;
 
-    await adminPage.goto('/admin/catalog/families/create', { waitUntil: 'load' });
+    await adminPage.goto('/admin/catalog/attribute-families/create', { waitUntil: 'load' });
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByText('General Code').click();
     await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(familyCode);
     await adminPage.locator('input[name="en_US[name]"]').fill(familyName);
-    await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+    await clickSave(adminPage, 'Save Attribute Family');
     await adminPage.waitForLoadState('networkidle');
 
     // Navigate to the family and verify the Completeness tab
-    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.goto('/admin/catalog/attribute-families', { waitUntil: 'load' });
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(familyCode);
     await adminPage.keyboard.press('Enter');
@@ -216,7 +216,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     // Search for an attribute that should be present (name is always assigned via General group)
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('name');
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
-    await adminPage.waitForLoadState('networkidle');
     // Should find at least 1 result matching "name"
     await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
 
@@ -257,7 +256,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('name');
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
-    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
   });
 
@@ -270,7 +268,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('xyz');
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
-    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/0 Results?/)).toBeVisible({ timeout: 20000 });
   });
 
@@ -283,7 +280,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Required in Channels' }).fill('xyz');
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
-    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/0 Results?/)).toBeVisible({ timeout: 20000 });
   });
 
@@ -300,7 +296,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
       await adminPage.locator('input[name="channel_requirements"]').locator('..').locator('.multiselect__tags').first().click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
     }
-    await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/Completeness updated successfully/i)).toBeVisible({ timeout: 20000 });
   });
 
   // ── Default family: Filter by Required in Channels after assignment ──
@@ -314,7 +310,6 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
       await unassignedSelect.click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
       await expect(adminPage.locator('#app').getByText(/Completeness updated successfully/i)).toBeVisible({ timeout: 20000 });
-      await adminPage.waitForLoadState('networkidle');
     }
 
     // Now apply the filter
@@ -323,14 +318,13 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Required in Channels' }).fill('default');
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
-    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
   });
 
   // ── Default family: Selectable attribute count ──
 
   test('Verify selectable attribute count in Completeness tab equals assigned family attributes', async ({ adminPage }) => {
-    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.goto('/admin/catalog/attribute-families', { waitUntil: 'load' });
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('default');
     await adminPage.keyboard.press('Enter');

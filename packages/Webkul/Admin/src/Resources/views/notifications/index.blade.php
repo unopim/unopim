@@ -15,18 +15,12 @@
             type="text/x-template"
             id="v-notification-list-template"
         >
-            <div class="flex gap-4 justify-between items-center mb-5 max-sm:flex-wrap">
-                <div class="grid gap-1.5">
-                    <p class="pt-1.5 text-xl text-gray-800 dark:text-slate-50 font-bold leading-6">
-                        @lang('admin::app.notifications.title')
-                    </p>
-
-                    <p class="text-gray-600 dark:text-gray-300">
-                        @lang('admin::app.notifications.description-text')
-                    </p>
-                </div>
-
-                <div class="flex gap-x-2.5 items-center">
+            <x-admin::page-header
+                :title="trans('admin::app.notifications.title')"
+                :subtitle="trans('admin::app.notifications.description-text')"
+                class="mb-5"
+            >
+                <x-slot:actions>
                     <button
                         class="transparent-button"
                         v-if="totalUnread > 0"
@@ -34,8 +28,8 @@
                     >
                         @lang('admin::app.notifications.read-all')
                     </button>
-                </div>
-            </div>
+                </x-slot>
+            </x-admin::page-header>
 
             <div class="flex flex-col mb-16 bg-white dark:bg-cherry-900 rounded-md box-shadow">
                 <!-- Status Tabs (uses x-admin::tabs styling pattern) -->
@@ -45,15 +39,15 @@
                         :key="tab.value"
                         class="pb-3.5 px-2.5 text-base font-medium cursor-pointer transition-all border-b-2"
                         :class="status === tab.value
-                            ? 'border-violet-700 text-violet-700'
-                            : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-violet-700'"
+                            ? 'border-primary-700 text-primary-700'
+                            : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-primary-700'"
                         @click="onTabChange(tab.value)"
                     >
                         <span v-text="tab.title"></span>
 
                         <span
                             v-if="tab.value === 'unread' && totalUnread > 0"
-                            class="ml-1 inline-flex items-center justify-center min-w-5 h-5 px-1.5 bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300 rounded-full text-xs font-semibold"
+                            class="ml-1 inline-flex items-center justify-center min-w-5 h-5 px-1.5 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-xs font-semibold"
                             v-text="totalUnread"
                         ></span>
                     </div>
@@ -71,13 +65,13 @@
                         :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
                         :class="isRead(userNotification)
                             ? 'bg-gray-50 dark:bg-cherry-900/50 hover:bg-gray-100 dark:hover:bg-cherry-800'
-                            : 'bg-white dark:bg-cherry-900 hover:bg-violet-50 dark:hover:bg-cherry-800'"
+                            : 'bg-white dark:bg-cherry-900 hover:bg-primary-50 dark:hover:bg-cherry-800'"
                     >
                         <!-- Unread indicator -->
                         <div class="flex-shrink-0 mt-1.5">
                             <span
                                 class="block w-2.5 h-2.5 rounded-full"
-                                :class="isRead(userNotification) ? 'bg-gray-300 dark:bg-gray-600' : 'bg-violet-500'"
+                                :class="isRead(userNotification) ? 'bg-gray-300 dark:bg-gray-600' : 'bg-primary-500'"
                             ></span>
                         </div>
 
@@ -131,7 +125,7 @@
 
                     <div class="flex gap-1 items-center">
                         <button
-                            class="inline-flex items-center justify-center p-1.5 bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-md text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="inline-flex items-center justify-center p-1.5 bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-md text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 disabled:opacity-50 disabled:cursor-not-allowed"
                             :disabled="!pagination.prev_page_url"
                             @click="getResults(pagination.prev_page_url)"
                         >
@@ -143,7 +137,7 @@
                         </span>
 
                         <button
-                            class="inline-flex items-center justify-center p-1.5 bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-md text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="inline-flex items-center justify-center p-1.5 bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-md text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 disabled:opacity-50 disabled:cursor-not-allowed"
                             :disabled="!pagination.next_page_url"
                             @click="getResults(pagination.next_page_url)"
                         >

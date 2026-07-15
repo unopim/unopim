@@ -153,6 +153,8 @@ abstract class DataGrid
             sortable: $column['sortable'],
             closure: $column['closure'] ?? null,
             visible: $column['visible'] ?? true,
+            attribute_type: isset($column['attribute_type']) && is_string($column['attribute_type']) ? $column['attribute_type'] : null,
+            operators: isset($column['operators']) && is_array($column['operators']) ? array_values($column['operators']) : null,
         );
     }
 

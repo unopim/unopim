@@ -15,7 +15,11 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
      */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::BOOLEAN_FIELD_TYPE],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::CONTAINS,
+            FilterOperators::EQUAL,
+        ]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -60,6 +64,13 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
                 ];
 
                 $this->queryBuilder::where($clause);
+                break;
+
+            case FilterOperators::EQUAL:
+                $this->queryBuilder::where([
+                    'term' => [$attributePath => current((array) $value)],
+                ]);
+
                 break;
         }
 

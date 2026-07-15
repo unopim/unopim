@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid } = require('../../utils/helpers');
 
 /**
  * Create a simple product and return to the product listing.
@@ -27,7 +27,7 @@ async function createSimpleProduct(adminPage, sku) {
   await adminPage.keyboard.press('Escape');
 
   await adminPage.locator('input[name="sku"]').fill(sku);
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await clickSave(adminPage, 'Save Product');
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await adminPage.waitForLoadState('networkidle').catch(() => {});
   return sku;

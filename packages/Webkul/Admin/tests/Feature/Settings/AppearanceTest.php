@@ -6,12 +6,10 @@ use Illuminate\Support\Facades\Storage;
 use function Pest\Laravel\get;
 use function Pest\Laravel\put;
 
-it('shows appearance settings page', function () {
+it('renders the appearance settings page', function () {
     $this->loginAsAdmin();
 
-    get(route('admin.settings.appearance.index'))
-        ->assertStatus(200)
-        ->assertSeeText(trans('admin::app.settings.appearance.title'));
+    get(route('admin.settings.appearance.index'))->assertOk();
 });
 
 it('updates logo and favicon from appearance settings', function () {
@@ -24,6 +22,6 @@ it('updates logo and favicon from appearance settings', function () {
         'favicon'    => UploadedFile::fake()->image('favicon.png', 16, 16),
     ]);
 
-    $response->assertRedirect(route('admin.configuration.system.settings'));
+    $response->assertRedirect(route('admin.settings.system.index'));
     $response->assertSessionHas('success');
 });

@@ -3,7 +3,6 @@
         attribute
     </x-slot>
 
-    <!-- Title of the page -->
     <x-slot:title>
         @lang('admin::app.catalog.attributes.edit.title')
     </x-slot>
@@ -28,7 +27,6 @@
         >
             {!! view_render_event('unopim.admin.catalog.attributes.edit.before') !!}
 
-            <!-- Input Form -->
             <x-admin::form
                 id="attribute-edit-form"
                 ajax
@@ -41,17 +39,14 @@
 
                 <!-- body content -->
                 <div class="flex gap-2.5 mt-3.5">
-                    <!-- Left sub Component -->
                     <div class="flex flex-col flex-1 gap-2 overflow-auto">
 
                         {!! view_render_event('unopim.admin.catalog.attributes.edit.card.label.before', ['attribute' => $attribute]) !!}
 
-                        <!-- Label -->
                         <div class="p-4 bg-white dark:bg-cherry-900 box-shadow rounded">
                             <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
                                 @lang('admin::app.catalog.attributes.edit.general')
                             </p>
-                                <!-- Attribute Code -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.catalog.attributes.edit.code')
@@ -82,7 +77,6 @@
                                 <x-admin::form.control-group.error control-name="code" />
                             </x-admin::form.control-group>
 
-                            <!-- Attribute Type -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.catalog.attributes.edit.type')
@@ -157,7 +151,6 @@
 
                         {!! view_render_event('unopim.admin.catalog.attributes.edit.card.label.after', ['attribute' => $attribute]) !!}
 
-                        <!-- Labels -->
                         <div class="bg-white dark:bg-cherry-900 box-shadow rounded">
                             <div class="flex justify-between items-center p-1.5">
                                 <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
@@ -166,7 +159,6 @@
                             </div>
 
                             <div class="px-4 pb-4">
-                                <!-- Locales Inputs -->
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label
@@ -189,7 +181,6 @@
                             </div>
                         </div>
 
-                        <!-- Options -->
                         <div
                             class="p-4 bg-white dark:bg-cherry-900 box-shadow rounded"
                             v-if="(
@@ -203,7 +194,6 @@
                                     @lang('admin::app.catalog.attributes.edit.options')
                                 </p>
 
-                                <!-- Add Row Button -->
                                 <div
                                     class="secondary-button text-sm"
                                     @click="$refs.addOptionsRow.toggle();swatchValue='';optionIsNew=true;"
@@ -212,12 +202,10 @@
                                 </div>
                             </div>
                             
-                            <!-- Swatch Changer And Empty Field Section -->
                             <div
                                 v-if="showSwatch"
                                 class="flex items-center gap-4 max-sm:flex-wrap"  
                             >
-                                <!-- Input Options -->
                                 <x-admin::form.control-group
                                     class="mb-2.5 w-full"
                                 >
@@ -254,7 +242,6 @@
                                 </x-admin::form.control-group>
                             </div>
 
-                            <!-- For Attribute Options If Data Exist -->
                             <div class="overflow-x-auto">
                                 <x-admin::datagrid
                                     :src="route('admin.catalog.attributes.options.index', $attribute->id)"
@@ -263,13 +250,12 @@
                                     <template #header="{ columns, records, sortPage, selectAllRecords, applied, isLoading, actions}">
                                         <template v-if="! isLoading">
                                             <div
-                                                class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-violet-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
+                                                class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-primary-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
                                                 :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType == 'color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                             >
-                                            <!-- Empty div to manage layout  -->
+                                            {{-- Empty div to manage layout --}}
                                             <div>
                                             </div>
-                                                <!-- Column Headers -->
                                                  <div v-if="showSwatch && (selectedSwatchType == 'color' || selectedSwatchType == 'image')"
                                                     class="flex items-center select-none">
                                                     <p class="text-gray-600 dark:text-gray-300">
@@ -299,7 +285,6 @@
                                                     </p>
                                                 </div>
 
-                                                <!-- Actions -->
                                                 <div
                                                     class="flex gap-2.5 items-center justify-end select-none"
                                                     v-if="actions?.length"
@@ -314,7 +299,6 @@
                                             </div>
                                         </template>
 
-                                        <!-- Datagrid Head Shimmer -->
                                         <template v-else>
                                             <x-admin::shimmer.datagrid.table.head :isMultiRow="true" />
                                         </template>
@@ -323,7 +307,7 @@
                                         <template v-if="! isLoading">
                                             <div
                                                 v-for="(record, index) in records"
-                                                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                                                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                                                 :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType=='color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                                 :draggable="isSortable"
                                                 @dragstart="onDragStart(index)"
@@ -335,7 +319,6 @@
                                                 <i class="icon-drag text-2xl transition-all group-hover:text-gray-700 cursor-grab" :class="{ 'invisible': !isSortable }"></i>
 
                                                 <div v-if="showSwatch && (selectedSwatchType == 'color' || selectedSwatchType == 'image')">
-                                                    <!-- Swatch Image -->
                                                     <div v-if="selectedSwatchType == 'image'">
                                                         <div>
                                                                 <img
@@ -344,7 +327,6 @@
                                                                 >
                                                         </div>
                                                     </div>
-                                                    <!-- Swatch Color -->
                                                     <div v-if="selectedSwatchType == 'color'">
                                                         <div
                                                             class="h-[25px] w-[25px] rounded-md border border-gray-200 dark:border-gray-800"
@@ -367,10 +349,9 @@
                                                 >
                                                 </p>
 
-                                                <!-- Actions -->
                                                 <div class="flex justify-end">
                                                     <span
-                                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                                         :class="action.icon"
                                                         v-text="!action.icon ? action.title : ''"
                                                         v-for="action in record.actions"
@@ -382,7 +363,6 @@
                                             </div>
                                         </template>
 
-                                        <!-- Datagrid Shimmer for body when loading data  -->
                                         <template v-else>
                                             <x-admin::shimmer.datagrid.table.body :isMultiRow="true" />
                                         </template>
@@ -392,11 +372,9 @@
                         </div>
                     </div>
 
-                    <!-- Right sub-component -->
                     <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                         {!! view_render_event('unopim.admin.catalog.attributes.edit.card.accordian.validations.before', ['attribute' => $attribute]) !!}
 
-                        <!-- Validations -->
                         <x-admin::accordion>
                             <x-slot:header>
                                 <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
@@ -405,7 +383,6 @@
                             </x-slot>
 
                             <x-slot:content>
-                                <!-- Input Validation -->
                                 @if($attribute->type == 'text')
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label>
@@ -440,7 +417,6 @@
                                     </x-admin::form.control-group>
                                 @endif
 
-                                <!-- REGEX -->
                                 <x-admin::form.control-group v-if="'regex' == selectedValidationType">
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.catalog.attributes.create.regex')
@@ -456,7 +432,6 @@
                                     <x-admin::form.control-group.error control-name="regex_pattern" />
                                 </x-admin::form.control-group>
 
-                                <!-- Is Required -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none">
                                     @php
                                         $selectedOption = old('is_required') ?? $attribute->is_required
@@ -485,7 +460,6 @@
                                     </label>
                                 </x-admin::form.control-group>
 
-                                <!-- Is Unique -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-0 opacity-70 select-none">
                                     <x-admin::form.control-group.control
                                         type="checkbox"
@@ -511,7 +485,6 @@
 
                         {!! view_render_event('unopim.admin.catalog.attributes.edit.card.accordian.configuration.before', ['attribute' => $attribute]) !!}
 
-                        <!-- Configurations -->
                         <x-admin::accordion>
                             <x-slot:header>
                                 <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
@@ -520,7 +493,6 @@
                             </x-slot>
 
                             <x-slot:content>
-                                <!-- Value Per Locale -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 opacity-70 select-none">
                                     @php
                                         $valuePerLocale = old('value_per_locale') ?? $attribute->value_per_locale;
@@ -552,7 +524,6 @@
                                 @endphp
 
                                 @if($valuePerLocale != 0 && ($selectedOption == 'textarea' || $selectedOption == 'text'))
-                                    <!-- AI Translate -->
                                     <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2  select-none">
                                         @php
                                             $valueTranslate = old('ai_translate') ?? $attribute->ai_translate;
@@ -581,7 +552,6 @@
                                         />
                                     </x-admin::form.control-group>
                                 @endif
-                                <!-- Value Per Channel -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 opacity-70 select-none">
                                     @php
                                         $valuePerChannel = old('value_per_channel') ?? $attribute->value_per_channel
@@ -609,7 +579,6 @@
                                     />
                                 </x-admin::form.control-group>
 
-                                <!-- Filterable  -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none {{ $attribute->code === 'sku' ? 'opacity-70' : '' }}">
                                     @php
                                         $isFilterable = old('is_filterable') ?? $attribute->is_filterable;
@@ -646,7 +615,6 @@
                 </div>
             </x-admin::form>
 
-            <!-- Add Options Model Form -->
             <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
                 as="div"
@@ -660,17 +628,14 @@
                     <x-admin::modal
                         ref="addOptionsRow"
                     >
-                        <!-- Modal Header !-->
                         <x-slot:header>
                             <p class="text-lg text-gray-800 dark:text-white font-bold">
                                 @lang('admin::app.catalog.attributes.edit.add-option')
                             </p>
                         </x-slot>
 
-                        <!-- Modal Content !-->
                         <x-slot:content>
                             <div class="grid gap-4">
-                                <!-- Image Input -->
                                 <x-admin::form.control-group
                                     class="w-full"
                                     v-if="selectedSwatchType == 'image'"
@@ -695,7 +660,6 @@
                                     <x-admin::form.control-group.error control-name="swatch_value" />
                                 </x-admin::form.control-group>
 
-                                <!-- Color Input -->
                                 <x-admin::form.control-group
                                     class="w-full max-w-[160px]"
                                     v-if="selectedSwatchType == 'color'"
@@ -714,7 +678,6 @@
                                 </x-admin::form.control-group>
 
                                 <div class="grid grid-cols-3 gap-4">
-                                <!-- Hidden Id Input -->
                                 <x-admin::form.control-group.control
                                     type="hidden"
                                     name="id"
@@ -726,7 +689,6 @@
                                     ::value="optionIsNew"
                                 />
 
-                                <!-- Attribute Option Code Input -->
                                 <x-admin::form.control-group class="w-full mb-2.5">
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.catalog.attributes.edit.code')
@@ -746,7 +708,6 @@
                                     <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
 
-                                <!-- Locales Input -->
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group class="w-full mb-2.5">
                                         <x-admin::form.control-group.label
@@ -770,9 +731,7 @@
                             </div>
                         </x-slot>
 
-                        <!-- Modal Footer !-->
                         <x-slot:footer>
-                            <!-- Save Button -->
                             <button
                                 type="submit"
                                 class="primary-button"

@@ -5,8 +5,7 @@
         ref="nativeUndoInput"
         type="text"
         :name="`${entityId}_${column.code}`"
-        @input="update"
-        style="opacity: 0; height: 0; width: 0; position: absolute;"
+        @input="update" class="opacity-0 h-0 w-0 absolute"
       />
       <input
         ref="input"
@@ -23,7 +22,7 @@
       <!-- Dropdown arrow (like Excel) -->
       <span
         v-if="isActive"
-        class="flex-shrink-0 px-0.5 cursor-pointer text-gray-400 hover:text-violet-600"
+        class="flex-shrink-0 px-0.5 cursor-pointer text-gray-400 hover:text-primary-600"
         @mousedown.prevent="openDropdown"
       >
         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
@@ -46,7 +45,7 @@
             :key="option[valueKey]"
             class="flex items-center justify-between px-2 py-1 hover:bg-gray-100 dark:hover:bg-cherry-700 cursor-pointer"
             :class="[
-              { 'font-semibold text-violet-700': selectedOption === option[valueKey] },
+              { 'font-semibold text-primary-700': selectedOption === option[valueKey] },
               { 'bg-gray-100 dark:bg-cherry-700': highlightedIndex === index }
             ]"
             :title="option[labelKey]"

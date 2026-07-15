@@ -1,5 +1,4 @@
 <x-admin::layouts>
-    <!-- Page Title -->
     <x-slot:title>
         @lang('admin::app.settings.data-transfer.exports.create.title')
     </x-slot>
@@ -18,13 +17,8 @@
             >
                 {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.create_form_controls.before') !!}
 
-                <!-- Page Header -->
-                <div class="flex justify-between items-center">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.settings.data-transfer.exports.create.title')
-                    </p>
-
-                    <div class="flex gap-x-2.5 items-center">
+                <x-admin::page-header :title="trans('admin::app.settings.data-transfer.exports.create.title')">
+                    <x-slot:actions>
                         <a
                             href="{{ route('admin.settings.data_transfer.exports.index') }}"
                             class="transparent-button"
@@ -35,23 +29,19 @@
                         <button type="submit" class="primary-button">
                             @lang('admin::app.settings.data-transfer.exports.create.save-btn')
                         </button>
-                    </div>
-                </div>
+                    </x-slot>
+                </x-admin::page-header>
 
-                <!-- Body Content -->
                 <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-                    <!-- Left Container -->
                     <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.general.before') !!}
 
-                        <!-- General -->
                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                             <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                 @lang('admin::app.settings.data-transfer.exports.create.general')
                             </p>
 
                             <div class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5">
-                                <!-- Code -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.settings.data-transfer.exports.create.code')
@@ -69,7 +59,6 @@
                                     <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
 
-                                <!-- Type -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.settings.data-transfer.exports.create.type')
@@ -106,7 +95,6 @@
 
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.scope.before') !!}
 
-                        <!-- Data to export -->
                         <div
                             v-if="hasScopeFilters"
                             class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow"
@@ -117,7 +105,7 @@
 
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="channels,locales,currencies,attributes"
                                 grid-class="grid grid-cols-1"
                             />
@@ -125,7 +113,6 @@
 
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.scope.after') !!}
 
-                        <!-- Product filters -->
                         <div
                             v-if="hasProductFilters"
                             class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow"
@@ -136,19 +123,18 @@
 
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="attribute_families,status"
                                 grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
                             />
 
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="completeness,time_condition,time_value,time_date,time_date_end"
                                 grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
                             />
 
-                            <!-- Category (tree) -->
                             <template v-if="supportsCategories">
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label>
@@ -163,34 +149,31 @@
 
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="sku"
                                 grid-class="grid grid-cols-1"
                             />
                         </div>
 
-                        <!-- Attribute Conditions -->
                         <template v-if="supportsConditions">
                             <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                                 <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                     @lang('admin::app.settings.data-transfer.exports.create.attribute-conditions')
                                 </p>
 
-                                <x-admin::data-transfer.attribute-conditions
-                                    :attribute-route="route('admin.settings.data_transfer.exports.filters.attributes')"
-                                    :exclude-attributes="[\Webkul\DataTransfer\Enums\ProductFilter::SKU->value]"
-                                    :operators="\Webkul\DataTransfer\Helpers\Sources\Export\Filters\AttributeConditionOperators::frontendMap()"
-                                >
-                                </x-admin::data-transfer.attribute-conditions>
+                                <x-admin::data-transfer.filter-fields
+                                    ::entity-type="entityType"
+                                    :exporter-config="$exporterConfig"
+                                    only="custom_attributes"
+                                    grid-class="grid grid-cols-1"
+                                />
                             </div>
                         </template>
                     </div>
 
-                    <!-- Right Container -->
                     <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.accordion.filters.befor') !!}
 
-                        <!-- Output -->
                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                             <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                 @lang('admin::app.settings.data-transfer.exports.create.output')
@@ -198,8 +181,7 @@
 
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
-                                ::fields="filterFields"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="file_format,with_media,header_row,use_labels,date_format,file_path"
                             />
                         </div>
@@ -208,7 +190,6 @@
 
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.accordion.settings.before') !!}
 
-                        <!-- Format settings -->
                         <div
                             v-if="selectedFileFormat == 'Csv'"
                             class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow"
@@ -250,18 +231,22 @@
                 if (! isset($exporterConfig[$selectedEntityType]['filters']['fields'])) {
                     $selectedEntityType = 'categories';
                 }
+
+                $setsKey = app(\Webkul\Admin\Fields\FieldConfig::class)->payload($exporterConfig)['key'];
             @endphp
 
             app.component('v-export-profile', {
                 template: '#v-export-profile-template',
 
                 data() {
+                    const setsKey = @json($setsKey);
+
                     return {
                         fileFormat: 'Csv',
                         selectedFileFormat: "{{ old('filters.file_format') ?? null }}",
                         entityType: "{{ $selectedEntityType }}",
-                        exporterConfig: @json($exporterConfig),
-                        filterFields: @json($exporterConfig[$selectedEntityType]['filters']['fields']),
+                        setsKey,
+                        filterFields: (window.unopim?.fieldSets?.[setsKey] ?? {})[@json($selectedEntityType)] ?? [],
                     };
                 },
 
@@ -279,7 +264,7 @@
                     },
 
                     supportsConditions() {
-                        return this.filterFields.some(field => field.name === 'attributes');
+                        return this.filterFields.some(field => field.name === 'custom_attributes');
                     },
 
                     supportsCategories() {
@@ -295,7 +280,7 @@
                             return;
                         }
 
-                        this.filterFields = this.exporterConfig[configKey]['filters']['fields'];
+                        this.filterFields = this.fieldsFor(configKey);
 
                         if (this.filterFields.filter(field => field.name == 'file_format').length == 0) {
                             this.selectedFileFormat = '';
@@ -315,6 +300,10 @@
                 },
 
                 methods: {
+                    fieldsFor(entityType) {
+                        return (window.unopim?.fieldSets?.[this.setsKey] ?? {})[entityType] ?? [];
+                    },
+
                     parseValue(value) {
                         try {
                             return value ? JSON.parse(value) : null;

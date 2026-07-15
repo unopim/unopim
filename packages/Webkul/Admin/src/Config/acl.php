@@ -649,17 +649,17 @@ return [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.integrations.index',
-        'sort'   => 9,
+        'sort'   => 10,
     ], [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.store',
-        'sort'   => 9,
+        'sort'   => 10,
     ], [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.download',
-        'sort'   => 9,
+        'sort'   => 10,
     ], [
         'key'   => 'configuration.integrations',
         'name'  => 'admin::app.acl.integrations',
@@ -731,7 +731,17 @@ return [
     ], [
         'key'   => 'configuration.system_settings',
         'name'  => 'admin::app.acl.system-settings',
-        'route' => 'admin.configuration.system.settings',
+        'route' => 'admin.settings.system.index',
+        'sort'  => 5,
+    ], [
+        'key'   => 'configuration.system_settings',
+        'name'  => 'admin::app.acl.system-settings',
+        'route' => 'admin.settings.system.edit',
+        'sort'  => 5,
+    ], [
+        'key'   => 'configuration.system_settings',
+        'name'  => 'admin::app.acl.system-settings',
+        'route' => 'admin.settings.system.update',
         'sort'  => 5,
     ], [
         'key'   => 'configuration.system_settings.edit',

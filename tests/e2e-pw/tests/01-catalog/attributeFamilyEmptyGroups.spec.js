@@ -13,7 +13,7 @@ async function createFamily(adminPage, code, name) {
     adminPage,
     'Save Attribute Family',
     /Family created successfully/i,
-    /\/admin\/catalog\/families\/edit\/\d+/
+    /\/admin\/catalog\/attribute-families\/edit\/\d+/
   );
 
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
@@ -60,8 +60,11 @@ test.describe('Attribute Family - Save with empty groups (#709)', () => {
     await adminPage.getByRole('button', { name: 'Assign Attribute Group' }).click();
     await adminPage.waitForTimeout(500);
 
+    // Touch a tracked field to surface the global "Save changes" bar
+    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Empty Group Test A');
+
     // Save with the group assigned
-    await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family updated successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Family updated successfully/i);
 
     // Step 3: Edit again — delete the group
     await navigateTo(adminPage, 'attributeFamilies');
@@ -85,8 +88,11 @@ test.describe('Attribute Family - Save with empty groups (#709)', () => {
     // Wait for the modal's Agree button to disappear before saving
     await agreeBtn.waitFor({ state: 'hidden', timeout: 10000 });
 
+    // Touch a tracked field to surface the global "Save changes" bar
+    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Empty Group Test B');
+
     // Step 4: Save — must redirect with success flash, not a 500 error
-    await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family updated successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Family updated successfully/i);
 
     // Cleanup
     await deleteFamily(adminPage, code);

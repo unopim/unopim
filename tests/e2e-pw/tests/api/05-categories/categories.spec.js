@@ -89,9 +89,14 @@ test.describe('Categories API - CRUD', () => {
     expectValidationError(result);
   });
 
-  test('5.9 - Missing parent → 4xx', async ({ api }) => {
-    const result = await post(api, '/categories', { data: payloads.categories.buildMissingParent() });
-    expectValidationError(result);
+  test('5.9 - Missing parent creates a root category', async ({ api, uid }) => {
+    // `parent` is optional (StoreCategoryRequest: sometimes|nullable|string), so a
+    // payload without it is a valid root category, not a validation error.
+    const code = `cat_noparent_${uid}`;
+    const result = await post(api, '/categories', { data: payloads.categories.buildMissingParent({ code }) });
+    expectOk(result);
+    expectSuccessEnvelope(result.body, 'created');
+    createdCodes.add(code);
   });
 
   test('5.10 - Empty payload → 4xx', async ({ api }) => {

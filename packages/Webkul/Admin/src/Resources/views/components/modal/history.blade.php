@@ -50,7 +50,7 @@
                                 <button
                                     type="button"
                                     @click="closeModal"
-                                    class="icon-cancel text-3xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                    class="icon-cancel text-3xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                                 >
                                 </button>
                             </div>
@@ -87,7 +87,7 @@
                                                         <span class="text-red-500">@{{ oldValueLabel }}</span>
                                                     </th>
                                                     <th class="py-2 px-4 text-left">
-                                                        <span class="text-violet-700">@{{ newValueLabel }}</span>
+                                                        <span class="text-primary-700">@{{ newValueLabel }}</span>
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -109,7 +109,7 @@
                                                     <tr v-for="history in versionHistory" :key="history.id" class="border-t dark:border-gray-800">
                                                         <td class="py-2 px-4">@{{ history.name }}</td>
                                                         <td class="py-2 px-4 text-red-500  word-break">@{{ history.old }}</td>
-                                                        <td class="py-2 px-4 text-violet-700 word-break">@{{ history.new }}</td>
+                                                        <td class="py-2 px-4 text-primary-700 word-break">@{{ history.new }}</td>
                                                     </tr>
                                                 </template>
                                             </tbody>

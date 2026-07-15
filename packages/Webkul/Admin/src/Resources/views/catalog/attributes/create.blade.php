@@ -1,10 +1,8 @@
 <x-admin::layouts>
-    <!-- Title of the page -->
     <x-slot:title>
         @lang('admin::app.catalog.attributes.create.title')
     </x-slot>
 
-    <!-- Create Attributes Vue Components -->
     <v-create-attributes :locales="{{ $locales->toJson() }}"></v-create-attributes>
 
     @pushOnce('scripts')
@@ -15,7 +13,6 @@
 
             {!! view_render_event('unopim.admin.catalog.attributes.create.before') !!}
 
-            <!-- Input Form -->
             <x-admin::form
                 ajax
                 :action="route('admin.catalog.attributes.store')"
@@ -24,14 +21,8 @@
 
                 {!! view_render_event('unopim.admin.catalog.attributes.create.create_form_controls.before') !!}
 
-                <!-- actions buttons -->
-                <div class="flex justify-between items-center">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.catalog.attributes.create.title')
-                    </p>
-
-                    <div class="flex gap-x-2.5 items-center">
-                        <!-- Cancel Button -->
+                <x-admin::page-header :title="trans('admin::app.catalog.attributes.create.title')">
+                    <x-slot:actions>
                         <a
                             href="{{ route('admin.catalog.attributes.index') }}"
                             class="transparent-button"
@@ -39,30 +30,25 @@
                             @lang('admin::app.catalog.attributes.create.back-btn')
                         </a>
 
-                        <!-- Save Button -->
                         <button
                             type="submit"
                             class="primary-button"
                         >
                             @lang('admin::app.catalog.attributes.create.save-btn')
                         </button>
-                    </div>
-                </div>
+                    </x-slot>
+                </x-admin::page-header>
 
-                <!-- body content -->
                 <div class="flex gap-2.5 mt-3.5">
 
                     {!! view_render_event('unopim.admin.catalog.attributes.create.card.label.before') !!}
 
-                    <!-- Left sub Component -->
                     <div class="flex flex-col gap-2 flex-1 overflow-auto">
-                        <!-- General -->
                         <div class="p-4 bg-white dark:bg-cherry-900 box-shadow rounded">
                             <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
                                 @lang('admin::app.catalog.attributes.create.general')
                             </p>
 
-                            <!-- Attribute Code -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.catalog.attributes.create.code')
@@ -91,7 +77,6 @@
                                 <x-admin::form.control-group.error control-name="code" />
                             </x-admin::form.control-group>
 
-                            <!-- Attribute Type -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.catalog.attributes.create.type')
@@ -169,7 +154,6 @@
                                 <x-admin::form.control-group.error control-name="swatch_type" />
                             </x-admin::form.control-group>
 
-                            <!-- Textarea Switcher -->
                             <x-admin::form.control-group v-show=" (selectedAttributeType == 'textarea')">
                                 <x-admin::form.control-group.label>
                                     @lang('admin::app.catalog.attributes.create.enable-wysiwyg')
@@ -184,7 +168,6 @@
                             </x-admin::form.control-group>
                         </div>
 
-                        <!-- Labels -->
                         <div class="bg-white dark:bg-cherry-900 box-shadow rounded">
                             <div class="flex justify-between items-center p-1.5">
                                 <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">                                    
@@ -193,7 +176,6 @@
                             </div>
 
                             <div class="px-4 pb-4">
-                                <!-- Locales Inputs -->
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group class="last:!mb-0">
                                         <x-admin::form.control-group.label>
@@ -215,9 +197,7 @@
 
                     {!! view_render_event('unopim.admin.catalog.attributes.create.card.general.before') !!}
 
-                    <!-- Right sub-component -->
                     <div class="flex flex-col gap-2 w-[360px] max-w-full">
-                        <!-- Validations -->
                         <x-admin::accordion>
                             <x-slot:header>
                                 <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
@@ -226,7 +206,6 @@
                             </x-slot>
 
                             <x-slot:content>
-                                <!-- Input Validation -->
                                 <x-admin::form.control-group v-if="selectedAttributeType == 'text'">
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.catalog.attributes.create.input-validation')
@@ -268,7 +247,6 @@
                                     <x-admin::form.control-group.error control-name="validation" />
                                 </x-admin::form.control-group>
 
-                                <!-- REGEX -->
                                 <x-admin::form.control-group v-show="selectedValidationType == 'regex'">
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.catalog.attributes.create.regex')
@@ -284,7 +262,6 @@
                                     <x-admin::form.control-group.error control-name="regex_pattern" />
                                 </x-admin::form.control-group>
 
-                                <!-- Is Required -->
                                  <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2">
                                     <x-admin::form.control-group.control
                                         type="checkbox"
@@ -302,7 +279,6 @@
                                     </label>
                                 </x-admin::form.control-group>
 
-                                <!-- Is Unique -->
                                 <x-admin::form.control-group
                                     class="flex gap-2.5 items-center !mb-0 select-none"
                                     v-if="selectedAttributeType == 'text'"
@@ -325,7 +301,6 @@
                             </x-slot>
                         </x-admin::accordion>
 
-                        <!-- Configurations -->
                         <x-admin::accordion>
                             <x-slot:header>
                                 <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
@@ -334,7 +309,6 @@
                             </x-slot>
 
                             <x-slot:content>
-                                <!-- Value Per Locale -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none">
                                     <x-admin::form.control-group.control
                                         type="checkbox"
@@ -352,7 +326,6 @@
                                         @lang('admin::app.catalog.attributes.edit.value-per-locale')
                                     </label>
                                 </x-admin::form.control-group>
-                                <!-- AI Translate -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none" v-show=" ((selectedAttributeType == 'textarea') || (selectedAttributeType == 'text')) && (valuePerLocale == 1)">
 
                                     <x-admin::form.control-group.control
@@ -371,7 +344,6 @@
                                     </label>
                                 </x-admin::form.control-group>
 
-                                <!-- Value Per Channel -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none">
                                     <x-admin::form.control-group.control
                                         type="checkbox"
@@ -389,7 +361,6 @@
                                     </label>
                                 </x-admin::form.control-group>
 
-                                <!-- Filterable  -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none">
                                     <x-admin::form.control-group.control
                                         type="checkbox"

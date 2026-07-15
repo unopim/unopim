@@ -12,7 +12,7 @@
                 <div class="flex items-center flex-wrap gap-3">
                     <!-- Label -->
                     <div class="flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full" style="background: #ef4444;"></span>
+                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
                         <span class="text-xs font-semibold text-zinc-700 dark:text-slate-300">
                             @lang('admin::app.dashboard.index.needs-attention')
                         </span>
@@ -22,10 +22,9 @@
                     <a
                         v-if="stats.unenriched > 0"
                         href="{{ route('admin.catalog.products.index') }}"
-                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium no-underline transition-shadow hover:shadow-md"
-                        style="background: #fef2f2; color: #991b1b;"
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium no-underline transition-shadow hover:shadow-md bg-red-50 text-red-800"
                     >
-                        <span class="w-1.5 h-1.5 rounded-full" style="background: #ef4444;"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                         @{{ stats.unenriched }} @lang('admin::app.dashboard.index.unenriched-products')
                     </a>
 
@@ -33,10 +32,9 @@
                     <a
                         v-if="stats.failedJobs > 0"
                         href="{{ route('admin.settings.data_transfer.tracker.index') }}"
-                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium no-underline transition-shadow hover:shadow-md"
-                        style="background: #fff7ed; color: #9a3412;"
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium no-underline transition-shadow hover:shadow-md bg-orange-50 text-orange-800"
                     >
-                        <span class="w-1.5 h-1.5 rounded-full" style="background: #f97316;"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
                         @{{ stats.failedJobs }} @lang('admin::app.dashboard.index.failed-jobs-24h')
                     </a>
 
@@ -44,10 +42,9 @@
                     <a
                         v-if="stats.lowCompleteness > 0"
                         href="{{ route('admin.catalog.products.index') }}"
-                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium no-underline transition-shadow hover:shadow-md"
-                        style="background: #fffbeb; color: #92400e;"
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium no-underline transition-shadow hover:shadow-md bg-amber-50 text-amber-800"
                     >
-                        <span class="w-1.5 h-1.5 rounded-full" style="background: #f59e0b;"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                         @{{ stats.lowCompleteness }} @lang('admin::app.dashboard.index.low-completeness')
                     </a>
                 </div>

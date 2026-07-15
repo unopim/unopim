@@ -6,14 +6,11 @@
     <div class="datagrid-toolbar mt-7 flex items-center justify-between gap-4 max-md:flex-wrap">
         <!-- Left Toolbar -->
         <div class="flex gap-x-1">
-            <!-- Mass Actions Panel -->
             <div
                 class="flex w-full items-center gap-x-1"
                 v-if="applied.massActions.indices.length"
             >
-                <!-- Mass Action Dropdown -->
                 <x-admin::dropdown>
-                    <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <button
                             type="button"
@@ -27,7 +24,6 @@
                         </button>
                     </x-slot>
 
-                    <!-- Dropdown Content -->
                     <x-slot:menu class="!p-0 shadow-[0_5px_20px_rgba(0,0,0,0.15)] dark:border-gray-800">
                         <template v-for="(massAction, massActionIndex) in available.massActions">
                             <li
@@ -36,7 +32,7 @@
                                 v-if="massAction?.options?.length"
                             >
                                 <a
-                                    class="flex gap-1.5 justify-between whitespace-no-wrap cursor-not-allowed rounded-t px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-cherry-800"
+                                    class="flex gap-1.5 justify-between whitespace-no-wrap cursor-not-allowed rounded-t px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-cherry-800"
                                     href="javascript:void(0);"
                                 >
                                     <i
@@ -59,7 +55,7 @@
                                         :key="optionIndex"
                                     >
                                         <a
-                                            class="whitespace-no-wrap block rounded-t px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-cherry-800"
+                                            class="whitespace-no-wrap block rounded-t px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-cherry-800"
                                             href="javascript:void(0);"
                                             v-text="option.label"
                                             @click="performMassAction(massAction, option)"
@@ -74,7 +70,7 @@
                                 :key="massActionIndex"
                             >
                                 <a
-                                    class="flex gap-1.5 whitespace-no-wrap rounded-b px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-cherry-800"
+                                    class="flex gap-1.5 whitespace-no-wrap rounded-b px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-cherry-800"
                                     href="javascript:void(0);"
                                     @click="performMassAction(massAction)"
                                 >
@@ -101,30 +97,19 @@
                 </div>
             </div>
 
-            <!-- Search Panel -->
             <div
                 class="flex w-full items-center gap-x-1"
                 v-else
             >
-                <!-- Search Panel -->
                 <div class="flex max-w-[445px] items-center max-sm:w-full max-sm:max-w-full">
-                    <div class="relative w-full">
-                        <input
-                            type="text"
-                            name="search"
-                            :value="getAppliedColumnValues('all')"
-                            class="block w-full rounded-lg border dark:border-cherry-800 bg-white dark:bg-cherry-900 py-1.5 ltr:pl-3 rtl:pr-3 ltr:pr-10 rtl:pl-10 leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400  dark:focus:border-gray-400"
-                            :placeholder="available.searchPlaceholder"
-                            autocomplete="off"
-                            @keydown.enter.prevent="filterPage"
-                        >
-
-                        <div class="icon-search pointer-events-none absolute ltr:right-2.5 rtl:left-2.5 top-2 flex items-center text-2xl" aria-hidden="true">
-                        </div>
-                    </div>
+                    <x-admin::search
+                        name="search"
+                        ::value="getAppliedColumnValues('all')"
+                        ::placeholder="available.searchPlaceholder"
+                        @keydown.enter.prevent="filterPage"
+                    />
                 </div>
 
-                <!-- Information Panel -->
                 <div class="ltr:pl-2.5 rtl:pr-2.5">
                     <p class="text-sm font-light text-gray-800 dark:text-white">
                         @{{ @json(trans('admin::app.components.datagrid.toolbar.results')).replace(':total', available.meta.total) }}
@@ -133,20 +118,17 @@
             </div>
         </div>
 
-        <!-- Right Toolbar -->
         <div class="flex items-center gap-x-4">
-            <!-- Manage Columns -->
              <template v-if="available.meta.managedColumn?.enabled">
                 <x-admin::datagrid.manage-columns />
              </template>
             
-            <!-- Filters Activation Button -->
             <x-admin::drawer width="350px" ref="filterDrawer">
                 <x-slot:toggle>
                     <div>
                         <div
                             class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
-                            :class="{'[&>*]:text-violet-700 [&>*]:dark:text-white': applied.filters.columns.length > 1}"
+                            :class="{'[&>*]:text-primary-700 [&>*]:dark:text-white': applied.filters.columns.length > 1}"
                             v-if="available?.columns?.filter(col => col?.filterable == true)?.length"
                         >
                             <span class="icon-filter text-2xl" aria-hidden="true"></span>
@@ -166,7 +148,6 @@
                     </div>
                 </x-slot>
 
-                <!-- Drawer Header -->
                 <x-slot:header>
                     <div class="flex justify-between items-center p-3">
                         <p class="text-base text-gray-800 dark:text-white font-semibold">
@@ -175,15 +156,13 @@
                     </div>
                 </x-slot>
 
-                <!-- Drawer Content -->
                 <x-slot:content class="!p-5">
                     <x-admin::datagrid.filters />
 
-                    <!-- Add Filter -->
                     <div class="mb-4" v-if="getInactiveFilterColumns().length || filterAttributesSrc">
                         <button
                             type="button"
-                            class="flex items-center gap-1.5 w-full justify-center rounded-md border border-dashed border-gray-300 dark:border-cherry-800 px-3 py-2 text-sm font-medium text-violet-700 dark:text-violet-400 transition-all hover:border-violet-400 hover:bg-violet-50 dark:hover:border-violet-400 dark:hover:bg-cherry-800"
+                            class="flex items-center gap-1.5 w-full justify-center rounded-md border border-dashed border-gray-300 dark:border-cherry-800 px-3 py-2 text-sm font-medium text-primary-700 dark:text-primary-400 transition-all hover:border-primary-400 hover:bg-primary-50 dark:hover:border-primary-400 dark:hover:bg-cherry-800"
                             @click="toggleFilterPicker()"
                         >
                             <span class="icon-add text-lg"></span>
@@ -213,7 +192,7 @@
                                 <p
                                     v-for="column in filterPickerList()"
                                     :key="column.index"
-                                    class="cursor-pointer px-3 py-2 text-sm text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-900"
+                                    class="cursor-pointer px-3 py-2 text-sm text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 dark:hover:bg-cherry-900"
                                     v-text="column.label"
                                     @click="selectFilterAttribute(column)"
                                 ></p>
@@ -247,7 +226,6 @@
 
             <div class="flex items-center gap-x-2">
                 <x-admin::dropdown>
-                    <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <button
                             type="button"
@@ -260,7 +238,6 @@
                         </button>
                     </x-slot>
 
-                    <!-- Dropdown Content -->
                     <x-slot:menu>
                         <x-admin::dropdown.menu.item
                             v-for="perPageOption in available.meta.per_page_options"
@@ -290,11 +267,10 @@
                     <span v-text="available.meta.last_page"></span>
                 </div>
 
-                <!-- Pagination -->
                 <div class="flex items-center gap-1" role="navigation" aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.page-number')">
                     <button
                         type="button"
-                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                         @click="changePage('first')"
                         title="@lang('admin::app.components.datagrid.toolbar.pagination.first-page')"
                         aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.first-page')"
@@ -303,7 +279,7 @@
                     </button>
                     <button
                         type="button"
-                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                         @click="changePage('previous')"
                         title="@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')"
                         aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')"
@@ -313,7 +289,7 @@
 
                     <button
                         type="button"
-                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                         @click="changePage('next')"
                         title="@lang('admin::app.components.datagrid.toolbar.pagination.next-page')"
                         aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.next-page')"
@@ -322,7 +298,7 @@
                     </button>
                     <button
                         type="button"
-                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
                         @click="changePage('last')"
                         title="@lang('admin::app.components.datagrid.toolbar.pagination.last-page')"
                         aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.last-page')"

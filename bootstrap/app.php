@@ -6,7 +6,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\PostTooLargeException;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Webkul\Admin\Http\Middleware\ConvertAjaxFormRedirect;
 use Webkul\Core\Http\Middleware\CheckForMaintenanceMode;
 use Webkul\Core\Http\Middleware\NoCacheMiddleware;
@@ -97,6 +99,19 @@ return Application::configure(basePath: dirname(__DIR__))
             exit($e->getMessage());
         });
 
+        $exceptions->render(function (NotFoundHttpException $e, $request) {
+            $errorCode = 404;
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'message'   => trans('admin::app.errors.'.$errorCode.'.title'),
+                    'errorCode' => $errorCode,
+                ], $errorCode);
+            }
+
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode], $errorCode);
+        });
+
         $exceptions->render(function (MethodNotAllowedHttpException $e, $request) {
             $errorCode = 405;
             $headers = $e->getHeaders();
@@ -105,6 +120,29 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'message'   => trans('admin::app.errors.'.$errorCode.'.title'),
                     'errorCode' => $errorCode,
+                ], $errorCode, $headers);
+            }
+
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode], $errorCode, $headers);
+        });
+
+        /*
+         * Render rate-limit lockouts (e.g. the admin login throttle) as the styled
+         * 429 page / a structured JSON body instead of the generic 500. Only active
+         * when APP_DEBUG is off, so local debugging still sees the raw exception.
+         */
+        $exceptions->render(function (ThrottleRequestsException $e, $request) {
+            if (config('app.debug')) {
+                return null;
+            }
+
+            $errorCode = 429;
+            $headers = $e->getHeaders();
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'error'       => trans('admin::app.errors.'.$errorCode.'.title'),
+                    'description' => trans('admin::app.errors.'.$errorCode.'.description'),
                 ], $errorCode, $headers);
             }
 

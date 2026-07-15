@@ -45,14 +45,12 @@
 
         <div class="flex  gap-4 justify-between items-center mt-7 max-md:flex-wrap">
             <div class="flex gap-x-1 items-center">
-                <!-- Channel Switcher -->
                 <x-admin::dropdown>
-                    <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <button
                         type="button"
                             class="
-                            flex gap-x-1 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50"
+                            flex gap-x-1 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-primary-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50"
                         >
                             <span class="icon-channel   text-2xl"></span>
 
@@ -64,12 +62,11 @@
                         </button>
                     </x-slot>
 
-                    <!-- Dropdown Content -->
                     <x-slot:content class="!p-0">
                         @foreach ($channels as $channel)
                             <a
                                 href="?{{ Arr::query(['channel' => $channel->code, 'locale' => $currentLocale?->code]) }}"
-                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white"
+                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 dark:text-white"
                             >
                             {{ ! empty($channel->name) ? $channel->name : '[' . $channel->code . ']' }}
                             </a>
@@ -77,13 +74,11 @@
                     </x-slot>
                 </x-admin::dropdown>
 
-                <!-- Locale Switcher -->
                 <x-admin::dropdown>
-                    <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <button
                             type="button"
-                            class="flex gap-x-1 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50 "
+                            class="flex gap-x-1 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-primary-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50 "
                         >
                             <span class="icon-language text-2xl"></span>
 
@@ -95,12 +90,11 @@
                         </button>
                     </x-slot>
 
-                    <!-- Dropdown Content -->
                     <x-slot:content class="!p-0">
                         @foreach ($currentChannel->locales->sortBy('name') as $locale)
                             <a
                                 href="?{{ Arr::query(['channel' => $currentChannel->code, 'locale' => $locale->code]) }}"
-                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white {{ $locale->code == $currentLocale?->code ? 'bg-gray-100 dark:bg-cherry-800' : ''}}"
+                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 dark:text-white {{ $locale->code == $currentLocale?->code ? 'bg-gray-100 dark:bg-cherry-800' : ''}}"
                             >
                                 {{ $locale->name }}
                             </a>
@@ -109,12 +103,11 @@
                 </x-admin::dropdown>
 
                 @if (isset($score['score']))
-                    <!-- Completeness Dropdown -->
                     <x-admin::dropdown>
                         <x-slot:toggle>
                             <button
                                 type="button"
-                                class="flex gap-x-2 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer appearance-none transition-all hover:bg-violet-50 dark:hover:bg-cherry-900 text-gray-600 dark:text-slate-50"
+                                class="flex gap-x-2 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer appearance-none transition-all hover:bg-primary-50 dark:hover:bg-cherry-900 text-gray-600 dark:text-slate-50"
                             >
                                 <span class="icon-activity text-2xl"></span>
 
@@ -122,13 +115,12 @@
                                     <span class="text-xl">% </span> @lang('completeness::app.catalog.products.edit.completeness.title')
                                 </div>
 
-                                <span class="inline-flex items-center px-2 py-1 rounded-md text-sm font-semibold bg-violet-700 text-white">
+                                <span class="inline-flex items-center px-2 py-1 rounded-md text-sm font-semibold bg-primary-700 text-white">
                                     {{ $score['score'].'%' }}
                                 </span>
                             </button>
                         </x-slot>
 
-                        <!-- Dropdown Content -->
                         <x-slot:content class="!p-0">
                             <div class="p-2">
                                 <div class="p-2 font-semibold border-b dark:border-cherry-800">
@@ -172,7 +164,6 @@
 
         {!! view_render_event('unopim.admin.catalog.product.edit.actions.after', ['product' => $product]) !!}
 
-        <!-- body content -->
         {!! view_render_event('unopim.admin.catalog.product.edit.form.before', ['product' => $product]) !!}
 
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
@@ -212,20 +203,15 @@
                                 </div>
 
                                 {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.after', ['product' => $product]) !!}
-                                <!-- Product Type View Blade File -->
                             </div>
                         @endif
-
-                        
 
                     {!! view_render_event('unopim.admin.catalog.product.edit.form.column_after', ['product' => $product]) !!}
                 @endforeach
             </div>
             <div class="right-column flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                <!-- Product Info View Blade File -->
                 @include('admin::catalog.products.edit.product-info')
 
-                <!-- Categories View Blade File -->
                 @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->values['categories'] ?? []])
 
                 @includeIf('admin::catalog.products.edit.types.' . $product->type)
@@ -233,7 +219,6 @@
                 <!-- Related, Cross Sells, Up Sells View Blade File -->
                 @include('admin::catalog.products.edit.links', ['linkedProducts' => $linkedProducts])
 
-                <!-- Include Product Type Additional Blade Files If Any -->
                 @foreach ($product->getTypeInstance()->getAdditionalViews() as $view)
                     @includeIf($view)
                 @endforeach
@@ -245,4 +230,47 @@
 
     {!! view_render_event('unopim.admin.catalog.product.edit.after', ['product' => $product]) !!}
 
+    @pushOnce('scripts')
+        {{-- Give the sticky edit header a solid white background once the page is scrolled
+             (Vue has no `.window` event modifier, so this is done with a plain listener). --}}
+        <script>
+            (function () {
+                // Query the header on each call — it's rendered by Vue (inside <v-form>),
+                // so it may not exist yet when this script first runs.
+                const update = () => {
+                    const header = document.querySelector('.js-sticky-header');
+
+                    if (! header) {
+                        return;
+                    }
+
+                    const scrolled = window.scrollY > 0;
+
+                    header.classList.toggle('bg-white', scrolled);
+                    header.classList.toggle('shadow-md', scrolled);
+                };
+
+                // The SPA re-runs pushed scripts on every ajax visit, so drop any
+                // previous listener before adding a new one and clean up on navigate —
+                // otherwise scroll handlers accumulate across visits.
+                if (window.__stickyProductHeader) {
+                    window.removeEventListener('scroll', window.__stickyProductHeader);
+                }
+
+                window.__stickyProductHeader = update;
+
+                window.addEventListener('scroll', update, { passive: true });
+
+                document.addEventListener('unopim:navigate:before', function cleanup() {
+                    window.removeEventListener('scroll', window.__stickyProductHeader);
+
+                    window.__stickyProductHeader = null;
+
+                    document.removeEventListener('unopim:navigate:before', cleanup);
+                });
+
+                setTimeout(update, 300);
+            })();
+        </script>
+    @endPushOnce
 </x-admin::layouts.with-history>
