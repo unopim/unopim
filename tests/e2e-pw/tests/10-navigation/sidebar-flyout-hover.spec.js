@@ -22,10 +22,13 @@ test.describe('Sidebar fly-out submenu hover', () => {
   test('keeps the fly-out open while moving from the parent onto a sub-item', async ({ adminPage }) => {
     const sidebar = adminPage.locator('#unopim-sidebar');
 
-    const catalog = sidebar.getByRole('link', { name: 'Catalog', exact: true });
+    // Sidebar labels render as `<p> Label </p>`, so the accessible name carries
+    // surrounding whitespace; anchor with a regex to stay exact without depending
+    // on that padding.
+    const catalog = sidebar.getByRole('link', { name: /^\s*Catalog\s*$/ });
     // The lowest sub-item is the worst case: the diagonal from the short trigger
     // row down to it crosses the most dead space.
-    const families = sidebar.getByRole('link', { name: 'Attribute Families', exact: true });
+    const families = sidebar.getByRole('link', { name: /^\s*Attribute Families\s*$/ });
 
     await catalog.hover();
     await expect(families).toBeVisible();
