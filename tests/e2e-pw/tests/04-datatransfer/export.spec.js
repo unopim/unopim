@@ -43,7 +43,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
-    await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
+    await adminPage.getByText('With Media').click();
     await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
@@ -57,7 +57,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
     await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
-    await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
+    await adminPage.getByText('With Media').click();
     await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
   });
@@ -67,7 +67,7 @@ test.describe('UnoPim Export Jobs', () => {
     await navigateTo(adminPage, 'exports');
     await adminPage.getByRole('link', { name: 'Create Export' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(`exp-fmt-${uid}`);
-    await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
+    await adminPage.getByText('With Media').click();
     await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The File Format field is required')).toBeVisible();
   });
@@ -78,7 +78,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('#export-type').locator('.multiselect__single, .multiselect__placeholder').first().click();
     await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
-    await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
+    await adminPage.getByText('With Media').click();
     await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
@@ -181,7 +181,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.waitForLoadState('networkidle');
 
     // Search again after returning to the listing
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
 
@@ -193,7 +193,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.waitForLoadState('networkidle');
 
     // Search again after returning to the listing
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
 
@@ -216,7 +216,7 @@ test.describe('UnoPim Export Jobs', () => {
     await createExport(adminPage, code, 'XLS', false);
     await expect(adminPage.getByRole('button', { name: 'Export Now' })).toBeVisible();
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
-    await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/tracker\/track\//);
+    await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/job-tracker\/track\//);
 
     // Cleanup
     await deleteExport(adminPage, code);
