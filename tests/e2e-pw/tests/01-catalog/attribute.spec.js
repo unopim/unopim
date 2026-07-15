@@ -99,8 +99,9 @@ async function addOption(adminPage, optionCode, optionLabel) {
   await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').fill(optionCode);
   await adminPage.locator('input[name="locales.en_US"]').fill(optionLabel);
   await clickSave(adminPage, 'Save Option');
-  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully')).toBeVisible();
-  await adminPage.getByText('Close').first().click();
+  // Modal auto-closes on successful save (storeOption toggles addOptionsRow); no manual Close needed.
+  // Success toasts stack, so assert the most recent one to avoid strict-mode multi-match.
+  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
 }
 
 /**
@@ -112,7 +113,7 @@ async function addColorSwatchOption(adminPage, optionCode, optionLabel, color) {
   await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').fill(optionCode);
   await adminPage.locator('input[name="locales\\.en_US"]').fill(optionLabel);
   await clickSave(adminPage, 'Save Option');
-  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
 }
 
 /**
@@ -124,7 +125,7 @@ async function addTextSwatchOption(adminPage, optionCode, optionLabel) {
   await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').fill(optionCode);
   await adminPage.locator('input[name="locales.en_US"]').fill(optionLabel);
   await clickSave(adminPage, 'Save Option');
-  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
 }
 
 /**
