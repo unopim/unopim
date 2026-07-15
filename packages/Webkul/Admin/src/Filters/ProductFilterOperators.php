@@ -2,41 +2,10 @@
 
 namespace Webkul\Admin\Filters;
 
-use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
 class ProductFilterOperators
 {
-    const OPTION_TYPES = [
-        Attribute::SELECT_FIELD_TYPE,
-        Attribute::MULTISELECT_FIELD_TYPE,
-        Attribute::CHECKBOX_FIELD_TYPE,
-    ];
-
-    const NUMERIC_TYPES = [
-        Attribute::PRICE_FIELD_TYPE,
-        'integer',
-        'decimal',
-    ];
-
-    const DATE_TYPES = [
-        Attribute::DATE_FIELD_TYPE,
-        Attribute::DATETIME_FIELD_TYPE,
-    ];
-
-    const TEXT_TYPES = [
-        Attribute::TEXT_TYPE,
-        Attribute::TEXTAREA_TYPE,
-    ];
-
-    const KNOWN_TYPES = [
-        ...self::TEXT_TYPES,
-        ...self::NUMERIC_TYPES,
-        ...self::OPTION_TYPES,
-        ...self::DATE_TYPES,
-        Attribute::BOOLEAN_FIELD_TYPE,
-    ];
-
     /**
      * Operators available for an attribute type.
      *
@@ -44,79 +13,28 @@ class ProductFilterOperators
      */
     public static function forType(?string $type): array
     {
-        if (in_array($type, self::OPTION_TYPES, true)) {
-            return [
-                ['operator' => FilterOperators::IN, 'label' => 'in'],
-                ['operator' => FilterOperators::NOT_IN, 'label' => 'not_in'],
-                ['operator' => FilterOperators::IS_EMPTY, 'label' => 'empty'],
-                ['operator' => FilterOperators::IS_NOT_EMPTY, 'label' => 'not_empty'],
-            ];
-        }
+        $operators = self::groupForType($type)['operators'] ?? [];
 
-        if ($type === Attribute::BOOLEAN_FIELD_TYPE) {
-            return [
-                ['operator' => FilterOperators::EQUAL, 'label' => 'equals'],
-            ];
-        }
+        return array_values(array_filter(array_map(function (array $entry) {
+            $operator = FilterOperators::tryFrom($entry['operator'] ?? '');
 
-        if (in_array($type, self::NUMERIC_TYPES, true)) {
-            return [
-                ['operator' => FilterOperators::EQUAL, 'label' => 'equals'],
-                ['operator' => FilterOperators::LESS_THAN, 'label' => 'less_than'],
-                ['operator' => FilterOperators::LESS_THAN_OR_EQUAL, 'label' => 'less_than_equal'],
-                ['operator' => FilterOperators::GREATER_THAN, 'label' => 'greater_than'],
-                ['operator' => FilterOperators::GREATER_THAN_OR_EQUAL, 'label' => 'greater_than_equal'],
-                ['operator' => FilterOperators::RANGE, 'label' => 'between'],
-                ['operator' => FilterOperators::IS_EMPTY, 'label' => 'empty'],
-                ['operator' => FilterOperators::IS_NOT_EMPTY, 'label' => 'not_empty'],
-            ];
-        }
-
-        if (in_array($type, self::DATE_TYPES, true)) {
-            return [
-                ['operator' => FilterOperators::LESS_THAN, 'label' => 'before'],
-                ['operator' => FilterOperators::GREATER_THAN, 'label' => 'after'],
-                ['operator' => FilterOperators::RANGE, 'label' => 'between'],
-                ['operator' => FilterOperators::IS_EMPTY, 'label' => 'empty'],
-                ['operator' => FilterOperators::IS_NOT_EMPTY, 'label' => 'not_empty'],
-            ];
-        }
-
-        return [
-            ['operator' => FilterOperators::CONTAINS, 'label' => 'contains'],
-            ['operator' => FilterOperators::EQUAL, 'label' => 'equals'],
-            ['operator' => FilterOperators::IS_EMPTY, 'label' => 'empty'],
-            ['operator' => FilterOperators::IS_NOT_EMPTY, 'label' => 'not_empty'],
-        ];
+            return $operator ? ['operator' => $operator, 'label' => $entry['label']] : null;
+        }, $operators)));
     }
 
     public static function valueControl(?string $type, FilterOperators $operator): string
     {
-        if (in_array($operator, [FilterOperators::IS_EMPTY, FilterOperators::IS_NOT_EMPTY], true)) {
+        if (in_array($operator->value, self::config('valueless_operators', []), true)) {
             return 'none';
         }
 
-        if ($type === Attribute::BOOLEAN_FIELD_TYPE) {
-            return 'boolean';
+        $group = self::groupForType($type);
+
+        if ($operator === FilterOperators::RANGE && ! empty($group['range_control'])) {
+            return $group['range_control'];
         }
 
-        if (in_array($type, self::OPTION_TYPES, true)) {
-            return 'options';
-        }
-
-        if ($operator === FilterOperators::RANGE) {
-            return in_array($type, self::DATE_TYPES, true) ? 'date_range' : 'number_range';
-        }
-
-        if (in_array($type, self::DATE_TYPES, true)) {
-            return 'date';
-        }
-
-        if (in_array($type, self::NUMERIC_TYPES, true)) {
-            return 'number';
-        }
-
-        return 'text';
+        return $group['control'] ?? 'text';
     }
 
     /**
@@ -146,10 +64,52 @@ class ProductFilterOperators
     {
         $map = [];
 
-        foreach (self::KNOWN_TYPES as $type) {
+        foreach (self::knownTypes() as $type) {
             $map[$type] = self::optionsForType($type);
         }
 
         return $map;
+    }
+
+    /**
+     * The config group whose `types` include the given attribute type,
+     * falling back to the configured default group.
+     *
+     * @return array<string, mixed>
+     */
+    protected static function groupForType(?string $type): array
+    {
+        $groups = self::config('groups', []);
+
+        foreach ($groups as $group) {
+            if (in_array($type, $group['types'] ?? [], true)) {
+                return $group;
+            }
+        }
+
+        return $groups[self::config('default_group', 'text')] ?? [];
+    }
+
+    /**
+     * All attribute types that have a configured operator group.
+     *
+     * @return array<int, string>
+     */
+    protected static function knownTypes(): array
+    {
+        $types = [];
+
+        foreach (self::config('groups', []) as $group) {
+            foreach ($group['types'] ?? [] as $type) {
+                $types[] = $type;
+            }
+        }
+
+        return $types;
+    }
+
+    protected static function config(string $key, mixed $default = null): mixed
+    {
+        return config('product_filter_operators.'.$key, $default);
     }
 }

@@ -117,6 +117,11 @@ class AdminServiceProvider extends ServiceProvider
         );
 
         $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/product_filter_operators.php',
+            'product_filter_operators'
+        );
+
+        $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/auth.php',
             'admin.auth'
         );

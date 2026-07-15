@@ -185,3 +185,37 @@ describe('an attribute column is built with the inputs the filter drawer needs',
             ->toContain(FilterOperators::NOT_IN->value);
     });
 });
+
+describe('operators are config-driven, so packages can extend them without touching core', function () {
+
+    it('offers operators for a brand-new attribute type registered only via config', function () {
+        config()->set('product_filter_operators.groups.custom_group', [
+            'types'     => ['xyz'],
+            'control'   => 'text',
+            'operators' => [
+                ['operator' => FilterOperators::IN->value, 'label' => 'in'],
+                ['operator' => FilterOperators::IS_EMPTY->value, 'label' => 'empty'],
+            ],
+        ]);
+
+        $options = ProductFilterOperators::optionsForType('xyz');
+
+        expect(array_column($options, 'value'))->toBe([
+            FilterOperators::IN->value,
+            FilterOperators::IS_EMPTY->value,
+        ])
+            ->and($options[0]['control'])->toBe('text')
+            ->and($options[1]['control'])->toBe('none')
+            ->and(ProductFilterOperators::frontendMap())->toHaveKey('xyz');
+    });
+
+    it('lets a package change the operators offered for an existing type', function () {
+        config()->set('product_filter_operators.groups.text.operators', [
+            ['operator' => FilterOperators::EQUAL->value, 'label' => 'equals'],
+        ]);
+
+        expect(operatorValues(Attribute::TEXT_TYPE))->toBe([
+            FilterOperators::EQUAL->value,
+        ]);
+    });
+});

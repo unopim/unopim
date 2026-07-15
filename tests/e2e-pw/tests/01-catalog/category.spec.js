@@ -68,12 +68,13 @@ test.describe('UnoPim Category Tests', () => {
   });
 
   test('Create Categories with empty Code and Name field', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'categories');
-    await adminPage.getByRole('link', { name: 'Create Category' }).click();
-    await adminPage.waitForLoadState('networkidle');
-    await adminPage.locator('input[name="code"]').fill('');
-    await adminPage.locator('#name').fill('');
-    await clickSave(adminPage, 'Save Category');
+    await openCreateForm(adminPage);
+    // Leave Code and Name empty; make the form dirty via the parent category
+    // radio so the "Save changes" bar appears and validation can run. A pristine
+    // form exposes no save affordance — the in-form button is removed by the
+    // unsaved-changes tracker and the bar only shows once the form is dirty.
+    await adminPage.locator('label[for="1"]').first().click();
+    await clickSaveChanges(adminPage);
     await expect(adminPage.locator('#app').getByText('The code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
   });
