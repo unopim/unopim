@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute family via UI.
@@ -50,7 +50,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill('');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Header');
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Attribute Family');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
 
@@ -97,7 +97,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
 
     // Edit action
     await searchAndEditFamily(adminPage, code);
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families\/edit/);
 
     // Copy action
     await navigateTo(adminPage, 'attributeFamilies');
@@ -106,7 +106,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Copy"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/copy/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families\/copy/);
 
     // Delete action — shows confirmation
     await navigateTo(adminPage, 'attributeFamilies');

@@ -83,12 +83,10 @@
     {!! view_render_event('unopim.admin.layout.body.before') !!}
 
     <div id="app">
-        <!-- Flash Message Blade Component -->
         <x-admin::flash-group />
 
         {!! view_render_event('unopim.admin.layout.content.before') !!}
 
-                <!-- Page Content Blade Component -->
                 {{ $slot }}
     </div>
 

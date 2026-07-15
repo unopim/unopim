@@ -23,7 +23,7 @@
 
                 <div class="absolute top-4 ltr:right-3 rtl:left-3">
                     <span
-                        class="icon-cancel text-3xl  cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                        class="icon-cancel text-3xl  cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                         @click="close"
                     >
                     </span>

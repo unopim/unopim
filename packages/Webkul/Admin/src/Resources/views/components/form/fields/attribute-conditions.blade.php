@@ -36,7 +36,7 @@
                 <div v-else class="grid grid-cols-2 gap-4 items-center max-md:grid-cols-1">
                     <div class="flex items-center gap-3 min-w-0 max-sm:flex-col max-sm:items-stretch">
                         <div class="flex items-center gap-2.5 min-w-0 flex-1 max-sm:w-full">
-                            <span class="w-2 h-2 rounded-full bg-violet-600 shrink-0"></span>
+                            <span class="w-2 h-2 rounded-full bg-primary-600 shrink-0"></span>
 
                             <div class="min-w-0">
                                 <div class="flex items-center min-w-0">
@@ -154,7 +154,7 @@
                 <button
                     type="button"
                     @click="addRow"
-                    class="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-violet-300 rounded-lg bg-violet-50 dark:bg-cherry-800 text-violet-700 dark:text-violet-200 font-semibold cursor-pointer transition-all hover:bg-violet-50 hover:border-violet-500"
+                    class="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-primary-300 rounded-lg bg-primary-50 dark:bg-cherry-800 text-primary-700 dark:text-primary-200 font-semibold cursor-pointer transition-all hover:bg-primary-50 hover:border-primary-500"
                 >
                     <span class="text-lg leading-none">+</span>
                     @lang('admin::app.settings.data-transfer.exports.create.add-condition')

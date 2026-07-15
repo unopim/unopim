@@ -23,17 +23,4 @@ class SystemController extends Controller
             'packages'   => $this->systemInformation->packages(),
         ]);
     }
-
-    /**
-     * Display the combined system settings page (Appearance, SMTP and Debug).
-     */
-    public function settings(): View
-    {
-        $config = collect(config('core'));
-
-        return view('admin::system.settings', [
-            'smtpGroup'  => $config->firstWhere('key', 'emails.configure.email_settings'),
-            'debugGroup' => $config->firstWhere('key', 'general.debug.settings'),
-        ]);
-    }
 }

@@ -1,11 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { clickSave, navigateTo } = require('../../utils/helpers');
 
 test.describe('UnoPim Webhook test cases', () => {
 
   test('Check the webhook option after installation', async ({ adminPage }) => {
     await navigateTo(adminPage, 'webhook');
-    await expect(adminPage).toHaveURL(/.*\/admin\/webhook\/settings/);
+    await expect(adminPage).toHaveURL(/.*\/admin\/configuration\/webhook/);
   });
 
   test('Check that webhook is clickable', async ({ adminPage }) => {
@@ -16,12 +16,12 @@ test.describe('UnoPim Webhook test cases', () => {
 
   test('Check the url of the webhook page', async ({ adminPage }) => {
     await navigateTo(adminPage, 'webhook');
-    await expect(adminPage).toHaveURL(/.*\/admin\/webhook\/settings/);
+    await expect(adminPage).toHaveURL(/.*\/admin\/configuration\/webhook/);
   });
 
   test('Check the page after clicking webhook', async ({ adminPage }) => {
     await navigateTo(adminPage, 'webhook');
-    await expect(adminPage).toHaveURL(/.*\/admin\/webhook\/settings/);
+    await expect(adminPage).toHaveURL(/.*\/admin\/configuration\/webhook/);
     await expect(adminPage.locator('#app').getByText('Webhook Settings', { exact: true })).toBeVisible();
   });
 
@@ -39,7 +39,7 @@ test.describe('UnoPim Webhook test cases', () => {
   test('Check saving webhook settings with empty field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'webhook');
     await adminPage.locator('input[name="webhook_url"]').fill('');
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(adminPage.locator('#app').getByText('The Webhook URL field is required')).toBeVisible();
   });
 
@@ -47,7 +47,7 @@ test.describe('UnoPim Webhook test cases', () => {
     await navigateTo(adminPage, 'webhook');
     const webhookUrlField = adminPage.locator('input[name="webhook_url"]');
     await webhookUrlField.fill('invalid-url');
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(adminPage.locator('#app').getByText('The webhook url format is invalid.', { exact: true })).toBeVisible();
   });
 
@@ -55,7 +55,7 @@ test.describe('UnoPim Webhook test cases', () => {
     await navigateTo(adminPage, 'webhook');
     const webhookUrlField = adminPage.locator('input[name="webhook_url"]');
     await webhookUrlField.fill('https://example.com/webhook');
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(adminPage.locator('#app').getByText('Webhook settings saved successfully')).toBeVisible();
   });
 
@@ -75,7 +75,7 @@ test.describe('UnoPim Webhook test cases', () => {
     const urlToSet = 'https://example.com/webhook';
     await webhookUrlField.fill(urlToSet);
     const isCheckedBefore = await webhookActiveCheckbox.isChecked();
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(adminPage.locator('#app').getByText('Webhook settings saved successfully')).toBeVisible();
     await adminPage.reload();
     const savedUrl = await webhookUrlField.inputValue();
@@ -95,7 +95,7 @@ test.describe('UnoPim Webhook test cases', () => {
     await navigateTo(adminPage, 'webhook');
     const logSection = adminPage.getByRole('link', { name: 'Logs' });
     await logSection.click();
-    await expect(adminPage).toHaveURL(/admin\/webhook\/settings.*logs/);
+    await expect(adminPage).toHaveURL(/admin\/configuration\/webhook.*logs/);
   });
 
   test('Check the content of the log section in webhook page', async ({ adminPage }) => {
@@ -153,7 +153,7 @@ test.describe('UnoPim Webhook test cases', () => {
     await navigateTo(adminPage, 'webhook');
     const historySection = adminPage.getByRole('link', { name: 'History' });
     await historySection.click();
-    await expect(adminPage).toHaveURL(/admin\/webhook\/settings.*history/);
+    await expect(adminPage).toHaveURL(/admin\/configuration\/webhook.*history/);
   });
 
   test('Check the column of the history section in webhook page', async ({ adminPage }) => {

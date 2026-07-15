@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'Avbryt',
                 'paused'                => 'Importen har pausats.',
                 'resumed'               => 'Importen har återupptagits.',
+                'zip-failed'            => 'Det gick inte att skapa zip-filen.',
                 'cancelled'             => 'Importen har avbrutits.',
                 'paused-info'           => 'Importen är pausad. Återstående batcher är parkerade.',
                 'paused-info-export'    => 'Exporten är pausad. Återstående batcher är parkerade.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'Redigera Användare',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Bekräfta lösenord före borttagning',
+                    'enter-current-password' => 'Ange nuvarande lösenord',
+                    'password'               => 'Lösenord',
+                    'confirm-delete'         => 'Bekräfta borttagning av detta konto',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Tillbaka',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'Den inloggade användaren kan inte tas bort.',
         ],
         'system-settings' => [
-            'info' => 'Hantera utseende, e-post (SMTP) och felsökning från ett och samma ställe.',
+            'title'              => 'Systeminställningar',
+            'back'               => 'Tillbaka',
+            'info'               => 'Hantera systeminställningar från ett och samma ställe.',
+            'search-placeholder' => 'Sök inställningar',
+            'save-btn'           => 'Spara',
+            'save-message'       => 'Inställningarna har sparats.',
+            'system'             => [
+                'title' => 'System',
+                'info'  => 'Grundläggande programinställningar.',
+            ],
+            'email'              => [
+                'title' => 'E-post',
+                'info'  => 'SMTP-avsändare och autentiseringsuppgifter.',
+            ],
+            'debug'              => [
+                'title' => 'Felsökning',
+                'info'  => 'Felsökning och loggning av programmet.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logotyp, favicon och tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'radera',
             ],
             'create' => [
-                'title'        => 'Systemprompt',
-                'create-btn'   => 'Skapa systemprompt',
-                'edit-title'   => 'Redigera systemprompt',
-                'create-title' => 'Skapa ny systemprompt',
-                'label-title'  => 'Titel',
-                'max-tokens'   => 'Max utdata-tokens',
-                'temperature'  => 'Temperatur',
-                'type'         => 'Typ',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Spara prompt',
-                'prompt-tone'  => 'Promptton',
+                'title'               => 'Systemprompt',
+                'create-btn'          => 'Skapa systemprompt',
+                'edit-title'          => 'Redigera systemprompt',
+                'create-title'        => 'Skapa ny systemprompt',
+                'label-title'         => 'Titel',
+                'max-tokens'          => 'Max utdata-tokens',
+                'temperature'         => 'Temperatur',
+                'type'                => 'Typ',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Spara prompt',
+                'prompt-tone'         => 'Promptton',
+                'max-tokens-tooltip'  => 'Tillåtet intervall för maximala utdata-tokens: 100 till 5000 tokens',
+                'temperature-tooltip' => 'Temperatur styr kreativiteten. Intervall: 0 till 2. Lägre värden (t.ex. 0,4) ger mer exakta och fokuserade svar.',
             ],
             'message' => [
                 'save-success'   => 'Systemprompt sparad framgångsrikt.',

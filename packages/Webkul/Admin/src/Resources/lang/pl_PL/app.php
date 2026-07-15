@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'Anuluj',
                 'paused'                => 'Import został wstrzymany.',
                 'resumed'               => 'Import został wznowiony.',
+                'zip-failed'            => 'Nie udało się utworzyć pliku zip.',
                 'cancelled'             => 'Import został anulowany.',
                 'paused-info'           => 'Import jest wstrzymany. Pozostałe partie są w zawieszeniu.',
                 'paused-info-export'    => 'Eksport jest wstrzymany. Pozostałe partie są w zawieszeniu.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'Edytuj użytkownika',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Potwierdź hasło przed usunięciem',
+                    'enter-current-password' => 'Wprowadź bieżące hasło',
+                    'password'               => 'Hasło',
+                    'confirm-delete'         => 'Potwierdź usunięcie tego konta',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Wróć',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'Nie można usunąć zalogowanego użytkownika.',
         ],
         'system-settings' => [
-            'info' => 'Zarządzaj wyglądem, pocztą e-mail (SMTP) i debugowaniem w jednym miejscu.',
+            'info'               => 'Zarządzaj ustawieniami systemu w jednym miejscu.',
+            'title'              => 'Ustawienia systemu',
+            'back'               => 'Wstecz',
+            'search-placeholder' => 'Szukaj ustawień',
+            'save-btn'           => 'Zapisz',
+            'save-message'       => 'Ustawienia zostały zapisane pomyślnie.',
+            'system'             => [
+                'title' => 'System',
+                'info'  => 'Podstawowe ustawienia aplikacji.',
+            ],
+            'email'              => [
+                'title' => 'E-mail',
+                'info'  => 'Nadawca SMTP i dane uwierzytelniające.',
+            ],
+            'debug'              => [
+                'title' => 'Debugowanie',
+                'info'  => 'Debugowanie i rejestrowanie aplikacji.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon i motyw.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'usuń',
             ],
             'create' => [
-                'title'        => 'Prompt systemowy',
-                'create-btn'   => 'Utwórz prompt systemowy',
-                'edit-title'   => 'Edytuj prompt systemowy',
-                'create-title' => 'Utwórz nowy prompt systemowy',
-                'label-title'  => 'Tytuł',
-                'max-tokens'   => 'Maks. tokeny wyjściowe',
-                'temperature'  => 'Temperatura',
-                'type'         => 'Typ',
-                'prompt'       => 'Podpowiedź',
-                'save-btn'     => 'Zapisz prompt',
-                'prompt-tone'  => 'Ton promptu',
+                'title'               => 'Prompt systemowy',
+                'create-btn'          => 'Utwórz prompt systemowy',
+                'edit-title'          => 'Edytuj prompt systemowy',
+                'create-title'        => 'Utwórz nowy prompt systemowy',
+                'label-title'         => 'Tytuł',
+                'max-tokens'          => 'Maks. tokeny wyjściowe',
+                'temperature'         => 'Temperatura',
+                'type'                => 'Typ',
+                'prompt'              => 'Podpowiedź',
+                'save-btn'            => 'Zapisz prompt',
+                'prompt-tone'         => 'Ton promptu',
+                'max-tokens-tooltip'  => 'Dozwolony zakres maksymalnych tokenów wyjściowych: od 100 do 5000 tokenów',
+                'temperature-tooltip' => 'Temperatura kontroluje kreatywność. Zakres: od 0 do 2. Niższe wartości (np. 0,4) dają dokładniejsze i bardziej precyzyjne odpowiedzi.',
             ],
             'message' => [
                 'save-success'   => 'Prompt systemowy został zapisany pomyślnie.',

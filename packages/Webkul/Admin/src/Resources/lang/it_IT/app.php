@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'Annulla',
                 'paused'                => 'L\'importazione è stata messa in pausa.',
                 'resumed'               => 'L\'importazione è stata ripresa.',
+                'zip-failed'            => 'Impossibile creare il file zip.',
                 'cancelled'             => 'L\'importazione è stata annullata.',
                 'paused-info'           => 'L\'importazione è in pausa. I batch rimanenti sono in attesa.',
                 'paused-info-export'    => 'L\'esportazione è in pausa. I batch rimanenti sono in attesa.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'Modifica Utente',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Conferma la password prima dell\'eliminazione',
+                    'enter-current-password' => 'Inserisci la password attuale',
+                    'password'               => 'Password',
+                    'confirm-delete'         => 'Conferma l\'eliminazione di questo account',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Indietro',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'Non è possibile eliminare l\'utente attualmente connesso.',
         ],
         'system-settings' => [
-            'info' => 'Gestisci aspetto, email (SMTP) e debug da un unico posto.',
+            'title'              => 'Impostazioni di sistema',
+            'back'               => 'Indietro',
+            'info'               => 'Gestisci le impostazioni di sistema da un unico posto.',
+            'search-placeholder' => 'Cerca impostazioni',
+            'save-btn'           => 'Salva',
+            'save-message'       => 'Impostazioni salvate con successo.',
+            'system'             => [
+                'title' => 'Sistema',
+                'info'  => 'Impostazioni principali dell\'applicazione.',
+            ],
+            'email'              => [
+                'title' => 'Email',
+                'info'  => 'Mittente e credenziali SMTP.',
+            ],
+            'debug'              => [
+                'title' => 'Debug',
+                'info'  => 'Debug e registrazione dell\'applicazione.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon e tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'elimina',
             ],
             'create' => [
-                'title'        => 'Prompt di sistema',
-                'create-btn'   => 'Crea prompt di sistema',
-                'edit-title'   => 'Modifica prompt di sistema',
-                'create-title' => 'Crea nuovo prompt di sistema',
-                'label-title'  => 'Titolo',
-                'max-tokens'   => 'Token di output massimi',
-                'temperature'  => 'Temperatura',
-                'type'         => 'Tipo',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Salva prompt',
-                'prompt-tone'  => 'Tono del prompt',
+                'title'               => 'Prompt di sistema',
+                'create-btn'          => 'Crea prompt di sistema',
+                'edit-title'          => 'Modifica prompt di sistema',
+                'create-title'        => 'Crea nuovo prompt di sistema',
+                'label-title'         => 'Titolo',
+                'max-tokens'          => 'Token di output massimi',
+                'temperature'         => 'Temperatura',
+                'type'                => 'Tipo',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Salva prompt',
+                'prompt-tone'         => 'Tono del prompt',
+                'max-tokens-tooltip'  => 'Intervallo consentito per i token di output massimi: da 100 a 5000 token',
+                'temperature-tooltip' => 'La temperatura controlla la creatività. Intervallo: da 0 a 2. Valori più bassi (ad es. 0,4) forniscono risposte più accurate e mirate.',
             ],
             'message' => [
                 'save-success'   => 'Prompt di sistema salvato con successo.',

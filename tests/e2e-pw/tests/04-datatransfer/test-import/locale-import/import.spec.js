@@ -1,10 +1,13 @@
 const { test, expect } = require('../../../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../../../utils/helpers');
+const { navigateTo, clickSaveAndExpect } = require('../../../../utils/helpers');
 const path = require('path');
 
 test.describe('Locale Import', () => {
-    const uid = generateUid();
-    const importCode = `locale-import-${uid}`;
+    // Fixed code (not a per-module uid): the runner can re-evaluate the module per
+    // test, so a uid would differ between Create and Run/Delete and the later tests
+    // would search a code that was never created. CI runs on a fresh DB, so a stable
+    // code cannot collide on the unique constraint.
+    const importCode = 'locale-import-e2e';
 
     test('Create Locale Import', async ({ adminPage }) => {
         await navigateTo(adminPage, 'imports');
@@ -31,7 +34,7 @@ test.describe('Locale Import', () => {
         const itemRow = adminPage.locator('div', { hasText: importCode });
         await itemRow.locator('span[title="Import"]').first().click();
 
-        await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports\/import/);
+        await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports\/import/);
 
         const importNowBtn = adminPage.getByRole('button', { name: 'Import Now' });
         await expect(importNowBtn).toBeVisible({ timeout: 5000 });

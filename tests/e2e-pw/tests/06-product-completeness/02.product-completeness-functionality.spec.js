@@ -1,10 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
+const { clickSave } = require('../../utils/helpers');
 
 /**
  * Helper: Navigate to the Default family's Completeness tab with all rows visible.
  */
 async function goToDefaultFamilyCompleteness(adminPage) {
-  await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+  await adminPage.goto('/admin/catalog/attribute-families', { waitUntil: 'load' });
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('default');
   await adminPage.keyboard.press('Enter');
@@ -33,7 +34,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
       await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
       await adminPage.locator('input[name="sku"]').fill(`completeness_na_${Date.now()}`);
-      await adminPage.getByRole('button', { name: 'Save Product' }).click();
+      await clickSave(adminPage, 'Save Product');
       await adminPage.waitForURL(/\/admin\/catalog\/products/, { timeout: 20000 });
       await adminPage.goto('/admin/catalog/products', { waitUntil: 'networkidle', timeout: 60000 });
     }
@@ -60,7 +61,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
       await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
       await adminPage.locator('input[name="sku"]').fill(`completeness_edit_${Date.now()}`);
-      await adminPage.getByRole('button', { name: 'Save Product' }).click();
+      await clickSave(adminPage, 'Save Product');
       await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
     } else {
       await editBtn.click();

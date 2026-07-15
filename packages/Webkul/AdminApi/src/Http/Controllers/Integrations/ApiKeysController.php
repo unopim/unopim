@@ -5,7 +5,6 @@ namespace Webkul\AdminApi\Http\Controllers\Integrations;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Token;
@@ -66,9 +65,13 @@ class ApiKeysController extends Controller
      */
     public function store(StoreApiKeyRequest $request): RedirectResponse
     {
+        if (! bouncer()->hasPermission('configuration.integrations.create')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         Event::dispatch('user.api_integration.create.before');
 
-        $data = request()->only([
+        $data = $request->only([
             'name',
             'admin_id',
             'permission_type',
@@ -96,17 +99,18 @@ class ApiKeysController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     *
-     * @throws ValidationException If the required parameters are not provided.
      */
     public function update(UpdateApiKeyRequest $request, int $id): RedirectResponse
     {
-        $data = array_merge(request()->only([
+        if (! bouncer()->hasPermission('configuration.integrations.edit')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        $data = array_merge($request->only([
             'name',
             'permission_type',
         ]), [
-            'permissions' => request()->has('permissions') ? request('permissions') : [],
+            'permissions' => $request->has('permissions') ? $request->input('permissions') : [],
         ]);
 
         Event::dispatch('user.api_integration.update.before', $id);
@@ -149,12 +153,14 @@ class ApiKeysController extends Controller
      * associated with the API key in the database.
      *
      * @return JsonResponse The JSON response containing the new client ID and secret key.
-     *
-     * @throws ValidationException If the required parameters are not provided.
      */
     public function generateKey(GenerateKeyRequest $request): JsonResponse
     {
-        $data = request()->only([
+        if (! bouncer()->hasPermission('configuration.integrations.edit')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        $data = $request->only([
             'name',
             'admin_id',
             'apiId',
@@ -165,7 +171,7 @@ class ApiKeysController extends Controller
 
         $client = $this->generateClientIdAndSecretKey($userId, $name);
 
-        $id = $name = $data['apiId'];
+        $id = $data['apiId'];
 
         $clientId = $client->getKey();
 
@@ -191,6 +197,10 @@ class ApiKeysController extends Controller
      */
     public function regenerateSecretKey(RegenerateSecretKeyRequest $request): JsonResponse
     {
+        if (! bouncer()->hasPermission('configuration.integrations.edit')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $data = $request->validated();
 
         $client = $this->clients->find($data['oauth_client_id']);
@@ -215,6 +225,10 @@ class ApiKeysController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('configuration.integrations.delete')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $apiKey = $this->apiKeyRepository->findOrFail($id);
 
         try {

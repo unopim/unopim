@@ -169,7 +169,7 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!-- Emoty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -200,7 +200,7 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!-- Empty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -228,7 +228,7 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!--  Emoty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -269,7 +269,7 @@
                 </div>
             @break
             @case('multiselect')
-                <!-- NO BREAK -->
+                {{-- NO BREAK --}}
                 @php
                     if (! is_array($value)) {
                         $value = str_contains((string) $value, ',')
@@ -278,7 +278,7 @@
                     }
                 @endphp
             @case('select')
-                <!-- NO BREAK -->
+                {{-- NO BREAK --}}
                 @php
                     $selectedValue = [];
                     foreach ($field->options->whereIn('code', $value) as $option) {
@@ -318,7 +318,6 @@
 
                 <x-slot:option>
                     <div class="flex items-center space-x-2">
-                        <!-- Image swatch -->
                         <div
                             v-if="option.attribute.swatch_type == 'image'"
                             class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
@@ -329,19 +328,17 @@
                             <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                 <div class="flex justify-between">
                                     <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                         @click.stop.prevent="previewImage(option)"
                                     ></span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Color swatch -->
                         <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
                             :style="{ backgroundColor: option.swatch_value }"
                             class="w-6 h-6 rounded border"></div>
 
-                        <!-- Label -->
                         <span>@{{ option[labelBy] }}</span>
                     </div>
                 </x-slot:option>
@@ -358,7 +355,7 @@
                             <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                 <div class="flex justify-between">
                                     <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                         @mousedown.stop.prevent="previewImage(option)"
                                     ></span>
                                 </div>
@@ -385,7 +382,7 @@
                                 <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                     <div class="flex justify-between">
                                         <span
-                                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                             @mousedown.stop.prevent="previewImage(option)"
                                         ></span>
                                     </div>

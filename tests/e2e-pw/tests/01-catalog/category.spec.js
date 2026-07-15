@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Open the Create Category form and let the unsaved-changes tracker
@@ -55,23 +55,25 @@ test.describe('UnoPim Category Tests', () => {
   test('Create Categories with empty Code field', async ({ adminPage }) => {
     await openCreateForm(adminPage);
     await adminPage.locator('#name').fill('Television');
-    await clickSaveChanges(adminPage);
+    await clickSave(adminPage, 'Save Category');
     await expect(adminPage.locator('#app').getByText('The code field is required')).toBeVisible();
   });
 
   test('Create Categories with empty Name field', async ({ adminPage }) => {
     await openCreateForm(adminPage);
     await adminPage.locator('input[name="code"]').fill('television_empty_name');
-    await clickSaveChanges(adminPage);
+    await adminPage.locator('#name').fill('');
+    await clickSave(adminPage, 'Save Category');
     await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
   });
 
   test('Create Categories with empty Code and Name field', async ({ adminPage }) => {
-    await openCreateForm(adminPage);
-    // Leave Code and Name empty; make the form dirty via the parent category
-    // radio so the "Save changes" bar appears and validation can run.
-    await adminPage.locator('label[for="1"]').first().click();
-    await clickSaveChanges(adminPage);
+    await navigateTo(adminPage, 'categories');
+    await adminPage.getByRole('link', { name: 'Create Category' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.locator('input[name="code"]').fill('');
+    await adminPage.locator('#name').fill('');
+    await clickSave(adminPage, 'Save Category');
     await expect(adminPage.locator('#app').getByText('The code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
   });

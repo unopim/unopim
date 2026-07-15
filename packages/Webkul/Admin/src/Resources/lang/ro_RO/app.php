@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'Anulare',
                 'paused'                => 'Importul a fost suspendat.',
                 'resumed'               => 'Importul a fost reluat.',
+                'zip-failed'            => 'Crearea fișierului zip a eșuat.',
                 'cancelled'             => 'Importul a fost anulat.',
                 'paused-info'           => 'Importul este suspendat. Loturile rămase sunt în așteptare.',
                 'paused-info-export'    => 'Exportul este suspendat. Loturile rămase sunt în așteptare.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'Editează Utilizator',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Confirmați parola înainte de ștergere',
+                    'enter-current-password' => 'Introduceți parola curentă',
+                    'password'               => 'Parolă',
+                    'confirm-delete'         => 'Confirmați ștergerea acestui cont',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Înapoi',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'Nu se poate șterge utilizatorul conectat.',
         ],
         'system-settings' => [
-            'info' => 'Gestionează aspectul, e-mailul (SMTP) și depanarea dintr-un singur loc.',
+            'info'               => 'Gestionează setările sistemului dintr-un singur loc.',
+            'title'              => 'Setări de sistem',
+            'back'               => 'Înapoi',
+            'search-placeholder' => 'Caută setări',
+            'save-btn'           => 'Salvează',
+            'save-message'       => 'Setările au fost salvate cu succes.',
+            'system'             => [
+                'title' => 'Sistem',
+                'info'  => 'Setări principale ale aplicației.',
+            ],
+            'email'              => [
+                'title' => 'E-mail',
+                'info'  => 'Expeditor SMTP și acreditări.',
+            ],
+            'debug'              => [
+                'title' => 'Depanare',
+                'info'  => 'Depanarea și înregistrarea aplicației.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon și temă.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'șterge',
             ],
             'create' => [
-                'title'        => 'Prompt de sistem',
-                'create-btn'   => 'Creează prompt de sistem',
-                'edit-title'   => 'Editează prompt de sistem',
-                'create-title' => 'Creează un nou prompt de sistem',
-                'label-title'  => 'Titlu',
-                'max-tokens'   => 'Tokeni de ieșire maximi',
-                'temperature'  => 'Temperatură',
-                'type'         => 'Tip',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Salvează prompt',
-                'prompt-tone'  => 'Tonul promptului',
+                'title'               => 'Prompt de sistem',
+                'create-btn'          => 'Creează prompt de sistem',
+                'edit-title'          => 'Editează prompt de sistem',
+                'create-title'        => 'Creează un nou prompt de sistem',
+                'label-title'         => 'Titlu',
+                'max-tokens'          => 'Tokeni de ieșire maximi',
+                'temperature'         => 'Temperatură',
+                'type'                => 'Tip',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Salvează prompt',
+                'prompt-tone'         => 'Tonul promptului',
+                'max-tokens-tooltip'  => 'Interval permis pentru numărul maxim de tokenuri de ieșire: 100 până la 5000 de tokenuri',
+                'temperature-tooltip' => 'Temperatura controlează creativitatea. Interval: 0 până la 2. Valorile mai mici (de ex., 0,4) oferă răspunsuri mai precise și mai concentrate.',
             ],
             'message' => [
                 'save-success'   => 'Promptul de sistem a fost salvat cu succes.',

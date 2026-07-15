@@ -8,18 +8,15 @@
     @endphp
 
     <v-magic-ai-platform>
-        <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.configuration.platform.title')
-            </p>
-            @if ($canCreatePlatform)
-                <div class="flex gap-x-2.5 items-center">
+        <x-admin::page-header :title="trans('admin::app.configuration.platform.title')">
+            <x-slot:actions>
+                @if ($canCreatePlatform)
                     <button type="button" class="primary-button">
                         @lang('admin::app.configuration.platform.create-btn')
                     </button>
-                </div>
-            @endif
-        </div>
+                @endif
+            </x-slot>
+        </x-admin::page-header>
         <x-admin::shimmer.datagrid />
     </v-magic-ai-platform>
 
@@ -40,9 +37,9 @@
 
             <!-- Setup Guide Banner (no platforms configured) -->
             @if($platformCount === 0)
-                <div class="mt-4 p-6 bg-gradient-to-r from-violet-50 to-blue-50 dark:from-cherry-900 dark:to-cherry-800 rounded-lg border border-violet-200 dark:border-cherry-700">
+                <div class="mt-4 p-6 bg-gradient-to-r from-primary-50 to-blue-50 dark:from-cherry-900 dark:to-cherry-800 rounded-lg border border-primary-200 dark:border-cherry-700">
                     <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0 w-12 h-12 bg-violet-100 dark:bg-violet-900 rounded-lg flex items-center justify-center">
+                        <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center">
                             <span class="text-2xl" role="img" aria-label="@lang('admin::app.configuration.platform.setup.lightning-icon')" title="@lang('admin::app.configuration.platform.setup.lightning-icon')">&#9889;</span>
                         </div>
                         <div class="flex-1">
@@ -54,15 +51,15 @@
                             </p>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                                    <span class="flex-shrink-0 w-6 h-6 bg-violet-200 dark:bg-violet-800 rounded-full flex items-center justify-center text-xs font-bold text-violet-700 dark:text-violet-200">1</span>
+                                    <span class="flex-shrink-0 w-6 h-6 bg-primary-200 dark:bg-primary-800 rounded-full flex items-center justify-center text-xs font-bold text-primary-700 dark:text-primary-200">1</span>
                                     @lang('admin::app.configuration.platform.setup.step-1')
                                 </div>
                                 <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                                    <span class="flex-shrink-0 w-6 h-6 bg-violet-200 dark:bg-violet-800 rounded-full flex items-center justify-center text-xs font-bold text-violet-700 dark:text-violet-200">2</span>
+                                    <span class="flex-shrink-0 w-6 h-6 bg-primary-200 dark:bg-primary-800 rounded-full flex items-center justify-center text-xs font-bold text-primary-700 dark:text-primary-200">2</span>
                                     @lang('admin::app.configuration.platform.setup.step-2')
                                 </div>
                                 <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                                    <span class="flex-shrink-0 w-6 h-6 bg-violet-200 dark:bg-violet-800 rounded-full flex items-center justify-center text-xs font-bold text-violet-700 dark:text-violet-200">3</span>
+                                    <span class="flex-shrink-0 w-6 h-6 bg-primary-200 dark:bg-primary-800 rounded-full flex items-center justify-center text-xs font-bold text-primary-700 dark:text-primary-200">3</span>
                                     @lang('admin::app.configuration.platform.setup.step-3')
                                 </div>
                             </div>
@@ -93,7 +90,7 @@
                 <template #body="{ columns, records, performAction }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                         @click="editModal(record.actions.find(a => a.index === 'action_1')?.url)"
                     >
@@ -105,13 +102,13 @@
                         <p v-text="record.created_at"></p>
                         <div class="flex justify-end gap-1" @click.stop>
                             <a @click="setAsDefault(record)" v-if="!record.is_default_raw" title="@lang('admin::app.configuration.platform.set-default')">
-                                <span class="icon-star cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
+                                <span class="icon-star cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800"></span>
                             </a>
                             <a v-if="record.actions.find(a => a.icon === 'icon-edit')" @click="editModal(record.actions.find(a => a.icon === 'icon-edit')?.url)" title="@lang('admin::app.configuration.platform.datagrid.edit')" aria-label="@lang('admin::app.configuration.platform.datagrid.edit')">
-                                <span class="icon-edit cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
+                                <span class="icon-edit cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800"></span>
                             </a>
                             <a v-if="record.actions.find(a => a.icon === 'icon-delete')" @click="performAction(record.actions.find(a => a.icon === 'icon-delete'))" title="@lang('admin::app.configuration.platform.datagrid.delete')" aria-label="@lang('admin::app.configuration.platform.datagrid.delete')">
-                                <span class="icon-delete cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
+                                <span class="icon-delete cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800"></span>
                             </a>
                         </div>
                     </div>
@@ -191,7 +188,7 @@
                                         @change="onApiKeyEntered()"
                                         @input="onApiKeyInput($event)"
                                     />
-                                    <p v-if="fetchingModels" class="mt-1 text-xs text-violet-600">@lang('admin::app.configuration.platform.fetching-models')...</p>
+                                    <p v-if="fetchingModels" class="mt-1 text-xs text-primary-600">@lang('admin::app.configuration.platform.fetching-models')...</p>
                                     <x-admin::form.control-group.error control-name="api_key" />
                                 </x-admin::form.control-group>
 
@@ -236,7 +233,7 @@
                                         <span
                                             v-for="(model, index) in selectedModels"
                                             :key="model"
-                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-200"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200"
                                         >
                                             @{{ model }}
                                             <button type="button" @click="removeModel(index)" class="hover:text-red-600" :aria-label="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)" :title="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)">&times;</button>
@@ -255,9 +252,9 @@
                                             <label
                                                 v-for="model in filteredModels"
                                                 :key="model"
-                                                class="flex items-center gap-2 cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 rounded px-2 py-1.5 text-sm"
+                                                class="flex items-center gap-2 cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 rounded px-2 py-1.5 text-sm"
                                             >
-                                                <input type="checkbox" :value="model" v-model="selectedModels" class="text-violet-600 rounded" />
+                                                <input type="checkbox" :value="model" v-model="selectedModels" class="text-primary-600 rounded" />
                                                 <span class="text-gray-700 dark:text-gray-300">@{{ model }}</span>
                                             </label>
 

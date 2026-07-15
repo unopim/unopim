@@ -3,12 +3,10 @@
         channel
     </x-slot>
 
-    <!-- Page Title -->
     <x-slot:title>
         @lang('admin::app.settings.channels.edit.title')
     </x-slot>
 
-    <!-- Channel Edit Form -->
     {!! view_render_event('unopim.admin.settings.channels.edit.before') !!}
 
     <x-admin::form
@@ -19,12 +17,8 @@
 
         {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.before') !!}
 
-        <div class="flex justify-between items-center">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.settings.channels.edit.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
+        <x-admin::page-header :title="trans('admin::app.settings.channels.edit.title')">
+            <x-slot:actions>
                 <a
                     href="{{ route('admin.settings.channels.index') }}"
                     class="transparent-button"
@@ -32,22 +26,19 @@
                     @lang('admin::app.settings.channels.edit.back-btn')
                 </a>
 
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     class="primary-button"
                     aria-lebel="Submit"
                 >
                     @lang('admin::app.settings.channels.edit.save-btn')
                 </button>
-            </div>
-        </div>
+            </x-slot>
+        </x-admin::page-header>
 
-        <!-- body content -->
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-            <!-- Left Section -->
             <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
 
-                <!-- General Information -->
 
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.general.before') !!}
 
@@ -56,7 +47,6 @@
                         @lang('admin::app.settings.channels.edit.general')
                     </p>
 
-                    <!-- Code -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.settings.channels.edit.code')
@@ -88,7 +78,6 @@
                         <x-admin::form.control-group.error control-name="code" />
                     </x-admin::form.control-group>
 
-                    <!-- Root Category -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.settings.channels.edit.root-category')
@@ -121,7 +110,6 @@
 
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.general.after') !!}
 
-                <!-- Name Translations -->
 
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.translations.before') !!}
 
@@ -151,9 +139,7 @@
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.translations.after') !!}
             </div>
 
-            <!-- Right Section -->
             <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                <!-- Currencies and Locale -->
 
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.accordion.currencies_and_locales.before') !!}
 
@@ -167,7 +153,6 @@
                     </x-slot>
             
                     <x-slot:content>
-                        <!-- Locales Checkboxes -->
                         <x-admin::form.control-group class="mb-4">
                             <x-admin::form.control-group.label class="required">
                                 @lang('admin::app.settings.channels.edit.locales')

@@ -172,7 +172,7 @@
 
                 <div class="flex items-center gap-x-1.5">
                     <p
-                        class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                        class="cursor-pointer text-xs font-medium leading-6 text-primary-700"
                         v-if="hasAnyAppliedColumnValues(column.index)"
                         @click="removeAppliedColumnAllValues(column.index)"
                     >
@@ -197,13 +197,13 @@
                         >
                             <template v-if="hasAnyAppliedColumnValues(column.index)">
                                 <span
-                                    class="flex items-center rounded bg-violet-100 px-2 py-0.5 text-sm font-semibold text-violet-700"
+                                    class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700"
                                     v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                                 >
                                     <span v-text="column.options.find((option => option.value == appliedColumnValue))?.label"></span>
 
                                     <span
-                                        class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1 rtl:mr-1 dark:!text-violet-700"
+                                        class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-700"
                                         @click.stop="removeAppliedColumnValue(column.index, appliedColumnValue)"
                                     ></span>
                                 </span>
@@ -246,7 +246,7 @@
 
                     <div class="flex items-center gap-x-1.5">
                         <p
-                            class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                            class="cursor-pointer text-xs font-medium leading-6 text-primary-700"
                             v-if="hasAnyAppliedColumnValues(column.index)"
                             @click="removeAppliedColumnAllValues(column.index)"
                         >
@@ -271,13 +271,13 @@
                             >
                                 <template v-if="hasAnyAppliedColumnValues(column.index)">
                                     <span
-                                        class="flex items-center rounded bg-violet-100 px-2 py-0.5 text-sm font-semibold text-violet-700"
+                                        class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700"
                                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                                     >
                                         <span v-text="column.options.params.options.find((option => option.value == appliedColumnValue))?.label"></span>
 
                                         <span
-                                            class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1 rtl:mr-1 dark:!text-violet-700"
+                                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-700"
                                             @click.stop="removeAppliedColumnValue(column.index, appliedColumnValue)"
                                         ></span>
                                     </span>
@@ -318,7 +318,7 @@
 
                     <div class="flex items-center gap-x-1.5">
                         <p
-                            class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                            class="cursor-pointer text-xs font-medium leading-6 text-primary-700"
                             v-if="hasAnyAppliedColumnValues(column.index)"
                             @click="removeAppliedColumnAllValues(column.index)"
                         >
@@ -354,7 +354,7 @@
 
                     <div class="flex items-center gap-x-1.5">
                         <p
-                            class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                            class="cursor-pointer text-xs font-medium leading-6 text-primary-700"
                             v-if="hasAnyAppliedColumnValues(column.index)"
                             @click="removeAppliedColumnAllValues(column.index)"
                         >
@@ -391,7 +391,7 @@
 
                 <div class="flex items-center gap-x-1.5">
                     <p
-                        class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                        class="cursor-pointer text-xs font-medium leading-6 text-primary-700"
                         v-if="hasAnyAppliedColumnValues(column.index)"
                         @click="removeAppliedColumnAllValues(column.index)"
                     >
@@ -454,13 +454,13 @@
 
                 <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
                     <p
-                        class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
+                        class="flex items-center rounded bg-primary-100 px-2 py-1 font-semibold text-primary-700"
                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                     >
                         <span v-text="appliedColumnValue.join(' to ')"></span>
 
                         <span
-                            class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
+                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
                             @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
                         >
                         </span>
@@ -480,7 +480,7 @@
 
                     <div class="flex items-center gap-x-1.5">
                         <p
-                            class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                            class="cursor-pointer text-xs font-medium leading-6 text-primary-700"
                             v-if="hasAnyAppliedColumnValues(column.index)"
                             @click="removeAppliedColumnAllValues(column.index)"
                         >
@@ -538,13 +538,13 @@
 
                 <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
                     <p
-                        class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
+                        class="flex items-center rounded bg-primary-100 px-2 py-1 font-semibold text-primary-700"
                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                     >
                         <span v-text="appliedColumnValue.join(' - ')"></span>
 
                         <span
-                            class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
+                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
                             @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
                         >
                         </span>
@@ -563,7 +563,7 @@
 
                 <div class="flex items-center gap-x-1.5">
                     <p
-                        class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                        class="cursor-pointer text-xs font-medium leading-6 text-primary-700"
                         v-if="hasAnyAppliedColumnValues(column.index)"
                         @click="removeAppliedColumnAllValues(column.index)"
                     >
@@ -626,13 +626,13 @@
 
                 <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
                     <p
-                        class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
+                        class="flex items-center rounded bg-primary-100 px-2 py-1 font-semibold text-primary-700"
                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                     >
                         <span v-text="appliedColumnValue.join(' to ')"></span>
 
                         <span
-                            class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
+                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
                             @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
                         >
                         </span>
@@ -652,7 +652,7 @@
 
                 <div class="flex items-center gap-x-1.5">
                     <p
-                        class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                        class="cursor-pointer text-xs font-medium leading-6 text-primary-700"
                         v-if="hasAnyAppliedColumnValues(column.index)"
                         @click="removeAppliedColumnAllValues(column.index)"
                     >
@@ -679,13 +679,13 @@
 
             <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
                 <p
-                    class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
+                    class="flex items-center rounded bg-primary-100 px-2 py-1 font-semibold text-primary-700"
                     v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                 >
                     <span v-text="appliedColumnValue"></span>
 
                     <span
-                        class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
+                        class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
                         @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
                     >
                     </span>
@@ -704,7 +704,7 @@
 
                 <div class="flex items-center gap-x-1.5">
                     <p
-                        class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                        class="cursor-pointer text-xs font-medium leading-6 text-primary-700"
                         v-if="hasAnyAppliedColumnValues(column.index)"
                         @click="removeAppliedColumnAllValues(column.index)"
                     >
@@ -731,13 +731,13 @@
 
             <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
                 <p
-                    class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
+                    class="flex items-center rounded bg-primary-100 px-2 py-1 font-semibold text-primary-700"
                     v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                 >
                     <span v-text="appliedColumnValue"></span>
 
                     <span
-                        class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
+                        class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
                         @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
                     >
                     </span>

@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'Otkaži',
                 'paused'                => 'Uvoz je pauziran.',
                 'resumed'               => 'Uvoz je nastavljen.',
+                'zip-failed'            => 'Izrada zip datoteke nije uspjela.',
                 'cancelled'             => 'Uvoz je otkazan.',
                 'paused-info'           => 'Uvoz je pauziran. Preostali paketi su na čekanju.',
                 'paused-info-export'    => 'Izvoz je pauziran. Preostali paketi su na čekanju.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'Uredi korisnika',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Potvrdite lozinku prije brisanja',
+                    'enter-current-password' => 'Unesite trenutnu lozinku',
+                    'password'               => 'Lozinka',
+                    'confirm-delete'         => 'Potvrdite brisanje ovog računa',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Natrag',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'Trenutno prijavljeni korisnik se ne može obrisati.',
         ],
         'system-settings' => [
-            'info' => 'Upravljajte izgledom, e-poštom (SMTP) i ispravljanjem pogrešaka s jednog mjesta.',
+            'title'              => 'Postavke sustava',
+            'back'               => 'Natrag',
+            'info'               => 'Upravljajte postavkama sustava s jednog mjesta.',
+            'search-placeholder' => 'Pretraži postavke',
+            'save-btn'           => 'Spremi',
+            'save-message'       => 'Postavke su uspješno spremljene.',
+            'system'             => [
+                'title' => 'Sustav',
+                'info'  => 'Osnovne postavke aplikacije.',
+            ],
+            'email'              => [
+                'title' => 'E-pošta',
+                'info'  => 'SMTP pošiljatelj i vjerodajnice.',
+            ],
+            'debug'              => [
+                'title' => 'Ispravljanje pogrešaka',
+                'info'  => 'Ispravljanje pogrešaka i bilježenje aplikacije.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logotip, favicon i tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'obriši',
             ],
             'create' => [
-                'title'        => 'Sistemski prompt',
-                'create-btn'   => 'Stvori sistemski prompt',
-                'edit-title'   => 'Uredi sistemski prompt',
-                'create-title' => 'Stvori novi sistemski prompt',
-                'label-title'  => 'Naslov',
-                'max-tokens'   => 'Maks. izlazni tokeni',
-                'temperature'  => 'Temperatura',
-                'type'         => 'Tip',
-                'prompt'       => 'Upit',
-                'save-btn'     => 'Spremi prompt',
-                'prompt-tone'  => 'Ton prompta',
+                'title'               => 'Sistemski prompt',
+                'create-btn'          => 'Stvori sistemski prompt',
+                'edit-title'          => 'Uredi sistemski prompt',
+                'create-title'        => 'Stvori novi sistemski prompt',
+                'label-title'         => 'Naslov',
+                'max-tokens'          => 'Maks. izlazni tokeni',
+                'temperature'         => 'Temperatura',
+                'type'                => 'Tip',
+                'prompt'              => 'Upit',
+                'save-btn'            => 'Spremi prompt',
+                'prompt-tone'         => 'Ton prompta',
+                'max-tokens-tooltip'  => 'Dopušteni raspon najviše izlaznih tokena: 100 do 5000 tokena',
+                'temperature-tooltip' => 'Temperatura kontrolira kreativnost. Raspon: 0 do 2. Niže vrijednosti (npr. 0,4) daju točnije i usredotočenije odgovore.',
             ],
             'message' => [
                 'save-success'   => 'Sistemski prompt uspješno spremljen.',

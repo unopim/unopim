@@ -21,13 +21,12 @@
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-media-gallery-template">
-        <!-- Panel Content -->
         <div class="grid">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                <!-- Add Media tile (always first) -->
+                {{-- Add Media tile (always first) --}}
                 <label
-                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
-                    :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : ''"
+                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-primary-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-primary-500 dark:hover:border-primary-400 hover:shadow-md"
+                    :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : ''"
                     v-if="ai.enabled"
                     :for="$.uid + '_imageInput'"
                     @click="resetAIModal(); $refs.choiceImageModal.open()"
@@ -36,7 +35,7 @@
                     @dragleave.prevent="isDragging = false"
                     @drop.prevent="onDrop"
                 >
-                    <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
+                    <span class="icon-image text-3xl text-gray-400 group-hover:text-primary-600 transition-colors"></span>
                     <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
                         @lang('admin::app.components.media.images.add-media-btn')
                     </p>
@@ -52,15 +51,15 @@
 
                 <label
                     v-else
-                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
-                    :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : ''"
+                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-primary-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-primary-500 dark:hover:border-primary-400 hover:shadow-md"
+                    :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : ''"
                     :for="$.uid + '_imageInput'"
                     @dragover.prevent="isDragging = true"
                     @dragenter.prevent="isDragging = true"
                     @dragleave.prevent="isDragging = false"
                     @drop.prevent="onDrop"
                 >
-                    <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
+                    <span class="icon-image text-3xl text-gray-400 group-hover:text-primary-600 transition-colors"></span>
                     <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
                         @lang('admin::app.components.media.images.add-media-btn')
                     </p>
@@ -84,7 +83,7 @@
                     />
                 </label>
 
-                <!-- Uploaded Images / Videos (rendered after the upload tile) -->
+                {{-- Uploaded Images / Videos (rendered after the upload tile) --}}
                 <draggable
                     class="contents"
                     ghost-class="draggable-ghost"
@@ -112,16 +111,13 @@
                     as="div"
                 >
                     <form>
-                        <!-- AI Content Generation Modal -->
                         <x-admin::modal ref="choiceImageModal">
-                            <!-- Modal Header -->
                             <x-slot:header>
                                 <p class="grid text-base text-gray-800 dark:text-gray-300 font-semibold text-center">
                                     @lang('admin::app.components.media.images.add-media-btn')
                                 </p>
                             </x-slot>
 
-                            <!-- Modal Content -->
                             <x-slot:content>
                                 <div class="mb-4">
                                     <label
@@ -176,7 +172,6 @@
                                 </div>
                             </x-slot>
 
-                            <!-- Modal Footer -->
                             <x-slot:footer>
                                 <div class="flex gap-x-2.5 items-center">
                                     <a href="#" @click="$refs.choiceImageModal.close()" class="secondary-button">
@@ -193,9 +188,7 @@
                     as="div"
                 >
                     <form @submit="handleSubmit($event, generate)">
-                        <!-- AI Content Generation Modal -->
                         <x-admin::modal ref="magicAIImageModal">
-                            <!-- Modal Header -->
                             <x-slot:header>
                                 <template v-if="! ai.images.length">
                                     <p class="flex gap-2.5 items-center text-lg text-gray-800 dark:text-white font-bold">
@@ -208,7 +201,7 @@
                                 <template v-else>
                                     <p class="text-lg text-gray-800 truncate dark:text-white font-bold">
                                         <span
-                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                                             @click="ai.images = []"
                                         ></span>
 
@@ -219,10 +212,8 @@
                                 </template>
                             </x-slot>
 
-                            <!-- Modal Content -->
                             <x-slot:content>
                                 <div v-show="! ai.images.length">
-                                    <!-- Default Image Prompt -->
                                     <x-admin::form.control-group v-if="imagePrompts.length">
                                         <x-admin::form.control-group.label>
                                             @lang('admin::app.components.tinymce.ai-generation.default-prompt')
@@ -236,7 +227,6 @@
                                         </select>
                                     </x-admin::form.control-group>
 
-                                    <!-- Prompt -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.components.media.images.ai-generation.prompt')
@@ -253,7 +243,6 @@
                                                 :label="trans('admin::app.components.media.images.ai-generation.prompt')"
                                             />
 
-                                            <!-- Icon inside textarea -->
                                             <div
                                                 class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
                                                 @click="openSuggestions"
@@ -352,11 +341,10 @@
                                     <div class="grid grid-cols-4 gap-5">
                                         <div
                                             class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
-                                            :class="{'!border-violet-700 ': image.selected}"
+                                            :class="{'!border-primary-700 ': image.selected}"
                                             v-for="image in ai.images"
                                             @click="selectImage(image, allowMultiple)"
                                         >
-                                            <!-- Image Preview -->
                                             <img
                                                 class="w-[120px] h-[120px]"
                                                 :src="image.url"
@@ -366,10 +354,8 @@
                                 </div>
                             </x-slot>
 
-                            <!-- Modal Footer -->
                             <x-slot:footer>
                                 <div class="flex items-center justify-between w-full">
-                                    <!-- Platform & Model compact selectors (left side) -->
                                     <div class="flex items-center gap-2" v-if="!ai.images.length">
                                         <select
                                             v-model="ai.platform_id"
@@ -389,7 +375,6 @@
                                     </div>
                                     <div v-else></div>
 
-                                    <!-- Action buttons (right side) -->
                                     <div class="flex gap-x-2.5 items-center">
                                         <template v-if="! ai.images.length">
                                             <button
@@ -398,14 +383,14 @@
                                                 :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
                                                 <template v-if="isLoading">
                                                     <img
-                                                        class="animate-spin h-5 w-5 text-violet-700"
+                                                        class="animate-spin h-5 w-5 text-primary-700"
                                                         src="{{ unopim_asset('images/spinner.svg') }}"
                                                     />
                                                     @lang('admin::app.components.tinymce.ai-generation.generating')
                                                 </template>
 
                                                 <template v-else>
-                                                    <span class="icon-magic text-2xl text-violet-700"></span>
+                                                    <span class="icon-magic text-2xl text-primary-700"></span>
                                                     @lang('admin::app.components.tinymce.ai-generation.generate')
                                                 </template>
                                             </button>
@@ -418,14 +403,14 @@
                                                 :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
                                                 <template v-if="isLoading">
                                                     <img
-                                                        class="animate-spin h-5 w-5 text-violet-700"
+                                                        class="animate-spin h-5 w-5 text-primary-700"
                                                         src="{{ unopim_asset('images/spinner.svg') }}"
                                                     />
                                                     @lang('admin::app.components.media.images.ai-generation.regenerating')
                                                 </template>
 
                                                 <template v-else>
-                                                    <span class="icon-magic text-2xl text-violet-700"></span>
+                                                    <span class="icon-magic text-2xl text-primary-700"></span>
                                                     @lang('admin::app.components.media.images.ai-generation.regenerate')
                                                 </template>
                                             </button>
@@ -450,12 +435,11 @@
     </script>
 
     <script type="text/x-template" id="v-media-gallery-item-template">
-        <div class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-700">
+        <div class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700">
             <div
                 v-if="image.type?.startsWith('image/')"
                 class="relative w-full"
             >
-                <!-- Image Preview -->
                 <img
                     :src="image.url" :type="image.type"
                     class="w-full h-[140px] object-cover bg-gray-100 dark:bg-cherry-800"
@@ -474,7 +458,6 @@
                     </x-slot>
                 </x-admin::modal>
 
-                <!-- Hover overlay with actions -->
                 <div class="absolute inset-0 flex items-end justify-center gap-2 p-2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
                     <span class="icon-drag text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-grab active:cursor-grabbing"></span>
                     <span
@@ -522,7 +505,6 @@
                 </x-slot>
             </x-admin::modal>
 
-            <!-- Filename caption -->
             <p
                 v-if="image.type?.startsWith('image/')"
                 class="px-2 py-1.5 text-xs text-gray-700 dark:text-gray-300 text-center truncate"
@@ -535,7 +517,6 @@
                 v-else-if="image.type?.startsWith('video/')"
                 class="relative w-full"
             >
-                <!-- Video Preview -->
                 <video
                     class="w-full h-[140px] object-cover bg-gray-900"
                     ref="videoPreview"
@@ -546,12 +527,11 @@
                     <source :src="image.url" :type="image.type">
                 </video>
 
-                <!-- Play badge (always visible to indicate video) -->
+                {{-- Play badge (always visible to indicate video) --}}
                 <div class="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center">
                     <span class="icon-play text-base leading-none"></span>
                 </div>
 
-                <!-- Hover overlay with actions -->
                 <div class="absolute inset-0 flex items-end justify-center gap-2 p-2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
                     <span
                         class="icon-play text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
@@ -580,7 +560,6 @@
                 </div>
             </div>
 
-            <!-- Filename caption (video) -->
             <p
                 v-if="image.type?.startsWith('video/')"
                 class="px-2 py-1.5 text-xs text-gray-700 dark:text-gray-300 text-center truncate"

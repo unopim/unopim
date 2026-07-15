@@ -8,7 +8,7 @@
             <span
                 v-for="(tag, index) in tags"
                 :key="tag"
-                class="flex items-center gap-1 px-1 py-1 rounded bg-violet-100 dark:bg-cherry-800 text-violet-700 dark:text-violet-200 text-sm"
+                class="flex items-center gap-1 px-1 py-1 rounded bg-primary-100 dark:bg-cherry-800 text-primary-700 dark:text-primary-200 text-sm"
             >
                 <span v-text="tag"></span>
 
@@ -16,7 +16,7 @@
                     type="button"
                     :aria-label="'Remove ' + tag"
                     @click.stop="removeTag(index)"
-                    class="icon-cross-large text-base leading-none text-violet-500 dark:text-violet-300 hover:text-violet-700 dark:hover:text-white"
+                    class="icon-cross-large text-base leading-none text-primary-500 dark:text-primary-300 hover:text-primary-700 dark:hover:text-white"
                 >
                 </button>
             </span>

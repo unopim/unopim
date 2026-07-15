@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'İptal',
                 'paused'                => 'İçe aktarım duraklatıldı.',
                 'resumed'               => 'İçe aktarım devam ettirildi.',
+                'zip-failed'            => 'Zip dosyası oluşturulamadı.',
                 'cancelled'             => 'İçe aktarım iptal edildi.',
                 'paused-info'           => 'İçe aktarım duraklatıldı. Kalan gruplar beklemede.',
                 'paused-info-export'    => 'Dışa aktarım duraklatıldı. Kalan gruplar beklemede.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'Kullanıcıyı Düzenle',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Silmeden önce parolayı onaylayın',
+                    'enter-current-password' => 'Mevcut parolayı girin',
+                    'password'               => 'Parola',
+                    'confirm-delete'         => 'Bu hesabın silinmesini onaylayın',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Geri',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'Giriş yapmış kullanıcı silinemez.',
         ],
         'system-settings' => [
-            'info' => 'Görünüm, e-posta (SMTP) ve hata ayıklama ayarlarını tek bir yerden yönetin.',
+            'title'              => 'Sistem Ayarları',
+            'back'               => 'Geri',
+            'info'               => 'Sistem ayarlarını tek bir yerden yönetin.',
+            'search-placeholder' => 'Ayarlarda ara',
+            'save-btn'           => 'Kaydet',
+            'save-message'       => 'Ayarlar başarıyla kaydedildi.',
+            'system'             => [
+                'title' => 'Sistem',
+                'info'  => 'Temel uygulama ayarları.',
+            ],
+            'email'              => [
+                'title' => 'E-posta',
+                'info'  => 'SMTP gönderici ve kimlik bilgileri.',
+            ],
+            'debug'              => [
+                'title' => 'Hata Ayıklama',
+                'info'  => 'Uygulama hata ayıklama ve günlük kaydı.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon ve tema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'sil',
             ],
             'create' => [
-                'title'        => 'Sistem Komutu',
-                'create-btn'   => 'Sistem Komutu Oluştur',
-                'edit-title'   => 'Sistem Komutunu Düzenle',
-                'create-title' => 'Yeni Sistem Komutu Oluştur',
-                'label-title'  => 'Başlık',
-                'max-tokens'   => 'Maksimum Çıktı Token',
-                'temperature'  => 'Sıcaklık',
-                'type'         => 'Tür',
-                'prompt'       => 'Komut',
-                'save-btn'     => 'Komutu Kaydet',
-                'prompt-tone'  => 'Komut Tonu',
+                'title'               => 'Sistem Komutu',
+                'create-btn'          => 'Sistem Komutu Oluştur',
+                'edit-title'          => 'Sistem Komutunu Düzenle',
+                'create-title'        => 'Yeni Sistem Komutu Oluştur',
+                'label-title'         => 'Başlık',
+                'max-tokens'          => 'Maksimum Çıktı Token',
+                'temperature'         => 'Sıcaklık',
+                'type'                => 'Tür',
+                'prompt'              => 'Komut',
+                'save-btn'            => 'Komutu Kaydet',
+                'prompt-tone'         => 'Komut Tonu',
+                'max-tokens-tooltip'  => 'İzin verilen maksimum çıkış belirteci aralığı: 100 ile 5000 belirteç',
+                'temperature-tooltip' => 'Sıcaklık yaratıcılığı kontrol eder. Aralık: 0 ile 2. Daha düşük değerler (örneğin 0,4) daha doğru ve odaklı yanıtlar verir.',
             ],
             'message' => [
                 'save-success'   => 'Sistem komutu başarıyla kaydedildi.',

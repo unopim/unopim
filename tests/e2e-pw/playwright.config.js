@@ -1,6 +1,32 @@
 const { defineConfig, devices } = require('@playwright/test');
 const path = require('path');
 const os = require('os');
+const fs = require('fs');
+
+/**
+ * Load tests/e2e-pw/.env (if present) into process.env without pulling in a
+ * dotenv dependency. Existing env vars win, so `BASE_URL=... npx playwright test`
+ * still overrides the file. See .env.example for the supported keys.
+ */
+(() => {
+  const envPath = path.resolve(__dirname, '.env');
+
+  if (! fs.existsSync(envPath)) {
+    return;
+  }
+
+  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+    const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/i);
+
+    if (! match) {
+      continue;
+    }
+
+    if (process.env[match[1]] === undefined) {
+      process.env[match[1]] = match[2].replace(/^["']|["']$/g, '');
+    }
+  }
+})();
 
 const isCI = !!process.env.CI;
 const STORAGE_STATE = path.resolve(__dirname, '.state/admin-auth.json');
@@ -49,7 +75,9 @@ module.exports = defineConfig({
   globalSetup: require.resolve('./global-setup.js'),
 
   use: {
-    /* Base URL — configurable via env for different environments */
+    /* Base URL — must point at THIS project's server and match its APP_URL so the
+     * app-url guard doesn't redirect. Set BASE_URL (env or tests/e2e-pw/.env) per
+     * environment; defaults to the local dev server. */
     baseURL: process.env.BASE_URL || 'http://127.0.0.1:8000',
 
     /* Reuse authenticated session across all tests */

@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { clickSave, navigateTo } = require('../../utils/helpers');
 
 test.describe('UnoPim MyAccount', () => {
 test('My Account', async ({ adminPage }) => {
@@ -12,6 +12,6 @@ test('My Account', async ({ adminPage }) => {
   await fileInput.setInputFiles('assets/john doe.jpeg');
   await adminPage.getByRole('textbox', { name: 'Current Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Current Password' }).fill('admin123');
-  await adminPage.getByRole('button', { name: 'Save changes' }).click();
+  await clickSave(adminPage, 'Save Account');
 });
 });

@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'Hủy',
                 'paused'                => 'Quá trình nhập đã được tạm dừng.',
                 'resumed'               => 'Quá trình nhập đã được tiếp tục.',
+                'zip-failed'            => 'Không thể tạo tệp zip.',
                 'cancelled'             => 'Quá trình nhập đã bị hủy.',
                 'paused-info'           => 'Quá trình nhập đang tạm dừng. Các lô còn lại đang chờ.',
                 'paused-info-export'    => 'Quá trình xuất đang tạm dừng. Các lô còn lại đang chờ.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'Chỉnh sửa người dùng',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Xác nhận mật khẩu trước khi xóa',
+                    'enter-current-password' => 'Nhập mật khẩu hiện tại',
+                    'password'               => 'Mật khẩu',
+                    'confirm-delete'         => 'Xác nhận xóa tài khoản này',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Quay lại',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'Không thể xóa người dùng hiện tại.',
         ],
         'system-settings' => [
-            'info' => 'Quản lý giao diện, email (SMTP) và gỡ lỗi từ một nơi duy nhất.',
+            'title'              => 'Cài đặt hệ thống',
+            'back'               => 'Quay lại',
+            'info'               => 'Quản lý cài đặt hệ thống từ một nơi duy nhất.',
+            'search-placeholder' => 'Tìm kiếm cài đặt',
+            'save-btn'           => 'Lưu',
+            'save-message'       => 'Đã lưu cài đặt thành công.',
+            'system'             => [
+                'title' => 'Hệ thống',
+                'info'  => 'Cài đặt cốt lõi của ứng dụng.',
+            ],
+            'email'              => [
+                'title' => 'Email',
+                'info'  => 'Người gửi SMTP và thông tin đăng nhập.',
+            ],
+            'debug'              => [
+                'title' => 'Gỡ lỗi',
+                'info'  => 'Gỡ lỗi và ghi nhật ký ứng dụng.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon và giao diện.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'xóa',
             ],
             'create' => [
-                'title'        => 'Lệnh hệ thống',
-                'create-btn'   => 'Tạo lệnh hệ thống',
-                'edit-title'   => 'Sửa lệnh hệ thống',
-                'create-title' => 'Tạo lệnh hệ thống mới',
-                'label-title'  => 'Tiêu đề',
-                'max-tokens'   => 'Token đầu ra tối đa',
-                'temperature'  => 'Nhiệt độ',
-                'type'         => 'Loại',
-                'prompt'       => 'Lệnh',
-                'save-btn'     => 'Lưu lệnh',
-                'prompt-tone'  => 'Giọng điệu lệnh',
+                'title'               => 'Lệnh hệ thống',
+                'create-btn'          => 'Tạo lệnh hệ thống',
+                'edit-title'          => 'Sửa lệnh hệ thống',
+                'create-title'        => 'Tạo lệnh hệ thống mới',
+                'label-title'         => 'Tiêu đề',
+                'max-tokens'          => 'Token đầu ra tối đa',
+                'temperature'         => 'Nhiệt độ',
+                'type'                => 'Loại',
+                'prompt'              => 'Lệnh',
+                'save-btn'            => 'Lưu lệnh',
+                'prompt-tone'         => 'Giọng điệu lệnh',
+                'max-tokens-tooltip'  => 'Phạm vi token đầu ra tối đa được phép: 100 đến 5000 token',
+                'temperature-tooltip' => 'Nhiệt độ kiểm soát khả năng sáng tạo. Phạm vi: 0 đến 2. Giá trị thấp hơn (ví dụ: 0,4) cho phản hồi chính xác và tập trung hơn.',
             ],
             'message' => [
                 'save-success'   => 'Lệnh hệ thống đã được lưu thành công.',

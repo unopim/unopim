@@ -5,23 +5,18 @@
         @lang('admin::app.settings.channels.index.title')
     </x-slot>
 
-    <div class="flex justify-between items-center">
-        <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-            @lang('admin::app.settings.channels.index.title')
-        </p>
-        
-        <div class="flex gap-x-2.5 items-center">
-            <!-- Create New Channel Button -->
-            @if (bouncer()->hasPermission('settings.channels.create'))
-                <a 
+    <x-admin::page-header :title="trans('admin::app.settings.channels.index.title')">
+        @if (bouncer()->hasPermission('settings.channels.create'))
+            <x-slot:actions>
+                <a
                     href="{{ route('admin.settings.channels.create') }}"
                     class="primary-button"
                 >
                     @lang('admin::app.settings.channels.index.create-btn')
                 </a>
-            @endif
-        </div>
-    </div>
+            </x-slot>
+        @endif
+    </x-admin::page-header>
 
     {!! view_render_event('unopim.settings.channels.list.before') !!}
     

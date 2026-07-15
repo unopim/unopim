@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\JobTrackerGrid;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -111,6 +112,10 @@ class TrackerController extends Controller
      */
     public function download(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         return Storage::disk('public')->download($import->file_path);
@@ -121,10 +126,29 @@ class TrackerController extends Controller
      */
     public function downloadArchive(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
         $zip = new ZipArchive;
-        $zipFileName = sprintf('%s-%s.zip', $jobTrack->jobInstance->code, $jobTrack->jobInstance->entity_type);
-        if ($zip->open(public_path($zipFileName), ZipArchive::CREATE) === true) {
+
+        // Slug the parts and basename the result so a job code containing "../"
+        // can never escape the temp directory (arbitrary file write). The archive
+        // is built in a private temp path, not the web-served public/ directory.
+        $zipFileName = basename(sprintf(
+            '%s-%s.zip',
+            Str::slug((string) $jobTrack->jobInstance->code),
+            Str::slug((string) $jobTrack->jobInstance->entity_type)
+        ));
+
+        $zipFilePath = storage_path('app/tmp/'.$zipFileName);
+
+        if (! is_dir(dirname($zipFilePath))) {
+            mkdir(dirname($zipFilePath), 0755, true);
+        }
+
+        if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
             $folderPath = $jobTrack->file_path;
             $files = Storage::allFiles($folderPath);
             $directories = Storage::allDirectories($folderPath);
@@ -143,10 +167,12 @@ class TrackerController extends Controller
 
             $zip->close();
 
-            return response()->download(public_path($zipFileName))->deleteFileAfterSend(true);
-        } else {
-            return 'Failed to create the zip file.';
+            return response()->download($zipFilePath)->deleteFileAfterSend(true);
         }
+
+        return response()->json([
+            'message' => trans('admin::app.settings.data-transfer.tracker.zip-failed'),
+        ], 500);
     }
 
     /**
@@ -154,6 +180,10 @@ class TrackerController extends Controller
      */
     public function downloadLogFile(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $path = JobLogger::getJobLogPath($id);
 
         $path = storage_path($path);

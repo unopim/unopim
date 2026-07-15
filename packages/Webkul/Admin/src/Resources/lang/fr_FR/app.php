@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'Annuler',
                 'paused'                => 'L\'importation a été mise en pause.',
                 'resumed'               => 'L\'importation a été reprise.',
+                'zip-failed'            => 'Échec de la création du fichier zip.',
                 'cancelled'             => 'L\'importation a été annulée.',
                 'paused-info'           => 'L\'importation est en pause. Les lots restants sont en attente.',
                 'paused-info-export'    => 'L\'exportation est en pause. Les lots restants sont en attente.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'Modifier l\'utilisateur',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Confirmer le mot de passe avant la suppression',
+                    'enter-current-password' => 'Saisir le mot de passe actuel',
+                    'password'               => 'Mot de passe',
+                    'confirm-delete'         => 'Confirmer la suppression de ce compte',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Retour',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'L\'utilisateur connecté ne peut pas être supprimé',
         ],
         'system-settings' => [
-            'info' => 'Gérez l\'apparence, l\'e-mail (SMTP) et le débogage depuis un seul endroit.',
+            'title'              => 'Paramètres système',
+            'back'               => 'Retour',
+            'info'               => 'Gérez les paramètres du système depuis un seul endroit.',
+            'search-placeholder' => 'Rechercher des paramètres',
+            'save-btn'           => 'Enregistrer',
+            'save-message'       => 'Paramètres enregistrés avec succès.',
+            'system'             => [
+                'title' => 'Système',
+                'info'  => 'Paramètres principaux de l\'application.',
+            ],
+            'email'              => [
+                'title' => 'E-mail',
+                'info'  => 'Expéditeur et identifiants SMTP.',
+            ],
+            'debug'              => [
+                'title' => 'Débogage',
+                'info'  => 'Débogage et journalisation de l\'application.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon et thème.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'supprimer',
             ],
             'create' => [
-                'title'        => 'Prompt système',
-                'create-btn'   => 'Créer un prompt système',
-                'edit-title'   => 'Modifier le prompt système',
-                'create-title' => 'Créer un nouveau prompt système',
-                'label-title'  => 'Titre',
-                'max-tokens'   => 'Jetons de sortie max.',
-                'temperature'  => 'Température',
-                'type'         => 'Type',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Enregistrer le prompt',
-                'prompt-tone'  => 'Ton du prompt',
+                'title'               => 'Prompt système',
+                'create-btn'          => 'Créer un prompt système',
+                'edit-title'          => 'Modifier le prompt système',
+                'create-title'        => 'Créer un nouveau prompt système',
+                'label-title'         => 'Titre',
+                'max-tokens'          => 'Jetons de sortie max.',
+                'temperature'         => 'Température',
+                'type'                => 'Type',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Enregistrer le prompt',
+                'prompt-tone'         => 'Ton du prompt',
+                'max-tokens-tooltip'  => 'Plage autorisée de jetons de sortie maximaux : 100 à 5000 jetons',
+                'temperature-tooltip' => 'La température contrôle la créativité. Plage : 0 à 2. Des valeurs plus faibles (par ex. 0,4) donnent des réponses plus précises et ciblées.',
             ],
             'message' => [
                 'save-success'   => 'Prompt système enregistré avec succès.',

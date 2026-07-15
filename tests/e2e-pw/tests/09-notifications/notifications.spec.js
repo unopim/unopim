@@ -34,8 +34,9 @@ async function navigateToNotifications(page) {
 test.describe('Notification Page', () => {
   test('1 - should load the notifications page', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
-    // Target the page title specifically (not the dropdown header)
-    await expect(adminPage.locator('p.text-xl').filter({ hasText: 'Notifications' })).toBeVisible();
+    // Target the page title specifically (not the dropdown header). The page title
+    // now renders through x-admin::page-header (<h1>), so match the heading role.
+    await expect(adminPage.getByRole('heading', { name: 'Notifications' })).toBeVisible();
     await expect(adminPage.getByText('List all the Notifications')).toBeVisible();
   });
 
@@ -54,17 +55,17 @@ test.describe('Notification Page', () => {
     // Click Unread tab
     await tabContainer.getByText('Unread', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(tabContainer.locator('div.text-violet-700').getByText('Unread')).toBeVisible();
+    await expect(tabContainer.locator('div.text-primary-700').getByText('Unread')).toBeVisible();
 
     // Click Read tab
     await tabContainer.getByText('Read', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(tabContainer.locator('div.text-violet-700').getByText('Read', { exact: true })).toBeVisible();
+    await expect(tabContainer.locator('div.text-primary-700').getByText('Read', { exact: true })).toBeVisible();
 
     // Click All tab
     await tabContainer.getByText('All', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(tabContainer.locator('div.text-violet-700').getByText('All')).toBeVisible();
+    await expect(tabContainer.locator('div.text-primary-700').getByText('All')).toBeVisible();
   });
 
   test('4 - should show empty state or notification list', async ({ adminPage }) => {
@@ -95,7 +96,7 @@ test.describe('Notification Page', () => {
     await navigateToNotifications(adminPage);
 
     // Check if there are unread notifications via the badge
-    const unreadBadge = adminPage.locator('.bg-violet-100');
+    const unreadBadge = adminPage.locator('.bg-primary-100');
     const hasUnread = await unreadBadge.isVisible({ timeout: 3000 }).catch(() => false);
 
     if (hasUnread) {

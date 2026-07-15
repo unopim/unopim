@@ -380,7 +380,7 @@
                                 @change="setValue($event.target.checked ? '1' : '0')"
                             />
 
-                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-violet-500 rounded-full peer dark:bg-gray-900 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-violet-700"></div>
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500 rounded-full peer dark:bg-gray-900 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-700"></div>
                         </label>
                     </div>
                 </script>
@@ -544,7 +544,7 @@
                                 v-for="option in field.options"
                                 :key="option.name"
                                 type="button"
-                                class="cursor-pointer rounded bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-violet-100 hover:text-violet-700 dark:bg-cherry-800 dark:text-gray-300"
+                                class="cursor-pointer rounded bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-primary-100 hover:text-primary-700 dark:bg-cherry-800 dark:text-gray-300"
                                 @click="setRange(option.from, option.to)"
                                 v-text="option.label"
                             ></button>

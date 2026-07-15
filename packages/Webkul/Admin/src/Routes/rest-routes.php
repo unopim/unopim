@@ -69,7 +69,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::get('default-prompt', 'defaultPrompt')->name('admin.magic_ai.default_prompt');
 
-        Route::get('prompt', 'index')->name('admin.magic_ai.prompt.index');
+        Route::get('prompts', 'index')->name('admin.magic_ai.prompt.index');
 
         Route::post('create-prompt', 'store')->name('admin.magic_ai.prompt.store');
 
@@ -91,13 +91,13 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::post('save/translated-attributes', 'saveAllTranslatedAttributes')->name('admin.magic_ai.store.translated.all_attribute');
 
-        Route::get('platforms', 'platforms')->name('admin.magic_ai.platforms');
+        Route::get('platform-options', 'platforms')->name('admin.magic_ai.platforms');
     });
 
     /**
      * Platform Routes
      */
-    Route::controller(MagicAIPlatformController::class)->prefix('magic-ai/platform')->group(function () {
+    Route::controller(MagicAIPlatformController::class)->prefix('magic-ai/platforms')->group(function () {
         Route::get('', 'index')->name('admin.magic_ai.platform.index');
         Route::post('', 'store')->name('admin.magic_ai.platform.store');
         Route::post('test-connection', 'testConnection')->name('admin.magic_ai.platform.test');
@@ -111,7 +111,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     /**
      * System Prompt Routes
      */
-    Route::controller(MagicAISystemPromptController::class)->prefix('system-prompt')->group(function () {
+    Route::controller(MagicAISystemPromptController::class)->prefix('system-prompts')->group(function () {
 
         Route::get('', 'index')->name('admin.magic_ai.system_prompt.index');
 

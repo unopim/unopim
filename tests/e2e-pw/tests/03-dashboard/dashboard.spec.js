@@ -62,13 +62,13 @@ test('2.3 - Shows Create Product quick action button', async ({ adminPage }) => 
 test('2.4 - Shows Import Data quick action link with icon', async ({ adminPage }) => {
   const link = adminPage.getByRole('link', { name: 'Import Data' });
   await expect(link).toBeVisible();
-  await expect(link).toHaveAttribute('href', /\/admin\/settings\/data-transfer\/imports/);
+  await expect(link).toHaveAttribute('href', /\/admin\/data-transfer\/imports/);
 });
 
 test('2.5 - Shows Export Data quick action link with icon', async ({ adminPage }) => {
   const link = adminPage.getByRole('link', { name: 'Export Data' });
   await expect(link).toBeVisible();
-  await expect(link).toHaveAttribute('href', /\/admin\/settings\/data-transfer\/exports/);
+  await expect(link).toHaveAttribute('href', /\/admin\/data-transfer\/exports/);
 });
 
 // ═════════════════════════════════════════════════
@@ -135,8 +135,8 @@ test('4.4 - Total Groups card shows icon and numeric count', async ({ adminPage 
 });
 
 test('4.5 - Total Groups links to attribute groups page', async ({ adminPage }) => {
-  const link = adminPage.getByRole('link', { name: /Total Attribute Groups Total Attribute Groups/ });
-  await expect(link).toHaveAttribute('href', /\/admin\/catalog\/attributegroups/);
+  const link = adminPage.getByRole('link', { name: /Total Attribute Groups/ });
+  await expect(link).toHaveAttribute('href', /\/admin\/catalog\/attribute-groups/);
 });
 
 test('4.6 - Total Families card shows icon and numeric count', async ({ adminPage }) => {
@@ -149,7 +149,7 @@ test('4.6 - Total Families card shows icon and numeric count', async ({ adminPag
 
 test('4.7 - Total Families links to families page', async ({ adminPage }) => {
   const link = adminPage.getByRole('link', { name: /Total Families Total Families/ });
-  await expect(link).toHaveAttribute('href', /\/admin\/catalog\/families/);
+  await expect(link).toHaveAttribute('href', /\/admin\/catalog\/attribute-families/);
 });
 
 test('4.8 - Total Locales card shows icon and numeric count', async ({ adminPage }) => {
@@ -606,12 +606,12 @@ test('13.1 - Create Product link navigates to products page', async ({ adminPage
 
 test('13.2 - Import Data link navigates to imports page', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Import Data' }).click();
-  await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports/);
+  await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports/);
 });
 
 test('13.3 - Export Data link navigates to exports page', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Export Data' }).click();
-  await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/exports/);
+  await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/exports/);
 });
 
 });

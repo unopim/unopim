@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { navigateTo, generateUid, clickSave, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create a product import job with given code and file.
@@ -55,7 +55,7 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
     const fileInput = adminPage.locator('input[type="file"]').first();
     await fileInput.setInputFiles('assets/1k_products.xlsx');
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Import');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
 
@@ -68,7 +68,7 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
     const fileInput = adminPage.locator('input[type="file"]').first();
     await fileInput.setInputFiles('assets/1k_products.xlsx');
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Import');
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
   });
 
@@ -79,7 +79,7 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(`imp-file-${uid}`);
     await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
     await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Import');
     await expect(adminPage.locator('#app').getByText('The File field is required')).toBeVisible();
   });
 
@@ -95,7 +95,7 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.getByRole('option', { name: 'Stop on Errors' }).locator('span').first().click();
     await adminPage.getByRole('textbox', { name: 'Allowed Errors' }).fill('');
     await adminPage.getByRole('textbox', { name: 'Field Separator' }).fill('');
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Import');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Action field is required')).toBeVisible();
@@ -115,7 +115,7 @@ test.describe('UnoPim Import Jobs', () => {
     await fileInput.setInputFiles('assets/1k_products.xlsx');
     await adminPage.locator('#action').getByRole('combobox').locator('div').filter({ hasText: 'Create/Update' }).click();
     await adminPage.getByRole('option', { name: 'Create/Update' }).locator('span').first().click();
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Import');
     await expect(adminPage.locator('#app').getByText('The Action field is required')).toBeVisible();
   });
 
@@ -130,7 +130,7 @@ test.describe('UnoPim Import Jobs', () => {
     await fileInput.setInputFiles('assets/1k_products.xlsx');
     await adminPage.locator('#validation_strategy').getByRole('combobox').locator('div').filter({ hasText: 'Stop on Errors' }).click();
     await adminPage.getByRole('option', { name: 'Stop on Errors' }).locator('span').first().click();
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Import');
     await expect(adminPage.locator('#app').getByText('The Validation Strategy field is required')).toBeVisible();
   });
 
@@ -144,7 +144,7 @@ test.describe('UnoPim Import Jobs', () => {
     const fileInput = adminPage.locator('input[type="file"]').first();
     await fileInput.setInputFiles('assets/1k_products.xlsx');
     await adminPage.getByRole('textbox', { name: 'Allowed Errors' }).fill('');
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Import');
     await expect(adminPage.locator('#app').getByText('The Allowed Errors field is required')).toBeVisible();
   });
 
@@ -158,7 +158,7 @@ test.describe('UnoPim Import Jobs', () => {
     const fileInput = adminPage.locator('input[type="file"]').first();
     await fileInput.setInputFiles('assets/1k_products.xlsx');
     await adminPage.getByRole('textbox', { name: 'Field Separator' }).fill('');
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Import');
     await expect(adminPage.locator('#app').getByText('The Field Separator field is required')).toBeVisible();
   });
 
@@ -198,7 +198,7 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
     const fileInput = adminPage.locator('input[type="file"]').first();
     await fileInput.setInputFiles('assets/1k_products.xlsx');
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Import');
     await expect(adminPage.locator('#app').getByText(/code has already been taken/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
@@ -264,7 +264,9 @@ test.describe('UnoPim Import Jobs', () => {
 
     // Test Import action
     await itemRow.locator('span[title="Import"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports\/import/);
+    await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports\/import/);
+    await adminPage.goBack();
+    await adminPage.waitForLoadState('networkidle');
 
     // Search again
     await navigateTo(adminPage, 'imports');
@@ -275,11 +277,13 @@ test.describe('UnoPim Import Jobs', () => {
     // Test Edit action
     const itemRow2 = adminPage.locator('div', { hasText: code });
     await itemRow2.locator('span[title="Edit"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports\/edit/);
+    await adminPage.goBack();
+    await adminPage.waitForLoadState('networkidle');
 
-    // Search again
-    await navigateTo(adminPage, 'imports');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    // Search again (scope to the datagrid's search box — after navigating back
+    // the page can briefly expose more than one "Search" textbox).
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
 
