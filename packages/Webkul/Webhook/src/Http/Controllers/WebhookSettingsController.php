@@ -2,6 +2,7 @@
 
 namespace Webkul\Webhook\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -25,7 +26,7 @@ class WebhookSettingsController
      *
      * @return View
      */
-    public function index()
+    public function index(): Factory|\Illuminate\Contracts\View\View
     {
         return view('webhook::settings.index');
     }
@@ -38,7 +39,7 @@ class WebhookSettingsController
     public function store(Request $request)
     {
         $request->validate([
-            'webhook_active' => 'sometimes|in:0,1,true,false',
+            'webhook_active' => ['sometimes', 'in:0,1,true,false'],
             'webhook_url'    => [
                 'nullable',
                 'required_if:webhook_active,1,true',
@@ -142,7 +143,7 @@ class WebhookSettingsController
             $response = Http::withOptions(SafeWebhookUrl::httpOptions($url))
                 ->timeout(self::TEST_REQUEST_TIMEOUT)
                 ->post($url, $payload);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return [
                 'success' => false,
                 'message' => trans('webhook::app.configuration.webhook.settings.index.webhook_url.connection_failed'),

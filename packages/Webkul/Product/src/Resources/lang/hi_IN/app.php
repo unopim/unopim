@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'वैरिएंट संरचनाएँ',
+        'ai-suggest'         => 'AI सुझाव',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'की प्रति -:value',

@@ -65,6 +65,7 @@
                         <div
                             class="flex gap-2.5 cursor-pointer"
                             v-for="(columnGroup, index) in ['user_id', 'user_name', 'status', 'email', 'role_name']"
+                            :key="index"
                         >
                             <p class="text-gray-600 dark:text-gray-300">
                                 <span class="[&>*]:after:content-['_/_']">
@@ -104,6 +105,7 @@
                 <template #body="{ columns, records, performAction }">
                     <div
                         v-for="record in records"
+                        :key="record.id"
                         class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="'grid-template-columns: repeat(' + (record.actions.length ? 6 : 5) + ', minmax(0, 1fr));'"
                         @click="id=1; editModal(record.actions.find(action => action.index === 'edit')?.url)"
@@ -296,6 +298,7 @@
                                 </x-admin::form.control-group>
                             </div>
 
+                            <template v-if="isUpdating">
                             <x-admin::form.control-group class="mb-4">
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.channels.edit.ui-locale')
@@ -321,6 +324,63 @@
                                 </x-admin::form.control-group.control>
 
                                 <x-admin::form.control-group.error control-name="ui_locale_id" />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group class="mb-4">
+                                <x-admin::form.control-group.label
+                                    :title="trans('admin::app.settings.users.index.create.catalog-locale-info')"
+                                >
+                                    @lang('admin::app.settings.users.index.create.catalog-locale')
+
+                                    <span class="icon-information text-base align-middle cursor-help"></span>
+                                </x-admin::form.control-group.label>
+
+                                @php
+                                    $catalogLocales = core()->getAllActiveLocales();
+                                @endphp
+
+                                <x-admin::form.control-group.control
+                                    type="select"
+                                    id="catalog_locale_id"
+                                    name="catalog_locale_id"
+                                    v-model="data.user.catalog_locale_id"
+                                    :label="trans('admin::app.settings.users.index.create.catalog-locale')"
+                                    :placeholder="trans('admin::app.settings.users.index.create.catalog-locale')"
+                                    :options="$catalogLocales"
+                                    track-by="id"
+                                    label-by="name"
+                                >
+                                </x-admin::form.control-group.control>
+
+                                <x-admin::form.control-group.error control-name="catalog_locale_id" />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group class="mb-4">
+                                <x-admin::form.control-group.label>
+                                    @lang('admin::app.settings.users.index.create.default-channel')
+                                </x-admin::form.control-group.label>
+
+                                @php
+                                    $userChannels = core()->getAllChannels()->map(fn ($channel) => [
+                                        'id'   => $channel->id,
+                                        'name' => $channel->name ?: '['.$channel->code.']',
+                                    ])->values()->toJson();
+                                @endphp
+
+                                <x-admin::form.control-group.control
+                                    type="select"
+                                    id="default_channel_id"
+                                    name="default_channel_id"
+                                    v-model="data.user.default_channel_id"
+                                    :label="trans('admin::app.settings.users.index.create.default-channel')"
+                                    :placeholder="trans('admin::app.settings.users.index.create.default-channel')"
+                                    :options="$userChannels"
+                                    track-by="id"
+                                    label-by="name"
+                                >
+                                </x-admin::form.control-group.control>
+
+                                <x-admin::form.control-group.error control-name="default_channel_id" />
                             </x-admin::form.control-group>
 
                                 <!-- TImezone -->
@@ -349,6 +409,7 @@
 
                                 <x-admin::form.control-group.error control-name="timezone" />
                             </x-admin::form.control-group>
+                            </template>
 
                             <!-- Role -->
                             <x-admin::form.control-group class="flex-1 w-full">
@@ -405,19 +466,12 @@
                                 </template>
                             </div>
 
-                            <x-admin::form.control-group>
-                                <div class="hidden">
-                                    <x-admin::media.images
-                                        name="image"
-                                        ::uploaded-images='data.images'
-                                    />
-                                </div>
-
-                                <v-media-images
+                            <x-admin::form.control-group v-if="isUpdating">
+                                <x-admin::media.images
                                     name="image"
-                                    :uploaded-images='data.images'
-                                >
-                                </v-media-images>
+                                    ::uploaded-images="data.images"
+                                    :show-suggestions="false"
+                                />
 
                                 <x-admin::form.control-group.error control-name="image" />
 
@@ -455,7 +509,7 @@
                         <!-- Modal Header -->
                         <x-slot:header>
                             <p class="text-lg text-gray-800 dark:text-white font-bold">
-                                @lang('Confirm Password Before DELETE')
+                                @lang('admin::app.settings.users.index.confirm-password-before-delete')
                             </p>
                         </x-slot>
 
@@ -464,7 +518,7 @@
                             <!-- Password -->
                             <x-admin::form.control-group class="mb-2.5">
                                 <x-admin::form.control-group.label class="required">
-                                    @lang('Enter Current Password')
+                                    @lang('admin::app.settings.users.index.enter-current-password')
                                 </x-admin::form.control-group.label>
 
                                 <x-admin::form.control-group.control
@@ -472,8 +526,8 @@
                                     id="password"
                                     name="password"
                                     rules="required"
-                                    :label="trans('Password')"
-                                    :placeholder="trans('Password')"
+                                    :label="trans('admin::app.settings.users.index.password')"
+                                    :placeholder="trans('admin::app.settings.users.index.password')"
                                 />
 
                                 <x-admin::form.control-group.error control-name="password" />
@@ -487,7 +541,7 @@
                                     type="submit"
                                     class="primary-button"
                                 >
-                                    @lang('Confirm Delete This Account')
+                                    @lang('admin::app.settings.users.index.confirm-delete-account')
                                 </button>
                             </div>
                         </x-slot>
@@ -533,6 +587,12 @@
 
                                 this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
 
+                                if (response.data.redirect_url) {
+                                    this.$navigate(response.data.redirect_url);
+
+                                    return;
+                                }
+
                                 this.resetForm();
                             })
                             .catch(error => {
@@ -543,29 +603,7 @@
                     },
 
                     editModal(url) {
-                        this.isUpdating = true;
-
-                        this.$axios.get(url)
-                            .then((response) => {
-                                this.data = {
-                                    ...response.data,
-                                        images: response.data.user.image_url
-                                        ? [{ id: 'image', url: response.data.user.image_url, value: response.data.user.image }]
-                                        : [],
-                                        user: {
-                                            ...response.data.user,
-                                            password:'',
-                                            password_confirmation:'',
-                                        },
-                                };
-
-                                this.$refs.modalForm.setValues(response.data.user);
-
-                                this.$refs.userUpdateOrCreateModal.toggle();
-                            })
-                            .catch(error => this.$emitter.emit('add-flash', { 
-                                type: 'error', message: error.response.data.message 
-                            }));
+                        this.$navigate(url);
                     },
 
                     UserConfirmModal() {

@@ -1,6 +1,9 @@
 @props([
     'activeTab' => 'general',
     'historyId' => null,
+    'generalUrl' => '?',
+    'historyUrl' => '?history',
+    'tabItems' => [],
 ])
 
 @php
@@ -111,60 +114,64 @@
                 <x-admin::layouts.sidebar />
 
                 <div class="flex-1 max-w-full px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 ltr:pl-[286px] rtl:pr-[286px] max-lg:!px-4 transition-all duration-300 group-[.sidebar-collapsed]/container:ltr:pl-[85px] group-[.sidebar-collapsed]/container:rtl:pr-[85px]">
-                    <div class="tabs">    
-                        @php
-                            $hasPermission = bouncer()->hasPermission('history');
+                    @php
+                        $hasPermission = bouncer()->hasPermission('history');
 
-                            $activeTab = $hasPermission
-                                ? (request()->has('history') ? 'history' : $activeTab)
-                                : ($activeTab ?? 'general');
+                        $activeTab = $hasPermission
+                            ? (request()->has('history') ? 'history' : $activeTab)
+                            : ($activeTab ?? 'general');
 
-                            $items = [
+                        $currentQuery = request()->query();
+                        $generalQuery = $currentQuery;
+                        unset($generalQuery['history']);
+
+                        $defaultGeneralUrl = request()->url().(count($generalQuery) ? '?'.http_build_query($generalQuery) : '?');
+                        $defaultHistoryUrl = request()->url().'?'.http_build_query(array_merge($generalQuery, ['history' => 1]));
+
+                        $generalUrl = $generalUrl === '?' ? $defaultGeneralUrl : $generalUrl;
+                        $historyUrl = $historyUrl === '?history' ? $defaultHistoryUrl : $historyUrl;
+
+                        $tabItems = count($tabItems)
+                            ? $tabItems
+                            : [
                                 [
-                                    'url'    => '?',
-                                    'name'   => 'admin::app.components.layouts.sidebar.general',
-                                    'active' => $activeTab === 'general',
+                                    'key'   => 'general',
+                                    'url'   => $generalUrl,
+                                    'label' => 'admin::app.components.layouts.sidebar.general',
                                 ],
                             ];
-                        @endphp
+                    @endphp
 
-                        <div class="flex gap-4 mb-4 pt-2 border-b-2 max-sm:hidden dark:border-gray-800">
-                            {{-- First: default tabs --}}
-                            @foreach ($items as $item)
-                                <a href="{{ $item['url'] }}">
-                                    <div class="{{ $item['active'] ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
-                                        @lang($item['name'])
-                                    </div>
-                                </a>
-                            @endforeach
+                    <div class="js-sticky-header sticky top-[57px] z-20 -mx-4 -mt-3 border-b border-gray-200 bg-unopim-primary-page px-4 pt-3 transition-shadow dark:border-gray-800 dark:bg-cherry-800">
+                        {{ $pageHeader ?? '' }}
 
+                        <x-admin::layouts.edit-tabs
+                            :items="$tabItems"
+                            :active="$activeTab"
+                            :history-url="$historyUrl"
+                            :show-history="$hasPermission"
+                        >
                             {{ $tabs ?? '' }}
-
-                            @if ($hasPermission)
-                                <a href="?history">
-                                    <div class="{{ $activeTab === 'history' ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
-                                        @lang('admin::app.components.layouts.sidebar.history')
-                                    </div>
-                                </a>
-                            @endif
-                        </div>
+                        </x-admin::layouts.edit-tabs>
                     </div>
 
-                    @if ($activeTab === 'general')
-                        {{ $slot }}
-                    @endif
+                    <div class="pt-4">
+                        @if ($activeTab === 'general')
+                            {{ $slot }}
+                        @endif
 
-                    {{ $tabContents ?? '' }}
+                        {{ $tabContents ?? '' }}
 
-                    @if ($activeTab === 'history')
-                        {!! view_render_event('unopim.admin.layout.history.before') !!}
+                        @if ($activeTab === 'history')
+                            {!! view_render_event('unopim.admin.layout.history.before') !!}
 
-                        <x-admin::history src="{{ route('admin.history.index',[$entityName, ($historyId ?? request()->id)]) }}" >
+                            <x-admin::history src="{{ route('admin.history.index',[$entityName, ($historyId ?? request()->id)]) }}" >
 
-                        </x-admin::history>
+                            </x-admin::history>
 
-                        {!! view_render_event('unopim.admin.layout.history.after') !!}
-                    @endif
+                            {!! view_render_event('unopim.admin.layout.history.after') !!}
+                        @endif
+                    </div>
                 </div>
             </div>
 

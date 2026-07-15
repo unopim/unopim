@@ -2,15 +2,22 @@ const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, clickSaveAndExpect, searchInDataGrid } = require('../../utils/helpers');
 
 /**
- * Helper: Create an attribute family via UI.
+ * Helper: Create an attribute family via the create-family modal on the index
+ * page (code only), then set its name on the edit page it lands on.
  */
 async function createFamily(adminPage, code, name) {
   await navigateTo(adminPage, 'attributeFamilies');
-  await adminPage.getByRole('link', { name: 'Create Attribute Family' }).click();
-  await adminPage.waitForLoadState('networkidle');
-  await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(code);
+  await adminPage.getByRole('button', { name: 'Create Attribute Family' }).click();
+  await adminPage.getByPlaceholder('Enter Code').fill(code);
+  await clickSaveAndExpect(
+    adminPage,
+    'Save Attribute Family',
+    /Family created successfully/i,
+    /\/admin\/catalog\/families\/edit\/\d+/
+  );
+
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family updated successfully/i);
 }
 
 /**

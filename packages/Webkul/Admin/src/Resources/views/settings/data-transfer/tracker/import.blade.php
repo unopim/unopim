@@ -317,7 +317,7 @@
                                 @{{ importResource.errors_count }}
                             </p>
                             <div class="grid gap-1" v-if="importResource.errors?.length">
-                                <p class="break-all text-sm text-red-600 dark:text-red-400" v-for="error in importResource.errors">@{{ error }}</p>
+                                <p class="break-all text-sm text-red-600 dark:text-red-400" v-for="(error, index) in importResource.errors" :key="index">@{{ error }}</p>
                             </div>
                         </div>
                     </div>
@@ -345,7 +345,7 @@
                             @lang('admin::app.settings.data-transfer.tracker.failed-info')
                         </p>
                         <div class="grid gap-1 ml-8 mt-2" v-if="importResource.errors?.length">
-                            <p class="break-all text-sm text-red-600 dark:text-red-400" v-for="error in importResource.errors">@{{ error }}</p>
+                            <p class="break-all text-sm text-red-600 dark:text-red-400" v-for="(error, index) in importResource.errors" :key="index">@{{ error }}</p>
                         </div>
                     </div>
 
@@ -1013,6 +1013,7 @@
 
                         elapsedSeconds: 0,
                         clockInterval: null,
+                        pollTimeout: null,
                         workStartedAt: null,
                         isActionInProgress: false,
                     };
@@ -1020,6 +1021,15 @@
 
                 mounted() {
                     this.getStats();
+                },
+
+                beforeUnmount() {
+                    this.stopClock();
+
+                    if (this.pollTimeout) {
+                        clearTimeout(this.pollTimeout);
+                        this.pollTimeout = null;
+                    }
                 },
 
                 methods: {
@@ -1086,62 +1096,6 @@
                         }
                     },
 
-                    validate() {
-                        this.$axios.get("{{ route('admin.settings.data_transfer.imports.validate', $import->id) }}")
-                            .then((response) => {
-                                this.importResource = response.data.import;
-                                this.isValid = response.data.is_valid;
-                            })
-                            .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
-                            });
-                    },
-
-                    start() {
-                        this.importResource.state = 'validation';
-
-                        this.$axios.get("{{ route('admin.settings.data_transfer.imports.start', $import->id) }}")
-                            .then((response) => {
-                                this.importResource = response.data.import;
-                                this.stats = response.data.stats;
-                                this.getStats();
-                            })
-                            .catch(error => {
-                                this.importResource.state = 'validated';
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
-                            });
-                    },
-
-                    link() {
-                        this.$axios.get("{{ route('admin.settings.data_transfer.imports.link', $import->id) }}")
-                            .then((response) => {
-                                this.importResource = response.data.import;
-                                this.stats = response.data.stats;
-                                if (this.importResource.state == 'linking') {
-                                    this.link();
-                                } else if (this.importResource.state == 'indexing') {
-                                    this.index();
-                                }
-                            })
-                            .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
-                            });
-                    },
-
-                    index() {
-                        this.$axios.get("{{ route('admin.settings.data_transfer.imports.index_data', $import->id) }}")
-                            .then((response) => {
-                                this.importResource = response.data.import;
-                                this.stats = response.data.stats;
-                                if (this.importResource.state == 'indexing') {
-                                    this.index();
-                                }
-                            })
-                            .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
-                            });
-                    },
-
                     pauseImport() {
                         this.isActionInProgress = true;
                         this.$axios.post("{{ route('admin.settings.data_transfer.imports.pause', $import->id) }}")
@@ -1150,7 +1104,7 @@
                                 this.getStats();
                             })
                             .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || 'Failed to pause import.' });
+                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || "@lang('admin::app.settings.data-transfer.tracker.pause-failed')" });
                             })
                             .finally(() => {
                                 this.isActionInProgress = false;
@@ -1165,7 +1119,7 @@
                                 this.getStats();
                             })
                             .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || 'Failed to resume import.' });
+                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || "@lang('admin::app.settings.data-transfer.tracker.resume-failed')" });
                             })
                             .finally(() => {
                                 this.isActionInProgress = false;
@@ -1191,7 +1145,7 @@
                                         this.getStats();
                                     })
                                     .catch(error => {
-                                        this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || 'Failed to cancel import.' });
+                                        this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || "@lang('admin::app.settings.data-transfer.tracker.cancel-failed')" });
                                     })
                                     .finally(() => {
                                         this.isActionInProgress = false;
@@ -1229,13 +1183,13 @@
 
                                 const pollingStates = ['pending', 'validating', 'validated', 'processing', 'processed', 'linking', 'indexing', 'paused'];
                                 if (pollingStates.includes(this.importResource.state)) {
-                                    setTimeout(() => {
+                                    this.pollTimeout = setTimeout(() => {
                                         this.getStats();
                                     }, 1000);
                                 }
                             })
                             .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
+                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message });
                             });
                     }
                 }

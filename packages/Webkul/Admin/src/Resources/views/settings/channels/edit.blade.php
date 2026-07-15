@@ -8,39 +8,27 @@
         @lang('admin::app.settings.channels.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.settings.channels.edit.title')"
+            :back-url="route('admin.settings.channels.index')"
+            :back-label="trans('admin::app.settings.channels.edit.back-btn')"
+            form="channel-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
     <!-- Channel Edit Form -->
     {!! view_render_event('unopim.admin.settings.channels.edit.before') !!}
 
     <x-admin::form
+        id="channel-edit-form"
         ajax
         :action="route('admin.settings.channels.update', ['id' => $channel->id])"
     >
         @method('PUT')
 
         {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.before') !!}
-
-        <div class="flex justify-between items-center">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.settings.channels.edit.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
-                <a
-                    href="{{ route('admin.settings.channels.index') }}"
-                    class="transparent-button"
-                >
-                    @lang('admin::app.settings.channels.edit.back-btn')
-                </a>
-
-                <button 
-                    type="submit" 
-                    class="primary-button"
-                    aria-lebel="Submit"
-                >
-                    @lang('admin::app.settings.channels.edit.save-btn')
-                </button>
-            </div>
-        </div>
 
         <!-- body content -->
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
@@ -63,7 +51,7 @@
                         </x-admin::form.control-group.label>
 
                         @php
-                            $selectedOption = old('type') ?: $channel->code;
+                            $selectedOption = old('code') ?: $channel->code;
                         @endphp
 
                         <x-admin::form.control-group.control
@@ -97,8 +85,8 @@
                         @php
                         
                             $selectedOption = $channel->root_category_id;
-                            
-                            $options = json_encode(app('Webkul\Category\Repositories\CategoryRepository')->getRootCategories()->toArray());
+
+                            $options = json_encode($rootCategories->toArray());
                         @endphp
 
                         <x-admin::form.control-group.control
@@ -132,8 +120,12 @@
 
                     @foreach (core()->getAllActiveLocales() as $locale)
                         <x-admin::form.control-group>
-                            <x-admin::form.control-group.label>
-                                {{ $locale->name }} 
+                            <x-admin::form.control-group.label
+                                class="w-full"
+                                localizable="true"
+                                :current-locale-code="$locale->code"
+                            >
+                                @lang('admin::app.settings.channels.edit.name')
                             </x-admin::form.control-group.label>
     
                             <x-admin::form.control-group.control

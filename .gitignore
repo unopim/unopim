@@ -9,8 +9,6 @@
 /stubs
 /data
 /docker-compose-collection
-Homestead.json
-Homestead.yaml
 /ignorables/*
 /node_modules
 npm-debug.log
@@ -30,12 +28,8 @@ yarn.lock
 yarn-error.log
 .phpunit.cache/
 .playwright-mcp/
-.claude/settings.json
-.claude/scheduled_tasks.lock
-.claude/settings.local.json
 tests/e2e-pw/.state/
 tests/e2e-pw/playwright-report/
-tests/e2e-pw/test-results/
 tests/e2e-pw/test-results/
 test-results
 .agents
@@ -52,3 +46,4 @@ skills-lock.json
 # Passport OAuth signing keys — generated per environment, never commit
 packages/Webkul/AdminApi/src/Secrets/Oauth/*.key
 AGENTS.md
+.playwright-cli

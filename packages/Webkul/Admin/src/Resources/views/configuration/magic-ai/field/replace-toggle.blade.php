@@ -55,7 +55,16 @@
             data: function() {
                 return {
                     localValue: this.value,
+                    isDisabled: ! Boolean('{{ core()->getConfigData("general.magic_ai.translation.enabled") == 1 }}'),
                 }
+            },
+
+            mounted() {
+                this.$emitter.on('config-value-changed', (data) => {
+                    if (data.fieldName == 'general[magic_ai][translation][enabled]') {
+                        this.isDisabled = parseInt(data.value || 0) !== 1;
+                    }
+                });
             },
         });
     </script>

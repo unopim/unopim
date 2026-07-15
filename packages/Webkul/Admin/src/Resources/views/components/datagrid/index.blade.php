@@ -1,6 +1,12 @@
-@props(['isMultiRow' => false])
+@props([
+    'isMultiRow' => false,
+    'compact' => false,
+])
 
-<v-datagrid {{ $attributes }}>
+<v-datagrid
+    compact="{{ $compact ? 'true' : 'false' }}"
+    {{ $attributes }}
+>
     <x-admin::shimmer.datagrid :isMultiRow="$isMultiRow" />
 
     {{ $slot }}
@@ -11,7 +17,7 @@
         type="text/x-template"
         id="v-datagrid-template"
     >
-        <div>
+        <div :class="{'compact-datagrid': isCompact()}">
             <x-admin::datagrid.toolbar />
 
             <div class="flex mt-4">
@@ -59,7 +65,7 @@
         app.component('v-datagrid', {
             template: '#v-datagrid-template',
 
-            props: ['src', 'filterAttributesSrc'],
+            props: ['src', 'filterAttributesSrc', 'compact'],
 
             data() {
                 return {
@@ -178,6 +184,10 @@
             },
 
             methods: {
+                isCompact() {
+                    return this.compact === true || this.compact === 'true';
+                },
+
                 /**
                  * Initialization: This function checks for any previously saved filters in local storage and applies them as needed.
                  *

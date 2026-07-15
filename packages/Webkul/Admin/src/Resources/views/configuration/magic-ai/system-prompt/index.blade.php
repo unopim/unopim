@@ -44,6 +44,7 @@
                 <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
                     <div
                         v-for="record in records"
+                        :key="record.id"
                         class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                         @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)"
@@ -156,8 +157,8 @@
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.configuration.system-prompt.create.max-tokens')
                                           <span 
-                                            class="icon tooltip-icon" 
-                                            title="Allowed Max Output Token range: 100 to 5000 tokens"
+                                            class="icon tooltip-icon"
+                                            title="@lang('admin::app.configuration.system-prompt.create.max-tokens-info')"
                                             style="cursor: pointer; margin-left: 6px;"
                                         >
                                             &#9432;
@@ -181,8 +182,8 @@
                                         @lang('admin::app.configuration.system-prompt.create.temperature')
 
                                        <span 
-                                            class="icon tooltip-icon" 
-                                            title="Temperature controls creativity. Range: 0 to 2. Lower values (e.g., 0.4) give more accurate and focused responses."
+                                            class="icon tooltip-icon"
+                                            title="@lang('admin::app.configuration.system-prompt.create.temperature-info')"
                                             style="cursor: pointer; margin-left: 6px;"
                                         >
                                             &#9432;
@@ -298,17 +299,7 @@
                     },
 
                     editModal(url) {
-                        this.$axios.get(url)
-                            .then((response) => {
-                                let data = response.data.data;
-                                this.id = data.id;
-                                this.title = data.title;
-                                this.is_enabled = data.is_enabled;
-                                this.tone = data.tone;
-                                this.max_tokens = data.max_tokens;
-                                this.temperature = data.temperature;
-                                this.$refs.promptUpdateOrCreateModal.toggle();
-                            })
+                        this.$navigate(url);
                     },
 
                     resetForm() {

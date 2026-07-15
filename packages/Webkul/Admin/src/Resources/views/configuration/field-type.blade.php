@@ -201,7 +201,7 @@
                 },
 
                 maskedPassword() {
-                    return this.value ? '*'.repeat(this.value.length) : '';
+                    return this.value ? '********' : '';
                 },
 
                 placeholder() {

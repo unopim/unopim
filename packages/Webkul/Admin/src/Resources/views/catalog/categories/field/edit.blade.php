@@ -8,6 +8,16 @@
         @lang('admin::app.catalog.category_fields.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.catalog.category_fields.edit.title')"
+            :back-url="route('admin.catalog.category_fields.index')"
+            :back-label="trans('admin::app.catalog.category_fields.edit.back-btn')"
+            form="category-field-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
     <!-- Edit category_fields Vue Components -->
     <v-edit-category-fields :locales="{{ $locales->toJson() }}"></v-edit-category-fields>
 
@@ -21,35 +31,12 @@
 
             <!-- Input Form -->
             <x-admin::form
+                id="category-field-edit-form"
                 ajax
                 :action="route('admin.catalog.category_fields.update', $categoryField->id)"
                 enctype="multipart/form-data"
                 method="PUT"
             >
-                <div class="flex justify-between items-center">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.catalog.category_fields.edit.title')
-                    </p>
-
-                    <div class="flex gap-x-2.5 items-center">
-                        <!-- Back Button -->
-                        <a
-                            href="{{ route('admin.catalog.category_fields.index') }}"
-                            class="transparent-button"
-                        >
-                            @lang('admin::app.catalog.category_fields.edit.back-btn')
-                        </a>
-
-                        <!-- Save Button -->
-                        <button
-                            type="submit"
-                            class="primary-button"
-                        >
-                            @lang('admin::app.catalog.category_fields.edit.save-btn')
-                        </button>
-                    </div>
-                </div>
-
                 <!-- body content -->
                 <div class="flex gap-2.5 mt-3.5">
                     <!-- Left sub Component -->
@@ -188,8 +175,12 @@
                                 <!-- Locales Inputs -->
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label>
-                                            {{ $locale->name }}
+                                        <x-admin::form.control-group.label
+                                            class="w-full"
+                                            localizable="true"
+                                            :current-locale-code="$locale->code"
+                                        >
+                                            @lang('admin::app.catalog.category_fields.edit.label')
                                         </x-admin::form.control-group.label>
 
                                         <x-admin::form.control-group.control
@@ -719,8 +710,12 @@
                                 <!-- Locales Input -->
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group class="w-full mb-2.5">
-                                        <x-admin::form.control-group.label>
-                                            {{ $locale->name }}
+                                        <x-admin::form.control-group.label
+                                            class="w-full"
+                                            localizable="true"
+                                            :current-locale-code="$locale->code"
+                                        >
+                                            @lang('admin::app.catalog.category_fields.edit.label')
                                         </x-admin::form.control-group.label>
 
                                         <x-admin::form.control-group.control

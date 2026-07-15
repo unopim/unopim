@@ -86,7 +86,7 @@
         {!! view_render_event('unopim.admin.layout.head') !!}
     </head>
 
-    <body class="h-full bg-violet-50 bg-opacity-30 dark:bg-cherry-800 font-inter" style="font-family: inter;">
+    <body class="h-full bg-unopim-primary-soft bg-opacity-30 dark:bg-cherry-800 font-inter" style="font-family: inter;">
         {!! view_render_event('unopim.admin.layout.body.before') !!}
 
         <div id="app" class="h-full">

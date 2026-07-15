@@ -126,7 +126,7 @@
                             <x-admin::form.control-group.control
                                 type="file"
                                 name="file"
-                                :info="trans('CSV, XLSX, JSON (MAX. 2MB)')"
+                                :info="trans('admin::app.settings.data-transfer.imports.create.file-upload-info')"
                                 :label="trans('admin::app.settings.data-transfer.imports.create.file')"
                             />
                             <x-admin::form.control-group.error control-name="file" />
@@ -314,7 +314,6 @@
                         entityType: "{{ old('entity_type') ?? 'categories' }}",
                         enableFileShow: @json($importerConfig[old('entity_type') ?? 'categories']['has_file_options'] ?? false),
                         importerConfig: @json($importerConfig),
-                        filterFields: @json($importerConfig['categories']['filters']['fields'] ?? null),
                     };
                 },
 
@@ -502,7 +501,7 @@
 
                     selectFile(file) {
                         if (! file.name.toLowerCase().endsWith('.zip')) {
-                            this.modalError = 'Please select a valid .zip file.';
+                            this.modalError = "@lang('admin::app.settings.data-transfer.imports.create.invalid-zip')";
                             return;
                         }
                         this.selectedFile = file;

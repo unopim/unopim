@@ -97,7 +97,7 @@
                 this.toggleBlockHeight = this.$refs.toggleBlock.clientHeight;
             },
 
-            beforeDestroy() {
+            beforeUnmount() {
                 window.removeEventListener('click', this.handleFocusOut);
             },
 
@@ -120,21 +120,21 @@
 
                         case 'top-left':
                             return [
-                                `min-width: ${this.toggleBlockWidth}px`
+                                `min-width: ${this.toggleBlockWidth}px`,
                                 `bottom: ${this.toggleBlockHeight*2}px`,
                                 'left: 0',
                             ];
 
                         case 'top-right':
                             return [
-                                `min-width: ${this.toggleBlockWidth}px`
+                                `min-width: ${this.toggleBlockWidth}px`,
                                 `bottom: ${this.toggleBlockHeight*2}px`,
                                 'right: 0',
                             ];
 
                         default:
                             return [
-                                `min-width: ${this.toggleBlockWidth}px`
+                                `min-width: ${this.toggleBlockWidth}px`,
                                 `top: ${this.toggleBlockHeight}px`,
                                 'left: 0',
                             ];

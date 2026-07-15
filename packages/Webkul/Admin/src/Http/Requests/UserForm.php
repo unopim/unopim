@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Webkul\Core\Repositories\LocaleRepository;
@@ -39,6 +40,11 @@ class UserForm extends FormRequest
     public function rules()
     {
         $id = $this->id ?: null;
+        $passwordMin = config('admin.auth.password_min');
+
+        if (! is_numeric($passwordMin)) {
+            $passwordMin = 8;
+        }
 
         return [
             'name'                  => ['required', new AlphaNumericSpace],
@@ -47,10 +53,12 @@ class UserForm extends FormRequest
                 'email',
                 Rule::unique('admins', 'email')->ignore($id, 'id'),
             ],
-            'password'              => 'nullable|min:'.config('admin.auth.password_min'),
+            'password'              => sprintf('%s|min:%s', $id ? 'nullable' : 'required', $passwordMin),
             'password_confirmation' => 'nullable|required_with:password|same:password',
             'status'                => 'sometimes',
             'ui_locale_id'          => 'required',
+            'catalog_locale_id'     => 'nullable|integer|exists:locales,id,status,1',
+            'default_channel_id'    => 'nullable|integer|exists:channels,id',
             'role_id'               => 'required',
             'timezone'              => 'required',
             'image.*'               => [
@@ -60,6 +68,43 @@ class UserForm extends FormRequest
                 new FileMimeExtensionMatch,
             ],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->id) {
+            return;
+        }
+
+        $defaultLocaleId = $this->defaultLocaleId();
+
+        $this->merge([
+            'timezone'           => $this->input('timezone') ?: config('app.timezone', 'UTC'),
+            'ui_locale_id'       => $this->input('ui_locale_id') ?: $defaultLocaleId,
+            'catalog_locale_id'  => $this->input('catalog_locale_id') ?: $defaultLocaleId,
+            'default_channel_id' => $this->input('default_channel_id') ?: core()->getDefaultChannel()?->id,
+        ]);
+    }
+
+    private function defaultLocaleId(): ?int
+    {
+        $localeId = DB::table('locales')
+            ->where('code', core()->getDefaultLocaleCodeFromDefaultChannel())
+            ->where('status', 1)
+            ->value('id')
+            ?? DB::table('locales')
+                ->where('status', 1)
+                ->value('id');
+
+        if (is_int($localeId)) {
+            return $localeId;
+        }
+
+        if (is_string($localeId) && ctype_digit($localeId)) {
+            return (int) $localeId;
+        }
+
+        return null;
     }
 
     /**

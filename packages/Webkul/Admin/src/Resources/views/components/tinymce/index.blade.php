@@ -311,7 +311,7 @@
                     showRichPreview: true,
                     showSystemPrompt: false,
                     selectedSystemPrompt: null,
-                    systemPrompts: @json(app(\Webkul\MagicAI\Repository\MagicAISystemPromptRepository::class)->all()->toArray()),
+                    systemPrompts: @json($systemPrompts ?? app(\Webkul\MagicAI\Repository\MagicAISystemPromptRepository::class)->all()->toArray()),
                     platforms: [],
                     aiModels: [],
                     defaultPrompts: [],
@@ -330,12 +330,21 @@
 
             mounted() {
                 this.init();
-                this.$emitter.on('change-theme', (theme) => {
-                    tinymce.get(0).destroy();
+
+                this.changeThemeHandler = (theme) => {
+                    tinymce.get(this.selector.replace('textarea#', ''))?.destroy();
                     this.currentSkin = (theme === 'dark') ? 'oxide-dark' : 'oxide';
                     this.currentContentCSS = (theme === 'dark') ? 'dark' : 'default';
                     this.init();
-                });
+                };
+
+                this.$emitter.on('change-theme', this.changeThemeHandler);
+            },
+
+            beforeUnmount() {
+                if (this.changeThemeHandler) {
+                    this.$emitter.off('change-theme', this.changeThemeHandler);
+                }
             },
 
             methods: {

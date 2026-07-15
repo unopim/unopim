@@ -145,6 +145,8 @@
                         })
                         .catch(error => {
                             this.isLoading = false;
+
+                            console.error(error);
                         });
                 },
 

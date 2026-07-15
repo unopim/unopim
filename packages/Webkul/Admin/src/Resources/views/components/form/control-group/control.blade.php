@@ -377,6 +377,7 @@
                     return;
                 }
 
+                {{-- TODO: mutates injected `field` prop; kept because it is the VeeValidate v-slot field API. --}}
                 this.field.checked = true;
 
                 this.field.onChange();
@@ -409,7 +410,6 @@
             </v-multiselect>   
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -531,7 +531,6 @@
             </v-multiselect>   
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -668,7 +667,6 @@
             </v-multiselect>   
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -819,7 +817,6 @@
             </v-multiselect>   
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -848,12 +845,11 @@
                 entityName: String,
                 attributeId: String,
                 multiple: Boolean,
-                isLoading: Boolean,
                 listRoute: {
                     type: String,
                     default: '{{ route('admin.catalog.options.fetch-all') }}'
                 },
-                queryParams: Array,
+                queryParams: [Array, Object],
             },
             
             data() {
@@ -861,7 +857,7 @@
                     selectedValue: this.parseValue() ? this.parseOptions().filter(option =>  this.parseValue() instanceof Array && this.parseValue()?.some(valueItem => option[this.trackBy] === valueItem)) : [],
                     isLoading: false,
                     optionsList: [],
-                    timeout: null,
+                    timer: null,
                     delayTime: 500,
                     lastPage: 1,
 
@@ -986,7 +982,7 @@
                         clearTimeout(this.timer);
                     }
 
-                    this.timer = setTimeout(this.search(query), this.delayTime);
+                    this.timer = setTimeout(() => this.search(query), this.delayTime);
                 },
 
                 parseOptions() {
@@ -1060,8 +1056,11 @@
                 :hide-selected="false"
                 :disabled="disabled ?? false"
                 :multiple="multiple ?? false"
+                :taggable="taggable ?? false"
+                :tag-placeholder="tagPlaceholder"
                 :name="name"
                 @search-change="handleSearch"
+                @tag="createOption"
                 @open="openedSelect"
                 @scroll="onScroll"
                 @select="selectOption"
@@ -1090,7 +1089,6 @@
             </v-multiselect>
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -1131,7 +1129,6 @@
                 field: Array,
                 placeholder: String,
                 disabled: Boolean,
-                isLoading: Boolean,
                 entityName: String,
                 attributeId: String,
                 multiple: Boolean,
@@ -1143,7 +1140,19 @@
                     type: String,
                     default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
-                queryParams: Array,
+                queryParams: [Array, Object],
+                taggable: {
+                    type: Boolean,
+                    default: false
+                },
+                createRoute: {
+                    type: String,
+                    default: ''
+                },
+                tagPlaceholder: {
+                    type: String,
+                    default: ''
+                },
             },
 
             data() {
@@ -1152,7 +1161,7 @@
 
                     isLoading: false,
                     optionsList: [],
-                    timeout: null,
+                    timer: null,
                     delayTime: 500,
                     lastPage: 1,
 
@@ -1248,7 +1257,7 @@
                         clearTimeout(this.timer);
                     }
 
-                    this.timer = setTimeout(this.search(query), this.delayTime);
+                    this.timer = setTimeout(() => this.search(query), this.delayTime);
                 },
 
                 search(query) {
@@ -1346,6 +1355,42 @@
                     });
                 },
 
+                createOption(query) {
+                    if (! this.createRoute) {
+                        return;
+                    }
+
+                    const code = query.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+
+                    if (! code) {
+                        return;
+                    }
+
+                    this.isLoading = true;
+
+                    this.$axios.post(this.createRoute, { code: code, name: query.trim() })
+                        .then((response) => {
+                            const option = response.data.data;
+
+                            this.optionsList.unshift(option);
+
+                            this.selectedValue = option;
+
+                            this.selectOption(option);
+
+                            this.isLoading = false;
+                        })
+                        .catch((error) => {
+                            this.isLoading = false;
+
+                            const message = error.response?.data?.errors?.code?.[0]
+                                ?? error.response?.data?.message
+                                ?? '';
+
+                            this.$emitter.emit('add-flash', { type: 'warning', message: message });
+                        });
+                },
+
                 previewImage(option) {
                     this.fileUrl = option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}';
                     this.$refs.imagePreviewModal.toggle();
@@ -1367,7 +1412,7 @@
                     <template v-if="fieldData.value && (fieldData.value.name || field.value)">
                         <span class="icon-product text-4xl mb-4 mr-4"></span>
                         <div class="flex justify-between items-center mb-2 text-sm text-gray-500 dark:text-gray-400">
-                            <p class="text-sm text-gray-500 dark:text-gray-400" v-html="fieldData.value.name || field.value"></p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400" v-text="fieldData.value.name || field.value"></p>
                             <button
                                 type="button"
                                 @click="clearFile"
@@ -1378,8 +1423,8 @@
                     </template>
                     <template v-else>
                         <span class="icon-export text-gray-500 dark:text-gray-400 text-4xl"></span>
-                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400" v-html="info"></p>
+                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">@lang('admin::app.components.form.file-uploader.upload-cta')</span> @lang('admin::app.components.form.file-uploader.upload-hint')</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400" v-text="info"></p>
                     </template>
                 </div>
                             
@@ -1414,6 +1459,7 @@
 
             data() {
                 return {
+                    {{-- TODO: `fieldData` aliases the injected `field` prop; writes mutate it by design so the VeeValidate field value drives the multipart submit. --}}
                     fieldData: this.field,
                     isDragging: false,
                 }

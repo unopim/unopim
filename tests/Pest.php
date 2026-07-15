@@ -9,6 +9,7 @@ use Webkul\Core\Tests\CoreTestCase;
 use Webkul\DataGrid\Tests\DataGridTestCase;
 use Webkul\Installer\Tests\UserCreateCommandTestCase;
 use Webkul\Product\Tests\ProductTestCase;
+use Webkul\Resource\Tests\ResourceTestCase;
 use Webkul\User\Tests\UserTestCase;
 
 ini_set('memory_limit', '1024M');
@@ -39,6 +40,7 @@ uses(CategoryTestCase::class)->in('../packages/Webkul/Category/tests');
 uses(CoreTestCase::class)->in('../packages/Webkul/AiAgent/tests');
 uses(CoreTestCase::class)->in('../packages/Webkul/Webhook/tests');
 uses(AdminTestCase::class)->in('../packages/Webkul/AppUrlGuard/tests');
+uses(ResourceTestCase::class)->in('../packages/Webkul/Resource/tests/Feature');
 
 /*
 |--------------------------------------------------------------------------

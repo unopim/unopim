@@ -33,7 +33,7 @@
                             :list-route="attributeRoute"
                             :query-params="attributeQueryParams"
                             :value="row.attribute"
-                            :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-select')'"
+                            :placeholder="selectPlaceholder"
                             @input="setAttribute(index, $event)"
                         >
                         </v-async-select-handler>
@@ -42,7 +42,7 @@
                     <button
                         type="button"
                         @click="removeRow(index)"
-                        :title="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-remove')'"
+                        :title="removeTitle"
                         class="icon-delete shrink-0 self-center text-2xl text-gray-500 dark:text-gray-300 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-cherry-800 p-1"
                     >
                     </button>
@@ -73,7 +73,7 @@
                             track-by="value"
                             label-by="label"
                             :value="row.operator"
-                            :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.operator-select')'"
+                            :placeholder="operatorPlaceholder"
                             @input="setOperator(index, $event)"
                         >
                         </v-select-handler>
@@ -100,7 +100,7 @@
                                 :track-by="'code'"
                                 :label-by="'label'"
                                 :value="stringValue(row)"
-                                :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-value')'"
+                                :placeholder="valueText"
                                 @input="setOptionValue(index, $event)"
                             >
                             </v-async-select-handler>
@@ -113,7 +113,7 @@
                                 track-by="value"
                                 label-by="label"
                                 :value="row.value"
-                                :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-value')'"
+                                :placeholder="valueText"
                                 @input="setBooleanValue(index, $event)"
                             >
                             </v-select-handler>
@@ -124,14 +124,14 @@
                                 <input
                                     :type="valueControl(row) === 'date_range' ? 'date' : 'number'"
                                     v-model="row.value"
-                                    :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.range-from')'"
+                                    :placeholder="rangeFromPlaceholder"
                                     class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-900 dark:border-gray-600"
                                 />
                                 <span class="text-gray-400">&ndash;</span>
                                 <input
                                     :type="valueControl(row) === 'date_range' ? 'date' : 'number'"
                                     v-model="row.value2"
-                                    :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.range-to')'"
+                                    :placeholder="rangeToPlaceholder"
                                     class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-900 dark:border-gray-600"
                                 />
                             </div>
@@ -151,7 +151,7 @@
                     <button
                         type="button"
                         @click="removeRow(index)"
-                        :title="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-remove')'"
+                        :title="removeTitle"
                         class="icon-delete shrink-0 self-center text-2xl text-gray-400 dark:text-gray-300 cursor-pointer rounded-md hover:bg-gray-100 hover:text-red-500 dark:hover:bg-cherry-700 p-1"
                     >
                     </button>
@@ -183,11 +183,16 @@
                     rows: [],
                     sequence: 0,
                     operatorsMap: this.parseJson(this.operators, {}),
-                    numberPlaceholder: "@lang('admin::app.settings.data-transfer.exports.create.value-number-placeholder')",
-                    valueText: "@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-value')",
+                    numberPlaceholder: @json(trans('admin::app.settings.data-transfer.exports.create.value-number-placeholder')),
+                    valueText: @json(trans('admin::app.settings.data-transfer.exports.create.custom-attribute-value')),
+                    selectPlaceholder: @json(trans('admin::app.settings.data-transfer.exports.create.custom-attribute-select')),
+                    removeTitle: @json(trans('admin::app.settings.data-transfer.exports.create.custom-attribute-remove')),
+                    operatorPlaceholder: @json(trans('admin::app.settings.data-transfer.exports.create.operator-select')),
+                    rangeFromPlaceholder: @json(trans('admin::app.settings.data-transfer.exports.create.range-from')),
+                    rangeToPlaceholder: @json(trans('admin::app.settings.data-transfer.exports.create.range-to')),
                     booleanOptionsJson: JSON.stringify([
-                        { value: 'true',  label: "@lang('admin::app.settings.data-transfer.exports.create.condition-yes')" },
-                        { value: 'false', label: "@lang('admin::app.settings.data-transfer.exports.create.condition-no')" },
+                        { value: 'true',  label: @json(trans('admin::app.settings.data-transfer.exports.create.condition-yes')) },
+                        { value: 'false', label: @json(trans('admin::app.settings.data-transfer.exports.create.condition-no')) },
                     ]),
                 };
             },

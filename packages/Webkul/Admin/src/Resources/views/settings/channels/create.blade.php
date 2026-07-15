@@ -74,9 +74,9 @@
                         </x-admin::form.control-group.label>
 
                         @php
-                            $options = json_encode(app('Webkul\Category\Repositories\CategoryRepository')->getRootCategories()->toArray());
+                            $options = json_encode($rootCategories->toArray());
                         @endphp
-                        
+
                         <x-admin::form.control-group.control
                             type="select"
                             id="root_category_id"

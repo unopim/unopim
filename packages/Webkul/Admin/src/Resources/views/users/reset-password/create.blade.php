@@ -115,7 +115,6 @@
                             :label="trans('admin::app.users.reset-password.confirm-password')"
                             :placeholder="trans('admin::app.users.reset-password.confirm-password')"
                             autocomplete="new-password"
-                            ref="password"
                         />
 
                         <span

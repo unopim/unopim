@@ -40,6 +40,8 @@
                         $filterOption['label'] = trans($filterOption['label']);
                     }
 
+                    unset($filterOption);
+
                     $exporterConfig[$name]['filters']['fields'][$key]['options'] = $filter['options'];
                 }
             }
@@ -87,7 +89,7 @@
             <template v-if="filterField?.type == 'boolean'">
                 <input type="hidden" :name="'filters[' + filterField.name + ']'" value="0" />
 
-                <label class="relative inline-flex items-center cursor-pointer">
+                <span class="relative inline-flex items-center cursor-pointer">
                     <input  
                         type="checkbox"
                         :name="'filters[' + filterField.name + ']'"
@@ -99,7 +101,7 @@
                     />
 
                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-900 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-violet-700"></div>
-                </label>
+                </span>
             </template>
 
             <template v-else-if="filterField.type == 'select'">
@@ -186,7 +188,8 @@
                     <x-admin::flat-picker.date>
                         <input
                             :type="filterField.type"
-                            :name="filterField.name"
+                            :name="'filters[' + filterField.name + ']'"
+                            :id="filterField.name"
                             v-bind="field"
                             :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
                             class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
@@ -208,7 +211,8 @@
                     <x-admin::flat-picker.datetime>
                         <input
                             :type="filterField.type"
-                            :name="filterField.name"
+                            :name="'filters[' + filterField.name + ']'"
+                            :id="filterField.name"
                             v-bind="field"
                             :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
                             class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
@@ -229,7 +233,8 @@
                 >
                     <textarea
                         :type="filterField.type"
-                        :name="filterField.name"
+                        :name="'filters[' + filterField.name + ']'"
+                        :id="filterField.name"
                         v-bind="field"
                         :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
                         class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
@@ -258,7 +263,8 @@
                 >
                     <input
                         :type="filterField.type"
-                        :name="filterField.name"
+                        :name="'filters[' + filterField.name + ']'"
+                        :id="filterField.name"
                         v-bind="field"
                         :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
                         class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
@@ -320,6 +326,11 @@
             mounted() {
                 this.$emitter.on('entity-type-changed', this.changeEntityType);
                 this.$emitter.on('filter-value-changed', this.handleScopeChange);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('entity-type-changed', this.changeEntityType);
+                this.$emitter.off('filter-value-changed', this.handleScopeChange);
             },
 
             computed: {

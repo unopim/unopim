@@ -105,7 +105,7 @@
                     </div>
 
                     <span class="text-xs text-zinc-400 dark:text-slate-500">
-                        Last 7 days
+                        @lang('admin::app.dashboard.index.last-7-days')
                     </span>
                 </div>
             </div>
@@ -182,6 +182,8 @@
                         })
                         .catch(error => {
                             this.isLoading = false;
+
+                            console.error(error);
                         });
                 },
 
@@ -193,7 +195,15 @@
 
                 formatDay(dateStr) {
                     const date = new Date(dateStr);
-                    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    const days = [
+                        "@lang('admin::app.dashboard.index.days.sun')",
+                        "@lang('admin::app.dashboard.index.days.mon')",
+                        "@lang('admin::app.dashboard.index.days.tue')",
+                        "@lang('admin::app.dashboard.index.days.wed')",
+                        "@lang('admin::app.dashboard.index.days.thu')",
+                        "@lang('admin::app.dashboard.index.days.fri')",
+                        "@lang('admin::app.dashboard.index.days.sat')",
+                    ];
                     return days[date.getDay()];
                 },
 

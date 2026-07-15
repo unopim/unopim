@@ -7,11 +7,21 @@
     'height'           => '120px'
 ])
 
+@php
+    $dynamicUploadedImages = $attributes->get('::uploaded-images') ?? $attributes->get(':uploaded-images');
+    $rootAttributes = $attributes->except(['::uploaded-images', ':uploaded-images', 'uploaded-images']);
+@endphp
+
 <v-media-gallery
+    {{ $rootAttributes }}
     name="{{ $name }}"
     v-bind:allow-multiple="{{ $allowMultiple ? true : false }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
-    :uploaded-images='{{ json_encode($uploadedImages) }}'
+    @if ($dynamicUploadedImages)
+        :uploaded-images="{{ $dynamicUploadedImages }}"
+    @else
+        :uploaded-images='{{ json_encode($uploadedImages) }}'
+    @endif
     width="{{ $width }}"
     height="{{ $height }}"
     :errors="errors"
@@ -26,51 +36,83 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 <!-- Add Media tile (always first) -->
                 <label
-                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
-                    :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : ''"
+                    class="group flex flex-col justify-center items-center rounded-md border border-dashed border-gray-300 bg-white text-center cursor-pointer transition-colors hover:border-unopim-primary hover:bg-gray-50 dark:border-cherry-700 dark:bg-cherry-900 dark:hover:border-unopim-primary dark:hover:bg-cherry-800"
+                    :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800' : ''"
+                    :style="tileStyle"
                     v-if="ai.enabled"
                     :for="$.uid + '_imageInput'"
+                    aria-label="@lang('admin::app.components.media.images.add-media-btn')"
                     @click="resetAIModal(); $refs.choiceImageModal.open()"
                     @dragover.prevent="isDragging = true"
                     @dragenter.prevent="isDragging = true"
                     @dragleave.prevent="isDragging = false"
                     @drop.prevent="onDrop"
                 >
-                    <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
-                    <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                    <span
+                        class="icon-image flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-500 transition-colors group-hover:border-unopim-primary/30 group-hover:text-unopim-primary dark:border-cherry-700 dark:bg-cherry-800 dark:text-gray-300"
+                        :class="isCompactTile ? 'h-8 w-8 text-xl' : 'h-9 w-9 text-2xl'"
+                    ></span>
+                    <p
+                        class="text-sm font-semibold leading-5 text-gray-800 dark:text-white"
+                        :class="isCompactTile ? 'mt-1.5' : 'mt-2'"
+                    >
                         @lang('admin::app.components.media.images.add-media-btn')
                     </p>
-                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                    <p
+                        v-if="! isCompactTile"
+                        class="mt-1 max-w-[9rem] px-2 text-xs leading-4 text-gray-500 dark:text-gray-400"
+                    >
                         @lang('admin::app.components.media.images.drag-drop-hint')
                     </p>
-                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                    <p
+                        class="px-2 text-[11px] leading-4 text-gray-400 dark:text-gray-500"
+                        :class="isCompactTile ? 'mt-0.5' : 'mt-1'"
+                    >
                         @lang('admin::app.components.media.images.allowed-types')
-                        <br>
-                        @lang('admin::app.components.media.videos.allowed-types')
+                        <template v-if="! isCompactTile">
+                            <br>
+                            @lang('admin::app.components.media.videos.allowed-types')
+                        </template>
                     </p>
                 </label>
 
                 <label
                     v-else
-                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-violet-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-violet-500 dark:hover:border-violet-400 hover:shadow-md"
-                    :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800 shadow-md' : ''"
+                    class="group flex flex-col justify-center items-center rounded-md border border-dashed border-gray-300 bg-white text-center cursor-pointer transition-colors hover:border-unopim-primary hover:bg-gray-50 dark:border-cherry-700 dark:bg-cherry-900 dark:hover:border-unopim-primary dark:hover:bg-cherry-800"
+                    :class="isDragging ? '!border-violet-500 !bg-violet-50 dark:!bg-cherry-800' : ''"
+                    :style="tileStyle"
                     :for="$.uid + '_imageInput'"
+                    aria-label="@lang('admin::app.components.media.images.add-media-btn')"
                     @dragover.prevent="isDragging = true"
                     @dragenter.prevent="isDragging = true"
                     @dragleave.prevent="isDragging = false"
                     @drop.prevent="onDrop"
                 >
-                    <span class="icon-image text-3xl text-gray-400 group-hover:text-violet-600 transition-colors"></span>
-                    <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                    <span
+                        class="icon-image flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-500 transition-colors group-hover:border-unopim-primary/30 group-hover:text-unopim-primary dark:border-cherry-700 dark:bg-cherry-800 dark:text-gray-300"
+                        :class="isCompactTile ? 'h-8 w-8 text-xl' : 'h-9 w-9 text-2xl'"
+                    ></span>
+                    <p
+                        class="text-sm font-semibold leading-5 text-gray-800 dark:text-white"
+                        :class="isCompactTile ? 'mt-1.5' : 'mt-2'"
+                    >
                         @lang('admin::app.components.media.images.add-media-btn')
                     </p>
-                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                    <p
+                        v-if="! isCompactTile"
+                        class="mt-1 max-w-[9rem] px-2 text-xs leading-4 text-gray-500 dark:text-gray-400"
+                    >
                         @lang('admin::app.components.media.images.drag-drop-hint')
                     </p>
-                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
+                    <p
+                        class="px-2 text-[11px] leading-4 text-gray-400 dark:text-gray-500"
+                        :class="isCompactTile ? 'mt-0.5' : 'mt-1'"
+                    >
                         @lang('admin::app.components.media.images.allowed-types')
-                        <br>
-                        @lang('admin::app.components.media.videos.allowed-types')
+                        <template v-if="! isCompactTile">
+                            <br>
+                            @lang('admin::app.components.media.videos.allowed-types')
+                        </template>
                     </p>
 
                     <input
@@ -354,6 +396,7 @@
                                             class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
                                             :class="{'!border-violet-700 ': image.selected}"
                                             v-for="image in ai.images"
+                                            :key="image.url"
                                             @click="selectImage(image, allowMultiple)"
                                         >
                                             <!-- Image Preview -->
@@ -671,6 +714,21 @@
             },
 
             computed: {
+                isCompactTile() {
+                    return this.parseDimension(this.width) <= 220
+                        && this.parseDimension(this.height) <= 160;
+                },
+
+                tileStyle() {
+                    return {
+                        width: this.width,
+                        height: this.height,
+                        minWidth: '120px',
+                        minHeight: '120px',
+                        padding: this.isCompactTile ? '10px' : '14px',
+                    };
+                },
+
                 selectedAIImages() {
                     return this.ai.images.filter(image => image.selected);
                 }
@@ -712,12 +770,12 @@
 
                     let selectedFiles = Array.from(this.allowMultiple ? files : [files[0]]);
 
-                    const validFiles = selectedFiles.every(file => file.type.includes('image/') || file.type.includes('video/'));
+                    const validFiles = selectedFiles.every(file => file.type.startsWith('image/') || file.type.startsWith('video/'));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.components.media.gallery.not-allowed-error')"
+                            message: @json(trans('admin::app.components.media.gallery.not-allowed-error'))
                         });
 
                         return;
@@ -756,12 +814,12 @@
                         return;
                     }
 
-                    const validFiles = Array.from(imageInput.files).every(file => file.type.includes('image/') || file.type.includes('video/'));
+                    const validFiles = Array.from(imageInput.files).every(file => file.type.startsWith('image/') || file.type.startsWith('video/'));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.components.media.gallery.not-allowed-error')"
+                            message: @json(trans('admin::app.components.media.gallery.not-allowed-error'))
                         });
 
                         return;
@@ -782,6 +840,12 @@
                     if (this.ai.enabled) {
                         this.$refs.choiceImageModal.close()
                     }
+                },
+
+                parseDimension(value) {
+                    const parsed = Number.parseInt(String(value), 10);
+
+                    return Number.isNaN(parsed) ? 120 : parsed;
                 },
 
                 remove(image) {
@@ -819,7 +883,7 @@
                                 values: this.fetchSuggestionValues,
                                 lookup: 'name',
                                 fillAttr: 'code',
-                                noMatchTemplate: "@lang('admin::app.common.no-match-found')",
+                                noMatchTemplate: @json(trans('admin::app.common.no-match-found')),
                                 selectTemplate: (item) => `@${item.original.code}`,
                                 menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
                             });
@@ -1026,12 +1090,12 @@
                         return;
                     }
 
-                    const validFiles = Array.from(imageInput.files).every(file => file.type.includes('image/') || file.type.includes('video/'));
+                    const validFiles = Array.from(imageInput.files).every(file => file.type.startsWith('image/') || file.type.startsWith('video/'));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.components.media.images.not-allowed-error')"
+                            message: @json(trans('admin::app.components.media.images.not-allowed-error'))
                         });
 
                         return;

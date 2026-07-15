@@ -95,7 +95,7 @@
                                 :class="isRead(userNotification)
                                     ? 'text-gray-400 dark:text-gray-500'
                                     : 'text-gray-600 dark:text-gray-300'"
-                                v-html="userNotification.notification.description"
+                                v-text="userNotification.notification.description"
                             ></p>
 
                             <p class="text-xs text-gray-400 dark:text-gray-500">

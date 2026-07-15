@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Struktur Varian',
+        'ai-suggest'         => 'Saran AI',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'salinan - :value',

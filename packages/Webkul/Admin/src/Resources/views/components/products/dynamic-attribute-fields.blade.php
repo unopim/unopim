@@ -179,7 +179,8 @@
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
-                    :responsive="true"
+                    width="210px"
+                    height="120px"
                     :has-context="true"
                 />
                 @break
@@ -211,7 +212,8 @@
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? $savedData : []"
                     :allow-multiple=true
-                    width='210px'
+                    width="210px"
+                    height="120px"
                 />
                 @break
             @case('file')

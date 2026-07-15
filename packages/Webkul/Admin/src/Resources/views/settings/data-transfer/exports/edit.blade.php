@@ -8,6 +8,16 @@
         @lang('admin::app.settings.data-transfer.exports.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.settings.data-transfer.exports.edit.title')"
+            :back-url="route('admin.settings.data_transfer.exports.index')"
+            :back-label="trans('admin::app.settings.data-transfer.exports.edit.back-btn')"
+            form="export-profile-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
     {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.before') !!}
 
     <v-export-profile-edit></v-export-profile-edit>
@@ -15,6 +25,7 @@
     @pushOnce('scripts')
         <script type="text/x-template" id="v-export-profile-edit-template">
             <x-admin::form
+                id="export-profile-edit-form"
                 ajax
                 :action="route('admin.settings.data_transfer.exports.update', $export->id)"
                 method="PUT"
@@ -36,26 +47,6 @@
                         ? (json_decode($savedCustomAttributes, true) ?? [])
                         : $savedCustomAttributes;
                 @endphp
-
-                <!-- Page Header -->
-                <div class="flex justify-between items-center">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.settings.data-transfer.exports.edit.title')
-                    </p>
-
-                    <div class="flex gap-x-2.5 items-center">
-                        <a
-                            href="{{ route('admin.settings.data_transfer.exports.index') }}"
-                            class="transparent-button"
-                        >
-                            @lang('admin::app.settings.data-transfer.exports.edit.back-btn')
-                        </a>
-
-                        <button type="submit" class="primary-button">
-                            @lang('admin::app.settings.data-transfer.exports.edit.save-btn')
-                        </button>
-                    </div>
-                </div>
 
                 <!-- Body Content -->
                 <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
@@ -286,12 +277,6 @@
 
                 mounted() {
                     this.$emitter.on('filter-value-changed', this.handleFilterValues);
-                },
-
-                watch: {
-                    fileFormat(value) {
-                        this.selectedFileFormat = JSON.parse(value).value;
-                    },
                 },
 
                 methods: {

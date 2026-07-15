@@ -222,6 +222,40 @@ it('denies catalog.families.completeness.mass_update without families.edit permi
 });
 
 /**
+ * Variant-structure routes were entirely missing from the ACL map, so
+ * Bouncer's route => key lookup found nothing and let the request through.
+ * These must be denied for a restricted admin without the dedicated
+ * variant-structures permissions.
+ */
+it('denies catalog.families.variant-structures.index without permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->get(route('admin.catalog.families.variant-structures.index', ['id' => 1]))
+        ->assertStatus(403);
+});
+
+it('denies catalog.families.variant-structures.edit without permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->get(route('admin.catalog.families.variant-structures.edit', ['id' => 1, 'structureId' => 1]))
+        ->assertStatus(403);
+});
+
+it('denies catalog.families.variant-structures.save without permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->put(route('admin.catalog.families.variant-structures.save', ['id' => 1]), [])
+        ->assertStatus(403);
+});
+
+it('denies catalog.families.variant-structures.delete without permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->delete(route('admin.catalog.families.variant-structures.delete', ['id' => 1, 'structureId' => 1]))
+        ->assertStatus(403);
+});
+
+/**
  * Core configuration save must require the configuration permission so a
  * restricted admin cannot persist global system settings.
  */

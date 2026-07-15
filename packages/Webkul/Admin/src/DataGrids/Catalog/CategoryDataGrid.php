@@ -6,11 +6,17 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataGrid\DataGrid;
 
 class CategoryDataGrid extends DataGrid
 {
+    /**
+     * Create a new datagrid instance.
+     */
+    public function __construct(protected CategoryRepository $categoryRepository) {}
+
     /**
      * Index.
      *
@@ -23,7 +29,7 @@ class CategoryDataGrid extends DataGrid
      *
      * @var ?string
      */
-    protected $sortColumn = 'name';
+    protected $sortColumn = 'category_name';
 
     /**
      * Default sort order of datagrid.
@@ -49,30 +55,15 @@ class CategoryDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $localeCode = core()->getRequestedLocaleCode();
 
-        $grammar = DB::rawQueryGrammar();
-
-        $subQuery = $this->getSubQuery($localeCode, $tablePrefix);
-
-        $jsonExpr = $grammar->jsonExtract("{$tablePrefix}cat.additional_data", 'locale_specific', $localeCode, 'name');
-
-        $categoryNameExpr = "(CASE WHEN {$jsonExpr} IS NOT NULL 
-            THEN REPLACE({$jsonExpr}, '\"', '') 
-            ELSE {$grammar->concat("'['", "{$tablePrefix}cat.code", "']'")} 
-        END)";
+        $categoryNameExpr = $this->categoryNameExpression("{$tablePrefix}cat");
 
         $queryBuilder = DB::table('categories as cat')
             ->select(
                 'cat.id as category_id',
                 'cat.code as code',
-                DB::raw($categoryNameExpr.' as category_name'),
-                DB::raw('category_display_names.name as display_name')
-            )
-            ->leftJoin(DB::raw("({$subQuery}) as category_display_names"), function ($leftJoin) {
-                $leftJoin->on('cat.id', '=', DB::raw('category_display_names.id'));
-            })
-            ->groupBy('cat.id', 'cat.code', DB::raw('category_display_names.name'));
+                DB::raw($categoryNameExpr.' as category_name')
+            );
 
         $this->addFilter('category_name', DB::raw($categoryNameExpr));
 
@@ -171,6 +162,8 @@ class CategoryDataGrid extends DataGrid
         if (! config('elasticsearch.enabled')) {
             parent::processRequest();
 
+            $this->attachDisplayNames();
+
             return;
         }
 
@@ -216,9 +209,13 @@ class CategoryDataGrid extends DataGrid
                     'query' => [],
                 ]
             );
+
+            $this->attachDisplayNames();
         } catch (\Exception $e) {
             Log::error('Elasticsearch unavailable, falling back to database query: '.$e->getMessage());
             parent::processRequest();
+
+            $this->attachDisplayNames();
 
             return;
         }
@@ -347,36 +344,47 @@ class CategoryDataGrid extends DataGrid
     }
 
     /**
-     * Creates a query to fetch the parent names of the categories
+     * Build the localized category-name SQL expression for the given table alias.
+     * Falls back to `[code]` when no localized name is stored for the locale.
      */
-    private function getSubQuery(string $locale, string $tablePrefix): string
+    private function categoryNameExpression(string $tableAlias): string
     {
         $grammar = DB::rawQueryGrammar();
 
-        $jsonExpr = $grammar->jsonExtract('additional_data', 'locale_specific', $locale, 'name');
+        $localeCode = core()->getRequestedLocaleCode();
 
-        $codeFallback = $grammar->concat("'['", 'code', "']'");
+        $jsonExpr = $grammar->jsonExtract("{$tableAlias}.additional_data", 'locale_specific', $localeCode, 'name');
 
-        $caseNameExpr = "(CASE WHEN {$jsonExpr} IS NOT NULL THEN REPLACE({$jsonExpr}, '\"', '') ELSE {$codeFallback} END)";
+        $codeFallback = $grammar->concat("'['", "{$tableAlias}.code", "']'");
 
-        $pathConcatExpr = $grammar->concat('tree_view.name', "' / '", $caseNameExpr);
+        return "(CASE WHEN {$jsonExpr} IS NOT NULL THEN REPLACE({$jsonExpr}, '\"', '') ELSE {$codeFallback} END)";
+    }
 
-        return "
-            WITH RECURSIVE tree_view AS (
-                SELECT id,
-                    parent_id,
-                    {$caseNameExpr} as name
-                FROM {$tablePrefix}categories
-                WHERE parent_id IS NULL
-                UNION ALL
-                SELECT parent.id,
-                    parent.parent_id,
-                    {$pathConcatExpr} as name
-                FROM {$tablePrefix}categories parent
-                JOIN tree_view ON parent.parent_id = tree_view.id
-            )
-            SELECT id, parent_id, name
-            FROM tree_view
-        ";
+    /**
+     * Resolve the full breadcrumb path (e.g. "Root / Child / Leaf") for the
+     * categories on the current page only, and assign it to `display_name`.
+     *
+     * The path is computed after pagination so we never walk the whole tree —
+     * only the ancestors of the visible rows are read.
+     */
+    private function attachDisplayNames(): void
+    {
+        if ($this->exportable || ! isset($this->paginator)) {
+            return;
+        }
+
+        $records = $this->paginator->getCollection();
+
+        if ($records->isEmpty()) {
+            return;
+        }
+
+        $ids = $records->pluck('category_id')->all();
+
+        $breadcrumbs = $this->categoryRepository->getBreadcrumbsForIds($ids);
+
+        $records->each(function ($record) use ($breadcrumbs) {
+            $record->display_name = $breadcrumbs[(int) $record->category_id] ?? $record->category_name;
+        });
     }
 }

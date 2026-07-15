@@ -327,9 +327,13 @@ class MagicAIController extends Controller
         ]);
     }
 
-    public function edit(int $id): JsonResponse
+    public function edit(int $id): View|JsonResponse
     {
         $prompt = $this->magicPromptRepository->findOrFail($id);
+
+        if (! request()->expectsJson()) {
+            return view('admin::configuration.magic-ai-prompt.edit', compact('prompt'));
+        }
 
         return new JsonResponse([
             'data' => $prompt,
@@ -350,7 +354,8 @@ class MagicAIController extends Controller
         $this->magicPromptRepository->update($data, request()->id);
 
         return new JsonResponse([
-            'message' => trans('admin::app.configuration.prompt.message.update-success'),
+            'message'      => trans('admin::app.configuration.prompt.message.update-success'),
+            'redirect_url' => route('admin.magic_ai.prompt.index'),
         ]);
     }
 

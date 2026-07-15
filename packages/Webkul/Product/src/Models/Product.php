@@ -365,7 +365,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      */
     public function normalizeWithImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): array
     {
-        $image = $this->getProductDisplayImage();
+        $image = $this->getProductDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
 
         $image = $image ? Storage::url($image) : null;
 

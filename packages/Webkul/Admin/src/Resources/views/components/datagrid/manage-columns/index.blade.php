@@ -87,17 +87,12 @@
                                     </template>
 
                                     <template v-else>
-                                        <div class="relative w-full flex items-center justify-center mb-1 mt-2">
-                                            <input
-                                                type="text"
-                                                class="bg-white dark:bg-cherry-800 border dark:border-cherry-900 rounded-lg block w-full ltr:pl-3 rtl:pr-3 ltr:pr-10 rtl:pl-10 py-1.5 leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400"
-                                                placeholder="Search"
+                                        <div class="mb-1 mt-2 flex w-full items-center justify-center">
+                                            <x-admin::search.field
                                                 v-model.lazy="searchTerm"
                                                 v-debounce="500"
                                                 @keydown.enter.prevent="search($event.target.value)"
                                             />
-
-                                            <span class="icon-search text-2xl absolute ltr:right-5 rtl:left-3 top-1.5 flex items-center pointer-events-none"></span>
                                         </div>
                                         <draggable
                                             class="!h-[calc(100vh-367px)] pb-[16px] pt-1 overflow-auto ltr:border-r rtl:border-l border-gray-200"

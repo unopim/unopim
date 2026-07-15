@@ -178,6 +178,38 @@ class CategoryRepository extends Repository
     }
 
     /**
+     * Resolve breadcrumb paths (e.g. "Root / Child / Leaf") for the given category
+     * ids using the nested-set `ancestors` relation.
+     *
+     * Runs a fixed number of queries regardless of tree depth or size (one to load
+     * the categories, one to eager-load all their ancestors), so it stays cheap for
+     * paginated listings instead of walking the whole tree.
+     *
+     * @param  int[]  $ids
+     * @return array<int, string> Map of category id => breadcrumb path.
+     */
+    public function getBreadcrumbsForIds(array $ids): array
+    {
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+
+        if (empty($ids)) {
+            return [];
+        }
+
+        return $this->model
+            ->whereIn('id', $ids)
+            ->with(['ancestors' => fn ($query) => $query->defaultOrder()])
+            ->get()
+            ->mapWithKeys(fn ($category) => [
+                (int) $category->id => $category->ancestors
+                    ->push($category)
+                    ->map(fn ($node) => $node->name)
+                    ->implode(' / '),
+            ])
+            ->all();
+    }
+
+    /**
      * Get root categories.
      *
      * @return Collection

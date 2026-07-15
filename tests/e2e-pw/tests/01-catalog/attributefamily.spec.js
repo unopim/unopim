@@ -2,15 +2,22 @@ const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
- * Helper: Create an attribute family via UI.
+ * Helper: Create an attribute family via the create-family modal on the index
+ * page. The modal only accepts a `code` (and, once other families exist, an
+ * optional `based_on` family to clone the structure from) — it lands directly
+ * on the new family's edit page, already scaffolded with a General group
+ * holding SKU.
  */
-async function createFamily(adminPage, code, name) {
+async function createFamily(adminPage, code) {
   await navigateTo(adminPage, 'attributeFamilies');
-  await adminPage.getByRole('link', { name: 'Create Attribute Family' }).click();
-  await adminPage.waitForLoadState('networkidle');
-  await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(code);
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family created successfully/i);
+  await adminPage.getByRole('button', { name: 'Create Attribute Family' }).click();
+  await adminPage.getByPlaceholder('Enter Code').fill(code);
+  await clickSaveAndExpect(
+    adminPage,
+    'Save Attribute Family',
+    /Family created successfully/i,
+    /\/admin\/catalog\/families\/edit\/\d+/
+  );
 }
 
 /**
@@ -46,10 +53,8 @@ test.describe('UnoPim Attribute Family Tests', () => {
 
   test('Create Attribute family with empty code field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributeFamilies');
-    await adminPage.getByRole('link', { name: 'Create Attribute Family' }).click();
-    await adminPage.waitForLoadState('networkidle');
-    await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill('');
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Header');
+    await adminPage.getByRole('button', { name: 'Create Attribute Family' }).click();
+    await adminPage.getByPlaceholder('Enter Code').fill('');
     await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
@@ -58,7 +63,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
     const uid = generateUid();
     const code = `fam_${uid}`;
 
-    await createFamily(adminPage, code, 'Test Family');
+    await createFamily(adminPage, code);
 
     // Cleanup
     await deleteFamily(adminPage, code);
@@ -88,72 +93,45 @@ test.describe('UnoPim Attribute Family Tests', () => {
     await expect(perPageBtn).toContainText('20');
   });
 
-  test('should perform actions on an attribute family (Edit, Copy, Delete)', async ({ adminPage }) => {
+  test('should perform actions on an attribute family (Edit, Delete)', async ({ adminPage }) => {
     const uid = generateUid();
     const code = `fam_${uid}`;
 
-    // Create test data
-    await createFamily(adminPage, code, 'Actions Test');
-
-    // Edit action
-    await searchAndEditFamily(adminPage, code);
+    // Create test data — modal creation lands directly on the edit page
+    await createFamily(adminPage, code);
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit/);
 
-    // Copy action
-    await navigateTo(adminPage, 'attributeFamilies');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
-    await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
-    const row = adminPage.locator('div', { hasText: code });
-    await row.locator('span[title="Copy"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/copy/);
+    // Edit action (from the datagrid)
+    await searchAndEditFamily(adminPage, code);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit/);
 
     // Delete action — shows confirmation
     await navigateTo(adminPage, 'attributeFamilies');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
-    const row2 = adminPage.locator('div', { hasText: code });
-    await row2.locator('span[title="Delete"]').first().click();
+    const row = adminPage.locator('div', { hasText: code });
+    await row.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
 
-    // Cleanup — confirm delete
+    // Confirm delete
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText(/Family deleted successfully/i)).toBeVisible();
-
-    // Also delete the copy if it was created
-    await deleteFamily(adminPage, code);
   });
 
   test('Edit Attribute Family', async ({ adminPage }) => {
     const uid = generateUid();
     const code = `fam_${uid}`;
 
-    // Create test data
-    await createFamily(adminPage, code, 'Before Edit');
+    // Create test data — modal creation lands directly on the edit page, already
+    // scaffolded with a General group holding SKU.
+    await createFamily(adminPage, code);
 
-    // Search and edit
-    await searchAndEditFamily(adminPage, code);
+    const assignedGroups = adminPage.locator('#assigned-attribute-groups');
+    await expect(assignedGroups.getByText('General').first()).toBeVisible();
+    await expect(assignedGroups.getByText('SKU').first()).toBeVisible();
+
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('After Edit');
-
-    // Assign General attribute group
-    await adminPage.locator('.secondary-button', { hasText: 'Assign Attribute Group' }).click();
-    await adminPage.locator('input[name="group"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.getByRole('textbox', { name: 'group-searchbox' }).fill('General');
-    await adminPage.getByRole('option', { name: 'General' }).first().click();
-    await adminPage.getByRole('button', { name: 'Assign Attribute Group' }).click();
-
-    // Drag SKU attribute to the group
-    const dragHandle = adminPage.locator('#unassigned-attributes i.icon-drag:near(:text("SKU"))').first();
-    const dropTarget = adminPage.locator('#assigned-attribute-groups .group_node').first();
-    const dragBox = await dragHandle.boundingBox();
-    const dropBox = await dropTarget.boundingBox();
-    if (dragBox && dropBox) {
-      await adminPage.mouse.move(dragBox.x + dragBox.width / 2, dragBox.y + dragBox.height / 2);
-      await adminPage.mouse.down();
-      await adminPage.mouse.move(dropBox.x + dropBox.width / 2, dropBox.y + dropBox.height / 2, { steps: 10 });
-      await adminPage.mouse.up();
-    }
 
     await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family updated successfully/i);
 
@@ -166,7 +144,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
     const code = `fam_${uid}`;
 
     // Create test data specifically for deletion
-    await createFamily(adminPage, code, 'To Delete');
+    await createFamily(adminPage, code);
 
     // Search and delete
     await navigateTo(adminPage, 'attributeFamilies');

@@ -91,13 +91,13 @@
 
                 onSelectStart(e) {
                     const onMouseUp = () => {
+                        document.removeEventListener('mouseup', onMouseUp);
                         this.gridContext.selecting = false;
 
                         if (! this.gridContext.multipleDrag) {
                             return;
                         }
 
-                        document.removeEventListener('mouseup', onMouseUp);
                         this.gridContext.multipleDrag = false;
 
                         if (! this.gridContext.dragStop) {

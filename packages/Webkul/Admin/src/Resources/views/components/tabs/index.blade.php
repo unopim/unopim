@@ -22,15 +22,15 @@
                     v-for="tab in tabs"
                     class="pb-3.5 px-2.5 text-base font-medium cursor-pointer transition-all border-b-2"
                     :class="tab.isActive
-                        ? 'border-violet-700 text-violet-700'
-                        : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-violet-700'"
+                        ? 'border-unopim-primary text-unopim-primary dark:text-unopim-primary'
+                        : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-unopim-primary'"
                     @click="change(tab)"
                 >
                     <span v-text="tab.title"></span>
 
                     <span
                         v-if="tab.badge !== null && tab.badge !== undefined"
-                        class="ml-1 inline-flex items-center justify-center min-w-5 h-5 px-1.5 bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300 rounded-full text-xs font-semibold"
+                        class="ml-1 inline-flex items-center justify-center min-w-5 h-5 px-1.5 bg-unopim-primary-muted dark:bg-cherry-800 text-unopim-primary dark:text-unopim-primary rounded-full text-xs font-semibold"
                         v-text="tab.badge"
                     ></span>
                 </div>

@@ -145,7 +145,7 @@
 
                                     <!-- Description -->
                                     <x-admin::form.control-group class="!mb-0">
-                                        <x-admin::form.control-group.label class="required">
+                                        <x-admin::form.control-group.label>
                                             @lang('admin::app.settings.roles.create.description')
                                         </x-admin::form.control-group.label>
 
@@ -153,7 +153,6 @@
                                             type="textarea"
                                             id="description"
                                             name="description"
-                                            rules="required"
                                             :value="old('description')"
                                             :label="trans('admin::app.settings.roles.create.description')"
                                             :placeholder="trans('admin::app.settings.roles.create.description')"

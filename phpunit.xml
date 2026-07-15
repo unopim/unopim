@@ -71,6 +71,14 @@
             <directory suffix="Test.php">packages/Webkul/AppUrlGuard/tests/Feature</directory>
         </testsuite>
 
+        <testsuite name="Resource Unit Test">
+            <directory suffix="Test.php">packages/Webkul/Resource/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Resource Feature Test">
+            <directory suffix="Test.php">packages/Webkul/Resource/tests/Feature</directory>
+        </testsuite>
+
     </testsuites>
 
     <source>

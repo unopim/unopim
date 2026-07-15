@@ -33,6 +33,25 @@ module.exports = {
                 },
                 sky: {
                     500: '#0C8CE9',
+                },
+                unopim: {
+                    'primary-50': '#F5F3FF',
+                    'primary-100': '#EDE9FE',
+                    'primary-200': '#DDD6FE',
+                    'primary-400': '#A78BFA',
+                    'primary-500': '#8B5CF6',
+                    'primary-600': '#7C3AED',
+                    'primary-700': '#6D28D9',
+                    'primary-900': '#4C1D95',
+                    primary: '#6D28D9',
+                    'primary-base': '#7C3AED',
+                    'primary-hover': '#8B5CF6',
+                    'primary-soft': '#F5F3FF',
+                    'primary-page': '#FAF9FF',
+                    'primary-muted': '#EDE9FE',
+                    'primary-border': '#DDD6FE',
+                    avatar: '#A78BFA',
+                    accent: '#35C2B4',
                 }
             },
 

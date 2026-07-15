@@ -48,6 +48,7 @@
                             <!-- Columns -->
                             <p
                                 v-for="column in visibleColumns"
+                                :key="column.index"
                                 class="flex gap-1.5 items-center min-w-0"
                                 :class="{'cursor-pointer select-none hover:text-gray-800 dark:hover:text-white': column.sortable}"
                                 @click="$parent.sortPage(column)"
@@ -92,6 +93,7 @@
                             <div
                                 class="row grid gap-2.5 items-center px-4 py-4 cursor-pointer border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                                 v-for="record in $parent.available.records"
+                                :key="record[$parent.available.meta.primary_column]"
                                 :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
                                 @click="handleRowClick($event, record)"
                             >
@@ -116,11 +118,12 @@
                                 <div
                                     class="min-w-0"
                                     v-for="column in visibleColumns"
+                                    :key="column.index"
                                 >
                                     <template v-if="column.type === 'image'">
                                         <img
                                             :src="record[column.index] ? record[column.index] : '{{ unopim_asset('images/placeholder.svg') }}'"
-                                            alt="Thumbnail"
+                                            alt="@lang('admin::app.components.datagrid.table.thumbnail')"
                                             width="74"
                                             height="74"
                                             class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
@@ -145,7 +148,7 @@
                                         <template v-else>
                                             <img
                                                 :src="record[column.index]?.url ? record[column.index].url : '{{ unopim_asset('images/placeholder.svg') }}'"
-                                                alt="Thumbnail"
+                                                alt="@lang('admin::app.components.datagrid.table.thumbnail')"
                                                 width="74"
                                                 height="74"
                                                 class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
@@ -153,11 +156,20 @@
                                         </template>
                                     </template>
 
+                                    {{-- Only closure columns emit trusted server-rendered HTML; everything else is plain text to prevent stored XSS. --}}
+                                    <p
+                                        v-else-if="column.closure"
+                                        class="truncate"
+                                        :title="stripHtml(record[column.index])"
+                                        v-html="record[column.index]"
+                                    >
+                                    </p>
+
                                     <p
                                         v-else
                                         class="truncate"
                                         :title="stripHtml(record[column.index])"
-                                        v-html="record[column.index]"
+                                        v-text="record[column.index]"
                                     >
                                     </p>
                                 </div>
@@ -176,7 +188,8 @@
                                             class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                             :class="action.icon"
                                             v-text="!action.icon ? action.title : ''"
-                                            v-for="action in record.actions"
+                                            v-for="(action, actionIndex) in record.actions"
+                                            :key="actionIndex"
                                             :title="action.title ?? ''"
                                             @click="$parent.performAction(action, record)"
                                         >

@@ -28,7 +28,7 @@
                 </x-slot>
 
                 @php
-                    $supportedType = Config('quick_exporters');
+                    $supportedType = config('quick_exporters');
                     $options = [];
 
                     foreach ($supportedType as $type => $value) {

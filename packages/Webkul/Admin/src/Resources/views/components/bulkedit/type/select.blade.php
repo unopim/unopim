@@ -59,7 +59,7 @@
               v-if="selectedOption === option[valueKey]"
               @click.stop.prevent="clearSelection"
               class="ml-2 text-red-500 hover:text-red-700"
-              title="Clear selection"
+              title="@lang('admin::app.catalog.products.bulk-edit.clear-selection')"
             >
               &times;
             </button>

@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Strutture delle varianti',
+        'ai-suggest'         => 'Suggerimento IA',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => 'copertura-di-:value',
         'copy-of'                       => 'Copia di :value',

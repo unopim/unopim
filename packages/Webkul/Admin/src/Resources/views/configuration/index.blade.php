@@ -13,13 +13,10 @@
         <!-- Configuration Search Bar Vue Component -->
         <v-configuration-search>
             <div class="flex items-center relative w-[525px] max-w-[525px] ltr:ml-2.5 rtl:mr-2.5 max-lg:w-[400px]">
-                <i class="icon-search absolute flex items-center ltr:left-3 rtl:right-3 text-2xl top-1.5"></i>
-
-                <input 
-                    type="text" 
-                    class="w-full px-10 py-1.5 block bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-lg leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400"
-                    placeholder="@lang('admin::app.configuration.index.search')" 
-                >
+                <x-admin::search.field
+                    icon-position="left"
+                    :placeholder="trans('admin::app.configuration.index.search')"
+                />
             </div>
         </v-configuration-search>
     </div>
@@ -73,17 +70,15 @@
     @pushOnce('scripts')
         <script type="text/x-template" id="v-configuration-search-template">
             <div class="flex items-center relative w-[525px] max-w-[525px] ltr:ml-2.5 rtl:mr-2.5 max-lg:w-[400px]">
-                <i class="icon-search text-2xl flex items-center absolute ltr:left-3 rtl:right-3 top-1.5"></i>
-
-                <input 
-                    type="text"
-                    class="bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-lg block w-full px-10 py-1.5 leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 peer"
-                    :class="{'border-gray-400': isDropdownOpen}"
-                    placeholder="@lang('admin::app.configuration.index.search')"
+                <x-admin::search.field
+                    icon-position="left"
+                    class="peer"
+                    ::class="{'border-gray-400': isDropdownOpen}"
+                    :placeholder="trans('admin::app.configuration.index.search')"
                     v-model.lazy="searchTerm"
                     @click="searchTerm.length >= 2 ? isDropdownOpen = true : {}"
                     v-debounce="500"
-                >
+                />
 
                 <div
                     class="absolute top-10 w-full bg-white dark:bg-cherry-800 shadow-[0px_0px_0px_0px_rgba(0,0,0,0.10),0px_1px_3px_0px_rgba(0,0,0,0.10),0px_5px_5px_0px_rgba(0,0,0,0.09),0px_12px_7px_0px_rgba(0,0,0,0.05),0px_22px_9px_0px_rgba(0,0,0,0.01),0px_34px_9px_0px_rgba(0,0,0,0.00)] border dark:border-cherry-800 rounded-lg z-10"
@@ -99,6 +94,7 @@
                                 :href="category.url"
                                 class="p-4 border-b dark:border-cherry-800 text-sm text-gray-600 dark:text-gray-300 font-semibold cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 last:border-b-0"
                                 v-for="category in searchedResults.data"
+                                :key="category.url"
                             >
                                 @{{ category.title }}
                             </a>
@@ -141,7 +137,7 @@
                     window.addEventListener('click', this.handleFocusOut);
                 },
 
-                beforeDestroy() {
+                beforeUnmount() {
                     window.removeEventListener('click', this.handleFocusOut);
                 },
 
@@ -167,7 +163,11 @@
 
                                 this.isLoading = false;
                             })
-                            .catch((error) => {});
+                            .catch((error) => {
+                                this.isLoading = false;
+
+                                console.error(error);
+                            });
                     },
 
                     handleFocusOut(e) {

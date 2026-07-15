@@ -6,6 +6,21 @@
         @lang('admin::app.catalog.products.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        {!! view_render_event('unopim.admin.catalog.product.edit.actions.before', ['product' => $product]) !!}
+
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.catalog.products.edit.title') . ' | SKU: ' . $product->sku"
+            :back-url="route('admin.catalog.products.index')"
+            :back-label="trans('admin::app.account.edit.back-btn')"
+            :sticky="false"
+        >
+            <x-slot:beforeActions>
+                {!! view_render_event('unopim.pdf.product.edit.actions.before', ['product' => $product]) !!}
+            </x-slot>
+        </x-admin::layouts.edit-page-header>
+    </x-slot>
+
     {!! view_render_event('unopim.admin.catalog.product.edit.before', ['product' => $product]) !!}
     <x-admin::graphs.radial-progress />
 
@@ -14,34 +29,7 @@
         enctype="multipart/form-data"
         ajax
     >
-        {!! view_render_event('unopim.admin.catalog.product.edit.actions.before', ['product' => $product]) !!}
-
         <input type="hidden" name="sku" value="{{ $product->sku }}">
-
-        <!-- Page Header -->
-        <div class="js-sticky-header sticky z-10 dark:bg-cherry-800 -mx-4 px-4 py-2.5 transition-shadow" style="top: 56px;">
-            <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-                <div class="grid gap-1.5">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold leading-6">
-                        @lang('admin::app.catalog.products.edit.title') | SKU: {{ $product->sku }}
-                    </p>
-                </div>
-
-                <div class="flex gap-x-2.5 items-center">
-                    {!! view_render_event('unopim.pdf.product.edit.actions.before', ['product' => $product]) !!}
-
-                    <!-- Back Button -->
-                    <a
-                        href="{{ route('admin.catalog.products.index') }}"
-                        class="transparent-button"
-                    >
-                        @lang('admin::app.account.edit.back-btn')
-                    </a>
-
-                    {{-- Save handled by the global unsaved-changes bar (appears on edit). --}}
-                </div>
-            </div>
-        </div>
 
         @php
             $channels = core()->getAllChannels();
@@ -243,11 +231,7 @@
                 @includeIf('admin::catalog.products.edit.types.' . $product->type)
 
                 <!-- Related, Cross Sells, Up Sells View Blade File -->
-                @include('admin::catalog.products.edit.links', [
-                    'upSellAssociations'    => $product->values['associations']['up_sells'] ?? [],
-                    'crossSellAssociations' => $product->values['associations']['cross_sells'] ?? [],
-                    'relatedAssociations'   => $product->values['associations']['related_products'] ?? [],
-                ])
+                @include('admin::catalog.products.edit.links', ['linkedProducts' => $linkedProducts])
 
                 <!-- Include Product Type Additional Blade Files If Any -->
                 @foreach ($product->getTypeInstance()->getAdditionalViews() as $view)
@@ -261,30 +245,4 @@
 
     {!! view_render_event('unopim.admin.catalog.product.edit.after', ['product' => $product]) !!}
 
-    @pushOnce('scripts')
-        {{-- Give the sticky edit header a solid white background once the page is scrolled
-             (Vue has no `.window` event modifier, so this is done with a plain listener). --}}
-        <script>
-            (function () {
-                // Query the header on each call — it's rendered by Vue (inside <v-form>),
-                // so it may not exist yet when this script first runs.
-                const update = () => {
-                    const header = document.querySelector('.js-sticky-header');
-
-                    if (! header) {
-                        return;
-                    }
-
-                    const scrolled = window.scrollY > 0;
-
-                    header.classList.toggle('bg-white', scrolled);
-                    header.classList.toggle('shadow-md', scrolled);
-                };
-
-                window.addEventListener('scroll', update, { passive: true });
-
-                setTimeout(update, 300);
-            })();
-        </script>
-    @endPushOnce
 </x-admin::layouts.with-history>

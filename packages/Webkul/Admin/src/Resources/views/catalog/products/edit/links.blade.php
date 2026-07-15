@@ -1,7 +1,9 @@
 @props([
-    'upSellAssociations'    => [],
-    'crossSellAssociations' => [],
-    'relatedAssociations'   => [],
+    'linkedProducts' => [
+        'up_sells'         => [],
+        'cross_sells'      => [],
+        'related_products' => [],
+    ],
 ])
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.links.before', ['product' => $product]) !!}
@@ -16,7 +18,6 @@
         id="v-product-links-template"
     >
         <div class="grid gap-2.5">
-            <!-- Panel -->
             <div class="bg-white grid gap-2.5 p-4 dark:bg-cherry-900 rounded box-shadow">
                 <p class="flex justify-between text-base text-gray-800 dark:text-white font-semibold mb-4">
                     @lang('admin::app.catalog.products.edit.links.title')
@@ -35,18 +36,20 @@
                             </p>
                         </div>
                         
-                        <!-- Add Button -->
                         <div class="flex gap-x-1 items-center">
                             <div
                                 class="secondary-button text-xs"
+                                role="button"
+                                tabindex="0"
                                 @click="selectedType = type.key; $refs.productSearch.openDrawer()"
+                                @keydown.enter.prevent="selectedType = type.key; $refs.productSearch.openDrawer()"
+                                @keydown.space.prevent="selectedType = type.key; $refs.productSearch.openDrawer()"
                             >
                                 @lang('admin::app.catalog.products.edit.links.add-btn')
                             </div>
                         </div>
                     </div>
         
-                    <!-- Product Listing -->
                     <div
                         class="grid"
                         v-if="addedProducts[type.key]?.length"
@@ -55,34 +58,37 @@
                             class="flex gap-2.5 justify-between p-4 border-b border-slate-300 dark:border-gray-800"
                             v-for="product in addedProducts[type.key]"
                         >
-                            <!-- Hidden Input -->
                             <input
                                 type="hidden"
                                 :name="type.key + '[]'"
                                 :value="product.sku"
                             />
 
-                            <!-- Information -->
                             <div class="flex gap-2.5">
-                                <!-- Image -->
                                 <div
                                     class="w-full h-[60px] max-w-[60px] max-h-[60px] relative rounded overflow-hidden"
                                     :class="{'border border-dashed border-gray-300 dark:border-cherry-800 dark:invert dark:mix-blend-exclusion': ! product?.image, 'w-[60px]': product?.image}"
                                 >
                                     <template v-if="! product?.image">
-                                        <img src="{{ unopim_asset('images/product-placeholders/front.svg') }}">
-                                    
+                                        <img
+                                            src="{{ unopim_asset('images/product-placeholders/front.svg') }}"
+                                            alt="@lang('admin::app.catalog.products.edit.links.image-placeholder')"
+                                        >
+
                                         <p class="w-full absolute bottom-1.5 text-[6px] text-gray-400 text-center font-semibold">
                                             @lang('admin::app.catalog.products.edit.links.image-placeholder')
                                         </p>
                                     </template>
-                
+
                                     <template v-else>
-                                        <img :src="product?.image" class="w-full h-full object-cover object-top">
+                                        <img
+                                            :src="product?.image"
+                                            :alt="product.name"
+                                            class="w-full h-full object-cover object-top"
+                                        >
                                     </template>
                                 </div>
 
-                                <!-- Details -->
                                 <div class="grid gap-1.5 place-content-start">
                                     <p
                                         class="text-base text-gray-800 dark:text-white font-semibold"
@@ -96,11 +102,15 @@
                                 </div>
                             </div>
 
-                            <!-- Actions -->
                             <div class="grid gap-1 place-content-start text-right">
                                 <p
                                     class="text-red-600 cursor-pointer transition-all"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-label="@lang('admin::app.catalog.products.index.datagrid.delete')"
                                     @click="remove(type.key, product)"
+                                    @keydown.enter.prevent="remove(type.key, product)"
+                                    @keydown.space.prevent="remove(type.key, product)"
                                     title="@lang('admin::app.catalog.products.index.datagrid.delete')"
                                 >
                                     <i class="icon-delete text-red-600 cursor-pointer transition-all text-xl"></i>
@@ -109,18 +119,16 @@
                         </div>
                     </div>
 
-                    <!-- For Empty Variations -->
                     <div
                         class="grid gap-3.5 justify-center justify-items-center py-10 px-2.5"
                         v-else
                     >
-                        <!-- Placeholder Image -->
                         <img
                             src="{{ unopim_asset('images/icon-add-product.svg') }}"
                             class="w-20 h-20 dark:invert dark:mix-blend-exclusion"
+                            alt=""
                         />
 
-                        <!-- Add Variants Information -->
                         <div class="flex flex-col gap-1.5 items-center">
                             <p class="text-base text-gray-400 font-semibold">
                                 @lang('admin::app.catalog.products.edit.links.empty-title')
@@ -136,7 +144,6 @@
                 </div>
             </div>
 
-            <!-- Product Search Blade Component -->
             <x-admin::products.search
                 ref="productSearch"
                 ::added-product-ids="addedProductIds"
@@ -175,13 +182,7 @@
                         }
                     ],
 
-                    addedProducts: {
-                        'up_sells': @json($upSellAssociations ? $product->whereIn('sku', $upSellAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()) : []),
-
-                        'cross_sells': @json($crossSellAssociations ? $product->whereIn('sku', $crossSellAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()) : []),
-
-                        'related_products': @json($relatedAssociations ? $product->whereIn('sku', $relatedAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()) : [])
-                    },
+                    addedProducts: @json($linkedProducts),
 
                     queryParams: {
                         skipSku: "{{ $product->sku }}"

@@ -61,6 +61,7 @@
             ],
             data: function() {
                 return {
+                    sourceChannel: this.value,
                     isTranslationEnabled: Boolean('{{ core()->getConfigData("general.magic_ai.translation.enabled") == 1 }}'),
                 }
             },

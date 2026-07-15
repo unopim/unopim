@@ -9,18 +9,24 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\HasApiTokens;
-use OwenIt\Auditing\Auditable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Webkul\Admin\Mail\Admin\ResetPasswordNotification;
 use Webkul\AdminApi\Models\Apikey;
+use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\LocaleProxy;
+use Webkul\HistoryControl\Contracts\HistoryAuditable;
+use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Notification\Models\UserNotification;
 use Webkul\User\Contracts\Admin as AdminContract;
 use Webkul\User\Database\Factories\AdminFactory;
 
-class Admin extends Authenticatable implements AdminContract, AuditableContract
+class Admin extends Authenticatable implements AdminContract, HistoryAuditable
 {
-    use Auditable, HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HistoryTrait, Notifiable;
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $historyTags = ['admin'];
 
     /**
      * The attributes that are mass assignable.
@@ -35,6 +41,8 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
         'api_token',
         'role_id',
         'ui_locale_id',
+        'catalog_locale_id',
+        'default_channel_id',
         'status',
         'timezone',
     ];
@@ -124,10 +132,8 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
 
     /**
      * Get the role that owns the admin.
-     *
-     * @return BelongsTo
      */
-    public function role()
+    public function role(): BelongsTo
     {
         return $this->belongsTo(RoleProxy::modelClass());
     }
@@ -150,14 +156,20 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
      */
     public function hasPermission($permission)
     {
+        $role = $this->role;
+
+        if (! $role) {
+            return false;
+        }
+
         if (
-            $this->role->permission_type == 'custom'
-            && ! $this->role->permissions
+            $role->permission_type == 'custom'
+            && ! $role->permissions
         ) {
             return false;
         }
 
-        return in_array($permission, $this->role->permissions);
+        return in_array($permission, $role->permissions);
     }
 
     /**
@@ -185,6 +197,22 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     public function uiLocale(): BelongsTo
     {
         return $this->belongsTo(LocaleProxy::modelClass(), 'ui_locale_id');
+    }
+
+    /**
+     * Locale the admin authors catalog content in; separate from uiLocale(), which is only the panel language.
+     */
+    public function catalogLocale(): BelongsTo
+    {
+        return $this->belongsTo(LocaleProxy::modelClass(), 'catalog_locale_id');
+    }
+
+    /**
+     * Channel the admin works in by default.
+     */
+    public function defaultChannel(): BelongsTo
+    {
+        return $this->belongsTo(ChannelProxy::modelClass(), 'default_channel_id');
     }
 
     /**

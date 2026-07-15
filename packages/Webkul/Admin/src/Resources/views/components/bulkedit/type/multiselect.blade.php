@@ -148,6 +148,12 @@
         this.$refs.input.addEventListener('keydown', this.handleKeyDown);
       },
 
+      beforeUnmount() {
+        document.removeEventListener('click', this.handleClickOutside);
+        this.$refs.input?.removeEventListener('keydown', this.handleKeyDown);
+        clearTimeout(this.debounceTimeout);
+      },
+
       methods: {
         handleKeyDown(e) {
           if (!this.open) return;

@@ -149,6 +149,10 @@
                 this.getRoots();
             },
 
+            beforeUnmount() {
+                clearTimeout(this.searchTimer);
+            },
+
             methods: {
                 getRoots() {
                     this.$axios.post("{{ route('admin.catalog.categories.tree') }}", {
