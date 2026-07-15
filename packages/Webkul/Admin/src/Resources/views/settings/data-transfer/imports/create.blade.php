@@ -270,8 +270,7 @@
                             </template>
                             <x-admin::data-transfer.import-setting-fields
                                         ::entity-type="entityType"
-                                        ::fields="settingFields"
-                                        :importer-config="json_encode($importerConfig)"
+                                        :importer-config="$importerConfig"
                             >
                             </x-admin::data-transfer.import-setting-fields>
                         </x-slot>
@@ -285,21 +284,27 @@
             </x-admin::form>
         </script>
         <script type="module">
+            @php
+                $fileOptions = array_map(
+                    fn ($entity) => (bool) ($entity['has_file_options'] ?? false),
+                    $importerConfig,
+                );
+            @endphp
+
             app.component('v-import-profile', {
                 template: '#v-import-profile-template',
-                
+
                 data() {
                     return {
                         entityType: "{{ old('entity_type') ?? 'categories' }}",
-                        enableFileShow: @json($importerConfig[old('entity_type') ?? 'categories']['has_file_options'] ?? false),
-                        importerConfig: @json($importerConfig),
-                        filterFields: @json($importerConfig['categories']['filters']['fields'] ?? null),
+                        fileOptions: @json($fileOptions),
+                        enableFileShow: @json($fileOptions[old('entity_type') ?? 'categories'] ?? false),
                     };
                 },
 
                 watch: {
                     entityType(value) {
-                        this.enableFileShow = this.importerConfig[JSON.parse(value).id]?.has_file_options;
+                        this.enableFileShow = this.fileOptions[JSON.parse(value).id] ?? false;
                         this.$emitter.emit('entity-type-changed', value);
                     },
                 },

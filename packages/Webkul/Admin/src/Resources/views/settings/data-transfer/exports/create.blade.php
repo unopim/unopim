@@ -105,7 +105,7 @@
 
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="channels,locales,currencies,attributes"
                                 grid-class="grid grid-cols-1"
                             />
@@ -123,14 +123,14 @@
 
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="attribute_families,status"
                                 grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
                             />
 
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="completeness,time_condition,time_value,time_date,time_date_end"
                                 grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
                             />
@@ -149,7 +149,7 @@
 
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="sku"
                                 grid-class="grid grid-cols-1"
                             />
@@ -161,12 +161,12 @@
                                     @lang('admin::app.settings.data-transfer.exports.create.attribute-conditions')
                                 </p>
 
-                                <x-admin::data-transfer.attribute-conditions
-                                    :attribute-route="route('admin.settings.data_transfer.exports.filters.attributes')"
-                                    :exclude-attributes="[\Webkul\DataTransfer\Enums\ProductFilter::SKU->value]"
-                                    :operators="\Webkul\DataTransfer\Helpers\Sources\Export\Filters\AttributeConditionOperators::frontendMap()"
-                                >
-                                </x-admin::data-transfer.attribute-conditions>
+                                <x-admin::data-transfer.filter-fields
+                                    ::entity-type="entityType"
+                                    :exporter-config="$exporterConfig"
+                                    only="custom_attributes"
+                                    grid-class="grid grid-cols-1"
+                                />
                             </div>
                         </template>
                     </div>
@@ -181,8 +181,7 @@
 
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
-                                ::fields="filterFields"
-                                :exporter-config="json_encode($exporterConfig)"
+                                :exporter-config="$exporterConfig"
                                 only="file_format,with_media,header_row,use_labels,date_format,file_path"
                             />
                         </div>
@@ -232,18 +231,22 @@
                 if (! isset($exporterConfig[$selectedEntityType]['filters']['fields'])) {
                     $selectedEntityType = 'categories';
                 }
+
+                $setsKey = app(\Webkul\Admin\Fields\FieldConfig::class)->payload($exporterConfig)['key'];
             @endphp
 
             app.component('v-export-profile', {
                 template: '#v-export-profile-template',
 
                 data() {
+                    const setsKey = @json($setsKey);
+
                     return {
                         fileFormat: 'Csv',
                         selectedFileFormat: "{{ old('filters.file_format') ?? null }}",
                         entityType: "{{ $selectedEntityType }}",
-                        exporterConfig: @json($exporterConfig),
-                        filterFields: @json($exporterConfig[$selectedEntityType]['filters']['fields']),
+                        setsKey,
+                        filterFields: (window.unopim?.fieldSets?.[setsKey] ?? {})[@json($selectedEntityType)] ?? [],
                     };
                 },
 
@@ -261,7 +264,7 @@
                     },
 
                     supportsConditions() {
-                        return this.filterFields.some(field => field.name === 'attributes');
+                        return this.filterFields.some(field => field.name === 'custom_attributes');
                     },
 
                     supportsCategories() {
@@ -281,7 +284,7 @@
                             return;
                         }
 
-                        this.filterFields = this.exporterConfig[configKey]['filters']['fields'];
+                        this.filterFields = this.fieldsFor(configKey);
 
                         if (this.filterFields.filter(field => field.name == 'file_format').length == 0) {
                             this.selectedFileFormat = '';
@@ -301,6 +304,10 @@
                 },
 
                 methods: {
+                    fieldsFor(entityType) {
+                        return (window.unopim?.fieldSets?.[this.setsKey] ?? {})[entityType] ?? [];
+                    },
+
                     parseValue(value) {
                         try {
                             return value ? JSON.parse(value) : null;

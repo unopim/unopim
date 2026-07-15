@@ -1,5 +1,7 @@
 @props(['isMultiRow' => false])
 
+<x-admin::form.fields.load :types="['text', 'number']" />
+
 <v-datagrid {{ $attributes }}>
     <x-admin::shimmer.datagrid :isMultiRow="$isMultiRow" />
 
@@ -85,6 +87,8 @@
 
                     addedFilterColumns: {},
 
+                    attributeConditions: {},
+
                     filterPickerPage: 1,
 
                     filterPickerLastPage: 1,
@@ -155,6 +159,28 @@
                 if (this._onShareLinkChanged) {
                     this.$emitter.off('share-link-changed', this._onShareLinkChanged);
                 }
+            },
+
+            computed: {
+                filterFields() {
+                    const types = {
+                        string:  'text',
+                        integer: 'number',
+                    };
+
+                    return (this.available.columns ?? []).reduce((fields, column) => {
+                        fields[column.index] = {
+                            name:        column.index,
+                            type:        types[column.type] ?? 'text',
+                            label:       column.label,
+                            placeholder: column.label,
+                            options:     [],
+                            async:       false,
+                        };
+
+                        return fields;
+                    }, {});
+                },
             },
 
             watch: {
@@ -345,6 +371,8 @@
 
                                 this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index === 'all' || (filterableColumns.includes(column.index)));
                             }
+
+                            this.syncAttributeConditions();
 
                             this.setCurrentSelectionMode();
 
@@ -737,6 +765,24 @@
                     let appliedColumn = this.findAppliedColumn(columnIndex);
 
                     return appliedColumn?.value ?? [];
+                },
+
+                setAppliedColumnValues(column, values) {
+                    if (! values.length) {
+                        this.applied.filters.columns = this.applied.filters.columns.filter(
+                            appliedColumn => appliedColumn.index !== column.index
+                        );
+
+                        return;
+                    }
+
+                    let appliedColumn = this.findAppliedColumn(column.index);
+
+                    if (appliedColumn) {
+                        appliedColumn.value = values;
+                    } else {
+                        this.applied.filters.columns.push({ index: column.index, value: values });
+                    }
                 },
 
                 removeAppliedColumnValue(columnIndex, appliedColumnValue) {
@@ -1183,6 +1229,189 @@
                     this.showFilterPicker = false;
 
                     this.addActiveFilter(column.index);
+
+                    this.syncAttributeConditions();
+                },
+
+                isAttributeFilter(column) {
+                    return !! column.attribute_type
+                        && ! this.defaultFilterIndices.includes(column.index);
+                },
+
+                attributeCondition(columnIndex) {
+                    if (! this.attributeConditions[columnIndex]) {
+                        this.attributeConditions[columnIndex] = {
+                            operator: '',
+                            value:    '',
+                            value2:   '',
+                            currency: '',
+                        };
+                    }
+
+                    return this.attributeConditions[columnIndex];
+                },
+
+                attributeOperators(column) {
+                    return column.operators ?? [];
+                },
+
+                attributeValueControl(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    const operator = this.attributeOperators(column)
+                        .find(operator => operator.value === condition.operator);
+
+                    return operator ? operator.control : 'text';
+                },
+
+                attributeValueOptions(column) {
+                    return Array.isArray(column.options) ? column.options : (column.options?.params?.options ?? []);
+                },
+
+                setAttributeOptionValue(column, event) {
+                    let parsed = null;
+
+                    try {
+                        parsed = event ? JSON.parse(event) : null;
+                    } catch (error) {
+                        parsed = null;
+                    }
+
+                    this.attributeCondition(column.index).value = Array.isArray(parsed)
+                        ? parsed.map(option => option?.code ?? option).filter(Boolean)
+                        : [];
+
+                    this.applyAttributeCondition(column);
+                },
+
+                attributeOptionValue(column) {
+                    const value = this.attributeCondition(column.index).value;
+
+                    return Array.isArray(value) ? value.join(',') : `${value ?? ''}`;
+                },
+
+                attributeOperatorLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeOperators(column)
+                        .find(operator => operator.value === condition.operator)?.label ?? '';
+                },
+
+                attributeCurrencyLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeValueOptions(column)
+                        .find(option => option.value === condition.currency)?.label ?? '';
+                },
+
+                attributeValueLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeValueOptions(column)
+                        .find(option => `${option.value}` === `${condition.value}`)?.label ?? '';
+                },
+
+                setAttributeCurrency(column, currency) {
+                    this.attributeCondition(column.index).currency = currency;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                setAttributeValue(column, value) {
+                    this.attributeCondition(column.index).value = value;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                syncAttributeConditions() {
+                    (this.available.columns ?? []).forEach(column => {
+                        if (! this.isAttributeFilter(column)) {
+                            return;
+                        }
+
+                        const condition = this.attributeCondition(column.index);
+                        const applied = this.findAppliedColumn(column.index)?.value?.[0];
+
+                        if (applied && typeof applied === 'object') {
+                            condition.operator = applied.operator ?? '';
+                            condition.value    = applied.value ?? '';
+                            condition.value2   = applied.value2 ?? '';
+                            condition.currency = applied.currency ?? '';
+                        }
+
+                        if (! condition.operator) {
+                            condition.operator = this.attributeOperators(column)[0]?.value ?? '';
+                        }
+                    });
+                },
+
+                setAttributeOperator(column, operator) {
+                    const condition = this.attributeCondition(column.index);
+                    const previous = this.attributeValueControl(column);
+
+                    condition.operator = operator;
+
+                    if (this.attributeValueControl(column) !== previous) {
+                        condition.value = '';
+                        condition.value2 = '';
+                    }
+
+                    this.applyAttributeCondition(column);
+                },
+
+                hasConditionValue(value) {
+                    return Array.isArray(value) ? value.length > 0 : `${value ?? ''}`.length > 0;
+                },
+
+                isConditionComplete(column, condition, control) {
+                    if (! condition.operator) {
+                        return false;
+                    }
+
+                    if (column.type === 'price' && ! condition.currency) {
+                        return false;
+                    }
+
+                    if (control === 'none') {
+                        return true;
+                    }
+
+                    if (control === 'number_range' || control === 'date_range') {
+                        return this.hasConditionValue(condition.value) && this.hasConditionValue(condition.value2);
+                    }
+
+                    return this.hasConditionValue(condition.value);
+                },
+
+                applyAttributeCondition(column) {
+                    const condition = this.attributeCondition(column.index);
+                    const control = this.attributeValueControl(column);
+
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        appliedColumn => appliedColumn.index !== column.index
+                    );
+
+                    if (! this.isConditionComplete(column, condition, control)) {
+                        return;
+                    }
+
+                    const payload = {
+                        operator: condition.operator,
+                        value:    control === 'none' ? '' : condition.value,
+                    };
+
+                    if (control === 'number_range' || control === 'date_range') {
+                        payload.value2 = condition.value2;
+                    }
+
+                    if (column.type === 'price') {
+                        payload.currency = condition.currency;
+                    }
+
+                    this.applied.filters.columns.push({
+                        index: column.index,
+                        value: [payload],
+                    });
                 },
 
                 loadFilterAttributes(reset = false) {

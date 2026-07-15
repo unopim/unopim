@@ -1,30 +1,15 @@
-@props([
-    'values'            => [],
-    'attributeRoute'    => '',
-    'excludeAttributes' => [],
-    'operators'         => [],
-])
-
-<v-attribute-conditions
-    values="{{ json_encode($values) }}"
-    old="{{ json_encode(old('filters.custom_attributes')) }}"
-    attribute-route="{{ $attributeRoute }}"
-    exclude-attributes="{{ json_encode($excludeAttributes) }}"
-    operators="{{ json_encode($operators) }}"
-    {{ $attributes }}
-></v-attribute-conditions>
-
 @pushOnce('scripts')
-    <script type="text/x-template" id="v-attribute-conditions-template">
+    <script type="text/x-template" id="v-field-attribute-conditions-template">
         <div class="flex flex-col gap-3">
-            <input type="hidden" name="filters[custom_attributes]" :value="serializedRows" />
+            <input type="hidden" :name="name" :value="serializedRows" />
+
+            <span class="unsaved-badge" style="display: none" aria-hidden="true"></span>
 
             <div
-                v-for="(row, index) in rows"
+                v-for="({ row, control, operatorsJson }, index) in decoratedRows"
                 :key="row.uid"
                 class="p-3 bg-gray-50 dark:bg-cherry-800 border border-gray-200 dark:border-gray-700 rounded-lg"
             >
-                <!-- Pick the attribute (shown until one is chosen) -->
                 <div v-if="! row.attribute" class="flex items-start gap-3">
                     <div class="flex-1 min-w-0">
                         <v-async-select-handler
@@ -43,118 +28,124 @@
                         type="button"
                         @click="removeRow(index)"
                         :title="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-remove')'"
+                        :aria-label="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-remove')'"
                         class="icon-delete shrink-0 self-center text-2xl text-gray-500 dark:text-gray-300 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-cherry-800 p-1"
                     >
                     </button>
                 </div>
-
-                <!-- Configured condition -->
-                <div
-                    v-else
-                    class="grid grid-cols-2 gap-4 items-center max-md:grid-cols-1"
-                >
-                    <!-- Left 50%: Attribute + condition -->
+                <div v-else class="grid grid-cols-2 gap-4 items-center max-md:grid-cols-1">
                     <div class="flex items-center gap-3 min-w-0 max-sm:flex-col max-sm:items-stretch">
-                        <!-- Attribute label (name + type) -->
                         <div class="flex items-center gap-2.5 min-w-0 flex-1 max-sm:w-full">
                             <span class="w-2 h-2 rounded-full bg-primary-600 shrink-0"></span>
 
                             <div class="min-w-0">
-                                <p class="text-sm font-semibold text-gray-800 dark:text-white truncate" v-text="row.name || row.attribute"></p>
+                                <div class="flex items-center min-w-0">
+                                    <p class="text-sm font-semibold text-gray-800 dark:text-white truncate" v-text="row.name || row.attribute"></p>
+
+                                    <span
+                                        v-if="isRowDirty(row)"
+                                        class="unsaved-badge shrink-0"
+                                    >@lang('admin::app.components.form.unsaved-changes.field-badge')</span>
+                                </div>
+
                                 <p class="text-xs text-gray-400 dark:text-gray-300" v-text="typeLabel(row)"></p>
                             </div>
                         </div>
 
-                        <!-- Condition -->
                         <div class="flex-1 min-w-0 max-sm:w-full">
-                        <v-select-handler
-                            :key="'op-' + row.uid + '-' + row.type"
-                            :options="operatorOptionsJson(row)"
-                            track-by="value"
-                            label-by="label"
-                            :value="row.operator"
-                            :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.operator-select')'"
-                            @input="setOperator(index, $event)"
-                        >
-                        </v-select-handler>
-                        </div>
-                    </div>
-
-                    <!-- Right 50%: Value + delete -->
-                    <div class="flex items-center gap-3 min-w-0">
-                        <!-- Value (switches with attribute type + operator) -->
-                        <div class="flex-1 min-w-0">
-                        <template v-if="valueControl(row) === 'none'">
-                            <p class="py-2.5 text-sm text-gray-400 dark:text-gray-300 italic">
-                                @lang('admin::app.settings.data-transfer.exports.create.no-value-needed')
-                            </p>
-                        </template>
-
-                        <template v-else-if="valueControl(row) === 'options'">
-                            <v-async-select-handler
-                                :key="valueControlKey(row)"
-                                entity-name="attribute"
-                                :attribute-id="String(row.attributeId)"
-                                multiple="true"
-                                :onselect="false"
-                                :track-by="'code'"
-                                :label-by="'label'"
-                                :value="stringValue(row)"
-                                :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-value')'"
-                                @input="setOptionValue(index, $event)"
-                            >
-                            </v-async-select-handler>
-                        </template>
-
-                        <template v-else-if="valueControl(row) === 'boolean'">
                             <v-select-handler
-                                :key="valueControlKey(row)"
-                                :options="booleanOptionsJson"
+                                :key="'op-' + row.uid + '-' + row.type"
+                                :options="operatorsJson"
                                 track-by="value"
                                 label-by="label"
-                                :value="row.value"
-                                :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-value')'"
-                                @input="setBooleanValue(index, $event)"
+                                :value="row.operator"
+                                :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.operator-select')'"
+                                @input="setOperator(index, $event)"
                             >
                             </v-select-handler>
-                        </template>
-
-                        <template v-else-if="valueControl(row) === 'number_range' || valueControl(row) === 'date_range'">
-                            <div class="flex items-center gap-2">
-                                <input
-                                    :type="valueControl(row) === 'date_range' ? 'date' : 'number'"
-                                    v-model="row.value"
-                                    :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.range-from')'"
-                                    class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-900 dark:border-gray-600"
-                                />
-                                <span class="text-gray-400">&ndash;</span>
-                                <input
-                                    :type="valueControl(row) === 'date_range' ? 'date' : 'number'"
-                                    v-model="row.value2"
-                                    :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.range-to')'"
-                                    class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-900 dark:border-gray-600"
-                                />
-                            </div>
-                        </template>
-
-                        <template v-else>
-                            <input
-                                :type="inputType(row)"
-                                v-model="row.value"
-                                :placeholder="valuePlaceholder(row)"
-                                class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-900 dark:border-gray-600"
-                            />
-                        </template>
+                        </div>
                     </div>
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="flex-1 min-w-0">
+                            <template v-if="control === 'none'">
+                                <p class="py-2.5 text-sm text-gray-400 dark:text-gray-300 italic">
+                                    @lang('admin::app.settings.data-transfer.exports.create.no-value-needed')
+                                </p>
+                            </template>
 
-                    <!-- Delete -->
-                    <button
-                        type="button"
-                        @click="removeRow(index)"
-                        :title="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-remove')'"
-                        class="icon-delete shrink-0 self-center text-2xl text-gray-400 dark:text-gray-300 cursor-pointer rounded-md hover:bg-gray-100 hover:text-red-500 dark:hover:bg-cherry-700 p-1"
-                    >
-                    </button>
+                            <template v-else-if="control === 'options'">
+                                <v-async-select-handler
+                                    :key="valueControlKey(row)"
+                                    entity-name="attribute"
+                                    :attribute-id="String(row.attributeId)"
+                                    multiple="true"
+                                    :onselect="false"
+                                    :track-by="'code'"
+                                    :label-by="'label'"
+                                    :value="stringValue(row)"
+                                    :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-value')'"
+                                    @input="setOptionValue(index, $event)"
+                                >
+                                </v-async-select-handler>
+                            </template>
+
+                            <template v-else-if="control === 'boolean'">
+                                <v-select-handler
+                                    :key="valueControlKey(row)"
+                                    :options="booleanOptionsJson"
+                                    track-by="value"
+                                    label-by="label"
+                                    :value="row.value"
+                                    :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-value')'"
+                                    @input="setBooleanValue(index, $event)"
+                                >
+                                </v-select-handler>
+                            </template>
+
+                            <template v-else-if="control === 'number_range' || control === 'date_range'">
+                                <div class="flex items-center gap-2">
+                                    <input
+                                        :type="control === 'date_range' ? 'date' : 'number'"
+                                        :id="inputId + '-' + index + '-from'"
+                                        v-model="row.value"
+                                        :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.range-from')'"
+                                        :aria-label="'@lang('admin::app.settings.data-transfer.exports.create.range-from')'"
+                                        class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-900 dark:border-gray-600"
+                                    />
+
+                                    <span class="text-gray-400">&ndash;</span>
+
+                                    <input
+                                        :type="control === 'date_range' ? 'date' : 'number'"
+                                        :id="inputId + '-' + index + '-to'"
+                                        v-model="row.value2"
+                                        :placeholder="'@lang('admin::app.settings.data-transfer.exports.create.range-to')'"
+                                        :aria-label="'@lang('admin::app.settings.data-transfer.exports.create.range-to')'"
+                                        class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-900 dark:border-gray-600"
+                                    />
+                                </div>
+                            </template>
+
+                            <template v-else>
+                                <input
+                                    :type="inputType(control)"
+                                    :id="inputId + '-' + index"
+                                    v-model="row.value"
+                                    :placeholder="valuePlaceholder(control)"
+                                    :aria-label="valuePlaceholder(control)"
+                                    class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-900 dark:border-gray-600"
+                                />
+                            </template>
+                        </div>
+
+                        <button
+                            type="button"
+                            @click="removeRow(index)"
+                            :title="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-remove')'"
+                            :aria-label="'@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-remove')'"
+                            class="icon-delete shrink-0 self-center text-2xl text-gray-400 dark:text-gray-300 cursor-pointer rounded-md hover:bg-gray-100 hover:text-red-500 dark:hover:bg-cherry-700 p-1"
+                        >
+                        </button>
                     </div>
                 </div>
             </div>
@@ -173,16 +164,18 @@
     </script>
 
     <script type="module">
-        app.component('v-attribute-conditions', {
-            template: '#v-attribute-conditions-template',
+        app.component('v-field-attribute-conditions', {
+            template: '#v-field-attribute-conditions-template',
 
-            props: ['values', 'old', 'attributeRoute', 'excludeAttributes', 'operators'],
+            mixins: [window.unopim.fieldBase],
 
             data() {
                 return {
                     rows: [],
                     sequence: 0,
-                    operatorsMap: this.parseJson(this.operators, {}),
+                    hydrated: false,
+                    savedSignatures: {},
+                    operatorsMap: @json(\Webkul\DataTransfer\Helpers\Sources\Export\Filters\AttributeConditionOperators::frontendMap()),
                     numberPlaceholder: "@lang('admin::app.settings.data-transfer.exports.create.value-number-placeholder')",
                     valueText: "@lang('admin::app.settings.data-transfer.exports.create.custom-attribute-value')",
                     booleanOptionsJson: JSON.stringify([
@@ -193,17 +186,30 @@
             },
 
             computed: {
+                decoratedRows() {
+                    return this.rows.map(row => {
+                        const operators = this.operatorsForType(row.type);
+                        const match = operators.find(operator => operator.value === row.operator);
+
+                        return {
+                            row,
+                            control:      match ? match.control : 'text',
+                            operatorsJson: JSON.stringify(operators),
+                        };
+                    });
+                },
+
                 serializedRows() {
-                    const rows = this.rows
-                        .filter(row => row.attribute && this.isComplete(row))
-                        .map(row => {
+                    const rows = this.decoratedRows
+                        .filter(({ row, control }) => row.attribute && this.isComplete(row, control))
+                        .map(({ row, control }) => {
                             const entry = { attribute: row.attribute, operator: row.operator };
 
-                            if (this.valueControl(row) !== 'none') {
+                            if (control !== 'none') {
                                 entry.value = row.value;
                             }
 
-                            if (this.valueControl(row) === 'number_range' || this.valueControl(row) === 'date_range') {
+                            if (control === 'number_range' || control === 'date_range') {
                                 entry.value2 = row.value2;
                             }
 
@@ -213,10 +219,25 @@
                     return JSON.stringify(rows);
                 },
 
-                attributeQueryParams() {
-                    const exclude = this.parseJson(this.excludeAttributes, []);
+                attributeRoute() {
+                    return this.field.list_route ?? '';
+                },
 
-                    return Array.isArray(exclude) && exclude.length ? { exclude } : {};
+                attributeQueryParams() {
+                    return this.field.query_params ?? {};
+                },
+            },
+
+            watch: {
+                rows: {
+                    deep: true,
+                    handler() {
+                        if (! this.hydrated) {
+                            return;
+                        }
+
+                        this.setValue(this.serializedRows);
+                    },
                 },
             },
 
@@ -225,7 +246,11 @@
             },
 
             methods: {
-                parseJson(value, fallback) {
+                decode(value, fallback) {
+                    if (value && typeof value === 'object') {
+                        return value;
+                    }
+
                     try {
                         let parsed = JSON.parse(value);
 
@@ -234,17 +259,36 @@
                         }
 
                         return parsed ?? fallback;
-                    } catch (e) {
+                    } catch (exception) {
                         return fallback;
                     }
                 },
 
-                operatorsForType(type) {
-                    return this.operatorsMap[type] ?? this.operatorsMap['text'] ?? [];
+                markHydrated() {
+                    this.$nextTick(() => {
+                        this.savedSignatures = this.rows.reduce((signatures, row) => {
+                            signatures[row.uid] = this.rowSignature(row);
+
+                            return signatures;
+                        }, {});
+
+                        this.hydrated = true;
+                    });
+                },
+                rowSignature(row) {
+                    return JSON.stringify([row.attribute, row.operator, row.value ?? '', row.value2 ?? '']);
                 },
 
-                operatorOptionsJson(row) {
-                    return JSON.stringify(this.operatorsForType(row.type));
+                isRowDirty(row) {
+                    if (! this.hydrated) {
+                        return false;
+                    }
+
+                    return this.savedSignatures[row.uid] !== this.rowSignature(row);
+                },
+
+                operatorsForType(type) {
+                    return this.operatorsMap[type] ?? this.operatorsMap['text'] ?? [];
                 },
 
                 valueControl(row) {
@@ -253,9 +297,7 @@
                     return match ? match.control : 'text';
                 },
 
-                inputType(row) {
-                    const control = this.valueControl(row);
-
+                inputType(control) {
                     if (control === 'number') {
                         return 'number';
                     }
@@ -267,8 +309,8 @@
                     return 'text';
                 },
 
-                valuePlaceholder(row) {
-                    return this.valueControl(row) === 'number' ? this.numberPlaceholder : this.valueText;
+                valuePlaceholder(control) {
+                    return control === 'number' ? this.numberPlaceholder : this.valueText;
                 },
 
                 typeLabel(row) {
@@ -287,9 +329,7 @@
                     return Array.isArray(row.value) ? row.value.join(',') : `${row.value ?? ''}`;
                 },
 
-                isComplete(row) {
-                    const control = this.valueControl(row);
-
+                isComplete(row, control) {
                     if (control === 'none') {
                         return true;
                     }
@@ -306,9 +346,11 @@
                 },
 
                 buildRows() {
-                    const saved = this.parseJson(this.old, null) ?? this.parseJson(this.values, []);
+                    const saved = this.decode(this.modelValue, []);
 
                     if (! Array.isArray(saved) || ! saved.length) {
+                        this.markHydrated();
+
                         return;
                     }
 
@@ -330,6 +372,8 @@
                     const codes = this.rows.map(row => row.attribute).filter(Boolean);
 
                     if (! codes.length) {
+                        this.markHydrated();
+
                         return;
                     }
 
@@ -337,6 +381,7 @@
                         params: { identifiers: { columnName: 'code', values: codes } },
                     }).then(result => {
                         const meta = {};
+
                         (result.data.options || []).forEach(option => { meta[option.code] = option; });
 
                         this.rows.forEach(row => {
@@ -350,10 +395,12 @@
                             row.type = option.type;
                             row.name = option.label || row.attribute;
 
-                            if (this.valueControl(row) === 'options' && ! Array.isArray(row.value)) {
+                            if (this.control === 'options' && ! Array.isArray(row.value)) {
                                 row.value = `${row.value ?? ''}`.split(',').map(code => code.trim()).filter(Boolean);
                             }
                         });
+                    }).finally(() => {
+                        this.markHydrated();
                     });
                 },
 
@@ -375,13 +422,7 @@
                 },
 
                 setAttribute(index, event) {
-                    let option = null;
-
-                    try {
-                        option = JSON.parse(event);
-                    } catch (e) {
-                        option = null;
-                    }
+                    const option = this.decode(event, null);
 
                     const row = this.rows[index];
                     const code = option?.code ?? '';
@@ -394,6 +435,7 @@
 
                     if (changed) {
                         const operators = this.operatorsForType(row.type);
+
                         row.operator = operators.length ? operators[0].value : '';
                         row.value = '';
                         row.value2 = '';
@@ -401,13 +443,7 @@
                 },
 
                 setOperator(index, event) {
-                    let option = null;
-
-                    try {
-                        option = JSON.parse(event);
-                    } catch (e) {
-                        option = null;
-                    }
+                    const option = this.decode(event, null);
 
                     const row = this.rows[index];
                     const previous = this.valueControl(row);
@@ -421,15 +457,7 @@
                 },
 
                 setOptionValue(index, event) {
-                    let parsed = event;
-
-                    if (typeof event === 'string') {
-                        try {
-                            parsed = JSON.parse(event);
-                        } catch (e) {
-                            parsed = null;
-                        }
-                    }
+                    const parsed = this.decode(event, null);
 
                     this.rows[index].value = Array.isArray(parsed)
                         ? parsed.map(option => option?.code ?? option).filter(Boolean)
@@ -437,13 +465,7 @@
                 },
 
                 setBooleanValue(index, event) {
-                    let option = null;
-
-                    try {
-                        option = JSON.parse(event);
-                    } catch (e) {
-                        option = null;
-                    }
+                    const option = this.decode(event, null);
 
                     this.rows[index].value = option?.value ?? '';
                 },

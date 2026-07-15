@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Admin\Console\Commands\RefreshDashboardCacheCommand;
+use Webkul\Admin\Fields\FieldConfig;
 use Webkul\Admin\Observers\CategoryObserver;
 use Webkul\Admin\Observers\ConfigurationObserver;
 use Webkul\Admin\Observers\ProductObserver;
@@ -81,6 +82,8 @@ class AdminServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerConfig();
+
+        $this->app->singleton(FieldConfig::class);
     }
 
     /**
@@ -111,6 +114,11 @@ class AdminServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/help.php',
             'help'
+        );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/product_filter_operators.php',
+            'product_filter_operators'
         );
 
         $this->mergeConfigFrom(

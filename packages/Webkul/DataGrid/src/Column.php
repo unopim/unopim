@@ -25,6 +25,8 @@ class Column
 
     /**
      * Create a column instance.
+     *
+     * @param  array<int, mixed>|null  $operators
      */
     public function __construct(
         public string $index,
@@ -36,6 +38,8 @@ class Column
         public bool $sortable = false,
         public mixed $closure = null,
         public bool $visible = true,
+        public ?string $attribute_type = null,
+        public ?array $operators = null,
     ) {
         $this->init();
     }
