@@ -12,6 +12,7 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Enums\FilterOperators;
@@ -649,7 +650,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
          * Attribute filters added from the datagrid's "Add Filter" carry the operator the
          * user picked. Everything else keeps deriving it from the column type.
          */
-        if ($condition = $this->getRequestedCondition($value)) {
+        if ($column instanceof Column && $condition = $this->getRequestedCondition($value)) {
             return $this->resolveCondition($column, $condition);
         }
 
@@ -679,8 +680,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Pull the {operator, value, value2, currency} payload sent by an attribute filter,
      * or null when the request uses the plain value format.
+     *
+     * @return array<array-key, mixed>|null
      */
-    protected function getRequestedCondition($value): ?array
+    protected function getRequestedCondition(mixed $value): ?array
     {
         $condition = is_array($value) ? reset($value) : null;
 
@@ -693,10 +696,15 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     /**
      * Turn an attribute filter's condition into the [operator, value] pair its filter expects.
+     *
+     * @param  array<array-key, mixed>  $condition
+     * @return array{0: FilterOperators|null, 1: mixed}
      */
-    protected function resolveCondition($column, array $condition): array
+    protected function resolveCondition(Column $column, array $condition): array
     {
-        $operator = FilterOperators::tryFrom($condition['operator']);
+        $operator = is_string($condition['operator'])
+            ? FilterOperators::tryFrom($condition['operator'])
+            : null;
 
         if (! $operator) {
             return [null, null];
@@ -724,7 +732,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         if (in_array($operator, [FilterOperators::IN, FilterOperators::NOT_IN], true)) {
-            return [$operator, is_array($value) ? array_values($value) : array_filter(explode(',', (string) $value))];
+            if (is_array($value)) {
+                return [$operator, array_values($value)];
+            }
+
+            return [$operator, array_filter(explode(',', is_scalar($value) ? (string) $value : ''))];
         }
 
         return [$operator, is_array($value) ? array_values($value) : [$value]];

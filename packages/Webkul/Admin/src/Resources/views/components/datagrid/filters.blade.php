@@ -1,7 +1,10 @@
 <div v-for="column in available.columns">
     <div v-if="column.filterable && activeFilterIndices.includes(column.index)">
         <!-- Attribute condition (operator + value), for attributes added via "Add Filter" -->
-        <div v-if="isAttributeFilter(column)">
+        <div
+            v-if="isAttributeFilter(column)"
+            :data-attribute-filter="column.index"
+        >
             <div class="flex items-center justify-between">
                 <p
                     class="text-sm font-medium leading-6 dark:text-white text-gray-800"
@@ -22,6 +25,7 @@
                     <x-slot:toggle>
                         <button
                             type="button"
+                            data-filter-currency
                             class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                         >
                             <span
@@ -50,6 +54,7 @@
                     <x-slot:toggle>
                         <button
                             type="button"
+                            data-filter-operator
                             class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                         >
                             <span
@@ -86,6 +91,7 @@
                         <x-slot:toggle>
                             <button
                                 type="button"
+                                data-filter-value
                                 class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                             >
                                 <span
@@ -111,23 +117,31 @@
                 </template>
 
                 <template v-else-if="attributeValueControl(column) === 'options'">
-                    <x-admin::form.control-group.control
-                        type="select"
-                        ::name="'condition_' + column.index"
-                        ::label="column.label"
-                        track-by="code"
-                        label-by="label"
-                        async="true"
-                        ::list-route="column.options.route"
-                        ::query-params="column.options.params"
+                    {{--
+                        Feed the saved value back in via :value so a selected option survives
+                        a save/reload — the async handler resolves the code to its label on
+                        mount. The :key re-mounts it when the operator changes so a reset
+                        condition cannot keep showing a stale selection.
+                    --}}
+                    <v-async-select-handler
+                        :key="'condition-value-' + column.index + '-' + attributeCondition(column.index).operator"
+                        :name="'condition_' + column.index"
+                        :track-by="'code'"
+                        :label-by="'label'"
+                        :list-route="column.options.route"
+                        :query-params="column.options.params"
+                        :value="attributeCondition(column.index).value"
+                        placeholder="@lang('admin::app.components.datagrid.filters.select')"
                         @select-option="setAttributeOptionValue(column, $event)"
-                    />
+                    >
+                    </v-async-select-handler>
                 </template>
 
                 <template v-else-if="attributeValueControl(column) === 'number_range' || attributeValueControl(column) === 'date_range'">
                     <div class="flex items-center gap-2">
                         <input
                             :type="attributeValueControl(column) === 'date_range' ? 'date' : 'number'"
+                            data-filter-value
                             class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                             v-model="attributeCondition(column.index).value"
                             placeholder="@lang('admin::app.settings.data-transfer.exports.create.range-from')"
@@ -138,6 +152,7 @@
 
                         <input
                             :type="attributeValueControl(column) === 'date_range' ? 'date' : 'number'"
+                            data-filter-value2
                             class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                             v-model="attributeCondition(column.index).value2"
                             placeholder="@lang('admin::app.settings.data-transfer.exports.create.range-to')"
@@ -149,6 +164,7 @@
                 <template v-else>
                     <input
                         :type="attributeValueControl(column)"
+                        data-filter-value
                         class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                         v-model="attributeCondition(column.index).value"
                         :placeholder="column.label"

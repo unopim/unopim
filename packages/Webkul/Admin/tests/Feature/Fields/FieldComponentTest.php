@@ -223,6 +223,20 @@ it('leaves the multi-value datagrid filters on their own dropdowns', function ()
         ->and($filters)->toContain('removeAppliedColumnValue');
 });
 
+/**
+ * Regression: an option-type attribute condition (e.g. a "In list" select filter) stored
+ * its value but rendered the async select blank on reopen, because the control was never
+ * fed the saved value back. Feeding :value in lets the handler resolve the code to its
+ * label so the selection survives a save/reload.
+ */
+it('feeds the saved value back into the option-type attribute filter', function () use ($views) {
+    $filters = file_get_contents($views.'/components/datagrid/filters.blade.php');
+
+    expect($filters)
+        ->toContain(':value="attributeCondition(column.index).value"')
+        ->and($filters)->toContain('@select-option="setAttributeOptionValue(column, $event)"');
+});
+
 it('renders every type standalone', function () {
     $types = ['text', 'number', 'textarea', 'boolean', 'select', 'multiselect', 'date', 'datetime', 'date-range', 'datetime-range', 'price', 'tags', 'category-tree', 'attribute-conditions'];
 

@@ -56,47 +56,47 @@ class ProductFilterOperators
     {
         if (in_array($type, self::OPTION_TYPES, true)) {
             return [
-                [FilterOperators::IN, 'in'],
-                [FilterOperators::NOT_IN, 'not_in'],
-                [FilterOperators::IS_EMPTY, 'empty'],
-                [FilterOperators::IS_NOT_EMPTY, 'not_empty'],
+                ['operator' => FilterOperators::IN, 'label' => 'in'],
+                ['operator' => FilterOperators::NOT_IN, 'label' => 'not_in'],
+                ['operator' => FilterOperators::IS_EMPTY, 'label' => 'empty'],
+                ['operator' => FilterOperators::IS_NOT_EMPTY, 'label' => 'not_empty'],
             ];
         }
 
         if ($type === Attribute::BOOLEAN_FIELD_TYPE) {
             return [
-                [FilterOperators::EQUAL, 'equals'],
+                ['operator' => FilterOperators::EQUAL, 'label' => 'equals'],
             ];
         }
 
         if (in_array($type, self::NUMERIC_TYPES, true)) {
             return [
-                [FilterOperators::EQUAL, 'equals'],
-                [FilterOperators::LESS_THAN, 'less_than'],
-                [FilterOperators::LESS_THAN_OR_EQUAL, 'less_than_equal'],
-                [FilterOperators::GREATER_THAN, 'greater_than'],
-                [FilterOperators::GREATER_THAN_OR_EQUAL, 'greater_than_equal'],
-                [FilterOperators::RANGE, 'between'],
-                [FilterOperators::IS_EMPTY, 'empty'],
-                [FilterOperators::IS_NOT_EMPTY, 'not_empty'],
+                ['operator' => FilterOperators::EQUAL, 'label' => 'equals'],
+                ['operator' => FilterOperators::LESS_THAN, 'label' => 'less_than'],
+                ['operator' => FilterOperators::LESS_THAN_OR_EQUAL, 'label' => 'less_than_equal'],
+                ['operator' => FilterOperators::GREATER_THAN, 'label' => 'greater_than'],
+                ['operator' => FilterOperators::GREATER_THAN_OR_EQUAL, 'label' => 'greater_than_equal'],
+                ['operator' => FilterOperators::RANGE, 'label' => 'between'],
+                ['operator' => FilterOperators::IS_EMPTY, 'label' => 'empty'],
+                ['operator' => FilterOperators::IS_NOT_EMPTY, 'label' => 'not_empty'],
             ];
         }
 
         if (in_array($type, self::DATE_TYPES, true)) {
             return [
-                [FilterOperators::LESS_THAN, 'before'],
-                [FilterOperators::GREATER_THAN, 'after'],
-                [FilterOperators::RANGE, 'between'],
-                [FilterOperators::IS_EMPTY, 'empty'],
-                [FilterOperators::IS_NOT_EMPTY, 'not_empty'],
+                ['operator' => FilterOperators::LESS_THAN, 'label' => 'before'],
+                ['operator' => FilterOperators::GREATER_THAN, 'label' => 'after'],
+                ['operator' => FilterOperators::RANGE, 'label' => 'between'],
+                ['operator' => FilterOperators::IS_EMPTY, 'label' => 'empty'],
+                ['operator' => FilterOperators::IS_NOT_EMPTY, 'label' => 'not_empty'],
             ];
         }
 
         return [
-            [FilterOperators::CONTAINS, 'contains'],
-            [FilterOperators::EQUAL, 'equals'],
-            [FilterOperators::IS_EMPTY, 'empty'],
-            [FilterOperators::IS_NOT_EMPTY, 'not_empty'],
+            ['operator' => FilterOperators::CONTAINS, 'label' => 'contains'],
+            ['operator' => FilterOperators::EQUAL, 'label' => 'equals'],
+            ['operator' => FilterOperators::IS_EMPTY, 'label' => 'empty'],
+            ['operator' => FilterOperators::IS_NOT_EMPTY, 'label' => 'not_empty'],
         ];
     }
 
@@ -139,15 +139,21 @@ class ProductFilterOperators
      */
     public static function optionsForType(?string $type): array
     {
-        return array_map(fn ($entry) => [
-            'value'   => $entry[0]->value,
-            'label'   => trans('admin::app.settings.data-transfer.exports.create.operators.'.$entry[1]),
-            'control' => self::valueControl($type, $entry[0]),
-        ], self::forType($type));
+        return array_map(function (array $entry) use ($type) {
+            $label = trans('admin::app.settings.data-transfer.exports.create.operators.'.$entry['label']);
+
+            return [
+                'value'   => $entry['operator']->value,
+                'label'   => is_string($label) ? $label : $entry['label'],
+                'control' => self::valueControl($type, $entry['operator']),
+            ];
+        }, self::forType($type));
     }
 
     /**
      * Every attribute type mapped to its operators, for the datagrid component.
+     *
+     * @return array<string, array<int, array{value: string, label: string, control: string}>>
      */
     public static function frontendMap(): array
     {

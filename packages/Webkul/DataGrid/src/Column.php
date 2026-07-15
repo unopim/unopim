@@ -25,6 +25,8 @@ class Column
 
     /**
      * Create a column instance.
+     *
+     * @param  array<int, mixed>|null  $operators
      */
     public function __construct(
         public string $index,

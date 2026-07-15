@@ -20,7 +20,7 @@ abstract class AbstractDatabaseAttributeFilter extends AbstractAttributeFilter
     /**
      * Filter values arrive as arrays from the datagrid; comparisons need a scalar.
      */
-    protected function scalarValue($value)
+    protected function scalarValue(mixed $value): mixed
     {
         return is_array($value) ? reset($value) : $value;
     }

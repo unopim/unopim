@@ -19,6 +19,10 @@ trait AttributeColumnTrait
 
         $label = $attribute->getTranslatedValueWithFallback('name');
 
+        $attributeType = is_array($attributeArray) && isset($attributeArray['type']) && is_string($attributeArray['type'])
+            ? $attributeArray['type']
+            : null;
+
         $column = [
             'index'      => $attributeArray['code'],
             'label'      => ! empty($label) ? $label : '['.$attributeArray['code'].']',
@@ -27,8 +31,8 @@ trait AttributeColumnTrait
             'filterable' => $attributeArray['is_filterable'] ?? false,
             'sortable'   => true,
             // Drives the operator + value inputs in the datagrid's attribute filters.
-            'attribute_type' => $attributeArray['type'] ?? null,
-            'operators'      => ProductFilterOperators::optionsForType($attributeArray['type'] ?? null),
+            'attribute_type' => $attributeType,
+            'operators'      => ProductFilterOperators::optionsForType($attributeType),
         ];
 
         return $this->applyFilterTypeOptions($column, $attribute);

@@ -47325,11 +47325,23 @@ parameters:
 		-
 			message: '#^Binary operation "\." between mixed and '' 00\:00\:01'' results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 1
+			count: 2
 			path: packages/Webkul/Product/src/Filter/Database/DateFilter.php
 
 		-
 			message: '#^Binary operation "\." between mixed and '' 23\:59\:59'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: packages/Webkul/Product/src/Filter/Database/DateFilter.php
+
+		-
+			message: '#^Binary operation "\." between mixed and '' \< \?'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: packages/Webkul/Product/src/Filter/Database/DateFilter.php
+
+		-
+			message: '#^Binary operation "\." between mixed and '' \> \?'' results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
 			path: packages/Webkul/Product/src/Filter/Database/DateFilter.php
@@ -47349,7 +47361,7 @@ parameters:
 		-
 			message: '#^Call to an undefined method Webkul\\ElasticSearch\\Facades\\ElasticSearchQuery\:\:whereRaw\(\)\.$#'
 			identifier: method.notFound
-			count: 2
+			count: 6
 			path: packages/Webkul/Product/src/Filter/Database/DateFilter.php
 
 		-
@@ -47461,6 +47473,12 @@ parameters:
 			path: packages/Webkul/Product/src/Filter/Database/DateFilter.php
 
 		-
+			message: '#^Part \$searchPath \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 2
+			path: packages/Webkul/Product/src/Filter/Database/DateFilter.php
+
+		-
 			message: '#^Property Webkul\\Product\\Filter\\AbstractAttributeFilter\:\:\$supportedAttributeTypes \(array\<string\>\) does not accept array\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -47481,7 +47499,7 @@ parameters:
 		-
 			message: '#^Call to an undefined method Webkul\\ElasticSearch\\Facades\\ElasticSearchQuery\:\:whereRaw\(\)\.$#'
 			identifier: method.notFound
-			count: 2
+			count: 6
 			path: packages/Webkul/Product/src/Filter/Database/PriceFilter.php
 
 		-
@@ -47499,7 +47517,19 @@ parameters:
 		-
 			message: '#^Cannot access offset 1 on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 5
+			path: packages/Webkul/Product/src/Filter/Database/PriceFilter.php
+
+		-
+			message: '#^Cannot access offset 2 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/Product/src/Filter/Database/PriceFilter.php
+
+		-
+			message: '#^Cannot access property \$value on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
 			path: packages/Webkul/Product/src/Filter/Database/PriceFilter.php
 
 		-
@@ -47595,6 +47625,12 @@ parameters:
 		-
 			message: '#^Part \$searchPath \(mixed\) of encapsed string cannot be cast to string\.$#'
 			identifier: encapsedStringPart.nonString
+			count: 5
+			path: packages/Webkul/Product/src/Filter/Database/PriceFilter.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
 			count: 1
 			path: packages/Webkul/Product/src/Filter/Database/PriceFilter.php
 
@@ -48385,21 +48421,27 @@ parameters:
 			path: packages/Webkul/Product/src/Filter/Database/TextFilter.php
 
 		-
-			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			message: '#^Binary operation "\." between mixed and '' NOT '' results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
 			path: packages/Webkul/Product/src/Filter/Database/TextFilter.php
 
 		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: packages/Webkul/Product/src/Filter/Database/TextFilter.php
+
+		-
 			message: '#^Call to an undefined method Webkul\\ElasticSearch\\Facades\\ElasticSearchQuery\:\:whereRaw\(\)\.$#'
 			identifier: method.notFound
-			count: 1
+			count: 5
 			path: packages/Webkul/Product/src/Filter/Database/TextFilter.php
 
 		-
 			message: '#^Cannot call method getRegexOperator\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 1
+			count: 2
 			path: packages/Webkul/Product/src/Filter/Database/TextFilter.php
 
 		-
@@ -48411,6 +48453,12 @@ parameters:
 		-
 			message: '#^Cannot call method orWhereRaw\(\) on mixed\.$#'
 			identifier: method.nonObject
+			count: 1
+			path: packages/Webkul/Product/src/Filter/Database/TextFilter.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
 			count: 1
 			path: packages/Webkul/Product/src/Filter/Database/TextFilter.php
 
@@ -48495,7 +48543,7 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array\<mixed, mixed\> given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: packages/Webkul/Product/src/Filter/Database/TextFilter.php
 
 		-
@@ -48513,7 +48561,7 @@ parameters:
 		-
 			message: '#^Part \$searchPath \(mixed\) of encapsed string cannot be cast to string\.$#'
 			identifier: encapsedStringPart.nonString
-			count: 1
+			count: 4
 			path: packages/Webkul/Product/src/Filter/Database/TextFilter.php
 
 		-
@@ -48651,7 +48699,7 @@ parameters:
 		-
 			message: '#^Possibly invalid array key type mixed\.$#'
 			identifier: array.invalidKey
-			count: 2
+			count: 3
 			path: packages/Webkul/Product/src/Filter/ElasticSearch/BooleanFilter.php
 
 		-
@@ -48662,6 +48710,12 @@ parameters:
 
 		-
 			message: '#^Cannot access property \$code on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/Product/src/Filter/ElasticSearch/DateFilter.php
+
+		-
+			message: '#^Cannot access property \$value on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: packages/Webkul/Product/src/Filter/ElasticSearch/DateFilter.php
@@ -48765,7 +48819,7 @@ parameters:
 		-
 			message: '#^Possibly invalid array key type mixed\.$#'
 			identifier: array.invalidKey
-			count: 2
+			count: 4
 			path: packages/Webkul/Product/src/Filter/ElasticSearch/DateFilter.php
 
 		-
@@ -48782,6 +48836,12 @@ parameters:
 
 		-
 			message: '#^Cannot access property \$code on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: packages/Webkul/Product/src/Filter/ElasticSearch/DateTimeFilter.php
+
+		-
+			message: '#^Cannot access property \$value on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: packages/Webkul/Product/src/Filter/ElasticSearch/DateTimeFilter.php
@@ -48885,7 +48945,7 @@ parameters:
 		-
 			message: '#^Possibly invalid array key type mixed\.$#'
 			identifier: array.invalidKey
-			count: 2
+			count: 4
 			path: packages/Webkul/Product/src/Filter/ElasticSearch/DateTimeFilter.php
 
 		-
@@ -49077,7 +49137,7 @@ parameters:
 		-
 			message: '#^Possibly invalid array key type mixed\.$#'
 			identifier: array.invalidKey
-			count: 2
+			count: 3
 			path: packages/Webkul/Product/src/Filter/ElasticSearch/OptionFilter.php
 
 		-
@@ -49095,6 +49155,18 @@ parameters:
 		-
 			message: '#^Cannot access offset 1 on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/Product/src/Filter/ElasticSearch/PriceFilter.php
+
+		-
+			message: '#^Cannot access offset 2 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/Product/src/Filter/ElasticSearch/PriceFilter.php
+
+		-
+			message: '#^Cannot access property \$value on mixed\.$#'
+			identifier: property.nonObject
 			count: 1
 			path: packages/Webkul/Product/src/Filter/ElasticSearch/PriceFilter.php
 
@@ -49179,6 +49251,12 @@ parameters:
 		-
 			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
 			identifier: argument.type
+			count: 1
+			path: packages/Webkul/Product/src/Filter/ElasticSearch/PriceFilter.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: array.invalidKey
 			count: 1
 			path: packages/Webkul/Product/src/Filter/ElasticSearch/PriceFilter.php
 
@@ -49833,7 +49911,7 @@ parameters:
 		-
 			message: '#^Binary operation "\." between mixed and ''\.keyword'' results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 1
+			count: 3
 			path: packages/Webkul/Product/src/Filter/ElasticSearch/TextFilter.php
 
 		-
