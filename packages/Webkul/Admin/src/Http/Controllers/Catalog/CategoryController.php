@@ -322,6 +322,10 @@ class CategoryController extends Controller
      */
     public function children(): JsonResponse
     {
+        if (! bouncer()->hasPermission('catalog.categories')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $parentId = (int) request()->input('id');
 
         $categoryId = (int) (request()->input('category') ?? 0);
@@ -346,6 +350,10 @@ class CategoryController extends Controller
 
     public function search(): JsonResponse
     {
+        if (! bouncer()->hasPermission('catalog.categories')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $locale = preg_replace('/[^A-Za-z_]/', '', (string) (request('locale') ?? core()->getRequestedLocaleCode()));
 
         $searchQuery = trim((string) request('query', ''));

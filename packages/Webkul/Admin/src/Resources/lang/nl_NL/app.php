@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'Annuleren',
                 'paused'                => 'De import is gepauzeerd.',
                 'resumed'               => 'De import is hervat.',
+                'zip-failed'            => 'Kan het zip-bestand niet aanmaken.',
                 'cancelled'             => 'De import is geannuleerd.',
                 'paused-info'           => 'De import is gepauzeerd. Resterende batches staan in de wacht.',
                 'paused-info-export'    => 'De export is gepauzeerd. Resterende batches staan in de wacht.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'Gebruiker bewerken',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Wachtwoord bevestigen vóór verwijderen',
+                    'enter-current-password' => 'Voer het huidige wachtwoord in',
+                    'password'               => 'Wachtwoord',
+                    'confirm-delete'         => 'Verwijderen van dit account bevestigen',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Terug',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'De ingelogde gebruiker kan niet worden verwijderd.',
         ],
         'system-settings' => [
-            'info' => 'Beheer weergave, e-mail (SMTP) en foutopsporing vanaf één plek.',
+            'info'               => 'Beheer systeeminstellingen vanaf één plek.',
+            'title'              => 'Systeeminstellingen',
+            'back'               => 'Terug',
+            'search-placeholder' => 'Instellingen zoeken',
+            'save-btn'           => 'Opslaan',
+            'save-message'       => 'Instellingen succesvol opgeslagen.',
+            'system'             => [
+                'title' => 'Systeem',
+                'info'  => 'Kerninstellingen van de applicatie.',
+            ],
+            'email'              => [
+                'title' => 'E-mail',
+                'info'  => 'SMTP-afzender en inloggegevens.',
+            ],
+            'debug'              => [
+                'title' => 'Foutopsporing',
+                'info'  => 'Foutopsporing en logging van de applicatie.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon en thema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'Verwijderen',
             ],
             'create' => [
-                'title'        => 'Systeemprompt',
-                'create-btn'   => 'Systeemprompt aanmaken',
-                'edit-title'   => 'Systeemprompt bewerken',
-                'create-title' => 'Nieuwe systeemprompt aanmaken',
-                'label-title'  => 'Titel',
-                'max-tokens'   => 'Max uitvoer-tokens',
-                'temperature'  => 'Temperatuur',
-                'type'         => 'Type',
-                'prompt'       => 'Prompt',
-                'save-btn'     => 'Prompt opslaan',
-                'prompt-tone'  => 'Prompttoon',
+                'title'               => 'Systeemprompt',
+                'create-btn'          => 'Systeemprompt aanmaken',
+                'edit-title'          => 'Systeemprompt bewerken',
+                'create-title'        => 'Nieuwe systeemprompt aanmaken',
+                'label-title'         => 'Titel',
+                'max-tokens'          => 'Max uitvoer-tokens',
+                'temperature'         => 'Temperatuur',
+                'type'                => 'Type',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Prompt opslaan',
+                'prompt-tone'         => 'Prompttoon',
+                'max-tokens-tooltip'  => 'Toegestaan bereik voor maximale uitvoertokens: 100 tot 5000 tokens',
+                'temperature-tooltip' => 'Temperatuur bepaalt de creativiteit. Bereik: 0 tot 2. Lagere waarden (bijv. 0,4) geven nauwkeurigere en gerichtere antwoorden.',
             ],
             'message' => [
                 'save-success'   => 'Systeemprompt succesvol opgeslagen.',

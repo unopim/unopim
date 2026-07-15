@@ -45,6 +45,11 @@
 
             methods: {
                 add(flash) {
+                    // Skip a toast that is already on screen to avoid duplicates on repeated submits.
+                    if (this.flashes.some(existing => existing.type === flash.type && existing.message === flash.message)) {
+                        return;
+                    }
+
                     flash.uid = this.uid++;
 
                     this.flashes.push(flash);

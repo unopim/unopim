@@ -157,8 +157,8 @@
             <span
                 class="flex icon-checkbox-normal text-2xl cursor-pointer select-none"
                 :class="{
-                    '!icon-checkbox-check text-violet-700': variants.length == selectedVariants.length,
-                    '!icon-checkbox-partial text-violet-700': selectedVariants.length && variants.length != selectedVariants.length
+                    '!icon-checkbox-check text-primary-700': variants.length == selectedVariants.length,
+                    '!icon-checkbox-partial text-primary-700': selectedVariants.length && variants.length != selectedVariants.length
                 }"
                 for="select-all-variants"
                 @click="selectAll"
@@ -748,7 +748,7 @@
 
                                             <a
                                                 :href="'{{ route('admin.catalog.products.edit', ':id') }}'.replace(':id', variant.id)" 
-                                                class="inline-block text-violet-700 hover:text-violet-700 hover:underline"
+                                                class="inline-block text-primary-700 hover:text-primary-700 hover:underline"
                                                 target="_blank"
                                             >
                                                 @lang('admin::app.catalog.products.edit.types.configurable.edit.edit-link-title')

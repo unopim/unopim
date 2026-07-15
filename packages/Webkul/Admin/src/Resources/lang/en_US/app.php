@@ -1283,6 +1283,7 @@ return [
                 'cancel'                => 'Cancel',
                 'paused'                => 'Import has been paused.',
                 'resumed'               => 'Import has been resumed.',
+                'zip-failed'            => 'Failed to create the zip file.',
                 'cancelled'             => 'Import has been cancelled.',
                 'paused-info'           => 'Import is paused. Remaining batches are on hold.',
                 'paused-info-export'    => 'Export is paused. Remaining batches are on hold.',
@@ -1738,6 +1739,13 @@ return [
                 'edit' => [
                     'title' => 'Edit User',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Confirm Password Before Delete',
+                    'enter-current-password' => 'Enter Current Password',
+                    'password'               => 'Password',
+                    'confirm-delete'         => 'Confirm Delete This Account',
+                ],
             ],
 
             'edit' => [
@@ -1768,11 +1776,29 @@ return [
         ],
 
         'system-settings' => [
-            'info' => 'Manage appearance, email (SMTP) and debug settings from a single place.',
+            'title'              => 'System Settings',
+            'back'               => 'Back',
+            'info'               => 'Manage system settings from a single place.',
+            'search-placeholder' => 'Search settings',
+            'save-btn'           => 'Save',
+            'save-message'       => 'Settings saved successfully.',
+            'system'             => [
+                'title' => 'System',
+                'info'  => 'Core application settings.',
+            ],
+            'email'              => [
+                'title' => 'Email',
+                'info'  => 'SMTP sender and credentials.',
+            ],
+            'debug'              => [
+                'title' => 'Debug',
+                'info'  => 'Application debug and logging.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon and theme.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -2078,17 +2104,19 @@ return [
                 'delete'        => 'delete',
             ],
             'create' => [
-                'title'         => 'System Prompt',
-                'create-btn'    => 'Create System Prompt',
-                'edit-title'    => 'Edit System Prompt',
-                'create-title'  => 'Create New System Prompt',
-                'label-title'   => 'Title',
-                'max-tokens'    => 'Max Output Tokens',
-                'temperature'   => 'Temperature',
-                'type'          => 'Type',
-                'prompt'        => 'Prompt',
-                'save-btn'      => 'Save Prompt',
-                'prompt-tone'   => 'Prompt Tone',
+                'title'               => 'System Prompt',
+                'create-btn'          => 'Create System Prompt',
+                'edit-title'          => 'Edit System Prompt',
+                'create-title'        => 'Create New System Prompt',
+                'label-title'         => 'Title',
+                'max-tokens'          => 'Max Output Tokens',
+                'temperature'         => 'Temperature',
+                'type'                => 'Type',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Save Prompt',
+                'prompt-tone'         => 'Prompt Tone',
+                'max-tokens-tooltip'  => 'Allowed Max Output Token range: 100 to 5000 tokens',
+                'temperature-tooltip' => 'Temperature controls creativity. Range: 0 to 2. Lower values (e.g., 0.4) give more accurate and focused responses.',
             ],
             'message' => [
                 'save-success'      => 'System Prompt saved successfully.',

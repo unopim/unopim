@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'Peruuta',
                 'paused'                => 'Tuonti on keskeytetty.',
                 'resumed'               => 'Tuontia on jatkettu.',
+                'zip-failed'            => 'ZIP-tiedoston luonti epäonnistui.',
                 'cancelled'             => 'Tuonti on peruutettu.',
                 'paused-info'           => 'Tuonti on keskeytetty. Jäljellä olevat erät ovat pidossa.',
                 'paused-info-export'    => 'Vienti on keskeytetty. Jäljellä olevat erät ovat pidossa.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'Muokkaa Käyttäjää',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'Vahvista salasana ennen poistamista',
+                    'enter-current-password' => 'Anna nykyinen salasana',
+                    'password'               => 'Salasana',
+                    'confirm-delete'         => 'Vahvista tämän tilin poistaminen',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'Takaisin',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'Kirjautunutta käyttäjää ei voi poistaa.',
         ],
         'system-settings' => [
-            'info' => 'Hallitse ulkoasua, sähköpostia (SMTP) ja virheenkorjausta yhdestä paikasta.',
+            'title'              => 'Järjestelmäasetukset',
+            'back'               => 'Takaisin',
+            'info'               => 'Hallitse järjestelmäasetuksia yhdestä paikasta.',
+            'search-placeholder' => 'Hae asetuksia',
+            'save-btn'           => 'Tallenna',
+            'save-message'       => 'Asetukset tallennettu onnistuneesti.',
+            'system'             => [
+                'title' => 'Järjestelmä',
+                'info'  => 'Sovelluksen perusasetukset.',
+            ],
+            'email'              => [
+                'title' => 'Sähköposti',
+                'info'  => 'SMTP-lähettäjä ja tunnistetiedot.',
+            ],
+            'debug'              => [
+                'title' => 'Virheenkorjaus',
+                'info'  => 'Sovelluksen virheenkorjaus ja lokitus.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'Logo, favicon ja teema.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'poista',
             ],
             'create' => [
-                'title'        => 'Järjestelmäkehote',
-                'create-btn'   => 'Luo järjestelmäkehote',
-                'edit-title'   => 'Muokkaa järjestelmäkehotetta',
-                'create-title' => 'Luo uusi järjestelmäkehote',
-                'label-title'  => 'Otsikko',
-                'max-tokens'   => 'Maks. tulostokenit',
-                'temperature'  => 'Lämpötila',
-                'type'         => 'Tyyppi',
-                'prompt'       => 'Kehote',
-                'save-btn'     => 'Tallenna kehote',
-                'prompt-tone'  => 'Kehotteen sävy',
+                'title'               => 'Järjestelmäkehote',
+                'create-btn'          => 'Luo järjestelmäkehote',
+                'edit-title'          => 'Muokkaa järjestelmäkehotetta',
+                'create-title'        => 'Luo uusi järjestelmäkehote',
+                'label-title'         => 'Otsikko',
+                'max-tokens'          => 'Maks. tulostokenit',
+                'temperature'         => 'Lämpötila',
+                'type'                => 'Tyyppi',
+                'prompt'              => 'Kehote',
+                'save-btn'            => 'Tallenna kehote',
+                'prompt-tone'         => 'Kehotteen sävy',
+                'max-tokens-tooltip'  => 'Sallittu enimmäistulostetokenien alue: 100–5000 tokenia',
+                'temperature-tooltip' => 'Lämpötila säätelee luovuutta. Alue: 0–2. Pienemmät arvot (esim. 0,4) antavat tarkempia ja kohdennetumpia vastauksia.',
             ],
             'message' => [
                 'save-success'   => 'Järjestelmäkehote tallennettu onnistuneesti.',

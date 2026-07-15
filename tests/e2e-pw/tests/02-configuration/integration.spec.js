@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Delete ALL existing integrations so admin_id is free for new ones.
@@ -31,7 +31,7 @@ async function createIntegration(adminPage, name) {
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
   await adminPage.locator('input[name="admin_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option').first().click();
-  await clickSaveAndExpect(adminPage, 'Save', /API Integration is created successfully/i, /\/admin\/integrations\/api-keys\/edit\//);
+  await clickSaveAndExpect(adminPage, 'Save', /API Integration is created successfully/i, /\/admin\/configuration\/integrations\/edit\//);
 }
 
 /**
@@ -55,7 +55,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
     await adminPage.locator('input[name="admin_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
     await adminPage.getByRole('option').first().click();
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
   });
 
@@ -64,7 +64,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await adminPage.getByRole('link', { name: 'Create' }).click();
     await adminPage.waitForLoadState('load');
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('Validation Test');
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(adminPage.locator('#app').getByText('The Assign User field is required')).toBeVisible();
   });
 
@@ -73,12 +73,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await adminPage.getByRole('link', { name: 'Create' }).click();
     await adminPage.waitForLoadState('load');
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
-    // Leave both required fields empty, but dirty the form via the permission
-    // type so the global "Save changes" bar appears (the inline save button is
-    // removed on tracked forms).
-    await adminPage.locator('input[name="permission_type"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
-    await adminPage.getByRole('option', { name: 'Custom' }).click();
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Assign User field is required')).toBeVisible();
   });
@@ -131,7 +126,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await searchInDataGrid(adminPage, name);
     const row = adminPage.locator('div', { hasText: name });
     await row.locator('span[title="Edit"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/integrations\/api-keys\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/configuration\/integrations\/edit/);
 
     await deleteIntegration(adminPage, name);
   });

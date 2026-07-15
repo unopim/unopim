@@ -45,6 +45,12 @@ return [
         'sort'   => 1,
     ],
     [
+        'key'    => 'ai-agent.general',
+        'name'   => 'ai-agent::app.acl.general',
+        'route'  => 'admin.magic_ai.settings.index',
+        'sort'   => 1,
+    ],
+    [
         'key'    => 'ai-agent.prompt',
         'name'   => 'ai-agent::app.acl.prompt',
         'route'  => 'admin.magic_ai.prompt.index',

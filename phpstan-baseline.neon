@@ -15,14 +15,14 @@ parameters:
 		-
 			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
 			identifier: larastan.noEnvCallsOutsideOfConfig
-			count: 10
-			path: packages/Webkul/Admin/src/Config/system.php
+			count: 1
+			path: packages/Webkul/Admin/src/Config/auth.php
 
 		-
 			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
 			identifier: larastan.noEnvCallsOutsideOfConfig
-			count: 1
-			path: packages/Webkul/Admin/src/Config/auth.php
+			count: 10
+			path: packages/Webkul/Admin/src/Config/system.php
 
 		-
 			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
@@ -76,12 +76,6 @@ parameters:
 			message: '#^Cannot call method concat\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
-			path: packages/Webkul/Admin/src/DataGrids/Catalog/AttributeDataGrid.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
 			path: packages/Webkul/Admin/src/DataGrids/Catalog/AttributeDataGrid.php
 
 		-
@@ -157,12 +151,6 @@ parameters:
 			path: packages/Webkul/Admin/src/DataGrids/Catalog/AttributeFamilyDataGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: packages/Webkul/Admin/src/DataGrids/Catalog/AttributeFamilyDataGrid.php
-
-		-
 			message: '#^Cannot call method length\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -205,12 +193,6 @@ parameters:
 			path: packages/Webkul/Admin/src/DataGrids/Catalog/AttributeGroupDataGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: packages/Webkul/Admin/src/DataGrids/Catalog/AttributeGroupDataGrid.php
-
-		-
 			message: '#^Cannot call method length\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -249,12 +231,6 @@ parameters:
 		-
 			message: '#^Cannot access property \$id on mixed\.$#'
 			identifier: property.nonObject
-			count: 2
-			path: packages/Webkul/Admin/src/DataGrids/Catalog/AttributeOptionDataGrid.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
 			count: 2
 			path: packages/Webkul/Admin/src/DataGrids/Catalog/AttributeOptionDataGrid.php
 
@@ -404,12 +380,6 @@ parameters:
 
 		-
 			message: '#^Cannot call method concat\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: packages/Webkul/Admin/src/DataGrids/Catalog/CategoryDataGrid.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 3
 			path: packages/Webkul/Admin/src/DataGrids/Catalog/CategoryDataGrid.php
@@ -592,12 +562,6 @@ parameters:
 			message: '#^Cannot call method concat\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
-			path: packages/Webkul/Admin/src/DataGrids/Catalog/CategoryFieldDataGrid.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 4
 			path: packages/Webkul/Admin/src/DataGrids/Catalog/CategoryFieldDataGrid.php
 
 		-
@@ -1102,12 +1066,6 @@ parameters:
 			message: '#^Cannot call method getQueryManager\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
-			path: packages/Webkul/Admin/src/DataGrids/Catalog/ProductDataGrid.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 6
 			path: packages/Webkul/Admin/src/DataGrids/Catalog/ProductDataGrid.php
 
 		-
@@ -1873,12 +1831,6 @@ parameters:
 			path: packages/Webkul/Admin/src/DataGrids/MagicAI/MagicAIPlatformDataGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: packages/Webkul/Admin/src/DataGrids/MagicAI/MagicAIPlatformDataGrid.php
-
-		-
 			message: '#^Parameter \#1 \$value of static method Webkul\\MagicAI\\Enums\\AiProvider\:\:tryFrom\(\) expects int\|string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1897,12 +1849,6 @@ parameters:
 			path: packages/Webkul/Admin/src/DataGrids/MagicAI/MagicAISystemPromptGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: packages/Webkul/Admin/src/DataGrids/MagicAI/MagicAISystemPromptGrid.php
-
-		-
 			message: '#^Cannot access property \$id on mixed\.$#'
 			identifier: property.nonObject
 			count: 2
@@ -1915,20 +1861,8 @@ parameters:
 			path: packages/Webkul/Admin/src/DataGrids/MagicAI/MagicPromptGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: packages/Webkul/Admin/src/DataGrids/MagicAI/MagicPromptGrid.php
-
-		-
 			message: '#^Cannot access property \$id on mixed\.$#'
 			identifier: property.nonObject
-			count: 2
-			path: packages/Webkul/Admin/src/DataGrids/Settings/ChannelDataGrid.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
 			count: 2
 			path: packages/Webkul/Admin/src/DataGrids/Settings/ChannelDataGrid.php
 
@@ -1987,12 +1921,6 @@ parameters:
 			path: packages/Webkul/Admin/src/DataGrids/Settings/CurrencyDataGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 4
-			path: packages/Webkul/Admin/src/DataGrids/Settings/CurrencyDataGrid.php
-
-		-
 			message: '#^Parameter \#1 \$currency of method Webkul\\Core\\Core\:\:getCurrencyLabel\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -2031,12 +1959,6 @@ parameters:
 		-
 			message: '#^Cannot access property \$id on mixed\.$#'
 			identifier: property.nonObject
-			count: 3
-			path: packages/Webkul/Admin/src/DataGrids/Settings/DataTransfer/ExportDataGrid.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
 			count: 3
 			path: packages/Webkul/Admin/src/DataGrids/Settings/DataTransfer/ExportDataGrid.php
 
@@ -2095,12 +2017,6 @@ parameters:
 			path: packages/Webkul/Admin/src/DataGrids/Settings/DataTransfer/ImportDataGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: packages/Webkul/Admin/src/DataGrids/Settings/DataTransfer/ImportDataGrid.php
-
-		-
 			message: '#^Parameter \#1 \$key of function trans expects string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -2149,12 +2065,6 @@ parameters:
 			path: packages/Webkul/Admin/src/DataGrids/Settings/DataTransfer/JobTrackerGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/Admin/src/DataGrids/Settings/DataTransfer/JobTrackerGrid.php
-
-		-
 			message: '#^Method Webkul\\Admin\\DataGrids\\Settings\\DataTransfer\\JobTrackerGrid\:\:prepareActions\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -2197,12 +2107,6 @@ parameters:
 			path: packages/Webkul/Admin/src/DataGrids/Settings/LocalesDataGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 4
-			path: packages/Webkul/Admin/src/DataGrids/Settings/LocalesDataGrid.php
-
-		-
 			message: '#^Parameter \#1 \$locale of static method Locale\:\:getDisplayName\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -2239,12 +2143,6 @@ parameters:
 			path: packages/Webkul/Admin/src/DataGrids/Settings/RolesDataGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: packages/Webkul/Admin/src/DataGrids/Settings/RolesDataGrid.php
-
-		-
 			message: '#^Cannot access property \$email on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -2265,12 +2163,6 @@ parameters:
 		-
 			message: '#^Cannot access property \$user_image on mixed\.$#'
 			identifier: property.nonObject
-			count: 2
-			path: packages/Webkul/Admin/src/DataGrids/Settings/UserDataGrid.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
 			count: 2
 			path: packages/Webkul/Admin/src/DataGrids/Settings/UserDataGrid.php
 
@@ -4303,12 +4195,6 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/Catalog/ProductController.php
 
 		-
-			message: '#^Access to an undefined property object\:\:\$items\.$#'
-			identifier: property.notFound
-			count: 2
-			path: packages/Webkul/Admin/src/Http/Controllers/ConfigurationController.php
-
-		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 2
@@ -4317,12 +4203,6 @@ parameters:
 		-
 			message: '#^Binary operation "\." between ''configuration/'' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/ConfigurationController.php
-
-		-
-			message: '#^Call to an undefined method object\:\:add\(\)\.$#'
-			identifier: method.notFound
 			count: 1
 			path: packages/Webkul/Admin/src/Http/Controllers/ConfigurationController.php
 
@@ -4363,7 +4243,7 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/ConfigurationController.php
 
 		-
-			message: '#^Parameter \#1 \$items of method Webkul\\Core\\Core\:\:sortItems\(\) expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$item of method Webkul\\Core\\Tree\:\:add\(\) expects array\<string, mixed\>, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: packages/Webkul/Admin/src/Http/Controllers/ConfigurationController.php
@@ -4371,12 +4251,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$path of static method Illuminate\\Filesystem\\FilesystemAdapter\:\:download\(\) expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/ConfigurationController.php
-
-		-
-			message: '#^Property Webkul\\Admin\\Http\\Controllers\\ConfigurationController\:\:\$configTree \(Webkul\\Core\\Tree\) does not accept object\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: packages/Webkul/Admin/src/Http/Controllers/ConfigurationController.php
 
@@ -4633,12 +4507,6 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/MagicAI/MagicAIController.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 10
-			path: packages/Webkul/Admin/src/Http/Controllers/MagicAI/MagicAIController.php
-
-		-
 			message: '#^Cannot call method select\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -4864,12 +4732,6 @@ parameters:
 			message: '#^Cannot call method count\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/MagicAI/MagicAIPlatformController.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
 			path: packages/Webkul/Admin/src/Http/Controllers/MagicAI/MagicAIPlatformController.php
 
 		-
@@ -5437,12 +5299,6 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/AbstractJobInstanceController.php
 
 		-
-			message: '#^Array has 2 duplicate keys with value ''validation_strategy'' \(''validation_strategy'', ''validation_strategy''\)\.$#'
-			identifier: array.duplicateKey
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/ExportController.php
-
-		-
 			message: '#^Call to an undefined method Webkul\\DataTransfer\\Contracts\\JobTrack\:\:unsetRelations\(\)\.$#'
 			identifier: method.notFound
 			count: 4
@@ -5572,12 +5428,6 @@ parameters:
 			message: '#^Cannot call method first\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 3
-			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/ExportController.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
 			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/ExportController.php
 
 		-
@@ -5726,12 +5576,6 @@ parameters:
 
 		-
 			message: '#^Cannot call method get\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/ExportFilterController.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/ExportFilterController.php
@@ -6043,12 +5887,6 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/ImportController.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/ImportController.php
-
-		-
 			message: '#^Cannot call method toJson\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -6253,9 +6091,9 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/TrackerController.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 2
 			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/TrackerController.php
 
 		-
@@ -6350,18 +6188,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$summary of method Webkul\\Admin\\Http\\Controllers\\Settings\\DataTransfer\\TrackerController\:\:normalizeSummary\(\) expects array\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/TrackerController.php
-
-		-
-			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/TrackerController.php
-
-		-
-			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: packages/Webkul/Admin/src/Http/Controllers/Settings/DataTransfer/TrackerController.php
@@ -6649,22 +6475,16 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/Settings/UserController.php
 
 		-
-			message: '#^Parameter \#1 \$value of function collect expects Illuminate\\Contracts\\Support\\Arrayable\<\(int\|string\), mixed\>\|iterable\<\(int\|string\), mixed\>\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/SystemController.php
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 2
+			path: packages/Webkul/Admin/src/Http/Controllers/SystemSettingsController.php
 
 		-
-			message: '#^Unable to resolve the template type TKey in call to function collect$#'
-			identifier: argument.templateType
+			message: '#^Method Webkul\\Admin\\Http\\Controllers\\SystemSettingsController\:\:allowedConfig\(\) should return array\<string, mixed\> but returns array\.$#'
+			identifier: return.type
 			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/SystemController.php
-
-		-
-			message: '#^Unable to resolve the template type TValue in call to function collect$#'
-			identifier: argument.templateType
-			count: 1
-			path: packages/Webkul/Admin/src/Http/Controllers/SystemController.php
+			path: packages/Webkul/Admin/src/Http/Controllers/SystemSettingsController.php
 
 		-
 			message: '#^Method Webkul\\Admin\\Http\\Controllers\\TinyMCEController\:\:storeMedia\(\) return type has no value type specified in iterable type array\.$#'
@@ -6841,12 +6661,6 @@ parameters:
 			path: packages/Webkul/Admin/src/Http/Controllers/User/SessionController.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: packages/Webkul/Admin/src/Http/Controllers/User/SessionController.php
-
-		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
 			count: 3
@@ -6892,6 +6706,12 @@ parameters:
 			message: '#^Parameter \#1 \$name of static method Illuminate\\Support\\Facades\\Route\:\:has\(\) expects array\|string, mixed given\.$#'
 			identifier: argument.type
 			count: 2
+			path: packages/Webkul/Admin/src/Http/Controllers/User/SessionController.php
+
+		-
+			message: '#^Parameter \#1 \$permission of method Webkul\\User\\Bouncer\:\:hasPermission\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 3
 			path: packages/Webkul/Admin/src/Http/Controllers/User/SessionController.php
 
 		-
@@ -7609,32 +7429,14 @@ parameters:
 			path: packages/Webkul/Admin/src/Mail/Mailable.php
 
 		-
-			message: '#^Access to an undefined property object\:\:\$items\.$#'
-			identifier: property.notFound
-			count: 4
-			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
-
-		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
-			count: 3
+			count: 2
 			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
 
 		-
 			message: '#^Binary operation "\." between mixed and ''\|'' results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 1
-			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
-
-		-
-			message: '#^Call to an undefined method object\:\:add\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
-
-		-
-			message: '#^Call to an undefined method object\:\:removeUnauthorizedUrls\(\)\.$#'
-			identifier: method.notFound
 			count: 1
 			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
 
@@ -7711,12 +7513,6 @@ parameters:
 			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
-
-		-
 			message: '#^Cannot call method with\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 3
@@ -7729,9 +7525,21 @@ parameters:
 			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
 
 		-
-			message: '#^Parameter \#1 \$items of method Webkul\\Core\\Core\:\:sortItems\(\) expects array, mixed given\.$#'
+			message: '#^Method Webkul\\Admin\\Providers\\AdminServiceProvider\:\:createACL\(\) should return Webkul\\Core\\Tree but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
+
+		-
+			message: '#^Parameter \#1 \$item of method Webkul\\Core\\Tree\:\:add\(\) expects array\<string, mixed\>, mixed given\.$#'
 			identifier: argument.type
 			count: 2
+			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
+
+		-
+			message: '#^Parameter \#1 \$permission of method Webkul\\User\\Bouncer\:\:hasPermission\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
 			path: packages/Webkul/Admin/src/Providers/AdminServiceProvider.php
 
 		-
@@ -7751,6 +7559,12 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: packages/Webkul/Admin/src/Providers/ModuleServiceProvider.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: packages/Webkul/Admin/src/SystemSettings.php
 
 		-
 			message: '#^Call to an undefined method Webkul\\Product\\Repositories\\ProductRepository\:\:whereIn\(\)\.$#'
@@ -9340,12 +9154,6 @@ parameters:
 			message: '#^Cannot call method forceFill\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
-			path: packages/Webkul/AdminApi/src/DataGrids/Integrations/ApiKeysDataGrid.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
 			path: packages/Webkul/AdminApi/src/DataGrids/Integrations/ApiKeysDataGrid.php
 
 		-
@@ -11365,20 +11173,8 @@ parameters:
 			path: packages/Webkul/AdminApi/src/Models/Client.php
 
 		-
-			message: '#^Access to an undefined property object\:\:\$items\.$#'
-			identifier: property.notFound
-			count: 2
-			path: packages/Webkul/AdminApi/src/Providers/AdminApiServiceProvider.php
-
-		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
-			count: 1
-			path: packages/Webkul/AdminApi/src/Providers/AdminApiServiceProvider.php
-
-		-
-			message: '#^Call to an undefined method object\:\:add\(\)\.$#'
-			identifier: method.notFound
 			count: 1
 			path: packages/Webkul/AdminApi/src/Providers/AdminApiServiceProvider.php
 
@@ -11431,7 +11227,7 @@ parameters:
 			path: packages/Webkul/AdminApi/src/Providers/AdminApiServiceProvider.php
 
 		-
-			message: '#^Parameter \#1 \$items of method Webkul\\Core\\Core\:\:sortItems\(\) expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$item of method Webkul\\Core\\Tree\:\:add\(\) expects array\<string, mixed\>, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: packages/Webkul/AdminApi/src/Providers/AdminApiServiceProvider.php
@@ -14689,12 +14485,6 @@ parameters:
 			path: packages/Webkul/AiAgent/src/Http/Client/BearerToken.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/AiAgent/src/Http/Controllers/AgentController.php
-
-		-
 			message: '#^Method Webkul\\AiAgent\\Http\\Controllers\\AgentController\:\:index\(\) should return Illuminate\\Http\\JsonResponse\|Illuminate\\View\\View but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -14758,12 +14548,6 @@ parameters:
 			message: '#^Cannot access offset ''values'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 4
-			path: packages/Webkul/AiAgent/src/Http/Controllers/ApprovalController.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
 			path: packages/Webkul/AiAgent/src/Http/Controllers/ApprovalController.php
 
 		-
@@ -14995,12 +14779,6 @@ parameters:
 			path: packages/Webkul/AiAgent/src/Http/Controllers/ConversationController.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/AiAgent/src/Http/Controllers/ConversationController.php
-
-		-
 			message: '#^Parameter \#1 \$value of function collect expects Illuminate\\Contracts\\Support\\Arrayable\<\(int\|string\), mixed\>\|iterable\<\(int\|string\), mixed\>\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -15023,12 +14801,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: packages/Webkul/AiAgent/src/Http/Controllers/ConversationController.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/AiAgent/src/Http/Controllers/CredentialController.php
 
 		-
 			message: '#^Method Webkul\\AiAgent\\Http\\Controllers\\CredentialController\:\:index\(\) should return Illuminate\\Http\\JsonResponse\|Illuminate\\View\\View but returns mixed\.$#'
@@ -15075,12 +14847,6 @@ parameters:
 		-
 			message: '#^Cannot access offset ''title'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: packages/Webkul/AiAgent/src/Http/Controllers/DashboardController.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
 			count: 1
 			path: packages/Webkul/AiAgent/src/Http/Controllers/DashboardController.php
 
@@ -15149,36 +14915,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: packages/Webkul/AiAgent/src/Http/Controllers/GenerateController.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/AiAgent/src/Http/Requests/AgentForm.php
-
-		-
-			message: '#^Method Webkul\\AiAgent\\Http\\Requests\\AgentForm\:\:authorize\(\) should return bool but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: packages/Webkul/AiAgent/src/Http/Requests/AgentForm.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/AiAgent/src/Http/Requests/CredentialForm.php
-
-		-
-			message: '#^Method Webkul\\AiAgent\\Http\\Requests\\CredentialForm\:\:authorize\(\) should return bool but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: packages/Webkul/AiAgent/src/Http/Requests/CredentialForm.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/AiAgent/src/Http/Requests/GenerateForm.php
 
 		-
 			message: '#^Cannot access offset ''categories'' on mixed\.$#'
@@ -22983,7 +22719,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Webkul\\Core\\Models\\Channel\:\:\$code\.$#'
 			identifier: property.notFound
-			count: 1
+			count: 2
 			path: packages/Webkul/Core/src/Core.php
 
 		-
@@ -23157,7 +22893,13 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 3
+			count: 2
+			path: packages/Webkul/Core/src/Core.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
 			path: packages/Webkul/Core/src/Core.php
 
 		-
@@ -23395,6 +23137,12 @@ parameters:
 			path: packages/Webkul/Core/src/Core.php
 
 		-
+			message: '#^Method Webkul\\Core\\Core\:\:getDefaultChannel\(\) should return Webkul\\Core\\Models\\Channel\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 2
+			path: packages/Webkul/Core/src/Core.php
+
+		-
 			message: '#^Method Webkul\\Core\\Core\:\:getDefaultChannelCode\(\) should return string but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -23505,12 +23253,6 @@ parameters:
 		-
 			message: '#^Method Webkul\\Core\\Core\:\:getTranslatableLocales\(\) should return Illuminate\\Support\\Collection but returns mixed\.$#'
 			identifier: return.type
-			count: 1
-			path: packages/Webkul/Core/src/Core.php
-
-		-
-			message: '#^Method Webkul\\Core\\Core\:\:isValidScopeCode\(\) has parameter \$code with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: packages/Webkul/Core/src/Core.php
 
@@ -23677,6 +23419,12 @@ parameters:
 			path: packages/Webkul/Core/src/Core.php
 
 		-
+			message: '#^Parameter \#2 \$value of method Webkul\\Core\\Eloquent\\Repository\:\:findOneByField\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/Core/src/Core.php
+
+		-
 			message: '#^Possibly invalid array key type mixed\.$#'
 			identifier: offsetAccess.invalidOffset
 			count: 6
@@ -23707,6 +23455,12 @@ parameters:
 			path: packages/Webkul/Core/src/Core.php
 
 		-
+			message: '#^Property Webkul\\Core\\Core\:\:\$defaultChannel \(Webkul\\Core\\Models\\Channel\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 2
+			path: packages/Webkul/Core/src/Core.php
+
+		-
 			message: '#^Property Webkul\\Core\\Core\:\:\$exchangeRates type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -23733,7 +23487,7 @@ parameters:
 		-
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
-			count: 3
+			count: 2
 			path: packages/Webkul/Core/src/Core.php
 
 		-
@@ -24333,7 +24087,7 @@ parameters:
 		-
 			message: '#^Method Webkul\\Core\\Http\\Middleware\\EnableDebugForAllowedIps\:\:handle\(\) should return Symfony\\Component\\HttpFoundation\\Response but returns mixed\.$#'
 			identifier: return.type
-			count: 1
+			count: 2
 			path: packages/Webkul/Core/src/Http/Middleware/EnableDebugForAllowedIps.php
 
 		-
@@ -25195,8 +24949,32 @@ parameters:
 			path: packages/Webkul/Core/src/Models/ChannelTranslation.php
 
 		-
+			message: '#^Access to an undefined property Webkul\\Core\\Models\\CoreConfig\:\:\$code\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/Webkul/Core/src/Models/CoreConfig.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: packages/Webkul/Core/src/Models/CoreConfig.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: packages/Webkul/Core/src/Models/CoreConfig.php
+
+		-
 			message: '#^Class Webkul\\Core\\Models\\CoreConfig uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
+			count: 1
+			path: packages/Webkul/Core/src/Models/CoreConfig.php
+
+		-
+			message: '#^Method Webkul\\Core\\Models\\CoreConfig\:\:generateTags\(\) should return array\<string\> but returns array\.$#'
+			identifier: return.type
 			count: 1
 			path: packages/Webkul/Core/src/Models/CoreConfig.php
 
@@ -25225,6 +25003,18 @@ parameters:
 			path: packages/Webkul/Core/src/Models/CoreConfig.php
 
 		-
+			message: '#^Parameter \#1 \$array of function array_keys expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/Core/src/Models/CoreConfig.php
+
+		-
+			message: '#^Parameter \#1 \$fieldName of method Webkul\\Core\\Core\:\:getConfigField\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/Core/src/Models/CoreConfig.php
+
+		-
 			message: '#^Property Webkul\\Core\\Models\\CoreConfig\:\:\$fillable type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -25232,6 +25022,12 @@ parameters:
 
 		-
 			message: '#^Property Webkul\\Core\\Models\\CoreConfig\:\:\$hidden type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/Webkul/Core/src/Models/CoreConfig.php
+
+		-
+			message: '#^Property Webkul\\Core\\Models\\CoreConfig\:\:\$historyTags type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: packages/Webkul/Core/src/Models/CoreConfig.php
@@ -26377,39 +26173,15 @@ parameters:
 			path: packages/Webkul/Core/src/Traits/PDFHandler.php
 
 		-
-			message: '#^Cannot access offset ''key'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: packages/Webkul/Core/src/Tree.php
-
-		-
-			message: '#^Cannot access offset ''name'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: packages/Webkul/Core/src/Tree.php
-
-		-
 			message: '#^Cannot access offset ''params'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: packages/Webkul/Core/src/Tree.php
 
 		-
 			message: '#^Cannot access offset ''route'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: packages/Webkul/Core/src/Tree.php
-
-		-
-			message: '#^Cannot access offset ''url'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: packages/Webkul/Core/src/Tree.php
-
-		-
-			message: '#^Cannot assign offset ''children'' to string\.$#'
-			identifier: offsetAssign.dimType
-			count: 1
+			count: 2
 			path: packages/Webkul/Core/src/Tree.php
 
 		-
@@ -26485,7 +26257,7 @@ parameters:
 			path: packages/Webkul/Core/src/Tree.php
 
 		-
-			message: '#^Parameter \#3 \$value of method Webkul\\Core\\Core\:\:array_set\(\) expects float\|int\|string, mixed given\.$#'
+			message: '#^Parameter \#3 \$value of method Webkul\\Core\\Core\:\:array_set\(\) expects float\|int\|string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: packages/Webkul/Core/src/Tree.php
@@ -26503,14 +26275,8 @@ parameters:
 			path: packages/Webkul/Core/src/Tree.php
 
 		-
-			message: '#^Property Webkul\\Core\\Tree\:\:\$items \(array\) does not accept mixed\.$#'
+			message: '#^Property Webkul\\Core\\Tree\:\:\$items \(array\<int\|string, mixed\>\) does not accept mixed\.$#'
 			identifier: assign.propertyType
-			count: 1
-			path: packages/Webkul/Core/src/Tree.php
-
-		-
-			message: '#^Property Webkul\\Core\\Tree\:\:\$items type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: packages/Webkul/Core/src/Tree.php
 
@@ -42349,12 +42115,6 @@ parameters:
 			path: packages/Webkul/HistoryControl/src/DataGrids/HistoryDataGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/HistoryControl/src/DataGrids/HistoryDataGrid.php
-
-		-
 			message: '#^Cannot call method where\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 2
@@ -42445,6 +42205,24 @@ parameters:
 			path: packages/Webkul/HistoryControl/src/Http/Controllers/HistoryController.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/HistoryControl/src/Http/Controllers/HistoryController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/HistoryControl/src/Http/Controllers/HistoryController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$version_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/Webkul/HistoryControl/src/Http/Controllers/HistoryController.php
+
+		-
 			message: '#^Access to an undefined property OwenIt\\Auditing\\Contracts\\Audit\:\:\$auditable_type\.$#'
 			identifier: property.notFound
 			count: 2
@@ -42490,24 +42268,6 @@ parameters:
 			message: '#^Cannot access offset \(int\|string\) on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 6
-			path: packages/Webkul/HistoryControl/src/Http/Controllers/HistoryController.php
-
-		-
-			message: '#^Cannot access property \$updated_at on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: packages/Webkul/HistoryControl/src/Http/Controllers/HistoryController.php
-
-		-
-			message: '#^Cannot access property \$user on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: packages/Webkul/HistoryControl/src/Http/Controllers/HistoryController.php
-
-		-
-			message: '#^Cannot access property \$version_id on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 1
 			path: packages/Webkul/HistoryControl/src/Http/Controllers/HistoryController.php
 
 		-
@@ -44474,6 +44234,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$name of static method Illuminate\\Database\\DatabaseManager\:\:purge\(\) expects string\|UnitEnum\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/Webkul/Installer/src/Http/Controllers/InstallerController.php
+
+		-
+			message: '#^Parameter \#1 \$package of method Webkul\\Installer\\Http\\Controllers\\InstallerController\:\:installPackageStreamed\(\) expects array\{composer\: string, label\: string, install\: string\}, array\{composer\: string, install\: string\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: packages/Webkul/Installer/src/Http/Controllers/InstallerController.php
@@ -54589,18 +54355,6 @@ parameters:
 			path: packages/Webkul/User/src/Bouncer.php
 
 		-
-			message: '#^Method Webkul\\User\\Bouncer\:\:hasPermission\(\) with return type void returns false but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: packages/Webkul/User/src/Bouncer.php
-
-		-
-			message: '#^Method Webkul\\User\\Bouncer\:\:hasPermission\(\) with return type void returns true but should not return anything\.$#'
-			identifier: return.void
-			count: 2
-			path: packages/Webkul/User/src/Bouncer.php
-
-		-
 			message: '#^Cannot call method state\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -54691,12 +54445,6 @@ parameters:
 			path: packages/Webkul/User/src/Http/Middleware/Bouncer.php
 
 		-
-			message: '#^Cannot call method allow\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: packages/Webkul/User/src/Http/Middleware/Bouncer.php
-
-		-
 			message: '#^Method Webkul\\User\\Http\\Middleware\\Bouncer\:\:checkIfAuthorized\(\) should return null but empty return statement found\.$#'
 			identifier: return.empty
 			count: 1
@@ -54721,16 +54469,16 @@ parameters:
 			path: packages/Webkul/User/src/Http/Middleware/Bouncer.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Contracts\\Auth\\StatefulGuard\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
+			message: '#^Parameter \#1 \$permission of method Webkul\\User\\Bouncer\:\:allow\(\) expects string, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: packages/Webkul/User/src/Http/Middleware/Bouncer.php
 
 		-
-			message: '#^Function bouncer\(\) has no return type specified\.$#'
-			identifier: missingType.return
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Contracts\\Auth\\StatefulGuard\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
 			count: 1
-			path: packages/Webkul/User/src/Http/helpers.php
+			path: packages/Webkul/User/src/Http/Middleware/Bouncer.php
 
 		-
 			message: '#^Access to an undefined property Webkul\\User\\Models\\Admin\:\:\$email\.$#'
@@ -55135,12 +54883,6 @@ parameters:
 			path: packages/Webkul/Webhook/src/DataGrids/LogsDataGrid.php
 
 		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: packages/Webkul/Webhook/src/DataGrids/LogsDataGrid.php
-
-		-
 			message: '#^Cannot call method orWhere\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 2
@@ -55438,12 +55180,6 @@ parameters:
 			message: '#^Cannot access property \$user on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
-			path: packages/Webkul/Webhook/src/Http/Controllers/WebhookLogsController.php
-
-		-
-			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 4
 			path: packages/Webkul/Webhook/src/Http/Controllers/WebhookLogsController.php
 
 		-

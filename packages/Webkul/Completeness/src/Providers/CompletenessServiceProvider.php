@@ -3,6 +3,7 @@
 namespace Webkul\Completeness\Providers;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Completeness\Console\RecalculateCompletenessCommand;
 use Webkul\Completeness\Listeners\HandleFamilyAttributeChanges;
@@ -18,7 +19,7 @@ class CompletenessServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../Config/completeness.php', 'completeness');
 
-        $this->loadRoutesFrom(__DIR__.'/../Routes/web.php');
+        Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'completeness');
 

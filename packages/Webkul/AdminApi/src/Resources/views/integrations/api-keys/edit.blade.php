@@ -154,7 +154,7 @@
                                         value="{{$apiKey->admins->name}}"
                                         readonly
                                         :label="trans('admin::app.configuration.integrations.edit.assign-user')"
-                                        :placeholder="trans('admin::pp.configuration.integrations.edit.assign-user')"
+                                        :placeholder="trans('admin::app.configuration.integrations.edit.assign-user')"
                                     />
                                 </x-admin::form.control-group>
                             </x-slot>

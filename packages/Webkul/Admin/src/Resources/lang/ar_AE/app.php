@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'إلغاء',
                 'paused'                => 'تم إيقاف الاستيراد مؤقتاً.',
                 'resumed'               => 'تم استئناف الاستيراد.',
+                'zip-failed'            => 'فشل في إنشاء الملف المضغوط.',
                 'cancelled'             => 'تم إلغاء الاستيراد.',
                 'paused-info'           => 'الاستيراد متوقف مؤقتاً. الدُفعات المتبقية قيد الانتظار.',
                 'paused-info-export'    => 'التصدير متوقف مؤقتاً. الدُفعات المتبقية قيد الانتظار.',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'تحرير العضو',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'تأكيد كلمة المرور قبل الحذف',
+                    'enter-current-password' => 'أدخل كلمة المرور الحالية',
+                    'password'               => 'كلمة المرور',
+                    'confirm-delete'         => 'تأكيد حذف هذا الحساب',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'خلف',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'لا يمكن حذف المستخدم الذي قام بتسجيل الدخول',
         ],
         'system-settings' => [
-            'info' => 'إدارة إعدادات المظهر والبريد الإلكتروني (SMTP) والتصحيح من مكان واحد.',
+            'info'               => 'إدارة إعدادات النظام من مكان واحد.',
+            'title'              => 'إعدادات النظام',
+            'back'               => 'رجوع',
+            'search-placeholder' => 'البحث في الإعدادات',
+            'save-btn'           => 'حفظ',
+            'save-message'       => 'تم حفظ الإعدادات بنجاح.',
+            'system'             => [
+                'title' => 'النظام',
+                'info'  => 'إعدادات التطبيق الأساسية.',
+            ],
+            'email'              => [
+                'title' => 'البريد الإلكتروني',
+                'info'  => 'مُرسِل SMTP وبيانات الاعتماد.',
+            ],
+            'debug'              => [
+                'title' => 'التصحيح',
+                'info'  => 'تصحيح أخطاء التطبيق والتسجيل.',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'الشعار والأيقونة المفضلة والمظهر.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'حذف',
             ],
             'create' => [
-                'title'        => 'موجه النظام',
-                'create-btn'   => 'إنشاء موجه النظام',
-                'edit-title'   => 'تعديل موجه النظام',
-                'create-title' => 'إنشاء موجه نظام جديد',
-                'label-title'  => 'العنوان',
-                'max-tokens'   => 'الحد الأقصى لرموز الإخراج',
-                'temperature'  => 'الحرارة',
-                'type'         => 'النوع',
-                'prompt'       => 'الموجه',
-                'save-btn'     => 'حفظ الموجه',
-                'prompt-tone'  => 'نبرة الموجه',
+                'title'               => 'موجه النظام',
+                'create-btn'          => 'إنشاء موجه النظام',
+                'edit-title'          => 'تعديل موجه النظام',
+                'create-title'        => 'إنشاء موجه نظام جديد',
+                'label-title'         => 'العنوان',
+                'max-tokens'          => 'الحد الأقصى لرموز الإخراج',
+                'temperature'         => 'الحرارة',
+                'type'                => 'النوع',
+                'prompt'              => 'الموجه',
+                'save-btn'            => 'حفظ الموجه',
+                'prompt-tone'         => 'نبرة الموجه',
+                'max-tokens-tooltip'  => 'نطاق الحد الأقصى المسموح به لرموز الإخراج: من 100 إلى 5000 رمز',
+                'temperature-tooltip' => 'تتحكم درجة الحرارة في مستوى الإبداع. النطاق: من 0 إلى 2. القيم الأقل (مثل 0.4) تعطي استجابات أكثر دقة وتركيزًا.',
             ],
             'message' => [
                 'save-success'   => 'تم حفظ موجه النظام بنجاح.',

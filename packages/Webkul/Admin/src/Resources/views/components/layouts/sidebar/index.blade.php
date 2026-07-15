@@ -1,7 +1,6 @@
 <div id="unopim-sidebar" class="fixed top-14 h-full bg-white dark:bg-cherry-700 w-[270px] shadow-[0px_8px_10px_0px_rgba(0,_0,_0,_0.2)] z-[1000] max-lg:hidden transition-all duration-300 group-[.sidebar-collapsed]/container:w-[70px]">
     <div id="unopim-sidebar-scroll" class="h-[calc(100vh-100px)] overflow-auto journal-scroll group-[.sidebar-collapsed]/container:overflow-visible">
         <nav class="grid gap-2 mt-2 w-full">
-            <!-- Navigation Menu -->
             @foreach ($menu->items as $menuItem)
                 <div
                     class="px-4 group/item {{ $menu->getActive($menuItem) ? 'active' : 'inactive' }}"
@@ -9,11 +8,11 @@
                 >
                     <a
                         href="{{ $menuItem['url'] }}"
-                        class="flex gap-2.5 p-1.5 items-center cursor-pointer hover:rounded-lg {{ $menu->getActive($menuItem) == 'active' ? 'bg-violet-100 rounded-lg' : ' hover:bg-violet-50 hover:dark:bg-cherry-800' }} peer"
+                        class="flex gap-2.5 p-1.5 items-center cursor-pointer hover:rounded-lg {{ $menu->getActive($menuItem) == 'active' ? 'bg-primary-100 rounded-lg' : ' hover:bg-primary-50 hover:dark:bg-cherry-800' }} peer"
                     >
-                        <span class="{{ $menuItem['icon'] }} text-2xl {{ $menu->getActive($menuItem) ? 'text-violet-700' : ''}}"></span>
+                        <span class="{{ $menuItem['icon'] }} text-2xl {{ $menu->getActive($menuItem) ? 'text-primary-700' : ''}}"></span>
                         
-                        <p class="font-semibold whitespace-nowrap group-[.sidebar-collapsed]/container:hidden {{ $menu->getActive($menuItem) ? 'text-violet-700' : 'text-gray-600 dark:text-gray-300'}}">
+                        <p class="font-semibold whitespace-nowrap group-[.sidebar-collapsed]/container:hidden {{ $menu->getActive($menuItem) ? 'text-primary-700' : 'text-gray-600 dark:text-gray-300'}}">
                             @lang($menuItem['name'])
                         </p>
                     </a>
@@ -23,7 +22,7 @@
                             @foreach ($menuItem['children'] as $subMenuItem)
                                 <a
                                     href="{{ $subMenuItem['url'] }}"
-                                    class="text-sm {{ $menu->getActive($subMenuItem) ? 'text-violet-700  dark:text-violet-400':'text-gray-600 dark:text-gray-300' }} whitespace-nowrap py-1 group-[.sidebar-collapsed]/container:px-5 group-[.sidebar-collapsed]/container:py-2.5 group-[.inactive]/item:px-5 group-[.inactive]/item:py-2.5 hover:text-violet-700 dark:hover:text-violet-400"
+                                    class="text-sm {{ $menu->getActive($subMenuItem) ? 'text-primary-700  dark:text-primary-400':'text-gray-600 dark:text-gray-300' }} whitespace-nowrap py-1 group-[.sidebar-collapsed]/container:px-5 group-[.sidebar-collapsed]/container:py-2.5 group-[.inactive]/item:px-5 group-[.inactive]/item:py-2.5 hover:text-primary-700 dark:hover:text-primary-400"
                                 >
                                     @lang($subMenuItem['name'])
                                 </a>
@@ -35,14 +34,13 @@
         </nav>
     </div>
 
-    <!-- Collapse menu -->
     <v-sidebar-collapse></v-sidebar-collapse>
 </div>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-sidebar-collapse-template">
         <div
-            class="bg-white dark:bg-cherry-700 fixed w-full max-w-[270px] bottom-0 px-4 hover:bg-violet-50 dark:hover:bg-cherry-800 border-t border-gray-200 dark:border-cherry-800  transition-all duration-300 cursor-pointer"
+            class="bg-white dark:bg-cherry-700 fixed w-full max-w-[270px] bottom-0 px-4 hover:bg-primary-50 dark:hover:bg-cherry-800 border-t border-gray-200 dark:border-cherry-800  transition-all duration-300 cursor-pointer"
             :class="{'max-w-[70px]': isCollapsed}"
             @click="toggle"
         >

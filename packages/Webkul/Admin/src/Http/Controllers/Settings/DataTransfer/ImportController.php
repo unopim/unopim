@@ -68,7 +68,7 @@ class ImportController extends Controller
         $importers = array_keys($importerConfig);
 
         $this->validate(request(), [
-            'code'                => 'required|unique:job_instances,code',
+            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/', 'unique:job_instances,code'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
@@ -146,7 +146,7 @@ class ImportController extends Controller
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         $this->validate(request(), [
-            'code'                => 'required',
+            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
@@ -155,7 +155,6 @@ class ImportController extends Controller
             request()->only([
                 'entity_type',
                 'action',
-                'validation_strategy',
                 'validation_strategy',
                 'allowed_errors',
                 'field_separator',
@@ -305,6 +304,10 @@ class ImportController extends Controller
      */
     public function validateImport(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         $isValid = $this->importHelper
@@ -322,6 +325,10 @@ class ImportController extends Controller
      */
     public function start(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         if (! $import->processed_rows_count) {
@@ -382,6 +389,10 @@ class ImportController extends Controller
      */
     public function link(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         if (! $import->processed_rows_count) {
@@ -443,6 +454,10 @@ class ImportController extends Controller
      */
     public function indexData(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         if (! $import->processed_rows_count) {
@@ -557,6 +572,10 @@ class ImportController extends Controller
      */
     public function stats(int $id, $state = Import::STATE_PROCESSED): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
         $jobInstance = json_decode($import->meta, true);
         $summary = $this->normalizeSummary($import->summary);
@@ -612,6 +631,10 @@ class ImportController extends Controller
      */
     public function download(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.imports')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         return Storage::disk('private')->download($import->file_path);
@@ -622,6 +645,10 @@ class ImportController extends Controller
      */
     public function downloadErrorReport(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.imports')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         return Storage::disk('private')->download($import->error_file_path);

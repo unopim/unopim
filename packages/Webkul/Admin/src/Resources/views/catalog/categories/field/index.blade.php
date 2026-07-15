@@ -3,12 +3,8 @@
         @lang('admin::app.catalog.category_fields.index.title')
     </x-slot>
 
-    <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-        <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-            @lang('admin::app.catalog.category_fields.index.title')
-        </p>
-
-        <div class="flex gap-x-2.5 items-center">
+    <x-admin::page-header :title="trans('admin::app.catalog.category_fields.index.title')">
+        <x-slot:actions>
             {!! view_render_event('unopim.admin.catalog.category_fields.index.create-button.before') !!}
 
             @if (bouncer()->hasPermission('catalog.category_fields.create'))
@@ -20,8 +16,8 @@
             @endif
 
             {!! view_render_event('unopim.admin.catalog.category_fields.index.create-button.after') !!}
-        </div>        
-    </div>
+        </x-slot>
+    </x-admin::page-header>
 
     {!! view_render_event('unopim.admin.catalog.category_fields.list.before') !!}
 

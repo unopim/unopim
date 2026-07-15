@@ -2,11 +2,7 @@
     @lang('completeness::app.catalog.families.edit.completeness.title')
 </x-slot>
 
-<div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-        @lang('completeness::app.catalog.families.edit.completeness.title')
-    </p>
-</div>
+<x-admin::page-header :title="trans('completeness::app.catalog.families.edit.completeness.title')" />
 
 <v-completeness-required-modal></v-completeness-required-modal>
 
@@ -21,7 +17,7 @@
                 <template #header="{ columns, records, sortPage, selectAllRecords, applied, isLoading, actions }">
                     <template v-if="!isLoading">
                         <div
-                            class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-violet-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
+                            class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-primary-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
                             :style="'grid-template-columns: ' + (actions.length ? '2fr ' : '') + 'repeat(' + (actions.length ? columns.length : (columns.length)) + ', 1fr)'"
                         >
                             <div
@@ -45,8 +41,8 @@
                                     <span
                                         class="icon-checkbox-normal cursor-pointer rounded-md text-2xl"
                                         :class="[
-                                            applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-violet-700' : (
-                                                applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-violet-700' : ''
+                                            applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-primary-700' : (
+                                                applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-primary-700' : ''
                                             ),
                                         ]"
                                     ></span>
@@ -86,7 +82,7 @@
                         <div
                             v-for="record in records"
                             :key="record.id"
-                            class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                            class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                             :style="'grid-template-columns: ' + (actions.length ? '2fr ' : '') + 'repeat(' + (actions.length ? columns.length : (columns.length)) + ', 1fr)'"
                         >
                             <div class="flex items-center gap-2.5 overflow-hidden" >
@@ -100,7 +96,7 @@
                                         v-model="applied.massActions.indices"
                                     >
                                     <label
-                                        class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
+                                        class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-primary-700"
                                         :for="`mass_action_select_record_${record.id}`"
                                     ></label>
                                 </div>
@@ -163,7 +159,7 @@
                             <div class="flex gap-x-2.5 items-center">
                                 <button
                                     type="button"
-                                    class="transparent-button hover:bg-violet-100 dark:hover:bg-gray-800 dark:text-white"
+                                    class="transparent-button hover:bg-primary-100 dark:hover:bg-gray-800 dark:text-white"
                                     @click="currentAttributeId = null; $refs.completenessModal.toggle()"
                                 >
                                     @lang('completeness::app.catalog.families.edit.completeness.back-btn')

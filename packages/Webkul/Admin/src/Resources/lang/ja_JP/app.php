@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'キャンセル',
                 'paused'                => 'インポートが一時停止されました。',
                 'resumed'               => 'インポートが再開されました。',
+                'zip-failed'            => 'ZIPファイルの作成に失敗しました。',
                 'cancelled'             => 'インポートがキャンセルされました。',
                 'paused-info'           => 'インポートが一時停止中です。残りのバッチは保留中です。',
                 'paused-info-export'    => 'エクスポートが一時停止中です。残りのバッチは保留中です。',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'ユーザーを編集',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => '削除する前にパスワードを確認',
+                    'enter-current-password' => '現在のパスワードを入力',
+                    'password'               => 'パスワード',
+                    'confirm-delete'         => 'このアカウントの削除を確認',
+                ],
             ],
             'edit' => [
                 'back-btn'         => '戻る',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'ログインユーザーは削除できません',
         ],
         'system-settings' => [
-            'info' => '外観、メール（SMTP）、デバッグの設定を一か所で管理できます。',
+            'title'              => 'システム設定',
+            'back'               => '戻る',
+            'info'               => 'システム設定を一か所で管理できます。',
+            'search-placeholder' => '設定を検索',
+            'save-btn'           => '保存',
+            'save-message'       => '設定が正常に保存されました。',
+            'system'             => [
+                'title' => 'システム',
+                'info'  => 'アプリケーションの基本設定。',
+            ],
+            'email'              => [
+                'title' => 'メール',
+                'info'  => 'SMTP送信者と認証情報。',
+            ],
+            'debug'              => [
+                'title' => 'デバッグ',
+                'info'  => 'アプリケーションのデバッグとログ記録。',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'ロゴ、ファビコン、テーマ。',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => '削除',
             ],
             'create' => [
-                'title'        => 'システムプロンプト',
-                'create-btn'   => 'システムプロンプトを作成',
-                'edit-title'   => 'システムプロンプトを編集',
-                'create-title' => '新しいシステムプロンプトを作成',
-                'label-title'  => 'タイトル',
-                'max-tokens'   => '最大出力トークン数',
-                'temperature'  => '温度',
-                'type'         => 'タイプ',
-                'prompt'       => 'プロンプト',
-                'save-btn'     => 'プロンプトを保存',
-                'prompt-tone'  => 'プロンプトトーン',
+                'title'               => 'システムプロンプト',
+                'create-btn'          => 'システムプロンプトを作成',
+                'edit-title'          => 'システムプロンプトを編集',
+                'create-title'        => '新しいシステムプロンプトを作成',
+                'label-title'         => 'タイトル',
+                'max-tokens'          => '最大出力トークン数',
+                'temperature'         => '温度',
+                'type'                => 'タイプ',
+                'prompt'              => 'プロンプト',
+                'save-btn'            => 'プロンプトを保存',
+                'prompt-tone'         => 'プロンプトトーン',
+                'max-tokens-tooltip'  => '許可される最大出力トークンの範囲：100〜5000トークン',
+                'temperature-tooltip' => '温度は創造性を制御します。範囲：0〜2。低い値（例：0.4）ほど、より正確で焦点の絞られた応答になります。',
             ],
             'message' => [
                 'save-success'   => 'システムプロンプトが正常に保存されました。',

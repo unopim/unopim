@@ -56,7 +56,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         /**
          * Attributes group routes.
          */
-        Route::controller(AttributeGroupController::class)->prefix('attributegroups')->group(function () {
+        Route::controller(AttributeGroupController::class)->prefix('attribute-groups')->group(function () {
             Route::get('', 'index')->name('admin.catalog.attribute.groups.index');
 
             Route::get('create', 'create')->name('admin.catalog.attribute.groups.create');
@@ -73,7 +73,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         /**
          * Attribute families routes.
          */
-        Route::controller(AttributeFamilyController::class)->prefix('families')->group(function () {
+        Route::controller(AttributeFamilyController::class)->prefix('attribute-families')->group(function () {
             Route::get('', 'index')->name('admin.catalog.families.index');
 
             Route::get('create', 'create')->name('admin.catalog.families.create');

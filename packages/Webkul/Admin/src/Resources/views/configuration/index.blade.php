@@ -44,7 +44,7 @@
                     <!-- Menus cards -->
                     @foreach ($item['children'] as $childKey =>  $child)
                         <a 
-                            class="flex items-center gap-2 max-w-[360px] p-2 rounded-lg transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                            class="flex items-center gap-2 max-w-[360px] p-2 rounded-lg transition-all hover:bg-primary-50 dark:hover:bg-cherry-800"
                             href="{{ route('admin.configuration.index', ($itemKey . '/' . $childKey)) }}"
                         >
                             @if (isset($child['icon']))
@@ -97,7 +97,7 @@
                         <div class="grid max-h-[400px] overflow-y-auto">
                             <a
                                 :href="category.url"
-                                class="p-4 border-b dark:border-cherry-800 text-sm text-gray-600 dark:text-gray-300 font-semibold cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 last:border-b-0"
+                                class="p-4 border-b dark:border-cherry-800 text-sm text-gray-600 dark:text-gray-300 font-semibold cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 last:border-b-0"
                                 v-for="category in searchedResults.data"
                             >
                                 @{{ category.title }}

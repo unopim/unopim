@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { clickSave } = require('../../utils/helpers');
 
 /**
  * Global unsaved-changes system — verified on the system-settings page, whose
@@ -8,7 +9,7 @@ const { test, expect } = require('../../utils/fixtures');
  * global header search box is never picked up.
  */
 test.describe('Unsaved changes bar', () => {
-  const URL = '/admin/configuration/system-settings';
+  const URL = '/admin/configuration/system/system.email';
 
   const gotoSettings = (page) =>
     page.goto(URL, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
@@ -37,7 +38,7 @@ test.describe('Unsaved changes bar', () => {
     // Edit again → Save changes → reload → persisted, bar gone.
     await field.fill(original + 'Y');
     await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save changes');
     await adminPage.waitForLoadState('networkidle').catch(() => {});
 
     await gotoSettings(adminPage);
@@ -46,7 +47,7 @@ test.describe('Unsaved changes bar', () => {
 
     // Cleanup: restore original.
     await firstField(adminPage).fill(original);
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save changes');
     await adminPage.waitForLoadState('networkidle').catch(() => {});
   });
 
@@ -59,7 +60,7 @@ test.describe('Unsaved changes bar', () => {
 
     await field.fill(original + 'S');
     await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
-    await expect(adminPage.getByText(/1 sections? modified/)).toBeVisible({ timeout: 10000 });
+    await expect(adminPage.getByText(/1 (section|field)s? modified/)).toBeVisible({ timeout: 10000 });
 
     await adminPage.getByRole('button', { name: 'Discard' }).click();
     await adminPage.locator('button.danger-button').first().click().catch(() => {});
@@ -120,12 +121,12 @@ test.describe('Unsaved changes bar', () => {
     await adminPage.locator('a[href$="/admin/dashboard"]').first().click({ timeout: 5000 });
     await expect(adminPage.getByText('Leave this page?', { exact: false })).toBeVisible({ timeout: 5000 });
     expect(nativeDialog).toBe(false);
-    expect(adminPage.url()).toContain('system-settings');
+    expect(adminPage.url()).toContain('configuration/system');
 
     // Disagree ("Stay on page") keeps you on the page.
     await adminPage.getByRole('button', { name: 'Stay on page' }).click();
     await expect(adminPage.getByText('Leave this page?', { exact: false })).toBeHidden();
-    expect(adminPage.url()).toContain('system-settings');
+    expect(adminPage.url()).toContain('configuration/system');
 
     // Agree ("Leave") navigates away (no native prompt thanks to the bypass).
     await adminPage.locator('a[href$="/admin/dashboard"]').first().click({ timeout: 5000 });

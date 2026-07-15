@@ -130,8 +130,11 @@ test('Email field should be preserved after failed login', async ({ adminPage })
   );
   const emailValue = await adminPage.inputValue('input[name=email]');
   expect(emailValue).toBe(email);
+  // The password field is intentionally NOT repopulated after a failed login
+  // (no old('password') binding) — re-echoing a submitted password is a security
+  // anti-pattern. Assert it is cleared.
   const passwordValue = await adminPage.inputValue('input[name=password]');
-  expect(passwordValue).toBe(invalidPassword);
+  expect(passwordValue).toBe('');
 });
 
 test('Login with valid credentials', async ({ adminPage }) => {

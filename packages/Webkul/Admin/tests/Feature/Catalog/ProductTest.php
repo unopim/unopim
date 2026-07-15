@@ -159,7 +159,6 @@ it('should return the edit page for simple product successfully', function () {
     $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.products.edit.title'))
-        ->assertSeeText(trans('admin::app.components.form.unsaved-changes.save'))
         ->assertSeeText(trans('admin::app.catalog.products.edit.categories.title'))
         ->assertSeeText(trans('admin::app.catalog.products.edit.links.title'))
         ->assertDontSeeText(trans('admin::app.catalog.products.edit.types.configurable.empty-title'));
@@ -173,7 +172,6 @@ it('should return the edit page for configurable product successfully', function
     $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.products.edit.title'))
-        ->assertSeeText(trans('admin::app.components.form.unsaved-changes.save'))
         ->assertSeeText(trans('admin::app.catalog.products.edit.categories.title'))
         ->assertSeeText(trans('admin::app.catalog.products.edit.links.title'))
         ->assertSeeText(trans('admin::app.catalog.products.edit.types.configurable.empty-title'));

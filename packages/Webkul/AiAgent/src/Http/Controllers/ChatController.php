@@ -35,6 +35,10 @@ class ChatController extends Controller
      */
     public function send(Request $request): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $chatContext = $this->buildChatContext($request);
 
         if ($chatContext instanceof JsonResponse) {
@@ -80,6 +84,10 @@ class ChatController extends Controller
      */
     public function stream(Request $request): StreamedResponse|JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $chatContext = $this->buildChatContext($request);
 
         if ($chatContext instanceof JsonResponse) {
@@ -340,6 +348,10 @@ class ChatController extends Controller
      */
     public function rate(Request $request): JsonResponse
     {
+        if (! bouncer()->hasPermission('ai-agent')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $request->validate([
             'rating'  => 'required|in:helpful,not_helpful',
             'message' => 'nullable|string|max:5000',

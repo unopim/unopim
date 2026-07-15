@@ -39,7 +39,7 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
     test("Verify Platforms menu visibility based on ACL", async ({
         adminPage,
     }) => {
-        await adminPage.goto("/admin/magic-ai/platform", {
+        await adminPage.goto("/admin/magic-ai/platforms", {
             waitUntil: "networkidle",
         });
         await expect(

@@ -40,6 +40,12 @@ class Core
     protected $defaultChannel;
 
     /**
+     * Whether the default channel was set explicitly via setDefaultChannel(),
+     * in which case it takes precedence over the configured channel code.
+     */
+    protected bool $defaultChannelExplicit = false;
+
+    /**
      * Currency.
      *
      * @var Currency
@@ -154,7 +160,13 @@ class Core
      */
     public function getDefaultChannel(): ?Channel
     {
-        if ($this->defaultChannel) {
+        // An explicitly set channel always wins. Otherwise the memoised channel is
+        // reused only while it still matches the configured code, so a runtime change
+        // to config('app.channel') is honoured and no stale channel leaks across
+        // Octane requests.
+        if ($this->defaultChannel
+            && ($this->defaultChannelExplicit || $this->defaultChannel->code === config('app.channel'))
+        ) {
             return $this->defaultChannel;
         }
 
@@ -173,6 +185,8 @@ class Core
     public function setDefaultChannel(Channel $channel): void
     {
         $this->defaultChannel = $channel;
+
+        $this->defaultChannelExplicit = true;
     }
 
     /**
@@ -345,7 +359,7 @@ class Core
      * raw SQL (e.g. JSON_EXTRACT paths). Anything outside this safe set is
      * rejected to prevent SQL injection via the scope parameters.
      */
-    public function isValidScopeCode($code): bool
+    public function isValidScopeCode(mixed $code): bool
     {
         return is_string($code) && preg_match('/^[a-zA-Z0-9_-]+$/', $code) === 1;
     }

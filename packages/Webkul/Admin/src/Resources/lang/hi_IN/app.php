@@ -1194,6 +1194,7 @@ return [
                 'cancel'                => 'रद्द करें',
                 'paused'                => 'आयात रोक दिया गया है।',
                 'resumed'               => 'आयात फिर से शुरू हो गया है।',
+                'zip-failed'            => 'ज़िप फ़ाइल बनाने में विफल।',
                 'cancelled'             => 'आयात रद्द कर दिया गया है।',
                 'paused-info'           => 'आयात रुका हुआ है। शेष बैच प्रतीक्षा में हैं।',
                 'paused-info-export'    => 'निर्यात रुका हुआ है। शेष बैच प्रतीक्षा में हैं।',
@@ -1627,6 +1628,13 @@ return [
                 'edit' => [
                     'title' => 'यूजर को संपादित करो',
                 ],
+
+                'delete-account' => [
+                    'confirm-password-title' => 'हटाने से पहले पासवर्ड की पुष्टि करें',
+                    'enter-current-password' => 'वर्तमान पासवर्ड दर्ज करें',
+                    'password'               => 'पासवर्ड',
+                    'confirm-delete'         => 'इस खाते को हटाने की पुष्टि करें',
+                ],
             ],
             'edit' => [
                 'back-btn'         => 'पीछे',
@@ -1654,11 +1662,29 @@ return [
             'current-user-delete-error' => 'लॉग इन उपयोगकर्ता को हटाया नहीं जा सकता',
         ],
         'system-settings' => [
-            'info' => 'दिखावट, ईमेल (SMTP) और डिबग सेटिंग्स को एक ही स्थान से प्रबंधित करें।',
+            'title'              => 'सिस्टम सेटिंग्स',
+            'back'               => 'वापस',
+            'info'               => 'सिस्टम सेटिंग्स को एक ही स्थान से प्रबंधित करें।',
+            'search-placeholder' => 'सेटिंग्स खोजें',
+            'save-btn'           => 'सहेजें',
+            'save-message'       => 'सेटिंग्स सफलतापूर्वक सहेजी गईं।',
+            'system'             => [
+                'title' => 'सिस्टम',
+                'info'  => 'मुख्य एप्लिकेशन सेटिंग्स।',
+            ],
+            'email'              => [
+                'title' => 'ईमेल',
+                'info'  => 'SMTP प्रेषक और क्रेडेंशियल।',
+            ],
+            'debug'              => [
+                'title' => 'डिबग',
+                'info'  => 'एप्लिकेशन डिबग और लॉगिंग।',
+            ],
         ],
 
         'appearance' => [
             'title'          => 'Appearance',
+            'info'           => 'लोगो, फ़ेविकॉन और थीम।',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
@@ -1933,17 +1959,19 @@ return [
                 'delete'      => 'हटाएँ',
             ],
             'create' => [
-                'title'        => 'सिस्टम प्रॉम्प्ट',
-                'create-btn'   => 'सिस्टम प्रॉम्प्ट बनाएं',
-                'edit-title'   => 'सिस्टम प्रॉम्प्ट संपादित करें',
-                'create-title' => 'नया सिस्टम प्रॉम्प्ट बनाएं',
-                'label-title'  => 'शीर्षक',
-                'max-tokens'   => 'अधिकतम आउटपुट टोकन',
-                'temperature'  => 'तापमान',
-                'type'         => 'प्रकार',
-                'prompt'       => 'प्रॉम्प्ट',
-                'save-btn'     => 'प्रॉम्प्ट सहेजें',
-                'prompt-tone'  => 'प्रॉम्प्ट स्वर',
+                'title'               => 'सिस्टम प्रॉम्प्ट',
+                'create-btn'          => 'सिस्टम प्रॉम्प्ट बनाएं',
+                'edit-title'          => 'सिस्टम प्रॉम्प्ट संपादित करें',
+                'create-title'        => 'नया सिस्टम प्रॉम्प्ट बनाएं',
+                'label-title'         => 'शीर्षक',
+                'max-tokens'          => 'अधिकतम आउटपुट टोकन',
+                'temperature'         => 'तापमान',
+                'type'                => 'प्रकार',
+                'prompt'              => 'प्रॉम्प्ट',
+                'save-btn'            => 'प्रॉम्प्ट सहेजें',
+                'prompt-tone'         => 'प्रॉम्प्ट स्वर',
+                'max-tokens-tooltip'  => 'अनुमत अधिकतम आउटपुट टोकन सीमा: 100 से 5000 टोकन',
+                'temperature-tooltip' => 'तापमान रचनात्मकता को नियंत्रित करता है। सीमा: 0 से 2। कम मान (जैसे 0.4) अधिक सटीक और केंद्रित प्रतिक्रियाएँ देते हैं।',
             ],
             'message' => [
                 'save-success'   => 'सिस्टम प्रॉम्प्ट सफलतापूर्वक सहेजा गया।',

@@ -1,12 +1,12 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, clickEditOnRow } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, clickEditOnRow } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
-const MAGIC_AI_CONFIG_URL = '/admin/configuration/general/magic_ai';
-const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platform';
-const MAGIC_AI_PROMPT_URL = '/admin/magic-ai/prompt';
-const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/system-prompt';
+const MAGIC_AI_CONFIG_URL = '/admin/magic-ai/settings';
+const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platforms';
+const MAGIC_AI_PROMPT_URL = '/admin/magic-ai/prompts';
+const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/system-prompts';
 
 async function ensureMagicAITextEnabled(adminPage) {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
@@ -145,7 +145,7 @@ async function createOpenAIPlatform(adminPage, label) {
     }
   }
 
-  await adminPage.getByRole('button', { name: 'Save' }).click();
+  await clickSave(adminPage, 'Save');
   await expect(adminPage.locator('#app').getByText(/saved successfully|created successfully|updated successfully/i)).toBeVisible({ timeout: 30000 });
 }
 
@@ -176,7 +176,7 @@ test.describe('UnoPim Magic AI Test Cases', () => {
 
 test('1.1 - Verify AI Platforms page opens with onboarding', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage).toHaveURL(/.*\/admin\/magic-ai\/platform/);
+  await expect(adminPage).toHaveURL(/.*\/admin\/magic-ai\/platforms/);
   await expect(adminPage.locator('#app').getByText('AI Platforms', { exact: true })).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Add Platform' })).toBeVisible();
 });
@@ -214,7 +214,7 @@ test('1.3 - Verify selecting provider shows Label and API Key fields', async ({ 
 test('1.4 - Save platform without required fields shows validation', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.getByRole('button', { name: 'Save' }).click();
+  await clickSave(adminPage, 'Save');
   await expect(adminPage.locator('#app').getByText(/provider.*required|required/i)).toBeVisible();
 });
 
@@ -260,7 +260,7 @@ test('2.1 - Verify Magic AI is visible in sidebar', async ({ adminPage }) => {
 
 test('2.2 - Verify config page opens with three sections', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage).toHaveURL(/.*\/admin\/configuration\/general\/magic_ai/);
+  await expect(adminPage).toHaveURL(/.*\/admin\/magic-ai\/settings/);
   await expect(adminPage.locator('#app').getByText('Text Generation', { exact: true })).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Image Generation', { exact: true })).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Translation', { exact: true })).toBeVisible();
@@ -314,7 +314,7 @@ test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', async 
     }
   }
 
-  await adminPage.getByRole('button', { name: 'Save changes' }).click();
+  await clickSave(adminPage, 'Save Configuration');
   await adminPage.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
   await expect(adminPage.locator('#app').getByText('Text Generation', { exact: true })).toBeVisible();
 });
@@ -340,7 +340,7 @@ test('2.8 - Configure Image Generation with OpenAI platform', async ({ adminPage
     await adminPage.keyboard.press('Escape');
   }
 
-  await adminPage.getByRole('button', { name: 'Save changes' }).click();
+  await clickSave(adminPage, 'Save Configuration');
   await adminPage.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
   await expect(adminPage.locator('#app').getByText('Text Generation', { exact: true })).toBeVisible();
 });
@@ -351,7 +351,7 @@ test('2.9 - Save Configuration without any changes', async ({ adminPage }) => {
 
   await Promise.all([
     adminPage.waitForResponse(resp => resp.url().includes('configuration') && resp.status() === 200, { timeout: 20000 }).catch(() => {}),
-    adminPage.getByRole('button', { name: 'Save changes' }).click()
+    clickSave(adminPage, 'Save Configuration')
   ]);
   await adminPage.waitForLoadState('networkidle');
   await expect(adminPage.locator('#app').getByText('Magic AI').first()).toBeVisible();
@@ -363,7 +363,7 @@ test('2.9 - Save Configuration without any changes', async ({ adminPage }) => {
 
 test('3.1 - Verify System Prompt page opens', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage).toHaveURL(/.*admin\/system-prompt.*/);
+  await expect(adminPage).toHaveURL(/.*admin\/system-prompts.*/);
   await expect(adminPage.getByRole('button', { name: 'Create System Prompt' })).toBeVisible();
 });
 
@@ -421,7 +421,7 @@ test('3.6 - Save System Prompt with empty fields shows validation', async ({ adm
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Create System Prompt' }).click();
   await expect(adminPage.locator('#app').getByText('Create New System Prompt')).toBeVisible();
-  await adminPage.getByRole('button', { name: 'Save' }).click();
+  await clickSave(adminPage, 'Save');
   await expect(adminPage.locator('#app').getByText('The Title field is required')).toBeVisible();
   await expect(adminPage.locator('#app').getByText('The Tone field is required')).toBeVisible();
 });
@@ -437,7 +437,7 @@ test('3.7 - Create and verify a System Prompt with all fields', async ({ adminPa
   await adminPage.locator('input[name="max_tokens"]').fill('2000');
   await adminPage.locator('input[name="temperature"]').fill('0.8');
   await adminPage.locator('textarea[name="tone"]').fill('Professional e-commerce copywriter tone, persuasive and conversion-focused');
-  await adminPage.getByRole('button', { name: 'Save' }).click();
+  await clickSave(adminPage, 'Save');
   await expect(adminPage.locator('#app').getByText('Prompt saved successfully.')).toBeVisible();
 
   // Verify it appears in datagrid
@@ -472,7 +472,7 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   const currentTitle = await titleInput.inputValue();
   await titleInput.clear();
   await titleInput.fill(currentTitle + ' Pro');
-  await adminPage.getByRole('button', { name: 'Save' }).click();
+  await clickSave(adminPage, 'Save');
   await expect(adminPage.locator('#app').getByText(/updated successfully|saved successfully/i)).toBeVisible({ timeout: 20000 });
 
   // Revert the edit
@@ -485,7 +485,7 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   await expect(titleInputRevert).toBeVisible({ timeout: 20000 });
   await titleInputRevert.clear();
   await titleInputRevert.fill(currentTitle);
-  await adminPage.getByRole('button', { name: 'Save' }).click();
+  await clickSave(adminPage, 'Save');
   await expect(adminPage.locator('#app').getByText(/updated successfully|saved successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
@@ -505,7 +505,7 @@ test('3.10 - Search system prompts in datagrid', async ({ adminPage }) => {
 
 test('4.1 - Verify Prompt page opens', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PROMPT_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage).toHaveURL(/.*admin\/magic-ai\/prompt.*/);
+  await expect(adminPage).toHaveURL(/.*admin\/magic-ai\/prompts.*/);
   await expect(adminPage.getByRole('button', { name: 'Create Prompt' })).toBeVisible();
 });
 
@@ -577,7 +577,7 @@ test('4.8 - Save Prompt with empty fields shows validation', async ({ adminPage 
   await adminPage.goto(MAGIC_AI_PROMPT_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
   await expect(adminPage.locator('#app').getByText('Create New Prompt')).toBeVisible();
-  await adminPage.getByRole('button', { name: 'Save Prompt' }).click();
+  await clickSave(adminPage, 'Save Prompt');
   await expect(adminPage.locator('#app').getByText('The title field is required')).toBeVisible();
   await expect(adminPage.locator('#app').getByText('The Prompt field is required')).toBeVisible();
 });
@@ -591,7 +591,7 @@ test('4.9 - Create a Product Text Generation prompt and clean up', async ({ admi
   await expect(adminPage.locator('#app').getByText('Create New Prompt')).toBeVisible();
   await adminPage.locator('input[name="title"]').fill(title);
   await adminPage.locator('textarea[name="prompt"]').fill('Write a detailed product description for @name highlighting its features, benefits and @color variant.');
-  await adminPage.getByRole('button', { name: 'Save Prompt' }).click();
+  await clickSave(adminPage, 'Save Prompt');
   await expect(adminPage.locator('#app').getByText('Prompt saved successfully.')).toBeVisible();
 
   // Cleanup
@@ -617,7 +617,7 @@ test('4.10 - Create a Category prompt and clean up', async ({ adminPage }) => {
   await adminPage.locator('div').filter({ hasText: /^Product$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'Category' }).first().click();
   await adminPage.locator('textarea[name="prompt"]').fill('Write a compelling category description for @name that helps customers browse products.');
-  await adminPage.getByRole('button', { name: 'Save Prompt' }).click();
+  await clickSave(adminPage, 'Save Prompt');
   await expect(adminPage.locator('#app').getByText('Prompt saved successfully.')).toBeVisible();
 
   // Cleanup
@@ -645,7 +645,7 @@ test('4.11 - Create an Image Generation prompt and clean up', async ({ adminPage
   await adminPage.getByRole('option', { name: 'Image Generation' }).first().click();
 
   await adminPage.locator('textarea[name="prompt"]').fill('Generate a professional product photo of @name on a clean white background with studio lighting.');
-  await adminPage.getByRole('button', { name: 'Save Prompt' }).click();
+  await clickSave(adminPage, 'Save Prompt');
   await expect(adminPage.locator('#app').getByText('Prompt saved successfully.')).toBeVisible();
 
   // Cleanup
@@ -693,7 +693,7 @@ test('5.1 - Enable Hindi locale for translation testing', async ({ adminPage }) 
   await adminPage.waitForLoadState('networkidle');
   await expect(adminPage.locator('label[for="status"]')).toBeVisible();
   await adminPage.locator('label[for="status"]').click();
-  await adminPage.getByRole('button', { name: 'Save Locale' }).click();
+  await clickSave(adminPage, 'Save Locale');
   await expect(adminPage.locator('#app').getByText(/Locale Updated successfully/i)).toBeVisible();
 });
 
@@ -719,10 +719,7 @@ test('5.2 - Edit the default channel and save via the unsaved-changes bar', asyn
   const originalName = await nameField.inputValue();
   await nameField.fill(`${originalName} ${generateUid()}`);
 
-  const saveBtn = adminPage.getByRole('button', { name: 'Save changes' });
-  await expect(saveBtn).toBeVisible({ timeout: 10000 });
-  await saveBtn.click();
-  await expect(adminPage.locator('#app').getByText(/Update Channel Successfully/i)).toBeVisible({ timeout: 20000 });
+  await clickSaveAndExpect(adminPage, 'Save changes', /Update Channel Successfully/i);
 
   // Restore the original name so the edit does not pollute shared state.
   await navigateTo(adminPage, 'channels');
@@ -731,10 +728,7 @@ test('5.2 - Edit the default channel and save via the unsaved-changes bar', asyn
   const nameFieldRestore = adminPage.locator('input[name="en_US\\[name\\]"]').first();
   await expect(nameFieldRestore).toHaveValue(/.+/, { timeout: 10000 });
   await nameFieldRestore.fill(originalName);
-  const saveBtnRestore = adminPage.getByRole('button', { name: 'Save changes' });
-  await expect(saveBtnRestore).toBeVisible({ timeout: 10000 });
-  await saveBtnRestore.click();
-  await expect(adminPage.locator('#app').getByText(/Update Channel Successfully/i)).toBeVisible({ timeout: 20000 });
+  await clickSaveAndExpect(adminPage, 'Save changes', /Update Channel Successfully/i);
 });
 
 // ═════════════════════════════════════════════════
@@ -792,7 +786,7 @@ test('7.1 - Create product, verify Magic AI button, and clean up', async ({ admi
   await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: 'Default' }).first().click();
   await adminPage.locator('input[name="sku"]').fill(sku);
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await clickSave(adminPage, 'Save Product');
   await expect(adminPage.locator('#app').getByText(/Product created successfully/i)).toBeVisible();
   await adminPage.waitForLoadState('networkidle');
 
@@ -828,7 +822,7 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: 'Default' }).first().click();
   await adminPage.locator('input[name="sku"]').fill(sku);
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await clickSave(adminPage, 'Save Product');
   await expect(adminPage.locator('#app').getByText(/Product created successfully/i)).toBeVisible();
   await adminPage.waitForLoadState('networkidle');
 
@@ -871,7 +865,7 @@ test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }
   await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: 'Default' }).first().click();
   await adminPage.locator('input[name="sku"]').fill(sku);
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await clickSave(adminPage, 'Save Product');
   await expect(adminPage.locator('#app').getByText(/Product created successfully/i)).toBeVisible();
 
   // Verify "More Actions" button exists
@@ -933,7 +927,7 @@ test('7.5b - More Actions button is hidden when AI translation is disabled', asy
   await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: 'Default' }).first().click();
   await adminPage.locator('input[name="sku"]').fill(sku);
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await clickSave(adminPage, 'Save Product');
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
   await adminPage.waitForLoadState('networkidle');
 
@@ -965,7 +959,7 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: 'Default' }).first().click();
   await adminPage.locator('input[name="sku"]').fill(sku);
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await clickSave(adminPage, 'Save Product');
   // Wait for redirect to edit page (toast may disappear before we catch it)
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
   await adminPage.waitForLoadState('networkidle');
@@ -1016,7 +1010,7 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
     const isChecked = await adminPage.locator('input#status[type="checkbox"]').isChecked();
     if (!isChecked) {
       await adminPage.locator('label[for="status"]').click();
-      await adminPage.getByRole('button', { name: 'Save Locale' }).click();
+      await clickSave(adminPage, 'Save Locale');
       await adminPage.waitForLoadState('networkidle');
     }
   }
@@ -1035,7 +1029,7 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
     if (await hindiOption.isVisible({ timeout: 5000 }).catch(() => false)) {
       await hindiOption.click();
       await adminPage.keyboard.press('Escape');
-      await adminPage.getByRole('button', { name: 'Save changes' }).click();
+      await clickSave(adminPage, 'Save Channel');
       await adminPage.waitForLoadState('networkidle');
     }
   }
@@ -1049,7 +1043,7 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
   await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: 'Default' }).first().click();
   await adminPage.locator('input[name="sku"]').fill(sku);
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await clickSave(adminPage, 'Save Product');
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
   await adminPage.waitForLoadState('networkidle');
 
@@ -1057,7 +1051,7 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
   const nameField = adminPage.locator('input[name*="[name]"]').first();
   if (await nameField.isVisible({ timeout: 5000 }).catch(() => false)) {
     await nameField.fill(`Test Product ${uid}`);
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    await clickSave(adminPage, 'Save Product');
     await adminPage.waitForLoadState('networkidle');
   }
 
@@ -1134,7 +1128,7 @@ test('8.1 - Create a category and verify Magic AI button', async ({ adminPage })
   await adminPage.locator('input[name="code"]').fill(uniqueCode);
   await adminPage.locator('#name').fill(`Electronics AI ${uid}`);
 
-  await adminPage.getByRole('button', { name: 'Save changes' }).click();
+  await clickSave(adminPage, 'Save Category');
   await expect(adminPage.locator('#app').getByText(/category created successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
@@ -1189,7 +1183,7 @@ test('9.2 - Create a Role with MagicAI permission and clean up', async ({ adminP
 
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(roleName);
   await adminPage.getByRole('textbox', { name: 'Description' }).fill('Role with Magic AI permissions only');
-  await adminPage.getByRole('button', { name: 'Save changes' }).click();
+  await clickSave(adminPage, 'Save Role');
   // Wait for redirect to roles list page (toast may disappear before assertion)
   await adminPage.waitForURL(/\/admin\/settings\/roles$/, { timeout: 20000 }).catch(() => {});
   await adminPage.waitForLoadState('networkidle');
@@ -1221,7 +1215,7 @@ test('9.3 - Create a user with MagicAI role and clean up both', async ({ adminPa
 
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(roleName);
   await adminPage.getByRole('textbox', { name: 'Description' }).fill('Temp role for user test');
-  await adminPage.getByRole('button', { name: 'Save changes' }).click();
+  await clickSave(adminPage, 'Save Role');
   await expect(adminPage.locator('#app').getByText('Roles Created Successfully')).toBeVisible();
 
   // Create user
@@ -1239,7 +1233,7 @@ test('9.3 - Create a user with MagicAI role and clean up both', async ({ adminPa
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: roleName }).first().click();
   await adminPage.locator('label[for="status"]').click();
-  await adminPage.getByRole('button', { name: 'Save User' }).click();
+  await clickSave(adminPage, 'Save User');
   await expect(adminPage.locator('#app').getByText(/User created successfully/i)).toBeVisible();
 
   // Cleanup: delete the user

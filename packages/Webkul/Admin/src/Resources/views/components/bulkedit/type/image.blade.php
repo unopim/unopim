@@ -23,12 +23,12 @@
         <span
           v-if="modelValue"
           @click="preview"
-          class="cursor-pointer text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 text-base icon-view"
+          class="cursor-pointer text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-base icon-view"
         ></span>
 
         <span
           @click="triggerUpload"
-          class="cursor-pointer text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 text-base icon-edit"
+          class="cursor-pointer text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-base icon-edit"
         ></span>
 
         <span
