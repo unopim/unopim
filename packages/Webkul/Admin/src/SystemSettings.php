@@ -40,7 +40,10 @@ class SystemSettings
      */
     public function find(string $key): ?array
     {
-        foreach (config('system_settings', []) as $item) {
+        /** @var array<int, array<string, mixed>> $registry */
+        $registry = config('system_settings', []);
+
+        foreach ($registry as $item) {
             if (($item['key'] ?? null) === $key) {
                 return $item;
             }
@@ -61,7 +64,10 @@ class SystemSettings
     public function formGroup(array $entry): ?array
     {
         if (! empty($entry['config_group'])) {
-            return collect(config('core'))->firstWhere('key', $entry['config_group']);
+            /** @var array<string, mixed>|null $group */
+            $group = collect((array) config('core', []))->firstWhere('key', $entry['config_group']);
+
+            return $group;
         }
 
         if (! empty($entry['fields'])) {
@@ -79,12 +85,15 @@ class SystemSettings
      */
     protected function accessibleItems(): array
     {
-        return array_values(array_filter(config('system_settings', []), function (array $item): bool {
+        /** @var array<int, array<string, mixed>> $registry */
+        $registry = config('system_settings', []);
+
+        return array_values(array_filter($registry, function (array $item): bool {
             if (empty($item['acl'])) {
                 return true;
             }
 
-            return bouncer()->hasPermission($item['acl']);
+            return bouncer()->hasPermission((string) $item['acl']);
         }));
     }
 }

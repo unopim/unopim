@@ -73,12 +73,13 @@ class SystemSettingsController extends Controller
      */
     protected function allowedConfig(Request $request, array $group): array
     {
-        $allowed = collect($group['fields'] ?? [])
+        $allowed = collect((array) ($group['fields'] ?? []))
             ->pluck('name')
             ->filter()
-            ->map(fn ($name) => $group['key'].'.'.$name)
+            ->map(fn ($name): string => ((string) $group['key']).'.'.((string) $name))
             ->all();
 
+        /** @var array<string, mixed> $payload */
         $payload = [];
 
         foreach (Arr::dot($request->except(['_token', 'admin_locale'])) as $code => $value) {
