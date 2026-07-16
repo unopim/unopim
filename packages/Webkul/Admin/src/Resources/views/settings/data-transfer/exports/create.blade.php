@@ -273,10 +273,6 @@
                 },
 
                 watch: {
-                    fileFormat(value) {
-                        this.selectedFileFormat = JSON.parse(value).value;
-                    },
-
                     entityType(value) {
                         let configKey = this.parseValue(value)?.id;
 

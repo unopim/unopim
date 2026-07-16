@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Mga Istruktura ng Variant',
+        'ai-suggest'         => 'Mungkahi ng AI',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => 'kopya-ng-:value',
         'copy-of'                       => 'Kopya ng :value',

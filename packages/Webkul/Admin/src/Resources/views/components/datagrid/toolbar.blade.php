@@ -3,7 +3,8 @@
 </template>
 
 <template v-else>
-    <div class="mt-7 flex items-center justify-between gap-4 max-md:flex-wrap">
+    <div class="datagrid-toolbar mt-7 flex items-center justify-between gap-4 max-md:flex-wrap">
+        <!-- Left Toolbar -->
         <div class="flex gap-x-1">
             <div
                 class="flex w-full items-center gap-x-1"
@@ -24,9 +25,10 @@
                     </x-slot>
 
                     <x-slot:menu class="!p-0 shadow-[0_5px_20px_rgba(0,0,0,0.15)] dark:border-gray-800">
-                        <template v-for="massAction in available.massActions">
+                        <template v-for="(massAction, massActionIndex) in available.massActions">
                             <li
                                 class="group/item relative overflow-visible"
+                                :key="massActionIndex"
                                 v-if="massAction?.options?.length"
                             >
                                 <a
@@ -48,7 +50,10 @@
                                 </a>
 
                                 <ul class="absolute ltr:left-full rtl:right-full top-0 z-10 hidden w-max min-w-[150px] border dark:border-cherry-800 rounded bg-white dark:bg-cherry-800 shadow-[0_5px_20px_rgba(0,0,0,0.15)] group-hover/item:block">
-                                    <li v-for="option in massAction.options">
+                                    <li
+                                        v-for="(option, optionIndex) in massAction.options"
+                                        :key="optionIndex"
+                                    >
                                         <a
                                             class="whitespace-no-wrap block rounded-t px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-cherry-800"
                                             href="javascript:void(0);"
@@ -60,7 +65,10 @@
                                 </ul>
                             </li>
 
-                            <li v-else>
+                            <li
+                                v-else
+                                :key="massActionIndex"
+                            >
                                 <a
                                     class="flex gap-1.5 whitespace-no-wrap rounded-b px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-cherry-800"
                                     href="javascript:void(0);"
@@ -82,10 +90,9 @@
 
                 <div class="ltr:pl-2.5 rtl:pr-2.5">
                     <p class="text-sm font-light text-gray-800 dark:text-white">
-                        {{-- Need to manage this translation. --}}
-                        @{{ "@lang('admin::app.components.datagrid.toolbar.length-of')".replace(':length', applied.massActions.indices.length) }}
+                        @{{ @json(trans('admin::app.components.datagrid.toolbar.length-of')).replace(':length', applied.massActions.indices.length) }}
 
-                        @{{ "@lang('admin::app.components.datagrid.toolbar.selected')".replace(':total', available.meta.total) }}
+                        @{{ @json(trans('admin::app.components.datagrid.toolbar.selected')).replace(':total', available.meta.total) }}
                     </p>
                 </div>
             </div>
@@ -105,8 +112,7 @@
 
                 <div class="ltr:pl-2.5 rtl:pr-2.5">
                     <p class="text-sm font-light text-gray-800 dark:text-white">
-                        {{-- Need to manage this translation. --}}
-                        @{{ "@lang('admin::app.components.datagrid.toolbar.results')".replace(':total', available.meta.total) }}
+                        @{{ @json(trans('admin::app.components.datagrid.toolbar.results')).replace(':total', available.meta.total) }}
                     </p>
                 </div>
             </div>
@@ -208,12 +214,13 @@
                         </div>
                     </div>
 
-                    <div
-                        class="primary-button block text-center"
+                    <button
+                        type="button"
+                        class="primary-button block w-full text-center"
                         @click="runFilters()"
                     >
                         @lang('admin::app.components.datagrid.filters.save')
-                    </div>
+                    </button>
                 </x-slot>
             </x-admin::drawer>
 
@@ -234,6 +241,7 @@
                     <x-slot:menu>
                         <x-admin::dropdown.menu.item
                             v-for="perPageOption in available.meta.per_page_options"
+                            ::key="perPageOption"
                             v-text="perPageOption"
                             @click="changePerPageOption(perPageOption)"
                         >

@@ -92,15 +92,15 @@
 
                         @method('PUT')
 
-                        {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.before') !!}
+                        {!! view_render_event('unopim.admin.settings.data-transfer.imports.import.import_form_controls.before') !!}
                             <button
-                                type="submit" 
+                                type="submit"
                                 class="primary-button place-self-start"
-                                aria-lebel="Submit"
+                                aria-label="{{ trans('admin::app.settings.data-transfer.imports.import.import-now') }}"
                             >
                                 @lang('admin::app.settings.data-transfer.imports.import.import-now')
                             </button>
-                        {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.after') !!}
+                        {!! view_render_event('unopim.admin.settings.data-transfer.imports.import.import_form_controls.after') !!}
 
                     </x-admin::form> 
                 @endif
@@ -112,9 +112,7 @@
                 template: '#v-import-now-template',
 
                 data() {
-                    return {
-                        importResource: @json($import),
-                    };
+                    return {};
                 },
             })
         </script>

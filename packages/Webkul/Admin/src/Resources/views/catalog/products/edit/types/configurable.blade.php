@@ -11,7 +11,6 @@
         id="v-product-variations-template"
     >
         <div class="relative bg-white dark:bg-cherry-900 rounded box-shadow">
-            <!-- Panel Header -->
             <div class="flex flex-wrap gap-2.5 justify-between mb-2.5 p-4">
                 <div class="flex flex-col gap-2">
                     <p class="text-base text-gray-800 dark:text-white font-semibold">
@@ -23,12 +22,15 @@
                     </p>
                 </div>
                 
-                <!-- Add Buttons -->
                 <div class="flex gap-x-1 items-center justify-between w-full">
                     <div></div>
                     <div
                         class="secondary-button"
+                        role="button"
+                        tabindex="0"
                         @click="$refs.variantCreateModal.open()"
+                        @keydown.enter.prevent="$refs.variantCreateModal.open()"
+                        @keydown.space.prevent="$refs.variantCreateModal.open()"
                     >
                         @lang('admin::app.catalog.products.edit.types.configurable.add-btn')
                     </div>
@@ -36,7 +38,6 @@
             </div>
 
             <template v-if="variants.length">
-                <!-- Panel Content -->
                 <div class="grid">
                     <v-product-variation-item
                         v-for='(variant, index) in variants'
@@ -44,6 +45,7 @@
                         :index="index"
                         :variant="variant"
                         :attributes="superAttributes"
+                        :default-id="defaultId"
                         @onRemoved="removeVariant"
                         :errors="errors"
                     >
@@ -51,16 +53,14 @@
                 </div>
             </template>
 
-            <!-- For Empty Variations -->
             <template v-else>
                 <div class="grid gap-3.5 justify-center justify-items-center py-10 px-2.5">
-                    <!-- Placeholder Image -->
                     <img
                         src="{{ unopim_asset('images/icon-add-product.svg') }}"
                         class="w-20 h-20 dark:invert dark:mix-blend-exclusion"
+                        alt=""
                     />
 
-                    <!-- Add Variants Information -->
                     <div class="flex flex-col gap-1.5 items-center">
                         <p class="text-base text-gray-400 font-semibold">
                             @lang('admin::app.catalog.products.edit.types.configurable.empty-title')
@@ -73,26 +73,22 @@
                 </div>
             </template>
 
-            <!-- Add Variant Form Modal -->
             <x-admin::form
                 v-slot="{ meta, errors, handleSubmit, setErrors }"
                 as="div"
             >
                 <form @submit="handleSubmit($event, addVariant)" ref="variantCreateForm">
-                    <!-- Customer Create Modal -->
                     <x-admin::modal ref="variantCreateModal">
-                        <!-- Modal Header -->
                         <x-slot:header>
                             <p class="text-lg text-gray-800 dark:text-white font-bold">
                                 @lang('admin::app.catalog.products.edit.types.configurable.create.title')
                             </p>
                         </x-slot>
         
-                        <!-- Modal Content -->
                         <x-slot:content>
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
-                                    sku
+                                    @lang('admin::app.catalog.products.edit.types.configurable.edit.sku')
                                 </x-admin::form.control-group.label>
                                 <x-admin::form.control-group.control
                                     id="sku"
@@ -104,6 +100,7 @@
 
                             <x-admin::form.control-group
                                 v-for='(attribute, index) in superAttributes'
+                                ::key="attribute.code"
                             >
                                 <x-admin::form.control-group.label class="required">
                                     @{{ attribute.name || '[' + attribute.code + ']' }}
@@ -132,9 +129,7 @@
                             </x-admin::form.control-group>
                         </x-slot>
         
-                        <!-- Modal Footer -->
                         <x-slot:footer>
-                            <!-- Modal Submission -->
                             <div class="flex gap-x-2.5 items-center">
                                 <button 
                                     type="submit"
@@ -152,7 +147,6 @@
 
     <!-- Variations Mass Action Template -->
     <script type="text/x-template" id="v-product-variations-mass-action-template">
-        <!-- Mass Actions -->
         <div class="flex gap-1.5 items-center px-4">
             <span
                 class="flex icon-checkbox-normal text-2xl cursor-pointer select-none"
@@ -165,18 +159,15 @@
             >
             </span>
 
-            <!-- Edit Drawer -->
             <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
                 as="div"
             >
                 <form @submit="handleSubmit($event, updateAll)">
-                    <!-- Edit Drawer -->
                     <x-admin::drawer
                         ref="updateVariantsDrawer"
                         class="text-left"
                     >
-                        <!-- Drawer Header -->
                         <x-slot:header>
                             <div class="flex justify-between items-center">
                                 <p class="text-xl font-medium dark:text-white">
@@ -192,14 +183,12 @@
                             </div>
                         </x-slot>
 
-                        <!-- Drawer Content -->
                         <x-slot:content class="p-4">
                             <x-admin::form
                                 v-slot="{ meta, errors, handleSubmit }"
                                 as="div"
                             >
                                 <form @submit="handleSubmit($event, update)">
-                                    <!-- Mass Update -->
                                     <template v-if="selectedType == 'editPrices'">
                                         <div class="pb-2.5 border-b dark:border-gray-800">
                                             <div class="flex gap-2.5 items-end">
@@ -338,8 +327,8 @@
                                                     @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
                                                 </button>
                                             </div>
-                    
-                                            <x-admin::form.control-group.error control-name="name" />
+
+                                            <x-admin::form.control-group.error control-name="status" />
                                         </div>
                                     </template>
                                 </form>
@@ -353,11 +342,13 @@
                                     'editWeight', 'editPrices', 'editStatus',
                                 ].includes(selectedType)}"
                                 v-for="variant in tempSelectedVariants"
+                                :key="variant.id"
                             >
                                 <div class="text-sm text-gray-800">
                                     <span
                                         class="dark:text-white after:content-['_/_'] last:after:content-['']"
                                         v-for='(attribute, index) in superAttributes'
+                                        :key="attribute.code"
                                     >
                                         @{{ optionName(attribute, variant?.values?.common[attribute.code]) }}
                                     </span>
@@ -431,7 +422,7 @@
                                                 class="custom-select flex w-full min-h-[39px] py-1.5 px-3 bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
                                                 :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
                                                 :name="'variants[variant_' + variant.id + ']'"
-                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
+                                                ::rules="{ required: true }"
                                                 v-model="variant.status"
                                                 label="@lang('admin::app.catalog.products.edit.types.configurable.edit.enabled')"
                                             >
@@ -472,7 +463,7 @@
                                                 class="flex w-full min-h-[39px] py-1.5 ltr:pl-2.5 rtl:pr-2.5 bg-white dark:bg-cherry-800  border dark:border-cherry-800   rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
                                                 :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
                                                 :name="'variants[variant_' + variant.id + ']'"
-                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
+                                                ::rules="{ required: true }"
                                                 v-model="variant.name"
                                                 label="@lang('admin::app.catalog.products.edit.types.configurable.edit.variant-name')"
                                             >
@@ -506,7 +497,7 @@
                                                 class="flex w-full min-h-[39px] py-1.5 ltr:pl-2.5 rtl:pr-2.5 bg-white dark:bg-cherry-800  border dark:border-cherry-800   rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
                                                 :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
                                                 :name="'variants[variant_' + variant.id + ']'"
-                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
+                                                ::rules="{ required: true }"
                                                 v-model="variant.sku"
                                                 label="@lang('admin::app.catalog.products.edit.types.configurable.edit.variant-sku')"
                                                 v-slugify
@@ -548,9 +539,7 @@
     <script type="text/x-template" id="v-product-variation-item-template"> 
         <div class="flex gap-2.5 justify-between px-4 py-6 border-b border-slate-300 dark:border-gray-800">
 
-            <!-- Information -->
             <div class="flex gap-2.5">
-                <!-- Form Hidden Fields -->
                 <input
                     type="hidden"
                     :name="'variants[' + variant.id + '][sku]'"
@@ -563,7 +552,10 @@
                     :value="variant.sku"
                 />
 
-                <template v-for="attribute in attributes">
+                <template
+                    v-for="attribute in attributes"
+                    :key="attribute.code"
+                >
                     <input
                         type="hidden"
                         :name="'variants[' + variant.id + '][values][common][' + attribute.code + ']'"
@@ -571,7 +563,10 @@
                     />
                 </template>
 
-                <template v-for="(image, index) in variant.images">
+                <template
+                    v-for="(image, index) in variant.images"
+                    :key="image.id ?? 'new_' + index"
+                >
                     <input type="hidden" :name="'variants[' + variant.id + '][images][files][' + image.id + ']'" v-if="! image.is_new"/>
 
                     <input
@@ -583,15 +578,16 @@
                         :ref="$.uid + '_imageInput_' + index"
                     />
                 </template>
-                <!-- //Ends Form Hidden Fields -->
 
-                <!-- Image -->
                 <div
                     class="w-full h-[60px] max-w-[60px] max-h-[60px] relative rounded overflow-hidden"
                     :class="{'border border-dashed border-gray-300 dark:border-cherry-800 dark:invert dark:mix-blend-exclusion': ! variant?.image, 'w-[60px]': variant?.image}"
                 >
                     <template v-if="! variant?.image">
-                        <img src="{{ unopim_asset('images/product-placeholders/front.svg') }}">
+                        <img
+                            src="{{ unopim_asset('images/product-placeholders/front.svg') }}"
+                            alt="@lang('admin::app.catalog.products.edit.types.configurable.image-placeholder')"
+                        >
 
                         <p class="w-full absolute bottom-1.5 text-[6px] text-gray-400 text-center font-semibold">
                             @lang('admin::app.catalog.products.edit.types.configurable.image-placeholder')
@@ -599,11 +595,14 @@
                     </template>
 
                     <template v-else>
-                        <img :src="variant?.image" class="w-full h-full object-cover object-top">
+                        <img
+                            :src="variant?.image"
+                            :alt="variant.sku"
+                            class="w-full h-full object-cover object-top"
+                        >
                     </template>
                 </div>
 
-                <!-- Details -->
                 <div class="grid gap-1.5 place-content-start">
                     <p class="text-gray-600 dark:text-gray-300">
                         @{{ "@lang('admin::app.catalog.products.edit.types.configurable.sku')".replace(':sku', variant.sku) }}
@@ -625,13 +624,14 @@
                             class="label-active"
                             v-if="isDefault"
                         >
-                            Default
+                            @lang('admin::app.catalog.products.edit.types.configurable.default')
                         </span>
 
                         <p class="text-gray-600 dark:text-gray-300">
                             <span
                                 class="after:content-[',_'] last:after:content-['']"
                                 v-for='(attribute, index) in attributes'
+                                :key="attribute.code"
                             >
                                 @{{ attribute.name + ': ' + optionName(attribute, variant?.values?.common[attribute.code]) }}
                             </span>
@@ -640,39 +640,43 @@
                 </div>
             </div>
 
-            <!-- Actions -->
             <div class="grid gap-1 place-content-start text-right">
                 <div class="flex gap-2.5">
-                    <!-- Remove -->
 
                     <i
                         class="icon-delete text-xl text-red-500 cursor-pointer"
+                        role="button"
+                        tabindex="0"
+                        aria-label="@lang('admin::app.catalog.products.index.datagrid.delete')"
                         @click="remove"
+                        @keydown.enter.prevent="remove"
+                        @keydown.space.prevent="remove"
                         title="@lang('admin::app.catalog.products.index.datagrid.delete')"
                     ></i>
 
-                    <!-- Edit -->
                     <div>
                         <p
                             class="text-emerald-600 cursor-pointer transition-all"
+                            role="button"
+                            tabindex="0"
+                            aria-label="@lang('admin::app.catalog.products.index.datagrid.edit')"
                             @click="$refs.editVariantDrawer.open()"
+                            @keydown.enter.prevent="$refs.editVariantDrawer.open()"
+                            @keydown.space.prevent="$refs.editVariantDrawer.open()"
                             title="@lang('admin::app.catalog.products.index.datagrid.edit')"
                         >
                             <i class="icon-edit text-xl"></i>
                         </p>
 
-                        <!-- Edit Drawer -->
                         <x-admin::form
                             v-slot="{ meta, errors, handleSubmit }"
                             as="div"
                         >
                             <form @submit="handleSubmit($event, update)" ref="editVariantForm">
-                                <!-- Edit Drawer -->
                                 <x-admin::drawer
                                     ref="editVariantDrawer"
                                     class="text-left"
                                 >
-                                    <!-- Drawer Header -->
                                     <x-slot:header>
                                         <div class="flex justify-between items-center">
                                             <p class="text-xl font-medium dark:text-white">
@@ -685,7 +689,6 @@
                                         </div>
                                     </x-slot>
 
-                                    <!-- Drawer Content -->
                                     <x-slot:content>
                                         <x-admin::form.control-group.control
                                             type="hidden"
@@ -711,6 +714,7 @@
 
                                     <x-admin::form.control-group
                                         v-for='(attribute, index) in attributes'
+                                        ::key="attribute.code"
                                     >
                                         <x-admin::form.control-group.label class="required">
                                             @{{ attribute.name }}
@@ -739,7 +743,6 @@
                                         </v-error-message>
                                     </x-admin::form.control-group>
 
-                                        <!-- Actions -->
                                         <div
                                             class="mt-2.5 text-sm text-gray-800 dark:text-white font-semibold"
                                             v-if="typeof variant.id !== 'string'"
@@ -891,6 +894,7 @@
             props: [
                 'variant',
                 'attributes',
+                'defaultId',
                 'errors',
             ],
 
@@ -902,12 +906,12 @@
 
             computed: {
                 isDefault() {
-                    return this.variant.id == this.$parent.defaultId;
+                    return this.variant.id == this.defaultId;
                 },
             },
 
             watch: {
-                variant: {
+                'variant.images': {
                     handler(newValue) {
                         setTimeout(() => this.setFiles());
                     },
@@ -921,7 +925,7 @@
                         return option.code == optionCode;
                     })
 
-                    return attributeOption.label ? attributeOption.label : '[' + optionCode + ']';
+                    return attributeOption?.label ?? '[' + optionCode + ']';
                 },
 
                 async update(params) {

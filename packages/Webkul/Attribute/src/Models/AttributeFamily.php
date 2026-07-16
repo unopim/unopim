@@ -36,6 +36,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
 
     protected $fillable = [
         'code',
+        'status',
     ];
 
     protected $auditInclude = [

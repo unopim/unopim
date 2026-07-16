@@ -40,7 +40,7 @@ class AttributeCompletenessDataGrid extends DataGrid
                     ->where('completeness_settings.family_id', '=', $familyId);
             })
             ->leftJoin('channels', 'completeness_settings.channel_id', '=', 'channels.id')
-            ->join('attribute_translations', function ($join) use ($locale) {
+            ->leftJoin('attribute_translations', function ($join) use ($locale) {
                 $join->on('attributes.id', '=', 'attribute_translations.attribute_id')
                     ->where('attribute_translations.locale', '=', $locale);
             })

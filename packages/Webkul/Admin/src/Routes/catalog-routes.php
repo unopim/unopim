@@ -63,6 +63,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::post('create', 'store')->name('admin.catalog.attribute.groups.store');
 
+            Route::post('quick-store', 'quickStore')->name('admin.catalog.attribute.groups.quick-store');
+
             Route::get('edit/{id}', 'edit')->name('admin.catalog.attribute.groups.edit');
 
             Route::put('edit/{id}', 'update')->name('admin.catalog.attribute.groups.update');
@@ -76,13 +78,17 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::controller(AttributeFamilyController::class)->prefix('attribute-families')->group(function () {
             Route::get('', 'index')->name('admin.catalog.families.index');
 
-            Route::get('create', 'create')->name('admin.catalog.families.create');
-
             Route::post('create', 'store')->name('admin.catalog.families.store');
 
             Route::get('edit/{id}', 'edit')->name('admin.catalog.families.edit');
 
-            Route::get('copy/{id}', 'copy')->name('admin.catalog.families.copy');
+            Route::get('edit/{id}/variant-structures', 'variantStructures')->name('admin.catalog.families.variant-structures.index');
+
+            Route::get('edit/{id}/variant-structures/{structureId}/edit', 'editVariantStructure')->name('admin.catalog.families.variant-structures.edit');
+
+            Route::put('edit/{id}/variant-structures', 'saveVariantStructures')->name('admin.catalog.families.variant-structures.save');
+
+            Route::delete('edit/{id}/variant-structures/{structureId}', 'deleteVariantStructure')->name('admin.catalog.families.variant-structures.delete');
 
             Route::put('edit/{id}', 'update')->name('admin.catalog.families.update');
 

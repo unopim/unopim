@@ -1,23 +1,21 @@
-<x-slot:title>
-    @lang('completeness::app.catalog.families.edit.completeness.title')
-</x-slot>
-
-<x-admin::page-header :title="trans('completeness::app.catalog.families.edit.completeness.title')" />
-
-<v-completeness-required-modal></v-completeness-required-modal>
+<x-admin::layouts.tab-content-panel
+    :title="trans('completeness::app.catalog.families.edit.completeness.title')"
+>
+    <v-completeness-required-modal></v-completeness-required-modal>
+</x-admin::layouts.tab-content-panel>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-completeness-required-modal-template">
         <div>
             <x-admin::datagrid 
+                compact
                 ref="completenessAttributeDatagrid"
                 :src="route('admin.catalog.families.completeness.edit', $familyId)"
             >
-                <!-- Header -->
                 <template #header="{ columns, records, sortPage, selectAllRecords, applied, isLoading, actions }">
                     <template v-if="!isLoading">
                         <div
-                            class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-primary-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
+                            class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-gray-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
                             :style="'grid-template-columns: ' + (actions.length ? '2fr ' : '') + 'repeat(' + (actions.length ? columns.length : (columns.length)) + ', 1fr)'"
                         >
                             <div
@@ -41,8 +39,8 @@
                                     <span
                                         class="icon-checkbox-normal cursor-pointer rounded-md text-2xl"
                                         :class="[
-                                            applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-primary-700' : (
-                                                applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-primary-700' : ''
+                                            applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-unopim-primary' : (
+                                                applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-unopim-primary' : ''
                                             ),
                                         ]"
                                     ></span>
@@ -76,13 +74,12 @@
                     </template>
                 </template>
 
-                <!-- Body -->
                 <template #body="{ columns, records, applied, actions, isLoading }">
                     <template v-if="!isLoading">
                         <div
                             v-for="record in records"
                             :key="record.id"
-                            class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                            class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-unopim-primary-soft hover:bg-opacity-30 dark:hover:bg-cherry-800"
                             :style="'grid-template-columns: ' + (actions.length ? '2fr ' : '') + 'repeat(' + (actions.length ? columns.length : (columns.length)) + ', 1fr)'"
                         >
                             <div class="flex items-center gap-2.5 overflow-hidden" >
@@ -96,7 +93,7 @@
                                         v-model="applied.massActions.indices"
                                     >
                                     <label
-                                        class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-primary-700"
+                                        class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-unopim-primary"
                                         :for="`mass_action_select_record_${record.id}`"
                                     ></label>
                                 </div>
@@ -159,7 +156,7 @@
                             <div class="flex gap-x-2.5 items-center">
                                 <button
                                     type="button"
-                                    class="transparent-button hover:bg-primary-100 dark:hover:bg-gray-800 dark:text-white"
+                                    class="transparent-button hover:bg-unopim-primary-soft dark:hover:bg-gray-800 dark:text-white"
                                     @click="currentAttributeId = null; $refs.completenessModal.toggle()"
                                 >
                                     @lang('completeness::app.catalog.families.edit.completeness.back-btn')
@@ -192,9 +189,17 @@
                 }
             },
             mounted() {
-                this.$emitter.on('open-completeness-required-modal', () => this.$refs?.completenessModal.open());
+                this.openCompletenessModalHandler = () => this.$refs?.completenessModal.open();
+
+                this.$emitter.on('open-completeness-required-modal', this.openCompletenessModalHandler);
 
                 this.$emitter.on('open-attribute-completeness-edit-modal', this.editModal);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('open-completeness-required-modal', this.openCompletenessModalHandler);
+
+                this.$emitter.off('open-attribute-completeness-edit-modal', this.editModal);
             },
             methods: {
                 save(params) {

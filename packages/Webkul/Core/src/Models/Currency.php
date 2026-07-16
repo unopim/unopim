@@ -8,16 +8,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use OwenIt\Auditing\Auditable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Symfony\Component\Intl\Currencies;
 use Webkul\Core\Contracts\Currency as CurrencyContract;
 use Webkul\Core\Database\Factories\CurrencyFactory;
+use Webkul\HistoryControl\Contracts\HistoryAuditable;
+use Webkul\HistoryControl\Traits\HistoryTrait;
 
-class Currency extends Model implements AuditableContract, CurrencyContract
+class Currency extends Model implements CurrencyContract, HistoryAuditable
 {
-    use Auditable;
     use HasFactory;
+    use HistoryTrait;
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $historyTags = ['currency'];
 
     /**
      * The attributes that are mass assignable.

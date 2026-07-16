@@ -22,6 +22,7 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\BooleanPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Contracts\Product as ProductContract;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Database\Factories\ProductFactory;
 use Webkul\Product\Presenters\ProductValuesPresenter;
@@ -215,6 +216,16 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
+     * Resolve this product's `values` across its ancestor chain (read-time
+     * variant inheritance). Returns the effective values array: the product's
+     * own values overlaid on every ancestor's, root -> leaf.
+     */
+    public function resolvedValues(): array
+    {
+        return app(VariantValueResolver::class)->resolve($this);
+    }
+
+    /**
      * Get an product attribute value.
      *
      * @return mixed
@@ -354,7 +365,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      */
     public function normalizeWithImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): array
     {
-        $image = $this->getProductDisplayImage();
+        $image = $this->getProductDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
 
         $image = $image ? Storage::url($image) : null;
 

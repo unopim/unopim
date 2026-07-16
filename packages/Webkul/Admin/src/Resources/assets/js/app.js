@@ -160,6 +160,8 @@ import Tribute from "./plugins/tribute";
 import Slugify from "./directives/slugify";
 import Debounce from "./directives/debounce";
 import Code from "./directives/code";
+import CodeGenerator from "./directives/code-generator";
+import { generateCode, sanitizeCode } from "./utils/code";
 
 /**
  * Ajax navigation (progressive enhancement).
@@ -191,6 +193,10 @@ function createAdminApp() {
     app.directive("slugify", Slugify);
     app.directive("debounce", Debounce);
     app.directive("code", Code);
+    app.directive("code-generator", CodeGenerator);
+
+    app.config.globalProperties.$generateCode = generateCode;
+    app.config.globalProperties.$sanitizeCode = sanitizeCode;
 
     /**
      * Canonical post-action navigation helper, available on every component as
@@ -213,6 +219,21 @@ function createAdminApp() {
 }
 
 window.createAdminApp = createAdminApp;
+
+// Ref-counted body scroll lock so a closing overlay doesn't restore page scroll while another is still open.
+window.lockBodyScroll = () => {
+    window.__scrollLocks = (window.__scrollLocks || 0) + 1;
+
+    document.body.style.overflow = "hidden";
+};
+
+window.unlockBodyScroll = () => {
+    window.__scrollLocks = Math.max(0, (window.__scrollLocks || 1) - 1);
+
+    if (! window.__scrollLocks) {
+        document.body.style.overflow = "";
+    }
+};
 
 createAdminApp();
 

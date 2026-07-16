@@ -199,10 +199,14 @@ class Core
 
     /**
      * Returns default locale code from default channel.
+     *
+     * Was previously hardcoded to 'en_US', which silently mislabelled every fallback translation on
+     * an install whose channel does not carry English.
      */
     public function getDefaultLocaleCodeFromDefaultChannel(): string
     {
-        return 'en_US';
+        return $this->getDefaultChannel()?->locales->first()?->code
+            ?? config('app.locale');
     }
 
     /**
@@ -247,7 +251,7 @@ class Core
             return $channelCode;
         }
 
-        return $channelCode ?: ($this->getCurrentChannelCode() ?: $this->getDefaultChannelCode());
+        return $channelCode ?: ($this->currentChannel?->code ?: app(CatalogScope::class)->channelCode());
     }
 
     /**
@@ -351,7 +355,7 @@ class Core
             return $localeCode;
         }
 
-        return $localeCode ?: app()->getLocale();
+        return $localeCode ?: app(CatalogScope::class)->localeCode();
     }
 
     /**
@@ -380,7 +384,8 @@ class Core
             return $requestedLocaleCode;
         }
 
-        return $requestedChannel->default_locale->code;
+        return $requestedChannel->locales->first()?->code
+            ?? $this->getDefaultLocaleCodeFromDefaultChannel();
     }
 
     /**

@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Variantstructuren',
+        'ai-suggest'         => 'AI-suggestie',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'kopie-van-:value',

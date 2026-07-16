@@ -3,6 +3,7 @@
 namespace Webkul\Product\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Webkul\Product\Listeners\CopyVariantStructure;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -11,4 +12,9 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array
      */
+    protected $listen = [
+        'catalog.attribute_family.copied' => [
+            CopyVariantStructure::class.'@handle',
+        ],
+    ];
 }

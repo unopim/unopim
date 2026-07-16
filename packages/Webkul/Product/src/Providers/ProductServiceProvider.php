@@ -4,6 +4,10 @@ namespace Webkul\Product\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Product\Console\ResyncVariantsCommand;
+use Webkul\Product\Console\StripRedundantVariantValuesCommand;
+use Webkul\Product\Contracts\VariantPlacementSuggester as VariantPlacementSuggesterContract;
+use Webkul\Product\Contracts\VariantValueResolver as VariantValueResolverContract;
 use Webkul\Product\Facades\ProductImage as ProductImageFacade;
 use Webkul\Product\Facades\ProductVideo as ProductVideoFacade;
 use Webkul\Product\Facades\ValueSetter as ProductValueSetter;
@@ -37,6 +41,9 @@ use Webkul\Product\Observers\ProductObserver;
 use Webkul\Product\ProductImage;
 use Webkul\Product\ProductVideo;
 use Webkul\Product\Services\ProductValueMapper;
+use Webkul\Product\Services\SuggestionManager;
+use Webkul\Product\Services\VariantPlacementSuggester;
+use Webkul\Product\Services\VariantValueResolver;
 use Webkul\Product\ValueSetter;
 
 class ProductServiceProvider extends ServiceProvider
@@ -55,6 +62,13 @@ class ProductServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
 
         ProductProxy::observe(ProductObserver::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                StripRedundantVariantValuesCommand::class,
+                ResyncVariantsCommand::class,
+            ]);
+        }
     }
 
     /**
@@ -67,6 +81,18 @@ class ProductServiceProvider extends ServiceProvider
         $this->registerFacades();
 
         $this->registerTags();
+
+        $this->registerBindings();
+    }
+
+    /**
+     * Register overridable service bindings.
+     */
+    protected function registerBindings(): void
+    {
+        $this->app->bind(VariantValueResolverContract::class, VariantValueResolver::class);
+        $this->app->bind(VariantPlacementSuggesterContract::class, VariantPlacementSuggester::class);
+        $this->app->singleton(SuggestionManager::class);
     }
 
     /**
@@ -75,6 +101,10 @@ class ProductServiceProvider extends ServiceProvider
     public function registerConfig(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/product_types.php', 'product_types');
+
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/suggesters.php', 'suggesters');
+
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/acl.php', 'acl');
     }
 
     /**

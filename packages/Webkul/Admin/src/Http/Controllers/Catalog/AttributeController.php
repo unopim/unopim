@@ -71,6 +71,7 @@ class AttributeController extends Controller
         $this->validate(request(), [
             'code'        => ['required', 'not_in:type,attribute_family_id', 'unique:attributes,code', new Code, new NotSupportedAttributes],
             'type'        => 'required',
+            'validation'  => 'required',
             'swatch_type' => [
                 'required_if:type,select,multiselect',
                 'prohibited_unless:type,select,multiselect',
@@ -79,6 +80,10 @@ class AttributeController extends Controller
         ]);
 
         $requestData = request()->all();
+
+        if (($requestData['validation'] ?? null) === 'none') {
+            $requestData['validation'] = null;
+        }
 
         $requestData['ai_translate'] = self::AI_TRANSLATE_DISABLED;
 

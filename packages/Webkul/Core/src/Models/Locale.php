@@ -8,16 +8,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use OwenIt\Auditing\Auditable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Webkul\Core\Contracts\Locale as LocaleContract;
 use Webkul\Core\Database\Factories\LocaleFactory;
+use Webkul\HistoryControl\Contracts\HistoryAuditable;
+use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\User\Models\AdminProxy;
 
-class Locale extends Model implements AuditableContract, LocaleContract
+class Locale extends Model implements HistoryAuditable, LocaleContract
 {
-    use Auditable;
     use HasFactory;
+    use HistoryTrait;
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $historyTags = ['locale'];
 
     /**
      * The attributes that are mass assignable.

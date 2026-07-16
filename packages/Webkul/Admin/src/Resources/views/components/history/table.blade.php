@@ -48,6 +48,7 @@
                             <!-- Columns -->
                             <p
                                 v-for="column in $parent.available.columns"
+                                :key="column.index"
                                 class="flex gap-1.5 items-center break-words"
                                 :class="{'cursor-pointer select-none hover:text-gray-800 dark:hover:text-white': column.sortable}"
                                 @click="$parent.sortPage(column)"
@@ -87,6 +88,7 @@
                             <div
                                 class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 dark:hover:bg-cherry-800"
                                 v-for="record in $parent.available.records"
+                                :key="record[$parent.available.meta.primary_column]"
                                 :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                             >
                                 <!-- Mass Actions -->
@@ -110,16 +112,8 @@
                                 <p
                                     class="break-words"
                                     v-for="column in $parent.available.columns"
+                                    :key="column.index"
                                     v-html="record[column.index]"
-                                    v-if="record.is_closure"
-                                >
-                                </p>
-
-                                <p
-                                    class="break-words"
-                                    v-for="column in $parent.available.columns"
-                                    v-html="record[column.index]"
-                                    v-else
                                 >
                                 </p>
 
@@ -137,6 +131,7 @@
                                             :class="action.icon"
                                             v-text="!action.icon ? action.title : ''"
                                             v-for="action in record.actions"
+                                            :key="action.index"
                                             :title="action.title ?? ''"
                                             @click="$parent.performAction(action)"
                                         >

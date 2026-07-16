@@ -1,0 +1,105 @@
+<?php
+
+namespace Webkul\Product\Console;
+
+use Illuminate\Console\Command;
+use Webkul\Product\Contracts\VariantValueResolver;
+use Webkul\Product\Models\ProductProxy;
+use Webkul\Product\Type\AbstractType;
+
+class StripRedundantVariantValuesCommand extends Command
+{
+    /**
+     * The console command signature.
+     *
+     * @var string
+     */
+    protected $signature = 'unopim:variants:strip-redundant
+                            {--apply : Delete redundant keys (omit for a dry-run report)}
+                            {--product= : Limit to a single configurable product id}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Reconcile legacy variants: remove child attribute values that merely duplicate an inherited ancestor value, leaving genuine overrides intact.';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle(VariantValueResolver $resolver): int
+    {
+        $common = AbstractType::COMMON_VALUES_KEY;
+
+        $query = ProductProxy::modelClass()::query()
+            ->where('type', 'configurable')
+            ->with('super_attributes');
+
+        if ($id = $this->option('product')) {
+            $query->where('id', $id);
+        }
+
+        $apply = (bool) $this->option('apply');
+
+        $scanned = 0;
+        $stripped = 0;
+        $variantCount = 0;
+
+        $query->chunkById(200, function ($parents) use ($resolver, $common, $apply, &$scanned, &$stripped, &$variantCount) {
+            foreach ($parents as $parent) {
+                $ancestorCommon = $resolver->resolve($parent)[$common] ?? [];
+
+                $keep = $parent->super_attributes->pluck('code')->push('sku')->all();
+
+                foreach ($parent->variants as $variant) {
+                    $variantCount++;
+
+                    $values = $variant->values ?? [];
+                    $ownCommon = $values[$common] ?? [];
+                    $removed = [];
+
+                    foreach ($ownCommon as $code => $value) {
+                        $scanned++;
+
+                        if (in_array($code, $keep, true)) {
+                            continue;
+                        }
+
+                        if (array_key_exists($code, $ancestorCommon) && $ancestorCommon[$code] === $value) {
+                            $removed[] = $code;
+                        }
+                    }
+
+                    if (empty($removed)) {
+                        continue;
+                    }
+
+                    $stripped += count($removed);
+
+                    $this->line(sprintf('  %s: %s %s', $variant->sku, $apply ? 'stripped' : 'would strip', implode(', ', $removed)));
+
+                    if ($apply) {
+                        foreach ($removed as $code) {
+                            unset($ownCommon[$code]);
+                        }
+
+                        $values[$common] = $ownCommon;
+                        $variant->values = $values;
+                        $variant->save();
+                    }
+                }
+            }
+        });
+
+        $this->info(sprintf(
+            '%s %d redundant value(s) across %d variant(s) (%d keys scanned).',
+            $apply ? 'Removed' : 'Would remove',
+            $stripped,
+            $variantCount,
+            $scanned
+        ));
+
+        return self::SUCCESS;
+    }
+}

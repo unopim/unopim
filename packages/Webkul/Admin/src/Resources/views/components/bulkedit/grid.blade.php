@@ -2,9 +2,9 @@
     <script type="text/x-template" id="v-spreadsheet-grid-template">
         <tbody ref="tbody">
             <v-spreadsheet-row
-                v-if="initialData.length"
+                v-if="rows.length"
                 :columns="columns"
-                v-for="(row, index) in initialData"
+                v-for="(row, index) in rows"
                 :key="index"
                 :rowId="index"
                 :row="row"
@@ -50,6 +50,7 @@
 
             data() {
                 return {
+                    rows: [],
                     loading: false,
                     error: null,
                     activeRow: null,
@@ -82,6 +83,7 @@
             },
 
             created() {
+                this.rows = Array.isArray(this.initialData) ? [...this.initialData] : [];
                 this.registerGlobalEvents();
                 document.addEventListener("keydown", this.handleKeydown);
             },
@@ -107,8 +109,7 @@
                         }
                     })
                     .then(response => {
-                        let data = response.data?.data || [];
-                        this.initialData = data;
+                        this.rows = response.data?.data || [];
                     })
                     .catch(console.error)
                     .finally(() => {
@@ -155,12 +156,10 @@
                         return;
                     }
 
-                    // Prevent browser default scrolling
                     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Tab'].includes(e.key)) {
                         e.preventDefault();
                     }
 
-                    // F2 → Enter edit mode (focus input)
                     if (e.key === 'F2') {
                         this.$nextTick(() => {
                             const input = this.activeCellInstance?.$refs?.component?.$refs?.input;
@@ -185,7 +184,6 @@
                         return;
                     }
 
-                    // Ctrl+D → Fill down (copy active cell value to selected range below)
                     if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
                         e.preventDefault();
                         this.fillDown();
@@ -193,7 +191,6 @@
                         return;
                     }
 
-                    // Ctrl+R → Fill right (copy active cell value to selected range right)
                     if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
                         e.preventDefault();
                         this.fillRight();
@@ -201,7 +198,6 @@
                         return;
                     }
 
-                    // Ctrl+Z → Undo last change
                     if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
                         e.preventDefault();
                         this.undo();
@@ -209,7 +205,6 @@
                         return;
                     }
 
-                    // Ctrl+A → Select all cells
                     if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
                         e.preventDefault();
                         this.selectAll();
@@ -217,7 +212,6 @@
                         return;
                     }
 
-                    // Delete / Backspace → Clear active cell
                     if (e.key === 'Delete' || e.key === 'Backspace') {
                         e.preventDefault();
                         this.clearActiveCell();
@@ -225,7 +219,6 @@
                         return;
                     }
 
-                    // Type to start editing — alphanumeric keys start edit mode
                     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
                         this.$nextTick(() => {
                             const input = this.activeCellInstance?.$refs?.component?.$refs?.input;
@@ -251,7 +244,6 @@
                         return;
                     }
 
-                    // Enter → Move down
                     if (e.key === 'Enter' && !e.shiftKey) {
                         this.moveActiveCell('ArrowDown');
                         this.focusActiveCell();
@@ -259,7 +251,6 @@
                         return;
                     }
 
-                    // Tab → Move right
                     if (e.key === 'Tab') {
                         if (e.shiftKey) {
                             this.moveActiveCell('ArrowLeft');
@@ -272,7 +263,6 @@
                         return;
                     }
 
-                    // Shift + Arrow → Range selection
                     if (e.shiftKey && e.key.startsWith('Arrow')) {
                         if (! this.selecting) {
                             this.enableShiftSelection();
@@ -282,7 +272,6 @@
                         return;
                     }
 
-                    // Arrow keys (basic move)
                     if (e.key.startsWith('Arrow') && !e.shiftKey) {
                         this.suppressNextFocus = true;
                         this.moveActiveCell(e.key);
@@ -298,7 +287,7 @@
                     );
 
                     for (const col of multiColumns) {
-                        if (this.optionsCache) {
+                        if (this.optionsCache[col.code]) {
                             continue;
                         }
 
@@ -323,7 +312,6 @@
                     this.valueCopied = null;
                     this.valuesCopied = {};
 
-                    // Case 1: Multi-cell drag copy
                     if (this.dragStart && this.dragStop) {
                         const startRow = this.dragStart.row;
                         const endRow = this.dragStop.row;
@@ -354,13 +342,11 @@
                         const startRow = this.activeRow;
                         const startCol = this.activeCol;
 
-                        // Step 1: Get origin of copied area
                         const keys = Object.keys(this.valuesCopied);
                         const rowCols = keys.map(k => k.split('-').map(Number));
                         const minRow = Math.min(...rowCols.map(([r]) => r));
                         const minCol = Math.min(...rowCols.map(([, c]) => c));
 
-                        // Step 2: Paste with correct offset
                         for (const key in this.valuesCopied) {
                             const [row, col] = key.split('-').map(Number);
                             const value = this.valuesCopied[key];
@@ -420,7 +406,7 @@
                 },
 
                 moveActiveCell(key) {
-                    const maxRow = this.initialData.length - 1;
+                    const maxRow = this.rows.length - 1;
                     const maxCol = this.fltColumns.length - 1;
 
                     if (this.dragStop) {
@@ -464,7 +450,7 @@
 
                     if (value === null || value === undefined) return;
 
-                    const maxRow = this.initialData.length - 1;
+                    const maxRow = this.rows.length - 1;
 
                     if (this.dragStart && this.dragStop) {
                         const minRow = Math.min(this.dragStart.row, this.dragStop.row);
@@ -527,7 +513,7 @@
                 },
 
                 selectAll() {
-                    const maxRow = this.initialData.length - 1;
+                    const maxRow = this.rows.length - 1;
                     const maxCol = this.fltColumns.length - 1;
 
                     this.dragStart = { row: 0, col: 0 };
@@ -787,7 +773,7 @@
                 },
 
                 handleArrowKeySelection(key) {
-                    const maxRow = this.initialData.length - 1;
+                    const maxRow = this.rows.length - 1;
                     const maxCol = this.fltColumns.length - 1;
 
                     if (! ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(key)) {

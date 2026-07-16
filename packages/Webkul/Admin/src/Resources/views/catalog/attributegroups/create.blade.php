@@ -1,7 +1,3 @@
-@php
-    $locales = app('Webkul\Core\Repositories\LocaleRepository')->getActiveLocales();
-@endphp
-
 <x-admin::layouts>
     <x-slot:title>
         @lang('admin::app.catalog.attribute-groups.create.title')

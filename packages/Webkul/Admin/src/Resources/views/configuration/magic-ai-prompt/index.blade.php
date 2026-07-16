@@ -38,6 +38,7 @@
                 <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
                     <div
                         v-for="record in records"
+                        :key="record.id"
                         class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                         @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)"
@@ -169,7 +170,7 @@
                                         v-model="type"
                                         rules="required"
                                         :options="$optionsInJson"
-                                        :value="old('section') ?? $supportedTypes[0]"
+                                        :value="old('type') ?? $supportedTypes[0]"
                                         track-by="id"
                                         label-by="label"
                                         @input="checkType($event)"
@@ -387,7 +388,7 @@
                     },
                     async fetchSuggestionValues(text, cb) {
                         const response = await fetch(
-                            `{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}&&locale={{ core()->getRequestedLocaleCode() }}`
+                            `{{ route('admin.magic_ai.suggestion_values') }}?query=${encodeURIComponent(text)}&entity_name=${encodeURIComponent(this.entityName)}&locale={{ core()->getRequestedLocaleCode() }}`
                         );
                         const data = await response.json();
                         this.suggestionValues = data;
@@ -395,18 +396,7 @@
                     },
 
                     editModal(url) {
-                        this.$axios.get(url)
-                            .then((response) => {
-                                let data = response.data.data;
-                                this.id = data.id;
-                                this.title = data.title;
-                                this.ai.prompt = data.prompt;
-                                this.type = data.type;
-                                this.purpose = data.purpose || 'text_generation';
-                                this.tone = data.tone;
-                                this.$refs.promptUpdateOrCreateModal.toggle();
-                                this.toggleMagicAIModal();
-                            })
+                        this.$navigate(url);
                     },
 
                     resetForm() {

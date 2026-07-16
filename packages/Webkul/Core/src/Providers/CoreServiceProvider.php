@@ -13,6 +13,7 @@ use Illuminate\Support\ServiceProvider;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
 use Intervention\Image\ImageManager;
+use Webkul\Core\CatalogScope;
 use Webkul\Core\Console\Commands\DownCommand;
 use Webkul\Core\Console\Commands\TranslationsChecker;
 use Webkul\Core\Console\Commands\UnoPimPublish;
@@ -25,6 +26,8 @@ use Webkul\Core\Facades\Core as CoreFacade;
 use Webkul\Core\Facades\ElasticSearch as ElasticSearchFacade;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\Core\Http\Middleware\EnableDebugForAllowedIps;
+use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\View\Compilers\BladeCompiler;
 use Webkul\Theme\ViewRenderEventManager;
 
@@ -189,6 +192,17 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->app->singleton('core', function () {
             return app()->make(Core::class);
+        });
+
+        /**
+         * The request's catalog scope. Scoped, not a singleton: Octane keeps singletons alive across
+         * requests inside a worker, which would leak one admin's locale into the next admin's page.
+         */
+        $this->app->scoped(CatalogScope::class, function ($app) {
+            return new CatalogScope(
+                $app->make(LocaleRepository::class),
+                $app->make(ChannelRepository::class),
+            );
         });
 
         /**

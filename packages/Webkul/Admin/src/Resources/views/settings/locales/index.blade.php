@@ -279,12 +279,7 @@
                     },
 
                     editModal(url) {
-                        this.$axios.get(url)
-                            .then((response) => {
-                                this.locale = response.data.data;
-
-                                this.$refs.localeUpdateOrCreateModal.toggle();
-                            })
+                        this.$navigate(url);
                     },
 
                     resetForm() {

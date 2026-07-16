@@ -7,11 +7,21 @@
     'height'           => '120px'
 ])
 
+@php
+    $dynamicUploadedImages = $attributes->get('::uploaded-images') ?? $attributes->get(':uploaded-images');
+    $rootAttributes = $attributes->except(['::uploaded-images', ':uploaded-images', 'uploaded-images']);
+@endphp
+
 <v-media-images
+    {{ $rootAttributes }}
     name="{{ $name }}"
     v-bind:allow-multiple="{{ $allowMultiple ? 'true' : 'false' }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
-    :uploaded-images='{{ json_encode($uploadedImages) }}'
+    @if ($dynamicUploadedImages)
+        :uploaded-images="{{ $dynamicUploadedImages }}"
+    @else
+        :uploaded-images='{{ json_encode($uploadedImages) }}'
+    @endif
     width="{{ $width }}"
     height="{{ $height }}"
     :errors="errors"
@@ -28,23 +38,24 @@
                 <template v-if="allowMultiple || images.length == 0">
                     <!-- AI Image Generation Button -->
                     <label
-                        class="grid justify-items-center items-center w-full h-[120px] max-w-[120px] min-w-[110px] max-h-[120px] min-h-[110px] border border-dashed border-primary-300 rounded cursor-pointer transition-all hover:border-primary-700  dark:invert dark:mix-blend-exclusion"
+                        class="group flex flex-col justify-center items-center rounded border border-dashed border-gray-300 bg-white text-center cursor-pointer transition-colors hover:border-primary-500 hover:bg-gray-50 dark:border-cherry-700 dark:bg-cherry-900 dark:hover:border-primary-400 dark:hover:bg-cherry-800"
                         :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : ''"
-                        :style="{'max-width': this.width, 'max-height': this.height}"
+                        :style="{ width: width, height: height, minWidth: '110px', minHeight: '110px' }"
                         v-if="ai.enabled"
+                        aria-label="@lang('admin::app.components.media.images.ai-add-image-btn')"
                         @click="resetAIModal(); $refs.magicAIImageModal.open()"
                         @dragover.prevent="isDragging = true"
                         @dragenter.prevent="isDragging = true"
                         @dragleave.prevent="isDragging = false"
                         @drop.prevent="onDrop"
                     >
-                        <div class="flex flex-col items-center">
-                            <span class="icon-magic text-2xl text-primary-700"></span>
+                        <div class="flex flex-col items-center px-2">
+                            <span class="icon-magic flex h-9 w-9 items-center justify-center rounded border border-primary-200 bg-gray-50 text-2xl text-primary-700 transition-colors group-hover:border-primary-300 dark:border-cherry-700 dark:bg-cherry-800"></span>
 
-                            <p class="grid text-sm text-primary-700 font-semibold text-center">
+                            <p class="mt-2 grid text-sm font-semibold leading-5 text-gray-800 text-center dark:text-white">
                                 @lang('admin::app.components.media.images.ai-add-image-btn')
                                 
-                                <span class="text-xs">
+                                <span class="mt-1 text-xs font-normal leading-4 text-gray-500 dark:text-gray-400">
                                     @lang('admin::app.components.media.images.ai-btn-info')
                                 </span>
                             </p>
@@ -53,26 +64,27 @@
 
                     <!-- Upload Image Button -->
                     <label
-                        class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300 dark:border-gray-300"
+                        class="group flex flex-col justify-center items-center rounded border border-dashed border-gray-300 bg-white text-center cursor-pointer transition-colors hover:border-primary-500 hover:bg-gray-50 dark:border-cherry-700 dark:bg-cherry-900 dark:hover:border-primary-400 dark:hover:bg-cherry-800"
                         :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : ''"
-                        :style="{'max-width': this.width, 'max-height': this.height}"
+                        :style="{ width: width, height: height, minWidth: '110px', minHeight: '110px' }"
                         :for="$.uid + '_imageInput'"
+                        aria-label="@lang('admin::app.components.media.images.add-image-btn')"
                         @dragover.prevent="isDragging = true"
                         @dragenter.prevent="isDragging = true"
                         @dragleave.prevent="isDragging = false"
                         @drop.prevent="onDrop"
                     >
-                        <div class="flex flex-col items-center">
-                            <span class="icon-image text-2xl"></span>
+                        <div class="flex flex-col items-center px-2">
+                            <span class="icon-image flex h-9 w-9 items-center justify-center rounded border border-gray-200 bg-gray-50 text-2xl text-gray-500 transition-colors group-hover:border-violet-200 group-hover:text-violet-600 dark:border-cherry-700 dark:bg-cherry-800 dark:text-gray-300"></span>
 
-                            <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
+                            <p class="mt-2 grid text-sm font-semibold leading-5 text-gray-800 text-center dark:text-white">
                                 @lang('admin::app.components.media.images.add-image-btn')
 
-                                <span class="text-[11px] font-normal">
+                                <span class="mt-1 text-xs font-normal leading-4 text-gray-500 dark:text-gray-400">
                                     @lang('admin::app.components.media.images.drag-drop-hint')
                                 </span>
 
-                                <span class="text-xs">
+                                <span class="mt-1 text-[11px] font-normal leading-4 text-gray-400 dark:text-gray-500">
                                     @lang('admin::app.components.media.images.allowed-types')
                                 </span>
                             </p>
@@ -261,6 +273,7 @@
                                             class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
                                             :class="{'!border-primary-700 ': image.selected}"
                                             v-for="image in ai.images"
+                                            :key="image.url"
                                             @click="image.selected = ! image.selected"
                                         >
                                             <!-- Image Preview -->
@@ -465,12 +478,12 @@
 
                     let selectedFiles = Array.from(this.allowMultiple ? files : [files[0]]);
 
-                    const validFiles = selectedFiles.every(file => file.type.includes('image/'));
+                    const validFiles = selectedFiles.every(file => file.type.startsWith('image/'));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.components.media.images.not-allowed-error')"
+                            message: @json(trans('admin::app.components.media.images.not-allowed-error'))
                         });
 
                         return;
@@ -492,12 +505,12 @@
                         return;
                     }
 
-                    const validFiles = Array.from(imageInput.files).every(file => file.type.includes('image/'));
+                    const validFiles = Array.from(imageInput.files).every(file => file.type.startsWith('image/'));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.components.media.images.not-allowed-error')"
+                            message: @json(trans('admin::app.components.media.images.not-allowed-error'))
                         });
 
                         return;
@@ -613,12 +626,12 @@
                         return;
                     }
 
-                    const validFiles = Array.from(imageInput.files).every(file => file.type.includes('image/'));
+                    const validFiles = Array.from(imageInput.files).every(file => file.type.startsWith('image/'));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.components.media.images.not-allowed-error')"
+                            message: @json(trans('admin::app.components.media.images.not-allowed-error'))
                         });
 
                         return;

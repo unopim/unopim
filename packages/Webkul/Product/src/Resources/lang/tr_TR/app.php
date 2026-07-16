@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Varyant Yapıları',
+        'ai-suggest'         => 'Yapay Zeka Önerisi',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => 'kopyası-:value',
         'copy-of'                       => ':value\'in kopyası',

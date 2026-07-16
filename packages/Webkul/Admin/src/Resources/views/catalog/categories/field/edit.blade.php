@@ -7,6 +7,17 @@
         @lang('admin::app.catalog.category_fields.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.catalog.category_fields.edit.title')"
+            :back-url="route('admin.catalog.category_fields.index')"
+            :back-label="trans('admin::app.catalog.category_fields.edit.back-btn')"
+            form="category-field-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
+    <!-- Edit category_fields Vue Components -->
     <v-edit-category-fields :locales="{{ $locales->toJson() }}"></v-edit-category-fields>
 
     @pushOnce('scripts')
@@ -18,29 +29,13 @@
             {!! view_render_event('unopim.admin.catalog.category_fields.edit.before') !!}
 
             <x-admin::form
+                id="category-field-edit-form"
                 ajax
                 :action="route('admin.catalog.category_fields.update', $categoryField->id)"
                 enctype="multipart/form-data"
                 method="PUT"
             >
-                <x-admin::page-header :title="trans('admin::app.catalog.category_fields.edit.title')">
-                    <x-slot:actions>
-                        <a
-                            href="{{ route('admin.catalog.category_fields.index') }}"
-                            class="transparent-button"
-                        >
-                            @lang('admin::app.catalog.category_fields.edit.back-btn')
-                        </a>
-
-                        <button
-                            type="submit"
-                            class="primary-button"
-                        >
-                            @lang('admin::app.catalog.category_fields.edit.save-btn')
-                        </button>
-                    </x-slot>
-                </x-admin::page-header>
-
+                <!-- body content -->
                 <div class="flex gap-2.5 mt-3.5">
                     <div class="flex flex-col flex-1 gap-2 overflow-auto">
 
@@ -171,8 +166,12 @@
                             <div class="px-4 pb-4">
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label>
-                                            {{ $locale->name }}
+                                        <x-admin::form.control-group.label
+                                            class="w-full"
+                                            localizable="true"
+                                            :current-locale-code="$locale->code"
+                                        >
+                                            @lang('admin::app.catalog.category_fields.edit.label')
                                         </x-admin::form.control-group.label>
 
                                         <x-admin::form.control-group.control
@@ -667,8 +666,12 @@
 
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group class="w-full mb-2.5">
-                                        <x-admin::form.control-group.label>
-                                            {{ $locale->name }}
+                                        <x-admin::form.control-group.label
+                                            class="w-full"
+                                            localizable="true"
+                                            :current-locale-code="$locale->code"
+                                        >
+                                            @lang('admin::app.catalog.category_fields.edit.label')
                                         </x-admin::form.control-group.label>
 
                                         <x-admin::form.control-group.control

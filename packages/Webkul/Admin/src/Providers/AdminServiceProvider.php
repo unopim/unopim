@@ -22,6 +22,7 @@ use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CurrencyProxy;
 use Webkul\Core\Models\LocaleProxy;
 use Webkul\Core\Tree;
+use Webkul\MagicAI\Repository\MagicAISystemPromptRepository;
 use Webkul\Product\Models\ProductProxy;
 
 class AdminServiceProvider extends ServiceProvider
@@ -168,6 +169,12 @@ class AdminServiceProvider extends ServiceProvider
             'admin::settings.roles.edit',
         ], function ($view) {
             $view->with('acl', $this->createACL());
+        });
+
+        view()->composer('admin::components.tinymce.index', function ($view) {
+            $systemPrompts = once(fn () => app(MagicAISystemPromptRepository::class)->all()->toArray());
+
+            $view->with('systemPrompts', $systemPrompts);
         });
     }
 

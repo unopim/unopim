@@ -90,6 +90,7 @@ class AjaxOptionsController extends Controller
             'options'  => $formattedOptions,
             'page'     => $options->currentPage(),
             'lastPage' => $options->lastPage(),
+            'total'    => $options->total(),
         ]);
     }
 

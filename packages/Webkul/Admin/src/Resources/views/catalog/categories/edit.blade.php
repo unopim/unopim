@@ -8,6 +8,16 @@
         @lang('admin::app.catalog.categories.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.catalog.categories.edit.title')"
+            :back-url="route('admin.catalog.categories.index')"
+            :back-label="trans('admin::app.catalog.categories.edit.back-btn')"
+            form="category-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
     @php
         $currentLocale = core()->getRequestedLocale();
 
@@ -20,6 +30,7 @@
 
     <!-- Category Edit Form -->
     <x-admin::form
+        id="category-edit-form"
         ajax
         :action="route('admin.catalog.categories.update', $category->id)"
         enctype="multipart/form-data"
@@ -27,26 +38,6 @@
     >
 
         {!! view_render_event('unopim.admin.catalog.categories.edit.edit_form_controls.before', ['category' => $category]) !!}
-
-        <x-admin::page-header :title="trans('admin::app.catalog.categories.edit.title')">
-            <x-slot:actions>
-                <!-- Back Button -->
-                <a
-                    href="{{ route('admin.catalog.categories.index') }}"
-                    class="transparent-button"
-                >
-                    @lang('admin::app.catalog.categories.edit.back-btn')
-                </a>
-
-                <!-- Save Button -->
-                <button
-                    type="submit"
-                    class="primary-button"
-                >
-                    @lang('admin::app.catalog.categories.edit.save-btn')
-                </button>
-            </x-slot>
-        </x-admin::page-header>
 
         <!-- Filter Row -->
         <div class="flex  gap-4 justify-between items-center mt-2 max-md:flex-wrap">

@@ -132,7 +132,7 @@
 
             computed: {
                 modalSize() {
-                    return this.sizeMap[this.modalType] || this.sizeMap.medium; // Default to medium
+                    return this.sizeMap[this.modalType] || this.sizeMap.medium;
                 }
             },
 
@@ -156,15 +156,10 @@
             },
 
             beforeUnmount() {
-                this.cleanupObservers();
-
-                if (this._onWindowResize) {
-                    window.removeEventListener('resize', this._onWindowResize);
-                    window.removeEventListener('orientationchange', this._onWindowResize);
+                if (this.isOpen) {
+                    window.unlockBodyScroll();
                 }
-            },
 
-            beforeDestroy() {
                 this.cleanupObservers();
 
                 if (this._onWindowResize) {
@@ -178,9 +173,9 @@
                     this.isOpen = ! this.isOpen;
 
                     if (this.isOpen) {
-                        document.body.style.overflow = 'hidden';
+                        window.lockBodyScroll();
                     } else {
-                        document.body.style.overflow ='scroll';
+                        window.unlockBodyScroll();
                     }
 
                     this.$emit('toggle', { isActive: this.isOpen });
@@ -196,9 +191,11 @@
                 },
 
                 open() {
-                    this.isOpen = true;
+                    if (! this.isOpen) {
+                        window.lockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'hidden';
+                    this.isOpen = true;
 
                     this.$emit('open', { isActive: this.isOpen });
 
@@ -209,9 +206,11 @@
                 },
 
                 close() {
-                    this.isOpen = false;
+                    if (this.isOpen) {
+                        window.unlockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'auto';
+                    this.isOpen = false;
 
                     this.cleanupObservers();
 

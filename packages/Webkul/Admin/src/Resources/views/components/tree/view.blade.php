@@ -138,8 +138,8 @@
 
                 getLabel(item) {
                     return item[this.labelField]
-                        ? item[this.labelField]
-                        : item.translations.filter((translation) => translation.locale === this.fallbackLocale)[0][this.labelField];
+                        || (item.translations?.find((translation) => translation.locale === this.fallbackLocale)?.[this.labelField]
+                        || `[${item[this.idField]}]`);
                 },
 
                 generateToggleIconComponent(props) {

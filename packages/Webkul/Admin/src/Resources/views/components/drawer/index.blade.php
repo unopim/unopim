@@ -138,6 +138,8 @@
             data() {
                 return {
                     isOpen: this.isActive,
+
+                    scrollLocked: false,
                 };
             },
 
@@ -145,6 +147,10 @@
                 isActive: function(newVal, oldVal) {
                     this.isOpen = newVal;
                 }
+            },
+
+            beforeUnmount() {
+                this.unlockScroll();
             },
 
             computed: {
@@ -158,6 +164,8 @@
                     } else if (this.position == 'right') {
                         return 'ltr:translate-x-full rtl:-translate-x-full';
                     }
+
+                    return 'ltr:translate-x-full rtl:-translate-x-full';
                 }
             },
 
@@ -166,9 +174,9 @@
                     this.isOpen = ! this.isOpen;
 
                     if (this.isOpen) {
-                        document.body.style.overflow = 'hidden';
+                        this.lockScroll();
                     } else {
-                        document.body.style.overflow ='scroll';
+                        this.unlockScroll();
                     }
 
                     this.$emit('toggle', { isActive: this.isOpen });
@@ -177,7 +185,7 @@
                 open() {
                     this.isOpen = true;
 
-                    document.body.style.overflow = 'hidden';
+                    this.lockScroll();
 
                     this.$emit('open', { isActive: this.isOpen });
                 },
@@ -185,10 +193,30 @@
                 close() {
                     this.isOpen = false;
 
-                    document.body.style.overflow = 'auto';
+                    this.unlockScroll();
 
                     this.$emit('close', { isActive: this.isOpen });
-                }
+                },
+
+                lockScroll() {
+                    if (this.scrollLocked) {
+                        return;
+                    }
+
+                    this.scrollLocked = true;
+
+                    window.lockBodyScroll();
+                },
+
+                unlockScroll() {
+                    if (! this.scrollLocked) {
+                        return;
+                    }
+
+                    this.scrollLocked = false;
+
+                    window.unlockBodyScroll();
+                },
             },
         });
     </script>

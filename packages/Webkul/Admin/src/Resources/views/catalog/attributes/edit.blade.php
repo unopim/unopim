@@ -7,6 +7,17 @@
         @lang('admin::app.catalog.attributes.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.catalog.attributes.edit.title')"
+            :back-url="route('admin.catalog.attributes.index')"
+            :back-label="trans('admin::app.catalog.attributes.edit.back-btn')"
+            form="attribute-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
+    <!-- Edit Attributes Vue Components -->
     <v-edit-attributes :locales="{{ $locales->toJson() }}"></v-edit-attributes>
 
     @pushOnce('scripts')
@@ -17,6 +28,7 @@
             {!! view_render_event('unopim.admin.catalog.attributes.edit.before') !!}
 
             <x-admin::form
+                id="attribute-edit-form"
                 ajax
                 :action="route('admin.catalog.attributes.update', $attribute->id)"
                 enctype="multipart/form-data"
@@ -25,24 +37,7 @@
                 
                 {!! view_render_event('unopim.admin.catalog.attributes.create._form_controls.before') !!}
 
-                <x-admin::page-header :title="trans('admin::app.catalog.attributes.edit.title')">
-                    <x-slot:actions>
-                        <a
-                            href="{{ route('admin.catalog.attributes.index') }}"
-                            class="transparent-button"
-                        >
-                            @lang('admin::app.catalog.attributes.edit.back-btn')
-                        </a>
-
-                        <button
-                            type="submit"
-                            class="primary-button"
-                        >
-                            @lang('admin::app.catalog.attributes.edit.save-btn')
-                        </button>
-                    </x-slot>
-                </x-admin::page-header>
-
+                <!-- body content -->
                 <div class="flex gap-2.5 mt-3.5">
                     <div class="flex flex-col flex-1 gap-2 overflow-auto">
 
@@ -130,7 +125,8 @@
                                 <x-admin::form.control-group.error control-name="type" />
                             </x-admin::form.control-group>
 
-                                <x-admin::form.control-group v-show="{{ $attribute->type == 'textarea' }}">
+                            <!-- Textarea Switcher -->
+                                <x-admin::form.control-group v-show="{{ $attribute->type === 'textarea' ? 'true' : 'false' }}">
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.catalog.attributes.edit.enable-wysiwyg')
                                     </x-admin::form.control-group.label>
@@ -165,8 +161,12 @@
                             <div class="px-4 pb-4">
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label>
-                                            {{ $locale->name }}
+                                        <x-admin::form.control-group.label
+                                            class="w-full"
+                                            localizable="true"
+                                            :current-locale-code="$locale->code"
+                                        >
+                                            @lang('admin::app.catalog.attributes.edit.label')
                                         </x-admin::form.control-group.label>
 
                                         <x-admin::form.control-group.control
@@ -710,8 +710,12 @@
 
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group class="w-full mb-2.5">
-                                        <x-admin::form.control-group.label>
-                                            {{ $locale->name }}
+                                        <x-admin::form.control-group.label
+                                            class="w-full"
+                                            localizable="true"
+                                            :current-locale-code="$locale->code"
+                                        >
+                                            @lang('admin::app.catalog.attributes.edit.label')
                                         </x-admin::form.control-group.label>
 
                                         <x-admin::form.control-group.control

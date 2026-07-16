@@ -170,6 +170,12 @@
                 this.registerGlobalEvents();
             },
 
+            beforeUnmount() {
+                if (this.isOpen) {
+                    window.unlockBodyScroll();
+                }
+            },
+
             watch: {
                 isOpen(newValue) {
                     if (newValue === true) {
@@ -202,9 +208,11 @@
 
                     closeModal = () => {},
                 }) {
-                    this.isOpen = true;
+                    if (! this.isOpen) {
+                        window.lockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'hidden';
+                    this.isOpen = true;
 
                     this.title = title;
 
@@ -230,9 +238,11 @@
                 },
 
                 closeModal() {
-                    this.isOpen = false;
+                    if (this.isOpen) {
+                        window.unlockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'auto';
+                    this.isOpen = false;
 
                     this.closeModalCallback();
                 },

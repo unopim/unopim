@@ -30,7 +30,7 @@
                         <input
                             type="text"
                             class="bg-white dark:bg-cherry-800 border dark:border-cherry-900 rounded-lg block w-full ltr:pl-3 rtl:pr-3 ltr:pr-10 rtl:pl-10 py-1.5 leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400"
-                            placeholder="Search by sku"
+                            :placeholder="@json(trans('admin::app.components.products.search.search-by-sku'))"
                             v-model.lazy="searchTerm"
                             v-debounce="500"
                         />
@@ -49,6 +49,7 @@
                     <div
                         class="flex gap-2.5 justify-between px-4 py-6 border-b border-slate-300 dark:border-gray-800"
                         v-for="product in filteredSearchedProducts"
+                        :key="product.id"
                     >
                         <!-- Information -->
                         <div class="flex gap-2.5">
@@ -93,7 +94,7 @@
                                 </p>
 
                                 <p class="text-gray-600 dark:text-gray-300">
-                                    @{{ "@lang('admin::app.components.products.search.sku')".replace(':sku', product.sku) }}
+                                    @{{ @json(trans('admin::app.components.products.search.sku')).replace(':sku', product.sku) }}
                                 </p>
                             </div>
                         </div>
@@ -133,7 +134,7 @@
             props: {
                 addedProductIds: {
                     type: Array,
-                    default: []
+                    default: () => []
                 },
 
                 queryParams: {
@@ -169,13 +170,12 @@
                 },
 
                 search() {
-                    if (this.searchTerm.length <= 1 && !this.searchedProducts.length == 0) {
-
+                    if (this.searchTerm.length <= 1 && this.searchedProducts.length !== 0) {
                         return;
                     }
 
                     let self = this;
-                    
+
                     this.$axios.get("{{ route('admin.catalog.products.search') }}", {
                             params: {
                                 ...{query: this.searchTerm},

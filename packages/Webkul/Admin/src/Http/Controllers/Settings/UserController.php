@@ -57,6 +57,8 @@ class UserController extends Controller
             'password_confirmation',
             'role_id',
             'ui_locale_id',
+            'catalog_locale_id',
+            'default_channel_id',
             'status',
             'timezone',
         ]);
@@ -98,7 +100,8 @@ class UserController extends Controller
         Event::dispatch('user.admin.create.after', $admin);
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.users.create-success'),
+            'message'      => trans('admin::app.settings.users.create-success'),
+            'redirect_url' => route('admin.settings.users.edit', $admin->id),
         ]);
     }
 
@@ -107,13 +110,17 @@ class UserController extends Controller
      *
      * @param  int  $id
      */
-    public function edit($id): JsonResponse
+    public function edit($id): View|JsonResponse
     {
         $user = $this->adminRepository->findOrFail($id);
 
         $roles = $this->roleRepository->all();
 
         $timezone = ['id' => $user?->timezone, 'label' => $user?->timezone];
+
+        if (! request()->expectsJson()) {
+            return view('admin::settings.users.edit', compact('roles', 'timezone', 'user'));
+        }
 
         return new JsonResponse([
             'roles'    => $roles,
@@ -165,7 +172,8 @@ class UserController extends Controller
         Event::dispatch('user.admin.update.after', $admin);
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.users.update-success'),
+            'message'      => trans('admin::app.settings.users.update-success'),
+            'redirect_url' => route('admin.settings.users.index'),
         ]);
     }
 

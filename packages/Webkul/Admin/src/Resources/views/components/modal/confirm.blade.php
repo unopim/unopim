@@ -91,6 +91,12 @@
                 this.registerGlobalEvents();
             },
 
+            beforeUnmount() {
+                if (this.isOpen) {
+                    window.unlockBodyScroll();
+                }
+            },
+
             methods: {
                 open({
                     title = "@lang('admin::app.components.modal.confirm.title')",
@@ -104,9 +110,11 @@
                     agree = () => {},
                     disagree = () => {},
                 }) {
-                    this.isOpen = true;
+                    if (! this.isOpen) {
+                        window.lockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'hidden';
+                    this.isOpen = true;
 
                     this.title = title;
 
@@ -135,17 +143,21 @@
                 },
 
                 disagree() {
-                    this.isOpen = false;
+                    if (this.isOpen) {
+                        window.unlockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'auto';
+                    this.isOpen = false;
 
                     this.disagreeCallback();
                 },
 
                 agree() {
-                    this.isOpen = false;
+                    if (this.isOpen) {
+                        window.unlockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'auto';
+                    this.isOpen = false;
 
                     this.agreeCallback();
                 },

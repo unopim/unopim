@@ -251,6 +251,11 @@ return [
         'route' => 'admin.catalog.attribute.groups.store',
         'sort'  => 1,
     ], [
+        'key'   => 'catalog.attribute_groups.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.catalog.attribute.groups.quick-store',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.attribute_groups.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.catalog.attribute.groups.edit',
@@ -273,11 +278,6 @@ return [
     ], [
         'key'   => 'catalog.families.create',
         'name'  => 'admin::app.acl.create',
-        'route' => 'admin.catalog.families.create',
-        'sort'  => 1,
-    ], [
-        'key'   => 'catalog.families.create',
-        'name'  => 'admin::app.acl.create',
         'route' => 'admin.catalog.families.store',
         'sort'  => 1,
     ], [
@@ -296,10 +296,25 @@ return [
         'route' => 'admin.catalog.families.delete',
         'sort'  => 3,
     ], [
-        'key'   => 'catalog.families.copy',
-        'name'  => 'admin::app.acl.copy',
-        'route' => 'admin.catalog.families.copy',
+        'key'   => 'catalog.families.variant-structures',
+        'name'  => 'admin::app.acl.variant-structures',
+        'route' => 'admin.catalog.families.variant-structures.index',
         'sort'  => 4,
+    ], [
+        'key'   => 'catalog.families.variant-structures.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.variant-structures.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.variant-structures.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.variant-structures.save',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.variant-structures.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.catalog.families.variant-structures.delete',
+        'sort'  => 3,
     ], [
         'key'   => 'catalog.families.edit',
         'name'  => 'admin::app.acl.edit',

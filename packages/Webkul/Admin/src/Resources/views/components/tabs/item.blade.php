@@ -45,10 +45,19 @@
             mounted() {
                 this.isActive = this.isSelected;
 
-                /**
-                 * On mounted, pushing element to its parents component.
-                 */
                 this.$parent.$data.tabs.push(this);
+            },
+
+            beforeUnmount() {
+                const tabs = this.$parent?.$data?.tabs;
+
+                if (tabs) {
+                    const index = tabs.indexOf(this);
+
+                    if (index !== -1) {
+                        tabs.splice(index, 1);
+                    }
+                }
             }
         });
     </script>

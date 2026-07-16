@@ -7,6 +7,17 @@
         @lang('admin::app.settings.data-transfer.exports.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.settings.data-transfer.exports.edit.title')"
+            :back-url="route('admin.settings.data_transfer.exports.index')"
+            :back-label="trans('admin::app.settings.data-transfer.exports.edit.back-btn')"
+            :save-label="trans('admin::app.settings.data-transfer.exports.edit.save-btn')"
+            form="export-profile-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
     {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.before') !!}
 
     <v-export-profile-edit></v-export-profile-edit>
@@ -14,6 +25,7 @@
     @pushOnce('scripts')
         <script type="text/x-template" id="v-export-profile-edit-template">
             <x-admin::form
+                id="export-profile-edit-form"
                 ajax
                 :action="route('admin.settings.data_transfer.exports.update', $export->id)"
                 method="PUT"
@@ -31,21 +43,7 @@
                     $supportsCategories = $fieldNames->contains('categories');
                 @endphp
 
-                <x-admin::page-header :title="trans('admin::app.settings.data-transfer.exports.edit.title')">
-                    <x-slot:actions>
-                        <a
-                            href="{{ route('admin.settings.data_transfer.exports.index') }}"
-                            class="transparent-button"
-                        >
-                            @lang('admin::app.settings.data-transfer.exports.edit.back-btn')
-                        </a>
-
-                        <button type="submit" class="primary-button">
-                            @lang('admin::app.settings.data-transfer.exports.edit.save-btn')
-                        </button>
-                    </x-slot>
-                </x-admin::page-header>
-
+                <!-- Body Content -->
                 <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
                     <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.general.before') !!}
@@ -263,12 +261,6 @@
 
                 mounted() {
                     this.$emitter.on('filter-value-changed', this.handleFilterValues);
-                },
-
-                watch: {
-                    fileFormat(value) {
-                        this.selectedFileFormat = JSON.parse(value).value;
-                    },
                 },
 
                 methods: {

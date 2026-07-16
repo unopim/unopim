@@ -4,12 +4,23 @@ namespace Webkul\Attribute\Repositories;
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Contracts\AttributeFamily;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeFamilyRepository extends Repository
 {
+    /**
+     * Attribute group a family falls back to when no source family is chosen.
+     */
+    const DEFAULT_GROUP_CODE = 'general';
+
+    /**
+     * Attribute every family must start with.
+     */
+    const DEFAULT_ATTRIBUTE_CODE = 'sku';
+
     /**
      * Create a new repository instance.
      *
@@ -33,6 +44,79 @@ class AttributeFamilyRepository extends Repository
     }
 
     /**
+     * Create a family with a usable starting structure: a clone of $basedOn when given,
+     * otherwise a single "general" group holding the sku attribute.
+     */
+    public function createScaffolded(string $code, ?int $basedOn = null, array $translations = []): AttributeFamily
+    {
+        $source = $basedOn ? $this->find($basedOn) : null;
+
+        return DB::transaction(function () use ($code, $source, $translations) {
+            $family = $this->create([
+                'code'             => $code,
+                'status'           => 1,
+                'attribute_groups' => $source
+                    ? $this->buildGroupsFromSource($source)
+                    : $this->buildDefaultGroups(),
+                ...$translations,
+            ]);
+
+            if ($source) {
+                Event::dispatch('catalog.attribute_family.copied', [
+                    'family' => $family,
+                    'source' => $source,
+                ]);
+            }
+
+            return $family;
+        });
+    }
+
+    /**
+     * Mirror the source family's group/attribute layout as a create() payload. Attribute groups are
+     * global rows shared across families, so the same group ids are re-mapped, never duplicated.
+     */
+    protected function buildGroupsFromSource(AttributeFamily $source): array
+    {
+        $groups = [];
+
+        foreach ($source->attributeFamilyGroupMappings()->get() as $mapping) {
+            $attributes = $mapping->customAttributes()
+                ->orderBy('attribute_group_mappings.position')
+                ->get();
+
+            $groups[$mapping->attribute_group_id] = [
+                'position'          => $mapping->position,
+                'custom_attributes' => $attributes->map(fn ($attribute) => [
+                    'id' => $attribute->id,
+                ])->values()->all(),
+            ];
+        }
+
+        return $groups;
+    }
+
+    /**
+     * A single "general" group holding sku. The group is recreated if an admin deleted it.
+     */
+    protected function buildDefaultGroups(): array
+    {
+        $group = $this->attributeGroupRepository->findOneByField('code', self::DEFAULT_GROUP_CODE)
+            ?? $this->attributeGroupRepository->create([
+                'code' => self::DEFAULT_GROUP_CODE,
+            ]);
+
+        return [
+            $group->id => [
+                'position'          => 1,
+                'custom_attributes' => [
+                    ['code' => self::DEFAULT_ATTRIBUTE_CODE],
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @return AttributeFamily
      */
     public function create(array $data)
@@ -43,16 +127,26 @@ class AttributeFamilyRepository extends Repository
 
         $family = parent::create($data);
 
-        foreach ($attributeGroups as $key => $group) {
+        $groupPosition = 1;
+
+        foreach ($attributeGroups as $groupId => $group) {
+            $attributeGroupId = $this->resolveAttributeGroupId($groupId, $group);
+
+            if (! $attributeGroupId) {
+                continue;
+            }
+
             $customAttributes = $group['custom_attributes'] ?? [];
 
             unset($group['custom_attributes']);
 
             $familyGroupMapping = $this->attributeFamilyGroupMappingRepository->create([
                 'attribute_family_id' => $family->id,
-                'attribute_group_id'  => $key,
-                'position'            => $group['position'],
+                'attribute_group_id'  => $attributeGroupId,
+                'position'            => $group['position'] ?? $groupPosition,
             ]);
+
+            $groupPosition++;
 
             foreach ($customAttributes as $key => $attribute) {
                 if (isset($attribute['id'])) {
@@ -91,17 +185,28 @@ class AttributeFamilyRepository extends Repository
             'removed' => [],
         ];
 
-        foreach ($data['attribute_groups'] ?? [] as $attributeGroupId => $attributeGroupInputs) {
+        $groupPosition = 1;
+
+        foreach ($data['attribute_groups'] ?? [] as $groupId => $attributeGroupInputs) {
             $new = [];
             $old = [];
 
-            $attributeGroupMappingId = $attributeGroupInputs['attribute_groups_mapping'];
+            $attributeGroupId = $this->resolveAttributeGroupId($groupId, $attributeGroupInputs);
+
+            if (! $attributeGroupId) {
+                continue;
+            }
+
+            $attributeGroupMappingId = $attributeGroupInputs['attribute_groups_mapping'] ?? null;
+            $attributeGroupPosition = $attributeGroupInputs['position'] ?? $groupPosition;
+
+            $groupPosition++;
 
             if (empty($attributeGroupMappingId)) {
                 $familyGroupMapping = $this->attributeFamilyGroupMappingRepository->create([
                     'attribute_family_id' => $family->id,
                     'attribute_group_id'  => $attributeGroupId,
-                    'position'            => $attributeGroupInputs['position'],
+                    'position'            => $attributeGroupPosition,
                 ]);
 
                 $attributeGroup = $this->attributeGroupRepository->findWhere(['id' => $attributeGroupId]);
@@ -111,13 +216,13 @@ class AttributeFamilyRepository extends Repository
                     continue;
                 }
 
-                foreach ($attributeGroupInputs['custom_attributes'] as $attributeInputs) {
+                foreach ($attributeGroupInputs['custom_attributes'] as $attributeIndex => $attributeInputs) {
                     $attribute = $this->attributeRepository->find($attributeInputs['id']);
 
                     $new[] = $attribute->toArray()['code'];
 
                     $familyGroupMapping->customAttributes()->save($attribute, [
-                        'position' => $attributeInputs['position'],
+                        'position' => $attributeInputs['position'] ?? ($attributeIndex + 1),
                     ]);
                 }
             } else {
@@ -128,7 +233,7 @@ class AttributeFamilyRepository extends Repository
                 $familyGroupMapping = $this->attributeFamilyGroupMappingRepository->update([
                     'attribute_family_id' => $family->id,
                     'attribute_group_id'  => $attributeGroupId,
-                    'position'            => $attributeGroupInputs['position'],
+                    'position'            => $attributeGroupPosition,
                 ], $attributeGroupMappingId);
 
                 $attributeGroup = $this->attributeGroupRepository->findWhere(['id' => $attributeGroupId]);
@@ -139,20 +244,22 @@ class AttributeFamilyRepository extends Repository
 
                 $previousAttributeIds = $familyGroupMapping->customAttributes()->get()->pluck('id');
 
-                foreach ($attributeGroupInputs['custom_attributes'] ?? [] as $attributeInputs) {
+                foreach ($attributeGroupInputs['custom_attributes'] ?? [] as $attributeIndex => $attributeInputs) {
                     $attribute = $this->attributeRepository->find($attributeInputs['id']);
                     $code = $attribute?->toArray()['code'];
+                    $attributePosition = $attributeInputs['position'] ?? ($attributeIndex + 1);
+
                     if (is_numeric($index = $previousAttributeIds->search($attributeInputs['id']))) {
                         $previousAttributeIds->forget($index);
                         $new[] = $code;
                         $old[] = $code;
                         $familyGroupMapping->customAttributes()->updateExistingPivot($attributeInputs['id'], [
-                            'position' => $attributeInputs['position'],
+                            'position' => $attributePosition,
                         ]);
                     } else {
                         $new[] = $code;
                         $familyGroupMapping->customAttributes()->save($attribute, [
-                            'position' => $attributeInputs['position'],
+                            'position' => $attributePosition,
                         ]);
                     }
                 }
@@ -219,6 +326,25 @@ class AttributeFamilyRepository extends Repository
         }
 
         return $trimmed;
+    }
+
+    private function resolveAttributeGroupId(int|string $groupId, array $inputs): ?int
+    {
+        $inputId = $inputs['id'] ?? null;
+
+        if (is_numeric($inputId)) {
+            return (int) $inputId;
+        }
+
+        if (is_numeric($groupId)) {
+            return (int) $groupId;
+        }
+
+        if (! empty($inputs['code'])) {
+            return $this->attributeGroupRepository->findOneByField('code', $inputs['code'])?->id;
+        }
+
+        return null;
     }
 
     /**

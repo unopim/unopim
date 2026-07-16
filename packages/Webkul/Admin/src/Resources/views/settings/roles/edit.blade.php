@@ -7,6 +7,17 @@
         @lang('admin::app.settings.roles.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.settings.roles.edit.title')"
+            :back-url="route('admin.settings.roles.index')"
+            :back-label="trans('admin::app.settings.roles.edit.back-btn')"
+            :save-label="trans('admin::app.settings.roles.edit.save-btn')"
+            form="role-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
     {!! view_render_event('unopim.admin.settings.roles.edit.before') !!}
 
     <v-edit-user-role></v-edit-user-role>
@@ -20,6 +31,7 @@
         >
             <div>
                 <x-admin::form
+                    id="role-edit-form"
                     ajax
                     method="PUT"
                     :action="route('admin.settings.roles.update', $role->id)"
@@ -27,24 +39,7 @@
 
                 {!! view_render_event('unopim.admin.settings.roles.edit.edit_form_controls.before') !!}
 
-                <x-admin::page-header :title="trans('admin::app.settings.roles.edit.title')">
-                    <x-slot:actions>
-                        <a
-                            href="{{ route('admin.settings.roles.index') }}"
-                            class="transparent-button"
-                        >
-                            @lang('admin::app.settings.roles.edit.back-btn')
-                        </a>
-
-                        <button
-                            type="submit"
-                            class="primary-button"
-                        >
-                            @lang('admin::app.settings.roles.edit.save-btn')
-                        </button>
-                    </x-slot>
-                </x-admin::page-header>
-
+                <!-- body content -->
                 <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
                     <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
 

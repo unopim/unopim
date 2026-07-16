@@ -7,9 +7,21 @@
         @lang('admin::app.settings.data-transfer.imports.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.settings.data-transfer.imports.edit.title')"
+            :back-url="route('admin.settings.data_transfer.imports.index')"
+            :back-label="trans('admin::app.settings.data-transfer.imports.edit.back-btn')"
+            :save-label="trans('admin::app.settings.data-transfer.imports.edit.save-btn')"
+            form="import-profile-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
     {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.before') !!}
 
     <x-admin::form
+        id="import-profile-edit-form"
         ajax
         :action="route('admin.settings.data_transfer.imports.update', $import->id)"
         method="PUT"
@@ -17,24 +29,7 @@
     >
         {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.create_form_controls.before') !!}
 
-        <x-admin::page-header :title="trans('admin::app.settings.data-transfer.imports.edit.title')">
-            <x-slot:actions>
-                <a
-                    href="{{ route('admin.settings.data_transfer.imports.index') }}"
-                    class="transparent-button"
-                >
-                    @lang('admin::app.settings.data-transfer.imports.edit.back-btn')
-                </a>
-
-                <button
-                    type="submit"
-                    class="primary-button"
-                >
-                    @lang('admin::app.settings.data-transfer.imports.edit.save-btn')
-                </button>
-            </x-slot>
-        </x-admin::page-header>
-
+        <!-- Body Content -->
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
                 {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.card.general.before') !!}
@@ -129,7 +124,7 @@
                             type="file"
                             name="file"
                             :value="old('file_path') ?? $import->file_path"
-                            :info="trans('CSV, XLSX, JSON (MAX. 2MB)')"
+                            :info="trans('admin::app.settings.data-transfer.imports.create.file-upload-info')"
                             :label="trans('admin::app.settings.data-transfer.imports.edit.file')"
                         />
                         <x-admin::form.control-group.error control-name="file" />
@@ -503,7 +498,7 @@
 
                     selectFile(file) {
                         if (! file.name.toLowerCase().endsWith('.zip')) {
-                            this.modalError = 'Please select a valid .zip file.';
+                            this.modalError = "@lang('admin::app.settings.data-transfer.imports.create.invalid-zip')";
                             return;
                         }
 

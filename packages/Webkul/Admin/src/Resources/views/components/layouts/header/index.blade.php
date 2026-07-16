@@ -10,7 +10,7 @@
 <header class="unopim-header flex justify-between items-center px-4 py-2.5 bg-white dark:bg-cherry-700  border-b dark:border-cherry-800 sticky top-0 z-[10001]">
     <div class="flex gap-1.5 items-center">
         <i
-            class="hidden icon-menu text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 max-lg:block"
+            class="hidden icon-menu text-2xl p-1.5 rounded-md cursor-pointer hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800 max-lg:block"
             @click="$refs.sidebarMenuDrawer.open()"
         >
         </i>
@@ -43,7 +43,7 @@
         <v-dark>
             <div class="flex">
                 <span
-                    class="{{ in_array(request()->cookie('dark_mode'), ['1', 'dark'], true) ? 'icon-light' : 'icon-dark' }} p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800"
+                    class="{{ in_array(request()->cookie('dark_mode'), ['1', 'dark'], true) ? 'icon-light' : 'icon-dark' }} p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800"
                 ></span>
             </div>
         </v-dark>
@@ -69,7 +69,7 @@
                         />
                     </button>
                 @else
-                    <button class="flex justify-center items-center w-9 h-9 bg-primary-400 rounded-full text-sm text-white font-semibold cursor-pointer leading-6 transition-all hover:bg-primary-500 focus:bg-primary-500">
+                    <button class="flex justify-center items-center w-9 h-9 bg-unopim-avatar bg-primary-400 rounded-full text-sm text-white font-semibold cursor-pointer leading-6 transition-all hover:bg-unopim-primary-hover hover:bg-primary-500 focus:bg-unopim-primary-hover focus:bg-primary-500">
                         {{ substr($admin->name, 0, 1) }}
                     </button>
                 @endif
@@ -82,6 +82,7 @@
                         src="{{ url('cache/logo/unopim.png') }}"
                         width="24"
                         height="24"
+                        alt="@lang('admin::app.components.layouts.header.logo')"
                         onerror="this.style.display='none'"
                     />
 
@@ -92,7 +93,7 @@
 
                 <div class="grid gap-1 pb-2.5">
                     <a
-                        class="px-5 py-2 text-base  text-gray-800 dark:text-white hover:bg-primary-50 dark:hover:bg-cherry-800 cursor-pointer"
+                        class="px-5 py-2 text-base  text-gray-800 dark:text-white hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800 cursor-pointer"
                         href="{{ route('admin.account.edit') }}"
                     >
                         @lang('admin::app.components.layouts.header.my-account')
@@ -107,7 +108,7 @@
                     </x-admin::form>
 
                     <a
-                        class="px-5 py-2 text-base  text-gray-800 dark:text-white hover:bg-primary-50 dark:hover:bg-cherry-800 cursor-pointer"
+                        class="px-5 py-2 text-base  text-gray-800 dark:text-white hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800 cursor-pointer"
                         href="{{ route('admin.session.destroy') }}"
                         data-no-ajax-nav
                         onclick="event.preventDefault(); document.getElementById('adminLogout').submit();"
@@ -156,11 +157,11 @@
                     <div class="relative group/item">
                         <a
                             href="{{ $menuItem['url'] }}"
-                            class="flex gap-2.5 p-1.5 items-center cursor-pointer {{ $menu->getActive($menuItem) == 'active' ? 'bg-primary-100 rounded-lg' : ' hover:bg-primary-50 dark:hover:bg-cherry-800 ' }} peer"
+                            class="flex gap-2.5 p-1.5 items-center cursor-pointer {{ $menu->getActive($menuItem) == 'active' ? 'bg-unopim-primary-muted bg-primary-100 rounded-lg' : ' hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800 ' }} peer"
                         >
-                            <span class="{{ $menuItem['icon'] }} text-2xl {{ $menu->getActive($menuItem) ? 'text-primary-700' : ''}}"></span>
+                            <span class="{{ $menuItem['icon'] }} text-2xl {{ $menu->getActive($menuItem) ? 'text-unopim-primary text-primary-700' : ''}}"></span>
 
-                            <p class="text-gray-600 dark:text-gray-300 font-semibold whitespace-nowrap {{ $menu->getActive($menuItem) ? 'text-primary-700' : 'text-gray-600'}}">
+                            <p class="text-gray-600 dark:text-gray-300 font-semibold whitespace-nowrap {{ $menu->getActive($menuItem) ? 'text-unopim-primary text-primary-700' : 'text-gray-600'}}">
                                 @lang($menuItem['name'])
                             </p>
                         </a>
@@ -170,7 +171,7 @@
                                 @foreach ($menuItem['children'] as $subMenuItem)
                                     <a
                                         href="{{ $subMenuItem['url'] }}"
-                                        class="text-sm {{ $menu->getActive($subMenuItem) ? 'text-primary-700 dark:text-primary-700':'text-gray-600 dark:text-gray-300' }} whitespace-nowrap py-1  hover:text-primary-700 hover:bg-gray-950"
+                                        class="text-sm {{ $menu->getActive($subMenuItem) ? 'text-unopim-primary dark:text-unopim-primary text-primary-700 dark:text-primary-700':'text-gray-600 dark:text-gray-300' }} whitespace-nowrap py-1 hover:text-unopim-primary hover:text-primary-700 hover:bg-gray-950"
                                     >
                                         @lang($subMenuItem['name'])
                                     </a>
@@ -197,7 +198,7 @@
                     </span>
 
                     <span
-                        class="flex justify-center items-center min-w-5 h-5 absolute -top-2 p-1.5 ltr:left-5 rtl:right-5 bg-primary-400 rounded-full text-white text-[10px] font-semibold leading-[9px] cursor-pointer"
+                        class="flex justify-center items-center min-w-5 h-5 absolute -top-2 p-1.5 ltr:left-5 rtl:right-5 bg-unopim-avatar bg-primary-400 rounded-full text-white text-[10px] font-semibold leading-[9px] cursor-pointer"
                         v-text="totalUnRead"
                         v-if="totalUnRead"
                     >
@@ -230,7 +231,7 @@
 
                                 <p
                                     class="text-sm text-gray-600 dark:text-gray-300"
-                                    v-html="userNotification.notification.description"
+                                    v-text="userNotification.notification.description"
                                 ></p>
 
                                 <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -244,13 +245,13 @@
                 <div class="flex gap-1.5 justify-between h-[47px] py-4 px-6 border-t dark:border-gray-800">
                     <a
                         href="{{ route('admin.notification.index') }}"
-                        class="text-sm text-primary-700 font-semibold cursor-pointer transition-all hover:underline"
+                        class="text-sm text-unopim-primary text-primary-700 font-semibold cursor-pointer transition-all hover:underline"
                     >
                         @lang('admin::app.notifications.view-all')
                     </a>
 
                     <a
-                        class="text-sm text-primary-700 font-semibold cursor-pointer transition-all hover:underline"
+                        class="text-sm text-unopim-primary text-primary-700 font-semibold cursor-pointer transition-all hover:underline"
                         v-if="userNotifications?.length"
                         @click="readAll()"
                     >
@@ -275,12 +276,18 @@
                         userNotifications: [],
 
                         totalUnRead: 0,
+
+                        pollTimer: null,
                     }
                 },
 
                 mounted() {
                     this.getNotification();
-                    this.userNotifications = setInterval(this.getNotification, 15000);
+                    this.pollTimer = setInterval(this.getNotification, 15000);
+                },
+
+                beforeUnmount() {
+                    clearInterval(this.pollTimer);
                 },
 
                 methods: {
@@ -301,7 +308,7 @@
                     readAll() {
                         this.$axios.post('{{ route('admin.notification.read_all') }}')
                             .then((response) => {
-                                this.notifications = response.data.search_results.data;
+                                this.userNotifications = response.data.search_results.data;
 
                                 this.totalUnRead = response.data.total_unread;
 
@@ -316,7 +323,7 @@
     <script type="text/x-template" id="v-dark-template">
         <div class="flex">
             <span
-                class="p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800"
+                class="p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800"
                 :class="[toggleIconClass]"
                 :title="toggleTitle"
                 @click="toggle"

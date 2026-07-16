@@ -140,7 +140,7 @@
                 <!-- Empty State -->
                 <div v-else class="flex-1 flex flex-col items-center justify-center py-8">
                     <img src="{{ unopim_asset('images/icon-products.svg')}}" class="w-12 h-12 opacity-30 mb-3">
-                    <p class="text-sm text-zinc-400 dark:text-slate-500">No products yet.</p>
+                    <p class="text-sm text-zinc-400 dark:text-slate-500">@lang('admin::app.dashboard.index.no-products')</p>
                 </div>
             </div>
         </template>
@@ -189,6 +189,8 @@
                         })
                         .catch(error => {
                             this.isLoading = false;
+
+                            console.error(error);
                         });
                 },
 

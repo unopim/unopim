@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\ChannelDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Code;
 use Webkul\Core\Rules\ConvertToArrayIfNeeded;
@@ -19,7 +20,10 @@ class ChannelController extends Controller
      *
      * @return void
      */
-    public function __construct(protected ChannelRepository $channelRepository) {}
+    public function __construct(
+        protected ChannelRepository $channelRepository,
+        protected CategoryRepository $categoryRepository
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -40,7 +44,9 @@ class ChannelController extends Controller
      */
     public function create(): View
     {
-        return view('admin::settings.channels.create');
+        $rootCategories = $this->categoryRepository->getRootCategories();
+
+        return view('admin::settings.channels.create', compact('rootCategories'));
     }
 
     /**
@@ -73,7 +79,7 @@ class ChannelController extends Controller
 
         session()->flash('success', trans('admin::app.settings.channels.create.create-success'));
 
-        return redirect()->route('admin.settings.channels.index');
+        return redirect()->route('admin.settings.channels.edit', $channel->id);
     }
 
     /**
@@ -83,7 +89,9 @@ class ChannelController extends Controller
     {
         $channel = $this->channelRepository->with(['locales', 'currencies'])->findOrFail($id);
 
-        return view('admin::settings.channels.edit', compact('channel'));
+        $rootCategories = $this->categoryRepository->getRootCategories();
+
+        return view('admin::settings.channels.edit', compact('channel', 'rootCategories'));
     }
 
     /**

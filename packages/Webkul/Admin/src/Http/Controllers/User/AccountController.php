@@ -37,13 +37,15 @@ class AccountController extends Controller
         $user = auth()->guard('admin')->user();
 
         $this->validate(request(), [
-            'name'             => 'required',
-            'email'            => 'email|unique:admins,email,'.$user->id,
-            'password'         => 'nullable|confirmed|min:'.config('admin.auth.password_min'),
-            'current_password' => 'required',
-            'image.*'          => 'nullable|mimes:bmp,jpeg,jpg,png,webp,svg',
-            'timezone'         => 'required',
-            'ui_locale_id'     => 'required',
+            'name'               => 'required',
+            'email'              => 'email|unique:admins,email,'.$user->id,
+            'password'           => 'nullable|confirmed|min:'.config('admin.auth.password_min'),
+            'current_password'   => 'required',
+            'image.*'            => 'nullable|mimes:bmp,jpeg,jpg,png,webp,svg',
+            'timezone'           => 'required',
+            'ui_locale_id'       => 'required',
+            'catalog_locale_id'  => 'nullable|integer|exists:locales,id,status,1',
+            'default_channel_id' => 'nullable|integer|exists:channels,id',
         ]);
 
         $data = request()->only([
@@ -55,6 +57,8 @@ class AccountController extends Controller
             'image',
             'timezone',
             'ui_locale_id',
+            'catalog_locale_id',
+            'default_channel_id',
         ]);
 
         if (! Hash::check($data['current_password'], $user->password)) {

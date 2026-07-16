@@ -34,6 +34,7 @@
         :placeholder="trans('admin::app.configuration.platform.fields.use-default')"
         track-by="id"
         label-by="label"
+        @input="document.dispatchEvent(new CustomEvent('magic-ai-platform-changed:general_magic_ai_settings_ai_platform', { detail: $event }))"
     />
 
     @if(empty($platforms))

@@ -13,7 +13,6 @@
         ref="input"
         type="datetime-local"
         :name="`${entityId}_${column.code}`"
-        v-bind="field"
         :value="modelValue"
         @input="onInput"
         class="w-full py-2.5 px-3 text-sm bg-transparent text-gray-600 dark:text-gray-300 transition-all focus:border-gray-400 dark:focus:border-gray-400"
@@ -85,11 +84,10 @@
         },
 
         emitChange(value) {
-          // Validate datetime-local format when a value is present.
           if (value && isNaN(Date.parse(value))) {
             this.$emitter?.emit('add-flash', {
               type: 'error',
-              message: "@lang('admin::app.catalog.products.bulk-edit.invalid-datetime')",
+              message: @json(trans('admin::app.catalog.products.bulk-edit.invalid-datetime')),
             });
             return;
           }

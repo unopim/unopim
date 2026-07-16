@@ -9,7 +9,7 @@
                 ></div>
             </td>
 
-            <template v-for="(col, index) in fltColumns" >
+            <template v-for="(col, index) in fltColumns" :key="index">
                 <v-spreadsheet-cell
                     :colId="index"
                     :rowId="rowId"

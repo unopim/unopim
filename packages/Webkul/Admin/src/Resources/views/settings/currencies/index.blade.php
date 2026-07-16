@@ -316,17 +316,7 @@
                     },
 
                     editModal(url) {
-                        this.codeIsNew = false;
-
-                        this.$axios.get(url)
-                            .then((response) => {
-                                this.selectedCurrency = response.data;
-
-                                this.$refs.currencyUpdateOrCreateModal.toggle();
-                            })
-                            .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message })
-                            });
+                        this.$navigate(url);
                     },
                 }
             })

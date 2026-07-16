@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'بنى المتغيرات',
+        'ai-suggest'         => 'اقتراح الذكاء الاصطناعي',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'نسخة من-:value',

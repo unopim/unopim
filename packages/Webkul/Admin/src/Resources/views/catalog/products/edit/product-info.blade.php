@@ -1,14 +1,10 @@
-<!-- Panel -->
 <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-    <!-- Panel Header -->
     <p class="flex justify-between text-base text-gray-800 dark:text-white font-semibold mb-4">
         @lang('admin::app.catalog.products.edit.product-info.title')
     </p>
 
-    <!-- Panel Content -->
     <div class="mb-5 text-sm text-gray-600 dark:text-gray-300">
 
-        <!-- Status Switch -->
         <x-admin::form.control-group>
             <x-admin::form.control-group.label>
                 @lang('admin::app.catalog.products.edit.product-info.status')
@@ -23,17 +19,15 @@
             />
         </x-admin::form.control-group>
 
-        <!-- Attribute Family -->
         <div class="mb-4">
             <label class="flex gap-1 items-center mb-1.5 text-xs text-gray-800 dark:text-white font-medium">
-                @lang('Family')
+                @lang('admin::app.catalog.products.edit.product-info.family')
             </label>
             <div class="w-full py-2.5 px-3 border rounded-md text-sm bg-gray-100 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-800 dark:border-gray-600">
                 {{ $product->attribute_family_id ? (! empty($product->attribute_family->name) ? $product->attribute_family->name : $product->attribute_family->code) : '—' }}
             </div>
         </div>
 
-        <!-- Product Type -->
         <div class="mb-4">
             <label class="flex gap-1 items-center mb-1.5 text-xs text-gray-800 dark:text-white font-medium">
                 @lang('admin::app.catalog.products.edit.product-info.product-type')
@@ -43,7 +37,6 @@
             </div>
         </div>
 
-        <!-- Parent Product (if exists) -->
         @if ($product->parent_id)
             <div class="mb-4">
                 <label class="flex gap-1 items-center mb-1.5 text-xs text-gray-800 dark:text-white font-medium">
@@ -55,7 +48,6 @@
             </div>
         @endif
 
-        <!-- Updated At -->
         <div class="mb-4">
             <label class="flex gap-1 items-center mb-1.5 text-xs text-gray-800 dark:text-white font-medium">
                 @lang('admin::app.catalog.products.edit.product-info.updated-at')
@@ -71,7 +63,6 @@
             </div>
         </div>
 
-        <!-- Created At -->
         <div class="mb-4">
             <label class="flex gap-1 items-center mb-1.5 text-xs text-gray-800 dark:text-white font-medium">
                 @lang('admin::app.catalog.products.edit.product-info.created-at')
@@ -83,4 +74,3 @@
         </div>
     </div>
 </div>
-<!-- End Panel -->

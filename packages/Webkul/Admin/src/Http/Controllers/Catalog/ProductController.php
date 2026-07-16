@@ -150,7 +150,46 @@ class ProductController extends Controller
 
         $averageScore = count($scores) ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null;
 
-        return view('admin::catalog.products.edit', compact('product', 'requiredAttributes', 'scores', 'averageScore'));
+        $associations = $product->values['associations'] ?? [];
+
+        $linkedProducts = [
+            'up_sells'         => $this->normalizeLinkedProducts($associations['up_sells'] ?? []),
+            'cross_sells'      => $this->normalizeLinkedProducts($associations['cross_sells'] ?? []),
+            'related_products' => $this->normalizeLinkedProducts($associations['related_products'] ?? []),
+        ];
+
+        return view('admin::catalog.products.edit', compact('product', 'requiredAttributes', 'scores', 'averageScore', 'linkedProducts'));
+    }
+
+    /**
+     * Resolve linked product SKUs to normalized (image-ready) payloads for the edit view.
+     */
+    protected function normalizeLinkedProducts(array $skus): array
+    {
+        if (empty($skus)) {
+            return [];
+        }
+
+        $products = $this->productRepository->with(['attribute_family'])->findWhereIn('sku', $skus);
+
+        /**
+         * Image attributes are resolved once per attribute family (not once
+         * per product row) to avoid an N+1 query for every linked product.
+         */
+        $imageAttributesByFamily = [];
+
+        return $products
+            ->map(function ($item) use (&$imageAttributesByFamily) {
+                $familyId = $item->attribute_family_id;
+
+                $imageAttributesByFamily[$familyId] ??= $item->attribute_family
+                    ? $item->attribute_family->customAttributes()->where('type', 'image')->get()
+                    : collect();
+
+                return $item->normalizeWithImage(imageAttributes: $imageAttributesByFamily[$familyId]);
+            })
+            ->values()
+            ->all();
     }
 
     /**

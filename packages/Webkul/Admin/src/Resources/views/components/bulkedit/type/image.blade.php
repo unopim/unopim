@@ -1,7 +1,6 @@
 @pushOnce('scripts')
   <script type="text/x-template" id="v-spreadsheet-image-template">
     <div class="w-full h-full flex items-center gap-1.5 px-1">
-      <!-- Thumbnail preview -->
       <div v-if="modelValue" class="flex-shrink-0 w-6 h-6 rounded overflow-hidden border border-gray-200 dark:border-cherry-700">
         <img
           :src="imageUrl"
@@ -14,7 +13,6 @@
         ref="input"
         type="text"
         :name="`${entityId}_${column.code}`"
-        v-bind="field"
         class="flex-1 min-w-0 text-xs text-gray-600 dark:text-gray-300 bg-transparent truncate focus:outline-none"
         readonly
       />
@@ -127,7 +125,10 @@
               }
             })
             .catch(error => {
-              this.$emitter.emit('add-flash', { type: 'warning', message: error });
+              this.$emitter.emit('add-flash', {
+                type: 'warning',
+                message: error?.response?.data?.message || @json(trans('admin::app.catalog.products.bulk-edit.img-fail')),
+              });
             });
         },
 

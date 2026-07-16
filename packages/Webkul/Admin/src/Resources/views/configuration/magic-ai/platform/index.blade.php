@@ -90,6 +90,7 @@
                 <template #body="{ columns, records, performAction }">
                     <div
                         v-for="record in records"
+                        :key="record.id"
                         class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                         @click="editModal(record.actions.find(a => a.index === 'action_1')?.url)"
@@ -470,11 +471,11 @@
                             }
 
                             if (!models.length) {
-                                this.fetchError = 'No models returned. Add models manually below.';
+                                this.fetchError = "@lang('admin::app.configuration.platform.errors.no-models-returned')";
                             }
                         }).catch(error => {
                             this.fetchingModels = false;
-                            this.fetchError = error.response?.data?.message || 'Failed to fetch. You can add models manually below.';
+                            this.fetchError = error.response?.data?.message || "@lang('admin::app.configuration.platform.errors.fetch-failed')";
                         });
                     },
 
@@ -580,7 +581,7 @@
                                 } else {
                                     this.$emitter.emit('add-flash', {
                                         type: 'error',
-                                        message: error.response?.data?.message || 'Save failed. Please try again.',
+                                        message: error.response?.data?.message || "@lang('admin::app.configuration.platform.errors.save-failed')",
                                     });
                                 }
                             });
@@ -616,7 +617,7 @@
                                 this.$refs.datagrid.get();
                             })
                             .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || 'An error occurred.' });
+                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || "@lang('admin::app.configuration.platform.errors.generic')" });
                             });
                     },
                 },

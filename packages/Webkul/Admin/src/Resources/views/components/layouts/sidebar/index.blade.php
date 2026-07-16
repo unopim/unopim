@@ -8,11 +8,11 @@
                 >
                     <a
                         href="{{ $menuItem['url'] }}"
-                        class="flex gap-2.5 p-1.5 items-center cursor-pointer hover:rounded-lg {{ $menu->getActive($menuItem) == 'active' ? 'bg-primary-100 rounded-lg' : ' hover:bg-primary-50 hover:dark:bg-cherry-800' }} peer"
+                        class="flex gap-2.5 p-1.5 items-center cursor-pointer hover:rounded-lg {{ $menu->getActive($menuItem) == 'active' ? 'bg-unopim-primary-muted bg-primary-100 rounded-lg' : ' hover:bg-unopim-primary-soft hover:bg-primary-50 hover:dark:bg-cherry-800' }} peer"
                     >
-                        <span class="{{ $menuItem['icon'] }} text-2xl {{ $menu->getActive($menuItem) ? 'text-primary-700' : ''}}"></span>
-                        
-                        <p class="font-semibold whitespace-nowrap group-[.sidebar-collapsed]/container:hidden {{ $menu->getActive($menuItem) ? 'text-primary-700' : 'text-gray-600 dark:text-gray-300'}}">
+                        <span class="{{ $menuItem['icon'] }} text-2xl {{ $menu->getActive($menuItem) ? 'text-unopim-primary text-primary-700' : ''}}"></span>
+
+                        <p class="font-semibold whitespace-nowrap group-[.sidebar-collapsed]/container:hidden {{ $menu->getActive($menuItem) ? 'text-unopim-primary text-primary-700' : 'text-gray-600 dark:text-gray-300'}}">
                             @lang($menuItem['name'])
                         </p>
                     </a>
@@ -22,7 +22,7 @@
                             @foreach ($menuItem['children'] as $subMenuItem)
                                 <a
                                     href="{{ $subMenuItem['url'] }}"
-                                    class="text-sm {{ $menu->getActive($subMenuItem) ? 'text-primary-700  dark:text-primary-400':'text-gray-600 dark:text-gray-300' }} whitespace-nowrap py-1 group-[.sidebar-collapsed]/container:px-5 group-[.sidebar-collapsed]/container:py-2.5 group-[.inactive]/item:px-5 group-[.inactive]/item:py-2.5 hover:text-primary-700 dark:hover:text-primary-400"
+                                    class="text-sm {{ $menu->getActive($subMenuItem) ? 'text-unopim-primary dark:text-unopim-primary text-primary-700 dark:text-primary-400':'text-gray-600 dark:text-gray-300' }} whitespace-nowrap py-1 group-[.sidebar-collapsed]/container:px-5 group-[.sidebar-collapsed]/container:py-2.5 group-[.inactive]/item:px-5 group-[.inactive]/item:py-2.5 hover:text-unopim-primary dark:hover:text-unopim-primary hover:text-primary-700 dark:hover:text-primary-400"
                                 >
                                     @lang($subMenuItem['name'])
                                 </a>
@@ -40,7 +40,7 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-sidebar-collapse-template">
         <div
-            class="bg-white dark:bg-cherry-700 fixed w-full max-w-[270px] bottom-0 px-4 hover:bg-primary-50 dark:hover:bg-cherry-800 border-t border-gray-200 dark:border-cherry-800  transition-all duration-300 cursor-pointer"
+            class="bg-white dark:bg-cherry-700 fixed w-full max-w-[270px] bottom-0 px-4 hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800 border-t border-gray-200 dark:border-cherry-800  transition-all duration-300 cursor-pointer"
             :class="{'max-w-[70px]': isCollapsed}"
             @click="toggle"
         >

@@ -54,7 +54,8 @@ class AttributeGroupController extends Controller
     public function store(): RedirectResponse
     {
         $this->validate(request(), [
-            'code' => ['required', 'unique:attribute_groups,code', new Code],
+            'code'                                   => ['required', 'unique:attribute_groups,code', new Code],
+            core()->getRequestedLocaleCode().'.name' => ['required', 'string', 'max:191'],
         ]);
 
         $requestData = request()->all();
@@ -68,6 +69,37 @@ class AttributeGroupController extends Controller
         session()->flash('success', trans('admin::app.catalog.attribute-groups.create-success'));
 
         return redirect()->route('admin.catalog.attribute.groups.index');
+    }
+
+    /**
+     * Create an attribute group inline (from the family's assign-group modal) and return it as a
+     * select option. Only the current locale's name is captured; other locales are filled later.
+     */
+    public function quickStore(): JsonResponse
+    {
+        $this->validate(request(), [
+            'code' => ['required', 'unique:attribute_groups,code', new Code],
+            'name' => ['required', 'string', 'max:191'],
+        ]);
+
+        $locale = core()->getRequestedLocaleCode();
+
+        Event::dispatch('catalog.attribute.group.create.before');
+
+        $attributeGroup = $this->attributeGroupRepository->create([
+            'code'   => request()->input('code'),
+            $locale  => ['name' => request()->input('name')],
+        ]);
+
+        Event::dispatch('catalog.attribute.group.create.after', $attributeGroup);
+
+        return new JsonResponse([
+            'data' => [
+                'id'    => $attributeGroup->id,
+                'code'  => $attributeGroup->code,
+                'label' => $attributeGroup->name ?: '['.$attributeGroup->code.']',
+            ],
+        ]);
     }
 
     /**

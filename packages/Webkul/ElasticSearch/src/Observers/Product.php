@@ -58,6 +58,12 @@ class Product
 
             $productArray = $this->sanitizeProductArray($productArray);
 
+            // Index the variant's resolved (inherited) values so search and
+            // filters see attributes owned by an ancestor. Read-time inheritance.
+            if (! empty($product->parent_id)) {
+                $productArray['values'] = $product->resolvedValues();
+            }
+
             if (isset($productArray['values'])) {
                 $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
             }
@@ -84,6 +90,12 @@ class Product
                 $productArray = $product->toArray();
 
                 $productArray = $this->sanitizeProductArray($productArray);
+
+                // Index the variant's resolved (inherited) values so search and
+                // filters see attributes owned by an ancestor. Read-time inheritance.
+                if (! empty($product->parent_id)) {
+                    $productArray['values'] = $product->resolvedValues();
+                }
 
                 if (isset($productArray['values'])) {
                     $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
