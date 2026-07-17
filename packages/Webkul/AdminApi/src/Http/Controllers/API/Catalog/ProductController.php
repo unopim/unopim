@@ -37,7 +37,7 @@ class ProductController extends ApiController
      * Updates a product in the system using the provided data and ID.
      *
      * @param  array  $data  The data to be used for updating the product.
-     * @param  Product  $id  The unique identifier of the product to be updated.
+     * @param  Product  $product  The product to be updated.
      * @return Product The updated product model.
      */
     protected function updateProduct(array $data, Product $product): Product
@@ -296,7 +296,7 @@ class ProductController extends ApiController
     /**
      * Prepares variant data for product update.
      *
-     * @param  Model  $product  The parent product model.
+     * @param  Product  $product  The parent product model.
      * @param  array  $data  The input data containing variant and super attribute information.
      * @param  string  $sku  The SKU of the product.
      * @return array The prepared variant data array.

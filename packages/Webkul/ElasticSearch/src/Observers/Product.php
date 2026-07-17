@@ -51,7 +51,7 @@ class Product
         $this->indexPrefix = config('elasticsearch.prefix');
     }
 
-    public function created(Products $product)
+    public function created(Products $product): void
     {
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             $productArray = $product->toArray();
@@ -83,7 +83,7 @@ class Product
         }
     }
 
-    public function updated(Products $product)
+    public function updated(Products $product): void
     {
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {
@@ -114,7 +114,7 @@ class Product
         }
     }
 
-    public function deleted(Products $product)
+    public function deleted(Products $product): void
     {
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {

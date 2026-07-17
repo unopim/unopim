@@ -3,6 +3,8 @@
 namespace Webkul\MagicAI\Services;
 
 use Laravel\Ai\Image;
+use Laravel\Ai\Responses\AgentResponse;
+use Laravel\Ai\Responses\ImageResponse;
 use Webkul\MagicAI\Agents\MagicContentAgent;
 use Webkul\MagicAI\Agents\TranslationAgent;
 use Webkul\MagicAI\Contracts\LLMModelInterface;
@@ -58,7 +60,7 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
         }
 
         if ($this->platform->extras && is_array($this->platform->extras)) {
-            $overrides = array_merge($overrides, $this->platform->extras);
+            return array_merge($overrides, $this->platform->extras);
         }
 
         return $overrides;
@@ -72,7 +74,7 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
         $response = ScopedProviderConfig::run(
             $this->aiProvider->configKey(),
             $this->providerOverrides(),
-            fn () => $this->contentAgent()->prompt(
+            fn (): AgentResponse => $this->contentAgent()->prompt(
                 $this->prompt,
                 provider: $this->aiProvider->toLab(),
                 model: $this->model,
@@ -93,7 +95,7 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
         $response = ScopedProviderConfig::run(
             $this->aiProvider->configKey(),
             $this->providerOverrides(),
-            fn () => $agent->prompt(
+            fn (): AgentResponse => $agent->prompt(
                 $this->prompt,
                 provider: $this->aiProvider->toLab(),
                 model: $this->model,
@@ -171,7 +173,7 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
         $response = ScopedProviderConfig::run(
             $this->aiProvider->configKey(),
             $this->providerOverrides(),
-            fn () => $pending->generate(
+            fn (): ImageResponse => $pending->generate(
                 provider: $this->aiProvider->toLab(),
                 model: $this->model,
             ),

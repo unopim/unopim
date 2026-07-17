@@ -156,9 +156,7 @@ class AiApiClient
 
         curl_close($ch);
 
-        if ($curlErrno) {
-            throw new ApiException('cURL error: '.$curlError, $curlErrno);
-        }
+        throw_if($curlErrno !== 0, ApiException::class, 'cURL error: '.$curlError, $curlErrno);
 
         $decoded = json_decode($response, true);
 
@@ -270,7 +268,7 @@ class AiApiClient
      */
     protected function convertToAnthropicFormat(array $messages): array
     {
-        return array_values(array_filter($messages, fn ($m) => $m['role'] !== 'system'));
+        return array_values(array_filter($messages, fn (array $m): bool => $m['role'] !== 'system'));
     }
 
     /**
@@ -280,7 +278,7 @@ class AiApiClient
      */
     protected function extractSystemMessage(array $messages): string
     {
-        $systemParts = array_filter($messages, fn ($m) => $m['role'] === 'system');
+        $systemParts = array_filter($messages, fn (array $m): bool => $m['role'] === 'system');
 
         return implode("\n\n", array_column($systemParts, 'content'));
     }
@@ -305,7 +303,7 @@ class AiApiClient
             (int) config('ai-agent.token_estimation.min_input_window', 1024),
         );
 
-        $estimates = array_map(fn ($message) => $this->tokenEstimator->estimateMessage($message), $messages);
+        $estimates = array_map($this->tokenEstimator->estimateMessage(...), $messages);
         $estimate = array_sum($estimates);
 
         Log::debug('AI Agent pre-flight token estimate', [
@@ -334,10 +332,12 @@ class AiApiClient
 
         // Pass 1: drop the oldest non-system history, never the final message.
         foreach (array_keys($messages) as $index) {
-            if ($index === $lastIndex || ($messages[$index]['role'] ?? '') === 'system') {
+            if ($index === $lastIndex) {
                 continue;
             }
-
+            if (($messages[$index]['role'] ?? '') === 'system') {
+                continue;
+            }
             $estimate -= $estimates[$index];
             unset($messages[$index]);
 
@@ -345,26 +345,17 @@ class AiApiClient
                 return $this->dropLeadingAssistantMessages(array_values($messages));
             }
         }
-
-        // Pass 2: drop the largest system context blocks, preserving the first
-        // system message (the agent instructions) and the final message.
-        $firstSystemIndex = null;
-
-        foreach ($messages as $index => $message) {
-            if (($message['role'] ?? '') === 'system') {
-                $firstSystemIndex = $index;
-
-                break;
-            }
-        }
+        $firstSystemIndex = array_find_key($messages, fn ($message): bool => ($message['role'] ?? '') === 'system');
 
         $trimmable = [];
 
         foreach (array_keys($messages) as $index) {
-            if ($index === $lastIndex || $index === $firstSystemIndex) {
+            if ($index === $lastIndex) {
                 continue;
             }
-
+            if ($index === $firstSystemIndex) {
+                continue;
+            }
             $trimmable[$index] = $estimates[$index];
         }
 
@@ -428,7 +419,7 @@ class AiApiClient
             (array) config('ai-agent.token_estimation.context_windows', []),
         );
 
-        uksort($map, fn ($a, $b) => strlen((string) $b) <=> strlen((string) $a));
+        uksort($map, fn ($a, $b): int => strlen((string) $b) <=> strlen((string) $a));
 
         $model = strtolower($model);
 

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_notifications', function (Blueprint $table) {
+        Schema::create('user_notifications', function (Blueprint $table): void {
             $table->id();
             $table->integer('admin_id')->unsigned()->nullable();
             $table->integer('notification_id')->unsigned()->nullable();

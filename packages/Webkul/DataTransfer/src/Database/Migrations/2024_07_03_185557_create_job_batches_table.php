@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('job_track_batches', function (Blueprint $table) {
+        Schema::create('job_track_batches', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('state')->default('pending');
             $table->json('data');

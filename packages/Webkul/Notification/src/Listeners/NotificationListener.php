@@ -13,10 +13,8 @@ class NotificationListener implements ShouldQueue
 {
     /**
      * Handle the event.
-     *
-     * @return void
      */
-    public function handle(NotificationEventInterface $event)
+    public function handle(NotificationEventInterface $event): void
     {
         $notification = Notification::create([
             'type'         => $event->notificationData['type'],
@@ -28,7 +26,7 @@ class NotificationListener implements ShouldQueue
         ]);
 
         $userNotificationsData = array_map(
-            fn ($userId) => [
+            fn ($userId): array => [
                 'admin_id' => $userId,
             ],
             $event->notificationData['user_ids']

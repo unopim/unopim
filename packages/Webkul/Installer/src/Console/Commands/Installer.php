@@ -2,6 +2,8 @@
 
 namespace Webkul\Installer\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -21,26 +23,14 @@ use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-class Installer extends Command
-{
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'unopim:install
+#[Description('UnoPim installer.')]
+#[Signature('unopim:install
         { --skip-env-check : Skip env check. }
         { --skip-admin-creation : Skip admin creation. }
         { --with-demo-data : Seed sample products and demo data. }
-        { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'UnoPim installer.';
-
+        { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }')]
+class Installer extends Command
+{
     /**
      * Locales list.
      *
@@ -134,11 +124,11 @@ class Installer extends Command
     /**
      * Install and configure UnoPIm.
      */
-    public function handle()
+    public function handle(): void
     {
-        $applicationDetails = ! $this->option('skip-env-check')
-            ? $this->checkForEnvFile()
-            : [];
+        $applicationDetails = $this->option('skip-env-check')
+            ? []
+            : $this->checkForEnvFile();
 
         $this->loadEnvConfigAtRuntime();
 
@@ -151,21 +141,20 @@ class Installer extends Command
                 $this->error('Verify that the correct credentials are provided to establish a connection with ElasticSearch.');
 
                 return;
-            } else {
-                $this->info('Elasticsearch Connected successfully');
             }
+            $this->info('Elasticsearch Connected successfully');
         }
 
         $this->warn('Step: Migrating all tables...');
         $this->call('migrate:fresh');
 
         $this->warn('Step: Seeding basic data for UnoPim kickstart...');
-        $this->info(app(UnoPimDatabaseSeeder::class)->run([
+        resolve(UnoPimDatabaseSeeder::class)->run([
             'default_locale'     => $applicationDetails['default_locale'] ?? 'en_US',
             'allowed_locales'    => $applicationDetails['allowed_locales'] ?? ['en_US'],
             'default_currency'   => $applicationDetails['default_currency'] ?? 'USD',
             'allowed_currencies' => $applicationDetails['allowed_currencies'] ?? ['USD'],
-        ]));
+        ]);
 
         $this->warn('Step: Linking storage directory...');
         $this->call('storage:link');
@@ -225,11 +214,11 @@ class Installer extends Command
         $option = $this->option('with-packages');
 
         if ($option !== null && $option !== '') {
-            $keys = array_filter(array_map('trim', explode(',', $option)));
+            $keys = array_filter(array_map(trim(...), explode(',', $option)));
         } elseif ($this->hasInteractiveTerminal()) {
             $keys = multiselect(
                 label: 'Select optional packages to install',
-                options: array_map(fn ($package) => $package['label'], $this->optionalPackages),
+                options: array_map(fn (array $package): string => $package['label'], $this->optionalPackages),
                 hint: 'Use the space bar to toggle, enter to confirm. Leave empty to skip.',
             );
         } else {
@@ -278,7 +267,7 @@ class Installer extends Command
      */
     protected function installOptionalPackages(array $keys): void
     {
-        if (empty($keys)) {
+        if ($keys === []) {
             return;
         }
 
@@ -366,13 +355,11 @@ class Installer extends Command
 
         $process->setTimeout(null);
 
-        $process->run(function ($type, $buffer) {
+        $process->run(function ($type, string|iterable $buffer): void {
             $this->output->write($buffer);
         });
 
-        if (! $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
+        throw_unless($process->isSuccessful(), ProcessFailedException::class, $process);
     }
 
     /**
@@ -420,7 +407,7 @@ class Installer extends Command
      */
     protected function markInstalled(): void
     {
-        app(DatabaseManager::class)->markInstalled();
+        resolve(DatabaseManager::class)->markInstalled();
 
         if (file_exists(storage_path('installed'))) {
             return;
@@ -433,10 +420,8 @@ class Installer extends Command
 
     /**
      *  Checking .env file and if not found then create .env file.
-     *
-     * @return ?array
      */
-    protected function checkForEnvFile()
+    protected function checkForEnvFile(): ?array
     {
         if (! file_exists(base_path('.env'))) {
             $this->info('Creating the environment configuration file.');
@@ -452,10 +437,8 @@ class Installer extends Command
     /**
      * Create a new .env file. Afterwards, request environment configuration details and set them
      * in the .env file to facilitate the migration to our database.
-     *
-     * @return ?array
      */
-    protected function createEnvFile()
+    protected function createEnvFile(): ?array
     {
         try {
             $applicationDetails = $this->askForApplicationDetails();
@@ -465,28 +448,28 @@ class Installer extends Command
             $this->askForElasticSearchDetails();
 
             return $applicationDetails;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->error('Error in creating .env file, please create it manually and then run `php artisan migrate` again.');
         }
+
+        return null;
     }
 
     /**
      * Ask for application details.
-     *
-     * @return void
      */
-    protected function askForApplicationDetails()
+    protected function askForApplicationDetails(): array
     {
         $this->updateEnvVariable(
             'APP_NAME',
             'Please provide the name of the application',
-            env('APP_NAME', 'UnoPim')
+            static::envDefault('APP_NAME', 'UnoPim')
         );
 
         $this->updateEnvVariable(
             'APP_URL',
             'Please provide the application URL',
-            env('APP_URL', 'http://localhost:8000')
+            static::envDefault('APP_URL', 'http://localhost:8000')
         );
 
         $this->envUpdate(
@@ -549,9 +532,9 @@ class Installer extends Command
 
             'DB_HOST'       => text(
                 label: 'Please enter the database host',
-                default: env('DB_HOST') ?? '127.0.0.1',
+                default: static::envDefault('DB_HOST', '127.0.0.1'),
                 required: true,
-                validate: fn (string $value) => preg_match('/\s/', trim($value))
+                validate: fn (string $value): ?string => preg_match('/\s/', trim($value))
                     ? 'The database host cannot contain whitespace.'
                     : null,
                 transform: trim(...),
@@ -559,9 +542,9 @@ class Installer extends Command
 
             'DB_PORT'       => text(
                 label: 'Please enter the database port',
-                default: env('DB_PORT') ?? '3306',
+                default: static::envDefault('DB_PORT', '3306'),
                 required: true,
-                validate: fn (string $value) => ctype_digit(trim($value))
+                validate: fn (string $value): ?string => ctype_digit(trim($value))
                     ? null
                     : 'The database port must be numeric.',
                 transform: trim(...),
@@ -569,7 +552,7 @@ class Installer extends Command
 
             'DB_DATABASE' => text(
                 label: 'Please enter the database name',
-                default: env('DB_DATABASE') ?? '',
+                default: static::envDefault('DB_DATABASE'),
                 required: true,
                 validate: function (string $value): ?string {
                     $trimmed = trim($value);
@@ -585,7 +568,7 @@ class Installer extends Command
 
             'DB_PREFIX' => text(
                 label: 'Please enter the database prefix',
-                default: env('DB_PREFIX') ?? '',
+                default: static::envDefault('DB_PREFIX'),
                 validate: function (string $value): ?string {
                     $trimmed = trim($value);
 
@@ -596,15 +579,15 @@ class Installer extends Command
                         default                                         => null,
                     };
                 },
-                transform: trim(...),
-                hint: 'or press enter to continue (leave empty to clear)'
+                hint: 'or press enter to continue (leave empty to clear)',
+                transform: trim(...)
             ),
 
             'DB_USERNAME' => text(
                 label: 'Please enter your database username',
-                default: env('DB_USERNAME') ?? '',
+                default: static::envDefault('DB_USERNAME'),
                 required: true,
-                validate: fn (string $value) => preg_match('/\s/', trim($value))
+                validate: fn (string $value): ?string => preg_match('/\s/', trim($value))
                     ? 'The database username cannot contain whitespace.'
                     : null,
                 transform: trim(...),
@@ -617,7 +600,7 @@ class Installer extends Command
         ];
 
         foreach (['DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_PREFIX', 'DB_USERNAME'] as $trimKey) {
-            $databaseDetails[$trimKey] = trim((string) ($databaseDetails[$trimKey] ?? ''));
+            $databaseDetails[$trimKey] = trim($databaseDetails[$trimKey] ?? '');
         }
 
         if (
@@ -625,7 +608,9 @@ class Installer extends Command
             || $databaseDetails['DB_USERNAME'] === ''
             || $databaseDetails['DB_PASSWORD'] === ''
         ) {
-            return $this->error('Please enter the database credentials.');
+            $this->error('Please enter the database credentials.');
+
+            return null;
         }
 
         foreach ($databaseDetails as $key => $value) {
@@ -643,7 +628,7 @@ class Installer extends Command
         $isElasticEnabled = select(
             label: 'Do you want to enable Elasticsearch?',
             options: ['yes', 'no'],
-            default: env('ELASTICSEARCH_ENABLED') ?? 'false'
+            default: static::envDefault('ELASTICSEARCH_ENABLED', 'false')
         ) === 'yes';
 
         if (! $isElasticEnabled) {
@@ -657,7 +642,7 @@ class Installer extends Command
         $connectionType = select(
             label: 'Please select the Elasticsearch connection',
             options: ['default', 'api', 'cloud'],
-            default: env('ELASTICSEARCH_CONNECTION') ?? 'default'
+            default: static::envDefault('ELASTICSEARCH_CONNECTION', 'default')
         );
 
         $this->envUpdate('ELASTICSEARCH_CONNECTION', $connectionType);
@@ -665,21 +650,21 @@ class Installer extends Command
         if ($connectionType === 'cloud') {
             $cloudId = text(
                 label: 'Please enter your Elasticsearch Cloud ID',
-                default: env('ELASTICSEARCH_CLOUD_ID') ?? '',
+                default: static::envDefault('ELASTICSEARCH_CLOUD_ID'),
                 transform: trim(...),
             );
             $this->envUpdate('ELASTICSEARCH_CLOUD_ID', $cloudId);
         } else {
             $host = text(
                 label: 'Please enter the Elasticsearch host',
-                default: env('ELASTICSEARCH_HOST') ?? '127.0.0.1:9200',
+                default: static::envDefault('ELASTICSEARCH_HOST', '127.0.0.1:9200'),
                 transform: trim(...),
             );
             $this->envUpdate('ELASTICSEARCH_HOST', $host);
 
             $user = text(
                 label: 'Please enter the Elasticsearch user',
-                default: env('ELASTICSEARCH_USER') ?? '',
+                default: static::envDefault('ELASTICSEARCH_USER'),
                 transform: trim(...),
             );
             $this->envUpdate('ELASTICSEARCH_USER', $user);
@@ -692,7 +677,7 @@ class Installer extends Command
             if ($connectionType === 'api') {
                 $apiKey = text(
                     label: 'Please enter the Elasticsearch API key',
-                    default: env('ELASTICSEARCH_API_KEY') ?? '',
+                    default: static::envDefault('ELASTICSEARCH_API_KEY'),
                     transform: trim(...),
                 );
                 $this->envUpdate('ELASTICSEARCH_API_KEY', $apiKey);
@@ -701,7 +686,7 @@ class Installer extends Command
 
         $indexPrefix = text(
             label: 'Please enter your Elasticsearch Index Prefix',
-            default: env('ELASTICSEARCH_INDEX_PREFIX') ?? '',
+            default: static::envDefault('ELASTICSEARCH_INDEX_PREFIX'),
             transform: trim(...),
         );
 
@@ -725,7 +710,7 @@ class Installer extends Command
         $adminEmail = text(
             label: 'Provide Email of Administrator',
             default  : 'admin@example.com',
-            validate: fn (string $value) => match (true) {
+            validate: fn (string $value): ?string => match (true) {
                 ! filter_var(trim($value), FILTER_VALIDATE_EMAIL) => 'The email address you entered is not valid please try again.',
                 default                                           => null
             },
@@ -786,20 +771,20 @@ class Installer extends Command
             $this->info('-----------------------------');
             $this->info('Great job, you\'ve done it!');
             $this->info('Congratulations! The installation has successfully completed and UnoPim is ready for use.');
-            $this->info('Please navigate to: '.env('APP_URL').'/admin'.' and use the following credentials for authentication:');
+            $this->info('Please navigate to: '.static::envDefault('APP_URL').'/admin'.' and use the following credentials for authentication:');
             $this->info('Email: '.$adminEmail);
             $this->info('Password was securely set for the admin user.');
             $this->info('Cheers!');
 
             Event::dispatch('unopim.installed');
         } catch (\Exception $e) {
-            return $this->error($e->getMessage());
+            $this->error($e->getMessage());
         }
     }
 
     protected function seedSampleProducts(): void
     {
-        $result = app(DemoDataInstaller::class)
+        $result = resolve(DemoDataInstaller::class)
             ->seed(fn (string $message) => $this->warn('Step: '.$message));
 
         if ($result['success']) {
@@ -819,35 +804,35 @@ class Installer extends Command
         /**
          * Setting application environment.
          */
-        app()['env'] = $this->getEnvAtRuntime('APP_ENV');
+        app()['env'] = static::getEnvAtRuntime('APP_ENV');
 
         /**
          * Setting application configuration.
          */
         config([
-            'app.env'      => $this->getEnvAtRuntime('APP_ENV'),
-            'app.name'     => $this->getEnvAtRuntime('APP_NAME'),
-            'app.url'      => $this->getEnvAtRuntime('APP_URL'),
-            'app.timezone' => $this->getEnvAtRuntime('APP_TIMEZONE'),
-            'app.locale'   => $this->getEnvAtRuntime('APP_LOCALE'),
-            'app.currency' => $this->getEnvAtRuntime('APP_CURRENCY'),
+            'app.env'      => static::getEnvAtRuntime('APP_ENV'),
+            'app.name'     => static::getEnvAtRuntime('APP_NAME'),
+            'app.url'      => static::getEnvAtRuntime('APP_URL'),
+            'app.timezone' => static::getEnvAtRuntime('APP_TIMEZONE'),
+            'app.locale'   => static::getEnvAtRuntime('APP_LOCALE'),
+            'app.currency' => static::getEnvAtRuntime('APP_CURRENCY'),
         ]);
 
         /**
          * Setting database configurations.
          */
-        $databaseConnection = $this->getEnvAtRuntime('DB_CONNECTION');
+        $databaseConnection = static::getEnvAtRuntime('DB_CONNECTION');
 
         $previousDefault = config('database.default');
 
         config([
             'database.default'                                    => $databaseConnection,
-            "database.connections.{$databaseConnection}.host"     => $this->getEnvAtRuntime('DB_HOST'),
-            "database.connections.{$databaseConnection}.port"     => $this->getEnvAtRuntime('DB_PORT'),
-            "database.connections.{$databaseConnection}.database" => $this->getEnvAtRuntime('DB_DATABASE'),
-            "database.connections.{$databaseConnection}.username" => $this->getEnvAtRuntime('DB_USERNAME'),
-            "database.connections.{$databaseConnection}.password" => $this->getEnvAtRuntime('DB_PASSWORD'),
-            "database.connections.{$databaseConnection}.prefix"   => $this->getEnvAtRuntime('DB_PREFIX'),
+            "database.connections.{$databaseConnection}.host"     => static::getEnvAtRuntime('DB_HOST'),
+            "database.connections.{$databaseConnection}.port"     => static::getEnvAtRuntime('DB_PORT'),
+            "database.connections.{$databaseConnection}.database" => static::getEnvAtRuntime('DB_DATABASE'),
+            "database.connections.{$databaseConnection}.username" => static::getEnvAtRuntime('DB_USERNAME'),
+            "database.connections.{$databaseConnection}.password" => static::getEnvAtRuntime('DB_PASSWORD'),
+            "database.connections.{$databaseConnection}.prefix"   => static::getEnvAtRuntime('DB_PREFIX'),
         ]);
 
         DB::setDefaultConnection($databaseConnection);
@@ -861,21 +846,21 @@ class Installer extends Command
         /**
          * Setting elasticsearch configurations.
          */
-        $elasticsearchPrefix = $this->getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') != '' ? $this->getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') : $this->getEnvAtRuntime('APP_NAME');
+        $elasticsearchPrefix = static::getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') != '' ? static::getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') : static::getEnvAtRuntime('APP_NAME');
 
         config([
-            'elasticsearch.connection'                => $this->getEnvAtRuntime('ELASTICSEARCH_CONNECTION'),
-            'elasticsearch.enabled'                   => $this->getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
+            'elasticsearch.connection'                => static::getEnvAtRuntime('ELASTICSEARCH_CONNECTION'),
+            'elasticsearch.enabled'                   => static::getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
             'elasticsearch.prefix'                    => $elasticsearchPrefix,
-            'elasticsearch.connections.default.hosts' => [$this->getEnvAtRuntime('ELASTICSEARCH_HOST')],
-            'elasticsearch.connections.default.user'  => $this->getEnvAtRuntime('ELASTICSEARCH_USER'),
-            'elasticsearch.connections.default.pass'  => $this->getEnvAtRuntime('ELASTICSEARCH_PASS'),
-            'elasticsearch.connections.api.hosts'     => [$this->getEnvAtRuntime('ELASTICSEARCH_HOST')],
-            'elasticsearch.connections.api.key'       => $this->getEnvAtRuntime('ELASTICSEARCH_API_KEY'),
-            'elasticsearch.connections.cloud.api_key' => $this->getEnvAtRuntime('ELASTICSEARCH_API_KEY'),
-            'elasticsearch.connections.cloud.id'      => $this->getEnvAtRuntime('ELASTICSEARCH_CLOUD_ID'),
-            'elasticsearch.connections.cloud.user'    => $this->getEnvAtRuntime('ELASTICSEARCH_USER'),
-            'elasticsearch.connections.cloud.pass'    => $this->getEnvAtRuntime('ELASTICSEARCH_PASS'),
+            'elasticsearch.connections.default.hosts' => [static::getEnvAtRuntime('ELASTICSEARCH_HOST')],
+            'elasticsearch.connections.default.user'  => static::getEnvAtRuntime('ELASTICSEARCH_USER'),
+            'elasticsearch.connections.default.pass'  => static::getEnvAtRuntime('ELASTICSEARCH_PASS'),
+            'elasticsearch.connections.api.hosts'     => [static::getEnvAtRuntime('ELASTICSEARCH_HOST')],
+            'elasticsearch.connections.api.key'       => static::getEnvAtRuntime('ELASTICSEARCH_API_KEY'),
+            'elasticsearch.connections.cloud.api_key' => static::getEnvAtRuntime('ELASTICSEARCH_API_KEY'),
+            'elasticsearch.connections.cloud.id'      => static::getEnvAtRuntime('ELASTICSEARCH_CLOUD_ID'),
+            'elasticsearch.connections.cloud.user'    => static::getEnvAtRuntime('ELASTICSEARCH_USER'),
+            'elasticsearch.connections.cloud.pass'    => static::getEnvAtRuntime('ELASTICSEARCH_PASS'),
         ]);
 
         $this->info('Configuration loaded...');
@@ -905,16 +890,16 @@ class Installer extends Command
     {
         $default = $this->getEnvChoiceDefault($key, $choices);
 
-        $choice = (new PreselectedSearchValue(
+        $choice = new PreselectedSearchValue(
             label: $question,
-            options: fn (string $value) => $this->filterChoices($choices, $value),
+            options: fn (string $value): array => $this->filterChoices($choices, $value),
             placeholder: 'Type to search...',
             scroll: 10,
             hint: $default !== null
                 ? 'Press Enter to keep the current value, or Backspace to clear it and search.'
                 : '',
             defaultValue: $default,
-        ))->prompt();
+        )->prompt();
 
         $this->envUpdate($key, $choice);
 
@@ -927,7 +912,7 @@ class Installer extends Command
      */
     protected function getEnvChoiceDefault(string $key, array $choices): ?string
     {
-        $current = $this->getEnvAtRuntime($key);
+        $current = static::getEnvAtRuntime($key);
 
         if (! is_string($current) || $current === '') {
             return null;
@@ -940,12 +925,14 @@ class Installer extends Command
 
     /**
      * Function for getting allowed choices based on the list of options.
+     *
+     * @return mixed[]
      */
-    protected function allowedChoice(string $question, array $choices)
+    protected function allowedChoice(string $question, array $choices): array
     {
         $selectedKeys = multisearch(
             label: $question,
-            options: fn (string $value) => $this->filterChoices($choices, $value),
+            options: fn (string $value): array => $this->filterChoices($choices, $value),
             placeholder: 'Type to search...',
             scroll: 10,
             hint: 'Use the space bar to select options.',
@@ -978,7 +965,7 @@ class Installer extends Command
 
         return array_filter(
             $choices,
-            fn (string $label, string $key) => str_contains(strtolower($label), $value)
+            fn (string $label, string $key): bool => str_contains(strtolower($label), $value)
                 || str_contains(strtolower($key), $value),
             ARRAY_FILTER_USE_BOTH
         );
@@ -1002,6 +989,17 @@ class Installer extends Command
     }
 
     /**
+     * Prompt default read from the `.env` file on disk, so values written
+     * earlier in the run (or shipped in the skeleton .env) pre-fill prompts.
+     */
+    protected static function envDefault(string $key, string $fallback = ''): string
+    {
+        $value = static::getEnvAtRuntime($key);
+
+        return $value === false || $value === '' ? $fallback : $value;
+    }
+
+    /**
      * Check key in `.env` file because it will help to find values at runtime.
      */
     protected static function getEnvAtRuntime(string $key): string|bool
@@ -1010,12 +1008,10 @@ class Installer extends Command
             foreach ($data as $line) {
                 $line = preg_replace('/\s+/', '', $line);
 
-                $rowValues = explode('=', $line);
+                $rowValues = explode('=', (string) $line);
 
-                if (strlen($line) !== 0) {
-                    if (strpos($key, $rowValues[0]) !== false) {
-                        return $rowValues[1];
-                    }
+                if (strlen((string) $line) !== 0 && str_contains($key, $rowValues[0])) {
+                    return $rowValues[1];
                 }
             }
         }

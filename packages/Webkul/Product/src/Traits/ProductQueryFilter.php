@@ -39,9 +39,7 @@ trait ProductQueryFilter
             }
         }
 
-        if (! $filter) {
-            throw new \Exception("No matching filter found for property: {$property}");
-        }
+        throw_unless($filter, \Exception::class, "No matching filter found for property: {$property}");
 
         if (! $attribute) {
             $this->applyPropertyFilter($filter, $property, $operator, $value, $context);

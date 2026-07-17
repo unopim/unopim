@@ -45,7 +45,7 @@ class TokenUsageRecorder
     {
         $cachedTokens = max(0, $cachedTokens);
 
-        DB::transaction(function () use ($userId, $tokensUsed, $cachedTokens) {
+        DB::transaction(function () use ($userId, $tokensUsed, $cachedTokens): void {
             $today = now()->toDateString();
 
             $row = DB::table('ai_agent_token_usage')

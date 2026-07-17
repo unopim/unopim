@@ -95,7 +95,7 @@ enum AiProvider: string
 
     public static function options(): array
     {
-        return array_map(fn (self $provider) => [
+        return array_map(fn (self $provider): array => [
             'title' => $provider->label(),
             'value' => $provider->value,
         ], self::cases());
@@ -189,7 +189,7 @@ enum AiProvider: string
 
         $data = json_decode($response->getBody()->getContents(), true);
         $models = array_map(
-            fn ($id) => ltrim((string) $id, '~'),
+            fn ($id): string => ltrim((string) $id, '~'),
             array_column($data['data'] ?? [], 'id')
         );
         sort($models);
@@ -246,7 +246,7 @@ enum AiProvider: string
             sort($models);
 
             return $models;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return [];
         }
     }

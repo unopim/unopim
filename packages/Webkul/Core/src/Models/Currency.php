@@ -2,6 +2,8 @@
 
 namespace Webkul\Core\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +16,15 @@ use Webkul\Core\Database\Factories\CurrencyFactory;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Appends([
+    'name',
+])]
+#[Fillable([
+    'code',
+    'symbol',
+    'decimal',
+    'status',
+])]
 class Currency extends Model implements CurrencyContract, HistoryAuditable
 {
     use HasFactory;
@@ -25,30 +36,11 @@ class Currency extends Model implements CurrencyContract, HistoryAuditable
     protected array $historyTags = ['currency'];
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'code',
-        'symbol',
-        'decimal',
-        'status',
-    ];
-
-    /**
-     * Extra fields/properties that do not exist in the table and are added to the object
-     */
-    protected $appends = [
-        'name',
-    ];
-
-    /**
      * Set currency code in capital
      */
-    public function setCodeAttribute($code): void
+    protected function code(): Attribute
     {
-        $this->attributes['code'] = strtoupper($code);
+        return Attribute::make(set: fn ($code): array => ['code' => strtoupper((string) $code)]);
     }
 
     /**
@@ -80,7 +72,7 @@ class Currency extends Model implements CurrencyContract, HistoryAuditable
      */
     public function isCurrencyBeingUsed(): bool
     {
-        return $this->channel()?->get()?->first()?->exists() ?? false;
+        return $this->channel()->exists();
     }
 
     /**
@@ -92,7 +84,7 @@ class Currency extends Model implements CurrencyContract, HistoryAuditable
             get: function (?string $value, array $attributes) {
                 try {
                     return Currencies::getName($attributes['code'], \Locale::getPrimaryLanguage(app()->getLocale()));
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     return $attributes['code'];
                 }
             }

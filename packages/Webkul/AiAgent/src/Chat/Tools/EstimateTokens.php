@@ -29,17 +29,17 @@ class EstimateTokens implements PimTool
             /**
              * Number of products sampled to derive the average per-product size.
              */
-            private const SAMPLE_SIZE = 20;
+            private const int SAMPLE_SIZE = 20;
 
             /**
              * Instruction/formatting overhead added per AI call, in tokens.
              */
-            private const PER_CALL_OVERHEAD_TOKENS = 600;
+            private const int PER_CALL_OVERHEAD_TOKENS = 600;
 
             /**
              * Assumed generated output size per product, in tokens.
              */
-            private const OUTPUT_TOKENS_PER_PRODUCT = 400;
+            private const int OUTPUT_TOKENS_PER_PRODUCT = 400;
 
             public function __construct(
                 ChatContext $context,
@@ -109,7 +109,7 @@ class EstimateTokens implements PimTool
                 $sample = $qb->limit(min(self::SAMPLE_SIZE, $productCount))->get();
 
                 $sampleTokens = $sample->map(
-                    fn ($row) => $this->tokenEstimator->estimate((string) $row->values)
+                    fn ($row): int => $this->tokenEstimator->estimate((string) $row->values)
                 );
 
                 $avgInputPerProduct = (int) ceil($sampleTokens->avg() ?? 0) + self::PER_CALL_OVERHEAD_TOKENS;

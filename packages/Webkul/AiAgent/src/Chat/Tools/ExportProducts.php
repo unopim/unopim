@@ -143,7 +143,7 @@ class ExportProducts implements PimTool
      */
     public function buildFilters(ChatContext $context, ?string $skus, string $status, ?string $category, string $format): array
     {
-        $skuList = array_values(array_filter(array_map('trim', explode(',', (string) $skus))));
+        $skuList = array_values(array_filter(array_map(trim(...), explode(',', (string) $skus))));
 
         return [
             'file_format' => $format === 'xlsx' ? 'Xlsx' : 'Csv',
@@ -220,8 +220,8 @@ class ExportProducts implements PimTool
             return $products;
         }
 
-        return $products->filter(function ($product) use ($filters) {
-            $values = json_decode($product->values, true) ?? [];
+        return $products->filter(function ($product) use ($filters): bool {
+            $values = json_decode((string) $product->values, true) ?? [];
 
             return in_array($filters['category'], $values['categories'] ?? [], true);
         })->values();
@@ -237,7 +237,7 @@ class ExportProducts implements PimTool
         ];
 
         foreach ($products as $product) {
-            $values = json_decode($product->values, true) ?? [];
+            $values = json_decode((string) $product->values, true) ?? [];
             $channelLocaleValues = $values['channel_locale_specific'][$context->channel][$context->locale] ?? [];
             $commonValues = $values['common'] ?? [];
 
@@ -245,7 +245,7 @@ class ExportProducts implements PimTool
 
             if (isset($channelLocaleValues['price']) && is_array($channelLocaleValues['price'])) {
                 $price = implode(', ', array_map(
-                    fn ($currency, $amount) => "{$currency}: {$amount}",
+                    fn ($currency, $amount): string => "{$currency}: {$amount}",
                     array_keys($channelLocaleValues['price']),
                     $channelLocaleValues['price']
                 ));
@@ -273,7 +273,7 @@ class ExportProducts implements PimTool
         $stream = fopen('php://temp', 'w+');
 
         foreach ($rows as $row) {
-            fputcsv($stream, $row);
+            fputcsv($stream, $row, escape: '\\');
         }
 
         rewind($stream);
@@ -333,7 +333,7 @@ class ExportProducts implements PimTool
 
         $this->jobTrackBatchRepository->create([
             'state'        => ExportHelper::STATE_PROCESSED,
-            'data'         => $products->pluck('id')->map(fn ($id) => ['id' => $id])->values()->all(),
+            'data'         => $products->pluck('id')->map(fn ($id): array => ['id' => $id])->values()->all(),
             'summary'      => $summary,
             'job_track_id' => $jobTrackId,
         ]);

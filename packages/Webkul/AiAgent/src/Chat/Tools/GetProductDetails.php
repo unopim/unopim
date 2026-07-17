@@ -57,7 +57,7 @@ class GetProductDetails implements PimTool
                     return json_encode(['error' => 'Product not found']);
                 }
 
-                $values = json_decode($product->values, true) ?? [];
+                $values = json_decode((string) $product->values, true) ?? [];
                 $family = DB::table('attribute_families')
                     ->where('id', $product->attribute_family_id)
                     ->value('code');

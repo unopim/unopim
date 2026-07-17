@@ -2,11 +2,8 @@
 
 namespace Webkul\AiAgent\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\AiAgent\Services\TranslationResponseParser;
@@ -34,10 +31,7 @@ use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
  */
 class TranslateProductValuesJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public int $tries = 2;
 
@@ -80,13 +74,13 @@ class TranslateProductValuesJob implements ShouldQueue
 
         $targetLocales = $this->resolveTargetLocales($allChannels);
 
-        if (empty($targetLocales)) {
+        if ($targetLocales === []) {
             return; // Only one locale configured — nothing to translate
         }
 
         $translatableFields = $this->collectTranslatableFields();
 
-        if (empty($translatableFields)) {
+        if ($translatableFields === []) {
             return;
         }
 
@@ -160,7 +154,7 @@ class TranslateProductValuesJob implements ShouldQueue
             }
         }
 
-        if (empty($succeeded)) {
+        if ($succeeded === []) {
             // Nothing was translated. Surface it as a failure instead of the
             // old silent "completed" so the queue retries and the operator
             // can see something went wrong.
@@ -173,7 +167,7 @@ class TranslateProductValuesJob implements ShouldQueue
             'TranslateProductValuesJob: %s translated to %s%s',
             $product->sku,
             implode(', ', $succeeded),
-            empty($failed) ? '' : ' (failed: '.implode(', ', array_keys($failed)).')',
+            $failed === [] ? '' : ' (failed: '.implode(', ', array_keys($failed)).')',
         ));
     }
 
@@ -208,10 +202,12 @@ class TranslateProductValuesJob implements ShouldQueue
         $fields = [];
 
         foreach ($this->fieldsToTranslate as $fieldCode => $originalValue) {
-            if (empty($originalValue) || ! is_string($originalValue)) {
+            if (empty($originalValue)) {
                 continue;
             }
-
+            if (! is_string($originalValue)) {
+                continue;
+            }
             if (\in_array($fieldCode, ['sku', 'url_key', 'product_number', 'image'], true)) {
                 continue;
             }
@@ -271,7 +267,7 @@ class TranslateProductValuesJob implements ShouldQueue
         array $familyAttributes,
         iterable $allChannels,
     ): int {
-        return DB::transaction(function () use ($targetLocale, $translated, $translatableFields, $familyAttributes, $allChannels) {
+        return DB::transaction(function () use ($targetLocale, $translated, $translatableFields, $familyAttributes, $allChannels): int {
             $fresh = DB::table('products')->where('id', $this->productId)->lockForUpdate()->first();
 
             if (! $fresh) {
@@ -291,10 +287,15 @@ class TranslateProductValuesJob implements ShouldQueue
             $applied = 0;
 
             foreach ($translated as $fieldCode => $translatedValue) {
-                if (! isset($translatableFields[$fieldCode]) || empty($translatedValue) || ! is_string($translatedValue)) {
+                if (! isset($translatableFields[$fieldCode])) {
                     continue;
                 }
-
+                if (empty($translatedValue)) {
+                    continue;
+                }
+                if (! is_string($translatedValue)) {
+                    continue;
+                }
                 $meta = $familyAttributes[$fieldCode] ?? ['value_per_channel' => true, 'value_per_locale' => true];
 
                 if ($meta['value_per_channel'] && $meta['value_per_locale']) {

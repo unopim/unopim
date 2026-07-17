@@ -17,6 +17,14 @@ use Webkul\AppUrlGuard\Http\Middleware\VerifyAppUrlMatches;
 class AppUrlGuardServiceProvider extends ServiceProvider
 {
     /**
+     * Register services.
+     */
+    public function register(): void
+    {
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/app_url_guard.php', 'app_url_guard');
+    }
+
+    /**
      * Bootstrap services.
      */
     public function boot(Kernel $kernel): void
@@ -53,6 +61,6 @@ class AppUrlGuardServiceProvider extends ServiceProvider
         }
 
         return ! app()->runningUnitTests()
-            && ! filter_var(env('CI'), FILTER_VALIDATE_BOOLEAN);
+            && ! filter_var(config('app_url_guard.ci'), FILTER_VALIDATE_BOOLEAN);
     }
 }

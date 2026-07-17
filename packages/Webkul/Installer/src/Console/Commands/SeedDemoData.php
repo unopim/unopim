@@ -2,6 +2,8 @@
 
 namespace Webkul\Installer\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
@@ -13,23 +15,11 @@ use Webkul\Installer\Helpers\DemoDataInstaller;
  * installer's `--with-demo-data` flag and the UI installer's
  * "sample products?" checkbox produce.
  */
+#[Description('Seed demo extras, categories, and sample products into an installed UnoPim database.')]
+#[Signature('unopim:install:demo-data
+        { --force : Re-seed even when demo data is already present. }')]
 class SeedDemoData extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'unopim:install:demo-data
-        { --force : Re-seed even when demo data is already present. }';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Seed demo extras, categories, and sample products into an installed UnoPim database.';
-
     /**
      * Execute the command.
      */

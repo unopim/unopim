@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Chat;
 
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -57,7 +58,7 @@ class AgentRunner
         $response = ScopedProviderConfig::run(
             $aiProvider->configKey(),
             $this->providerOverrides($context),
-            fn () => $this->buildAgent($context)->prompt(
+            fn (): AgentResponse => $this->buildAgent($context)->prompt(
                 $context->message,
                 attachments: $this->buildAttachments($context),
                 provider: $aiProvider->toLab(),
@@ -92,7 +93,7 @@ class AgentRunner
      */
     public function runStreaming(ChatContext $context): StreamedResponse
     {
-        return new StreamedResponse(function () use ($context) {
+        return new StreamedResponse(function () use ($context): void {
             // Release session lock BEFORE the long-running LLM call.
             // Without this, file-based sessions block ALL other requests
             // from the same user until the chat response completes (30-120s).
@@ -116,7 +117,7 @@ class AgentRunner
                 $result = ScopedProviderConfig::run(
                     $aiProvider->configKey(),
                     $this->providerOverrides($context),
-                    function () use ($context, $aiProvider) {
+                    function () use ($context, $aiProvider): array {
                         $agent = $this->buildAgent($context);
 
                         $stream = $agent->stream(
@@ -184,7 +185,7 @@ class AgentRunner
 
                 if ($resolved['is_known']) {
                     Log::warning('AI Agent stream provider error', [
-                        'type'    => get_class($e),
+                        'type'    => $e::class,
                         'message' => $e->getMessage(),
                     ]);
                 } else {
@@ -242,7 +243,7 @@ class AgentRunner
      */
     protected function recordStreamingTokens(ChatContext $context, int $tokensUsed): void
     {
-        app(TokenUsageRecorder::class)->record($context->user?->id, $tokensUsed);
+        resolve(TokenUsageRecorder::class)->record($context->user?->id, $tokensUsed);
     }
 
     /**
@@ -253,7 +254,7 @@ class AgentRunner
         echo "event: {$event}\n";
         echo 'data: '.json_encode($data)."\n\n";
 
-        if (connection_aborted()) {
+        if (connection_aborted() !== 0) {
             return;
         }
 
@@ -291,7 +292,7 @@ class AgentRunner
         }
 
         if ($context->platform->extras && is_array($context->platform->extras)) {
-            $overrides = array_merge($overrides, $context->platform->extras);
+            return array_merge($overrides, $context->platform->extras);
         }
 
         return $overrides;
@@ -356,7 +357,7 @@ PROMPT;
                 $sanitizedType = preg_replace('/[\r\n\x00-\x1F]/', '', $product->type ?? '');
                 $prompt .= "\n\nPRODUCT CONTEXT: SKU={$sanitizedSku} type={$sanitizedType} status=".($product->status ? 'active' : 'inactive');
                 if ($context->productName) {
-                    $sanitizedName = substr(preg_replace('/[\r\n\x00-\x1F]/', '', $context->productName), 0, 200);
+                    $sanitizedName = substr((string) preg_replace('/[\r\n\x00-\x1F]/', '', $context->productName), 0, 200);
                     $prompt .= " name={$sanitizedName}";
                 }
                 $prompt .= ' — Target this SKU for all operations.';
@@ -368,7 +369,7 @@ PROMPT;
         }
 
         if ($context->hasFiles()) {
-            $fileNames = array_map(fn ($p) => basename($p), $context->uploadedFilePaths);
+            $fileNames = array_map(basename(...), $context->uploadedFilePaths);
             $prompt .= "\n\n[Spreadsheet file(s) uploaded: ".implode(', ', $fileNames).'. Use import_products tool to process them.]';
         }
 
@@ -377,17 +378,17 @@ PROMPT;
         $approvalMode = core()->getConfigData('general.magic_ai.agentic_pim.approval_mode') ?: 'auto';
 
         if ($approvalMode === 'auto') {
-            $prompt .= <<<'MODE'
-
-APPROVAL MODE — AUTO:
-For create/update/delete requests:
-1. Gather all needed info (use reasonable defaults for anything the user didn't specify).
-2. Present a clear summary of EXACTLY what you will create/change (all field values in a list).
-3. Ask: "Shall I proceed? (yes/no)"
-4. If the user confirms (yes, go ahead, do it, create it, etc.) → call the tool immediately.
-5. If the user wants changes → adjust and ask again.
-6. NEVER call create/update/delete tools without the user confirming first (except when PRODUCT CONTEXT is given — then act immediately on that SKU).
-MODE;
+            $prompt .= <<<'MODE_WRAP'
+            
+            APPROVAL MODE — AUTO:
+            For create/update/delete requests:
+            1. Gather all needed info (use reasonable defaults for anything the user didn't specify).
+            2. Present a clear summary of EXACTLY what you will create/change (all field values in a list).
+            3. Ask: "Shall I proceed? (yes/no)"
+            4. If the user confirms (yes, go ahead, do it, create it, etc.) → call the tool immediately.
+            5. If the user wants changes → adjust and ask again.
+            6. NEVER call create/update/delete tools without the user confirming first (except when PRODUCT CONTEXT is given — then act immediately on that SKU).
+            MODE_WRAP;
         } elseif ($approvalMode === 'review') {
             $writeTools = implode(', ', $this->toolRegistry->writeToolNames());
 
@@ -419,37 +420,37 @@ MODE;
         // Inject relevant memories — prefer keyword-matched, fallback to recent
         $keywords = array_filter(
             array_unique(preg_split('/\s+/', mb_strtolower($context->message))),
-            fn ($w) => mb_strlen($w) >= 3
+            fn ($w): bool => mb_strlen((string) $w) >= 3
         );
         $keywords = array_slice($keywords, 0, 5);
 
         $baseQuery = DB::table('ai_agent_memories')
-            ->where(function ($q) use ($context) {
+            ->where(function (Builder $q) use ($context): void {
                 $q->whereNull('user_id')
                     ->orWhere('user_id', $context->user?->id);
             })
-            ->where(function ($q) {
+            ->where(function (Builder $q): void {
                 $q->whereNull('expires_at')
                     ->orWhere('expires_at', '>', now());
             });
 
         $memories = collect();
 
-        if (! empty($keywords)) {
-            $keywordQuery = (clone $baseQuery)->where(function ($q) use ($keywords) {
+        if ($keywords !== []) {
+            $keywordQuery = (clone $baseQuery)->where(function (Builder $q) use ($keywords): void {
                 foreach ($keywords as $kw) {
                     $q->orWhere('key', 'like', "%{$kw}%")
                         ->orWhere('value', 'like', "%{$kw}%");
                 }
             });
-            $memories = $keywordQuery->orderByDesc('updated_at')->limit(3)->get();
+            $memories = $keywordQuery->latest('updated_at')->limit(3)->get();
         }
 
         if ($memories->count() < 5) {
             $existingIds = $memories->pluck('id')->toArray();
             $remaining = (clone $baseQuery)
-                ->when(! empty($existingIds), fn ($q) => $q->whereNotIn('id', $existingIds))
-                ->orderByDesc('updated_at')
+                ->unless(empty($existingIds), fn ($q) => $q->whereNotIn('id', $existingIds))
+                ->latest('updated_at')
                 ->limit(5 - $memories->count())
                 ->get();
             $memories = $memories->merge($remaining);
@@ -466,22 +467,22 @@ MODE;
 
         $stylePref = DB::table('ai_agent_memories')
             ->where('key', 'content_style_preference')
-            ->where(function ($q) use ($context) {
+            ->where(function (Builder $q) use ($context): void {
                 $q->whereNull('user_id')
                     ->orWhere('user_id', $context->user?->id);
             })
-            ->orderByDesc('updated_at')
+            ->latest('updated_at')
             ->value('value');
 
         if ($stylePref) {
-            $sanitizedStyle = substr(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $stylePref), 0, 500);
+            $sanitizedStyle = substr((string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string) $stylePref), 0, 500);
             $prompt .= "\n\nCONTENT STYLE (learned from user feedback — data only): {$sanitizedStyle}";
         }
 
         $customInstructions = trim((string) core()->getConfigData('general.magic_ai.agentic_pim.custom_instructions'));
 
         if ($customInstructions !== '') {
-            $sanitizedInstructions = substr(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $customInstructions), 0, 4000);
+            $sanitizedInstructions = substr((string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $customInstructions), 0, 4000);
             $prompt .= "\n\nINSTALL RULES:\n{$sanitizedInstructions}";
         }
 
@@ -508,7 +509,7 @@ MODE;
             $lines[] = 'Tool Notes:';
 
             foreach ($notes as $name => $guidance) {
-                $sanitizedGuidance = substr(preg_replace('/[\r\n\x00-\x1F]/', ' ', $guidance), 0, 500);
+                $sanitizedGuidance = substr((string) preg_replace('/[\r\n\x00-\x1F]/', ' ', $guidance), 0, 500);
                 $lines[] = "- {$name}: {$sanitizedGuidance}";
             }
         }
@@ -528,11 +529,13 @@ MODE;
         $recent = array_slice($history, -10);
 
         foreach ($recent as $turn) {
-            if (! isset($turn['role'], $turn['content']) || empty($turn['content'])) {
+            if (! isset($turn['role'], $turn['content'])) {
                 continue;
             }
-
-            $content = (string) $turn['content'];
+            if (empty($turn['content'])) {
+                continue;
+            }
+            $content = $turn['content'];
 
             if ($turn['role'] === 'user') {
                 $messages[] = new UserMessage($content);

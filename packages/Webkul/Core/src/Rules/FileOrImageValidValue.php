@@ -70,7 +70,7 @@ class FileOrImageValidValue implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if ($this->isMultiple && is_string($value) && str_contains($value, ',')) {
-            $value = array_filter(explode(',', $value), 'trim');
+            $value = array_filter(explode(',', $value), trim(...));
         }
 
         $values = is_array($value)
@@ -167,13 +167,7 @@ class FileOrImageValidValue implements ValidationRule
             return false;
         }
 
-        foreach ($this->allowedPathPrefixes as $prefix) {
-            if (str_starts_with($path, rtrim($prefix, '/').'/')) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->allowedPathPrefixes, fn ($prefix): bool => str_starts_with($path, rtrim((string) $prefix, '/').'/'));
     }
 
     protected function validateStoredFileType(string $path): bool
@@ -193,7 +187,7 @@ class FileOrImageValidValue implements ValidationRule
         $expectedMimeTypes = MimeTypes::getDefault()->getMimeTypes($extension);
 
         return is_string($mimeType)
-            && ! empty($expectedMimeTypes)
+            && $expectedMimeTypes !== []
             && in_array($mimeType, $expectedMimeTypes, true);
     }
 

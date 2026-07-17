@@ -98,10 +98,8 @@ class CurrencyRepository extends Repository
 
     /**
      * This function returns a query builder instance for further manipulation of the currency model.
-     *
-     * @return Builder
      */
-    public function queryBuilder()
+    public function queryBuilder(): static
     {
         return $this;
 

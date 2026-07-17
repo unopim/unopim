@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('attribute_group_translations', function (Blueprint $table) {
+        Schema::table('attribute_group_translations', function (Blueprint $table): void {
             $table->string('name', 255)->nullable()->index('attribute_group_translations_name')->change();
         });
     }
@@ -21,11 +21,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('attribute_group_translations', function (Blueprint $table) {
+        Schema::table('attribute_group_translations', function (Blueprint $table): void {
             $table->dropIndex('attribute_group_translations_name');
         });
 
-        Schema::table('attribute_group_translations', function (Blueprint $table) {
+        Schema::table('attribute_group_translations', function (Blueprint $table): void {
             $table->text('name')->nullable()->change();
         });
     }

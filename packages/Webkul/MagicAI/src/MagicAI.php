@@ -10,24 +10,16 @@ use Webkul\MagicAI\Services\LaravelAiAdapter;
 
 class MagicAI
 {
-    /**
-     * @deprecated Use AiProvider enum instead
-     */
+    #[\Deprecated(message: 'Use AiProvider enum instead')]
     const MAGIC_OPEN_AI = 'openai';
 
-    /**
-     * @deprecated Use AiProvider enum instead
-     */
+    #[\Deprecated(message: 'Use AiProvider enum instead')]
     const MAGIC_GROQ_AI = 'groq';
 
-    /**
-     * @deprecated Use AiProvider enum instead
-     */
+    #[\Deprecated(message: 'Use AiProvider enum instead')]
     const MAGIC_OLLAMA_AI = 'ollama';
 
-    /**
-     * @deprecated Use AiProvider enum instead
-     */
+    #[\Deprecated(message: 'Use AiProvider enum instead')]
     const MAGIC_GEMINI_AI = 'gemini';
 
     const SUFFIX_HTML_PROMPT = 'Generate a response using HTML formatting only. Do not include Markdown or any non-HTML syntax.';
@@ -68,7 +60,7 @@ class MagicAI
      */
     public function setPlatformId(int $id): self
     {
-        $this->platformRecord = app(MagicAIPlatformRepository::class)->findOrFail($id);
+        $this->platformRecord = resolve(MagicAIPlatformRepository::class)->findOrFail($id);
 
         return $this;
     }
@@ -88,19 +80,18 @@ class MagicAI
      */
     public function useDefault(): self
     {
-        $this->platformRecord = app(MagicAIPlatformRepository::class)->getDefault();
+        $this->platformRecord = resolve(MagicAIPlatformRepository::class)->getDefault();
 
         return $this;
     }
 
     /**
      * Set LLM platform.
-     *
-     * @deprecated Use setPlatformId() or useDefault() instead
      */
+    #[\Deprecated(message: 'Use setPlatformId() or useDefault() instead')]
     public function setPlatForm(string $platform): self
     {
-        $repo = app(MagicAIPlatformRepository::class);
+        $repo = resolve(MagicAIPlatformRepository::class);
 
         $this->platformRecord = $repo->findOneWhere([
             'provider' => $platform,
@@ -140,7 +131,7 @@ class MagicAI
 
     public function setPrompt(string $prompt, string $fieldType = 'tinymce'): self
     {
-        $this->prompt = $fieldType == 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
+        $this->prompt = $fieldType === 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
 
         return $this;
     }
@@ -180,7 +171,7 @@ class MagicAI
     public function getModelInstance(): LLMModelInterface
     {
         $platform = $this->platformRecord
-            ?? app(MagicAIPlatformRepository::class)->getDefault();
+            ?? resolve(MagicAIPlatformRepository::class)->getDefault();
 
         if (! $platform) {
             throw new \RuntimeException(
@@ -209,13 +200,13 @@ class MagicAI
     public function getModelList(): array
     {
         $platform = $this->platformRecord
-            ?? app(MagicAIPlatformRepository::class)->getDefault();
+            ?? resolve(MagicAIPlatformRepository::class)->getDefault();
 
         if (! $platform) {
             return [];
         }
 
-        return array_map(fn ($model) => [
+        return array_map(fn ($model): array => [
             'id'    => $model,
             'label' => $model,
         ], $platform->model_list);

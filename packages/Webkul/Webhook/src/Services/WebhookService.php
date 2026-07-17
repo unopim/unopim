@@ -32,7 +32,7 @@ class WebhookService
 
         $webhookUrl = $this->settingsRepository->getWebhookUrl();
 
-        if (empty($webhookUrl)) {
+        if (in_array($webhookUrl, [null, '', '0'], true)) {
             return null;
         }
 
@@ -86,7 +86,7 @@ class WebhookService
 
         $webhookUrl = $this->settingsRepository->getWebhookUrl();
 
-        if (empty($webhookUrl)) {
+        if (in_array($webhookUrl, [null, '', '0'], true)) {
             return null;
         }
 
@@ -176,7 +176,7 @@ class WebhookService
 
         $webhookUrl = $this->settingsRepository->getWebhookUrl();
 
-        if (empty($webhookUrl)) {
+        if (in_array($webhookUrl, [null, '', '0'], true)) {
             return null;
         }
 
@@ -187,14 +187,14 @@ class WebhookService
                 ? $this->getProductChangesForWebhook($product)
                 : [];
 
-            if ($requireChanges && empty($productChanges)) {
+            if ($requireChanges && $productChanges === []) {
                 continue;
             }
 
             $normalized[] = $this->normalizeWebhookData($product, $productChanges);
         }
 
-        if (empty($normalized)) {
+        if ($normalized === []) {
             return null;
         }
 
@@ -215,7 +215,7 @@ class WebhookService
                 return null;
             }
 
-            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhookUrl))->post($webhookUrl, $normalized, $webhookData);
+            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhookUrl))->post($webhookUrl, $normalized);
         } catch (\Exception $e) {
             $response = null;
 
@@ -236,11 +236,7 @@ class WebhookService
             ?? request()->user('admin')
             ?? request()->user('api');
 
-        if (is_array($admin)) {
-            $adminName = $admin['name'] ?? null;
-        } else {
-            $adminName = $admin?->name ?? null;
-        }
+        $adminName = is_array($admin) ? $admin['name'] ?? null : $admin?->name ?? null;
 
         $data = [
             'user'   => $adminName,
@@ -287,12 +283,10 @@ class WebhookService
         ];
 
         if ($type === 'configurable') {
-            $normalized['variants'] = $product->variants->map(function ($variant) {
-                return [
-                    'sku'    => $variant->sku,
-                    'status' => (bool) $variant->status,
-                ];
-            })->toArray();
+            $normalized['variants'] = $product->variants->map(fn ($variant): array => [
+                'sku'    => $variant->sku,
+                'status' => (bool) $variant->status,
+            ])->toArray();
         }
 
         return $normalized;

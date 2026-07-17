@@ -19,7 +19,7 @@ class AttributeFamilyPresenter implements HistoryPresenterInterface
 
         foreach ($newValues['AttributeFamilyGroupMapping'] ?? [] as $key => $newValue) {
 
-            $oldValue = isset($oldValues['AttributeFamilyGroupMapping'][$key]) ? $oldValues['AttributeFamilyGroupMapping'][$key] : '';
+            $oldValue = $oldValues['AttributeFamilyGroupMapping'][$key] ?? '';
 
             if ($oldValue == $newValue) {
                 continue;

@@ -11,7 +11,7 @@ class Resource
      */
     public static function routes(string $name, string $controller): void
     {
-        Route::middleware(['admin'])->group(function () use ($name, $controller) {
+        Route::middleware(['admin'])->group(function () use ($name, $controller): void {
             Route::get($name, [$controller, 'index'])->name("admin.{$name}.index");
             Route::get("{$name}/create", [$controller, 'create'])->name("admin.{$name}.create");
             Route::post($name, [$controller, 'store'])->name("admin.{$name}.store");

@@ -109,7 +109,7 @@ class ImportProducts implements PimTool
                     return json_encode(['error' => trans('ai-agent::app.common.import-unsupported-format')]);
                 }
 
-                if (empty($rows)) {
+                if ($rows === []) {
                     return json_encode(['error' => trans('ai-agent::app.common.import-empty-file')]);
                 }
 
@@ -119,7 +119,7 @@ class ImportProducts implements PimTool
                     ]);
                 }
 
-                $headers = array_map(fn ($h) => strtolower(trim((string) $h)), array_keys($rows[0]));
+                $headers = array_map(fn (string $h): string => strtolower(trim($h)), array_keys($rows[0]));
 
                 if (! \in_array('sku', $headers, true)) {
                     return json_encode([
@@ -147,7 +147,7 @@ class ImportProducts implements PimTool
 
                     $sku = trim((string) ($normalizedRow['sku'] ?? ''));
 
-                    if (empty($sku) || ! $this->outer->validateSku($sku)) {
+                    if ($sku === '' || $sku === '0' || ! $this->outer->validateSku($sku)) {
                         $skippedInvalidSku[] = trans('ai-agent::app.common.import-invalid-sku-row', ['row' => $i + 2]);
 
                         continue;
@@ -163,8 +163,8 @@ class ImportProducts implements PimTool
                 $filteredRows = [];
 
                 $existingSkus = $this->outer->existingSkuSet(array_merge(
-                    array_map(fn ($row) => trim((string) ($row['sku'] ?? '')), $normalizedRows),
-                    array_map(fn ($row) => trim((string) ($row['parent'] ?? '')), $normalizedRows),
+                    array_map(fn (array $row): string => trim((string) ($row['sku'] ?? '')), $normalizedRows),
+                    array_map(fn (array $row): string => trim((string) ($row['parent'] ?? '')), $normalizedRows),
                 ));
 
                 foreach ($normalizedRows as $row) {
@@ -199,7 +199,7 @@ class ImportProducts implements PimTool
                     $filteredRows[] = $row;
                 }
 
-                if (empty($filteredRows)) {
+                if ($filteredRows === []) {
                     return json_encode([
                         'error'   => trans('ai-agent::app.common.import-no-eligible-rows'),
                         'skipped' => count($skippedInvalidSku) + $aclSkipped,
@@ -222,14 +222,14 @@ class ImportProducts implements PimTool
                 $jobInstance = $this->outer->createJobInstance($storedFilePath, $familyCode, $this->context);
                 $jobTrack = $this->outer->createJobTrack($jobInstance);
 
-                ImportTrackBatch::dispatch($jobTrack);
+                dispatch(new ImportTrackBatch($jobTrack));
 
                 return json_encode([
                     'result' => [
                         'total_rows'  => count($rows),
                         'queued_rows' => count($filteredRows),
                         'skipped'     => count($skippedInvalidSku) + $aclSkipped,
-                        'errors'      => empty($aclErrors) ? null : array_slice($aclErrors, 0, 5),
+                        'errors'      => $aclErrors === [] ? null : array_slice($aclErrors, 0, 5),
                         'tracker_id'  => $jobTrack->id,
                         'tracker_url' => route('admin.settings.data_transfer.imports.import-view', $jobInstance->id),
                         'message'     => trans('ai-agent::app.common.import-queued', ['count' => count($filteredRows)]),
@@ -351,7 +351,7 @@ class ImportProducts implements PimTool
             $delimiter = "\t";
         }
 
-        $headers = fgetcsv($handle, 0, $delimiter);
+        $headers = fgetcsv($handle, 0, $delimiter, escape: '\\');
 
         if (! $headers) {
             fclose($handle);
@@ -364,16 +364,14 @@ class ImportProducts implements PimTool
 
         $rows = [];
 
-        while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
+        while (($data = fgetcsv($handle, 0, $delimiter, escape: '\\')) !== false) {
             if (count($data) !== count($headers)) {
                 continue;
             }
 
             $row = array_combine($headers, $data);
 
-            if ($row !== false) {
-                $rows[] = $row;
-            }
+            $rows[] = $row;
 
             // Stop past the cap so a hostile file cannot exhaust memory; the
             // caller rejects the oversized upload.
@@ -413,9 +411,7 @@ class ImportProducts implements PimTool
             foreach ($data as $rowData) {
                 if (count($rowData) === count($headers)) {
                     $row = array_combine($headers, $rowData);
-                    if ($row !== false) {
-                        $rows[] = $row;
-                    }
+                    $rows[] = $row;
                 }
 
                 if (count($rows) > self::MAX_IMPORT_ROWS) {
@@ -473,7 +469,7 @@ class ImportProducts implements PimTool
      */
     public function existingSkuSet(array $skus): array
     {
-        $unique = array_values(array_unique(array_filter($skus, fn ($sku) => $sku !== '')));
+        $unique = array_values(array_unique(array_filter($skus, fn (string $sku): bool => $sku !== '')));
 
         $existing = [];
 

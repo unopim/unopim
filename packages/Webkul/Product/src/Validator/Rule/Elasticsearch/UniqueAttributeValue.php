@@ -20,9 +20,9 @@ class UniqueAttributeValue implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, \Closure $fail): void
     {
-        $queryBuilder = app(ElasticProductQueryBuilder::class);
+        $queryBuilder = resolve(ElasticProductQueryBuilder::class);
 
-        $value = ! is_array($value) ? [$value] : $value;
+        $value = is_array($value) ? $value : [$value];
 
         $queryBuilder->applyFilter($this->attributeCode, FilterOperators::IN, $value);
 

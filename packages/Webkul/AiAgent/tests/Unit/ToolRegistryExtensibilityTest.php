@@ -9,6 +9,7 @@ use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Contracts\AuthorizesContext;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Chat\ToolRegistry;
+use Webkul\AiAgent\Chat\Tools\GetProductDetails;
 use Webkul\AiAgent\Chat\Tools\SearchProducts;
 use Webkul\AiAgent\Events\AgentSystemPromptBuilding;
 use Webkul\MagicAI\Models\MagicAIPlatform;
@@ -133,7 +134,7 @@ it('skips config entries flagged enabled=false', function () {
 it('removes a tool from build() when disabled by name or class', function () {
     $registry = app(ToolRegistry::class);
     $registry->disable('search_products');
-    $registry->disable(\Webkul\AiAgent\Chat\Tools\GetProductDetails::class);
+    $registry->disable(GetProductDetails::class);
 
     expect($registry->has('search_products'))->toBeFalse();
     expect($registry->has('get_product_details'))->toBeFalse();

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('magic_ai_prompts', function (Blueprint $table) {
+        Schema::table('magic_ai_prompts', function (Blueprint $table): void {
             $table->unsignedBigInteger('tone')->nullable()->after('type');
             $table->foreign('tone')
                 ->references('id')
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('magic_ai_prompts', function (Blueprint $table) {
+        Schema::table('magic_ai_prompts', function (Blueprint $table): void {
             $table->dropForeign('magic_ai_prompts_tone_foreign');
             $table->dropColumn('tone');
         });

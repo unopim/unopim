@@ -25,14 +25,14 @@ class AgentForm extends FormRequest
     public function rules(): array
     {
         return [
-            'name'         => 'required|string|max:255',
-            'description'  => 'nullable|string|max:2000',
-            'systemPrompt' => 'nullable|string|max:10000',
-            'credentialId' => 'required|exists:ai_agent_credentials,id',
-            'maxTokens'    => 'sometimes|integer|min:1|max:128000',
-            'temperature'  => 'sometimes|numeric|min:0|max:2',
-            'pipeline'     => 'nullable|array',
-            'status'       => 'sometimes|boolean',
+            'name'         => ['required', 'string', 'max:255'],
+            'description'  => ['nullable', 'string', 'max:2000'],
+            'systemPrompt' => ['nullable', 'string', 'max:10000'],
+            'credentialId' => ['required', 'exists:ai_agent_credentials,id'],
+            'maxTokens'    => ['sometimes', 'integer', 'min:1', 'max:128000'],
+            'temperature'  => ['sometimes', 'numeric', 'min:0', 'max:2'],
+            'pipeline'     => ['nullable', 'array'],
+            'status'       => ['sometimes', 'boolean'],
         ];
     }
 }

@@ -25,7 +25,7 @@ class EnableDebugForAllowedIps
                 // enable() also calls boot() internally, which is required when
                 // DEBUGBAR_ENABLED=false prevented the ServiceProvider from
                 // booting the bar at startup.
-                app('debugbar')->enable();
+                resolve('debugbar')->enable();
             }
 
             return $next($request);
@@ -65,7 +65,7 @@ class EnableDebugForAllowedIps
     protected function isAllowedIp(Request $request): bool
     {
         $allowedIps = array_filter(array_map(
-            'trim',
+            trim(...),
             explode(',', (string) core()->getConfigData('general.debug.settings.allowed_ips'))
         ));
 

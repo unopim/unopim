@@ -12,7 +12,7 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('ai_agent_memories', function (Blueprint $table) {
+        Schema::table('ai_agent_memories', function (Blueprint $table): void {
             $table->string('channel', 64)->nullable()->after('scope');
 
             $table->index(['user_id', 'channel']);
@@ -25,7 +25,7 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('ai_agent_memories', function (Blueprint $table) {
+        Schema::table('ai_agent_memories', function (Blueprint $table): void {
             $table->dropIndex(['user_id', 'channel']);
             $table->dropColumn('channel');
         });

@@ -2,11 +2,8 @@
 
 namespace Webkul\AiAgent\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Ai\Embeddings;
@@ -22,10 +19,7 @@ use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
  */
 class IndexProductEmbeddingsJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public int $tries = 2;
 
@@ -46,19 +40,19 @@ class IndexProductEmbeddingsJob implements ShouldQueue
         ProductEmbeddingIndex $index,
         ProductEmbeddingDocumentBuilder $documentBuilder,
     ): void {
-        if (! $index->isEnabled() || empty($this->productIds)) {
+        if (! $index->isEnabled() || $this->productIds === []) {
             return;
         }
 
         $documents = $this->buildDocuments($documentBuilder);
 
-        if (empty($documents)) {
+        if ($documents === []) {
             return;
         }
 
         $documents = $this->rejectUnchanged($index, $documents);
 
-        if (empty($documents)) {
+        if ($documents === []) {
             return;
         }
 
@@ -83,8 +77,10 @@ class IndexProductEmbeddingsJob implements ShouldQueue
 
         foreach (array_values($documents) as $position => $document) {
             $vector = $vectors[$position] ?? null;
-
-            if (! is_array($vector) || empty($vector)) {
+            if (! is_array($vector)) {
+                continue;
+            }
+            if ($vector === []) {
                 continue;
             }
 
@@ -107,7 +103,7 @@ class IndexProductEmbeddingsJob implements ShouldQueue
     protected function buildDocuments(ProductEmbeddingDocumentBuilder $documentBuilder): array
     {
         $rows = DB::table('products')
-            ->whereIn('id', array_map('intval', $this->productIds))
+            ->whereIn('id', array_map(intval(...), $this->productIds))
             ->select('id', 'sku', 'values', 'attribute_family_id')
             ->get();
 
@@ -141,7 +137,7 @@ class IndexProductEmbeddingsJob implements ShouldQueue
 
         return array_values(array_filter(
             $documents,
-            fn (array $document) => ($existingHashes[$document['product_id']] ?? null) !== $document['content_hash'],
+            fn (array $document): bool => ($existingHashes[$document['product_id']] ?? null) !== $document['content_hash'],
         ));
     }
 }

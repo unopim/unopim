@@ -10,9 +10,8 @@ class Refund extends Product
      * After refund is created
      *
      * @param  \Webkul\Sale\Contracts\Refund  $refund
-     * @return void
      */
-    public function afterCreate($refund)
+    public function afterCreate($refund): void
     {
         foreach ($refund->items as $item) {
             if (! $item->product) {

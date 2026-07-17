@@ -14,7 +14,7 @@ return new class extends Migration
     {
         $this->deduplicateCodes();
 
-        Schema::table('attribute_families', function (Blueprint $table) {
+        Schema::table('attribute_families', function (Blueprint $table): void {
             $table->unique('code', 'attribute_families_code_unique');
         });
     }
@@ -24,7 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('attribute_families', function (Blueprint $table) {
+        Schema::table('attribute_families', function (Blueprint $table): void {
             $table->dropUnique('attribute_families_code_unique');
         });
     }
@@ -41,11 +41,15 @@ return new class extends Migration
             ->pluck('code');
 
         foreach ($duplicateCodes as $code) {
+            $keptId = DB::table('attribute_families')
+                ->where('code', $code)
+                ->min('id');
+
             $ids = DB::table('attribute_families')
                 ->where('code', $code)
+                ->where('id', '>', $keptId)
                 ->orderBy('id')
-                ->pluck('id')
-                ->slice(1);
+                ->pluck('id');
 
             foreach ($ids as $id) {
                 DB::table('attribute_families')

@@ -6,6 +6,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\Checker\QueryParametersChecker;
+use Webkul\Core\Eloquent\Repository;
 
 abstract class ApiDataSource
 {
@@ -111,7 +112,7 @@ abstract class ApiDataSource
     /**
      * Process all requested filters.
      *
-     * @return Builder
+     * @return Repository
      */
     public function processRequestedFilters(array $requestedFilters)
     {
@@ -327,7 +328,7 @@ abstract class ApiDataSource
     /**
      * Get translations of the channel.
      *
-     * @param  array  $channel  The channel data from the database.
+     * @param  array  $data  The channel data from the database.
      * @return array An associative array containing the locales as keys and their corresponding channel names as values.
      */
     public function getTranslations($data, $labelKey = 'name')

@@ -24,7 +24,7 @@ class ProductEmbeddingObserver
     public function created(Products $product): void
     {
         if ($this->productEmbeddingIndex->isEnabled()) {
-            IndexProductEmbeddingsJob::dispatch([$product->id]);
+            dispatch(new IndexProductEmbeddingsJob([$product->id]));
         }
     }
 
@@ -40,7 +40,7 @@ class ProductEmbeddingObserver
         }
 
         if ($this->productEmbeddingIndex->isEnabled()) {
-            IndexProductEmbeddingsJob::dispatch([$product->id]);
+            dispatch(new IndexProductEmbeddingsJob([$product->id]));
         }
     }
 
@@ -50,7 +50,7 @@ class ProductEmbeddingObserver
     public function deleted(Products $product): void
     {
         if ($this->productEmbeddingIndex->isEnabled()) {
-            DeleteProductEmbeddingJob::dispatch($product->id);
+            dispatch(new DeleteProductEmbeddingJob($product->id));
         }
     }
 }

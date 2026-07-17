@@ -2,6 +2,10 @@
 
 namespace Webkul\Attribute\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,32 +16,24 @@ use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Appends([
+    'swatch_value_url',
+])]
+#[Fillable([
+    'code',
+    'swatch_value',
+    'sort_order',
+    'attribute_id',
+])]
+#[WithoutTimestamps]
 class AttributeOption extends TranslatableModel implements AttributeOptionContract, HistoryContract
 {
     use HasFactory;
     use HistoryTrait;
 
-    public $timestamps = false;
-
     public $translatedAttributes = ['label'];
 
     protected $historyTags = ['attribute'];
-
-    protected $fillable = [
-        'code',
-        'swatch_value',
-        'sort_order',
-        'attribute_id',
-    ];
-
-    /**
-     * Append to the model attributes
-     *
-     * @var array
-     */
-    protected $appends = [
-        'swatch_value_url',
-    ];
 
     /**
      * Get the attribute that owns the attribute option.
@@ -66,9 +62,9 @@ class AttributeOption extends TranslatableModel implements AttributeOptionContra
     /**
      * Get image url for the product image.
      */
-    public function getSwatchValueUrlAttribute()
+    protected function swatchValueUrl(): Attribute
     {
-        return $this->swatch_value_url();
+        return Attribute::make(get: fn () => $this->swatch_value_url());
     }
 
     /**

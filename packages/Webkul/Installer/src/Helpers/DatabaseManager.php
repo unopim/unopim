@@ -13,7 +13,7 @@ class DatabaseManager
     /**
      * Check Database Connection.
      */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         if (! file_exists(base_path('.env'))) {
             return false;
@@ -36,12 +36,8 @@ class DatabaseManager
 
             $userCount = DB::table('admins')->count();
 
-            if (! $userCount) {
-                return false;
-            }
-
-            return true;
-        } catch (Exception $e) {
+            return (bool) $userCount;
+        } catch (Exception) {
             return false;
         }
     }
@@ -65,7 +61,7 @@ class DatabaseManager
             return DB::table('core_config')
                 ->where('code', self::INSTALLED_CONFIG_CODE)
                 ->exists();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -86,7 +82,7 @@ class DatabaseManager
             return ! DB::table('core_config')
                 ->where('code', self::INSTALLED_CONFIG_CODE)
                 ->exists();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -106,7 +102,7 @@ class DatabaseManager
                 ['code' => self::INSTALLED_CONFIG_CODE],
                 ['value' => '1']
             );
-        } catch (Exception $e) {
+        } catch (Exception) {
             // Marker persistence is best-effort; the storage marker still applies.
         }
     }
@@ -152,9 +148,7 @@ class DatabaseManager
             return;
         }
 
-        if (! preg_match('/^[A-Za-z0-9_]+$/', (string) $database)) {
-            throw new Exception("The database name '{$database}' is invalid. Use only letters, numbers, and underscores.");
-        }
+        throw_unless(preg_match('/^\w+$/', (string) $database), Exception::class, "The database name '{$database}' is invalid. Use only letters, numbers, and underscores.");
 
         // Connect without the target database (pgsql needs the "postgres" maintenance db).
         config(["database.connections.{$connection}.database" => $driver === 'pgsql' ? 'postgres' : null]);
@@ -182,24 +176,24 @@ class DatabaseManager
 
     /**
      * Seed the database.
-     *
-     * @return void|string
      */
-    public function seeder($data)
+    public function seeder(array $data): ?string
     {
         try {
-            app(UnoPimDatabaseSeeder::class)->run($data['parameter']);
+            resolve(UnoPimDatabaseSeeder::class)->run($data['parameter']);
 
             $this->storageLink();
         } catch (Exception $e) {
             return $e->getMessage();
         }
+
+        return null;
     }
 
     /**
      * Storage Link.
      */
-    private function storageLink()
+    private function storageLink(): void
     {
         Artisan::call('storage:link');
     }
@@ -212,7 +206,7 @@ class DatabaseManager
      * cipher key, so the user's existing session (and CSRF token) would be
      * silently discarded on the next request — surfacing as a 419 Page Expired
      */
-    public function generateKey()
+    public function generateKey(): void
     {
         if (! empty(config('app.key'))) {
             return;
@@ -220,7 +214,7 @@ class DatabaseManager
 
         try {
             Artisan::call('key:generate');
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
     }
 }

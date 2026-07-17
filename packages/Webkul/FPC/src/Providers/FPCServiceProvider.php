@@ -8,10 +8,8 @@ class FPCServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         // $this->app->register(EventServiceProvider::class);
     }

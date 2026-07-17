@@ -2,8 +2,8 @@
 
 namespace Webkul\Product\Filter\ElasticSearch\Property;
 
-use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
+use Illuminate\Support\Facades\Date;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\AbstractPropertyFilter;
 
@@ -27,11 +27,9 @@ class DateTimeFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         if (! in_array($property, $this->supportedProperties)) {
             throw new \InvalidArgumentException(
@@ -47,9 +45,7 @@ class DateTimeFilter extends AbstractPropertyFilter
             case FilterOperators::IN:
                 $clause = [
                     'terms' => [
-                        $property => array_map(function ($data) use ($property) {
-                            return $this->getFormattedDateTime($property, $data);
-                        }, $value),
+                        $property => array_map(fn (string $data): string => $this->getFormattedDateTime($property, $data), $value),
                     ],
                 ];
 
@@ -82,8 +78,8 @@ class DateTimeFilter extends AbstractPropertyFilter
         try {
             $utcTimeZone = 'UTC';
 
-            $dateTime = Carbon::parse($value, $utcTimeZone);
-        } catch (InvalidFormatException $e) {
+            $dateTime = Date::parse($value, $utcTimeZone);
+        } catch (InvalidFormatException) {
             throw new \LogicException(
                 sprintf(
                     'Invalid date format for field "%s", expected "Y-m-d H:i:s", but "%s" given',

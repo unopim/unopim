@@ -17,11 +17,9 @@ class AttributeServiceProvider extends ServiceProvider
 
         $this->registerConfig();
 
-        $this->app->singleton(AttributeService::class, function ($app) {
-            return new AttributeService(
-                $app->make(AttributeRepository::class)
-            );
-        });
+        $this->app->singleton(AttributeService::class, fn ($app): AttributeService => new AttributeService(
+            $app->make(AttributeRepository::class)
+        ));
     }
 
     /**

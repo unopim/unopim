@@ -54,7 +54,10 @@ class AttributeValueRule implements ValidationRule
         }
     }
 
-    protected function getDataFromAttributeKey(string $attribute)
+    /**
+     * @return string[]|null[]
+     */
+    protected function getDataFromAttributeKey(string $attribute): array
     {
         $data = explode('.', $attribute);
 
@@ -94,22 +97,22 @@ class AttributeValueRule implements ValidationRule
      */
     protected function isExpectedAttribute(?Attribute $attribute, ?string $channel, ?string $locale): bool
     {
-        if (! $attribute) {
+        if (! $attribute instanceof Attribute) {
             return false;
         }
 
         if ($attribute->isLocaleAndChannelBasedAttribute()) {
-            return ! empty($channel) && ! empty($locale);
+            return ! in_array($channel, [null, '', '0'], true) && ! in_array($locale, [null, '', '0'], true);
         }
 
         if ($attribute->isChannelBasedAttribute()) {
-            return ! empty($channel) && empty($locale);
+            return ! in_array($channel, [null, '', '0'], true) && in_array($locale, [null, '', '0'], true);
         }
 
         if ($attribute->isLocaleBasedAttribute()) {
-            return ! empty($locale) && empty($channel);
+            return ! in_array($locale, [null, '', '0'], true) && in_array($channel, [null, '', '0'], true);
         }
 
-        return empty($channel) && empty($locale);
+        return in_array($channel, [null, '', '0'], true) && in_array($locale, [null, '', '0'], true);
     }
 }

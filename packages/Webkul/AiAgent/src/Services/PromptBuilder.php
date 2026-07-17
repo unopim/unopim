@@ -37,7 +37,7 @@ class PromptBuilder implements PromptBuilderContract
         // 2. Dynamic context (product data, filters) as a system-level message.
         //    Keys are sorted recursively so identical context always serializes
         //    to identical bytes.
-        if (! empty($payload->context)) {
+        if ($payload->context !== []) {
             $contextJson = json_encode(
                 $this->sortKeysRecursively($payload->context),
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,

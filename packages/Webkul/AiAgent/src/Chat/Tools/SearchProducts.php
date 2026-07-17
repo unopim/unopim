@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -116,7 +117,7 @@ class SearchProducts implements PimTool
                     // risking false negatives.
                     $useCoarsePreFilter = (bool) preg_match('/^[a-zA-Z0-9 _.\-]+$/', $query);
 
-                    $qb->where(function ($q) use ($term, $valuesAsText, $prefix, $grammar, $searchable, $useCoarsePreFilter) {
+                    $qb->where(function (Builder $q) use ($term, $valuesAsText, $prefix, $grammar, $searchable, $useCoarsePreFilter): void {
                         // `sku` is a structural column on the products table;
                         // every other searchable field comes from the dynamic
                         // attribute list so custom attributes are covered.
@@ -126,12 +127,12 @@ class SearchProducts implements PimTool
                             return;
                         }
 
-                        $q->orWhere(function ($candidate) use ($term, $valuesAsText, $prefix, $grammar, $searchable, $useCoarsePreFilter) {
+                        $q->orWhere(function (Builder $candidate) use ($term, $valuesAsText, $prefix, $grammar, $searchable, $useCoarsePreFilter): void {
                             if ($useCoarsePreFilter) {
                                 $candidate->whereRaw("{$valuesAsText} LIKE ?", [$term]);
                             }
 
-                            $candidate->where(function ($attributeMatch) use ($term, $prefix, $grammar, $searchable) {
+                            $candidate->where(function (Builder $attributeMatch) use ($term, $prefix, $grammar, $searchable): void {
                                 foreach ($searchable as $attribute) {
                                     $attributeMatch->orWhereRaw(
                                         $grammar->jsonExtract("{$prefix}p.values", ...$this->valuePath($attribute)).' LIKE ?',
@@ -165,27 +166,25 @@ class SearchProducts implements PimTool
                 $editBaseUrl = route('admin.catalog.products.edit', ['id' => '__ID__']);
 
                 $attributeTexts = $products->map(
-                    fn ($p) => $this->flattenSearchableValues($p->values, $searchable)
+                    fn ($p): string => $this->flattenSearchableValues($p->values, $searchable)
                 )->values();
 
-                $results = $products->map(function ($p) use ($editBaseUrl) {
-                    return [
-                        'id'              => $p->id,
-                        'sku'             => $p->sku,
-                        'name'            => $p->product_name ?? $p->url_key ?? '(unnamed)',
-                        'type'            => $p->type,
-                        'status'          => $p->status ? 'active' : 'inactive',
-                        'family'          => $p->family_code,
-                        'edit_url'        => str_replace('__ID__', (string) $p->id, $editBaseUrl),
-                        'relevance_score' => null,
-                    ];
-                })->values();
+                $results = $products->map(fn ($p): array => [
+                    'id'              => $p->id,
+                    'sku'             => $p->sku,
+                    'name'            => $p->product_name ?? $p->url_key ?? '(unnamed)',
+                    'type'            => $p->type,
+                    'status'          => $p->status ? 'active' : 'inactive',
+                    'family'          => $p->family_code,
+                    'edit_url'        => str_replace('__ID__', (string) $p->id, $editBaseUrl),
+                    'relevance_score' => null,
+                ])->values();
 
                 $hasSemanticQuery = ! empty($query) && mb_strlen(trim($query)) > 2;
 
                 if ($hasSemanticQuery && $results->count() > 2) {
                     $documents = $results
-                        ->map(fn ($item, $index) => implode(' | ', array_filter([
+                        ->map(fn ($item, $index): string => implode(' | ', array_filter([
                             $item['sku'],
                             $item['name'],
                             $item['type'],
@@ -198,7 +197,7 @@ class SearchProducts implements PimTool
 
                     $ranked = $this->semanticRankingService->rank($query, $documents, $limit);
 
-                    if (! empty($ranked)) {
+                    if ($ranked !== []) {
                         $reranked = collect();
 
                         foreach ($ranked as $item) {
@@ -249,7 +248,7 @@ class SearchProducts implements PimTool
                     ->whereIn('type', ['text', 'textarea'])
                     ->where('code', '!=', 'sku')
                     ->get(['code', 'value_per_locale', 'value_per_channel'])
-                    ->filter(fn ($attribute) => preg_match('/^[a-zA-Z0-9_]+$/', $attribute->code))
+                    ->filter(fn ($attribute): int|false => preg_match('/^\w+$/', (string) $attribute->code))
                     ->values();
             }
 
@@ -277,7 +276,7 @@ class SearchProducts implements PimTool
              */
             protected function flattenSearchableValues(?string $json, Collection $searchable): string
             {
-                if (empty($json)) {
+                if (in_array($json, [null, '', '0'], true)) {
                     return '';
                 }
 

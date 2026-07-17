@@ -158,10 +158,11 @@ class SafeWebhookUrl
      */
     protected static function isAllowedIp(string $ip): bool
     {
-        // Loopback opt-in for Playwright E2E delivery test (env var, not
-        // app env — explicit allowlist, off in production by default).
+        // Loopback opt-in for Playwright E2E delivery test (explicit
+        // allowlist, off in production by default). getenv() covers the
+        // putenv() path used by tests; config covers .env deployments.
         $loopbackAllowed = filter_var(
-            getenv('WEBHOOK_ALLOW_LOOPBACK') ?: env('WEBHOOK_ALLOW_LOOPBACK', false),
+            getenv('WEBHOOK_ALLOW_LOOPBACK') ?: config('webhook.allow_loopback', false),
             FILTER_VALIDATE_BOOLEAN
         );
 

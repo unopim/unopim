@@ -14,22 +14,16 @@ parameters:
         - packages/*/tests/*
         - packages/*/src/Database/Migration/*
         - packages/*/src/Config/*
+        - packages/*/Config/*
         - packages/*/src/Resources/*
         - packages/Webkul/DebugBar/*
+        - packages/Webkul/FPC/*
 
     ignoreErrors:
-        # Laravel framework's own baseline patterns (dynamic/magic false positives)
-        - "#\\(void\\) is used#"
+        # Eloquent magic (attributes, __call scopes) — removable once models carry @property docblocks
         - "#Access to an undefined property#"
-        - "#but return statement is missing.#"
         - "#Call to an undefined method#"
-        - "#Caught class [a-zA-Z0-9\\\\_]+ not found.#"
-        - "#Class [a-zA-Z0-9\\\\_]+ not found.#"
         - "#has invalid type#"
-        - "#Instantiated class [a-zA-Z0-9\\\\_]+ not found.#"
-        - "#Unsafe usage of new static#"
         # Concord proxy models and package facades resolved at runtime (larastan cannot see the magic)
         - "#Call to an undefined static method Webkul\\\\.+::#"
         - "#on an unknown class Webkul\\\\.+Proxy#"
-        # Optional third-party packages that may not be installed
-        - "#unknown class Spatie\\\\ResponseCache#"

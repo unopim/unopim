@@ -8,12 +8,10 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('sku')->unique();
             $table->string('type');
@@ -28,7 +26,7 @@ return new class extends Migration
             $table->foreign('attribute_family_id')->references('id')->on('attribute_families')->onDelete('restrict');
         });
 
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table): void {
             $table->foreign('parent_id')->references('id')->on('products')->onDelete('cascade');
             /** Indexes */
             $table->index('sku');
@@ -38,7 +36,7 @@ return new class extends Migration
             $table->index(['attribute_family_id', 'parent_id'], 'attribute_family_parent_idx');
         });
 
-        Schema::create('product_relations', function (Blueprint $table) {
+        Schema::create('product_relations', function (Blueprint $table): void {
             $table->integer('parent_id')->unsigned();
             $table->integer('child_id')->unsigned();
 
@@ -48,7 +46,7 @@ return new class extends Migration
             $table->unique(['parent_id', 'child_id']);
         });
 
-        Schema::create('product_super_attributes', function (Blueprint $table) {
+        Schema::create('product_super_attributes', function (Blueprint $table): void {
             $table->integer('product_id')->unsigned();
             $table->integer('attribute_id')->unsigned();
 
@@ -61,10 +59,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('product_super_attributes');
 

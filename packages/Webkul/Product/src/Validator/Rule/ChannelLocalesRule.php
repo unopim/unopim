@@ -23,7 +23,7 @@ class ChannelLocalesRule implements ValidationRule
     {
         $attribute = str_replace(AbstractType::CHANNEL_LOCALE_VALUES_KEY.'.', '', $attribute);
 
-        if (! isset($attribute, $this->channels[$attribute])) {
+        if (! isset($this->channels[$attribute])) {
             $fail(sprintf('Unexpected Channel %s', $attribute));
 
             return;
@@ -33,8 +33,8 @@ class ChannelLocalesRule implements ValidationRule
 
         $unexpected = array_diff($locales, $this->channels[$attribute]);
 
-        if (! empty($unexpected)) {
-            $fail(sprintf('Unexpected locale(s) %s in channel %s', implode($unexpected), $attribute));
+        if ($unexpected !== []) {
+            $fail(sprintf('Unexpected locale(s) %s in channel %s', implode('', $unexpected), $attribute));
         }
     }
 }

@@ -109,12 +109,6 @@ class VariantPlacementSuggester extends AbstractSuggester implements VariantPlac
 
     protected function matchesVariantKeyword(string $code): bool
     {
-        foreach ($this->variantKeywords as $keyword) {
-            if (str_contains($code, $keyword)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->variantKeywords, fn ($keyword): bool => str_contains($code, (string) $keyword));
     }
 }

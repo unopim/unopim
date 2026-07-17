@@ -157,8 +157,6 @@ class SessionController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
      */
     public function destroy(): RedirectResponse
     {

@@ -36,27 +36,27 @@ class CategoryTree implements PimTool
             /**
              * Default number of levels expanded per call.
              */
-            private const DEFAULT_DEPTH = 2;
+            private const int DEFAULT_DEPTH = 2;
 
             /**
              * Maximum number of levels expanded per call.
              */
-            private const MAX_DEPTH = 5;
+            private const int MAX_DEPTH = 5;
 
             /**
              * Default number of children returned per node per level.
              */
-            private const DEFAULT_CHILDREN_PER_LEVEL = 20;
+            private const int DEFAULT_CHILDREN_PER_LEVEL = 20;
 
             /**
              * Maximum number of children returned per node per level.
              */
-            private const MAX_CHILDREN_PER_LEVEL = 100;
+            private const int MAX_CHILDREN_PER_LEVEL = 100;
 
             /**
              * Hard cap on total nodes returned in a single call.
              */
-            private const MAX_NODES = 500;
+            private const int MAX_NODES = 500;
 
             public function name(): string
             {
@@ -276,13 +276,13 @@ class CategoryTree implements PimTool
             private function pruneByRelevance(Collection $rows, string $relevanceQuery, int $perLevel): Collection
             {
                 $documents = $rows
-                    ->map(fn ($row) => $row->code.' | '.$this->presentCategory($row)['name'])
+                    ->map(fn (object $row): string => $row->code.' | '.$this->presentCategory($row)['name'])
                     ->values()
                     ->all();
 
                 $ranked = $this->embeddingSimilarityService->rank($relevanceQuery, $documents, $perLevel);
 
-                if (empty($ranked)) {
+                if ($ranked === []) {
                     return $rows->take($perLevel)->values();
                 }
 

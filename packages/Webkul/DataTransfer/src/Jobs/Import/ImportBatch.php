@@ -3,17 +3,13 @@
 namespace Webkul\DataTransfer\Jobs\Import;
 
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
 
 class ImportBatch implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, \Illuminate\Foundation\Queue\Queueable;
 
     /**
      * The number of seconds the job can run before timing out.
@@ -26,20 +22,17 @@ class ImportBatch implements ShouldQueue
      * Create a new job instance.
      *
      * @param  mixed  $importBatch
-     * @return void
      */
     public function __construct(protected $importBatch, protected $jobTrackId) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $logger = JobLogger::make($this->jobTrackId);
 
-        $importHelper = app(ImportHelper::class)
+        $importHelper = resolve(ImportHelper::class)
             ->setImport($this->importBatch->jobTrack)
             ->setLogger($logger);
 
@@ -58,7 +51,7 @@ class ImportBatch implements ShouldQueue
         $logger->info("ImportBatch #{$this->importBatch->id} completed.");
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         JobLogger::make($this->jobTrackId)->error("ImportBatch #{$this->importBatch->id} failed: {$exception->getMessage()}", [
             'batch_id'  => $this->importBatch->id,

@@ -17,7 +17,7 @@ class Worker extends BaseWorker
         }
 
         while (true) {
-            if (isset($this->resetScope)) {
+            if ($this->resetScope !== null) {
                 ($this->resetScope)();
             }
 

@@ -8,33 +8,15 @@ use Webkul\DataTransfer\Buffer\FileBuffer;
 
 class LocalTemporaryFile extends TemporaryFile
 {
-    /**
-     * @var string
-     */
-    private $filePath;
+    private readonly string $LocalFilePath;
 
     /**
-     * @var string
+     * @param  string  $writerType
      */
-    private $writerType;
-
-    /**
-     * @var string
-     */
-    private $LocalFilePath;
-
-    /**
-     * @var string|null
-     */
-    private $temporaryPath;
-
-    public function __construct(string $filePath, string $temporaryPath, $writerType = SpoutWriterFactory::CSV)
+    public function __construct(private readonly string $filePath, private readonly string $temporaryPath, private $writerType = SpoutWriterFactory::CSV)
     {
-        $this->temporaryPath = $temporaryPath;
-        Storage::makeDirectory($temporaryPath);
-        $this->filePath = $filePath;
-        $this->writerType = $writerType;
-        $this->LocalFilePath = storage_path(FileBuffer::PUBLIC_STORAGE_PATH.$filePath);
+        Storage::makeDirectory($this->temporaryPath);
+        $this->LocalFilePath = storage_path(FileBuffer::PUBLIC_STORAGE_PATH.$this->filePath);
     }
 
     public function getLocalPath(): string
@@ -85,9 +67,9 @@ class LocalTemporaryFile extends TemporaryFile
     }
 
     /**
-     * @param @param string|resource $contents
+     * @param  string|resource  $contents
      */
-    public function put($contents)
+    public function put($contents): void
     {
         file_put_contents($this->filePath, $contents);
     }

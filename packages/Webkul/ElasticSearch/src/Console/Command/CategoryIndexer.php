@@ -2,28 +2,23 @@
 
 namespace Webkul\ElasticSearch\Console\Command;
 
-use Carbon\Carbon;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Facades\ElasticSearch;
 
+#[Description('Index all categories into Elasticsearch')]
+#[Signature('unopim:category:index')]
 class CategoryIndexer extends Command
 {
     const BATCH_SIZE = 10000;
 
-    protected $signature = 'unopim:category:index';
-
-    protected $description = 'Index all categories into Elasticsearch';
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    public function handle()
+    public function handle(): void
     {
         if (config('elasticsearch.enabled')) {
             $indexPrefix = config('elasticsearch.prefix');
@@ -58,7 +53,7 @@ class CategoryIndexer extends Command
                     if (
                         (
                             isset($elasticCategory[$category->id])
-                            && $elasticCategory[$category->id] != Carbon::parse($category->updated_at)->setTimezone('UTC')->format('Y-m-d\TH:i:s.u\Z')
+                            && $elasticCategory[$category->id] != Date::parse($category->updated_at)->setTimezone('UTC')->format('Y-m-d\TH:i:s.u\Z')
                         )
                         || ! isset($elasticCategory[$category->id])
                     ) {
@@ -104,11 +99,11 @@ class CategoryIndexer extends Command
                         ],
                         'size' => 1000000000,
                     ],
-                ])['hits']['hits'])->pluck('_id')->map(fn ($id) => (int) $id)->toArray();
+                ])['hits']['hits'])->pluck('_id')->map(fn ($id): int => (int) $id)->toArray();
 
                 $categoriesToDelete = array_diff($elasticCategoryIds, $dbCategoryIds);
 
-                if (! empty($categoriesToDelete)) {
+                if ($categoriesToDelete !== []) {
                     $this->info('Deleting stale categories from Elasticsearch...');
                     $deleteProgressBar = new ProgressBar($this->output, count($categoriesToDelete));
                     $deleteProgressBar->start();
@@ -182,7 +177,10 @@ class CategoryIndexer extends Command
         }
     }
 
-    public function getCategoryUpdates($categoryIndex, $command = null)
+    /**
+     * @return mixed[]
+     */
+    public function getCategoryUpdates($categoryIndex, $command = null): array
     {
         $scrollSize = 10000;
         $elasticCategory = [];

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('variant_structures', function (Blueprint $table) {
+        Schema::create('variant_structures', function (Blueprint $table): void {
             $table->increments('id');
             $table->unsignedInteger('attribute_family_id');
             $table->string('code');
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreign('attribute_family_id')->references('id')->on('attribute_families')->onDelete('cascade');
         });
 
-        Schema::create('variant_structure_axes', function (Blueprint $table) {
+        Schema::create('variant_structure_axes', function (Blueprint $table): void {
             $table->increments('id');
             $table->unsignedInteger('variant_structure_id');
             $table->unsignedInteger('attribute_id');
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
         });
 
-        Schema::create('variant_structure_attributes', function (Blueprint $table) {
+        Schema::create('variant_structure_attributes', function (Blueprint $table): void {
             $table->increments('id');
             $table->unsignedInteger('variant_structure_id');
             $table->unsignedInteger('attribute_id');

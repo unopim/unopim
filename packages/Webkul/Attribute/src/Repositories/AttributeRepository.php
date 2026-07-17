@@ -17,8 +17,6 @@ class AttributeRepository extends Repository
 
     /**
      * Create a new repository instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeOptionRepository $attributeOptionRepository,
@@ -86,16 +84,13 @@ class AttributeRepository extends Repository
                     if (empty($optionInputs['code'])) {
                         $optionInputs['code'] = 'option_'.strtolower(Str::random(8));
                     }
-
                     $this->attributeOptionRepository->create(array_merge([
                         'attribute_id' => $attribute->id,
                     ], $optionInputs));
+                } elseif ($optionInputs['isDelete'] == 'true') {
+                    $this->attributeOptionRepository->delete($optionId);
                 } else {
-                    if ($optionInputs['isDelete'] == 'true') {
-                        $this->attributeOptionRepository->delete($optionId);
-                    } else {
-                        $this->attributeOptionRepository->update($optionInputs, $optionId);
-                    }
+                    $this->attributeOptionRepository->update($optionInputs, $optionId);
                 }
             }
         }
@@ -105,11 +100,8 @@ class AttributeRepository extends Repository
 
     /**
      * Validate user input.
-     *
-     * @param  array  $data
-     * @return array
      */
-    public function validateUserInput($data)
+    public function validateUserInput(array $data): array
     {
         if (isset($data['type']) && $data['type'] !== 'text') {
             unset($data['is_unique']);
@@ -183,30 +175,26 @@ class AttributeRepository extends Repository
 
     /**
      * Get partials.
-     *
-     * @return array
      */
-    public function getPartial()
+    public function getPartial(): array
     {
         $attributes = $this->model->all();
 
         $trimmed = [];
 
-        foreach ($attributes as $key => $attribute) {
-            if (
-                $attribute->code != 'tax_category_id'
-                && (
-                    in_array($attribute->type, ['select', 'multiselect'])
-                    || $attribute->code == 'sku'
-                )
-            ) {
-                array_push($trimmed, [
+        foreach ($attributes as $attribute) {
+            if ($attribute->code != 'tax_category_id'
+            && (
+                in_array($attribute->type, ['select', 'multiselect'])
+                || $attribute->code == 'sku'
+            )) {
+                $trimmed[] = [
                     'id'      => $attribute->id,
                     'name'    => $attribute->admin_name,
                     'type'    => $attribute->type,
                     'code'    => $attribute->code,
                     'options' => $attribute->options,
-                ]);
+                ];
             }
         }
 
@@ -255,16 +243,16 @@ class AttributeRepository extends Repository
 
         $query = DB::table('attributes')
             ->select($resolvedColumns)
-            ->leftJoin('attribute_translations as attribute_name', function ($join) {
+            ->leftJoin('attribute_translations as attribute_name', function ($join): void {
                 $join->on('attribute_name.attribute_id', '=', 'attributes.id')
                     ->where('attribute_name.locale', '=', core()->getRequestedLocaleCode());
             })
-            ->where(function ($query) use ($search) {
+            ->where(function (\Illuminate\Contracts\Database\Query\Builder $query) use ($search): void {
                 $query->where('attributes.code', 'LIKE', '%'.$search.'%')
                     ->orWhere('attribute_name.name', 'LIKE', '%'.$search.'%');
             });
 
-        if ($excludeTypes) {
+        if ($excludeTypes !== []) {
             $query->whereNotIn('attributes.type', $excludeTypes);
         }
 

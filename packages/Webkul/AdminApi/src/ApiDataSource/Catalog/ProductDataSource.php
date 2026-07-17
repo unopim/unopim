@@ -192,7 +192,7 @@ class ProductDataSource extends ApiDataSource
         // `orWhere` on type alone returned any configurable product, masking invalid SKUs.
         $parentQuery->where('products.sku', $sku)
             ->where('products.type', config('product_types.configurable.key'));
-        $parentId = $parentQuery->get()->first()?->id;
+        $parentId = $parentQuery->first()?->id;
 
         if (! $parentId) {
             throw new UnprocessableEntityHttpException(
@@ -227,7 +227,6 @@ class ProductDataSource extends ApiDataSource
     /**
      * Filters the product query builder by the category code.
      *
-     * @param  array  $code
      * @return Builder
      */
     protected function filterByCategories(Builder $scopeQueryBuilder, string $operator, string $filterTable, array $value)

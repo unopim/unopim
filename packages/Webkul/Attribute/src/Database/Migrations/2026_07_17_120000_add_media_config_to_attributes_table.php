@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('attributes', function (Blueprint $table) {
+        Schema::table('attributes', function (Blueprint $table): void {
             $table->json('allowed_extensions')->nullable()->after('regex_pattern');
             $table->unsignedInteger('max_file_size')->nullable()->after('allowed_extensions');
         });
 
-        Schema::table('attribute_translations', function (Blueprint $table) {
+        Schema::table('attribute_translations', function (Blueprint $table): void {
             $table->text('instructions')->nullable()->after('name');
         });
     }
@@ -26,11 +26,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('attributes', function (Blueprint $table) {
+        Schema::table('attributes', function (Blueprint $table): void {
             $table->dropColumn(['allowed_extensions', 'max_file_size']);
         });
 
-        Schema::table('attribute_translations', function (Blueprint $table) {
+        Schema::table('attribute_translations', function (Blueprint $table): void {
             $table->dropColumn('instructions');
         });
     }

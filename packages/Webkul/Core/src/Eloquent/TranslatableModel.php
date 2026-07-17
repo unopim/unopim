@@ -3,6 +3,7 @@
 namespace Webkul\Core\Eloquent;
 
 use Astrotomic\Translatable\Translatable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Core\Helpers\Locales;
@@ -16,7 +17,7 @@ class TranslatableModel extends Model
      */
     protected function getLocalesHelper(): Locales
     {
-        return app(Locales::class);
+        return resolve(Locales::class);
     }
 
     /**
@@ -30,28 +31,26 @@ class TranslatableModel extends Model
     {
         if ($this->isChannelBased()) {
             return core()->getDefaultLocaleCodeFromDefaultChannel();
-        } else {
-            if ($this->defaultLocale) {
-                return $this->defaultLocale;
-            }
-
-            return config('translatable.locale') ?: app()->make('translator')->getLocale();
         }
+        if ($this->defaultLocale) {
+            return $this->defaultLocale;
+        }
+
+        return config('translatable.locale') ?: app()->make('translator')->getLocale();
     }
 
     /**
      * Is channel based.
-     *
-     * @return bool
      */
-    protected function isChannelBased()
+    protected function isChannelBased(): bool
     {
         return false;
     }
 
-    public function scopeWhereTranslationIn(Builder $query, string $translationField, $value, ?string $locale = null, string $method = 'whereHas')
+    #[Scope]
+    protected function whereTranslationIn(Builder $query, string $translationField, $value, ?string $locale = null, string $method = 'whereHas')
     {
-        return $query->$method('translations', function (Builder $query) use ($translationField, $value, $locale) {
+        return $query->$method('translations', function (Builder $query) use ($translationField, $value, $locale): void {
             $query->whereIn($this->getTranslationsTable().'.'.$translationField, $value);
 
             if ($locale) {

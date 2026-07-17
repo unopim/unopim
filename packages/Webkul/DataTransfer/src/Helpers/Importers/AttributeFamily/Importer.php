@@ -291,7 +291,7 @@ class Importer extends AbstractImporter
         $idsToDelete = array_unique($idsToDelete);
         $this->deletedItemsCount = count($idsToDelete);
 
-        if (! empty($idsToDelete)) {
+        if ($idsToDelete !== []) {
             $this->attributeFamilyRepository->deleteWhere([['id', 'IN', $idsToDelete]]);
         }
 
@@ -353,7 +353,7 @@ class Importer extends AbstractImporter
 
             if (! empty($rowData['completeness'])) {
                 $channelCodes = array_filter(
-                    array_map('trim', explode(',', $rowData['completeness']))
+                    array_map(trim(...), explode(',', $rowData['completeness']))
                 );
 
                 $existing = $entry['attribute_groups'][$groupCode]['completeness'][$attributeCode] ?? [];
@@ -477,9 +477,9 @@ class Importer extends AbstractImporter
             ->where('family_id', $familyId)
             ->delete();
 
-        if (! empty($incoming)) {
-            $unique = array_unique(array_map('serialize', $incoming));
-            $rows = array_map('unserialize', $unique);
+        if ($incoming !== []) {
+            $unique = array_unique(array_map(serialize(...), $incoming));
+            $rows = array_map(unserialize(...), $unique);
 
             DB::table('completeness_settings')->insert($rows);
         }

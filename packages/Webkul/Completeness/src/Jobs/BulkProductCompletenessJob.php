@@ -3,12 +3,9 @@
 namespace Webkul\Completeness\Jobs;
 
 use Illuminate\Bus\Batch;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +15,7 @@ use Webkul\Product\Repositories\ProductRepository;
 
 class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
 
     protected const CHUNK_SIZE = 100;
 
@@ -49,18 +46,18 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
 
     public function handle(): void
     {
-        $this->productRepository = app(ProductRepository::class);
+        $this->productRepository = resolve(ProductRepository::class);
 
         try {
             $allProductIds = $this->collectProductIds();
 
-            if (empty($allProductIds)) {
+            if ($allProductIds === []) {
                 return;
             }
 
             $jobs = $this->buildChunkedJobs($allProductIds);
 
-            if (empty($jobs)) {
+            if ($jobs === []) {
                 return;
             }
 
@@ -71,10 +68,10 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
             Bus::batch($jobs)
                 ->name('completeness-calculation'.($familyId ? "-family-{$familyId}" : ''))
                 ->onQueue(config('completeness.queue', 'system'))
-                ->then(function (Batch $batch) use ($totalProducts, $userId, $familyId) {
+                ->then(function (Batch $batch) use ($totalProducts, $userId, $familyId): void {
                     static::sendCompletionNotification($totalProducts, $userId, $familyId);
                 })
-                ->catch(function (Batch $batch, Throwable $e) {
+                ->catch(function (Batch $batch, Throwable $e): void {
                     logger()->error('Completeness batch failed: '.$e->getMessage());
                 })
                 ->allowFailures()
@@ -102,7 +99,7 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
             ->select('id')
             ->where('attribute_family_id', $this->familyId)
             ->orderBy('id')
-            ->chunkById(self::BATCH_SIZE, function ($products) use (&$allIds) {
+            ->chunkById(self::BATCH_SIZE, function ($products) use (&$allIds): void {
                 foreach ($products as $product) {
                     $allIds[] = $product->id;
                 }
@@ -128,15 +125,15 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
         $userEmails = [];
 
         if ($userId) {
-            $admin = DB::table('admins')->find($userId);
+            $admin = (array) DB::table('admins')->find($userId);
 
-            if ($admin) {
-                $userIds[] = $admin->id;
-                $userEmails[] = $admin->email;
+            if ($admin !== []) {
+                $userIds[] = $admin['id'];
+                $userEmails[] = $admin['email'];
             }
         }
 
-        if (empty($userIds)) {
+        if ($userIds === []) {
             $admins = DB::table('admins')
                 ->join('roles', 'admins.role_id', '=', 'roles.id')
                 ->where('roles.permission_type', 'all')
@@ -156,12 +153,12 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
         ]);
 
         if ($familyId) {
-            $family = DB::table('attribute_families')->find($familyId);
+            $familyCode = DB::table('attribute_families')->where('id', $familyId)->value('code');
 
-            if ($family) {
+            if ($familyCode !== null) {
                 $description = trans('completeness::app.notifications.completeness-calculated-family', [
                     'count'  => $totalProducts,
-                    'family' => $family->code,
+                    'family' => $familyCode,
                 ]);
             }
         }
@@ -172,7 +169,7 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
             && Config::get('mail.mailers.smtp.username')
             && Config::get('mail.mailers.smtp.password');
 
-        NotificationEvent::dispatch([
+        event(new NotificationEvent([
             'type'         => 'completeness',
             'title'        => trans('completeness::app.notifications.completeness-title'),
             'description'  => $description,
@@ -184,6 +181,6 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
                 'totalProducts' => $totalProducts,
                 'familyId'      => $familyId,
             ],
-        ]);
+        ]));
     }
 }

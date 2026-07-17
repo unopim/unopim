@@ -239,8 +239,6 @@ class UserController extends Controller
 
     /**
      * Destroy current after confirming.
-     *
-     * @return Response
      */
     public function destroySelf(): JsonResponse
     {

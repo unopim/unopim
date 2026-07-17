@@ -14,11 +14,10 @@ use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
 use Intervention\Image\ImageManager;
 use Webkul\Core\CatalogScope;
-use Webkul\Core\Console\Commands\DownCommand;
 use Webkul\Core\Console\Commands\TranslationsChecker;
 use Webkul\Core\Console\Commands\UnoPimPublish;
 use Webkul\Core\Console\Commands\UnoPimVersion;
-use Webkul\Core\Console\Commands\UpCommand;
+use Webkul\Core\Contracts\Database\Grammar;
 use Webkul\Core\Core;
 use Webkul\Core\ElasticSearch;
 use Webkul\Core\Exceptions\Handler;
@@ -46,7 +45,7 @@ class CoreServiceProvider extends ServiceProvider
         if ($appUrl = config('app.url')) {
             URL::forceRootUrl($appUrl);
 
-            if ($scheme = parse_url($appUrl, PHP_URL_SCHEME)) {
+            if ($scheme = parse_url((string) $appUrl, PHP_URL_SCHEME)) {
                 URL::forceScheme($scheme);
             }
         }
@@ -83,20 +82,12 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'core');
 
-        Event::listen('unopim.shop.layout.body.after', static function (ViewRenderEventManager $viewRenderEventManager) {
+        Event::listen('unopim.shop.layout.body.after', static function (ViewRenderEventManager $viewRenderEventManager): void {
             $viewRenderEventManager->addTemplate('core::blade.tracer.style');
         });
 
-        Event::listen('unopim.admin.layout.head', static function (ViewRenderEventManager $viewRenderEventManager) {
+        Event::listen('unopim.admin.layout.head', static function (ViewRenderEventManager $viewRenderEventManager): void {
             $viewRenderEventManager->addTemplate('core::blade.tracer.style');
-        });
-
-        $this->app->extend('command.down', function () {
-            return new DownCommand;
-        });
-
-        $this->app->extend('command.up', function () {
-            return new UpCommand;
         });
 
         /**
@@ -114,7 +105,7 @@ class CoreServiceProvider extends ServiceProvider
             ])->where(['filename' => $filenamePattern]);
         }
 
-        DB::macro('rawQueryGrammar', fn () => GrammarQueryManager::getGrammar());
+        DB::macro('rawQueryGrammar', fn (): Grammar => GrammarQueryManager::getGrammar());
     }
 
     /**
@@ -166,7 +157,7 @@ class CoreServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/media.php', 'media');
 
-        $this->app->singleton('image_manager', function ($app) {
+        $this->app->singleton('image_manager', function ($app): ImageManager {
             $driver = $app['config']->get('image.driver', 'gd');
 
             return match ($driver) {
@@ -193,33 +184,25 @@ class CoreServiceProvider extends ServiceProvider
 
         $loader->alias('core', CoreFacade::class);
 
-        $this->app->singleton('core', function () {
-            return app()->make(Core::class);
-        });
+        $this->app->singleton('core', fn () => app()->make(Core::class));
 
         /**
          * The request's catalog scope. Scoped, not a singleton: Octane keeps singletons alive across
          * requests inside a worker, which would leak one admin's locale into the next admin's page.
          */
-        $this->app->scoped(CatalogScope::class, function ($app) {
-            return new CatalogScope(
-                $app->make(LocaleRepository::class),
-                $app->make(ChannelRepository::class),
-            );
-        });
+        $this->app->scoped(CatalogScope::class, fn ($app): CatalogScope => new CatalogScope(
+            $app->make(LocaleRepository::class),
+            $app->make(ChannelRepository::class),
+        ));
 
         /**
          * Register ElasticSearch as a singleton.
          */
-        $this->app->singleton('elasticsearch', function () {
-            return new ElasticSearch;
-        });
+        $this->app->singleton('elasticsearch', fn (): ElasticSearch => new ElasticSearch);
 
         $loader->alias('elasticsearch', ElasticSearchFacade::class);
 
-        $this->app->singleton(ElasticSearchClient::class, function () {
-            return app()->make('elasticsearch')->connection();
-        });
+        $this->app->singleton(ElasticSearchClient::class, fn (): ElasticSearchClient => app()->make('elasticsearch')->connection());
     }
 
     /**
@@ -241,8 +224,6 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function registerBladeCompiler(): void
     {
-        $this->app->singleton('blade.compiler', function ($app) {
-            return new BladeCompiler($app['files'], $app['config']['view.compiled']);
-        });
+        $this->app->singleton('blade.compiler', fn ($app): BladeCompiler => new BladeCompiler($app['files'], $app['config']['view.compiled']));
     }
 }

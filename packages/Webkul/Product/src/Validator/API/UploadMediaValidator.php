@@ -4,6 +4,7 @@ namespace Webkul\Product\Validator\API;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -34,21 +35,19 @@ class UploadMediaValidator
         $rules = $this->generateRules($productAttribute, $id);
         $validator = Validator::make($data, $rules);
 
-        if (! $productAttribute) {
-            $validator->after(function ($validator) use ($attributeCode) {
+        if (! $productAttribute instanceof Attribute) {
+            $validator->after(function ($validator) use ($attributeCode): void {
                 $validator->errors()->add('attribute', trans('admin::app.catalog.attributes.not-found', ['code' => $attributeCode]));
             });
         }
 
         if ($productAttribute && ! in_array($productAttribute->type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE, AttributeTypes::GALLERY_ATTRIBUTE_TYPE])) {
-            $validator->after(function ($validator) use ($attributeCode) {
+            $validator->after(function ($validator) use ($attributeCode): void {
                 $validator->errors()->add('attribute', trans('admin::app.catalog.attributes.not-found', ['code' => $attributeCode]));
             });
         }
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
+        throw_if($validator->fails(), ValidationException::class, $validator);
     }
 
     /**
@@ -56,10 +55,8 @@ class UploadMediaValidator
      */
     protected function generateRules($productAttribute, ?string $id = null): array
     {
-        $rules = [
+        return [
             'file' => $productAttribute ? $productAttribute->getValidationsOnlyMedia($id ? (int) $id : null) : [],
         ];
-
-        return $rules;
     }
 }

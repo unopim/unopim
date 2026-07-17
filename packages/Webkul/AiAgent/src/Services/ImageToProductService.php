@@ -98,18 +98,14 @@ class ImageToProductService
      */
     protected function toBase64DataUri(string $filePath, ?string $mimeType = null): string
     {
-        if (! file_exists($filePath)) {
-            throw new \InvalidArgumentException("Image file not found: {$filePath}");
-        }
+        throw_unless(file_exists($filePath), \InvalidArgumentException::class, "Image file not found: {$filePath}");
 
         $raw = file_get_contents($filePath);
 
-        if ($raw === false || strlen($raw) === 0) {
-            throw new \InvalidArgumentException("Failed to read image file: {$filePath}");
-        }
+        throw_if($raw === false || $raw === '', \InvalidArgumentException::class, "Failed to read image file: {$filePath}");
 
         // Auto-detect mime type if not provided or unreliable
-        if (empty($mimeType) || $mimeType === 'application/octet-stream') {
+        if (in_array($mimeType, [null, '', '0', 'application/octet-stream'], true)) {
             $mimeType = mime_content_type($filePath) ?: 'image/jpeg';
         }
 

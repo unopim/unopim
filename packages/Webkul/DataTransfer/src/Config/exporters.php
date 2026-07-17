@@ -1,14 +1,39 @@
 <?php
 
+use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Attribute\Repositories\AttributeGroupRepository;
+use Webkul\Attribute\Repositories\AttributeOptionRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Category\Repositories\CategoryFieldRepository;
+use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Core\Repositories\CurrencyRepository;
+use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\DataTransfer\Enums\ProductFilter;
+use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
+use Webkul\DataTransfer\Validators\JobInstances\Export\AttributeFamilyJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\AttributeGroupJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\AttributeJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\AttributeOptionJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\CategoryFieldJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\CategoryJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\ChannelJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\CurrencyJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\LocaleJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\ProductJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\RoleJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\UserJobValidator;
+use Webkul\Product\Repositories\ProductRepository;
+use Webkul\User\Repositories\AdminRepository;
+use Webkul\User\Repositories\RoleRepository;
 
 return [
     'products' => [
         'title'       => 'data_transfer::app.exporters.products.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Product\Exporter',
-        'source'      => 'Webkul\Product\Repositories\ProductRepository',
+        'exporter'    => Exporter::class,
+        'source'      => ProductRepository::class,
         'sample_path' => 'data-transfer/samples/products.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\ProductJobValidator',
+        'validator'   => ProductJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -240,10 +265,10 @@ return [
 
     'categories' => [
         'title'       => 'data_transfer::app.exporters.categories.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Category\Exporter',
-        'source'      => 'Webkul\Category\Repositories\CategoryRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Category\Exporter::class,
+        'source'      => CategoryRepository::class,
         'sample_path' => 'data-transfer/samples/categories.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\CategoryJobValidator',
+        'validator'   => CategoryJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -276,10 +301,10 @@ return [
 
     'category-fields' => [
         'title'       => 'data_transfer::app.exporters.category-fields.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\CategoryField\Exporter',
-        'source'      => 'Webkul\Category\Repositories\CategoryFieldRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\CategoryField\Exporter::class,
+        'source'      => CategoryFieldRepository::class,
         'sample_path' => 'data-transfer/samples/category-fields.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\CategoryFieldJobValidator',
+        'validator'   => CategoryFieldJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -307,10 +332,10 @@ return [
 
     'attributes' => [
         'title'       => 'data_transfer::app.exporters.attributes.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Attribute\Exporter',
-        'source'      => 'Webkul\Attribute\Repositories\AttributeRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Attribute\Exporter::class,
+        'source'      => AttributeRepository::class,
         'sample_path' => 'data-transfer/samples/attributes.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\AttributeJobValidator',
+        'validator'   => AttributeJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -338,10 +363,10 @@ return [
 
     'attribute-groups' => [
         'title'       => 'data_transfer::app.exporters.attribute-groups.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\AttributeGroup\Exporter',
-        'source'      => 'Webkul\Attribute\Repositories\AttributeGroupRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\AttributeGroup\Exporter::class,
+        'source'      => AttributeGroupRepository::class,
         'sample_path' => 'data-transfer/samples/attribute-groups.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\AttributeGroupJobValidator',
+        'validator'   => AttributeGroupJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -369,10 +394,10 @@ return [
 
     'attribute-families' => [
         'title'       => 'data_transfer::app.exporters.attribute-families.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\AttributeFamily\Exporter',
-        'source'      => 'Webkul\Attribute\Repositories\AttributeFamilyRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\AttributeFamily\Exporter::class,
+        'source'      => AttributeFamilyRepository::class,
         'sample_path' => 'data-transfer/samples/attribute-families.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\AttributeFamilyJobValidator',
+        'validator'   => AttributeFamilyJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -400,10 +425,10 @@ return [
 
     'attribute-options' => [
         'title'       => 'data_transfer::app.exporters.attribute-options.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\AttributeOption\Exporter',
-        'source'      => 'Webkul\Attribute\Repositories\AttributeOptionRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\AttributeOption\Exporter::class,
+        'source'      => AttributeOptionRepository::class,
         'sample_path' => 'data-transfer/samples/attribute-options.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\AttributeOptionJobValidator',
+        'validator'   => AttributeOptionJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -431,10 +456,10 @@ return [
 
     'locales' => [
         'title'       => 'data_transfer::app.exporters.locales.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Locale\Exporter',
-        'source'      => 'Webkul\Core\Repositories\LocaleRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Locale\Exporter::class,
+        'source'      => LocaleRepository::class,
         'sample_path' => 'data-transfer/samples/locales.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\LocaleJobValidator',
+        'validator'   => LocaleJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -476,10 +501,10 @@ return [
 
     'channels' => [
         'title'       => 'data_transfer::app.exporters.channels.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Channel\Exporter',
-        'source'      => 'Webkul\Core\Repositories\ChannelRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Channel\Exporter::class,
+        'source'      => ChannelRepository::class,
         'sample_path' => 'data-transfer/samples/channels.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\ChannelJobValidator',
+        'validator'   => ChannelJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -507,10 +532,10 @@ return [
 
     'currencies' => [
         'title'       => 'data_transfer::app.exporters.currencies.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Currency\Exporter',
-        'source'      => 'Webkul\Core\Repositories\CurrencyRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Currency\Exporter::class,
+        'source'      => CurrencyRepository::class,
         'sample_path' => 'data-transfer/samples/currencies.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\CurrencyJobValidator',
+        'validator'   => CurrencyJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -552,10 +577,10 @@ return [
 
     'roles' => [
         'title'       => 'data_transfer::app.exporters.roles.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Role\Exporter',
-        'source'      => 'Webkul\User\Repositories\RoleRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Role\Exporter::class,
+        'source'      => RoleRepository::class,
         'sample_path' => 'data-transfer/samples/roles.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\RoleJobValidator',
+        'validator'   => RoleJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -583,10 +608,10 @@ return [
 
     'users' => [
         'title'       => 'data_transfer::app.exporters.users.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\User\Exporter',
-        'source'      => 'Webkul\User\Repositories\AdminRepository',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\User\Exporter::class,
+        'source'      => AdminRepository::class,
         'sample_path' => 'data-transfer/samples/users.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\UserJobValidator',
+        'validator'   => UserJobValidator::class,
         'filters'     => [
             'fields' => [
                 [

@@ -11,36 +11,22 @@ class Bouncer
      */
     public function hasPermission($permission): bool
     {
-        if (
-            auth()->guard('admin')->check()
-            && auth()->guard('admin')->user()->role->permission_type == 'all'
-        ) {
+        if (auth()->guard('admin')->check()
+        && auth()->guard('admin')->user()->role->permission_type == 'all') {
             return true;
-        } else {
-            if (
-                ! auth()->guard('admin')->check()
-                || ! auth()->guard('admin')->user()->hasPermission($permission)
-            ) {
-                return false;
-            }
         }
 
-        return true;
+        return auth()->guard('admin')->check() && auth()->guard('admin')->user()->hasPermission($permission);
     }
 
     /**
      * Checks if user allowed or not for certain action
      *
      * @param  string  $permission
-     * @return void
      */
-    public static function allow($permission)
+    public static function allow($permission): void
     {
-        if (
-            ! auth()->guard('admin')->check()
-            || ! auth()->guard('admin')->user()->hasPermission($permission)
-        ) {
-            abort(403, 'This action is unauthorized');
-        }
+        abort_if(! auth()->guard('admin')->check()
+        || ! auth()->guard('admin')->user()->hasPermission($permission), 403, 'This action is unauthorized');
     }
 }

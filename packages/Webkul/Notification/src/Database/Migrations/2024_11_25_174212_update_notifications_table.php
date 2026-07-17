@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('notifications', function (Blueprint $table) {
+        Schema::table('notifications', function (Blueprint $table): void {
             $table->string('route')->nullable()->after('type');
             $table->json('route_params')->nullable()->after('route');
             $table->string('title')->nullable()->after('route_params');
@@ -26,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('notifications', function (Blueprint $table) {
+        Schema::table('notifications', function (Blueprint $table): void {
             $table->boolean('read')->default(0);
             $table->dropColumn(['route', 'route_params', 'title', 'description', 'context']); // Drop the columns if rolling back
         });

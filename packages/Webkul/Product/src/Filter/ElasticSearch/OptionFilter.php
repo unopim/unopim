@@ -10,9 +10,6 @@ use Webkul\ElasticSearch\Enums\FilterOperators;
  */
 class OptionFilter extends AbstractElasticSearchAttributeFilter
 {
-    /**
-     * @param  array  $supportedProperties
-     */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::CHECKBOX_FIELD_TYPE, Attribute::MULTISELECT_FIELD_TYPE, Attribute::SELECT_FIELD_TYPE],
         array $allowedOperators = [
@@ -33,13 +30,11 @@ class OptionFilter extends AbstractElasticSearchAttributeFilter
         $attribute,
         $operator,
         $value,
-        $locale = null,
-        $channel = null,
+        ?string $locale = null,
+        ?string $channel = null,
         $options = []
-    ) {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+    ): static {
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 

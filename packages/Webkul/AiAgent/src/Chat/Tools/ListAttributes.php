@@ -92,7 +92,7 @@ class ListAttributes implements PimTool
 
                 $context = $this->context;
 
-                $result = $attributes->map(function ($attr) use ($context) {
+                $result = $attributes->map(function ($attr) use ($context): array {
                     $info = [
                         'code'              => $attr->code,
                         'type'              => $attr->type,
@@ -104,7 +104,7 @@ class ListAttributes implements PimTool
                     // Include options for select/multiselect attributes
                     if (\in_array($attr->type, ['select', 'multiselect'])) {
                         $options = DB::table('attribute_options as ao')
-                            ->leftJoin('attribute_option_translations as aot', function ($join) use ($context) {
+                            ->leftJoin('attribute_option_translations as aot', function ($join) use ($context): void {
                                 $join->on('aot.attribute_option_id', '=', 'ao.id')
                                     ->where('aot.locale', '=', $context->locale);
                             })
@@ -112,7 +112,7 @@ class ListAttributes implements PimTool
                             ->select('ao.code', 'aot.label')
                             ->orderBy('ao.sort_order')
                             ->get()
-                            ->map(fn ($o) => ['code' => $o->code, 'label' => $o->label ?? $o->code])
+                            ->map(fn ($o): array => ['code' => $o->code, 'label' => $o->label ?? $o->code])
                             ->toArray();
 
                         $info['options'] = $options;

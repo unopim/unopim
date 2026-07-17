@@ -2,9 +2,11 @@
 
 namespace Webkul\DataTransfer\Buffer;
 
-use Maatwebsite\Excel\Files\TemporaryFile;
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Webkul\DataTransfer\Jobs\Export\File\LocalTemporaryFile;
+use Webkul\DataTransfer\Jobs\Export\File\RemoteTemporaryFile;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Jobs\Export\File\TemporaryFileFactory;
 
@@ -30,10 +32,7 @@ class FileBuffer
 
     protected $writer;
 
-    /**
-     * @return TemporaryFile
-     */
-    public function make($directory, ?string $fileExtension = null, ?string $fileName = null)
+    public function make($directory, ?string $fileExtension = null, ?string $fileName = null): RemoteTemporaryFile|LocalTemporaryFile
     {
         $temporaryFileFactory = new TemporaryFileFactory($directory);
 
@@ -42,9 +41,7 @@ class FileBuffer
 
     protected function getWriter($filePath, array $options = [])
     {
-        if (! isset($options['type'])) {
-            throw new \InvalidArgumentException('Option "type" have to be defined');
-        }
+        throw_unless(isset($options['type']), \InvalidArgumentException::class, 'Option "type" have to be defined');
 
         $writer = SpoutWriterFactory::createWriter($options['type'], $options);
 
@@ -71,7 +68,7 @@ class FileBuffer
     /**
      * Add the specified keys to the list of headers
      */
-    public function addToHeaders(array $keys)
+    public function addToHeaders(array $keys): void
     {
         $headers = array_merge($this->headers, $keys);
         $headers = array_unique($headers);

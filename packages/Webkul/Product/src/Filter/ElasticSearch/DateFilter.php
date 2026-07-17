@@ -12,9 +12,6 @@ class DateFilter extends AbstractElasticSearchAttributeFilter
 {
     protected $dateFormat = 'Y-m-d';
 
-    /**
-     * @param  array  $supportedProperties
-     */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::DATE_FIELD_TYPE],
         array $allowedOperators = [
@@ -37,13 +34,11 @@ class DateFilter extends AbstractElasticSearchAttributeFilter
         $attribute,
         $operator,
         $value,
-        $locale = null,
-        $channel = null,
+        ?string $locale = null,
+        ?string $channel = null,
         $options = []
-    ) {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+    ): static {
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         $attributeCode = $attribute->code;
 
@@ -53,9 +48,7 @@ class DateFilter extends AbstractElasticSearchAttributeFilter
             case FilterOperators::IN:
                 $clause = [
                     'terms' => [
-                        $attributePath => array_map(function ($data) use ($attributeCode) {
-                            return $this->getFormattedDateTime($attributeCode, $data);
-                        }, $value),
+                        $attributePath => array_map(fn (string $data): string => $this->getFormattedDateTime($attributeCode, $data), $value),
                     ],
                 ];
 

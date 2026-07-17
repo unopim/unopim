@@ -109,7 +109,7 @@ class ProductEmbeddingIndex
      */
     public function bulkUpsert(array $documents): array
     {
-        if (empty($documents)) {
+        if ($documents === []) {
             return [];
         }
 
@@ -144,7 +144,7 @@ class ProductEmbeddingIndex
                 }
             }
 
-            if ($failedIds) {
+            if ($failedIds !== []) {
                 Log::channel('elasticsearch')->error('Failed to index product embeddings in '.$this->indexName().' index.', [
                     'product_ids' => $failedIds,
                 ]);
@@ -182,7 +182,7 @@ class ProductEmbeddingIndex
      */
     public function existingContentHashes(array $productIds): array
     {
-        if (empty($productIds)) {
+        if ($productIds === []) {
             return [];
         }
 
@@ -192,7 +192,7 @@ class ProductEmbeddingIndex
                 'body'  => [
                     '_source' => ['content_hash'],
                     'query'   => [
-                        'ids' => ['values' => array_values(array_map('intval', $productIds))],
+                        'ids' => ['values' => array_values(array_map(intval(...), $productIds))],
                     ],
                     'size' => count($productIds),
                 ],
@@ -227,7 +227,7 @@ class ProductEmbeddingIndex
 
         $knn = [
             'field'          => self::VECTOR_FIELD,
-            'query_vector'   => array_map('floatval', $queryVector),
+            'query_vector'   => array_map(floatval(...), $queryVector),
             'k'              => $k,
             'num_candidates' => max($k, (int) config('ai-agent.vector_store.knn.num_candidates', 100)),
         ];

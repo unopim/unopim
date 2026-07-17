@@ -17,20 +17,18 @@ class ProductAssociationsValidator extends ValuesValidator
     /**
      * Validation rules to be used on the data
      */
-    protected function generateRules(mixed $data, ?string $productId, array $options)
+    protected function generateRules(mixed $data, ?string $productId, array $options): array
     {
-        $rules = [
+        return [
             '*'   => new KeyExistsRule(self::ASSOCIATION_SECTIONS),
             '*.*' => 'exists:products,sku',
         ];
-
-        return $rules;
     }
 
     /**
      * Get validation messages for the validator
      */
-    protected function getMessages()
+    protected function getMessages(): array
     {
         return [
             '*.*.exists' => trans('validation.exists-value'),

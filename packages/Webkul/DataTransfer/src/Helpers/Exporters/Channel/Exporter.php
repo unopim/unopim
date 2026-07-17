@@ -14,8 +14,6 @@ class Exporter extends AbstractExporter
 {
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -27,10 +25,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Initializes the file buffer for the export process.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         $this->initializeFileBuffer();
     }
@@ -87,7 +83,7 @@ class Exporter extends AbstractExporter
      *
      * @return \Iterator
      */
-    protected function getResults()
+    protected function getResults(): \Traversable
     {
         return $this->channelRepository->queryBuilder()->get()->getIterator();
     }

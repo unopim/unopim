@@ -32,7 +32,7 @@ class ProductImportCsvNormalizer
      * family CODE; the core importer requires sku/locale/channel/type/parent/
      * attribute_family to all be present.
      */
-    private const STRUCTURAL_COLUMNS = ['sku', 'type', 'attribute_family', 'parent', 'channel', 'locale', 'status'];
+    private const array STRUCTURAL_COLUMNS = ['sku', 'type', 'attribute_family', 'parent', 'channel', 'locale', 'status'];
 
     public function __construct(
         protected ProductWriterService $writerService,
@@ -101,14 +101,19 @@ class ProductImportCsvNormalizer
         $hasCategories = false;
 
         foreach ($rows as $row) {
-            foreach ($this->normalizeKeys($row) as $column => $value) {
+            foreach (array_keys($this->normalizeKeys($row)) as $column) {
                 if ($column === 'categories') {
                     $hasCategories = true;
 
                     continue;
                 }
-
-                if (\in_array($column, $reserved, true) || isset($seen[$column]) || ! isset($familyAttrs[$column])) {
+                if (\in_array($column, $reserved, true)) {
+                    continue;
+                }
+                if (isset($seen[$column])) {
+                    continue;
+                }
+                if (! isset($familyAttrs[$column])) {
                     continue;
                 }
 

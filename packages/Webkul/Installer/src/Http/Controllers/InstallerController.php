@@ -81,8 +81,6 @@ class InstallerController extends Controller
 
     /**
      * Create a new controller instance
-     *
-     * @return void
      */
     public function __construct(
         protected ServerRequirements $serverRequirements,
@@ -169,7 +167,7 @@ class InstallerController extends Controller
     {
         $env = $this->readEnvFile();
 
-        if (empty($env)) {
+        if ($env === []) {
             return;
         }
 
@@ -205,8 +203,13 @@ class InstallerController extends Controller
 
         foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
             $line = trim($line);
-
-            if ($line === '' || str_starts_with($line, '#') || ! str_contains($line, '=')) {
+            if ($line === '') {
+                continue;
+            }
+            if (str_starts_with($line, '#')) {
+                continue;
+            }
+            if (! str_contains($line, '=')) {
                 continue;
             }
 
@@ -253,14 +256,14 @@ class InstallerController extends Controller
         $requirements = $this->serverRequirements->validate();
 
         if (request()->has('locale')) {
-            return redirect()->route('installer.index');
+            return to_route('installer.index');
         }
 
         $optionalPackages = $this->optionalPackages;
 
         $cloudHostingUrl = self::CLOUD_HOSTING_URL;
 
-        return view('installer::installer.index', compact('requirements', 'phpVersion', 'optionalPackages', 'cloudHostingUrl'));
+        return view('installer::installer.index', ['requirements' => $requirements, 'phpVersion' => $phpVersion, 'optionalPackages' => $optionalPackages, 'cloudHostingUrl' => $cloudHostingUrl]);
     }
 
     /**
@@ -280,9 +283,7 @@ class InstallerController extends Controller
             $request['db_prefix'] = trim((string) $request['db_prefix']);
         }
 
-        $request = array_map(function ($input) {
-            return strip_tags((string) $input);
-        }, $request);
+        $request = array_map(fn ($input): string => strip_tags((string) $input), $request);
 
         // Match the CLI installer's prefix validation 1:1 so both install
         // paths surface the same migration-blocking errors up-front.
@@ -323,17 +324,13 @@ class InstallerController extends Controller
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
 
-        $migration = $this->databaseManager->migration();
-
-        return $migration;
+        return $this->databaseManager->migration();
     }
 
     /**
      * Run Seeder
-     *
-     * @return void|string
      */
-    public function runSeeder()
+    public function runSeeder(): ?string
     {
         $this->abortIfInstalled();
         $this->abortIfDatabasePopulated();
@@ -368,10 +365,10 @@ class InstallerController extends Controller
         $response = $this->environmentManager->setEnvConfiguration(request()->allParameters);
 
         if ($response) {
-            $seeder = $this->databaseManager->seeder($parameter);
-
-            return $seeder;
+            return $this->databaseManager->seeder($parameter);
         }
+
+        return null;
     }
 
     /**
@@ -384,16 +381,14 @@ class InstallerController extends Controller
         $this->abortIfInstalled();
 
         // Fail closed if the install state cannot be positively confirmed.
-        if (! $this->databaseManager->canConfirmNotInstalled()) {
-            abort(403);
-        }
+        abort_unless($this->databaseManager->canConfirmNotInstalled(), 403);
 
         // Only ever promote the seeder's freshly-created default admin.
         $this->abortUnlessAdminIsFreshlySeeded();
 
         $this->reloadDatabaseConfigFromEnv();
 
-        $password = password_hash(request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
+        $password = password_hash((string) request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
         $uiLocaleId = DB::table('locales')->where('code', request()->input('locale'))->where('status', 1)->first()?->id ?? 58;
 
         try {
@@ -487,8 +482,8 @@ class InstallerController extends Controller
         // Whitelist package keys against the server-side map — never trust the
         // client with composer/artisan arguments. Unknown keys are dropped.
         $packages = array_values(array_filter(
-            array_map('strval', $requestedPackages),
-            fn ($key) => isset($this->optionalPackages[$key])
+            array_map(strval(...), $requestedPackages),
+            fn (string $key): bool => isset($this->optionalPackages[$key])
         ));
 
         // Persist to a temp state file rather than the session: the SSE stream is
@@ -509,8 +504,8 @@ class InstallerController extends Controller
                 'packages'           => $packages,
                 'app_locale'         => strip_tags((string) $request->input('app_locale', 'en_US')),
                 'app_currency'       => strip_tags((string) $request->input('app_currency', 'USD')),
-                'allowed_locales'    => array_map(fn ($v) => strip_tags((string) $v), $allowedLocales),
-                'allowed_currencies' => array_map(fn ($v) => strip_tags((string) $v), $allowedCurrencies),
+                'allowed_locales'    => array_map(fn ($v): string => strip_tags((string) $v), $allowedLocales),
+                'allowed_currencies' => array_map(fn ($v): string => strip_tags((string) $v), $allowedCurrencies),
             ])
         );
 
@@ -571,7 +566,7 @@ class InstallerController extends Controller
             $appCurrency,
             $allowedLocales,
             $allowedCurrencies
-        ) {
+        ): void {
             $emit = function (string $text): void {
                 echo 'data: '.json_encode(['line' => $text]).PHP_EOL.PHP_EOL;
 
@@ -655,7 +650,7 @@ class InstallerController extends Controller
                 if ($sample) {
                     $emit(trans('installer::app.installer.index.terminal.installing-sample'));
 
-                    $result = app(DemoDataInstaller::class)->seed();
+                    $result = resolve(DemoDataInstaller::class)->seed();
 
                     if (! ($result['success'] ?? false)) {
                         $emit(trans('installer::app.installer.index.terminal.sample-failed', [
@@ -843,7 +838,7 @@ class InstallerController extends Controller
             return false;
         }
 
-        $disabled = array_map('trim', explode(',', strtolower((string) ini_get('disable_functions'))));
+        $disabled = array_map(trim(...), explode(',', strtolower((string) ini_get('disable_functions'))));
 
         return ! in_array('proc_open', $disabled, true);
     }
@@ -907,7 +902,7 @@ class InstallerController extends Controller
     /**
      * SMTP connection setup for Mail
      */
-    public function smtpConfigSetup()
+    public function smtpConfigSetup(): string
     {
         $this->abortIfInstalled();
 

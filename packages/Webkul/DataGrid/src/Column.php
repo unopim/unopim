@@ -178,20 +178,20 @@ class Column
             [
                 'name'  => RangeOptionEnum::LAST_MONTH->value,
                 'label' => trans('admin::app.components.datagrid.filters.date-options.last-month'),
-                'from'  => now()->subMonth(1)->startOfMonth()->format($format),
-                'to'    => now()->subMonth(1)->endOfMonth()->format($format),
+                'from'  => now()->subMonths(1)->startOfMonth()->format($format),
+                'to'    => now()->subMonths(1)->endOfMonth()->format($format),
             ],
             [
                 'name'  => RangeOptionEnum::LAST_THREE_MONTHS->value,
                 'label' => trans('admin::app.components.datagrid.filters.date-options.last-three-months'),
-                'from'  => now()->subMonth(3)->startOfMonth()->format($format),
-                'to'    => now()->subMonth(1)->endOfMonth()->format($format),
+                'from'  => now()->subMonths(3)->startOfMonth()->format($format),
+                'to'    => now()->subMonths(1)->endOfMonth()->format($format),
             ],
             [
                 'name'  => RangeOptionEnum::LAST_SIX_MONTHS->value,
                 'label' => trans('admin::app.components.datagrid.filters.date-options.last-six-months'),
-                'from'  => now()->subMonth(6)->startOfMonth()->format($format),
-                'to'    => now()->subMonth(1)->endOfMonth()->format($format),
+                'from'  => now()->subMonths(6)->startOfMonth()->format($format),
+                'to'    => now()->subMonths(1)->endOfMonth()->format($format),
             ],
             [
                 'name'  => RangeOptionEnum::THIS_YEAR->value,

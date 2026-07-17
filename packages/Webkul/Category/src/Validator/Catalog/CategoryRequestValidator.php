@@ -2,8 +2,8 @@
 
 namespace Webkul\Category\Validator\Catalog;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
-use Illuminate\Validation\Validator;
 use Webkul\Category\Contracts\CategoryField;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Rules\FieldOption;
@@ -17,7 +17,7 @@ class CategoryRequestValidator extends CategoryValidator
     /**
      * Validates the category data based on the provided request data and optional category ID.
      */
-    public function validate(array $requestData, ?int $id = null): void
+    public function validate(array $requestData, ?int $id = null): array
     {
         $validator = parent::validate($requestData, $id);
 
@@ -36,6 +36,8 @@ class CategoryRequestValidator extends CategoryValidator
 
             throw $exception::withMessages($errorMessages);
         }
+
+        return [];
     }
 
     /**
@@ -58,7 +60,7 @@ class CategoryRequestValidator extends CategoryValidator
 
         $fieldKeys = [];
 
-        foreach ($rules as $key => $validationRules) {
+        foreach (array_keys($rules) as $key) {
             if (! is_string($key)) {
                 continue;
             }
@@ -96,7 +98,7 @@ class CategoryRequestValidator extends CategoryValidator
         }
 
         if ($field->type === self::CHECKBOX_FIELD_TYPE) {
-            $rules = [new FieldOption($field)];
+            return [new FieldOption($field)];
         }
 
         return $rules;

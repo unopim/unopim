@@ -2,6 +2,8 @@
 
 namespace Webkul\AiAgent\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -11,14 +13,12 @@ use Illuminate\Support\Facades\File;
  * Run via: php artisan ai-agent:cleanup
  * Recommended: schedule daily in the kernel.
  */
+#[Description('Clean up temporary AI agent files (compressed images, exports, generated images)')]
+#[Signature('ai-agent:cleanup
+                            {--days=7 : Delete files older than this many days}
+                            {--dry-run : Show what would be deleted without deleting}')]
 class CleanupTempFiles extends Command
 {
-    protected $signature = 'ai-agent:cleanup
-                            {--days=7 : Delete files older than this many days}
-                            {--dry-run : Show what would be deleted without deleting}';
-
-    protected $description = 'Clean up temporary AI agent files (compressed images, exports, generated images)';
-
     public function handle(): int
     {
         $days = (int) $this->option('days');

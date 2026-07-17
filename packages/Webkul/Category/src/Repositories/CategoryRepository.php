@@ -141,7 +141,7 @@ class CategoryRepository extends Repository
      *
      * @param  Category  $category  The category instance to start from.
      * @param  bool  $present  Whether to include the present category in the result.
-     * @return array The branch of categories from the given category to its parent(s).
+     * @return \Kalnoy\Nestedset\Collection|null The branch of categories from the given category to its parent(s).
      */
     public function getTreeBranchToParent(Category $category, bool $present = true)
     {
@@ -190,9 +190,9 @@ class CategoryRepository extends Repository
      */
     public function getBreadcrumbsForIds(array $ids): array
     {
-        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+        $ids = array_values(array_unique(array_filter(array_map(intval(...), $ids))));
 
-        if (empty($ids)) {
+        if ($ids === []) {
             return [];
         }
 
@@ -200,7 +200,7 @@ class CategoryRepository extends Repository
             ->whereIn('id', $ids)
             ->with(['ancestors' => fn ($query) => $query->defaultOrder()])
             ->get()
-            ->mapWithKeys(fn ($category) => [
+            ->mapWithKeys(fn ($category): array => [
                 (int) $category->id => $category->ancestors
                     ->push($category)
                     ->map(fn ($node) => $node->name)
@@ -230,7 +230,7 @@ class CategoryRepository extends Repository
     {
         $query = $this->getModel()->where('parent_id', $parentId);
 
-        if ($categoryId) {
+        if ($categoryId !== 0) {
             $query->where('id', '!=', $categoryId);
         }
 
@@ -244,7 +244,7 @@ class CategoryRepository extends Repository
 
         $query = $this->getModel()->where('parent_id', $parentId);
 
-        if ($categoryId) {
+        if ($categoryId !== 0) {
             $query->where('id', '!=', $categoryId);
         }
 
@@ -279,9 +279,8 @@ class CategoryRepository extends Repository
      * Get partials.
      *
      * @param  array|null  $columns
-     * @return array
      */
-    public function getPartial($columns = null)
+    public function getPartial($columns = null): array
     {
         $categories = $this->model->all();
 
@@ -307,9 +306,8 @@ class CategoryRepository extends Repository
      * this created method.
      *
      * @param  string  $attributeNames
-     * @return array
      */
-    private function setSameAttributeValueToAllLocale(array $data, ...$attributeNames)
+    private function setSameAttributeValueToAllLocale(array $data, ...$attributeNames): array
     {
         $requestedLocale = core()->getRequestedLocaleCode();
 
@@ -373,9 +371,9 @@ class CategoryRepository extends Repository
         }
 
         if (isset($category->additional_data[self::LOCALE_VALUES_KEY])) {
-            $localeValues = ! empty($localeValues)
-                ? array_merge($category->additional_data[self::LOCALE_VALUES_KEY], $localeValues)
-                : $category->additional_data[self::LOCALE_VALUES_KEY];
+            $localeValues = empty($localeValues)
+                ? $category->additional_data[self::LOCALE_VALUES_KEY]
+                : array_merge($category->additional_data[self::LOCALE_VALUES_KEY], $localeValues);
         }
 
         $localeValues = is_array($localeValues)
@@ -411,9 +409,9 @@ class CategoryRepository extends Repository
     protected function processAdditionalDataValues(int $categoryId, array $values, array $categoryValues = []): array
     {
         $values = array_filter(
-            ! empty($categoryValues)
-                ? array_merge($categoryValues, $values)
-                : $values
+            $categoryValues === []
+                ? $values
+                : array_merge($categoryValues, $values)
         );
 
         foreach ($values as $field => $fieldValue) {

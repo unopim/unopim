@@ -2,6 +2,8 @@
 
 namespace Webkul\AiAgent\Support;
 
+use Illuminate\Contracts\Database\Query\Builder;
+
 /**
  * Channel scoping for agent-memory queries.
  *
@@ -21,7 +23,7 @@ class MemoryScope
      */
     public static function apply($query, ?string $channel)
     {
-        return $query->where(function ($q) use ($channel) {
+        return $query->where(function (Builder $q) use ($channel): void {
             $q->whereNull('channel');
 
             if ($channel !== null && $channel !== '') {

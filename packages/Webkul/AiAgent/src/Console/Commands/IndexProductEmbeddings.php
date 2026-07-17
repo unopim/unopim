@@ -2,8 +2,10 @@
 
 namespace Webkul\AiAgent\Console\Commands;
 
-use Carbon\Carbon;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Webkul\AiAgent\Jobs\IndexProductEmbeddingsJob;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
@@ -13,14 +15,12 @@ use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
  *
  * Run via: php artisan ai-agent:embeddings:index [--since=2026-01-01] [--batch=100]
  */
+#[Description('Queue (re)indexing of product embeddings into the AI vector store')]
+#[Signature('ai-agent:embeddings:index
+                            {--since= : Only queue products updated at or after this date/time}
+                            {--batch= : Products per queued job batch (defaults to config batch_size)}')]
 class IndexProductEmbeddings extends Command
 {
-    protected $signature = 'ai-agent:embeddings:index
-                            {--since= : Only queue products updated at or after this date/time}
-                            {--batch= : Products per queued job batch (defaults to config batch_size)}';
-
-    protected $description = 'Queue (re)indexing of product embeddings into the AI vector store';
-
     public function __construct(protected ProductEmbeddingIndex $productEmbeddingIndex)
     {
         parent::__construct();
@@ -41,7 +41,7 @@ class IndexProductEmbeddings extends Command
 
         if ($this->option('since')) {
             try {
-                $since = Carbon::parse($this->option('since'));
+                $since = Date::parse($this->option('since'));
             } catch (\Throwable) {
                 $this->error('Invalid --since value. Provide a parseable date/time, e.g. 2026-01-01 or "2026-01-01 10:00:00".');
 
@@ -62,10 +62,10 @@ class IndexProductEmbeddings extends Command
         $queuedProducts = 0;
         $queuedJobs = 0;
 
-        $query->chunkById($batchSize, function ($products) use (&$queuedProducts, &$queuedJobs) {
-            $productIds = $products->pluck('id')->map(fn ($id) => (int) $id)->all();
+        $query->chunkById($batchSize, function ($products) use (&$queuedProducts, &$queuedJobs): void {
+            $productIds = $products->pluck('id')->map(fn ($id): int => (int) $id)->all();
 
-            IndexProductEmbeddingsJob::dispatch($productIds);
+            dispatch(new IndexProductEmbeddingsJob($productIds));
 
             $queuedProducts += count($productIds);
             $queuedJobs++;

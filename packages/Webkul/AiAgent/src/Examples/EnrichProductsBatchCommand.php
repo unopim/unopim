@@ -2,6 +2,8 @@
 
 namespace Webkul\AiAgent\Examples;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Webkul\AiAgent\Agents\BulkProductEnricherAgent;
 use Webkul\Product\Repositories\ProductRepository;
@@ -15,22 +17,10 @@ use Webkul\Product\Repositories\ProductRepository;
  * Usage:
  *   php artisan ai-agent:enrich-products --limit=100 --agent-id=4 --credential-id=1
  */
+#[Description('Bulk enrich product data using AI Agent')]
+#[Signature('ai-agent:enrich-products {--limit=50} {--agent-id=4} {--credential-id=1} {--dry-run}')]
 class EnrichProductsBatchCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'ai-agent:enrich-products {--limit=50} {--agent-id=4} {--credential-id=1} {--dry-run}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Bulk enrich product data using AI Agent';
-
     /**
      * Execute the console command.
      */
@@ -59,7 +49,7 @@ class EnrichProductsBatchCommand extends Command
         $this->info('Processing '.$products->count().' products...');
 
         // Convert to array format for agent
-        $productData = $products->map(fn ($p) => [
+        $productData = $products->map(fn ($p): array => [
             'sku'         => $p->sku,
             'name'        => $p->name,
             'description' => $p->description,
@@ -104,13 +94,13 @@ class EnrichProductsBatchCommand extends Command
      */
     protected function displayResults(array $data): void
     {
-        if (empty($data)) {
+        if ($data === []) {
             return;
         }
 
         $this->table(
             ['SKU', 'Name', 'Category', 'Quality Score'],
-            array_map(fn ($item) => [
+            array_map(fn (array $item): array => [
                 $item['sku'] ?? '—',
                 $item['name'] ?? '—',
                 $item['category'] ?? '—',

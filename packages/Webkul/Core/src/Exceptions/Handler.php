@@ -83,7 +83,7 @@ class Handler extends ExceptionHandler
                 ], $errorCode);
             }
 
-            return response()->view('admin::errors.index', compact('errorCode'), $errorCode);
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode], $errorCode);
         });
     }
 
@@ -102,7 +102,7 @@ class Handler extends ExceptionHandler
                 ], $errorCode);
             }
 
-            return response()->view('admin::errors.index', compact('errorCode'));
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode]);
         });
     }
 
@@ -111,9 +111,7 @@ class Handler extends ExceptionHandler
      */
     private function handleValidationException(): void
     {
-        $this->renderable(function (ValidationException $exception, Request $request) {
-            return parent::convertValidationExceptionToResponse($exception, $request);
-        });
+        $this->renderable(fn (ValidationException $exception, Request $request) => parent::convertValidationExceptionToResponse($exception, $request));
     }
 
     /**
@@ -131,7 +129,7 @@ class Handler extends ExceptionHandler
                 ], $errorCode);
             }
 
-            return response()->view('admin::errors.index', compact('errorCode'));
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode]);
         });
     }
 
@@ -140,6 +138,10 @@ class Handler extends ExceptionHandler
      */
     private function isApiRequest(Request $request): bool
     {
-        return $request->is('api/*') || $request->is('*/api/*');
+        if ($request->is('api/*')) {
+            return true;
+        }
+
+        return $request->is('*/api/*');
     }
 }

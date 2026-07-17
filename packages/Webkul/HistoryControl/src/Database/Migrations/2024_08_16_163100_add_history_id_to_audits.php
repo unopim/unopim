@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         if (! Schema::hasColumn('audits', 'history_id')) {
-            Schema::table('audits', function (Blueprint $table) {
+            Schema::table('audits', function (Blueprint $table): void {
                 $table->unsignedInteger('history_id')->nullable();
             });
         }
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('audits', function (Blueprint $table) {
+        Schema::table('audits', function (Blueprint $table): void {
             $table->dropColumn('history_id');
         });
     }

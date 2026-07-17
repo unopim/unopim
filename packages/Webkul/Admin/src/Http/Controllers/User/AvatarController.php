@@ -36,7 +36,7 @@ class AvatarController extends Controller
         }
 
         return response($response->body())
-            ->header('Content-Type', $response->header('Content-Type', 'image/png'))
+            ->header('Content-Type', $response->header('Content-Type') ?: 'image/png')
             ->header('Cache-Control', 'public, max-age=300');
     }
 }

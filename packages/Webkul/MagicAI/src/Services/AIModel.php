@@ -12,13 +12,13 @@ class AIModel
      */
     public static function getModels(): array
     {
-        $platform = app(MagicAIPlatformRepository::class)->getDefault();
+        $platform = resolve(MagicAIPlatformRepository::class)->getDefault();
 
         if (! $platform) {
             return [];
         }
 
-        return array_map(fn ($model) => [
+        return array_map(fn ($model): array => [
             'id'    => $model,
             'label' => $model,
         ], $platform->model_list);
@@ -45,7 +45,7 @@ class AIModel
      */
     public static function getModelsForPlatform(int $platformId): array
     {
-        return app(MagicAIPlatformRepository::class)->getModelOptions($platformId);
+        return resolve(MagicAIPlatformRepository::class)->getModelOptions($platformId);
     }
 
     /**
@@ -54,7 +54,7 @@ class AIModel
      */
     public static function filterImageModels(array $models, ?int $platformId = null): array
     {
-        $repo = app(MagicAIPlatformRepository::class);
+        $repo = resolve(MagicAIPlatformRepository::class);
         $platform = $platformId ? $repo->find($platformId) : $repo->getDefault();
 
         if (! $platform) {
@@ -75,24 +75,18 @@ class AIModel
             default             => [],
         };
 
-        if (empty($imagePatterns)) {
+        if ($imagePatterns === []) {
             return $models;
         }
 
-        $filtered = array_filter($models, function ($model) use ($imagePatterns) {
+        $filtered = array_filter($models, function ($model) use ($imagePatterns): bool {
             $id = is_array($model) ? ($model['id'] ?? '') : $model;
 
-            foreach ($imagePatterns as $pattern) {
-                if (preg_match($pattern, $id)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return array_any($imagePatterns, fn ($pattern): int|false => preg_match($pattern, $id));
         });
 
         // If no image-specific models found, return all models
         // (the provider supports images, user can pick any model that works)
-        return ! empty($filtered) ? array_values($filtered) : $models;
+        return $filtered === [] ? $models : array_values($filtered);
     }
 }

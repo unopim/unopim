@@ -2,8 +2,8 @@
 
 namespace Webkul\Webhook\DataGrids;
 
-use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -23,7 +23,7 @@ class LogsDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $queryBuilder = DB::table('webhook_logs')->select(
+        return DB::table('webhook_logs')->select(
             'id',
             'created_at',
             'sku',
@@ -31,16 +31,12 @@ class LogsDataGrid extends DataGrid
             'status',
             'extra'
         );
-
-        return $queryBuilder;
     }
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -58,12 +54,12 @@ class LogsDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
+            'closure'    => function ($row): string {
                 $timezone = auth('admin')->user()->timezone ?? config('app.timezone');
 
                 try {
-                    $display = Carbon::parse($row->created_at)->setTimezone($timezone)->toDateTimeString();
-                } catch (\Exception $e) {
+                    $display = Date::parse($row->created_at)->setTimezone($timezone)->toDateTimeString();
+                } catch (\Exception) {
                     $display = $row->created_at;
                 }
 
@@ -101,7 +97,7 @@ class LogsDataGrid extends DataGrid
                     'options' => $this->buildStatusFilterOptions(),
                 ],
             ],
-            'closure' => function ($row) {
+            'closure' => function ($row): string {
                 $extra = is_string($row->extra ?? null) ? json_decode($row->extra, true) : ($row->extra ?? []);
                 $code = $extra['response']['status'] ?? null;
 
@@ -155,7 +151,7 @@ class LogsDataGrid extends DataGrid
             $pairs[] = [(int) $row->status, (int) $row->code];
         }
 
-        usort($pairs, fn ($a, $b) => $b[0] <=> $a[0] ?: $a[1] <=> $b[1]);
+        usort($pairs, fn (array $a, array $b): int => $b[0] <=> $a[0] ?: $a[1] <=> $b[1]);
 
         $options = [];
 
@@ -195,11 +191,11 @@ class LogsDataGrid extends DataGrid
             $statusValues = (array) $requestedFilters['status'];
             unset($requestedFilters['status']);
 
-            $this->queryBuilder->where(function ($outer) use ($statusValues) {
+            $this->queryBuilder->where(function ($outer) use ($statusValues): void {
                 foreach ($statusValues as $value) {
-                    $outer->orWhere(function ($q) use ($value) {
+                    $outer->orWhere(function ($q) use ($value): void {
                         if ($value === 'timeout_or_error') {
-                            $q->where('status', 0)->where(function ($inner) {
+                            $q->where('status', 0)->where(function ($inner): void {
                                 $inner->whereNull('extra->response->status')
                                     ->orWhere('extra->response->status', 0);
                             });
@@ -227,10 +223,8 @@ class LogsDataGrid extends DataGrid
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('configuration.webhook.logs.view')) {
             $this->addAction([
@@ -239,9 +233,7 @@ class LogsDataGrid extends DataGrid
                 'title'         => trans('webhook::app.configuration.webhook.logs.index.datagrid.view'),
                 'method'        => 'GET',
                 'frontend_view' => 'view-modal',
-                'url'           => function ($row) {
-                    return route('webhook.logs.show', $row->id);
-                },
+                'url'           => fn ($row): string => route('webhook.logs.show', $row->id),
             ]);
         }
 
@@ -251,19 +243,15 @@ class LogsDataGrid extends DataGrid
                 'icon'   => 'icon-delete',
                 'title'  => trans('webhook::app.configuration.webhook.logs.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('webhook.logs.delete', $row->id);
-                },
+                'url'    => fn ($row): string => route('webhook.logs.delete', $row->id),
             ]);
         }
     }
 
     /**
      * Prepare the mass actions
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         if (bouncer()->hasPermission('configuration.webhook.logs.mass_delete')) {
             $this->addMassAction([

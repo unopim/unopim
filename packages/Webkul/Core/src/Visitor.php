@@ -10,10 +10,8 @@ class Visitor extends BaseVisitor
 {
     /**
      * Create a visit log.
-     *
-     * @return void
      */
-    public function visit(?Model $model = null)
+    public function visit(?Model $model = null): void
     {
         foreach ($this->except as $path) {
             if ($this->request->is($path)) {
@@ -21,7 +19,7 @@ class Visitor extends BaseVisitor
             }
         }
 
-        UpdateCreateVisitIndex::dispatch($model, $this->prepareLog());
+        dispatch(new UpdateCreateVisitIndex($model, $this->prepareLog()));
     }
 
     /**
@@ -34,10 +32,8 @@ class Visitor extends BaseVisitor
 
     /**
      * Returns logs
-     *
-     * @return array
      */
-    public function getLog()
+    public function getLog(): array
     {
         return $this->prepareLog();
     }

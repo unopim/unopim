@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('category_field_option_translations', function (Blueprint $table) {
+        Schema::create('category_field_option_translations', function (Blueprint $table): void {
             $table->increments('id');
             $table->integer('category_field_option_id')->unsigned();
             $table->string('locale');

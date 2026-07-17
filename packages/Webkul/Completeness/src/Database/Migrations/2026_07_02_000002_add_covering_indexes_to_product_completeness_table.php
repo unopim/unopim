@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('product_completeness', function (Blueprint $table) {
+        Schema::table('product_completeness', function (Blueprint $table): void {
             $table->index(['channel_id', 'product_id'], 'pc_channel_product_idx');
             $table->index(['locale_id', 'product_id'], 'pc_locale_product_idx');
         });
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('product_completeness', function (Blueprint $table) {
+        Schema::table('product_completeness', function (Blueprint $table): void {
             $table->dropIndex('pc_channel_product_idx');
             $table->dropIndex('pc_locale_product_idx');
         });

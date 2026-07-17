@@ -23,8 +23,6 @@ class AttributeFamilyRepository extends Repository
 
     /**
      * Create a new repository instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
@@ -40,7 +38,7 @@ class AttributeFamilyRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeFamily';
+        return AttributeFamily::class;
     }
 
     /**
@@ -87,7 +85,7 @@ class AttributeFamilyRepository extends Repository
 
             $groups[$mapping->attribute_group_id] = [
                 'position'          => $mapping->position,
-                'custom_attributes' => $attributes->map(fn ($attribute) => [
+                'custom_attributes' => $attributes->map(fn ($attribute): array => [
                     'id' => $attribute->id,
                 ])->values()->all(),
             ];
@@ -167,12 +165,11 @@ class AttributeFamilyRepository extends Repository
 
     /**
      * @param  int  $id
-     * @param  string  $attribute
      * @return AttributeFamily
      */
-    public function update(array $data, $id, $attribute = 'id')
+    public function update(array $data, $id)
     {
-        $family = parent::update($data, $id, $attribute);
+        $family = parent::update($data, $id);
         $previousAttributeGroupMappingIds = $family->attributeFamilyGroupMappings()->pluck('id');
 
         $newValue = [];
@@ -288,7 +285,7 @@ class AttributeFamilyRepository extends Repository
             $this->attributeFamilyGroupMappingRepository->delete($mappingId);
         }
 
-        if (! empty($addedAndRemovedAttributes['added']) || ! empty($addedAndRemovedAttributes['removed'])) {
+        if (isset($addedAndRemovedAttributes['added']) && $addedAndRemovedAttributes['added'] !== [] || isset($addedAndRemovedAttributes['removed']) && $addedAndRemovedAttributes['removed'] !== []) {
             Event::dispatch('catalog.attribute_family.attributes.changed', [
                 'data'      => $addedAndRemovedAttributes['added'],
                 'removed'   => $addedAndRemovedAttributes['removed'],
@@ -303,10 +300,7 @@ class AttributeFamilyRepository extends Repository
         return $family;
     }
 
-    /**
-     * @return array
-     */
-    public function getPartial()
+    public function getPartial(): array
     {
         $attributeFamilies = $this->model->all();
 

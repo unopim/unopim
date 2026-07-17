@@ -12,10 +12,8 @@ class Exporter extends AbstractExporter
 {
     /**
      * Initializes the export process.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         $this->initializeFileBuffer();
     }
@@ -41,8 +39,10 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare roles from current batch
+     *
+     * @return array{name: mixed, description: mixed, permission_type: mixed, permissions: string}[]
      */
-    public function prepareRoles(JobTrackBatchContract $batch)
+    public function prepareRoles(JobTrackBatchContract $batch): array
     {
         $roles = [];
         foreach ($batch->data as $rowData) {
@@ -50,7 +50,7 @@ class Exporter extends AbstractExporter
                 'name'            => EscapeFormulaOperators::escapeValue($rowData['name']),
                 'description'     => EscapeFormulaOperators::escapeValue($rowData['description']),
                 'permission_type' => $rowData['permission_type'],
-                'permissions'     => ! empty($rowData['permissions']) ? implode(',', $rowData['permissions']) : '',
+                'permissions'     => empty($rowData['permissions']) ? '' : implode(',', $rowData['permissions']),
             ];
 
             $this->createdItemsCount++;

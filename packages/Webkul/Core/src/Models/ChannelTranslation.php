@@ -32,13 +32,6 @@ class ChannelTranslation extends Model implements ChannelTranslationContract, Hi
     protected $guarded = [];
 
     /**
-     * Castable.
-     *
-     * @var array
-     */
-    protected $casts = [];
-
-    /**
      * Create a new factory instance for the model.
      */
     protected static function newFactory(): Factory
@@ -54,5 +47,13 @@ class ChannelTranslation extends Model implements ChannelTranslationContract, Hi
     public function getPrimaryModelIdForHistory(): int
     {
         return $this->channel_id;
+    }
+
+    /**
+     * Castable.
+     */
+    protected function casts(): array
+    {
+        return [];
     }
 }

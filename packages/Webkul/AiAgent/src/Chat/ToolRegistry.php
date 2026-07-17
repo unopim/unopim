@@ -109,7 +109,7 @@ class ToolRegistry
     public function writeToolNames(): array
     {
         return array_values(array_map(
-            fn (array $meta) => $meta['name'],
+            fn (array $meta): string => $meta['name'],
             array_filter($this->metadata, fn (array $meta) => $meta['write']),
         ));
     }
@@ -122,8 +122,8 @@ class ToolRegistry
     public function readToolNames(): array
     {
         return array_values(array_map(
-            fn (array $meta) => $meta['name'],
-            array_filter($this->metadata, fn (array $meta) => ! $meta['write']),
+            fn (array $meta): string => $meta['name'],
+            array_filter($this->metadata, fn (array $meta): bool => ! $meta['write']),
         ));
     }
 

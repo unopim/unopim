@@ -20,7 +20,7 @@ class EmbeddingSimilarityService
      */
     public function rank(string $query, array $documents, ?int $limit = null): array
     {
-        if (trim($query) === '' || empty($documents)) {
+        if (trim($query) === '' || $documents === []) {
             return [];
         }
 
@@ -32,27 +32,29 @@ class EmbeddingSimilarityService
             $vectors = $response->embeddings;
             $queryVector = $vectors[0] ?? null;
 
-            if (! is_array($queryVector) || empty($queryVector)) {
+            if (! is_array($queryVector) || $queryVector === []) {
                 return [];
             }
 
             $scores = [];
 
             foreach (array_slice($vectors, 1) as $index => $vector) {
-                if (! is_array($vector) || empty($vector)) {
+                if (! is_array($vector)) {
                     continue;
                 }
-
+                if ($vector === []) {
+                    continue;
+                }
                 $scores[] = [
                     'index' => $index,
                     'score' => $this->cosine($queryVector, $vector),
                 ];
             }
 
-            usort($scores, fn ($a, $b) => $b['score'] <=> $a['score']);
+            usort($scores, fn (array $a, array $b): int => $b['score'] <=> $a['score']);
 
             if (! is_null($limit)) {
-                $scores = array_slice($scores, 0, max(1, $limit));
+                return array_slice($scores, 0, max(1, $limit));
             }
 
             return $scores;
@@ -72,7 +74,7 @@ class EmbeddingSimilarityService
      */
     public function rankProducts(string $query, ?int $limit = null, ?int $attributeFamilyId = null): array
     {
-        $index = $this->productEmbeddingIndex ?? app(ProductEmbeddingIndex::class);
+        $index = $this->productEmbeddingIndex ?? resolve(ProductEmbeddingIndex::class);
 
         if (trim($query) === '' || ! $index->isEnabled()) {
             return [];
@@ -85,7 +87,7 @@ class EmbeddingSimilarityService
 
             $queryVector = $response->embeddings[0] ?? null;
 
-            if (! is_array($queryVector) || empty($queryVector)) {
+            if (! is_array($queryVector) || $queryVector === []) {
                 return [];
             }
 

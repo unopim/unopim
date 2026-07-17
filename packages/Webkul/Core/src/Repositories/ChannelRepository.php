@@ -15,7 +15,7 @@ class ChannelRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Core\Contracts\Channel';
+        return Channel::class;
     }
 
     /**
@@ -78,16 +78,15 @@ class ChannelRepository extends Repository
      * Update.
      *
      * @param  int  $id
-     * @param  string  $attribute
      * @return Channel
      */
-    public function update(array $data, $id, $attribute = 'id')
+    public function update(array $data, $id)
     {
         $model = $this->getModel();
 
         $data = $this->removeEmptyTranslations($data, $model);
 
-        $channel = parent::update($data, $id, $attribute);
+        $channel = parent::update($data, $id);
 
         // Sync the Channel Locales
         $oldLocales = $channel->locales()->pluck('code')->toArray();
@@ -117,8 +116,10 @@ class ChannelRepository extends Repository
     {
         foreach (core()->getAllActiveLocales() as $locale) {
             $localeCode = $locale->code;
-
-            if (! isset($data[$localeCode]) || ! is_array($data[$localeCode])) {
+            if (! isset($data[$localeCode])) {
+                continue;
+            }
+            if (! is_array($data[$localeCode])) {
                 continue;
             }
 
@@ -159,7 +160,7 @@ class ChannelRepository extends Repository
 
     public function getChannelAsOptions(): Collection
     {
-        return $this->all()->map(function ($channel) {
+        return $this->all()->map(function ($channel): array {
             $channelLabel = $channel->name;
 
             return [

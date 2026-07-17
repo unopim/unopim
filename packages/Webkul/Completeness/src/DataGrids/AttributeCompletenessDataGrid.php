@@ -30,17 +30,17 @@ class AttributeCompletenessDataGrid extends DataGrid
 
         $queryBuilder = DB::table('attributes')
             ->join('attribute_group_mappings', 'attributes.id', '=', 'attribute_group_mappings.attribute_id')
-            ->join('attribute_family_group_mappings', function ($join) use ($familyId) {
+            ->join('attribute_family_group_mappings', function ($join) use ($familyId): void {
                 $join->on('attribute_group_mappings.attribute_family_group_id', '=', 'attribute_family_group_mappings.id')
                     ->where('attribute_family_group_mappings.attribute_family_id', '=', $familyId);
             })
             ->join('attribute_groups', 'attribute_family_group_mappings.attribute_group_id', '=', 'attribute_groups.id')
-            ->leftJoin('completeness_settings', function ($join) use ($familyId) {
+            ->leftJoin('completeness_settings', function ($join) use ($familyId): void {
                 $join->on('attributes.id', '=', 'completeness_settings.attribute_id')
                     ->where('completeness_settings.family_id', '=', $familyId);
             })
             ->leftJoin('channels', 'completeness_settings.channel_id', '=', 'channels.id')
-            ->leftJoin('attribute_translations', function ($join) use ($locale) {
+            ->leftJoin('attribute_translations', function ($join) use ($locale): void {
                 $join->on('attributes.id', '=', 'attribute_translations.attribute_id')
                     ->where('attribute_translations.locale', '=', $locale);
             })
@@ -72,10 +72,8 @@ class AttributeCompletenessDataGrid extends DataGrid
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'code',
@@ -114,10 +112,8 @@ class AttributeCompletenessDataGrid extends DataGrid
 
     /**
      * Prepare mass actions.
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         $this->addMassAction([
             'type'    => 'edit',

@@ -79,7 +79,7 @@ class PlanTasks implements PimTool
                         'task_id'     => $parentId,
                         'goal'        => $goal,
                         'total_steps' => count($steps),
-                        'steps'       => array_map(fn ($s, $i) => [
+                        'steps'       => array_map(fn ($s, $i): array => [
                             'step'        => $i + 1,
                             'title'       => $s['title'] ?? 'Step '.($i + 1),
                             'description' => $s['description'] ?? '',

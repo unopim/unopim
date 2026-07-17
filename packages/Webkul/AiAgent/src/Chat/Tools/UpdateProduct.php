@@ -10,6 +10,7 @@ use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Jobs\TranslateProductValuesJob;
 use Webkul\AiAgent\Services\ProductWriterService;
+use Webkul\Product\Repositories\ProductRepository;
 
 class UpdateProduct implements PimTool
 {
@@ -64,12 +65,12 @@ class UpdateProduct implements PimTool
                 if (empty($changes)) {
                     return json_encode(['error' => 'Invalid or empty changes JSON.']);
                 }
-                $skus = array_map('trim', explode(',', $sku));
+                $skus = array_map(trim(...), explode(',', $sku));
 
                 $updated = 0;
                 $errors = [];
 
-                $productRepo = app('Webkul\Product\Repositories\ProductRepository');
+                $productRepo = resolve(ProductRepository::class);
                 $currencies = $this->writerService->getActiveCurrencyCodes();
                 $activeLocaleCodes = array_flip(core()->getAllActiveLocales()->pluck('code')->all());
 
@@ -100,7 +101,7 @@ class UpdateProduct implements PimTool
 
                         // LLM sometimes passes locale-keyed objects like {"ar_AE": "text"}.
                         // Detect and route each locale value to the correct bucket.
-                        if (is_array($value) && ! empty($value)) {
+                        if (is_array($value) && $value !== []) {
                             $localeKeys = array_keys($value);
                             $looksLikeLocaleMap = isset($activeLocaleCodes[(string) ($localeKeys[0] ?? '')]);
 
@@ -108,10 +109,18 @@ class UpdateProduct implements PimTool
                                 $meta = $familyAttributes[$code];
 
                                 foreach ($value as $localeCode => $localeValue) {
-                                    if (! isset($activeLocaleCodes[(string) $localeCode]) || ! is_string($localeValue) || empty($localeValue)) {
+                                    if (! isset($activeLocaleCodes[(string) $localeCode])) {
                                         continue;
                                     }
-
+                                    if (! is_string($localeValue)) {
+                                        continue;
+                                    }
+                                    if ($localeValue === '') {
+                                        continue;
+                                    }
+                                    if ($localeValue === '0') {
+                                        continue;
+                                    }
                                     if ($meta['value_per_channel'] && $meta['value_per_locale']) {
                                         foreach ($allChannels as $ch) {
                                             $values['channel_locale_specific'][$ch->code][$localeCode][$code] = $localeValue;
@@ -191,13 +200,8 @@ class UpdateProduct implements PimTool
                     $updated++;
 
                     // Dispatch translation for text fields
-                    if (! empty($translatableFields)) {
-                        TranslateProductValuesJob::dispatch(
-                            productId: $productId,
-                            sourceLocale: $this->context->locale,
-                            fieldsToTranslate: $translatableFields,
-                            channel: $this->context->channel,
-                        )->delay(now()->addSeconds(3));
+                    if ($translatableFields !== []) {
+                        dispatch(new TranslateProductValuesJob(productId: $productId, sourceLocale: $this->context->locale, fieldsToTranslate: $translatableFields, channel: $this->context->channel))->delay(now()->addSeconds(3));
                     }
                 }
 
@@ -205,7 +209,7 @@ class UpdateProduct implements PimTool
                     'result' => [
                         'updated' => $updated,
                         'skus'    => implode(', ', $skus),
-                        'errors'  => empty($errors) ? null : $errors,
+                        'errors'  => $errors === [] ? null : $errors,
                     ],
                 ]);
             }

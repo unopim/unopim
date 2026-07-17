@@ -46,7 +46,7 @@ class AiAgentServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../../Database/Migration');
 
         // Inject the global AI chat widget only when Agentic PIM is enabled
-        Event::listen('unopim.admin.layout.content.after', function ($viewRenderEventManager) {
+        Event::listen('unopim.admin.layout.content.after', function ($viewRenderEventManager): void {
             if (auth()->guard('admin')->check() && core()->getConfigData('general.magic_ai.agentic_pim.enabled')) {
                 $viewRenderEventManager->addTemplate('ai-agent::components.chat-widget');
             }
@@ -111,7 +111,7 @@ class AiAgentServiceProvider extends ServiceProvider
 
         // Agent tool calling infrastructure — populated from the ai-agent.tools
         // config map so packages can add/override/disable tools declaratively.
-        $this->app->singleton(ToolRegistry::class, function ($app) {
+        $this->app->singleton(ToolRegistry::class, function ($app): ToolRegistry {
             $registry = new ToolRegistry;
 
             foreach ($app['config']->get('ai-agent.tools', []) as $class => $metadata) {

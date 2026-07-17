@@ -44,12 +44,7 @@ class CreateProductDraftStep implements PipelineStageContract
     {
         $enriched = $payload->metadata['enrichedAttributes'] ?? null;
 
-        if (! is_array($enriched)) {
-            throw new PipelineException(
-                'CreateProductDraftStep: enrichedAttributes is missing — EnrichmentStep must run first.',
-                self::class,
-            );
-        }
+        throw_unless(is_array($enriched), PipelineException::class, 'CreateProductDraftStep: enrichedAttributes is missing — EnrichmentStep must run first.', self::class);
 
         $draft = $this->buildDraft($payload, $enriched);
 
@@ -117,7 +112,7 @@ class CreateProductDraftStep implements PipelineStageContract
         // Primary path: resolve a Webkul product draft repository if bound
         if (app()->bound('Webkul\Product\Repositories\ProductDraftRepository')) {
             /** @var object $repo */
-            $repo = app('Webkul\Product\Repositories\ProductDraftRepository');
+            $repo = resolve('Webkul\Product\Repositories\ProductDraftRepository');
             $model = $repo->create($draft);
 
             return $model->id;

@@ -11,10 +11,8 @@ class EventServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         Event::listen('catalog.product.update.after', [Product::class, 'afterUpdate']);
 

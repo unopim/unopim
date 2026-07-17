@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Webkul\Admin\Validations\ConfigurableUniqueSku;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Repositories\ProductRepository;
 
 class Configurable extends AbstractType
 {
@@ -72,9 +73,8 @@ class Configurable extends AbstractType
      * Set default variant id.
      *
      * @param  int  $defaultVariantId
-     * @return void
      */
-    public function setDefaultVariantId($defaultVariantId)
+    public function setDefaultVariantId($defaultVariantId): void
     {
         $this->product->additional = array_merge($this->product->additional ?? [], [
             'default_variant_id' => $defaultVariantId,
@@ -83,10 +83,8 @@ class Configurable extends AbstractType
 
     /**
      * Update default variant id if present in request.
-     *
-     * @return void
      */
-    public function updateDefaultVariantId()
+    public function updateDefaultVariantId(): void
     {
         if (! $defaultVariantId = request()->input('default_variant_id')) {
             return;
@@ -179,11 +177,10 @@ class Configurable extends AbstractType
      * Create variant.
      *
      * @param  \Webkul\Product\Contracts\Product  $product
-     * @param  array  $permutation
-     * @param  array  $data
+     * @param  array  $productSuperAttributes
      * @return \Webkul\Product\Contracts\Product
      */
-    public function createVariant($product, $productSuperAttributes, $data = [], Collection|array $uniqueAttributes = [])
+    public function createVariant($product, $productSuperAttributes, array $data = [], Collection|array $uniqueAttributes = [])
     {
         $variant = $this->productRepository->getModel()->create([
             'parent_id'           => $product->id,
@@ -250,7 +247,7 @@ class Configurable extends AbstractType
     {
         parent::copyRelationships($product);
 
-        $attributesToSkip = config('products.skipAttributesOnCopy') ?? [];
+        $attributesToSkip = config('products.skipAttributesOnCopy', []);
 
         if (
             in_array('super_attributes', $attributesToSkip)
@@ -284,10 +281,8 @@ class Configurable extends AbstractType
 
     /**
      * Return validation rules.
-     *
-     * @return array
      */
-    public function getTypeValidationRules()
+    public function getTypeValidationRules(): array
     {
         return [
             'variants.*.sku'    => [
@@ -302,9 +297,8 @@ class Configurable extends AbstractType
      *
      * @param  array  $options1
      * @param  array  $options2
-     * @return bool
      */
-    public function compareOptions($options1, $options2)
+    public function compareOptions($options1, $options2): ?bool
     {
         if ($this->product->id != $options2['product_id']) {
             return false;
@@ -324,6 +318,8 @@ class Configurable extends AbstractType
         if (! isset($options2['selected_configurable_option'])) {
             return false;
         }
+
+        return null;
     }
 
     /**
@@ -334,15 +330,15 @@ class Configurable extends AbstractType
      */
     public function getAdditionalOptions($data)
     {
-        $childProduct = app('Webkul\Product\Repositories\ProductRepository')->find($data['selected_configurable_option']);
+        $childProduct = resolve(ProductRepository::class)->find($data['selected_configurable_option']);
 
         foreach ($this->product->super_attributes as $attribute) {
             $option = $attribute->options()->where('id', $childProduct->{$attribute->code})->first();
 
             $data['attributes'][$attribute->code] = [
-                'attribute_name' => $attribute->name ? $attribute->name : $attribute->admin_name,
+                'attribute_name' => $attribute->name ?: $attribute->admin_name,
                 'option_id'      => $option->id,
-                'option_label'   => $option->label ? $option->label : $option->admin_name,
+                'option_label'   => $option->label ?: $option->admin_name,
             ];
         }
 

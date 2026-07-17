@@ -75,7 +75,7 @@ class FieldProcessor
         $baseDir = rtrim($imgpath, '/');
 
         foreach ($paths as $path) {
-            $trimmedPath = ltrim(trim($path), '/');
+            $trimmedPath = ltrim(trim((string) $path), '/');
 
             $fullPath = $baseDir.'/'.$trimmedPath;
             $storagePath = 'public/'.$fullPath;

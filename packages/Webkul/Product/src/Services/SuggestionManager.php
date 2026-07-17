@@ -14,7 +14,7 @@ class SuggestionManager
             return null;
         }
 
-        return app($config['class']);
+        return resolve($config['class']);
     }
 
     /**
@@ -45,7 +45,7 @@ class SuggestionManager
     {
         $suggester = $this->resolve($key);
 
-        if (! $suggester) {
+        if (! $suggester instanceof Suggester) {
             return [];
         }
 
@@ -53,10 +53,10 @@ class SuggestionManager
             try {
                 $suggestion = $suggester->suggestByAi($context);
 
-                if (! empty($suggestion)) {
+                if ($suggestion !== []) {
                     return $suggestion;
                 }
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // Fall through to the rule-based suggestion.
             }
         }

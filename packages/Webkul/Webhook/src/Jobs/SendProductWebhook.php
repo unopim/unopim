@@ -2,11 +2,8 @@
 
 namespace Webkul\Webhook\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\User\Models\AdminProxy;
@@ -14,7 +11,7 @@ use Webkul\Webhook\Services\WebhookService;
 
 class SendProductWebhook implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
 
     public int $tries = 3;
 

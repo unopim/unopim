@@ -13,7 +13,7 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('ai_agent_token_usage', function (Blueprint $table) {
+        Schema::table('ai_agent_token_usage', function (Blueprint $table): void {
             $table->unsignedBigInteger('cached_tokens')->nullable()->after('tokens_used');
         });
     }
@@ -25,7 +25,7 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('ai_agent_token_usage', function (Blueprint $table) {
+        Schema::table('ai_agent_token_usage', function (Blueprint $table): void {
             $table->dropColumn('cached_tokens');
         });
     }

@@ -21,7 +21,7 @@ class Category
         $this->indexPrefix = config('elasticsearch.prefix');
     }
 
-    public function created(Categories $category)
+    public function created(Categories $category): void
     {
         if (config('elasticsearch.enabled')) {
             try {
@@ -38,7 +38,7 @@ class Category
         }
     }
 
-    public function updated(Categories $category)
+    public function updated(Categories $category): void
     {
         if (config('elasticsearch.enabled')) {
             try {
@@ -55,7 +55,7 @@ class Category
         }
     }
 
-    public function deleted(Categories $category)
+    public function deleted(Categories $category): void
     {
         if (config('elasticsearch.enabled')) {
             try {

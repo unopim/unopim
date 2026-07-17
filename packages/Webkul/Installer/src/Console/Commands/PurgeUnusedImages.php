@@ -2,32 +2,20 @@
 
 namespace Webkul\Installer\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+#[Description('Purge unused images from the system')]
+#[Signature('unopim:images:purge-unused {--dry-run : List unused images without deleting them}')]
 class PurgeUnusedImages extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'unopim:images:purge-unused {--dry-run : List unused images without deleting them}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Purge unused images from the system';
-
-    /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $this->info('Starting purge of unused images...');
 
@@ -78,10 +66,10 @@ class PurgeUnusedImages extends Command
     {
         return DB::table('products')
             ->pluck('values')
-            ->map(fn ($value) => $this->extractImagesFromProduct(json_decode($value, true), $imageAttributes))
+            ->map(fn ($value): array => $this->extractImagesFromProduct(json_decode((string) $value, true), $imageAttributes))
             ->flatten()
             ->filter()
-            ->map(fn ($path) => ltrim($path, '/'))
+            ->map(fn ($path): string => ltrim((string) $path, '/'))
             ->unique()
             ->toArray();
     }
@@ -95,7 +83,7 @@ class PurgeUnusedImages extends Command
         $sections = ['common', 'locale_specific', 'channel_specific', 'channel_locale_specific'];
 
         return collect($sections)
-            ->flatMap(fn ($section) => $this->processSection($section, $data, $imageAttributes))
+            ->flatMap(fn (string $section): array => $this->processSection($section, $data, $imageAttributes))
             ->toArray();
     }
 
@@ -118,17 +106,15 @@ class PurgeUnusedImages extends Command
     private function extractImagesFromAttributes(array $attributes, array $imageAttributes): array
     {
         return collect($attributes)
-            ->filter(fn ($value, $key) => in_array($key, $imageAttributes))
-            ->flatMap(function ($value) {
-                return is_array($value) ? $value : [$value];
-            })
+            ->filter(fn ($value, $key): bool => in_array($key, $imageAttributes))
+            ->flatMap(fn ($value): array => is_array($value) ? $value : [$value])
             ->toArray();
     }
 
     private function extractLocaleOrChannelSpecificImages(array $sectionData, array $imageAttributes): array
     {
         return collect($sectionData)
-            ->flatMap(fn ($attributes) => $this->extractImagesFromAttributes($attributes, $imageAttributes))
+            ->flatMap(fn (array $attributes): array => $this->extractImagesFromAttributes($attributes, $imageAttributes))
             ->toArray();
     }
 
@@ -136,12 +122,12 @@ class PurgeUnusedImages extends Command
     {
         return collect($sectionData)
             ->flatMap(fn ($channelData) => collect($channelData)
-                ->flatMap(fn ($attributes) => $this->extractImagesFromAttributes($attributes, $imageAttributes))
+                ->flatMap(fn (array $attributes): array => $this->extractImagesFromAttributes($attributes, $imageAttributes))
                 ->toArray())
             ->toArray();
     }
 
-    private function deleteEmptyDirectories(string $directory, string $baseDirectory)
+    private function deleteEmptyDirectories(string $directory, string $baseDirectory): void
     {
         if (Storage::disk('public')->exists($directory)) {
             $files = Storage::disk('public')->files($directory);
@@ -151,7 +137,7 @@ class PurgeUnusedImages extends Command
                 Storage::disk('public')->deleteDirectory($directory);
 
                 $parentDirectory = dirname($directory);
-                if ($parentDirectory !== '.' && $parentDirectory !== '/' && $parentDirectory !== $baseDirectory) {
+                if (! in_array($parentDirectory, ['.', '/', $baseDirectory], true)) {
                     $this->deleteEmptyDirectories($parentDirectory, $baseDirectory);
                 }
             }
@@ -169,7 +155,7 @@ class PurgeUnusedImages extends Command
     private function getAllImagesFromStorage(): array
     {
         return collect(Storage::disk('public')->allFiles('product'))
-            ->map(fn ($path) => ltrim($path, '/'))
+            ->map(fn ($path): string => ltrim((string) $path, '/'))
             ->toArray();
     }
 
@@ -181,7 +167,7 @@ class PurgeUnusedImages extends Command
                 $this->info("Deleted: $unusedImage");
 
                 // Check and delete empty directories recursively
-                $directory = dirname($unusedImage);
+                $directory = dirname((string) $unusedImage);
                 $this->deleteEmptyDirectories($directory, 'product');
             } else {
                 $this->warn("File not found: $unusedImage");

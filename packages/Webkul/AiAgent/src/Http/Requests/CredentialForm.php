@@ -25,12 +25,12 @@ class CredentialForm extends FormRequest
     public function rules(): array
     {
         return [
-            'label'    => 'required|string|max:255',
-            'provider' => 'required|string|in:openai,anthropic,azure,custom',
-            'apiUrl'   => 'required|url|max:500',
-            'apiKey'   => 'required|string|max:500',
-            'model'    => 'required|string|max:255',
-            'status'   => 'sometimes|boolean',
+            'label'    => ['required', 'string', 'max:255'],
+            'provider' => ['required', 'string', 'in:openai,anthropic,azure,custom'],
+            'apiUrl'   => ['required', 'url', 'max:500'],
+            'apiKey'   => ['required', 'string', 'max:500'],
+            'model'    => ['required', 'string', 'max:255'],
+            'status'   => ['sometimes', 'boolean'],
         ];
     }
 }

@@ -5,6 +5,9 @@ namespace Webkul\Category\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Category\Models\Category;
 
+/**
+ * @extends Factory<Category>
+ */
 class CategoryFactory extends Factory
 {
     /**
@@ -28,12 +31,12 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'            => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'code'            => fake()->regexify('/^[a-zA-Z]+\w+$/'),
             'parent_id'       => Category::whereIsRoot()->first()->id,
             'additional_data' => [
                 'locale_specific' => [
                     core()->getRequestedLocaleCode() => [
-                        'name' => $this->faker->name,
+                        'name' => fake()->name,
                     ],
                 ],
             ],

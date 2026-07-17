@@ -11,6 +11,7 @@ use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
+use Webkul\Product\Repositories\ProductRepository;
 
 class BulkEdit implements PimTool
 {
@@ -98,12 +99,12 @@ class BulkEdit implements PimTool
 
                 $updated = 0;
                 $errors = [];
-                $repo = app('Webkul\Product\Repositories\ProductRepository');
+                $repo = resolve(ProductRepository::class);
                 $currencies = DB::table('currencies')->where('status', 1)->pluck('code')->toArray() ?: ['USD'];
 
                 foreach ($products as $p) {
                     try {
-                        $values = json_decode($p->values, true) ?? [];
+                        $values = json_decode((string) $p->values, true) ?? [];
                         $familyAttrs = $this->writerService->getFamilyAttributesPublic($p->attribute_family_id);
                         $statusChanged = false;
 
@@ -151,10 +152,12 @@ class BulkEdit implements PimTool
 
                         // Apply transforms (append/prepend/replace on existing values)
                         foreach ($transforms as $code => $transform) {
-                            if (! is_array($transform) || empty($transform['action'])) {
+                            if (! is_array($transform)) {
                                 continue;
                             }
-
+                            if (empty($transform['action'])) {
+                                continue;
+                            }
                             $action = $transform['action'];
                             $transformValue = $transform['value'] ?? '';
 
@@ -178,8 +181,8 @@ class BulkEdit implements PimTool
 
                             // Apply the transformation
                             $newValue = match ($action) {
-                                'append'  => str_ends_with($currentValue, $transformValue) ? $currentValue : $currentValue.$transformValue,
-                                'prepend' => str_starts_with($currentValue, $transformValue) ? $currentValue : $transformValue.$currentValue,
+                                'append'  => str_ends_with($currentValue, (string) $transformValue) ? $currentValue : $currentValue.$transformValue,
+                                'prepend' => str_starts_with($currentValue, (string) $transformValue) ? $currentValue : $transformValue.$currentValue,
                                 'replace' => isset($transform['search']) ? str_replace($transform['search'], $transformValue, $currentValue) : $transformValue,
                                 default   => $currentValue,
                             };
@@ -213,7 +216,7 @@ class BulkEdit implements PimTool
                         'matched' => $products->count(),
                         'updated' => $updated,
                         'filter'  => "{$filter_by}={$filter_value}",
-                        'errors'  => empty($errors) ? null : array_slice($errors, 0, 5),
+                        'errors'  => $errors === [] ? null : array_slice($errors, 0, 5),
                     ],
                 ]);
             }

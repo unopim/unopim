@@ -66,7 +66,7 @@ class ProductWriterService
         ImageProductContext $ctx,
     ): int|string {
         /** @var ProductRepository $repo */
-        $repo = app('Webkul\Product\Repositories\ProductRepository');
+        $repo = resolve(ProductRepository::class);
 
         $familyId = $this->resolveFamily($family);
 
@@ -103,8 +103,13 @@ class ProductWriterService
             }
 
             $value = $attributes[$attrCode] ?? null;
-
-            if ($value === null || $value === '' || $value === []) {
+            if ($value === null) {
+                continue;
+            }
+            if ($value === '') {
+                continue;
+            }
+            if ($value === []) {
                 continue;
             }
 
@@ -152,21 +157,21 @@ class ProductWriterService
         $values = $product->values ?? [];
         $values['common'] = array_merge($values['common'] ?? [], $commonValues);
 
-        if (! empty($channelLocaleValues)) {
+        if ($channelLocaleValues !== []) {
             $values['channel_locale_specific'][$channel][$locale] = array_merge(
                 $values['channel_locale_specific'][$channel][$locale] ?? [],
                 $channelLocaleValues,
             );
         }
 
-        if (! empty($channelSpecificValues)) {
+        if ($channelSpecificValues !== []) {
             $values['channel_specific'][$channel] = array_merge(
                 $values['channel_specific'][$channel] ?? [],
                 $channelSpecificValues,
             );
         }
 
-        if (! empty($localeSpecificValues)) {
+        if ($localeSpecificValues !== []) {
             $values['locale_specific'][$locale] = array_merge(
                 $values['locale_specific'][$locale] ?? [],
                 $localeSpecificValues,
@@ -176,7 +181,7 @@ class ProductWriterService
         // 5 — Save categories
         $categoryValues = $this->resolveCategories($ctx->category, $attributes['categories'] ?? null);
 
-        if (! empty($categoryValues)) {
+        if ($categoryValues !== []) {
             $values['categories'] = $categoryValues;
         }
 
@@ -264,13 +269,13 @@ class ProductWriterService
      */
     protected function resolveSelectValue(string $attrCode, mixed $value, int $attributeId): ?string
     {
-        if (! is_string($value) || empty($value)) {
+        if (! is_string($value) || ($value === '' || $value === '0')) {
             return null;
         }
 
         // Load available options for this attribute
         $options = DB::table('attribute_options as ao')
-            ->leftJoin('attribute_option_translations as aot', function ($join) {
+            ->leftJoin('attribute_option_translations as aot', function ($join): void {
                 $join->on('aot.attribute_option_id', '=', 'ao.id')
                     ->where('aot.locale', '=', config('app.fallback_locale', 'en_US'));
             })
@@ -280,14 +285,14 @@ class ProductWriterService
 
         // Try exact code match first
         foreach ($options as $opt) {
-            if (strcasecmp($opt->code, $value) === 0) {
+            if (strcasecmp((string) $opt->code, $value) === 0) {
                 return $opt->code;
             }
         }
 
         // Try label match
         foreach ($options as $opt) {
-            if ($opt->label && strcasecmp($opt->label, $value) === 0) {
+            if ($opt->label && strcasecmp((string) $opt->label, $value) === 0) {
                 return $opt->code;
             }
         }
@@ -296,8 +301,8 @@ class ProductWriterService
         $valueLower = strtolower($value);
 
         foreach ($options as $opt) {
-            $codeLower = strtolower($opt->code);
-            $labelLower = $opt->label ? strtolower($opt->label) : '';
+            $codeLower = strtolower((string) $opt->code);
+            $labelLower = $opt->label ? strtolower((string) $opt->label) : '';
 
             if (str_contains($valueLower, $codeLower) || str_contains($codeLower, $valueLower)) {
                 return $opt->code;
@@ -362,7 +367,7 @@ class ProductWriterService
         }
 
         try {
-            $fileStorer = app(FileStorer::class);
+            $fileStorer = resolve(FileStorer::class);
             $storagePath = 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.'image';
 
             return $fileStorer->store(
@@ -370,7 +375,7 @@ class ProductWriterService
                 new File($imagePath),
                 [FileStorer::HASHED_FOLDER_NAME_KEY => true],
             );
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return null;
         }
     }
@@ -413,11 +418,11 @@ class ProductWriterService
 
         if (is_array($categoriesAttr)) {
             $suggestions = array_merge($suggestions, $categoriesAttr);
-        } elseif (is_string($categoriesAttr) && ! empty($categoriesAttr)) {
+        } elseif (is_string($categoriesAttr) && ($categoriesAttr !== '' && $categoriesAttr !== '0')) {
             $suggestions[] = $categoriesAttr;
         }
 
-        if (empty($suggestions)) {
+        if ($suggestions === []) {
             return [];
         }
 
@@ -437,12 +442,12 @@ class ProductWriterService
             }
 
             // Try matching the last segment of "Electronics > Laptops" paths
-            $segments = array_map('trim', explode('>', $suggestion));
+            $segments = array_map(trim(...), explode('>', $suggestion));
             $lastSegment = end($segments);
             $slugged = Str::slug($lastSegment);
 
             foreach ($allCategories as $code) {
-                if (strcasecmp($code, $lastSegment) === 0 || $code === $slugged) {
+                if (strcasecmp((string) $code, $lastSegment) === 0 || $code === $slugged) {
                     $matched[] = $code;
                     break;
                 }
