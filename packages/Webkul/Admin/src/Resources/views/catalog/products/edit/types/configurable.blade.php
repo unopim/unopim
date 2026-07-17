@@ -1,6 +1,7 @@
 {!! view_render_event('unopim.admin.catalog.product.edit.form.types.configurable.before', ['product' => $product]) !!}
 
 <v-product-variations :errors="errors"></v-product-variations>
+<x-admin::media.gallery v-if="false" />
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.types.configurable.after', ['product' => $product]) !!}
 
@@ -224,13 +225,13 @@
 
                                     <template v-if="selectedType == 'addImages'">
                                         <div class="pb-2.5 border-b dark:border-gray-800">
-                                            <v-media-images
+                                            <v-media-gallery
                                                 name="images"
                                                 class="mb-2.5"
                                                 v-bind:allow-multiple="true"
                                                 :uploaded-images="updateTypes[selectedType].images"
                                             >
-                                            </v-media-images>
+                                            </v-media-gallery>
 
                                             <button class="secondary-button">
                                                 @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
@@ -519,13 +520,13 @@
                                 </template>
                                 
                                 <template v-if="selectedType == 'addImages'">
-                                    <v-media-images
+                                    <v-media-gallery
                                         name="images"
                                         class="mt-2.5"
                                         v-bind:allow-multiple="true"
                                         :uploaded-images="variant.temp_images"
                                     >
-                                    </v-media-images>
+                                    </v-media-gallery>
                                 </template>
                             </div>
                         </x-slot>

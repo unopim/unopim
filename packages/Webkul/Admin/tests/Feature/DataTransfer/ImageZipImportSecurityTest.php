@@ -45,6 +45,25 @@ it('does not extract script/executable files from an imported image zip', functi
     Storage::disk('public')->deleteDirectory($path);
 });
 
+it('does not extract active image content disguised with a raster extension', function () {
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.imports.edit']);
+
+    $zip = makeImageZip([
+        'disguised.png' => '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(document.domain)"></svg>',
+    ]);
+
+    $response = $this->post(route('admin.settings.data_transfer.imports.upload_images_zip'), [
+        'images_zip' => $zip,
+    ]);
+
+    $path = $response->json('path');
+
+    expect(Storage::disk('public')->exists($path.'/disguised.png'))->toBeFalse()
+        ->and($response->json('files_count'))->toBe(0);
+
+    Storage::disk('public')->deleteDirectory($path);
+});
+
 it('still extracts legitimate image files from an imported zip', function () use ($onePixelPng) {
     $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.imports.edit']);
 
@@ -66,7 +85,10 @@ it('still extracts legitimate image files from an imported zip', function () use
 it('rejects oversized zip entries to prevent memory-exhaustion DoS', function () use ($onePixelPng) {
     $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.imports.edit']);
 
-    config(['image_import.max_entry_size' => 1024 * 1024]);
+    config([
+        'image_import.max_entry_size'        => 1024 * 1024,
+        'image_import.max_compression_ratio' => 0,
+    ]);
 
     $zip = makeImageZip([
         'huge.png' => $onePixelPng.str_repeat("\0", 2 * 1024 * 1024),
@@ -105,4 +127,49 @@ it('preserves subfolders so same-named images do not collide', function () use (
         ->and($response->json('files_count'))->toBe(2);
 
     Storage::disk('public')->deleteDirectory($path);
+});
+
+it('rejects archives exceeding the configured entry-count limit', function () use ($onePixelPng) {
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.imports.edit']);
+    config(['image_import.max_entries' => 2]);
+
+    $zip = makeImageZip([
+        'one.png'   => $onePixelPng,
+        'two.png'   => $onePixelPng,
+        'three.png' => $onePixelPng,
+    ]);
+
+    $this->post(route('admin.settings.data_transfer.imports.upload_images_zip'), [
+        'images_zip' => $zip,
+    ])->assertUnprocessable();
+});
+
+it('rejects archives exceeding the cumulative uncompressed-size limit', function () use ($onePixelPng) {
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.imports.edit']);
+    config([
+        'image_import.max_total_size'        => strlen($onePixelPng),
+        'image_import.max_compression_ratio' => 0,
+    ]);
+
+    $zip = makeImageZip([
+        'one.png' => $onePixelPng,
+        'two.png' => $onePixelPng,
+    ]);
+
+    $this->post(route('admin.settings.data_transfer.imports.upload_images_zip'), [
+        'images_zip' => $zip,
+    ])->assertUnprocessable();
+});
+
+it('rejects archives exceeding the configured compression ratio', function () use ($onePixelPng) {
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.imports.edit']);
+    config(['image_import.max_compression_ratio' => 1]);
+
+    $zip = makeImageZip([
+        'compressed.png' => $onePixelPng.str_repeat("\0", 4096),
+    ]);
+
+    $this->post(route('admin.settings.data_transfer.imports.upload_images_zip'), [
+        'images_zip' => $zip,
+    ])->assertUnprocessable();
 });

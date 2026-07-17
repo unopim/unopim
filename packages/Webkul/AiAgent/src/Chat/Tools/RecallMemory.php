@@ -8,6 +8,7 @@ use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\AiAgent\Support\MemoryScope;
 
 class RecallMemory implements PimTool
 {
@@ -54,6 +55,9 @@ class RecallMemory implements PimTool
                     $q->whereNull('user_id')
                         ->orWhere('user_id', $this->context->user?->id);
                 });
+
+                // Channel-scoped memories: own channel plus legacy null-channel rows
+                MemoryScope::apply($qb, $this->context->channel);
 
                 if ($search) {
                     $qb->where(function ($q) use ($search) {

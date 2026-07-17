@@ -5,6 +5,7 @@ namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
@@ -177,9 +178,12 @@ class MediaFileController extends ApiController
             $file = request()->file('file');
 
             if ($file instanceof UploadedFile) {
-                $filePath = $this->fileStorer->store(
+                $extension = $file->guessExtension() ?: strtolower($file->getClientOriginalExtension());
+
+                $filePath = $this->fileStorer->storeAs(
                     path: 'attribute_option'.DIRECTORY_SEPARATOR.$attributeOption->id,
-                    file: $file
+                    name: Str::random(40).'.'.$extension,
+                    file: $file,
                 );
 
                 $updatedOption = $this->attributeOptionRepository->update([

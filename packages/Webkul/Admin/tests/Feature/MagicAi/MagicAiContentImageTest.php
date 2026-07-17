@@ -57,6 +57,18 @@ describe('content endpoint', function () {
             ->assertJsonValidationErrors(['prompt']);
     });
 
+    it('rejects image counts and quality values outside the provider-safe limits', function () {
+        $this->postJson(route('admin.magic_ai.image'), [
+            'model'   => 'dall-e-3',
+            'prompt'  => 'a prompt',
+            'size'    => '1024x1024',
+            'n'       => 1000,
+            'quality' => 'unlimited',
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['n', 'quality']);
+    });
+
     it('returns a friendly message when the provider times out', function () {
         $mock = Mockery::mock(MagicAI::class);
         $mock->shouldReceive('useDefault')->andReturnSelf();

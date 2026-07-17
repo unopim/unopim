@@ -130,3 +130,44 @@ it('rejects a non-image logo upload', function () {
         'logo_image' => [UploadedFile::fake()->create('malware.php', 10, 'application/x-php')],
     ])->assertSessionHasErrors('logo_image.0');
 });
+
+it('rejects a scalar non-image logo upload before it can bypass wildcard validation', function () {
+    Storage::fake(config('filesystems.default'));
+
+    $this->loginAsAdmin();
+
+    $this->put(route('admin.settings.appearance.update'), [
+        'logo_image' => UploadedFile::fake()->create('malware.php', 10, 'application/x-php'),
+    ])->assertSessionHasErrors('logo_image');
+
+    expect(CoreConfig::query()->where('code', 'general.design.admin_logo.logo_image')->exists())->toBeFalse();
+});
+
+it('rejects image content carrying an active-content filename', function () {
+    Storage::fake(config('filesystems.default'));
+
+    $this->loginAsAdmin();
+
+    $this->put(route('admin.settings.appearance.update'), [
+        'logo_image' => [UploadedFile::fake()->image('payload.html')],
+    ])->assertSessionHasErrors('logo_image.0');
+});
+
+it('stores appearance images with a generated filename and detected extension', function () {
+    Storage::fake(config('filesystems.default'));
+
+    $this->loginAsAdmin();
+
+    $this->put(route('admin.settings.appearance.update'), [
+        'logo_image' => [UploadedFile::fake()->image('operator-logo.png', 192, 50)],
+    ])->assertSessionHasNoErrors();
+
+    $path = CoreConfig::query()
+        ->where('code', 'general.design.admin_logo.logo_image')
+        ->value('value');
+
+    expect(basename($path))->toMatch('/^[A-Za-z0-9]{40}\.png$/')
+        ->and($path)->not->toContain('operator-logo');
+
+    Storage::assertExists($path);
+});

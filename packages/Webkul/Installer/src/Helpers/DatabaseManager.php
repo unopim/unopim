@@ -71,6 +71,27 @@ class DatabaseManager
     }
 
     /**
+     * Fail-closed check: true only when we can positively confirm the app is not
+     * yet installed (core_config readable and the install flag absent). Any
+     * uncertainty — missing table or DB error — returns false so destructive
+     * installer steps deny rather than treat uncertainty as "not installed".
+     */
+    public function canConfirmNotInstalled(): bool
+    {
+        try {
+            if (! Schema::hasTable('core_config')) {
+                return false;
+            }
+
+            return ! DB::table('core_config')
+                ->where('code', self::INSTALLED_CONFIG_CODE)
+                ->exists();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * Persist the "installation completed" flag in the database so the installer
      * stays sealed even if the storage/ marker is lost.
      */

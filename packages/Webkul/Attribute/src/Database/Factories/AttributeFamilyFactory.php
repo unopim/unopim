@@ -67,7 +67,7 @@ class AttributeFamilyFactory extends Factory
      */
     public function withRequiredAttributes(?Attribute $attributes = null): AttributeFamilyFactory
     {
-        return $this->afterCreating(function (AttributeFamily $family) {
+        return $this->afterCreating(function (AttributeFamily $family) use ($attributes) {
             $this->linkAttributeGroupToFamily($family);
 
             $this->linkAttributesToFamily($family, $attributes ?? Attribute::factory()->create(['is_required' => 1]));
@@ -81,7 +81,7 @@ class AttributeFamilyFactory extends Factory
      */
     public function withMinimalAttributesForProductTypes(?Attribute $attributes = null): AttributeFamilyFactory
     {
-        return $this->afterCreating(function (AttributeFamily $family) {
+        return $this->afterCreating(function (AttributeFamily $family) use ($attributes) {
             $this->linkAttributeGroupToFamily($family);
 
             $this->linkAttributesToFamily($family, $attributes ?? Attribute::factory()->create(['type' => 'select']));

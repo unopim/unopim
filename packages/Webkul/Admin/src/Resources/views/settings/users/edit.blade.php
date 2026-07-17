@@ -49,7 +49,7 @@
                             @lang('admin::app.account.edit.profile-image')
                         </x-admin::form.control-group.label>
 
-                        <x-admin::media.images
+                        <x-admin::media.image
                             name="image"
                             :show-suggestions="false"
                             :uploaded-images="$user->image ? [['id' => 'image', 'url' => $user->image_url, 'value' => $user->image]] : []"

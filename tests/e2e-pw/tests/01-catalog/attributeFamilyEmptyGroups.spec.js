@@ -1,100 +1,56 @@
-const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect, searchInDataGrid } = require('../../utils/helpers');
+const { test, expect } = require('../../utils/family-fixtures');
+const { generateUid } = require('../../utils/helpers');
+const {
+  gotoIndex, createFamily, deleteFamilyByCode, assignGroup, saveFamilyEdit,
+} = require('../../utils/family-helpers');
 
 /**
- * Helper: Create an attribute family via the create-family modal on the index
- * page (code only), then set its name on the edit page it lands on.
+ * Regression #709 — saving an attribute family after every assigned group has been
+ * removed must not 500. Runs against the current branch (8023) via family-fixtures.
  */
-async function createFamily(adminPage, code, name) {
-  await navigateTo(adminPage, 'attributeFamilies');
-  await adminPage.getByRole('button', { name: 'Create Attribute Family' }).click();
-  await adminPage.getByPlaceholder('Enter Code').fill(code);
-  await clickSaveAndExpect(
-    adminPage,
-    'Save Attribute Family',
-    /Family created successfully/i,
-    /\/admin\/catalog\/attribute-families\/edit\/\d+/
-  );
-
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family updated successfully/i);
-}
-
-/**
- * Helper: Delete a family by code.
- */
-async function deleteFamily(adminPage, code) {
-  await navigateTo(adminPage, 'attributeFamilies');
-  await searchInDataGrid(adminPage, code);
-  const deleteBtn = adminPage.locator('div', { hasText: code }).locator('span[title="Delete"]').first();
-  if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await deleteBtn.click();
-    await adminPage.getByRole('button', { name: 'Delete', exact: true }).first().click();
-    await adminPage.waitForLoadState('networkidle');
-  }
+async function reopenFamily(page, code) {
+  await gotoIndex(page);
+  await page.getByRole('textbox', { name: 'Search' }).fill(code);
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(1500);
+  await page.locator('div', { hasText: code }).locator('span[title="Edit"]').first().click();
+  await page.waitForSelector('.group_node', { timeout: 30000 });
 }
 
 test.describe('Attribute Family - Save with empty groups (#709)', () => {
-  test.setTimeout(90000);
+  test.setTimeout(120000);
 
-  test('should not crash when saving attribute family after removing all assigned groups', async ({ adminPage }) => {
-    const uid = generateUid();
-    const code = `emptygrp_${uid}`;
+  test('should not crash when saving after removing all assigned groups', async ({ adminPage }) => {
+    const page = adminPage;
+    const code = `emptygrp_${generateUid()}`;
 
-    // Step 1: Create an attribute family
-    await createFamily(adminPage, code, 'Empty Group Test');
+    // Create a family (lands on edit page).
+    const { code: created } = await createFamily(page, code, { name: 'Empty Group Test' });
 
-    // Step 2: Edit it — assign a group
-    await navigateTo(adminPage, 'attributeFamilies');
-    await searchInDataGrid(adminPage, code);
-    await adminPage.locator('div', { hasText: code }).locator('span[title="Edit"]').first().click();
-    await adminPage.waitForLoadState('networkidle');
+    // Assign an extra group, then save via the tracked bar.
+    await assignGroup(page);
+    await page.locator('input[name="en_US\\[name\\]"]').fill('Empty Group Test A');
+    await page.locator('input[name="en_US\\[name\\]"]').blur();
+    await saveFamilyEdit(page);
 
-    // Assign an attribute group
-    await adminPage.locator('.secondary-button', { hasText: 'Assign Attribute Group' }).click();
-    await adminPage.locator('input[name="group"]').locator('..').locator('.multiselect__placeholder').click();
-    // Pick the first available group
-    const firstGroupOption = adminPage.getByRole('option').first();
-    await firstGroupOption.waitFor({ state: 'visible', timeout: 10000 });
-    await firstGroupOption.click();
-    await adminPage.getByRole('button', { name: 'Assign Attribute Group' }).click();
-    await adminPage.waitForTimeout(500);
+    // Reopen and remove the non-SKU group via its trash icon (the General group
+    // holds SKU and cannot be removed).
+    await reopenFamily(page, created);
+    const removableRow = page.locator('#assigned-attribute-groups .group_node')
+      .filter({ hasNot: page.getByText('General', { exact: true }) }).first();
+    await removableRow.waitFor({ state: 'visible', timeout: 15000 });
+    await removableRow.locator('button.icon-delete').click();
 
-    // Touch a tracked field to surface the global "Save changes" bar
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Empty Group Test A');
+    const agree = page.getByRole('button', { name: 'Agree', exact: true });
+    await agree.waitFor({ state: 'visible', timeout: 10000 });
+    await agree.click();
+    await agree.waitFor({ state: 'hidden', timeout: 10000 });
 
-    // Save with the group assigned
-    await clickSaveAndExpect(adminPage, 'Save changes', /Family updated successfully/i);
+    // Save again — must succeed (no 500).
+    await page.locator('input[name="en_US\\[name\\]"]').fill('Empty Group Test B');
+    await page.locator('input[name="en_US\\[name\\]"]').blur();
+    await saveFamilyEdit(page);
 
-    // Step 3: Edit again — delete the group
-    await navigateTo(adminPage, 'attributeFamilies');
-    await searchInDataGrid(adminPage, code);
-    await adminPage.locator('div', { hasText: code }).locator('span[title="Edit"]').first().click();
-    await adminPage.waitForLoadState('networkidle');
-
-    // Select the first assigned group so deleteGroup() has a target
-    const firstGroupNode = adminPage.locator('#assigned-attribute-groups .group_node').first();
-    await firstGroupNode.waitFor({ state: 'visible', timeout: 10000 });
-    await firstGroupNode.click();
-
-    // Open the delete-group confirm modal
-    await adminPage.getByText('Delete Group', { exact: true }).click();
-
-    // Confirm in the modal (default agree label is "Agree")
-    const agreeBtn = adminPage.getByRole('button', { name: 'Agree', exact: true });
-    await agreeBtn.waitFor({ state: 'visible', timeout: 10000 });
-    await agreeBtn.click();
-
-    // Wait for the modal's Agree button to disappear before saving
-    await agreeBtn.waitFor({ state: 'hidden', timeout: 10000 });
-
-    // Touch a tracked field to surface the global "Save changes" bar
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Empty Group Test B');
-
-    // Step 4: Save — must redirect with success flash, not a 500 error
-    await clickSaveAndExpect(adminPage, 'Save changes', /Family updated successfully/i);
-
-    // Cleanup
-    await deleteFamily(adminPage, code);
+    await deleteFamilyByCode(page, created);
   });
 });

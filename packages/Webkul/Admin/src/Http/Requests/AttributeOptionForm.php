@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Rules\Code;
+use Webkul\Core\Rules\FileMimeExtensionMatch;
 
 class AttributeOptionForm extends FormRequest
 {
@@ -39,6 +40,8 @@ class AttributeOptionForm extends FormRequest
                 'image',
                 'mimes:jpeg,jpg,png,gif,webp,bmp,svg',
                 'mimetypes:image/jpeg,image/png,image/gif,image/webp,image/bmp,image/svg,image/svg+xml',
+                'max:2048',
+                new FileMimeExtensionMatch,
             ];
         }
 

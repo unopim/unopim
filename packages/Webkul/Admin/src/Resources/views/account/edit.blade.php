@@ -7,6 +7,7 @@
         :title="trans('admin::app.account.edit.title')"
         :back-url="route('admin.dashboard.index')"
         :back-label="trans('admin::app.account.edit.back-btn')"
+        :save-label="trans('admin::app.account.edit.save-btn')"
         form="account-edit-form"
     />
 
@@ -29,9 +30,10 @@
                             @lang('admin::app.account.edit.profile-image')
                         </x-admin::form.control-group.label>
 
-                        <x-admin::media.images
+                        <x-admin::media.image
                             name="image"
                             :show-suggestions="false"
+                            :accepted-extensions="\Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS"
                             :uploaded-images="$user->image ? [['id' => 'image', 'url' => $user->image_url, 'value' => $user->image]] : []"
                         />
 

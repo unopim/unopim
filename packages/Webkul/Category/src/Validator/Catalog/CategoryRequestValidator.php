@@ -12,6 +12,8 @@ use Webkul\Core\Rules\FileOrImageValidValue;
 
 class CategoryRequestValidator extends CategoryValidator
 {
+    protected ?int $categoryId = null;
+
     /**
      * Validates the category data based on the provided request data and optional category ID.
      */
@@ -46,8 +48,13 @@ class CategoryRequestValidator extends CategoryValidator
         }
 
         $existsFields = $this->getCategoryFields();
+        $this->categoryId = $id;
 
-        $rules = $this->inputFieldsRules($existsFields, $requestData, $id);
+        try {
+            $rules = $this->inputFieldsRules($existsFields, $requestData, $id);
+        } finally {
+            $this->categoryId = null;
+        }
 
         $fieldKeys = [];
 
@@ -77,7 +84,15 @@ class CategoryRequestValidator extends CategoryValidator
         $rules = parent::fieldTypeRules($field);
 
         if ($field->type === self::FILE_FIELD_TYPE || $field->type === self::IMAGE_FIELD_TYPE) {
-            $rules = [new FileOrImageValidValue(isImage: $field->type === self::IMAGE_FIELD_TYPE)];
+            $maxKilobytes = $field->type === self::IMAGE_FIELD_TYPE
+                ? (int) (core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? 2048)
+                : (int) (core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? 2048);
+
+            $rules = [new FileOrImageValidValue(
+                isImage: $field->type === self::IMAGE_FIELD_TYPE,
+                maxKilobytes: $maxKilobytes,
+                allowedPathPrefixes: $this->categoryId ? ['category/'.$this->categoryId.'/'.$field->code] : [],
+            )];
         }
 
         if ($field->type === self::CHECKBOX_FIELD_TYPE) {

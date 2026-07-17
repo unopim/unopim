@@ -27,7 +27,7 @@
         "kalnoy/nestedset": "^7.0",
         "khaled.alshamaa/ar-php": "^6.0.0",
         "konekt/concord": "^1.16",
-        "laravel/ai": "^0.7",
+        "laravel/ai": "^0.9.1",
         "laravel/framework": "^13.0",
         "laravel/octane": "^2.3",
         "laravel/passport": "^13.7",
@@ -117,9 +117,6 @@
         "phpstan": [
             "./vendor/bin/phpstan analyse --memory-limit=2G"
         ],
-        "phpstan-baseline": [
-            "./vendor/bin/phpstan analyse --memory-limit=2G --generate-baseline"
-        ],
         "rector": [
             "./vendor/bin/rector process"
         ],
@@ -128,8 +125,7 @@
         ]
     },
     "scripts-descriptions": {
-        "phpstan": "Run PHPStan static analysis at max level against the application.",
-        "phpstan-baseline": "Regenerate the PHPStan baseline of pre-existing errors.",
+        "phpstan": "Run PHPStan static analysis at level 1 against the application.",
         "rector": "Apply Rector automated refactorings to the application.",
         "rector-dry": "Preview Rector refactorings without modifying files."
     },

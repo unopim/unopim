@@ -69,6 +69,7 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->publishes([
             dirname(__DIR__).'/Config/concord.php'       => config_path('concord.php'),
+            dirname(__DIR__).'/Config/media.php'         => config_path('media.php'),
             dirname(__DIR__).'/Config/repository.php'    => config_path('repository.php'),
             dirname(__DIR__).'/Config/visitor.php'       => config_path('visitor.php'),
             dirname(__DIR__).'/Config/elasticsearch.php' => config_path('elasticsearch.php'),
@@ -163,6 +164,8 @@ class CoreServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/media.php', 'media');
+
         $this->app->singleton('image_manager', function ($app) {
             $driver = $app['config']->get('image.driver', 'gd');
 

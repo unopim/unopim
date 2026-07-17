@@ -218,7 +218,7 @@ class ChatController extends Controller
         if (! empty($filePaths)) {
             session(['ai_agent_file_paths' => $filePaths]);
             session(['ai_agent_file_uploaded_at' => now()->timestamp]);
-        } elseif (empty($filePaths)) {
+        } else {
             $uploadedAt = session('ai_agent_file_uploaded_at', 0);
 
             if ((now()->timestamp - $uploadedAt) < 600) {
@@ -231,6 +231,19 @@ class ChatController extends Controller
         $context = $request->input('context', []);
         $message = $request->input('message', '');
 
+        // Catalog scope: widget-provided codes win, then the framework's
+        // resolution (request input > admin catalog scope > default channel).
+        $locale = $context['locale'] ?? null;
+        $channel = $context['channel'] ?? null;
+
+        if (! core()->isValidScopeCode($locale)) {
+            $locale = null;
+        }
+
+        if (! core()->isValidScopeCode($channel)) {
+            $channel = null;
+        }
+
         // If no message but files/images attached, provide a default instruction
         if (empty($message) && (! empty($imagePaths) || ! empty($filePaths))) {
             $message = trans('ai-agent::app.common.process-attached-files');
@@ -242,8 +255,8 @@ class ChatController extends Controller
             productId: ! empty($context['product_id']) ? (int) $context['product_id'] : null,
             productSku: $context['product_sku'] ?? null,
             productName: $context['product_name'] ?? null,
-            locale: app()->getLocale() ?: 'en_US',
-            channel: 'default',
+            locale: $locale ?: core()->getRequestedLocaleCode(),
+            channel: $channel ?: core()->getRequestedChannelCode(),
             platform: $platform,
             model: $model,
             uploadedImagePaths: $imagePaths,
@@ -258,6 +271,24 @@ class ChatController extends Controller
      */
     protected function checkTokenBudget(): ?JsonResponse
     {
+        $perUserBudget = (int) (core()->getConfigData('general.magic_ai.agentic_pim.daily_token_budget_per_user') ?: 0);
+
+        if ($perUserBudget > 0) {
+            $todayUsage = (int) DB::table('ai_agent_token_usage')
+                ->where('user_id', auth()->guard('admin')->id())
+                ->where('usage_date', now()->toDateString())
+                ->sum('tokens_used');
+
+            if ($todayUsage >= $perUserBudget) {
+                return new JsonResponse([
+                    'reply'  => trans('ai-agent::app.common.token-budget-exhausted', ['used' => $todayUsage, 'budget' => $perUserBudget]),
+                    'action' => 'error',
+                ], 429);
+            }
+
+            return null;
+        }
+
         $configValue = core()->getConfigData('general.magic_ai.agentic_pim.daily_token_budget');
 
         // Default to 0 (unlimited) if not explicitly configured

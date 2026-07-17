@@ -52,6 +52,20 @@
 
         $fieldLabel = empty($fieldLabel) ? '['.$field->code.']' : $fieldLabel;
 
+        $fieldInstructions = $field->translate($currentLocaleCode)['instructions'] ?? '';
+
+        $imageExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : \Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS;
+
+        $galleryExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : array_merge(\Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS, \Webkul\Core\Rules\FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
+
+        $fileExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : \Webkul\Core\Rules\FileOrImageValidValue::FILE_ALLOWED_EXTENSION;
+
         $fieldType = $field->type;
     @endphp
 
@@ -173,15 +187,17 @@
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
-                <x-admin::media.images
+                <x-admin::media.image
                     name="{{ $fieldName }}"
-                    ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
-                    width="210px"
-                    height="120px"
+                    :accepted-extensions="$imageExtensions"
+                    :instructions="$fieldInstructions"
+                    width="270px"
+                    height="140px"
                     :has-context="true"
+                    :full-preview="true"
                 />
                 @break
             @case('gallery')
@@ -207,13 +223,14 @@
 
                 <x-admin::media.gallery
                     name="{{ $fieldName }}"
-                    ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? $savedData : []"
+                    :accepted-extensions="$galleryExtensions"
+                    :instructions="$fieldInstructions"
                     :allow-multiple=true
-                    width="210px"
-                    height="120px"
+                    width="270px"
+                    height="140px"
                 />
                 @break
             @case('file')
@@ -235,14 +252,15 @@
                 @endIf
 
                 <x-admin::media.files
-                    type="video"
                     :id="$field->code"
                     :name="$fieldName"
                     ::rules="{{ $field->getValidationsField() }}"
                     :label="$fieldLabel"
                     :uploaded-files="! empty($value) ? [$savedFile] : []"
+                    :accepted-extensions="$fileExtensions"
+                    :instructions="$fieldInstructions"
                     value="{{$value}}"
-                    class="mt-3" 
+                    class="mt-3"
                 />
                 @break
             @case('price')

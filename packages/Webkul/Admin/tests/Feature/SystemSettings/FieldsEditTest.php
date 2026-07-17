@@ -13,7 +13,7 @@ it('renders a fields edit page and persists to core config', function () {
 
     $this->put(route('admin.settings.system.update', 'system.debug'), [
         'system' => ['debug' => ['enabled' => '1']],
-    ])->assertRedirect(route('admin.settings.system.index'));
+    ])->assertRedirect(route('admin.settings.system.edit', 'system.debug'));
 
     expect(core()->getConfigData('system.debug.enabled'))->toBe('1');
 });

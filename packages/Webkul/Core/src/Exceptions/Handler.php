@@ -83,7 +83,7 @@ class Handler extends ExceptionHandler
                 ], $errorCode);
             }
 
-            return response()->view('admin::errors.index', compact('errorCode'));
+            return response()->view('admin::errors.index', compact('errorCode'), $errorCode);
         });
     }
 

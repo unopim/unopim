@@ -141,8 +141,7 @@ class ChannelController extends Controller
 
         if ($channel->code == config('app.channel')) {
             return new JsonResponse([
-                'message'    => trans('admin::app.settings.channels.index.last-delete-error'),
-                'message'    => trans('admin::app.settings.channels.index.last-delete-error'),
+                'message' => trans('admin::app.settings.channels.index.last-delete-error'),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 

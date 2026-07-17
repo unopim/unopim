@@ -44,7 +44,7 @@ class DataQualityReport implements PimTool
                 }
 
                 $category = $request->string('category')->toString() ?: null;
-                $limit = $request->has('limit') ? (int) $request->get('limit') : 200;
+                $limit = $request->integer('limit', 200);
 
                 $limit = min(max($limit, 1), 1000);
                 $channel = $this->context->channel;

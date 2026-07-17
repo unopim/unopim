@@ -340,6 +340,21 @@ return [
         'name'  => 'admin::app.acl.view',
         'route' => 'admin.history.view',
         'sort'  => 1,
+    ], [
+        'key'   => 'history.view',
+        'name'  => 'admin::app.acl.view',
+        'route' => 'admin.history.version.view',
+        'sort'  => 1,
+    ], [
+        'key'   => 'history.view',
+        'name'  => 'admin::app.acl.view',
+        'route' => 'admin.history.version.restore',
+        'sort'  => 1,
+    ], [
+        'key'   => 'history.view',
+        'name'  => 'admin::app.acl.view',
+        'route' => 'admin.history.version.delete',
+        'sort'  => 1,
     ],
 
     /*

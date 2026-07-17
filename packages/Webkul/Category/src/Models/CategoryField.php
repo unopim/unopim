@@ -179,7 +179,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
     /**
      * Returns field validation rules for API and internal functions
      */
-    public function getValidationsFieldOnlyMedia(): array
+    public function getValidationsFieldOnlyMedia(?int $id = null): array
     {
         $validations = [];
 
@@ -191,20 +191,28 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
 
         if ($this->type === 'file') {
             $validations[] = 'file';
-            $validations[] = 'max:'.(core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? '5120');
+            $validations[] = 'max:'.(core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? '2048');
         }
 
         if ($this->type === 'image') {
             $validations[] = 'file';
             $validations[] = 'mimes:bmp,jpeg,jpg,png';
-            $retVal = core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? '5120';
+            $retVal = core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? '2048';
 
             if ($retVal) {
                 $validations[] = 'max:'.$retVal.'';
             }
         }
 
-        $validations[] = new FileOrImageValidValue(isImage: $this->type === 'image');
+        $maxKilobytes = $this->type === 'image'
+            ? (int) (core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? 2048)
+            : (int) (core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? 2048);
+
+        $validations[] = new FileOrImageValidValue(
+            isImage: $this->type === 'image',
+            maxKilobytes: $maxKilobytes,
+            allowedPathPrefixes: $id ? ['category/'.$id.'/'.$this->code] : [],
+        );
 
         return $validations;
     }

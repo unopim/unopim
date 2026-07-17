@@ -41,8 +41,8 @@ class ProductWriterService
     public function createProduct(ImageProductContext $ctx, array $options = []): ImageProductContext
     {
         $sku = $options['sku'] ?? $this->generateSku($ctx);
-        $locale = $options['locale'] ?? 'en_US';
-        $channel = $options['channel'] ?? 'default';
+        $locale = $options['locale'] ?? core()->getRequestedLocaleCode();
+        $channel = $options['channel'] ?? core()->getRequestedChannelCode();
         $family = $options['family'] ?? null;
 
         $resolved = $ctx->resolvedAttributes();
@@ -140,10 +140,10 @@ class ProductWriterService
             $channelLocaleValues['price'] = $this->buildPriceValue($estimatedPrice, $currencies);
         }
 
-        // Estimate cost from price (~60% of retail) if cost attribute exists and not set
+        // Estimate cost from price if the cost attribute exists and is not set
         if ($estimatedPrice && is_numeric($estimatedPrice) && isset($familyAttributes['cost']) && ! isset($channelSpecificValues['cost'])) {
             $channelSpecificValues['cost'] = $this->buildPriceValue(
-                round((float) $estimatedPrice * 0.6, 2),
+                round((float) $estimatedPrice * $this->costPriceRatio(), 2),
                 $currencies,
             );
         }
@@ -272,7 +272,7 @@ class ProductWriterService
         $options = DB::table('attribute_options as ao')
             ->leftJoin('attribute_option_translations as aot', function ($join) {
                 $join->on('aot.attribute_option_id', '=', 'ao.id')
-                    ->where('aot.locale', '=', 'en_US');
+                    ->where('aot.locale', '=', config('app.fallback_locale', 'en_US'));
             })
             ->where('ao.attribute_id', $attributeId)
             ->select('ao.code', 'aot.label')
@@ -382,10 +382,20 @@ class ProductWriterService
      */
     protected function getActiveCurrencies(): array
     {
-        return DB::table('currencies')
+        $codes = DB::table('currencies')
             ->where('status', 1)
             ->pluck('code')
-            ->toArray() ?: ['USD'];
+            ->toArray();
+
+        if (empty($codes)) {
+            $codes = DB::table('currencies')
+                ->orderBy('id')
+                ->limit(1)
+                ->pluck('code')
+                ->toArray();
+        }
+
+        return $codes ?: ['USD'];
     }
 
     /**
@@ -459,17 +469,18 @@ class ProductWriterService
      */
     protected function resolveFamily(?string $family): int
     {
-        if ($family && app()->bound('Webkul\Attribute\Repositories\AttributeFamilyRepository')) {
-            $repo = app('Webkul\Attribute\Repositories\AttributeFamilyRepository');
-            $model = $repo->findOneByField('code', $family);
+        if ($family !== null && $family !== '' && preg_match('/^[a-zA-Z0-9_-]+$/', $family)) {
+            $familyId = DB::table('attribute_families')
+                ->where('code', $family)
+                ->value('id');
 
-            if ($model) {
-                return $model->id;
+            if ($familyId) {
+                return (int) $familyId;
             }
         }
 
         // Fallback: use the first attribute family
-        return DB::table('attribute_families')->value('id') ?? 1;
+        return (int) (DB::table('attribute_families')->value('id') ?? 1);
     }
 
     // -------------------------------------------------------------------------
@@ -492,5 +503,25 @@ class ProductWriterService
     public function resolveSelectValuePublic(string $attrCode, mixed $value, int $attributeId): ?string
     {
         return $this->resolveSelectValue($attrCode, $value, $attributeId);
+    }
+
+    /**
+     * Public accessor for getActiveCurrencies.
+     *
+     * @return array<string>
+     */
+    public function getActiveCurrencyCodes(): array
+    {
+        return $this->getActiveCurrencies();
+    }
+
+    /**
+     * Cost-to-price ratio used when estimating a cost from a retail price.
+     */
+    public function costPriceRatio(): float
+    {
+        $ratio = core()->getConfigData('general.magic_ai.agentic_pim.cost_price_ratio');
+
+        return is_numeric($ratio) && (float) $ratio > 0 ? (float) $ratio : 0.6;
     }
 }

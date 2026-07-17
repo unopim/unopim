@@ -30,7 +30,7 @@ class CleanupExecutionsJob implements ShouldQueue
     {
         $cutoff = now()->subDays($this->retentionDays);
 
-        $repository->model
+        $repository->getModel()
             ->where('created_at', '<', $cutoff)
             ->delete();
     }

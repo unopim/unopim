@@ -59,17 +59,48 @@ const appOptions = {
 
             if (! form) return;
 
-            const buttons = form.querySelectorAll('button[type="submit"], button:not([type])');
+            // Re-entrancy guard: a large payload keeps the request in flight long
+            // enough for the user to click Save again (or hit Enter). Every submit
+            // path funnels through here, so one flag on the form dedupes them all.
+            if (form.dataset.ajaxSubmitting === "true") {
+                return;
+            }
 
-            const toggleButtons = (disabled) => {
+            const submitSelector = 'button[type="submit"], button:not([type]), input[type="submit"]';
+
+            const buttonSet = new Set(form.querySelectorAll('button[type="submit"], button:not([type])'));
+
+            // On tracked forms the in-form save is removed and the real button is the
+            // unsaved-changes bar's "Save changes" (type=button, outside the form).
+            // Include it, plus any button associated via form="<id>", so the visible
+            // button also disables while the save is in flight.
+            const root = form.closest(".unsaved-root");
+
+            if (root) {
+                root.querySelectorAll("[data-unsaved-save]").forEach(el => buttonSet.add(el));
+            }
+
+            if (form.id) {
+                document.querySelectorAll('[form="' + CSS.escape(form.id) + '"]').forEach(el => {
+                    if (el.matches(submitSelector)) {
+                        buttonSet.add(el);
+                    }
+                });
+            }
+
+            const buttons = Array.from(buttonSet);
+
+            const setBusy = (busy) => {
+                form.dataset.ajaxSubmitting = busy ? "true" : "false";
+
                 buttons.forEach(button => {
-                    button.disabled = disabled;
-                    button.classList.toggle("opacity-50", disabled);
-                    button.classList.toggle("cursor-not-allowed", disabled);
+                    button.disabled = busy;
+                    button.classList.toggle("opacity-50", busy);
+                    button.classList.toggle("cursor-not-allowed", busy);
                 });
             };
 
-            toggleButtons(true);
+            setBusy(true);
 
             this.$axios.post(form.getAttribute("action") || form.action, new FormData(form), {
                 headers: {
@@ -90,10 +121,10 @@ const appOptions = {
                         return;
                     }
 
-                    toggleButtons(false);
+                    setBusy(false);
                 })
                 .catch(error => {
-                    toggleButtons(false);
+                    setBusy(false);
 
                     // No page reload on failure, so clear the password field instead of leaving the secret on screen.
                     form.querySelectorAll('input[autocomplete="current-password"]').forEach(input => {
@@ -125,6 +156,12 @@ const appOptions = {
                             if (element) {
                                 element.scrollIntoView({ behavior: "smooth", block: "center" });
                             }
+                        }
+
+                        const validationMessage = (response.data && response.data.message) || form.dataset.ajaxErrorMessage;
+
+                        if (validationMessage) {
+                            this.$emitter.emit(EMITTER_EVENTS.ADD_FLASH, { type: "error", message: validationMessage });
                         }
 
                         return;

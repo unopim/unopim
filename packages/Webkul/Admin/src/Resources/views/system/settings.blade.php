@@ -49,9 +49,8 @@
                             </p>
 
                             <x-admin::form.control-group class="!mb-0 shrink-0">
-                                <x-admin::media.images
+                                <x-admin::media.image
                                     name="logo_image"
-                                    :allow-multiple="false"
                                     :show-suggestions="false"
                                     :show-upload-hint="false"
                                     width="240px"
@@ -75,9 +74,8 @@
                             </p>
 
                             <x-admin::form.control-group class="!mb-0 shrink-0">
-                                <x-admin::media.images
+                                <x-admin::media.image
                                     name="favicon"
-                                    :allow-multiple="false"
                                     :show-suggestions="false"
                                     :show-upload-hint="false"
                                     width="120px"

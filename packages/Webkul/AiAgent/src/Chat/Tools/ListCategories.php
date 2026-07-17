@@ -33,7 +33,7 @@ class ListCategories implements PimTool
             {
                 return [
                     'search' => $schema->string()->description('Search term to filter categories by code or name'),
-                    'limit'  => $schema->integer()->description('Maximum results (default 20)'),
+                    'limit'  => $schema->integer()->description('Maximum results (default 20, max 100)'),
                 ];
             }
 
@@ -44,7 +44,7 @@ class ListCategories implements PimTool
                 }
 
                 $search = $request->string('search')->toString() ?: null;
-                $limit = $request->has('limit') ? (int) $request->get('limit') : 20;
+                $limit = $request->integer('limit', 20);
 
                 $limit = min(max($limit, 1), 100);
 

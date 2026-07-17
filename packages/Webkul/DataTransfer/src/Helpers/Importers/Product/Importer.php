@@ -1142,7 +1142,10 @@ class Importer extends AbstractImporter
             $validations = [];
 
             if (! isset($rules[$attributeCode])) {
-                $validations += $attribute->getValidationRules(withUniqueValidation: false);
+                $validations += $attribute->getValidationRules(
+                    withUniqueValidation: false,
+                    allowedPathPrefixes: array_filter([trim((string) $this->import->images_directory_path, '/')]),
+                );
             } else {
                 $validations = $rules[$attributeCode];
             }

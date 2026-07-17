@@ -435,7 +435,7 @@
                             </div>
 
                             <x-admin::form.control-group v-if="isUpdating">
-                                <x-admin::media.images
+                                <x-admin::media.image
                                     name="image"
                                     ::uploaded-images="data.images"
                                     :show-suggestions="false"

@@ -69,11 +69,77 @@ describe('Installer pre-auth admin takeover', function () {
         expect($after->password)->toBe($original->password);
     });
 
+    it('denies overwrite of an established admin when both install seals are absent', function () {
+        // Residual (b): a DB restored after the backfill migration was already
+        // recorded (so `php artisan migrate` is a no-op and never re-sets the
+        // flag) but before the install flag row was written, then redeployed
+        // onto fresh storage. Both seals are absent, yet admin id 1 is an
+        // ESTABLISHED account created at the original install. CanInstall does
+        // not seal in this state, so a real unauthenticated request reaches the
+        // controller — which must refuse to overwrite the established admin.
+        if (file_exists($this->marker)) {
+            unlink($this->marker);
+        }
+
+        DB::table('admins')->where('id', 1)->update(['created_at' => now()->subDays(30)]);
+
+        $original = DB::table('admins')->where('id', 1)->first();
+
+        $this->postJson('/install/api/admin-config-setup', [
+            'admin'    => 'Attacker',
+            'email'    => 'attacker@evil.test',
+            'password' => 'pwned-pass',
+            'timezone' => 'UTC',
+            'locale'   => 'en_US',
+        ])->assertForbidden();
+
+        $after = DB::table('admins')->where('id', 1)->first();
+
+        expect($after->email)->toBe($original->email);
+        expect($after->password)->toBe($original->password);
+    });
+
+    it('denies admin-config-setup when sealed by the DB flag alone with the storage marker absent', function () {
+        // Upgraded/restored instance: the ephemeral storage marker is gone but
+        // the persistent installer.installed flag is present (set by the
+        // backfill migration or a prior completed install). The flag alone must
+        // seal the admin-overwrite endpoint even though the file marker is lost.
+        if (file_exists($this->marker)) {
+            unlink($this->marker);
+        }
+
+        DB::table('core_config')->updateOrInsert(
+            ['code' => 'installer.installed'],
+            ['value' => '1']
+        );
+
+        $original = DB::table('admins')->where('id', 1)->first();
+
+        $this->withoutMiddleware()
+            ->postJson('/install/api/admin-config-setup', [
+                'admin'    => 'Unauthorized Setup',
+                'email'    => 'unauthorized@example.test',
+                'password' => 'unauthorized-pass',
+                'timezone' => 'UTC',
+                'locale'   => 'en_US',
+            ])
+            ->assertForbidden();
+
+        $after = DB::table('admins')->where('id', 1)->first();
+
+        expect($after->email)->toBe($original->email);
+        expect($after->password)->toBe($original->password);
+    });
+
     it('still allows admin-config-setup while the install is in progress', function () {
 
         if (file_exists($this->marker)) {
             unlink($this->marker);
         }
+
+        // Model a genuine in-progress install: the base seeder created the
+        // default admin id 1 moments before the admin step runs.
+        DB::table('admins')->where('id', 1)->update(['created_at' => now()]);
 
         $this->withoutMiddleware()
             ->postJson('/install/api/admin-config-setup', [
@@ -139,6 +205,8 @@ describe('Installer completion marker', function () {
     });
 
     it('seals the installer after admin setup when no demo data is requested', function () {
+        DB::table('admins')->where('id', 1)->update(['created_at' => now()]);
+
         $this->withoutMiddleware()
             ->postJson('/install/api/admin-config-setup', [
                 'admin'    => 'Real Admin',
@@ -153,6 +221,8 @@ describe('Installer completion marker', function () {
     });
 
     it('defers sealing past admin setup when demo data is requested', function () {
+        DB::table('admins')->where('id', 1)->update(['created_at' => now()]);
+
         $this->withoutMiddleware()
             ->postJson('/install/api/admin-config-setup', [
                 'admin'            => 'Real Admin',

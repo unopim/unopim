@@ -22,7 +22,7 @@ class AttributeTranslation extends Model implements AttributeTranslationContract
 
     public $timestamps = false;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'instructions'];
 
     protected $historyTags = ['attribute'];
 
@@ -30,7 +30,8 @@ class AttributeTranslation extends Model implements AttributeTranslationContract
      * Key => Label for history
      */
     protected $historyTranslatableFields = [
-        'name' => 'Name',
+        'name'         => 'Name',
+        'instructions' => 'Instructions',
     ];
 
     /**

@@ -33,11 +33,9 @@ enum AiProvider: string
             self::Azure      => Lab::Azure,
             self::OpenRouter => Lab::OpenRouter,
             // Custom providers (Cerebras, Together, Fireworks, Perplexity,
-            // DeepInfra, etc.) only implement OpenAI's legacy /chat/completions
-            // endpoint — which is what laravel/ai's Groq gateway speaks.
-            // Routing Custom through Groq lets any chat-completions-compatible
-            // API work out of the box with a runtime api_url override.
-            self::Custom => Lab::Groq,
+            // DeepInfra, etc.) implement OpenAI's /chat/completions endpoint,
+            // which laravel/ai's dedicated OpenAI-compatible driver speaks.
+            self::Custom => Lab::OpenAICompatible,
         };
     }
 
@@ -71,9 +69,9 @@ enum AiProvider: string
     {
         return match ($this) {
             self::OpenRouter => 'openrouter',
-            // Custom routes through laravel/ai's Groq gateway (chat-completions),
-            // so its api_url override must land in the groq config namespace.
-            self::Custom => 'groq',
+            // Custom routes through laravel/ai's OpenAI-compatible driver, so
+            // its api_url override must land in that config namespace.
+            self::Custom => 'openai-compatible',
             default      => $this->value,
         };
     }

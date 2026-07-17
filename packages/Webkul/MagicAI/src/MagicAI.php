@@ -3,6 +3,7 @@
 namespace Webkul\MagicAI;
 
 use Webkul\MagicAI\Contracts\LLMModelInterface;
+use Webkul\MagicAI\Contracts\SupportsStructuredTranslation;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
@@ -109,9 +110,6 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set LLM model.
-     */
     public function setModel(string $model): self
     {
         $this->model = $model;
@@ -119,9 +117,6 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set stream response.
-     */
     public function setStream(bool $stream): self
     {
         $this->stream = $stream;
@@ -129,9 +124,6 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set temperature.
-     */
     public function setTemperature(float $temperature): self
     {
         $this->temperature = $temperature;
@@ -139,9 +131,6 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set the max tokens.
-     */
     public function setMaxTokens(int $maxTokens): self
     {
         $this->maxTokens = $maxTokens;
@@ -149,9 +138,6 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set LLM prompt text.
-     */
     public function setPrompt(string $prompt, string $fieldType = 'tinymce'): self
     {
         $this->prompt = $fieldType == 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
@@ -159,9 +145,6 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set LLM system prompt.
-     */
     public function setSystemPrompt(string $systemPrompt): self
     {
         $this->systemPrompt = $systemPrompt;
@@ -169,25 +152,31 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Generate text content.
-     */
     public function ask(): string
     {
         return $this->getModelInstance()->ask();
     }
 
-    /**
-     * Generate images.
-     */
     public function images(array $options): array
     {
         return $this->getModelInstance()->images($options);
     }
 
     /**
-     * Get LLM model instance.
+     * Translate the configured prompt.
+     *
+     * Uses structured output when the underlying model adapter supports it,
+     * falling back to plain text generation otherwise.
      */
+    public function translate(): string
+    {
+        $instance = $this->getModelInstance();
+
+        return $instance instanceof SupportsStructuredTranslation
+            ? $instance->translate()
+            : $instance->ask();
+    }
+
     public function getModelInstance(): LLMModelInterface
     {
         $platform = $this->platformRecord
@@ -195,12 +184,12 @@ class MagicAI
 
         if (! $platform) {
             throw new \RuntimeException(
-                'No AI platform configured. Please add a platform in Configuration > Magic AI > Platforms.'
+                trans('admin::app.configuration.platform.message.no-platform-configured')
             );
         }
 
         $model = $this->model ?? $platform->model_list[0] ?? throw new \RuntimeException(
-            'No model configured for the selected platform.'
+            trans('admin::app.configuration.platform.message.no-model-configured')
         );
 
         return new LaravelAiAdapter(

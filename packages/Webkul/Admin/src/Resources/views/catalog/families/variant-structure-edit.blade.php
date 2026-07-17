@@ -42,15 +42,20 @@
         />
     </x-slot>
 
-    <v-variant-structure-editor
-        :axis-options='@json($axisOptions)'
-        :groups='@json($variantGroups)'
-        :initial-structure='@json($structure)'
-        save-url="{{ route('admin.catalog.families.variant-structures.save', $attributeFamily->id) }}"
-        back-url="{{ route('admin.catalog.families.edit', [$attributeFamily->id, 'variants' => 1]) }}"
-    >
-        <x-admin::shimmer.families.attributes-panel />
-    </v-variant-structure-editor>
+    {{-- The with-history layout renders the default slot only for the "general" tab.
+         This editor page runs under the "variants" tab, so its content must live in
+         the tabContents slot (rendered for every tab) or the page renders blank. --}}
+    <x-slot:tabContents>
+        <v-variant-structure-editor
+            :axis-options='@json($axisOptions)'
+            :groups='@json($variantGroups)'
+            :initial-structure='@json($structure)'
+            save-url="{{ route('admin.catalog.families.variant-structures.save', $attributeFamily->id) }}"
+            back-url="{{ route('admin.catalog.families.edit', [$attributeFamily->id, 'variants' => 1]) }}"
+        >
+            <x-admin::shimmer.families.attributes-panel />
+        </v-variant-structure-editor>
+    </x-slot:tabContents>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-variant-structure-editor-template">

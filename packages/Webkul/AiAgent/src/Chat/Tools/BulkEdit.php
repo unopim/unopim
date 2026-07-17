@@ -48,7 +48,7 @@ class BulkEdit implements PimTool
                     'filter_value'    => $schema->string()->description('Filter value (e.g. "active", category code, family code)'),
                     'changes_json'    => $schema->string()->description('JSON of attribute changes to SET (e.g. {"status":"inactive","brand":"Nike"})'),
                     'transforms_json' => $schema->string()->description('JSON of attribute transforms to MODIFY existing values. Each entry: {"attribute_code": {"action": "append|prepend|replace", "value": "text", "search": "old text (for replace)"}}. Example: {"url_key": {"action": "append", "value": "-webkul"}}'),
-                    'limit'           => $schema->integer()->description('Max products to update (default 50, max 500)'),
+                    'limit'           => $schema->integer()->description('Max products to update (default 50, max 100)'),
                 ];
             }
 
@@ -62,7 +62,7 @@ class BulkEdit implements PimTool
                 $filter_value = $request->string('filter_value')->toString() ?: null;
                 $changes_json = $request->string('changes_json')->toString() ?: null;
                 $transforms_json = $request->string('transforms_json')->toString() ?: null;
-                $limit = $request->has('limit') ? (int) $request->get('limit') : 50;
+                $limit = $request->integer('limit', 50);
 
                 $changes = $changes_json ? json_decode($changes_json, true) : [];
                 $transforms = $transforms_json ? json_decode($transforms_json, true) : [];

@@ -43,7 +43,7 @@ class GetProductDetails implements PimTool
                 }
 
                 $sku = $request->string('sku')->toString() ?: null;
-                $productId = $request->has('product_id') ? (int) $request->get('product_id') : null;
+                $productId = $request->has('product_id') ? $request->integer('product_id') : null;
 
                 $product = null;
 

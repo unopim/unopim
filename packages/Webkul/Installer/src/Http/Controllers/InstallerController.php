@@ -35,6 +35,15 @@ class InstallerController extends Controller
     const USER_ID = 1;
 
     /**
+     * Max age (seconds) of the seeded default admin (id 1) for adminConfigSetup
+     * to still promote it — distinguishes an in-progress install from an
+     * established live admin whose install seals were lost.
+     *
+     * @var int
+     */
+    const ADMIN_SEED_PROMOTION_WINDOW = 86400;
+
+    /**
      * Cloud hosting promo URL shown in the installer top bar.
      *
      * @var string
@@ -108,6 +117,41 @@ class InstallerController extends Controller
     protected function abortIfDatabasePopulated(): void
     {
         abort_if($this->databaseManager->isInstalled(), 403);
+    }
+
+    /**
+     * Allow the admin-promotion step to overwrite only the seeder's freshly
+     * created default admin (id 1), never an established live admin.
+     *
+     * abortIfDatabasePopulated() cannot be used here (the base seeder populates
+     * id 1 before this step) and the persistent flag is insufficient for a DB
+     * restored between the backfill migration and the flag write. created_at
+     * age is the reliable distinguisher; any error or stale timestamp fails
+     * closed.
+     */
+    protected function abortUnlessAdminIsFreshlySeeded(): void
+    {
+        try {
+            $existing = DB::table('admins')->where('id', self::USER_ID)->first();
+        } catch (\Throwable $e) {
+            report($e);
+
+            abort(403);
+        }
+
+        if ($existing === null) {
+            return;
+        }
+
+        $createdAt = isset($existing->created_at)
+            ? strtotime((string) $existing->created_at)
+            : false;
+
+        abort_if(
+            $createdAt === false
+                || (time() - $createdAt) > self::ADMIN_SEED_PROMOTION_WINDOW,
+            403
+        );
     }
 
     /**
@@ -339,6 +383,14 @@ class InstallerController extends Controller
     {
         $this->abortIfInstalled();
 
+        // Fail closed if the install state cannot be positively confirmed.
+        if (! $this->databaseManager->canConfirmNotInstalled()) {
+            abort(403);
+        }
+
+        // Only ever promote the seeder's freshly-created default admin.
+        $this->abortUnlessAdminIsFreshlySeeded();
+
         $this->reloadDatabaseConfigFromEnv();
 
         $password = password_hash(request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
@@ -414,6 +466,10 @@ class InstallerController extends Controller
     public function prepareInstall(Request $request): JsonResponse
     {
         $this->abortIfInstalled();
+
+        // Precedes migration/seeding; refuse on a populated DB so a marker-lost
+        // instance cannot have its .env repointed by an unauthenticated request.
+        $this->abortIfDatabasePopulated();
 
         $this->reloadDatabaseConfigFromEnv();
 
@@ -545,6 +601,10 @@ class InstallerController extends Controller
             }
             @ob_implicit_flush(true);
 
+            // Once the admin is committed, a later failure must still seal the
+            // installer so the half-completed install cannot be re-driven.
+            $administratorCreated = false;
+
             try {
                 // a. Database
                 $this->reloadDatabaseConfigFromEnv();
@@ -588,6 +648,7 @@ class InstallerController extends Controller
                 // d. Administrator
                 $emit(trans('installer::app.installer.index.terminal.creating-admin'));
                 $this->createAdminFromSession($admin);
+                $administratorCreated = true;
                 $emit(trans('installer::app.installer.index.terminal.admin-created'));
 
                 // e. Sample data (optional)
@@ -626,6 +687,12 @@ class InstallerController extends Controller
                 @flush();
             } catch (\Throwable $e) {
                 report($e);
+
+                // Seal if the admin was already created, so the reachable
+                // endpoints cannot be replayed to overwrite it.
+                if ($administratorCreated) {
+                    $this->markInstalled();
+                }
 
                 echo 'event: error'.PHP_EOL;
                 echo 'data: '.json_encode(['message' => $e->getMessage()]).PHP_EOL.PHP_EOL;

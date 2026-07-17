@@ -3,12 +3,15 @@
 namespace Webkul\AiAgent\Services;
 
 use Laravel\Ai\Embeddings;
+use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
 
 /**
  * Semantic similarity scoring using laravel/ai embeddings.
  */
 class EmbeddingSimilarityService
 {
+    public function __construct(protected ?ProductEmbeddingIndex $productEmbeddingIndex = null) {}
+
     /**
      * Rank documents by similarity to a query text.
      *
@@ -22,7 +25,9 @@ class EmbeddingSimilarityService
         }
 
         try {
-            $response = Embeddings::for(array_merge([$query], $documents))->generate();
+            $response = Embeddings::for(array_merge([$query], $documents))
+                ->cache()
+                ->generate();
 
             $vectors = $response->embeddings;
             $queryVector = $vectors[0] ?? null;
@@ -51,6 +56,40 @@ class EmbeddingSimilarityService
             }
 
             return $scores;
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
+    /**
+     * Rank products by similarity to a query using the persistent vector store.
+     *
+     * Runs an Elasticsearch kNN search against pre-indexed product embeddings.
+     * Returns [] when the vector store is disabled or on any failure, so
+     * callers can fall back to their existing ranking path.
+     *
+     * @return array<int, array{product_id: int, score: float}> sorted by score descending
+     */
+    public function rankProducts(string $query, ?int $limit = null, ?int $attributeFamilyId = null): array
+    {
+        $index = $this->productEmbeddingIndex ?? app(ProductEmbeddingIndex::class);
+
+        if (trim($query) === '' || ! $index->isEnabled()) {
+            return [];
+        }
+
+        try {
+            $response = Embeddings::for([$query])
+                ->cache()
+                ->generate();
+
+            $queryVector = $response->embeddings[0] ?? null;
+
+            if (! is_array($queryVector) || empty($queryVector)) {
+                return [];
+            }
+
+            return $index->searchSimilar($queryVector, $limit ?? 10, $attributeFamilyId);
         } catch (\Throwable) {
             return [];
         }

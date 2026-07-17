@@ -31,7 +31,7 @@ class UploadMediaValidator
 
         $attributeCode = $data['attribute'];
         $productAttribute = $this->attributeService->findAttributeByCode($attributeCode);
-        $rules = $this->generateRules($productAttribute);
+        $rules = $this->generateRules($productAttribute, $id);
         $validator = Validator::make($data, $rules);
 
         if (! $productAttribute) {
@@ -54,10 +54,10 @@ class UploadMediaValidator
     /**
      * Validation rules to be used on the data
      */
-    protected function generateRules($productAttribute): array
+    protected function generateRules($productAttribute, ?string $id = null): array
     {
         $rules = [
-            'file' => $productAttribute ? $productAttribute->getValidationsOnlyMedia() : [],
+            'file' => $productAttribute ? $productAttribute->getValidationsOnlyMedia($id ? (int) $id : null) : [],
         ];
 
         return $rules;

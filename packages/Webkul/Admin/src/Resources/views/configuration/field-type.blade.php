@@ -67,6 +67,19 @@
                 />
             </template>
         
+            <template v-if="field.type == 'textarea'">
+                <x-admin::form.control-group.control
+                    type="textarea"
+                    ::id="name"
+                    ::name="name"
+                    ::value="value"
+                    ::rules="validations"
+                    ::label="label"
+                    ::placeholder="placeholder"
+                    @input="emitChangeEvent($event.target.value, name)"
+                />
+            </template>
+
             <template v-if="field.type == 'password'">
                 <x-admin::form.control-group.control
                     type="password"

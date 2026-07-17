@@ -182,6 +182,11 @@ return [
                     ['title' => 'Strict confirm (always confirm + verify after every change)', 'value' => 'review'],
                     ['title' => 'Suggest only (describe changes but never execute)', 'value' => 'suggest'],
                 ],
+            ], [
+                'name'  => 'custom_instructions',
+                'title' => 'admin::app.configuration.index.general.magic-ai.agentic-pim.custom-instructions',
+                'type'  => 'textarea',
+                'info'  => 'admin::app.configuration.index.general.magic-ai.agentic-pim.custom-instructions-info',
             ],
         ],
     ], [

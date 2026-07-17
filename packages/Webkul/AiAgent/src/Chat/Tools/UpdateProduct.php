@@ -3,7 +3,6 @@
 namespace Webkul\AiAgent\Chat\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\DB;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
@@ -71,7 +70,8 @@ class UpdateProduct implements PimTool
                 $errors = [];
 
                 $productRepo = app('Webkul\Product\Repositories\ProductRepository');
-                $currencies = DB::table('currencies')->where('status', 1)->pluck('code')->toArray() ?: ['USD'];
+                $currencies = $this->writerService->getActiveCurrencyCodes();
+                $activeLocaleCodes = array_flip(core()->getAllActiveLocales()->pluck('code')->all());
 
                 foreach ($skus as $s) {
                     $product = $productRepo->findOneByField('sku', $s);
@@ -102,13 +102,13 @@ class UpdateProduct implements PimTool
                         // Detect and route each locale value to the correct bucket.
                         if (is_array($value) && ! empty($value)) {
                             $localeKeys = array_keys($value);
-                            $looksLikeLocaleMap = preg_match('/^[a-z]{2}_[A-Z]{2}$/', $localeKeys[0] ?? '');
+                            $looksLikeLocaleMap = isset($activeLocaleCodes[(string) ($localeKeys[0] ?? '')]);
 
                             if ($looksLikeLocaleMap && isset($familyAttributes[$code])) {
                                 $meta = $familyAttributes[$code];
 
                                 foreach ($value as $localeCode => $localeValue) {
-                                    if (! is_string($localeValue) || empty($localeValue)) {
+                                    if (! isset($activeLocaleCodes[(string) $localeCode]) || ! is_string($localeValue) || empty($localeValue)) {
                                         continue;
                                     }
 

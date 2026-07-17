@@ -187,6 +187,17 @@
                                             :name="$locale->code . '[name]'"
                                             :value="old($locale->code)['name'] ?? ''"
                                         />
+
+                                        <x-admin::form.control-group.label class="mt-2">
+                                            @lang('admin::app.catalog.attributes.create.instructions')
+                                        </x-admin::form.control-group.label>
+
+                                        <x-admin::form.control-group.control
+                                            type="textarea"
+                                            :name="$locale->code . '[instructions]'"
+                                            :value="old($locale->code)['instructions'] ?? ''"
+                                            :placeholder="trans('admin::app.catalog.attributes.create.instructions-placeholder')"
+                                        />
                                     </x-admin::form.control-group>
                                 @endforeach
                             </div>

@@ -49,7 +49,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     /**
      * Tinymce file upload handler.
      */
-    Route::post('tinymce/upload', [TinyMCEController::class, 'upload'])->name('admin.tinymce.upload');
+    Route::post('tinymce/upload', [TinyMCEController::class, 'upload'])
+        ->middleware('throttle:30,1')
+        ->name('admin.tinymce.upload');
 
     /**
      * AI Routes
@@ -65,7 +67,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::post('content', 'content')->name('admin.magic_ai.content');
 
-        Route::post('image', 'image')->name('admin.magic_ai.image');
+        Route::post('image', 'image')->middleware('throttle:10,1')->name('admin.magic_ai.image');
 
         Route::get('default-prompt', 'defaultPrompt')->name('admin.magic_ai.default_prompt');
 

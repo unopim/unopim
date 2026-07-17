@@ -82,7 +82,7 @@ class CategoryMediaValidator extends CategoryValidator
     {
         $rules = [];
         $existsField = $this->getCategoryFields([$requestData['category_field']])->first();
-        $rules['file'] = $existsField->getValidationsFieldOnlyMedia();
+        $rules['file'] = $existsField->getValidationsFieldOnlyMedia($id);
 
         return Validator::make($requestData, $rules);
     }

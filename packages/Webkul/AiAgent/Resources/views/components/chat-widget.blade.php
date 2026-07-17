@@ -57,27 +57,31 @@
         <transition :name="noTransition ? '' : 'ap-slide'">
             <div
                 v-if="isOpen"
+                id="agenting-pim-panel"
                 class="ap-panel"
+                role="dialog"
+                aria-modal="true"
+                aria-label="@lang('ai-agent::app.widget.panel-title')"
             >
                 {{-- Header --}}
-                <div class="flex items-center justify-between px-4 py-2.5 flex-shrink-0" style="background:linear-gradient(135deg,rgb(var(--c-primary-700)) 0%,rgb(var(--c-primary-600)) 50%,rgb(var(--c-primary-500)) 100%);">
+                <div class="ap-header flex items-center justify-between px-4 py-2.5 flex-shrink-0">
                     <div class="flex items-center gap-2.5">
                         <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
-                            <svg width="14" height="14" style="color:#fff;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
                         </div>
                         <div>
-                            <p style="color:#fff;font-weight:600;font-size:13px;line-height:1.25;margin:0;">@lang('ai-agent::app.widget.panel-title')</p>
-                            <p style="color:rgba(255,255,255,0.55);font-size:10px;line-height:1.25;margin:0;">@lang('ai-agent::app.widget.panel-subtitle')</p>
+                            <p class="ap-header-title">@lang('ai-agent::app.widget.panel-title')</p>
+                            <p class="ap-header-sub">@lang('ai-agent::app.widget.panel-subtitle')</p>
                         </div>
                     </div>
-                    <div style="display:flex;align-items:center;gap:4px;">
-                        <a href="{{ route('ai-agent.settings') }}" title="@lang('ai-agent::app.widget.ai-settings')" style="color:rgba(255,255,255,0.65);display:flex;align-items:center;padding:5px;border-radius:6px;text-decoration:none;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='transparent'">
+                    <div class="flex items-center gap-1">
+                        <a href="{{ route('ai-agent.settings') }}" class="ap-header-btn" title="@lang('ai-agent::app.widget.ai-settings')" aria-label="@lang('ai-agent::app.widget.ai-settings')">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
                         </a>
-                        <button v-if="activeTab === 'chat' && messages.length > 0" @click="newSession" :title="trans.newConversation" style="color:rgba(255,255,255,0.65);background:transparent;border:none;cursor:pointer;display:flex;align-items:center;padding:5px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='transparent'">
+                        <button v-if="activeTab === 'chat' && messages.length > 0" @click="newSession" class="ap-header-btn" :title="trans.newConversation" :aria-label="trans.newConversation">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
                         </button>
-                        <button @click="close" :title="trans.close" style="color:rgba(255,255,255,0.65);background:transparent;border:none;cursor:pointer;display:flex;align-items:center;padding:5px;border-radius:6px;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='transparent'">
+                        <button @click="close" class="ap-header-btn" :title="trans.close" :aria-label="trans.close">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
@@ -87,7 +91,7 @@
                 <div v-if="productContext" class="ap-context-banner">
                     <svg width="13" height="13" class="ap-context-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                     <span class="ap-context-text" v-text="trans.editing + ': ' + (productContext.sku || trans.product + ' #' + productContext.id)"></span>
-                    <button @click="productContext = null" class="ap-context-close">
+                    <button @click="productContext = null" class="ap-context-close" :title="trans.close" :aria-label="trans.close">
                         <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
@@ -118,14 +122,13 @@
                 <div v-show="activeTab === 'capabilities'" style="flex:1;overflow-y:auto;padding:16px;">
                     {{-- Search bar --}}
                     <div style="position:relative;margin-bottom:12px;">
-                        <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <svg class="ap-search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         <input
                             v-model="capabilitySearch"
                             type="text"
                             :placeholder="trans.searchCapabilities"
+                            :aria-label="trans.searchCapabilities"
                             class="ap-search-input"
-                            @focus="$event.target.style.borderColor='rgb(var(--c-primary-600))'"
-                            @blur="$event.target.style.borderColor='#e5e7eb'"
                         />
                     </div>
 
@@ -160,12 +163,16 @@
                     <div v-if="sessions.length" style="flex:1;overflow-y:auto;padding:8px;">
                         <div v-for="(session, idx) in sessions" :key="session.id"
                             @click="switchToSession(session.id)"
+                            @keydown.enter.prevent="switchToSession(session.id)"
+                            @keydown.space.prevent="switchToSession(session.id)"
+                            role="button"
+                            tabindex="0"
                             class="ap-session-card"
                             :class="{ 'ap-session-card-active': session.id === activeSessionId }">
                             {{-- Session icon --}}
                             <div class="ap-session-icon"
-                                :style="{ background: session.id === activeSessionId ? 'rgb(var(--c-primary-600))' : '#f3f4f6' }">
-                                <svg width="14" height="14" fill="none" :stroke="session.id === activeSessionId ? '#fff' : '#9ca3af'" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                :class="{ 'ap-session-icon-active': session.id === activeSessionId }">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                             </div>
 
                             {{-- Session info --}}
@@ -184,6 +191,7 @@
                             {{-- Delete button --}}
                             <button v-else @click.stop="deleteSession(session.id)"
                                 :title="trans.deleteSession"
+                                :aria-label="trans.deleteSession"
                                 class="ap-session-delete"
                                 @mouseenter="$event.currentTarget.style.color='rgb(var(--c-danger))'"
                                 @mouseleave="$event.currentTarget.style.color='#9ca3af'"
@@ -196,8 +204,8 @@
                     {{-- Empty state --}}
                     <div v-else style="flex:1;display:flex;align-items:center;justify-content:center;padding:32px;">
                         <div style="text-align:center;">
-                            <svg style="margin:0 auto 12px;color:#d1d5db;" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
-                            <p style="font-size:12px;color:#9ca3af;" v-text="trans.noSessions"></p>
+                            <svg class="ap-empty-icon" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+                            <p class="ap-empty-text" v-text="trans.noSessions"></p>
                         </div>
                     </div>
                 </div>
@@ -271,11 +279,11 @@
                                                     <span class="text-primary-400 dark:text-primary-500 capitalize font-semibold" v-text="String(key).replace(/_/g, ' ') + ': '"></span>
                                                     {{-- Boolean --}}
                                                     <span v-if="typeof val === 'boolean'" class="inline-flex items-center gap-1 font-semibold" :class="val ? 'text-emerald-600' : 'text-red-400'">
-                                                        <span v-text="val ? '✓ Yes' : '✗ No'"></span>
+                                                        <span v-text="val ? '✓ ' + trans.yes : '✗ ' + trans.no"></span>
                                                     </span>
                                                     {{-- Array --}}
                                                     <template v-else-if="Array.isArray(val)">
-                                                        <div v-if="val.length === 0" class="mt-0.5 text-gray-400 italic">None</div>
+                                                        <div v-if="val.length === 0" class="mt-0.5 text-gray-400 italic" v-text="trans.none"></div>
                                                         <div v-else class="mt-1 flex flex-wrap gap-1">
                                                             <span v-for="(item, i) in val" :key="i" class="inline-block px-2 py-0.5 rounded-md text-[11px] font-medium bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-800" v-text="item"></span>
                                                         </div>
@@ -309,17 +317,17 @@
 
                                     {{-- Message actions: retry, copy, helpful, not helpful — shown AFTER result card --}}
                                     <div v-if="!msg.isStreaming && !msg.isRedirect" class="flex items-center gap-0.5 ap-msg-actions" style="margin-top:2px;">
-                                        <button @click="retryFrom(idx)" title="Retry" class="ap-action-btn">
+                                        <button @click="retryFrom(idx)" :title="trans.retry" :aria-label="trans.retry" class="ap-action-btn">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
                                         </button>
-                                        <button @click="copyMessage(idx)" :title="msg._copied ? 'Copied!' : 'Copy'" class="ap-action-btn">
+                                        <button @click="copyMessage(idx)" :title="msg._copied ? trans.copied : trans.copy" :aria-label="msg._copied ? trans.copied : trans.copy" class="ap-action-btn">
                                             <svg v-if="!msg._copied" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                                             <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--c-success))" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                         </button>
-                                        <button @click="rateMessage(idx, 'helpful')" title="Helpful" class="ap-action-btn" :class="{ 'ap-action-active': msg._rating === 'helpful' }">
+                                        <button @click="rateMessage(idx, 'helpful')" :title="trans.helpful" :aria-label="trans.helpful" class="ap-action-btn" :class="{ 'ap-action-active': msg._rating === 'helpful' }">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
                                         </button>
-                                        <button @click="rateMessage(idx, 'not_helpful')" title="Not helpful" class="ap-action-btn" :class="{ 'ap-action-active': msg._rating === 'not_helpful' }">
+                                        <button @click="rateMessage(idx, 'not_helpful')" :title="trans.notHelpful" :aria-label="trans.notHelpful" class="ap-action-btn" :class="{ 'ap-action-active': msg._rating === 'not_helpful' }">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
                                         </button>
                                     </div>
@@ -328,11 +336,11 @@
                                     <div v-if="needsConfirmation(msg, idx)" class="flex gap-2 mt-1">
                                         <button @click="confirmAction('yes', idx)" :disabled="isLoading" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md" style="background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                            Yes, proceed
+                                            <span v-text="trans.yesProceed"></span>
                                         </button>
                                         <button @click="confirmAction('no', idx)" :disabled="isLoading" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-cherry-800 transition-all">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                            No
+                                            <span v-text="trans.no"></span>
                                         </button>
                                     </div>
                                 </div>
@@ -340,7 +348,7 @@
                         </template>
 
                         {{-- Typing / Streaming indicator --}}
-                        <div v-if="isLoading">
+                        <div v-if="isLoading" aria-live="polite" role="status">
                             <div style="padding:2px 0;">
                                 <div class="flex items-center gap-2">
                                     <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
@@ -398,8 +406,6 @@
                                 :placeholder="inputPlaceholder"
                                 :disabled="isLoading"
                                 @input="autoResize"
-                                @focus="$event.target.parentElement.style.border='1.5px solid rgb(var(--c-primary-600))'"
-                                @blur="$event.target.parentElement.style.border='1.5px solid #d1d5db'"
                             ></textarea>
 
                             {{-- Toolbar row: Attach + Platform/Model + Send --}}
@@ -409,6 +415,11 @@
                                 <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;">
                                     <label
                                         :title="fileInputTitle"
+                                        :aria-label="fileInputTitle"
+                                        role="button"
+                                        tabindex="0"
+                                        @keydown.enter.prevent="$refs.fileInput.click()"
+                                        @keydown.space.prevent="$refs.fileInput.click()"
                                         class="ap-input-chip">
                                         <svg v-if="activeCapability && activeCapability.acceptsSpreadsheet" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                                         <svg v-else width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
@@ -421,6 +432,7 @@
                                             @change="onPlatformChange"
                                             class="ap-input-select"
                                             :title="trans.selectPlatform"
+                                            :aria-label="trans.selectPlatform"
                                         >
                                             <option v-for="p in platforms" :key="p.id" :value="p.id" v-text="p.label"></option>
                                         </select>
@@ -428,6 +440,7 @@
                                             v-model="selectedModel"
                                             class="ap-input-select"
                                             :title="trans.selectModel"
+                                            :aria-label="trans.selectModel"
                                         >
                                             <option v-for="m in availableModels" :key="m" :value="m" v-text="m"></option>
                                         </select>
@@ -438,9 +451,9 @@
                                 <button
                                     @click="send"
                                     :disabled="isLoading || (!inputText.trim() && pendingFiles.length === 0)"
-                                    style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));transition:opacity 0.2s,transform 0.1s;"
-                                    :style="{ opacity: (isLoading || (!inputText.trim() && pendingFiles.length === 0)) ? '0.35' : '1', cursor: (isLoading || (!inputText.trim() && pendingFiles.length === 0)) ? 'not-allowed' : 'pointer' }"
+                                    class="ap-send-btn"
                                     :title="isLoading ? trans.sending : trans.send"
+                                    :aria-label="isLoading ? trans.sending : trans.send"
                                 >
                                     <svg v-if="!isLoading" width="14" height="14" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="white" stroke="none"/></svg>
                                     <svg v-else class="animate-spin" width="14" height="14" fill="none" viewBox="0 0 24 24"><circle style="opacity:.3" cx="12" cy="12" r="10" stroke="white" stroke-width="4"/><path style="opacity:.8" fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
@@ -458,10 +471,11 @@
         <button
             v-show="!isOpen"
             @click="toggle"
+            class="ap-fab"
             :title="trans.openPanel"
-            style="position:fixed;bottom:24px;right:24px;z-index:10002;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgb(var(--c-primary-600) / 0.4);border:none;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;"
-            @mouseenter="$event.currentTarget.style.transform='scale(1.1)';$event.currentTarget.style.boxShadow='0 6px 20px rgb(var(--c-primary-600) / 0.5)'"
-            @mouseleave="$event.currentTarget.style.transform='';$event.currentTarget.style.boxShadow='0 4px 15px rgb(var(--c-primary-600) / 0.4)'"
+            :aria-label="trans.openPanel"
+            :aria-expanded="isOpen ? 'true' : 'false'"
+            aria-controls="agenting-pim-panel"
         >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
         </button>
@@ -483,6 +497,34 @@
 
 /* Backdrop — hidden on desktop */
 .ap-backdrop { display: none; }
+
+/* Panel header (gradient stays identical in both themes) */
+.ap-header {
+    background: linear-gradient(135deg, rgb(var(--c-primary-700)) 0%, rgb(var(--c-primary-600)) 50%, rgb(var(--c-primary-500)) 100%);
+    color: #fff;
+}
+.ap-header-title { color: #fff; font-weight: 600; font-size: 13px; line-height: 1.25; margin: 0; }
+.ap-header-sub { color: rgba(255, 255, 255, 0.55); font-size: 10px; line-height: 1.25; margin: 0; }
+.ap-header-btn {
+    color: rgba(255, 255, 255, 0.65); background: transparent; border: none; cursor: pointer;
+    display: flex; align-items: center; padding: 5px; border-radius: 6px;
+    text-decoration: none; transition: background 0.15s;
+}
+.ap-header-btn:hover, .ap-header-btn:focus-visible { background: rgba(255, 255, 255, 0.15); }
+
+/* Floating trigger button */
+.ap-fab {
+    position: fixed; bottom: 24px; right: 24px; z-index: 10002;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, rgb(var(--c-primary-600)), rgb(var(--c-primary-500)));
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 15px rgb(var(--c-primary-600) / 0.4);
+    border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+}
+.ap-fab:hover, .ap-fab:focus-visible {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgb(var(--c-primary-600) / 0.5);
+}
 
 /* Tablet & mobile: full-screen overlay above navbar */
 @media (max-width: 1024px) {
@@ -568,12 +610,16 @@
 }
 .dark .ap-tab-btn.ap-tab-active { background:#1f1b2d; color:rgb(var(--c-primary-300)); border-bottom-color:rgb(var(--c-primary-400)); }
 
+.ap-search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#9ca3af; }
+.dark .ap-search-icon { color:#9f97b8; }
 .ap-search-input {
     width:100%; padding:7px 10px 7px 32px; font-size:12px;
     border:1px solid #e5e7eb; border-radius:8px; outline:none;
     background:#f9fafb; color:#374151; box-sizing:border-box;
 }
 .dark .ap-search-input { background:#241f35; border-color:#453c5f; color:#e5e7eb; }
+.ap-search-input:focus { border-color:rgb(var(--c-primary-600)); }
+.dark .ap-search-input:focus { border-color:rgb(var(--c-primary-400)); }
 
 .ap-session-new-wrap { padding:12px 16px; border-bottom:1px solid #e5e7eb; flex-shrink:0; }
 .dark .ap-session-new-wrap { border-bottom-color:#453c5f; }
@@ -600,7 +646,14 @@
 .ap-session-icon {
     width:32px; height:32px; border-radius:8px; display:flex; align-items:center;
     justify-content:center; flex-shrink:0;
+    background:#f3f4f6; color:#9ca3af;
 }
+.dark .ap-session-icon { background:#3b3252; color:#b9b4cb; }
+.ap-session-icon.ap-session-icon-active { background:rgb(var(--c-primary-600)); color:#fff; }
+.ap-empty-icon { margin:0 auto 12px; color:#d1d5db; }
+.dark .ap-empty-icon { color:#5b4a80; }
+.ap-empty-text { font-size:12px; color:#9ca3af; }
+.dark .ap-empty-text { color:#9f97b8; }
 .ap-session-title {
     font-size:12px; font-weight:600; color:#374151; margin:0;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
@@ -685,8 +738,11 @@
 .dark .ap-input-wrap { background:#1f1b2d; border-top-color:#453c5f; }
 .ap-input-box {
     border:1.5px solid #d1d5db; border-radius:12px; background:#f9fafb; overflow:hidden;
+    transition:border-color 0.15s;
 }
 .dark .ap-input-box { background:#241f35; border-color:#5b4a80; }
+.ap-input-box:focus-within { border-color:rgb(var(--c-primary-600)); }
+.dark .ap-input-box:focus-within { border-color:rgb(var(--c-primary-400)); }
 .ap-input-textarea {
     width:100%; resize:none; font-size:13px; color:#374151; background:transparent;
     padding:12px 14px 6px; border:none; outline:none; min-height:76px;
@@ -718,6 +774,13 @@
 .dark .ap-input-select:focus { border-color:rgb(var(--c-primary-400)); }
 .ap-input-footnote { font-size:10px; color:#9ca3af; text-align:center; margin-top:6px; }
 .dark .ap-input-footnote { color:#9f97b8; }
+.ap-send-btn {
+    display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+    width:32px; height:32px; border-radius:8px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));
+    transition:opacity 0.2s, transform 0.1s;
+}
+.ap-send-btn:disabled { opacity:0.35; cursor:not-allowed; }
 </style>
 
 {{-- DOMPurify is bundled with the admin app (window.DOMPurify) — no external CDN. --}}
@@ -796,6 +859,53 @@ app.component('v-agenting-pim', {
             send: `@lang('ai-agent::app.widget.send')`,
             sending: `@lang('ai-agent::app.widget.sending')`,
             openingProduct: `@lang('ai-agent::app.widget.opening-product')`,
+            retry: `@lang('ai-agent::app.widget.retry')`,
+            copy: `@lang('ai-agent::app.widget.copy')`,
+            copied: `@lang('ai-agent::app.widget.copied')`,
+            helpful: `@lang('ai-agent::app.widget.helpful')`,
+            notHelpful: `@lang('ai-agent::app.widget.not-helpful')`,
+            yes: `@lang('ai-agent::app.widget.yes')`,
+            no: `@lang('ai-agent::app.widget.no')`,
+            none: `@lang('ai-agent::app.widget.none')`,
+            yesProceed: `@lang('ai-agent::app.widget.yes-proceed')`,
+            noCancel: `@lang('ai-agent::app.widget.no-cancel')`,
+            analyzingFiles: `@lang('ai-agent::app.widget.analyzing-files')`,
+            thinking: `@lang('ai-agent::app.widget.thinking')`,
+            refreshingPage: `@lang('ai-agent::app.widget.refreshing-page')`,
+            runningTool: `@lang('ai-agent::app.widget.tool-status.running-tool')`,
+            toolStatus: {
+                search_products: `@lang('ai-agent::app.widget.tool-status.search-products')`,
+                get_product_details: `@lang('ai-agent::app.widget.tool-status.get-product-details')`,
+                create_product: `@lang('ai-agent::app.widget.tool-status.create-product')`,
+                update_product: `@lang('ai-agent::app.widget.tool-status.update-product')`,
+                delete_products: `@lang('ai-agent::app.widget.tool-status.delete-products')`,
+                bulk_edit: `@lang('ai-agent::app.widget.tool-status.bulk-edit')`,
+                export_products: `@lang('ai-agent::app.widget.tool-status.export-products')`,
+                analyze_image: `@lang('ai-agent::app.widget.tool-status.analyze-image')`,
+                attach_image: `@lang('ai-agent::app.widget.tool-status.attach-image')`,
+                edit_image: `@lang('ai-agent::app.widget.tool-status.edit-image')`,
+                generate_image: `@lang('ai-agent::app.widget.tool-status.generate-image')`,
+                generate_content: `@lang('ai-agent::app.widget.tool-status.generate-content')`,
+                list_categories: `@lang('ai-agent::app.widget.tool-status.list-categories')`,
+                assign_categories: `@lang('ai-agent::app.widget.tool-status.assign-categories')`,
+                create_category: `@lang('ai-agent::app.widget.tool-status.create-category')`,
+                category_tree: `@lang('ai-agent::app.widget.tool-status.category-tree')`,
+                list_attributes: `@lang('ai-agent::app.widget.tool-status.list-attributes')`,
+                create_attribute: `@lang('ai-agent::app.widget.tool-status.create-attribute')`,
+                find_similar_products: `@lang('ai-agent::app.widget.tool-status.find-similar-products')`,
+                catalog_summary: `@lang('ai-agent::app.widget.tool-status.catalog-summary')`,
+                data_quality_report: `@lang('ai-agent::app.widget.tool-status.data-quality-report')`,
+                verify_product: `@lang('ai-agent::app.widget.tool-status.verify-product')`,
+                remember_fact: `@lang('ai-agent::app.widget.tool-status.remember-fact')`,
+                recall_memory: `@lang('ai-agent::app.widget.tool-status.recall-memory')`,
+                plan_tasks: `@lang('ai-agent::app.widget.tool-status.plan-tasks')`,
+                manage_users: `@lang('ai-agent::app.widget.tool-status.manage-users')`,
+                manage_roles: `@lang('ai-agent::app.widget.tool-status.manage-roles')`,
+                manage_channels: `@lang('ai-agent::app.widget.tool-status.manage-channels')`,
+                manage_families: `@lang('ai-agent::app.widget.tool-status.manage-families')`,
+                manage_attribute_options: `@lang('ai-agent::app.widget.tool-status.manage-attribute-options')`,
+                rate_content: `@lang('ai-agent::app.widget.tool-status.rate-content')`,
+            },
         };
 
         return {
@@ -1285,7 +1395,7 @@ app.component('v-agenting-pim', {
             const userMsg = { role: 'user', content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
             this.messages.push(userMsg);
             this.inputText = ''; this.resetTextarea(); this.scrollBottom(); this.isLoading = true;
-            this.streamingStatus = files.length > 0 ? 'Analyzing uploaded files...' : 'Thinking...';
+            this.streamingStatus = files.length > 0 ? this.trans.analyzingFiles : this.trans.thinking;
 
             try {
                 const fd = new FormData();
@@ -1328,7 +1438,7 @@ app.component('v-agenting-pim', {
                     }
                 } catch (streamErr) {
                     // Streaming failed — fallback to blocking JSON endpoint
-                    this.streamingStatus = 'Processing...';
+                    this.streamingStatus = this.trans.processing;
                     const res = await this.$axios.post("{{ route('ai-agent.chat.send') }}", fd, { headers: { 'Content-Type': 'multipart/form-data' } });
                     data = res.data;
                 }
@@ -1344,7 +1454,7 @@ app.component('v-agenting-pim', {
                     setTimeout(() => { window.location.href = data.product_url; }, 1500);
                 } else if (this.shouldAutoRefreshAfterAction(data)) {
                     this.saveState();
-                    this.streamingStatus = 'Refreshing page to show latest changes...';
+                    this.streamingStatus = this.trans.refreshingPage;
                     setTimeout(() => { window.location.reload(); }, 1500);
                 }
             } catch (err) {
@@ -1387,7 +1497,7 @@ app.component('v-agenting-pim', {
                                 const eventData = JSON.parse(line.substring(6));
                                 switch (currentEvent) {
                                     case 'status':
-                                        this.streamingStatus = eventData.message || 'Processing...';
+                                        this.streamingStatus = eventData.message || this.trans.processing;
                                         break;
                                     case 'tool_call':
                                         this.streamingStatus = this.toolStatusLabel(eventData.tool, eventData.step);
@@ -1433,7 +1543,7 @@ app.component('v-agenting-pim', {
                 setTimeout(() => { window.location.href = resultData.product_url; }, 1500);
             } else if (this.shouldAutoRefreshAfterAction(resultData)) {
                 this.saveState();
-                this.streamingStatus = 'Refreshing page to show latest changes...';
+                this.streamingStatus = this.trans.refreshingPage;
                 setTimeout(() => { window.location.reload(); }, 1500);
             }
         },

@@ -559,7 +559,7 @@
                                     />
 
                                     <div class="hidden">
-                                        <x-admin::media.images
+                                        <x-admin::media.image
                                             name="swatch_value"
                                             ::uploaded-images='swatchValue.image'
                                         />

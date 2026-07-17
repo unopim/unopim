@@ -1,9 +1,17 @@
 @props([
-    'isActive' => false,
+    'isActive'      => false,
+    'noClass'       => false,
+    'preventSubmit' => false,
 ])
 
 <v-modal
     is-active="{{ $isActive }}"
+    @if ($noClass)
+        :no-class="true"
+    @endif
+    @if ($preventSubmit)
+        :prevent-submit="true"
+    @endif
     {{ $attributes }}
 >
     @isset($toggle)
@@ -27,7 +35,7 @@
     @endisset
 
     @isset($content)
-        <template v-slot:content>
+        <template v-slot:content="{ toggle, isOpen }">
             <div {{ $content->attributes->merge(['class' => 'px-4 py-2.5 border-b dark:border-gray-800']) }}>
                 {{ $content }}
             </div>
@@ -82,11 +90,12 @@
                     data-unsaved-ignore
                     v-if="isOpen"
                 >
-                    <div class="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
+                    <div :class="noClass ? '' : 'flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0'">
                         <div
                             ref="modalContent"
-                            class="w-full max-h-[96%] z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2"
-                            :class="[modalSize, { 'overflow-y-auto': isOverflowing, 'overflow-hidden': clip }]"
+                            :class="noClass
+                                ? 'w-full h-full'
+                                : ['w-full max-h-[96%] z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2', modalSize, { 'overflow-y-auto': isOverflowing, 'overflow-hidden': clip }]"
                         >
                             <!-- Header Slot -->
                             <slot
@@ -97,7 +106,11 @@
                             </slot>
 
                             <!-- Content Slot -->
-                            <slot name="content"></slot>
+                            <slot
+                                name="content"
+                                :toggle="toggle"
+                                :isOpen="isOpen"
+                            ></slot>
                             
                             <!-- Footer Slot -->
                             <slot name="footer"></slot>
@@ -112,7 +125,7 @@
         app.component('v-modal', {
             template: '#v-modal-template',
 
-            props: ['isActive', 'type', 'clip'],
+            props: ['isActive', 'type', 'clip', 'noClass', 'preventSubmit'],
 
             data() {
                 return {
@@ -153,6 +166,7 @@
 
                 window.addEventListener('resize', this._onWindowResize);
                 window.addEventListener('orientationchange', this._onWindowResize);
+                window.addEventListener('keydown', this.handleKeydown);
             },
 
             beforeUnmount() {
@@ -166,6 +180,8 @@
                     window.removeEventListener('resize', this._onWindowResize);
                     window.removeEventListener('orientationchange', this._onWindowResize);
                 }
+
+                window.removeEventListener('keydown', this.handleKeydown);
             },
 
             methods: {
@@ -262,6 +278,12 @@
                     if (this.mutationObserver) {
                         this.mutationObserver.disconnect();
                         this.mutationObserver = null;
+                    }
+                },
+
+                handleKeydown(event) {
+                    if (event.key === 'Enter' && this.isOpen && this.preventSubmit) {
+                        event.preventDefault();
                     }
                 },
             }

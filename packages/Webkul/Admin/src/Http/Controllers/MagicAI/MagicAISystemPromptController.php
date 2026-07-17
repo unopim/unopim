@@ -15,7 +15,15 @@ class MagicAISystemPromptController extends Controller
     public function __construct(
         protected MagicAISystemPromptRepository $magicAiSystemPromptRepository,
         protected Prompt $promptService,
-    ) {}
+    ) {
+        $this->middleware(function ($request, $next) {
+            if (! bouncer()->hasPermission('ai-agent.system-prompt')) {
+                abort(403);
+            }
+
+            return $next($request);
+        });
+    }
 
     public function index(): View|JsonResponse
     {
