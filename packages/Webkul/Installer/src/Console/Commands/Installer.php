@@ -522,7 +522,7 @@ class Installer extends Command
     /**
      * Add the database credentials to the .env file.
      */
-    protected function askForDatabaseDetails()
+    protected function askForDatabaseDetails(): void
     {
         $databaseDetails = [
             'DB_CONNECTION' => select(
@@ -610,7 +610,7 @@ class Installer extends Command
         ) {
             $this->error('Please enter the database credentials.');
 
-            return null;
+            return;
         }
 
         foreach ($databaseDetails as $key => $value) {
