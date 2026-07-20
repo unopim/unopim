@@ -3,6 +3,7 @@
 namespace Webkul\Theme;
 
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Str;
 
 class Theme
 {
@@ -20,7 +21,6 @@ class Theme
      * @param  string  $name
      * @param  string  $assetsPath
      * @param  string  $viewsPath
-     * @return void
      */
     public function __construct(
         public $code,
@@ -29,18 +29,15 @@ class Theme
         public $viewsPath = null,
         public $vite = []
     ) {
-        $this->assetsPath = $assetsPath === null ? $code : $assetsPath;
+        $this->assetsPath = $assetsPath ?? $code;
 
-        $this->viewsPath = $viewsPath === null ? $code : $viewsPath;
+        $this->viewsPath = $viewsPath ?? $code;
     }
 
     /**
      * Sets the parent.
-     *
-     * @param  Theme
-     * @return void
      */
-    public function setParent(Theme $parent)
+    public function setParent(Theme $parent): void
     {
         $this->parent = $parent;
     }
@@ -57,17 +54,15 @@ class Theme
 
     /**
      * Return all the possible view paths.
-     *
-     * @return array
      */
-    public function getViewPaths()
+    public function getViewPaths(): array
     {
         $paths = [];
 
         $theme = $this;
 
         do {
-            if (substr($theme->viewsPath, 0, 1) === DIRECTORY_SEPARATOR) {
+            if (Str::startsWith($theme->viewsPath, DIRECTORY_SEPARATOR)) {
                 $path = base_path(substr($theme->viewsPath, 1));
             } else {
                 $path = $theme->viewsPath;

@@ -2,6 +2,8 @@
 
 namespace Webkul\Attribute\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +14,11 @@ use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Models\ProductProxy;
 
+#[Fillable([
+    'code',
+    'status',
+])]
+#[WithoutTimestamps]
 class AttributeFamily extends TranslatableModel implements AttributeFamilyContract, HistoryAuditable
 {
     use HasFactory;
@@ -20,8 +27,6 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     const ALLOWED_VARIANT_OPTION_TYPES = [
         'select',
     ];
-
-    public $timestamps = false;
 
     public $translatedAttributes = ['name'];
 
@@ -32,11 +37,6 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     protected $historyProxyFields = [
         'attribute_family_group_mappings',
         'attribute_group_mappings',
-    ];
-
-    protected $fillable = [
-        'code',
-        'status',
     ];
 
     protected $auditInclude = [
@@ -60,7 +60,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     /**
      * Get all the attributes for the attribute groups.
      */
-    public function getCustomAttributesAttribute()
+    protected function getCustomAttributesAttribute()
     {
         return $this->customAttributes()->get();
     }

@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('magic_ai_prompts', function (Blueprint $table) {
+        Schema::table('magic_ai_prompts', function (Blueprint $table): void {
             $table->string('purpose', 50)->default('text_generation')->after('type');
         });
 
@@ -42,7 +42,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('magic_ai_prompts', function (Blueprint $table) {
+        Schema::table('magic_ai_prompts', function (Blueprint $table): void {
             $table->dropColumn('purpose');
         });
     }

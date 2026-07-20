@@ -8,12 +8,10 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('attribute_groups', function (Blueprint $table) {
+        Schema::create('attribute_groups', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('code');
             $table->boolean('is_user_defined')->default(1);
@@ -22,10 +20,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('attribute_groups');
     }

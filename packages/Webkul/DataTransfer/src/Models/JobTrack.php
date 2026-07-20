@@ -2,6 +2,8 @@
 
 namespace Webkul\DataTransfer\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,11 +12,32 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Database\Factories\JobTrackFactory;
 
+#[Fillable([
+    'state',
+    'type',
+    'action',
+    'validation_strategy',
+    'validation_strategy',
+    'allowed_errors',
+    'processed_rows_count',
+    'invalid_rows_count',
+    'errors_count',
+    'errors',
+    'field_separator',
+    'file_path',
+    'images_directory_path',
+    'error_file_path',
+    'summary',
+    'started_at',
+    'completed_at',
+    'meta',
+    'job_instances_id',
+    'user_id',
+])]
+#[Table(name: 'job_track')]
 class JobTrack extends Model implements JobTrackContract
 {
     use HasFactory;
-
-    protected $table = 'job_track';
 
     /**
      * Indicates if the model should be timestamped.
@@ -22,47 +45,6 @@ class JobTrack extends Model implements JobTrackContract
      * @var bool
      */
     public $timestamps = true;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'state',
-        'type',
-        'action',
-        'validation_strategy',
-        'validation_strategy',
-        'allowed_errors',
-        'processed_rows_count',
-        'invalid_rows_count',
-        'errors_count',
-        'errors',
-        'field_separator',
-        'file_path',
-        'images_directory_path',
-        'error_file_path',
-        'summary',
-        'started_at',
-        'completed_at',
-        'meta',
-        'job_instances_id',
-        'user_id',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'summary'      => 'array',
-        'meta'         => 'array',
-        'errors'       => 'array',
-        'started_at'   => 'datetime',
-        'completed_at' => 'datetime',
-    ];
 
     /**
      * Get the job that owns the job batch.
@@ -90,5 +72,19 @@ class JobTrack extends Model implements JobTrackContract
     protected static function newFactory(): Factory
     {
         return JobTrackFactory::new();
+    }
+
+    /**
+     * The attributes that should be cast.
+     */
+    protected function casts(): array
+    {
+        return [
+            'summary'      => 'array',
+            'meta'         => 'array',
+            'errors'       => 'array',
+            'started_at'   => 'datetime',
+            'completed_at' => 'datetime',
+        ];
     }
 }

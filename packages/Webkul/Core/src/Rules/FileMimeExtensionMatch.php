@@ -27,17 +27,17 @@ class FileMimeExtensionMatch implements ValidationRule
 
         $mimeTypes = MimeTypes::getDefault()->getMimeTypes($extension);
 
-        if (empty($mimeTypes)) {
+        if ($mimeTypes === []) {
             $fail(trans('core::validation.file-mime-extension-mismatch', ['extension' => $extension, 'mimeType' => $mimeType]));
 
             return;
         }
 
-        if (strtolower($extension) === 'jpeg') {
+        if (strtolower((string) $extension) === 'jpeg') {
             $extension = 'jpg';
         }
 
-        if (! (in_array($mimeType, $mimeTypes) && $value->guessExtension() === strtolower($extension))) {
+        if (! in_array($mimeType, $mimeTypes) || $value->guessExtension() !== strtolower((string) $extension)) {
             $fail(trans('core::validation.file-mime-extension-mismatch', ['extension' => $extension, 'mimeType' => $mimeType]));
 
             return;
@@ -48,10 +48,13 @@ class FileMimeExtensionMatch implements ValidationRule
      * Check that the given value is a valid file instance.
      *
      * @param  mixed  $value
-     * @return bool
      */
-    public function isValidFileInstance($value)
+    public function isValidFileInstance($value): bool
     {
-        return ($value instanceof UploadedFile && $value->isValid()) || $value instanceof File;
+        if ($value instanceof UploadedFile && $value->isValid()) {
+            return true;
+        }
+
+        return $value instanceof File;
     }
 }

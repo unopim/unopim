@@ -14,8 +14,6 @@ class Exporter extends AbstractExporter
 {
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -27,10 +25,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Initializes the channels and locales for the export process.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         $this->initializeFileBuffer();
     }
@@ -64,8 +60,10 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare attribute groups from current batch
+     *
+     * @return array{code: mixed, locale: mixed, name: mixed}[]
      */
-    public function prepareAttributeGroups(JobTrackBatchContract $batch, mixed $filePath)
+    public function prepareAttributeGroups(JobTrackBatchContract $batch, mixed $filePath): array
     {
         $locales = core()->getAllActiveLocales()->pluck('code');
         $attributeGroups = [];

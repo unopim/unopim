@@ -22,8 +22,6 @@ class Exporter extends AbstractExporter
 
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -35,10 +33,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Initializes the channels and locales for the export process.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         $this->categoryFields = $this->categoryFieldRepository->getActiveCategoryFields();
         $this->initializeFileBuffer();
@@ -76,8 +72,10 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare categories from current batch
+     *
+     * @return array<int, non-empty-array>
      */
-    public function prepareCategories(JobTrackBatchContract $batch, mixed $filePath)
+    public function prepareCategories(JobTrackBatchContract $batch, mixed $filePath): array
     {
         $locales = core()->getAllActiveLocales()->pluck('code');
         $categories = [];
@@ -110,22 +108,19 @@ class Exporter extends AbstractExporter
 
     /**
      * Sets category field values for a product. If an category field is not present in the given values array,
-     *
-     * @param  array  $values
-     * @return array
      */
-    protected function setFieldsAdditionalData(array $additionalData, $filePath, $options = [])
+    protected function setFieldsAdditionalData(array $additionalData, $filePath, $options = []): array
     {
         $fieldValues = [];
         $filters = $this->getFilters();
         $withMedia = (bool) $filters['with_media'];
 
-        foreach ($this->categoryFields as $key => $field) {
+        foreach ($this->categoryFields as $field) {
             $fieldValues[$field->code] = $additionalData[$field->code] ?? null;
 
             if ($withMedia && in_array($field->type, [FieldValidator::FILE_FIELD_TYPE, FieldValidator::IMAGE_FIELD_TYPE])) {
                 $exitingFilePath = $additionalData[$field->code] ?? null;
-                if ($exitingFilePath && ! empty($exitingFilePath)) {
+                if ($exitingFilePath) {
                     $newfilePath = $filePath->getTemporaryPath().'/'.$exitingFilePath;
                     $this->copyMedia($exitingFilePath, $newfilePath);
                 }
@@ -149,7 +144,7 @@ class Exporter extends AbstractExporter
             return [];
         }
 
-        if (! array_key_exists('additional_data', $data) || ! array_key_exists('common', $data['additional_data'])) {
+        if (! array_key_exists('common', $data['additional_data'])) {
             return [];
         }
 
@@ -168,7 +163,7 @@ class Exporter extends AbstractExporter
             return [];
         }
 
-        if (! array_key_exists('additional_data', $data) || ! array_key_exists('locale_specific', $data['additional_data'])) {
+        if (! array_key_exists('locale_specific', $data['additional_data'])) {
             return [];
         }
 

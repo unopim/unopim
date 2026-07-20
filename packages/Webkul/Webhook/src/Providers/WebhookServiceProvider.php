@@ -9,10 +9,8 @@ class WebhookServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
 
@@ -27,10 +25,8 @@ class WebhookServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerConfig();
     }
@@ -46,6 +42,10 @@ class WebhookServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/acl.php', 'acl'
+        );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/webhook.php', 'webhook'
         );
     }
 }

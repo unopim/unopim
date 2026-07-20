@@ -256,6 +256,33 @@ it('denies catalog.families.variant-structures.delete without permission', funct
 });
 
 /**
+ * History version routes were absent from the ACL map, so Bouncer's
+ * route => key lookup found nothing and let the request through. The
+ * read route leaks audit history for any entity, and the restore/delete
+ * verbs are latent mutations. All three must require history.view.
+ */
+it('denies history.version.view without history.view permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->get(route('admin.history.version.view', ['entity' => 'product', 'id' => 1, 'versionId' => 1]))
+        ->assertStatus(403);
+});
+
+it('denies history.version.restore without history.view permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->post(route('admin.history.version.restore', ['entity' => 'product', 'id' => 1, 'versionId' => 1]), [])
+        ->assertStatus(403);
+});
+
+it('denies history.version.delete without history.view permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->delete(route('admin.history.version.delete', ['entity' => 'product', 'id' => 1, 'versionId' => 1]))
+        ->assertStatus(403);
+});
+
+/**
  * Core configuration save must require the configuration permission so a
  * restricted admin cannot persist global system settings.
  */

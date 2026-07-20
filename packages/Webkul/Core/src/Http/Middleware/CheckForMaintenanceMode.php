@@ -81,10 +81,8 @@ class CheckForMaintenanceMode extends BaseCheckForMaintenanceMode
 
             $route = $request->route();
 
-            if ($route instanceof Route) {
-                if (in_array($route->getName(), $this->excludedNames)) {
-                    return $response;
-                }
+            if ($route instanceof Route && in_array($route->getName(), $this->excludedNames)) {
+                return $response;
             }
 
             throw new HttpException(503);
@@ -98,22 +96,21 @@ class CheckForMaintenanceMode extends BaseCheckForMaintenanceMode
      */
     protected function setAllowedIps(): void
     {
-        $allowedIps = config('app.maintenance_allowed_ips', env('MAINTENANCE_ALLOWED_IPS', ''));
+        $allowedIps = config('app.maintenance_allowed_ips', '');
 
-        $this->excludedIPs = array_filter(array_map('trim', explode(',', $allowedIps)));
+        $this->excludedIPs = array_filter(array_map(trim(...), explode(',', $allowedIps)));
     }
 
     /**
      * Check for the except routes.
      *
      * @param  Request  $request
-     * @return bool
      */
-    protected function shouldPassThrough($request)
+    protected function shouldPassThrough($request): bool
     {
         foreach ($this->except as $except) {
             if ($except !== '/') {
-                $except = trim($except, '/');
+                $except = trim((string) $except, '/');
             }
 
             if ($request->is($except)) {

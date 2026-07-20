@@ -9,12 +9,12 @@ use Webkul\AiAgent\Http\Controllers\ExecutionController;
 use Webkul\AiAgent\Http\Controllers\GenerateController;
 
 // Route middleware: ['admin'] only — NOT ['web', 'admin']
-Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
+Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function (): void {
 
-    Route::prefix('ai-agent')->name('ai-agent.')->group(function () {
+    Route::prefix('ai-agent')->name('ai-agent.')->group(function (): void {
 
         // ── AI Settings (redirects to Magic AI configuration) ─
-        Route::get('settings', fn () => redirect()->route('admin.configuration.edit', ['general', 'magic_ai']))
+        Route::get('settings', fn () => to_route('admin.configuration.edit', ['general', 'magic_ai']))
             ->name('settings');
 
         // ── Agents ───────────────────────────────────────────
@@ -85,7 +85,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             ->whereNumber('id');
 
         // ── Dashboard & Analytics ──────────────────────────
-        Route::middleware('throttle:60,1')->group(function () {
+        Route::middleware('throttle:60,1')->group(function (): void {
             Route::get('dashboard/analytics', [DashboardController::class, 'analytics'])
                 ->name('dashboard.analytics');
 

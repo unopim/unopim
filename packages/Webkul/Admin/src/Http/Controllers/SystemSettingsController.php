@@ -59,7 +59,7 @@ class SystemSettingsController extends Controller
 
         session()->flash('success', trans('admin::app.settings.system-settings.save-message'));
 
-        return redirect()->route('admin.settings.system.index');
+        return redirect()->route('admin.settings.system.edit', $key);
     }
 
     /**

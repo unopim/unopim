@@ -8,6 +8,9 @@ use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Completeness\Models\CompletenessSetting;
 use Webkul\Core\Models\Channel;
 
+/**
+ * @extends Factory<CompletenessSetting>
+ */
 class CompletenessSettingFactory extends Factory
 {
     protected $model = CompletenessSetting::class;

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('ai_agent_token_usage', function (Blueprint $table) {
+        Schema::create('ai_agent_token_usage', function (Blueprint $table): void {
             $table->id();
             $table->unsignedInteger('user_id')->nullable();
             $table->date('usage_date');

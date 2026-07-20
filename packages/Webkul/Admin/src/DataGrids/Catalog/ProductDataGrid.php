@@ -560,9 +560,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $sortOrder = strtolower(trim((string) $sortOrder)) === 'asc' ? 'asc' : 'desc';
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
-            $attribute = $this->attributeService->findAttributeByCode($sortColumn) ?? 'text';
+            $attribute = $this->attributeService->findAttributeByCode($sortColumn);
 
-            $castType = $attribute?->type === 'price' || $attribute->validation === 'numeric'
+            $castType = $attribute && ($attribute->type === 'price' || $attribute->validation === 'numeric')
                 ? 'DECIMAL'
                 : null;
 

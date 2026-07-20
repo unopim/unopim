@@ -21,12 +21,10 @@ class WebhookLogsController
      */
     public function index()
     {
-        if (! bouncer()->hasPermission('configuration.webhook.logs')) {
-            abort(403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
-        }
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
         if (request()->ajax()) {
-            return app(LogsDataGrid::class)->toJson();
+            return resolve(LogsDataGrid::class)->toJson();
         }
 
         return view('webhook::logs.index');
@@ -37,9 +35,7 @@ class WebhookLogsController
      */
     public function show(int $id): JsonResponse
     {
-        if (! bouncer()->hasPermission('configuration.webhook.logs.view')) {
-            abort(403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
-        }
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs.view'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
         $log = $this->logsRepository->findOrFail($id);
 
@@ -59,9 +55,7 @@ class WebhookLogsController
      */
     public function destroy(int $id): JsonResponse
     {
-        if (! bouncer()->hasPermission('configuration.webhook.logs.delete')) {
-            abort(403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
-        }
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs.delete'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
         try {
             $this->logsRepository->delete($id);
@@ -83,9 +77,7 @@ class WebhookLogsController
      */
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
-        if (! bouncer()->hasPermission('configuration.webhook.logs.mass_delete')) {
-            abort(403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
-        }
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs.mass_delete'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
         $logIds = $massDestroyRequest->input('indices');
 

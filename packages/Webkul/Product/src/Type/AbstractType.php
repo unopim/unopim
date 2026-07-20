@@ -5,9 +5,8 @@ namespace Webkul\Product\Type;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use Webkul\Attribute\Contracts\Group;
+use Webkul\Attribute\Contracts\AttributeGroup;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
@@ -86,8 +85,6 @@ abstract class AbstractType
 
     /**
      * Create a new product type instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
@@ -327,9 +324,9 @@ abstract class AbstractType
     protected function processValues(int $productId, array $values, array $productValues = [], bool $isCommonAttribute = false): array
     {
         $values = array_filter(
-            ! empty($productValues)
-                ? array_merge($productValues, $values)
-                : $values
+            $productValues === []
+                ? $values
+                : array_merge($productValues, $values)
         );
 
         foreach ($values as $field => $fieldValue) {
@@ -337,7 +334,7 @@ abstract class AbstractType
                 $attribute = $this->attributeRepository->findOneByField('code', $field);
                 $type = $attribute?->type;
 
-                if ($type === 'image' || $type === 'gallery' || $type === 'file') {
+                if (in_array($type, ['image', 'gallery', 'file'], true)) {
                     $path = 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$field;
 
                     if ($type === 'gallery') {
@@ -358,7 +355,7 @@ abstract class AbstractType
                         }, $fieldValue);
 
                         $values[$field] = array_values($values[$field]);
-                    } elseif (! empty($fieldValue) && current($fieldValue) instanceof UploadedFile) {
+                    } elseif ($fieldValue !== [] && current($fieldValue) instanceof UploadedFile) {
                         $uploadedFile = current($fieldValue);
 
                         if (! $uploadedFile->isValid()) {
@@ -390,7 +387,7 @@ abstract class AbstractType
             if (is_array($fieldValue)) {
                 $fieldValue = array_filter($fieldValue);
 
-                if (empty($fieldValue)) {
+                if ($fieldValue === []) {
                     unset($values[$field]);
                 } else {
                     $values[$field] = array_is_list($fieldValue) ? implode(',', $fieldValue) : $fieldValue;
@@ -439,7 +436,7 @@ abstract class AbstractType
      */
     protected function copyRelationships($product)
     {
-        $attributesToSkip = config('products.copy.skip_attributes') ?? [];
+        $attributesToSkip = config('products.copy.skip_attributes', []);
 
         if (! in_array('product_relations', $attributesToSkip)) {
             DB::table('product_relations')->insert([
@@ -447,22 +444,6 @@ abstract class AbstractType
                 'child_id'  => $product->id,
             ]);
         }
-    }
-
-    /**
-     * Copy product image video.
-     */
-    private function copyMedia($product, $media, $copiedMedia): void
-    {
-        $path = explode('/', $media->path);
-
-        $copiedMedia->path = 'product/'.$product->id.'/'.end($path);
-
-        $copiedMedia->save();
-
-        Storage::makeDirectory('product/'.$product->id);
-
-        Storage::copy($media->path, $copiedMedia->path);
     }
 
     /**
@@ -519,7 +500,7 @@ abstract class AbstractType
     /**
      * Retrieve product attributes.
      *
-     * @param  Group  $group
+     * @param  AttributeGroup|null  $group
      * @param  bool  $skipSuperAttribute
      * @return Collection
      */
@@ -614,34 +595,23 @@ abstract class AbstractType
     /**
      * Compare options.
      *
-     * @param  array  $options1
-     * @param  array  $options2
      * @return bool
      */
-    public function compareOptions($options1, $options2)
+    public function compareOptions(array $options1, array $options2)
     {
         if ($this->product->id != $options2['product_id']) {
             return false;
-        } else {
-            if (
-                isset($options1['parent_id'])
-                && isset($options2['parent_id'])
-            ) {
-                return $options1['parent_id'] == $options2['parent_id'];
-            } elseif (
-                isset($options1['parent_id'])
-                && ! isset($options2['parent_id'])
-            ) {
-                return false;
-            } elseif (
-                isset($options2['parent_id'])
-                && ! isset($options1['parent_id'])
-            ) {
-                return false;
-            }
+        }
+        if (isset($options1['parent_id'])
+        && isset($options2['parent_id'])) {
+            return $options1['parent_id'] == $options2['parent_id'];
+        }
+        if (isset($options1['parent_id'])
+        && ! isset($options2['parent_id'])) {
+            return false;
         }
 
-        return true;
+        return ! isset($options2['parent_id']) || isset($options1['parent_id']);
     }
 
     /**

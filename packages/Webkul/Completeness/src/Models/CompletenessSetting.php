@@ -2,6 +2,7 @@
 
 namespace Webkul\Completeness\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,18 +13,19 @@ use Webkul\Completeness\Contracts\CompletenessSetting as CompletenessSettingCont
 use Webkul\Completeness\Database\Factories\CompletenessSettingFactory;
 use Webkul\Core\Models\Channel;
 
+#[Fillable([
+    'family_id',
+    'attribute_id',
+    'channel_id',
+])]
 class CompletenessSetting extends Model implements CompletenessSettingContracts
 {
     use HasFactory;
 
-    protected $fillable = [
-        'family_id',
-        'attribute_id',
-        'channel_id',
-    ];
-
     /**
      * Get the attribute family associated with this setting.
+     *
+     * @return BelongsTo<AttributeFamily, $this>
      */
     public function family(): BelongsTo
     {
@@ -32,6 +34,8 @@ class CompletenessSetting extends Model implements CompletenessSettingContracts
 
     /**
      * Get the attribute associated with this setting.
+     *
+     * @return BelongsTo<Attribute, $this>
      */
     public function attribute(): BelongsTo
     {
@@ -40,6 +44,8 @@ class CompletenessSetting extends Model implements CompletenessSettingContracts
 
     /**
      * Get the channel associated with this setting.
+     *
+     * @return BelongsTo<Channel, $this>
      */
     public function channel(): BelongsTo
     {

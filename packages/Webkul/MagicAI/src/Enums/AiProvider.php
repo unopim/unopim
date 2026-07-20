@@ -33,11 +33,9 @@ enum AiProvider: string
             self::Azure      => Lab::Azure,
             self::OpenRouter => Lab::OpenRouter,
             // Custom providers (Cerebras, Together, Fireworks, Perplexity,
-            // DeepInfra, etc.) only implement OpenAI's legacy /chat/completions
-            // endpoint — which is what laravel/ai's Groq gateway speaks.
-            // Routing Custom through Groq lets any chat-completions-compatible
-            // API work out of the box with a runtime api_url override.
-            self::Custom => Lab::Groq,
+            // DeepInfra, etc.) implement OpenAI's /chat/completions endpoint,
+            // which laravel/ai's dedicated OpenAI-compatible driver speaks.
+            self::Custom => Lab::OpenAICompatible,
         };
     }
 
@@ -71,9 +69,9 @@ enum AiProvider: string
     {
         return match ($this) {
             self::OpenRouter => 'openrouter',
-            // Custom routes through laravel/ai's Groq gateway (chat-completions),
-            // so its api_url override must land in the groq config namespace.
-            self::Custom => 'groq',
+            // Custom routes through laravel/ai's OpenAI-compatible driver, so
+            // its api_url override must land in that config namespace.
+            self::Custom => 'openai-compatible',
             default      => $this->value,
         };
     }
@@ -97,7 +95,7 @@ enum AiProvider: string
 
     public static function options(): array
     {
-        return array_map(fn (self $provider) => [
+        return array_map(fn (self $provider): array => [
             'title' => $provider->label(),
             'value' => $provider->value,
         ], self::cases());
@@ -191,7 +189,7 @@ enum AiProvider: string
 
         $data = json_decode($response->getBody()->getContents(), true);
         $models = array_map(
-            fn ($id) => ltrim((string) $id, '~'),
+            fn ($id): string => ltrim((string) $id, '~'),
             array_column($data['data'] ?? [], 'id')
         );
         sort($models);
@@ -248,7 +246,7 @@ enum AiProvider: string
             sort($models);
 
             return $models;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return [];
         }
     }

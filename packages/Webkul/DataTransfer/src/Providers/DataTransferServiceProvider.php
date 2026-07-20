@@ -49,12 +49,10 @@ class DataTransferServiceProvider extends ServiceProvider
      */
     protected function registerWorker()
     {
-        $this->app->singleton('unopim.singlejob.queue.worker', function ($app) {
-            $isDownForMaintenance = function () {
-                return $this->app->isDownForMaintenance();
-            };
+        $this->app->singleton('unopim.singlejob.queue.worker', function ($app): Worker {
+            $isDownForMaintenance = (fn () => $this->app->isDownForMaintenance());
 
-            $resetScope = function () use ($app) {
+            $resetScope = function () use ($app): void {
                 $app['log']->flushSharedContext();
 
                 if (method_exists($app['log'], 'withoutContext')) {
@@ -94,14 +92,12 @@ class DataTransferServiceProvider extends ServiceProvider
             ]);
         }
 
-        $this->app->singleton(JobExecuteCommand::class, function ($app) {
-            return new JobExecuteCommand(
-                $app['unopim.singlejob.queue.worker'],
-                $app['cache.store'],
-                $app->make(JobInstancesRepository::class),
-                $app->make(JobTrackRepository::class),
-                $app->make(AdminRepository::class),
-            );
-        });
+        $this->app->singleton(JobExecuteCommand::class, fn ($app): JobExecuteCommand => new JobExecuteCommand(
+            $app['unopim.singlejob.queue.worker'],
+            $app['cache.store'],
+            $app->make(JobInstancesRepository::class),
+            $app->make(JobTrackRepository::class),
+            $app->make(AdminRepository::class),
+        ));
     }
 }

@@ -19,11 +19,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
+        RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
 
-        ParallelTesting::setUpTestDatabase(function (string $database, int $token) {
+        ParallelTesting::setUpTestDatabase(function (string $database, int $token): void {
             try {
                 Artisan::call('db:seed');
             } catch (\Throwable $e) {
@@ -51,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
-        $allowedIpList = array_filter(array_map('trim', explode(',', $allowedIps)));
+        $allowedIpList = array_filter(array_map(trim(...), explode(',', $allowedIps)));
 
         if (! in_array(request()->ip(), $allowedIpList)) {
             config(['debugbar.enabled' => false]);

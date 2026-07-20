@@ -25,7 +25,7 @@ class Field
      */
     public static function text(string $name): self
     {
-        return (new self($name))->setType('text');
+        return new self($name)->setType('text');
     }
 
     /**
@@ -33,7 +33,7 @@ class Field
      */
     public static function select(string $name): self
     {
-        return (new self($name))->setType('select');
+        return new self($name)->setType('select');
     }
 
     /**
@@ -41,7 +41,7 @@ class Field
      */
     public static function textarea(string $name): self
     {
-        return (new self($name))->setType('textarea');
+        return new self($name)->setType('textarea');
     }
 
     protected function setType(string $type): self

@@ -2,12 +2,16 @@
 
 namespace Webkul\User\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use Webkul\Admin\Mail\Admin\ResetPasswordNotification;
 use Webkul\AdminApi\Models\Apikey;
@@ -19,7 +23,25 @@ use Webkul\Notification\Models\UserNotification;
 use Webkul\User\Contracts\Admin as AdminContract;
 use Webkul\User\Database\Factories\AdminFactory;
 
-class Admin extends Authenticatable implements AdminContract, HistoryAuditable
+#[Fillable([
+    'name',
+    'email',
+    'password',
+    'image',
+    'api_token',
+    'role_id',
+    'ui_locale_id',
+    'catalog_locale_id',
+    'default_channel_id',
+    'status',
+    'timezone',
+])]
+#[Hidden([
+    'password',
+    'api_token',
+    'remember_token',
+])]
+class Admin extends Authenticatable implements AdminContract, HistoryAuditable, OAuthenticatable
 {
     use HasApiTokens, HasFactory, HistoryTrait, Notifiable;
 
@@ -27,36 +49,6 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable
      * @var array<int, string>
      */
     protected array $historyTags = ['admin'];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'image',
-        'api_token',
-        'role_id',
-        'ui_locale_id',
-        'catalog_locale_id',
-        'default_channel_id',
-        'status',
-        'timezone',
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'api_token',
-        'remember_token',
-    ];
 
     /**
      * Get image url for the product image.
@@ -73,25 +65,25 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable
     /**
      * Get image url for the product image.
      */
-    public function getImageUrlAttribute()
+    protected function imageUrl(): Attribute
     {
-        return $this->image_url();
+        return Attribute::make(get: fn () => $this->image_url());
     }
 
     /**
      * Get avatar url. Priority: uploaded image -> gravatar -> null.
      */
-    public function getAvatarUrlAttribute(): ?string
+    protected function avatarUrl(): Attribute
     {
-        return $this->image_url() ?: $this->getGravatarUrlAttribute();
+        return Attribute::make(get: fn () => $this->image_url() ?: $this->getGravatarUrlAttribute());
     }
 
     /**
      * Build deterministic gravatar url from email.
      */
-    public function getGravatarUrlAttribute(): ?string
+    protected function gravatarUrl(): Attribute
     {
-        return self::getGravatarUrlFromEmail($this->email);
+        return Attribute::make(get: fn (): ?string => self::getGravatarUrlFromEmail($this->email));
     }
 
     /**
@@ -113,7 +105,7 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable
 
         try {
             return route('admin.avatar.public', ['hash' => $hash]);
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
             return "https://gravatar.com/avatar/{$hash}?s=200&d=404";
         }
     }
@@ -176,9 +168,8 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable
      * Send the password reset notification.
      *
      * @param  string  $token
-     * @return void
      */
-    public function sendPasswordResetNotification($token)
+    public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordNotification($token));
     }

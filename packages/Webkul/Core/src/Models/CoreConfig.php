@@ -2,6 +2,9 @@
 
 namespace Webkul\Core\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +14,14 @@ use Webkul\Core\Database\Factories\CoreConfigFactory;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Fillable([
+    'code',
+    'value',
+    'channel_code',
+    'locale_code',
+])]
+#[Hidden(['token'])]
+#[Table(name: 'core_config')]
 class CoreConfig extends Model implements AuditableContract, CoreConfigContract, PresentableHistoryInterface
 {
     use HasFactory, HistoryTrait;
@@ -21,32 +32,6 @@ class CoreConfig extends Model implements AuditableContract, CoreConfigContract,
      * @var array
      */
     protected $historyTags = ['core-config'];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $table = 'core_config';
-
-    /**
-     * Fillable for mass assignment
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'code',
-        'value',
-        'channel_code',
-        'locale_code',
-    ];
-
-    /**
-     * Hidden properties
-     *
-     * @var array
-     */
-    protected $hidden = ['token'];
 
     /**
      * Create a new factory instance for the model

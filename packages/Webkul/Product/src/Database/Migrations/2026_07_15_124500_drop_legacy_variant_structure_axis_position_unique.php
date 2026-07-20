@@ -14,7 +14,7 @@ return new class extends Migration
      * backs the `variant_structure_id` foreign key, so dropping it would
      * fail with "Cannot drop index ...: needed in a foreign key constraint".
      */
-    private const LEGACY_INDEX = 'vsax_structure_position_unique';
+    private const string LEGACY_INDEX = 'vsax_structure_position_unique';
 
     public function up(): void
     {
@@ -23,7 +23,7 @@ return new class extends Migration
         }
 
         if ($this->indexExists('variant_structure_axes', self::LEGACY_INDEX)) {
-            Schema::table('variant_structure_axes', function (Blueprint $table) {
+            Schema::table('variant_structure_axes', function (Blueprint $table): void {
                 $table->dropUnique(self::LEGACY_INDEX);
             });
         }
@@ -36,7 +36,7 @@ return new class extends Migration
         }
 
         if (! $this->indexExists('variant_structure_axes', self::LEGACY_INDEX)) {
-            Schema::table('variant_structure_axes', function (Blueprint $table) {
+            Schema::table('variant_structure_axes', function (Blueprint $table): void {
                 $table->unique(['variant_structure_id', 'position'], self::LEGACY_INDEX);
             });
         }

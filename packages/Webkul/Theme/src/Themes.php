@@ -13,7 +13,7 @@ class Themes
      *
      * @var string
      */
-    protected $activeTheme = null;
+    protected $activeTheme;
 
     /**
      * Contains all themes.
@@ -38,12 +38,10 @@ class Themes
 
     /**
      * Create a new themes instance.
-     *
-     * @return void
      */
     public function __construct()
     {
-        $this->defaultThemeCode = Config::get('themes.admin-default', null);
+        $this->defaultThemeCode = Config::get('themes.admin-default');
 
         $this->laravelViewsPath = Config::get('view.paths');
 
@@ -62,10 +60,8 @@ class Themes
 
     /**
      * Return list of registered themes.
-     *
-     * @return array
      */
-    public function getChannelThemes()
+    public function getChannelThemes(): array
     {
         $themes = config('themes.admin', []);
 
@@ -77,7 +73,7 @@ class Themes
                 $data['name'] ?? '',
                 $data['assets_path'] ?? '',
                 $data['views_path'] ?? '',
-                isset($data['vite']) ? $data['vite'] : [],
+                $data['vite'] ?? [],
             );
 
             if (! empty($data['parent'])) {
@@ -90,10 +86,8 @@ class Themes
 
     /**
      * Check if specified exists.
-     *
-     * @return bool
      */
-    public function exists(string $themeName)
+    public function exists(string $themeName): bool
     {
         foreach ($this->themes as $theme) {
             if ($theme->code == $themeName) {
@@ -106,10 +100,8 @@ class Themes
 
     /**
      * Prepare all themes.
-     *
-     * @return void
      */
-    public function loadThemes()
+    public function loadThemes(): void
     {
         $parentThemes = [];
 
@@ -132,11 +124,7 @@ class Themes
         foreach ($parentThemes as $childCode => $parentCode) {
             $child = $this->find($childCode);
 
-            if ($this->exists($parentCode)) {
-                $parent = $this->find($parentCode);
-            } else {
-                $parent = new Theme($parentCode);
-            }
+            $parent = $this->exists($parentCode) ? $this->find($parentCode) : new Theme($parentCode);
 
             $child->setParent($parent);
         }
@@ -149,11 +137,7 @@ class Themes
      */
     public function set(string $themeName)
     {
-        if ($this->exists($themeName)) {
-            $theme = $this->find($themeName);
-        } else {
-            $theme = new Theme($themeName);
-        }
+        $theme = $this->exists($themeName) ? $this->find($themeName) : new Theme($themeName);
 
         $this->activeTheme = $theme;
 
@@ -167,7 +151,7 @@ class Themes
 
         Config::set('view.paths', $paths);
 
-        $themeViewFinder = app('view.finder');
+        $themeViewFinder = resolve('view.finder');
 
         $themeViewFinder->setPaths($paths);
 
@@ -233,7 +217,7 @@ class Themes
          * If the namespace is null, it means the theming system is activated. We use the request URI to
          * detect the theme and provide Vite assets based on the current theme.
          */
-        if (empty($namespace)) {
+        if (in_array($namespace, [null, '', '0'], true)) {
             return $this->current()->url($url);
         }
 
@@ -243,9 +227,7 @@ class Themes
          */
         $viters = config('unopim-vite.viters');
 
-        if (empty($viters[$namespace])) {
-            throw new ViterNotFound($namespace);
-        }
+        throw_if(empty($viters[$namespace]), ViterNotFound::class, $namespace);
 
         $viteUrl = trim($viters[$namespace]['package_assets_directory'], '/').'/'.$url;
 
@@ -266,7 +248,7 @@ class Themes
          * If the namespace is null, it means the theming system is activated. We use the request URI to
          * detect the theme and provide Vite assets based on the current theme.
          */
-        if (empty($namespace)) {
+        if (in_array($namespace, [null, '', '0'], true)) {
             return $this->current()->setUnoPimVite($entryPoints);
         }
 
@@ -276,9 +258,7 @@ class Themes
          */
         $viters = config('unopim-vite.viters');
 
-        if (empty($viters[$namespace])) {
-            throw new ViterNotFound($namespace);
-        }
+        throw_if(empty($viters[$namespace]), ViterNotFound::class, $namespace);
 
         return Vite::useHotFile($viters[$namespace]['hot_file'])
             ->useBuildDirectory($viters[$namespace]['build_directory'])

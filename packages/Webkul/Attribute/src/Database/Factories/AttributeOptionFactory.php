@@ -5,6 +5,9 @@ namespace Webkul\Attribute\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Attribute\Models\AttributeOption;
 
+/**
+ * @extends Factory<AttributeOption>
+ */
 class AttributeOptionFactory extends Factory
 {
     /**
@@ -20,8 +23,8 @@ class AttributeOptionFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'       => $this->faker->unique()->word,
-            'sort_order' => $this->faker->randomDigit(),
+            'code'       => fake()->unique()->word,
+            'sort_order' => fake()->randomDigit(),
         ];
     }
 }

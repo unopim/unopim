@@ -11,9 +11,7 @@ abstract class AbstractPrompt
     // Implement the searchStringWithAt method
     protected function searchStringWithAt($string)
     {
-        $matches = Str::matchAll('/@\w+/', $string)->toArray();
-
-        return $matches;
+        return Str::matchAll('/@\w+/', $string)->toArray();
     }
 
     public function getValue(array $values, string $key)

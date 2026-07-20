@@ -20,11 +20,7 @@ class ProductEventListener
             return;
         }
 
-        AutoEnrichProductJob::dispatch(
-            productId: $product->id,
-            locale: app()->getLocale() ?: 'en_US',
-            channel: 'default',
-        )->delay(now()->addSeconds(5)); // Small delay to ensure product is fully saved
+        dispatch(new AutoEnrichProductJob(productId: $product->id, locale: core()->getRequestedLocaleCode(), channel: core()->getRequestedChannelCode()))->delay(now()->addSeconds(5)); // Small delay to ensure product is fully saved
     }
 
     /**

@@ -15,7 +15,7 @@ return new class extends Migration
     public function up(): void
     {
         // Widen the column — encrypted values are much longer than plaintext.
-        Schema::table('ai_agent_credentials', function (Blueprint $table) {
+        Schema::table('ai_agent_credentials', function (Blueprint $table): void {
             $table->text('apiKey')->change();
         });
 
@@ -54,7 +54,7 @@ return new class extends Migration
                 ->update(['apiKey' => $plain]);
         }
 
-        Schema::table('ai_agent_credentials', function (Blueprint $table) {
+        Schema::table('ai_agent_credentials', function (Blueprint $table): void {
             $table->string('apiKey')->change();
         });
     }

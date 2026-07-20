@@ -5,6 +5,9 @@ namespace Webkul\Core\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Core\Models\CoreConfig;
 
+/**
+ * @extends Factory<CoreConfig>
+ */
 class CoreConfigFactory extends Factory
 {
     /**

@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Services;
 
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Services\AttributeNormalizerFactory;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Product\Contracts\Normalizer as NormalizerContract;
@@ -32,7 +33,7 @@ class AttributeValueNormalizer implements NormalizerContract
         return $this->processNormalizedValues($values, $options);
     }
 
-    public function processNormalizedValues($data, array $options = [])
+    public function processNormalizedValues($data, array $options = []): array
     {
         $processedOnAttribute = $options['processed_on_attribute'] ?? false;
 
@@ -49,7 +50,7 @@ class AttributeValueNormalizer implements NormalizerContract
 
             $attribute = $this->attributeService->findAttributeByCode($attributeCode);
 
-            if (! $attribute) {
+            if (! $attribute instanceof Attribute) {
                 continue;
             }
 
@@ -65,7 +66,7 @@ class AttributeValueNormalizer implements NormalizerContract
 
         foreach ($attributeCodes as $attributeCode) {
             $attribute = $this->attributeService->findAttributeByCode($attributeCode);
-            if (! $attribute) {
+            if (! $attribute instanceof Attribute) {
                 continue;
             }
 
@@ -76,7 +77,7 @@ class AttributeValueNormalizer implements NormalizerContract
         return $processedData;
     }
 
-    public function getProcessedData($attribute, $value, $options)
+    public function getProcessedData(?Attribute $attribute, $value, array $options)
     {
         $normalizer = $this->attributeNormalizerFactory->getNormalizer($attribute->type);
 

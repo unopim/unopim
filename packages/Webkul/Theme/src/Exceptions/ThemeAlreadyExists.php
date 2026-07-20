@@ -10,7 +10,6 @@ class ThemeAlreadyExists extends \Exception
      * Create an instance.
      *
      * @param  Theme  $theme
-     * @return void
      */
     public function __construct($theme)
     {

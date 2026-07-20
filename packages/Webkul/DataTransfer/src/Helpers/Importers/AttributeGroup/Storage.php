@@ -21,8 +21,6 @@ class Storage
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(protected AttributeGroupRepository $attributeGroupRepository) {}
 
@@ -44,7 +42,7 @@ class Storage
         $query = $this->attributeGroupRepository->query()
             ->select($this->selectColumns);
 
-        if (! empty($codes)) {
+        if ($codes !== []) {
             $query->whereIn('attribute_groups.code', $codes);
         }
 
@@ -90,6 +88,6 @@ class Storage
      */
     public function isEmpty(): bool
     {
-        return empty($this->items);
+        return $this->items === [];
     }
 }

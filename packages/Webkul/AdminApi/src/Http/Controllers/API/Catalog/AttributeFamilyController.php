@@ -54,8 +54,6 @@ class AttributeFamilyController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(StoreAttributeFamilyRequest $request): JsonResponse
     {
@@ -83,9 +81,7 @@ class AttributeFamilyController extends ApiController
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
+     * Update the specified resource in storage.
      */
     public function update(UpdateAttributeFamilyRequest $request, string $code): JsonResponse
     {

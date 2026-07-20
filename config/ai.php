@@ -110,6 +110,12 @@ return [
             'key'    => env('OPENAI_API_KEY'),
         ],
 
+        'openai-compatible' => [
+            'driver' => 'openai-compatible',
+            'url'    => env('OPENAI_COMPATIBLE_URL'),
+            'key'    => env('OPENAI_COMPATIBLE_API_KEY'),
+        ],
+
         'openrouter' => [
             'driver' => 'openrouter',
             'key'    => env('OPENROUTER_API_KEY'),

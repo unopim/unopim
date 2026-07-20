@@ -10,12 +10,13 @@ class NotificationEvent implements NotificationEventInterface
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    /**
+     * @var mixed[]
+     */
     public $notificationData;
 
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
     public function __construct(array $notificationData)
     {

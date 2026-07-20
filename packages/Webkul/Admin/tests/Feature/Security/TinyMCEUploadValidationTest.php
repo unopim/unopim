@@ -64,3 +64,31 @@ describe('TinyMCE upload — safe storage', function () {
         Storage::disk('public')->assertExists($result['file']);
     });
 });
+
+describe('TinyMCE upload — authorization', function () {
+    it('rejects authenticated admins without a content-edit permission', function () {
+        Storage::fake('public');
+        $this->loginWithPermissions();
+
+        expect(bouncer()->hasPermission('catalog.products.edit'))->toBeFalse()
+            ->and(bouncer()->hasPermission('catalog.categories.edit'))->toBeFalse()
+            ->and(bouncer()->hasPermission('ai-agent.prompt.edit'))->toBeFalse();
+
+        $this->post(route('admin.tinymce.upload'), [
+            'file' => UploadedFile::fake()->image('photo.png'),
+        ])->assertForbidden();
+
+        expect(Storage::disk('public')->allFiles('tinymce'))->toBeEmpty();
+    });
+
+    it('allows product editors to upload a validated image', function () {
+        Storage::fake('public');
+        $this->loginWithPermissions('custom', ['catalog.products.edit']);
+
+        $this->post(route('admin.tinymce.upload'), [
+            'file' => UploadedFile::fake()->image('photo.png'),
+        ])->assertOk();
+
+        expect(Storage::disk('public')->allFiles('tinymce'))->toHaveCount(1);
+    });
+});

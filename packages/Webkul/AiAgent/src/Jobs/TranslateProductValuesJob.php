@@ -2,33 +2,50 @@
 
 namespace Webkul\AiAgent\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Webkul\AiAgent\Services\TranslationResponseParser;
 use Webkul\MagicAI\Facades\MagicAI;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 
 /**
  * Translates product attribute values to all target locales using AI.
  *
- * Dispatched after product creation/update to fill in translations
- * for locale-dependent fields (name, description, meta_title, etc.).
- * Runs asynchronously so the user doesn't wait for translations.
+ * Dispatched after product creation/update to fill in translations for
+ * locale-dependent fields (name, description, meta_title, etc.). Runs
+ * asynchronously so the user does not wait for translations.
+ *
+ * Reliability guarantees:
+ * - Each locale is persisted independently under a short row lock, so a
+ *   worker timeout mid-run keeps the locales already completed instead of
+ *   discarding every translation (the root cause of the "reported complete,
+ *   only a handful processed" symptom).
+ * - A response that cannot be parsed (including one truncated by the token
+ *   limit) is recorded as a failure, never silently treated as success.
+ * - When no locale could be translated at all, the job throws so the queue
+ *   marks it failed and surfaces it, rather than reporting a false success.
+ * - Estimated token spend is recorded so background translation counts
+ *   toward the daily budget.
  */
 class TranslateProductValuesJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     public int $tries = 2;
 
-    public int $timeout = 180;
+    /**
+     * Generous ceiling — many locale-specific fields (HTML descriptions
+     * especially) overflowed the previous 2000-token limit and were dropped.
+     */
+    public int $timeout = 600;
+
+    /**
+     * Output token ceiling per locale request. Sized to fit a full set of
+     * translated product fields without truncation.
+     */
+    protected const MAX_OUTPUT_TOKENS = 4000;
 
     /**
      * @param  int  $productId  Product to translate
@@ -53,26 +70,20 @@ class TranslateProductValuesJob implements ShouldQueue
             return;
         }
 
-        $values = json_decode($product->values, true) ?? [];
-
-        // Get all channels and their locales
         $allChannels = core()->getAllChannels();
 
-        // Collect target locales (all active locales except the source)
-        $targetLocales = [];
-        foreach ($allChannels as $channel) {
-            foreach ($channel->locales as $locale) {
-                if ($locale->code !== $this->sourceLocale && ! \in_array($locale->code, $targetLocales, true)) {
-                    $targetLocales[] = $locale->code;
-                }
-            }
-        }
+        $targetLocales = $this->resolveTargetLocales($allChannels);
 
-        if (empty($targetLocales)) {
+        if ($targetLocales === []) {
             return; // Only one locale configured — nothing to translate
         }
 
-        // Resolve AI platform
+        $translatableFields = $this->collectTranslatableFields();
+
+        if ($translatableFields === []) {
+            return;
+        }
+
         $platform = $platformRepository->getDefault() ?? $platformRepository->getActiveList()->first();
 
         if (! $platform) {
@@ -81,55 +92,23 @@ class TranslateProductValuesJob implements ShouldQueue
             return;
         }
 
-        // Get locale display names for better translations
         $localeNames = DB::table('locales')
             ->whereIn('code', $targetLocales)
             ->pluck('name', 'code')
             ->toArray();
 
-        // Load family attributes to know which bucket each field goes in
-        $familyAttributes = [];
-        if ($product->attribute_family_id) {
-            $attrs = DB::table('attributes as a')
-                ->join('attribute_group_mappings as agm', 'agm.attribute_id', '=', 'a.id')
-                ->join('attribute_family_group_mappings as afgm', 'afgm.id', '=', 'agm.attribute_family_group_id')
-                ->where('afgm.attribute_family_id', $product->attribute_family_id)
-                ->select('a.code', 'a.value_per_channel', 'a.value_per_locale')
-                ->get();
+        $familyAttributes = $this->loadFamilyAttributes($product->attribute_family_id);
 
-            foreach ($attrs as $attr) {
-                $familyAttributes[$attr->code] = [
-                    'value_per_channel' => (bool) $attr->value_per_channel,
-                    'value_per_locale'  => (bool) $attr->value_per_locale,
-                ];
-            }
+        $fieldsText = '';
+        foreach ($translatableFields as $fieldCode => $originalValue) {
+            $fieldsText .= "{$fieldCode}: {$originalValue}\n";
         }
 
-        // Translate each field to each target locale
+        $succeeded = [];
+        $failed = [];
+
         foreach ($targetLocales as $targetLocale) {
             $localeName = $localeNames[$targetLocale] ?? $targetLocale;
-
-            // Batch all fields into a single prompt for efficiency
-            $fieldsText = '';
-            $translatableFields = [];
-
-            foreach ($this->fieldsToTranslate as $fieldCode => $originalValue) {
-                if (empty($originalValue) || ! is_string($originalValue)) {
-                    continue;
-                }
-
-                // Skip non-translatable fields
-                if (\in_array($fieldCode, ['sku', 'url_key', 'product_number', 'image'], true)) {
-                    continue;
-                }
-
-                $translatableFields[$fieldCode] = $originalValue;
-                $fieldsText .= "{$fieldCode}: {$originalValue}\n";
-            }
-
-            if (empty($translatableFields)) {
-                continue;
-            }
 
             try {
                 $prompt = "Translate these product fields from {$this->sourceLocale} to {$targetLocale} ({$localeName}). "
@@ -138,78 +117,208 @@ class TranslateProductValuesJob implements ShouldQueue
 
                 $response = MagicAI::usePlatform($platform)
                     ->setTemperature(0.3)
-                    ->setMaxTokens(2000)
+                    ->setMaxTokens(self::MAX_OUTPUT_TOKENS)
                     ->setPrompt($prompt, 'text')
                     ->ask();
 
-                // Parse JSON from response
-                $translated = $this->extractJson($response);
+                $translated = TranslationResponseParser::extractObject($response);
 
-                if (empty($translated)) {
-                    Log::warning("TranslateProductValuesJob: Failed to parse translation for {$product->sku} → {$targetLocale}");
+                if ($translated === null) {
+                    $reason = TranslationResponseParser::looksTruncated($response)
+                        ? 'truncated response (token limit)'
+                        : 'unparseable response';
+                    $failed[$targetLocale] = $reason;
+                    Log::warning("TranslateProductValuesJob: {$product->sku} -> {$targetLocale}: {$reason}");
 
                     continue;
                 }
 
-                // Apply translations to the correct buckets
-                foreach ($translated as $fieldCode => $translatedValue) {
-                    if (! isset($translatableFields[$fieldCode]) || empty($translatedValue)) {
-                        continue;
-                    }
+                $applied = $this->persistLocaleTranslations(
+                    $targetLocale,
+                    $translated,
+                    $translatableFields,
+                    $familyAttributes,
+                    $allChannels,
+                );
 
-                    $meta = $familyAttributes[$fieldCode] ?? ['value_per_channel' => true, 'value_per_locale' => true];
+                if ($applied === 0) {
+                    $failed[$targetLocale] = 'no valid fields in response';
 
-                    if ($meta['value_per_channel'] && $meta['value_per_locale']) {
-                        foreach ($allChannels as $ch) {
-                            if ($ch->locales->contains('code', $targetLocale)) {
-                                $values['channel_locale_specific'][$ch->code][$targetLocale][$fieldCode] = $translatedValue;
-                            }
-                        }
-                    } elseif ($meta['value_per_locale']) {
-                        $values['locale_specific'][$targetLocale][$fieldCode] = $translatedValue;
-                    }
-                    // channel_specific and common fields don't vary by locale — skip
+                    continue;
                 }
+
+                $succeeded[] = $targetLocale;
             } catch (\Throwable $e) {
-                Log::error("TranslateProductValuesJob: Translation to {$targetLocale} failed for {$product->sku}: {$e->getMessage()}");
+                $failed[$targetLocale] = $e->getMessage();
+                Log::error("TranslateProductValuesJob: {$targetLocale} failed for {$product->sku}: {$e->getMessage()}");
             }
         }
 
-        // Save all translations at once
-        DB::table('products')
-            ->where('id', $this->productId)
-            ->update(['values' => json_encode($values)]);
+        if ($succeeded === []) {
+            // Nothing was translated. Surface it as a failure instead of the
+            // old silent "completed" so the queue retries and the operator
+            // can see something went wrong.
+            throw new \RuntimeException(
+                "TranslateProductValuesJob: all locales failed for {$product->sku} — ".json_encode($failed)
+            );
+        }
 
-        Log::info("TranslateProductValuesJob: Translated {$product->sku} to ".implode(', ', $targetLocales));
+        Log::info(sprintf(
+            'TranslateProductValuesJob: %s translated to %s%s',
+            $product->sku,
+            implode(', ', $succeeded),
+            $failed === [] ? '' : ' (failed: '.implode(', ', array_keys($failed)).')',
+        ));
     }
 
     /**
-     * Extract JSON from LLM response (handles markdown code blocks).
+     * Collect every active locale (across all channels) except the source.
+     *
+     * @param  iterable<object>  $allChannels
+     * @return array<int, string>
      */
-    protected function extractJson(string $response): ?array
+    protected function resolveTargetLocales(iterable $allChannels): array
     {
-        // Try direct JSON parse
-        $decoded = json_decode($response, true);
-        if (is_array($decoded)) {
-            return $decoded;
-        }
+        $targetLocales = [];
 
-        // Try extracting from ```json ... ``` blocks
-        if (preg_match('/```(?:json)?\s*([\s\S]*?)```/', $response, $matches)) {
-            $decoded = json_decode(trim($matches[1]), true);
-            if (is_array($decoded)) {
-                return $decoded;
+        foreach ($allChannels as $channel) {
+            foreach ($channel->locales as $locale) {
+                if ($locale->code !== $this->sourceLocale && ! \in_array($locale->code, $targetLocales, true)) {
+                    $targetLocales[] = $locale->code;
+                }
             }
         }
 
-        // Try extracting from { ... } anywhere in the response
-        if (preg_match('/\{[^{}]*\}/', $response, $matches)) {
-            $decoded = json_decode($matches[0], true);
-            if (is_array($decoded)) {
-                return $decoded;
+        return $targetLocales;
+    }
+
+    /**
+     * Filter the requested fields down to the ones that can be translated.
+     *
+     * @return array<string, string>
+     */
+    protected function collectTranslatableFields(): array
+    {
+        $fields = [];
+
+        foreach ($this->fieldsToTranslate as $fieldCode => $originalValue) {
+            if (empty($originalValue)) {
+                continue;
             }
+            if (! is_string($originalValue)) {
+                continue;
+            }
+            if (\in_array($fieldCode, ['sku', 'url_key', 'product_number', 'image'], true)) {
+                continue;
+            }
+
+            $fields[$fieldCode] = $originalValue;
         }
 
-        return null;
+        return $fields;
+    }
+
+    /**
+     * Load per-attribute channel/locale scope flags for the product's family.
+     *
+     * @return array<string, array{value_per_channel: bool, value_per_locale: bool}>
+     */
+    protected function loadFamilyAttributes(?int $familyId): array
+    {
+        if (! $familyId) {
+            return [];
+        }
+
+        $attrs = DB::table('attributes as a')
+            ->join('attribute_group_mappings as agm', 'agm.attribute_id', '=', 'a.id')
+            ->join('attribute_family_group_mappings as afgm', 'afgm.id', '=', 'agm.attribute_family_group_id')
+            ->where('afgm.attribute_family_id', $familyId)
+            ->select('a.code', 'a.value_per_channel', 'a.value_per_locale')
+            ->get();
+
+        $map = [];
+
+        foreach ($attrs as $attr) {
+            $map[$attr->code] = [
+                'value_per_channel' => (bool) $attr->value_per_channel,
+                'value_per_locale'  => (bool) $attr->value_per_locale,
+            ];
+        }
+
+        return $map;
+    }
+
+    /**
+     * Persist one locale's translations into the correct value buckets under
+     * a short row lock, re-reading the freshest values first so concurrent
+     * writes (e.g. a rapid create-then-update on the same product) are not
+     * clobbered.
+     *
+     * @param  array<string, mixed>  $translated  field_code => translated value
+     * @param  array<string, string>  $translatableFields
+     * @param  array<string, array{value_per_channel: bool, value_per_locale: bool}>  $familyAttributes
+     * @param  iterable<object>  $allChannels
+     * @return int Number of fields actually written
+     */
+    protected function persistLocaleTranslations(
+        string $targetLocale,
+        array $translated,
+        array $translatableFields,
+        array $familyAttributes,
+        iterable $allChannels,
+    ): int {
+        return DB::transaction(function () use ($targetLocale, $translated, $translatableFields, $familyAttributes, $allChannels): int {
+            $fresh = DB::table('products')->where('id', $this->productId)->lockForUpdate()->first();
+
+            if (! $fresh) {
+                return 0;
+            }
+
+            $raw = (string) ($fresh->values ?? '');
+            $decoded = json_decode($raw, true);
+
+            if ($decoded === null && trim($raw) !== '' && strtolower(trim($raw)) !== 'null') {
+                // Stored values are non-empty but unparseable — abort rather
+                // than overwriting the whole blob with only the translations.
+                return 0;
+            }
+
+            $values = is_array($decoded) ? $decoded : [];
+            $applied = 0;
+
+            foreach ($translated as $fieldCode => $translatedValue) {
+                if (! isset($translatableFields[$fieldCode])) {
+                    continue;
+                }
+                if (empty($translatedValue)) {
+                    continue;
+                }
+                if (! is_string($translatedValue)) {
+                    continue;
+                }
+                $meta = $familyAttributes[$fieldCode] ?? ['value_per_channel' => true, 'value_per_locale' => true];
+
+                if ($meta['value_per_channel'] && $meta['value_per_locale']) {
+                    foreach ($allChannels as $ch) {
+                        if ($ch->locales->contains('code', $targetLocale)) {
+                            $values['channel_locale_specific'][$ch->code][$targetLocale][$fieldCode] = $translatedValue;
+                        }
+                    }
+                    $applied++;
+                } elseif ($meta['value_per_locale']) {
+                    $values['locale_specific'][$targetLocale][$fieldCode] = $translatedValue;
+                    $applied++;
+                }
+                // channel_specific and common fields do not vary by locale — skip
+            }
+
+            if ($applied > 0) {
+                DB::table('products')
+                    ->where('id', $this->productId)
+                    ->update(['values' => json_encode($values)]);
+            }
+
+            return $applied;
+        });
     }
 }

@@ -8,11 +8,15 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\MagicAI\MagicPromptGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\MagicAI\ContentGenerationRequest;
+use Webkul\Admin\Http\Requests\MagicAI\ImageGenerationRequest;
+use Webkul\Admin\Http\Requests\MagicAI\MagicPromptRequest;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\MagicAI\Facades\MagicAI;
 use Webkul\MagicAI\Jobs\SaveTranslatedAllAttributesJob;
 use Webkul\MagicAI\Jobs\SaveTranslatedDataJob;
+use Webkul\MagicAI\MagicAI as MagicAIService;
 use Webkul\MagicAI\Models\MagicAISystemPrompt;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Repository\MagicAISystemPromptRepository;
@@ -34,9 +38,6 @@ class MagicAIController extends Controller
         protected Prompt $promptService,
     ) {}
 
-    /**
-     * Get the AI model API.
-     */
     public function model(): JsonResponse
     {
         try {
@@ -79,9 +80,6 @@ class MagicAIController extends Controller
         }
     }
 
-    /**
-     * Get the AI available model.
-     */
     public function availableModel(): JsonResponse
     {
         return new JsonResponse([
@@ -153,16 +151,11 @@ class MagicAIController extends Controller
     /**
      * Generate AI content.
      */
-    public function content(): JsonResponse
+    public function content(ContentGenerationRequest $request): JsonResponse
     {
         if (! bouncer()->hasPermission('ai-agent')) {
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
-
-        $this->validate(request(), [
-            'model'  => 'required',
-            'prompt' => 'required',
-        ]);
 
         try {
             $locale = core()->getRequestedLocaleCode();
@@ -219,7 +212,7 @@ class MagicAIController extends Controller
             $message = $e->getMessage();
 
             if (str_contains($message, 'cURL error 28') || str_contains($message, 'timed out')) {
-                $message = 'The AI response is taking longer than expected. Please try again.';
+                $message = trans('admin::app.configuration.platform.message.ai-response-timeout');
             }
 
             return new JsonResponse([
@@ -231,27 +224,35 @@ class MagicAIController extends Controller
     /**
      * Generate an image.
      */
-    public function image(): JsonResponse
+    public function image(ImageGenerationRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'prompt' => 'required|string',
-            'model'  => 'required|string',
-            'size'   => 'required|in:1024x1024,1024x1792,1792x1024',
-        ]);
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], JsonResponse::HTTP_FORBIDDEN);
+        }
+
+        $validated = $request->validated();
 
         try {
-            $prompt = $this->promptService->getPrompt(
-                request()->input('prompt'),
-                request()->input('resource_id'),
-                request()->input('resource_type')
-            );
+            $prompt = $validated['prompt'];
 
-            $options = request()->only(['n', 'size', 'quality']);
+            if (isset($validated['resource_id'], $validated['resource_type'])) {
+                $prompt = $this->promptService->getPrompt(
+                    $prompt,
+                    $validated['resource_id'],
+                    $validated['resource_type']
+                );
+            }
+
+            $options = array_filter([
+                'n'       => $validated['n'] ?? null,
+                'size'    => $validated['size'],
+                'quality' => $validated['quality'] ?? null,
+            ], fn (mixed $value): bool => $value !== null);
 
             $magicAi = $this->resolvePlatform();
 
             $images = $magicAi
-                ->setModel(request()->input('model'))
+                ->setModel($validated['model'])
                 ->setPrompt($prompt)
                 ->images($options);
 
@@ -302,17 +303,9 @@ class MagicAIController extends Controller
         return view('admin::configuration.magic-ai-prompt.index');
     }
 
-    public function store(): JsonResponse
+    public function store(MagicPromptRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'prompt'    => 'required',
-            'title'     => 'required',
-            'type'      => 'required',
-            'purpose'   => 'required|in:text_generation,image_generation,translation',
-            'tone'      => 'nullable',
-        ]);
-
-        $data = request()->only([
+        $data = $request->only([
             'prompt',
             'title',
             'type',
@@ -340,17 +333,9 @@ class MagicAIController extends Controller
         ]);
     }
 
-    public function update(): JsonResponse
+    public function update(MagicPromptRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'prompt'    => 'required',
-            'title'     => 'required',
-            'type'      => 'required',
-            'purpose'   => 'required|in:text_generation,image_generation,translation',
-            'tone'      => 'nullable',
-        ]);
-
-        $data = request()->only(['prompt', 'title', 'type', 'purpose', 'tone']);
+        $data = $request->only(['prompt', 'title', 'type', 'purpose', 'tone']);
         $this->magicPromptRepository->update($data, request()->id);
 
         return new JsonResponse([
@@ -418,13 +403,11 @@ class MagicAIController extends Controller
             $response = $magicAi
                 ->setModel(request()->input('model'))
                 ->setPrompt($prompt)
-                ->ask();
-            preg_match_all('/<p\b[^>]*>.*?<\/p>/s', $response, $matches);
+                ->translate();
 
-            $value = empty($matches[0]) ? trim($response) : implode('', $matches[0]);
             $translatedData[] = [
                 'locale'  => $locale,
-                'content' => $value,
+                'content' => trim($response),
             ];
         }
 
@@ -471,8 +454,8 @@ class MagicAIController extends Controller
                 $result[$field] = [
                     'fieldLabel'     => $attribute->name,
                     'fieldName'      => $field,
-                    'isTranslatable' => ! empty($arr) && array_key_exists($field, $arr),
-                    'sourceData'     => ! empty($arr) && array_key_exists($field, $arr) ? $arr[$field] : null,
+                    'isTranslatable' => true,
+                    'sourceData'     => $arr[$field],
                     'translatedData' => null,
                     'type'           => $attribute->type,
                 ];
@@ -520,14 +503,11 @@ class MagicAIController extends Controller
                 $response = $magicAi
                     ->setModel(request()->input('model'))
                     ->setPrompt($prompt)
-                    ->ask();
-
-                preg_match_all('/<p\b[^>]*>.*?<\/p>/s', $response, $matches);
-                $value = empty($matches[0]) ? trim($response) : implode('', $matches[0]);
+                    ->translate();
 
                 $translatedDataForLocale[$field] = [
                     'field'   => $field,
-                    'content' => $value,
+                    'content' => trim($response),
                 ];
             }
 
@@ -555,7 +535,7 @@ class MagicAIController extends Controller
     /**
      * Resolve the platform from request or use default.
      */
-    protected function resolvePlatform(): \Webkul\MagicAI\MagicAI
+    protected function resolvePlatform(): MagicAIService
     {
         $platformId = request()->input('platform_id');
 
@@ -575,7 +555,7 @@ class MagicAIController extends Controller
     /**
      * Resolve the translation platform from config or fall back to default.
      */
-    protected function resolveTranslationPlatform(): \Webkul\MagicAI\MagicAI
+    protected function resolveTranslationPlatform(): MagicAIService
     {
         $requestPlatformId = request()->input('platform_id');
 
@@ -597,7 +577,7 @@ class MagicAIController extends Controller
      * config or stale request id) fall back to the default platform so
      * the user is never blocked by a dangling reference.
      */
-    protected function setPlatformOrDefault(int $platformId): \Webkul\MagicAI\MagicAI
+    protected function setPlatformOrDefault(int $platformId): MagicAIService
     {
         try {
             return MagicAI::setPlatformId($platformId);

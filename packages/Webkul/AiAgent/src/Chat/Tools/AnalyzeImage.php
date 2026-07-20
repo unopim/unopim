@@ -71,7 +71,7 @@ class AnalyzeImage implements PimTool
                     $dataUri = 'data:'.$mimeType.';base64,'.base64_encode($raw);
 
                     // Configure the AiApiClient with the platform from this chat session
-                    $apiClient = app(AiApiClient::class);
+                    $apiClient = resolve(AiApiClient::class);
                     $apiClient->configure(new CredentialConfig(
                         id: $this->context->platform->id,
                         label: $this->context->platform->label,

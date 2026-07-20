@@ -18,9 +18,7 @@ class MagicAICredentialValidator implements ConfigValidator
 
         $validator = Validator::make($credentials, $rules);
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
+        throw_if($validator->fails(), ValidationException::class, $validator);
 
         return [];
     }

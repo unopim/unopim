@@ -38,9 +38,9 @@ class Importer extends AbstractImporter
     public const INVALID_DISPLAY_MODE = 'invalid_display_mode';
 
     /**
-     * Error code for non existing code
+     * Error code for non existing locale
      */
-    public const ERROR_NOT_FOUND_LOCALE = 'slug_not_found_to_delete';
+    public const ERROR_NOT_FOUND_LOCALE = 'locale_not_exist';
 
     const ERROR_NOT_UNIQUE_VALUE = 'not_unique_value';
 
@@ -111,8 +111,6 @@ class Importer extends AbstractImporter
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
@@ -164,7 +162,7 @@ class Importer extends AbstractImporter
         parent::validateData();
     }
 
-    public function getCategoryFields()
+    public function getCategoryFields(): array
     {
         if (! isset($this->categoryFields)) {
             $this->cachedCategoryFields = $this->categoryFieldRepository->where('status', 1)->get();
@@ -217,7 +215,7 @@ class Importer extends AbstractImporter
             return false;
         }
 
-        if (empty($this->categoryFieldValidations)) {
+        if ($this->categoryFieldValidations === []) {
             $this->categoryFieldValidations = $this->getCategoryFieldValidations();
         }
 
@@ -232,7 +230,7 @@ class Importer extends AbstractImporter
             'parent' => [
                 'nullable',
                 'string',
-                function (string $attribute, mixed $value, \Closure $fail) {
+                function (string $attribute, mixed $value, \Closure $fail): void {
                     if (! empty($value)
                         && ! $this->categoryStorage->has($value)
                         && ! in_array($value, $this->categoryCodesInBatch)
@@ -341,8 +339,6 @@ class Importer extends AbstractImporter
 
         $categories = [];
 
-        $imagesData = [];
-
         foreach ($batch->data as $rowData) {
             /**
              * Prepare categories for import
@@ -428,9 +424,7 @@ class Importer extends AbstractImporter
      */
     public function getCategoryId(?string $code)
     {
-        if (! $code) {
-            throw new \Exception('category code not found');
-        }
+        throw_unless($code, \Exception::class, 'category code not found');
 
         return $this->categoryRepository
             ->where('code', $code)
@@ -464,7 +458,7 @@ class Importer extends AbstractImporter
                 ];
             }
 
-            if (! empty($updateData)) {
+            if ($updateData !== []) {
                 $chunkSize = (int) config('import.bulk_chunk_size', 500);
 
                 foreach (array_chunk($updateData, $chunkSize) as $chunk) {
@@ -495,7 +489,7 @@ class Importer extends AbstractImporter
         }
     }
 
-    public function updateParentCategoryId(&$category)
+    public function updateParentCategoryId(array &$category): void
     {
         if (! empty($category['parent'])) {
             // Use in-memory storage (pre-loaded with batch + parent codes) instead of
@@ -551,7 +545,7 @@ class Importer extends AbstractImporter
 
             $fieldValidation = array_merge($fieldValidation, $this->categoryRulesExtractor->getFieldTypeRules($categoryField));
 
-            if (empty($fieldValidation)) {
+            if ($fieldValidation === []) {
                 continue;
             }
 
@@ -630,7 +624,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        if (empty($validations)) {
+        if ($validations === []) {
             return;
         }
 

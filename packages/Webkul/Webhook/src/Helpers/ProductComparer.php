@@ -180,11 +180,11 @@ class ProductComparer
             $removed = array_diff($oldSection, $newSection);
             $added = array_diff($newSection, $oldSection);
 
-            if (! empty($removed)) {
+            if ($removed !== []) {
                 $diff['removed'][$sectionName] = array_values($removed);
             }
 
-            if (! empty($added)) {
+            if ($added !== []) {
                 $diff['added'][$sectionName] = array_values($added);
             }
 

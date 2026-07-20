@@ -2,25 +2,21 @@
 
 namespace Webkul\Core\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Arr;
-use Webkul\Core\Repositories\VisitRepository;
+use Shetabit\Visitor\Models\Visit;
 
 class UpdateCreateVisitIndex implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
 
     /**
      * Create a new job instance.
      *
      * @param  Model  $model
      * @param  array  $log
-     * @return void
      */
     public function __construct(
         protected $model,
@@ -29,14 +25,10 @@ class UpdateCreateVisitIndex implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        $visitRepository = app(VisitRepository::class);
-
-        $lastVisit = $visitRepository->where(Arr::only($this->log, [
+        $lastVisit = Visit::query()->where(Arr::only($this->log, [
             'method',
             'url',
             'ip',
@@ -51,7 +43,7 @@ class UpdateCreateVisitIndex implements ShouldQueue
         if ($this->model !== null && method_exists($this->model, 'visitLogs')) {
             $this->model->visitLogs()->create($this->log);
         } else {
-            $visitRepository->create($this->log);
+            Visit::query()->create($this->log);
         }
     }
 }

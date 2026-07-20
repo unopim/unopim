@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('job_instances', function (Blueprint $table) {
+        Schema::create('job_instances', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('code')->unique();
             $table->string('entity_type');

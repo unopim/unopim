@@ -37,7 +37,6 @@ return [
             'settings' => [
                 'index' => [
                     'name'    => 'Settings',
-                    'title'   => 'Webhook Settings',
                     'save'    => 'Save',
                     'general' => 'General',
                     'active'  => [

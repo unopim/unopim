@@ -24,8 +24,6 @@ class DefaultHasher extends BaseDefaultHasher
             return $request->attributes->get('responsecache.cacheNameSuffix');
         }
 
-        $cacheNameSuffix = $this->cacheProfile->useCacheNameSuffix($request);
-
-        return $cacheNameSuffix;
+        return $this->cacheProfile->useCacheNameSuffix($request);
     }
 }

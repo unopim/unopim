@@ -22,18 +22,11 @@ class CommaSeparatedInteger implements ValidationRule
      *
      * @param  string  $attribute
      * @param  mixed  $value
-     * @return bool
      */
-    public function isCommaSeparatedInteger($attribute, $value)
+    public function isCommaSeparatedInteger($attribute, $value): bool
     {
-        $integerValues = explode(',', $value);
+        $integerValues = explode(',', (string) $value);
 
-        foreach ($integerValues as $integerValue) {
-            if (! preg_match('/^[0-9]+$/', $integerValue)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($integerValues, fn ($integerValue): int|false => preg_match('/^\d+$/', (string) $integerValue));
     }
 }

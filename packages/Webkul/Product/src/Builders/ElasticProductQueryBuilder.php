@@ -26,7 +26,7 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
         $operator,
         $value,
         array $context
-    ) {
+    ): static {
         $locale = $attribute->value_per_locale ? ($context['locale'] ?? null) : null;
         $channel = $attribute->value_per_channel ? ($context['channel'] ?? null) : null;
 
@@ -56,7 +56,7 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
         $operator,
         $value,
         array $context
-    ) {
+    ): static {
         $filter->setQueryManager(new ElasticSearchQuery);
 
         $filter->applyUnfilteredFilter($attribute, $operator, $value, $context);

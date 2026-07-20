@@ -304,7 +304,7 @@ class CategoryController extends Controller
 
             $branches = $this->categoryRepository->getTreeBranchToParent($category, false);
 
-            if ($branches && ! empty($branches)) {
+            if ($branches && $branches->isNotEmpty()) {
                 $allBranches[] = $branches->first();
             }
         }

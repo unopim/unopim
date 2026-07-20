@@ -1,19 +1,25 @@
 @props([
-    'name'           => 'files',
-    'uploadedFiles' => [],
-    'width'          => '210px',
-    'height'         => '120px'
+    'name'               => 'files',
+    'uploadedFiles'      => [],
+    'width'              => '210px',
+    'height'             => '120px',
+    'acceptedExtensions' => \Webkul\Core\Rules\FileOrImageValidValue::FILE_ALLOWED_EXTENSION,
+    'instructions'         => '',
 ])
+
+<x-admin::media.field type="files" :name="$name" :instructions="$instructions">
 
 <v-media-files
     name="{{ $name }}"
     :uploaded-files='{{ json_encode($uploadedFiles) }}'
     width="{{ $width }}"
     height="{{ $height }}"
+    :accepted-extensions='@json($acceptedExtensions)'
     :errors="errors"
     class="{{ $attributes->get('class') }}"
 >
 </v-media-files>
+</x-admin::media.field>
 
 @pushOnce('scripts')
     <script
@@ -22,37 +28,18 @@
     >
         <div class="grid">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {{-- Add File tile (always first; hidden once a file exists) --}}
-                <label
-                    class="group flex flex-col justify-center items-center min-h-[160px] rounded-lg border-2 border-dashed border-gray-300 dark:border-cherry-500 bg-gradient-to-br from-primary-50/40 to-white dark:from-cherry-900/40 dark:to-cherry-900 cursor-pointer transition-all hover:border-primary-500 dark:hover:border-primary-400 hover:shadow-md"
-                    :class="[errors['inputFiles.files[0]'] ? 'border-red-500 dark:border-red-500' : '', isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : '']"
-                    :for="$.uid + '_fileInput'"
+                {{-- Add File tile (shared dropzone; hidden once a file exists) --}}
+                <v-media-add-tile
                     v-if="0 == inputFiles.length"
-                    @dragover.prevent="isDragging = true"
-                    @dragenter.prevent="isDragging = true"
-                    @dragleave.prevent="isDragging = false"
-                    @drop.prevent="onDrop"
-                >
-                    <span class="icon-folder text-3xl text-gray-400 group-hover:text-primary-600 transition-colors"></span>
-                    <p class="mt-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
-                        @lang('admin::app.components.media.files.add-file-btn')
-                    </p>
-                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
-                        @lang('admin::app.components.media.images.drag-drop-hint')
-                    </p>
-                    <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 text-center px-2 leading-tight">
-                        @lang('admin::app.components.media.files.allowed-types')
-                    </p>
-
-                    <input
-                        type="file"
-                        class="hidden"
-                        :id="$.uid + '_fileInput'"
-                        accept="application/pdf"
-                        :ref="$.uid + '_fileInput'"
-                        @change="add"
-                    />
-                </label>
+                    title="@lang('admin::app.components.media.files.add-file-btn')"
+                    hint="@lang('admin::app.components.media.images.drag-drop-hint')"
+                    allowed-types="@lang('admin::app.components.media.files.allowed-types')"
+                    :accept="acceptAttribute"
+                    :input-id="$.uid + '_fileInput'"
+                    icon="icon-file"
+                    @change="add"
+                    @drop="onDrop"
+                ></v-media-add-tile>
 
                 <draggable
                     class="contents"
@@ -68,6 +55,7 @@
                             :inputFile="element"
                             :width="width"
                             :height="height"
+                            :accepted-extensions="acceptedExtensions"
                             @onRemove="remove($event)"
                             @onChange="change($event)"
                         >
@@ -79,42 +67,51 @@
     </script>
 
     <script type="text/x-template" id="v-media-files-item-template">
-        <div class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700">
-            <div class="relative flex flex-col items-center justify-center w-full h-[140px] bg-gray-50 dark:bg-cherry-800">
-                <span class="icon-folder text-5xl text-gray-400 dark:text-gray-500"></span>
-                <span class="mt-1 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">PDF</span>
+        <div>
+            <v-media-card
+                :media="cardMedia"
+                mode="file"
+                width="100%"
+                height="176px"
+                :allow-preview="true"
+                :allow-replace="true"
+                :allow-remove="true"
+                :show-badge="true"
+                :show-extension="false"
+                @preview="preview"
+                @replace="replace"
+                @remove="remove"
+            >
+                <template #actions="{ media }">
+                    <a
+                        :href="media.url"
+                        target="_blank"
+                        class="icon-down-stat rounded bg-white/20 p-1.5 text-white"
+                        aria-label="@lang('admin::app.export.download')"
+                        @click.stop
+                    ></a>
+                </template>
+            </v-media-card>
 
-                <div class="absolute inset-0 flex items-end justify-center gap-2 p-2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
-                    <a :href="inputFile.url" target="_blank" class="flex items-center">
-                        <span class="icon-down-stat text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"></span>
-                    </a>
-                    <label
-                        class="icon-edit text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
-                        :for="$.uid + '_fileInput_' + index"
-                    ></label>
-                    <span
-                        class="icon-delete text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-red-500/80 cursor-pointer"
-                        @click="remove"
-                    ></span>
+            <input type="hidden" :name="name" v-if="! inputFile.is_new && inputFile.value" :value="inputFile.value"/>
+            <input
+                type="file"
+                :name="name + '[]'"
+                class="hidden"
+                :accept="acceptAttribute"
+                :id="$.uid + '_fileInput_' + index"
+                :ref="$.uid + '_fileInput_' + index"
+                @change="edit"
+            />
 
-                    <input type="hidden" :name="name" v-if="! inputFile.is_new && inputFile.value" :value="inputFile.value"/>
-                    <input
-                        type="file"
-                        :name="name + '[]'"
-                        class="hidden"
-                        accept="application/pdf"
-                        :id="$.uid + '_fileInput_' + index"
-                        :ref="$.uid + '_fileInput_' + index"
-                        @change="edit"
-                    />
-                </div>
-            </div>
-
-            <p
-                class="px-2 py-1.5 text-xs text-gray-700 dark:text-gray-300 text-center truncate"
-                :title="inputFile?.file?.name ?? inputFile.fileName"
-                v-text="inputFile?.file?.name ?? inputFile.fileName"
-            ></p>
+            <x-admin::modal ref="filePreviewModal" type="large">
+                <x-slot:header>
+                    <p class="text-lg font-bold text-gray-800 dark:text-white" v-text="cardMedia.name"></p>
+                </x-slot>
+                <x-slot:content>
+                    <iframe :src="inputFile.url" class="w-full rounded" style="height: 70vh;"></iframe>
+                </x-slot>
+            </x-admin::modal>
         </div>
     </script>
 
@@ -143,6 +140,11 @@
                     default: '120px'
                 },
 
+                acceptedExtensions: {
+                    type: Array,
+                    default: () => [],
+                },
+
                 errors: {
                     type: Object,
                     default: () => {}
@@ -157,48 +159,47 @@
                 }
             },
 
+            computed: {
+                acceptAttribute() {
+                    if (! this.acceptedExtensions.length) {
+                        return '';
+                    }
+
+                    return this.acceptedExtensions.map(extension => `.${extension.replace(/^\./, '')}`).join(',');
+                },
+            },
+
             mounted() {
                 this.inputFiles = this.uploadedFiles;
             },
 
             methods: {
-                onDrop(event) {
-                    this.isDragging = false;
+                isFileAccepted(file) {
+                    if (! this.acceptedExtensions.length) {
+                        return true;
+                    }
 
-                    let files = event.dataTransfer ? event.dataTransfer.files : null;
+                    const extension = (file.name.split('.').pop() || '').toLowerCase();
 
+                    return this.acceptedExtensions
+                        .map(value => value.toLowerCase().replace(/^\./, ''))
+                        .includes(extension);
+                },
+
+                onDrop(files) {
+                    this.addFiles(files);
+                },
+
+                add(files) {
+                    this.addFiles(files);
+                },
+
+                addFiles(files) {
                     if (! files || ! files.length) {
                         return;
                     }
 
-                    let file = files[0];
-
-                    if (! file.type.includes('application/pdf')) {
-                        this.$emitter.emit('add-flash', {
-                            type: 'warning',
-                            message: "@lang('admin::app.components.media.files.not-allowed-error')"
-                        });
-
-                        return;
-                    }
-
-                    this.inputFiles.push({
-                        id: 'file_' + this.inputFiles.length,
-                        url: '',
-                        file: file
-                    });
-
-                    this.signalChange();
-                },
-
-                add() {
-                    let inputs = this.$refs[this.$.uid + '_fileInput'];
-
-                    if (inputs.files == undefined) {
-                        return;
-                    }
-
-                    const validFiles = Array.from(inputs.files).every(file => file.type.includes('application/pdf'));
+                    const validFiles = Array.from(files).every(file => this.isFileAccepted(file));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
@@ -209,7 +210,7 @@
                         return;
                     }
 
-                    inputs.files.forEach((file, index) => {
+                    Array.from(files).forEach((file) => {
                         this.inputFiles.push({
                             id: 'file_' + this.inputFiles.length,
                             url: '',
@@ -249,12 +250,27 @@
         app.component('v-media-files-item', {
             template: '#v-media-files-item-template',
 
-            props: ['index', 'inputFile', 'name', 'width', 'height'],
+            props: ['index', 'inputFile', 'name', 'width', 'height', 'acceptedExtensions'],
 
-            data() {
-                return {
-                    isPlaying: false
-                }
+            computed: {
+                cardMedia() {
+                    const fileName = this.inputFile?.file?.name ?? this.inputFile?.fileName ?? '';
+
+                    return {
+                        url: this.inputFile.url,
+                        name: fileName,
+                        type: this.inputFile?.file?.type ?? 'application/pdf',
+                        extension: (fileName.split('.').pop() || 'pdf').toLowerCase(),
+                    };
+                },
+
+                acceptAttribute() {
+                    if (! this.acceptedExtensions || ! this.acceptedExtensions.length) {
+                        return '';
+                    }
+
+                    return this.acceptedExtensions.map(extension => `.${extension.replace(/^\./, '')}`).join(',');
+                },
             },
 
             mounted() {
@@ -266,6 +282,14 @@
             },
 
             methods: {
+                preview() {
+                    this.$refs.filePreviewModal.toggle();
+                },
+
+                replace() {
+                    this.$refs[this.$.uid + '_fileInput_' + this.index].click();
+                },
+
                 edit() {
                     let inputs = this.$refs[this.$.uid + '_fileInput_' + this.index];
 
@@ -273,7 +297,17 @@
                         return;
                     }
 
-                    const validFiles = Array.from(inputs.files).every(file => file.type.includes('application/pdf'));
+                    const validFiles = Array.from(inputs.files).every(file => {
+                        if (! this.acceptedExtensions || ! this.acceptedExtensions.length) {
+                            return true;
+                        }
+
+                        const extension = (file.name.split('.').pop() || '').toLowerCase();
+
+                        return this.acceptedExtensions
+                            .map(value => value.toLowerCase().replace(/^\./, ''))
+                            .includes(extension);
+                    });
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {

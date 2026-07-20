@@ -10,7 +10,7 @@ class DataGridExport implements FromGenerator, WithCustomCsvSettings
     /**
      * Create a new instance.
      *
-     * @param mixed DataGrid
+     * @param  mixed  $gridData
      * @return void
      */
     public function __construct(protected $gridData = []) {}

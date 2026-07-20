@@ -16,18 +16,18 @@ class HistoryController extends Controller
     public function get(string $entityName, int $id)
     {
         if (request()->ajax()) {
-            return app(HistoryDataGrid::class)->setEntityName($entityName)->setEntityId($id)->toJson();
+            return resolve(HistoryDataGrid::class)->setEntityName($entityName)->setEntityId($id)->toJson();
         }
     }
 
-    public function getHistoryView(string $entityName, int $id)
+    public function getHistoryView(string $entityName, int $id): void
     {
         // Your code here
     }
 
-    public function getVersionHistoryView(string $entityName, int $id, int $versionId)
+    public function getVersionHistoryView(string $entityName, int $id, int $versionId): JsonResponse
     {
-        $versionData = app(AuditRepository::class)->getVersionDataByNameIdVersionId($entityName, $id, $versionId);
+        $versionData = resolve(AuditRepository::class)->getVersionDataByNameIdVersionId($entityName, $id, $versionId);
 
         $normalizedData = $this->normalize($versionData);
 
@@ -146,18 +146,18 @@ class HistoryController extends Controller
 
         $normalizedData['versionHistory'] = array_filter(
             $normalizedData['versionHistory'],
-            fn ($entry) => ! empty($entry['old']) || ! empty($entry['new'])
+            fn (array $entry): bool => ! empty($entry['old']) || ! empty($entry['new'])
         );
 
         return $normalizedData;
     }
 
-    public function restoreHistory(string $entityName, int $id)
+    public function restoreHistory(string $entityName, int $id): void
     {
         // Your code here
     }
 
-    public function deleteHistory(string $entityName, int $id)
+    public function deleteHistory(string $entityName, int $id): void
     {
         // Your code here
     }

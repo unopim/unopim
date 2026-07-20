@@ -11,12 +11,15 @@ if (! function_exists('core')) {
      */
     function core()
     {
-        return app('core');
+        return resolve('core');
     }
 }
 
 if (! function_exists('array_permutation')) {
-    function array_permutation($input)
+    /**
+     * @return mixed[]
+     */
+    function array_permutation($input): array
     {
         $results = [];
 
@@ -25,7 +28,7 @@ if (! function_exists('array_permutation')) {
                 continue;
             }
 
-            if (empty($results)) {
+            if ($results === []) {
                 foreach ($values as $value) {
                     $results[] = [$key => $value];
                 }
@@ -60,7 +63,7 @@ if (! function_exists('clean_content')) {
      */
     function clean_content(?string $content): string
     {
-        if (empty($content)) {
+        if (in_array($content, [null, '', '0'], true)) {
             return '';
         }
 
@@ -68,11 +71,11 @@ if (! function_exists('clean_content')) {
         $content = preg_replace('/@\w+(\s*\(.*?\))?/s', '', $content);
 
         // Strip Blade echo syntax: {{ }}, {!! !!}
-        $content = preg_replace('/\{\{.*?\}\}/s', '', $content);
-        $content = preg_replace('/\{!!.*?!!\}/s', '', $content);
+        $content = preg_replace('/\{\{.*?\}\}/s', '', (string) $content);
+        $content = preg_replace('/\{!!.*?!!\}/s', '', (string) $content);
 
         // Strip PHP tags
-        $content = preg_replace('/<\?(?:php|=).*?\?>/s', '', $content);
+        $content = preg_replace('/<\?(?:php|=).*?\?>/s', '', (string) $content);
 
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Cache.SerializerPath', storage_path('app/purifier'));
@@ -91,6 +94,6 @@ if (! function_exists('image_manager')) {
      */
     function image_manager(): ImageManager
     {
-        return app('image_manager');
+        return resolve('image_manager');
     }
 }

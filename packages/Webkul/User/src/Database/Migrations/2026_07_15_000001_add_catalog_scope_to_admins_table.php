@@ -17,7 +17,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('admins', function (Blueprint $table) {
+        Schema::table('admins', function (Blueprint $table): void {
             $table->unsignedInteger('catalog_locale_id')->nullable()->after('ui_locale_id')->comment('locale catalog content is authored in');
             $table->unsignedInteger('default_channel_id')->nullable()->after('catalog_locale_id')->comment('channel the admin works in by default');
 
@@ -31,7 +31,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('admins', function (Blueprint $table) {
+        Schema::table('admins', function (Blueprint $table): void {
             $table->dropForeign(['catalog_locale_id']);
             $table->dropForeign(['default_channel_id']);
 

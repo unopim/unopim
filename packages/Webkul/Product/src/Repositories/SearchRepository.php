@@ -12,10 +12,9 @@ class SearchRepository extends ProductRepository
     /**
      * Upload provided image
      *
-     * @param  array  $data
      * @return string
      */
-    public function uploadSearchImage($data)
+    public function uploadSearchImage(array $data)
     {
         $path = request()->file('image')->store('product-search');
 

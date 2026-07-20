@@ -26,9 +26,8 @@
                     @lang('admin::app.settings.appearance.logo')
                 </x-admin::form.control-group.label>
 
-                <x-admin::media.images
+                <x-admin::media.image
                     name="logo_image"
-                    :allow-multiple="false"
                     :show-suggestions="false"
                     width="240px"
                     height="120px"
@@ -51,9 +50,8 @@
                     @lang('admin::app.settings.appearance.favicon')
                 </x-admin::form.control-group.label>
 
-                <x-admin::media.images
+                <x-admin::media.image
                     name="favicon"
-                    :allow-multiple="false"
                     :show-suggestions="false"
                     width="120px"
                     height="120px"

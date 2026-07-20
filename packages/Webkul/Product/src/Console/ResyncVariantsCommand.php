@@ -2,28 +2,18 @@
 
 namespace Webkul\Product\Console;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Webkul\Completeness\Jobs\ProductCompletenessJob;
 use Webkul\Product\Models\ProductProxy;
 
+#[Description('Rebuild derived data (completeness scores, search index) for variant subtrees. A safety net when a queued propagation job was dropped; the source tree is always authoritative.')]
+#[Signature('unopim:variants:resync
+                            {--product= : Limit to a single configurable product id}
+                            {--all : Resync every configurable product}')]
 class ResyncVariantsCommand extends Command
 {
-    /**
-     * The console command signature.
-     *
-     * @var string
-     */
-    protected $signature = 'unopim:variants:resync
-                            {--product= : Limit to a single configurable product id}
-                            {--all : Resync every configurable product}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Rebuild derived data (completeness scores, search index) for variant subtrees. A safety net when a queued propagation job was dropped; the source tree is always authoritative.';
-
     /**
      * Execute the console command.
      */
@@ -45,7 +35,7 @@ class ResyncVariantsCommand extends Command
 
         $ids = [];
 
-        $roots->chunkById(200, function ($products) use (&$ids) {
+        $roots->chunkById(200, function ($products) use (&$ids): void {
             foreach ($products as $product) {
                 $ids[] = $product->id;
 
@@ -61,7 +51,7 @@ class ResyncVariantsCommand extends Command
 
         $ids = array_values(array_unique($ids));
 
-        if (empty($ids)) {
+        if ($ids === []) {
             $this->info('No variant trees to resync.');
 
             return self::SUCCESS;
@@ -69,7 +59,7 @@ class ResyncVariantsCommand extends Command
 
         // Recompute completeness for the whole subtree. Re-saving would also fire
         // the Elasticsearch observer; completeness is the derived data we own here.
-        ProductCompletenessJob::dispatch($ids);
+        dispatch(new ProductCompletenessJob($ids));
 
         $this->info(sprintf('Queued resync for %d product(s) across the matched variant tree(s).', count($ids)));
 

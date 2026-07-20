@@ -35,6 +35,15 @@ class InstallerController extends Controller
     const USER_ID = 1;
 
     /**
+     * Max age (seconds) of the seeded default admin (id 1) for adminConfigSetup
+     * to still promote it — distinguishes an in-progress install from an
+     * established live admin whose install seals were lost.
+     *
+     * @var int
+     */
+    const ADMIN_SEED_PROMOTION_WINDOW = 86400;
+
+    /**
      * Cloud hosting promo URL shown in the installer top bar.
      *
      * @var string
@@ -72,8 +81,6 @@ class InstallerController extends Controller
 
     /**
      * Create a new controller instance
-     *
-     * @return void
      */
     public function __construct(
         protected ServerRequirements $serverRequirements,
@@ -111,6 +118,41 @@ class InstallerController extends Controller
     }
 
     /**
+     * Allow the admin-promotion step to overwrite only the seeder's freshly
+     * created default admin (id 1), never an established live admin.
+     *
+     * abortIfDatabasePopulated() cannot be used here (the base seeder populates
+     * id 1 before this step) and the persistent flag is insufficient for a DB
+     * restored between the backfill migration and the flag write. created_at
+     * age is the reliable distinguisher; any error or stale timestamp fails
+     * closed.
+     */
+    protected function abortUnlessAdminIsFreshlySeeded(): void
+    {
+        try {
+            $existing = DB::table('admins')->where('id', self::USER_ID)->first();
+        } catch (\Throwable $e) {
+            report($e);
+
+            abort(403);
+        }
+
+        if ($existing === null) {
+            return;
+        }
+
+        $createdAt = isset($existing->created_at)
+            ? strtotime((string) $existing->created_at)
+            : false;
+
+        abort_if(
+            $createdAt === false
+                || (time() - $createdAt) > self::ADMIN_SEED_PROMOTION_WINDOW,
+            403
+        );
+    }
+
+    /**
      * Apply the database credentials from the freshly written .env to the live
      * runtime config.
      *
@@ -125,7 +167,7 @@ class InstallerController extends Controller
     {
         $env = $this->readEnvFile();
 
-        if (empty($env)) {
+        if ($env === []) {
             return;
         }
 
@@ -161,8 +203,13 @@ class InstallerController extends Controller
 
         foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
             $line = trim($line);
-
-            if ($line === '' || str_starts_with($line, '#') || ! str_contains($line, '=')) {
+            if ($line === '') {
+                continue;
+            }
+            if (str_starts_with($line, '#')) {
+                continue;
+            }
+            if (! str_contains($line, '=')) {
                 continue;
             }
 
@@ -209,14 +256,14 @@ class InstallerController extends Controller
         $requirements = $this->serverRequirements->validate();
 
         if (request()->has('locale')) {
-            return redirect()->route('installer.index');
+            return to_route('installer.index');
         }
 
         $optionalPackages = $this->optionalPackages;
 
         $cloudHostingUrl = self::CLOUD_HOSTING_URL;
 
-        return view('installer::installer.index', compact('requirements', 'phpVersion', 'optionalPackages', 'cloudHostingUrl'));
+        return view('installer::installer.index', ['requirements' => $requirements, 'phpVersion' => $phpVersion, 'optionalPackages' => $optionalPackages, 'cloudHostingUrl' => $cloudHostingUrl]);
     }
 
     /**
@@ -236,9 +283,7 @@ class InstallerController extends Controller
             $request['db_prefix'] = trim((string) $request['db_prefix']);
         }
 
-        $request = array_map(function ($input) {
-            return strip_tags((string) $input);
-        }, $request);
+        $request = array_map(fn ($input): string => strip_tags((string) $input), $request);
 
         // Match the CLI installer's prefix validation 1:1 so both install
         // paths surface the same migration-blocking errors up-front.
@@ -279,17 +324,13 @@ class InstallerController extends Controller
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
 
-        $migration = $this->databaseManager->migration();
-
-        return $migration;
+        return $this->databaseManager->migration();
     }
 
     /**
      * Run Seeder
-     *
-     * @return void|string
      */
-    public function runSeeder()
+    public function runSeeder(): ?string
     {
         $this->abortIfInstalled();
         $this->abortIfDatabasePopulated();
@@ -324,10 +365,10 @@ class InstallerController extends Controller
         $response = $this->environmentManager->setEnvConfiguration(request()->allParameters);
 
         if ($response) {
-            $seeder = $this->databaseManager->seeder($parameter);
-
-            return $seeder;
+            return $this->databaseManager->seeder($parameter);
         }
+
+        return null;
     }
 
     /**
@@ -339,9 +380,15 @@ class InstallerController extends Controller
     {
         $this->abortIfInstalled();
 
+        // Fail closed if the install state cannot be positively confirmed.
+        abort_unless($this->databaseManager->canConfirmNotInstalled(), 403);
+
+        // Only ever promote the seeder's freshly-created default admin.
+        $this->abortUnlessAdminIsFreshlySeeded();
+
         $this->reloadDatabaseConfigFromEnv();
 
-        $password = password_hash(request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
+        $password = password_hash((string) request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
         $uiLocaleId = DB::table('locales')->where('code', request()->input('locale'))->where('status', 1)->first()?->id ?? 58;
 
         try {
@@ -415,6 +462,10 @@ class InstallerController extends Controller
     {
         $this->abortIfInstalled();
 
+        // Precedes migration/seeding; refuse on a populated DB so a marker-lost
+        // instance cannot have its .env repointed by an unauthenticated request.
+        $this->abortIfDatabasePopulated();
+
         $this->reloadDatabaseConfigFromEnv();
 
         $payload = $request->all();
@@ -431,8 +482,8 @@ class InstallerController extends Controller
         // Whitelist package keys against the server-side map — never trust the
         // client with composer/artisan arguments. Unknown keys are dropped.
         $packages = array_values(array_filter(
-            array_map('strval', $requestedPackages),
-            fn ($key) => isset($this->optionalPackages[$key])
+            array_map(strval(...), $requestedPackages),
+            fn (string $key): bool => isset($this->optionalPackages[$key])
         ));
 
         // Persist to a temp state file rather than the session: the SSE stream is
@@ -453,8 +504,8 @@ class InstallerController extends Controller
                 'packages'           => $packages,
                 'app_locale'         => strip_tags((string) $request->input('app_locale', 'en_US')),
                 'app_currency'       => strip_tags((string) $request->input('app_currency', 'USD')),
-                'allowed_locales'    => array_map(fn ($v) => strip_tags((string) $v), $allowedLocales),
-                'allowed_currencies' => array_map(fn ($v) => strip_tags((string) $v), $allowedCurrencies),
+                'allowed_locales'    => array_map(fn ($v): string => strip_tags((string) $v), $allowedLocales),
+                'allowed_currencies' => array_map(fn ($v): string => strip_tags((string) $v), $allowedCurrencies),
             ])
         );
 
@@ -515,7 +566,7 @@ class InstallerController extends Controller
             $appCurrency,
             $allowedLocales,
             $allowedCurrencies
-        ) {
+        ): void {
             $emit = function (string $text): void {
                 echo 'data: '.json_encode(['line' => $text]).PHP_EOL.PHP_EOL;
 
@@ -544,6 +595,10 @@ class InstallerController extends Controller
                 @ob_end_flush();
             }
             @ob_implicit_flush(true);
+
+            // Once the admin is committed, a later failure must still seal the
+            // installer so the half-completed install cannot be re-driven.
+            $administratorCreated = false;
 
             try {
                 // a. Database
@@ -588,13 +643,14 @@ class InstallerController extends Controller
                 // d. Administrator
                 $emit(trans('installer::app.installer.index.terminal.creating-admin'));
                 $this->createAdminFromSession($admin);
+                $administratorCreated = true;
                 $emit(trans('installer::app.installer.index.terminal.admin-created'));
 
                 // e. Sample data (optional)
                 if ($sample) {
                     $emit(trans('installer::app.installer.index.terminal.installing-sample'));
 
-                    $result = app(DemoDataInstaller::class)->seed();
+                    $result = resolve(DemoDataInstaller::class)->seed();
 
                     if (! ($result['success'] ?? false)) {
                         $emit(trans('installer::app.installer.index.terminal.sample-failed', [
@@ -626,6 +682,12 @@ class InstallerController extends Controller
                 @flush();
             } catch (\Throwable $e) {
                 report($e);
+
+                // Seal if the admin was already created, so the reachable
+                // endpoints cannot be replayed to overwrite it.
+                if ($administratorCreated) {
+                    $this->markInstalled();
+                }
 
                 echo 'event: error'.PHP_EOL;
                 echo 'data: '.json_encode(['message' => $e->getMessage()]).PHP_EOL.PHP_EOL;
@@ -776,7 +838,7 @@ class InstallerController extends Controller
             return false;
         }
 
-        $disabled = array_map('trim', explode(',', strtolower((string) ini_get('disable_functions'))));
+        $disabled = array_map(trim(...), explode(',', strtolower((string) ini_get('disable_functions'))));
 
         return ! in_array('proc_open', $disabled, true);
     }
@@ -840,7 +902,7 @@ class InstallerController extends Controller
     /**
      * SMTP connection setup for Mail
      */
-    public function smtpConfigSetup()
+    public function smtpConfigSetup(): string
     {
         $this->abortIfInstalled();
 

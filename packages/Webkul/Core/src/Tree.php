@@ -36,8 +36,6 @@ class Tree
 
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -66,14 +64,14 @@ class Tree
      *
      * @param  array<string, mixed>  $item
      */
-    public function add($item, $type = ''): void
+    public function add(array $item, $type = ''): void
     {
         $item['children'] = [];
 
         if ($type == 'menu') {
             $item['url'] = route($item['route'], $item['params'] ?? []);
 
-            if (strpos($this->current, $item['url']) !== false) {
+            if (str_contains($this->current, $item['url'])) {
                 $this->currentKey = $item['key'];
             }
         } elseif ($type == 'acl') {
@@ -89,20 +87,19 @@ class Tree
 
     /**
      * Method to find the active links
-     *
-     * @param  array  $item
-     * @return string|void
      */
-    public function getActive($item)
+    public function getActive(array $item): ?bool
     {
         $url = trim($item['url'], '/');
 
         if (
-            strpos($this->current, $url) !== false
-            || (strpos($this->currentKey, $item['key']) === 0)
+            str_contains($this->current, $url)
+            || (str_starts_with($this->currentKey, $item['key']))
         ) {
             return true;
         }
+
+        return null;
     }
 
     /**
@@ -110,7 +107,7 @@ class Tree
      */
     public function removeUnauthorizedUrls(): array
     {
-        return collect($this->items)->map(function ($item) {
+        return collect($this->items)->map(function (array $item): array {
             $this->removeChildrenUnauthorizedUrls($item);
 
             return $item;

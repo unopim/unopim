@@ -13,7 +13,7 @@ class GrammarQueryManager
 
     public static function getGrammar(?string $driver = null): Grammar
     {
-        $driver = $driver ?? DB::getDriverName();
+        $driver ??= DB::getDriverName();
 
         if (isset(static::$instances[$driver])) {
             return static::$instances[$driver];

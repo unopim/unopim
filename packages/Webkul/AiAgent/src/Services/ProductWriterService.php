@@ -41,8 +41,8 @@ class ProductWriterService
     public function createProduct(ImageProductContext $ctx, array $options = []): ImageProductContext
     {
         $sku = $options['sku'] ?? $this->generateSku($ctx);
-        $locale = $options['locale'] ?? 'en_US';
-        $channel = $options['channel'] ?? 'default';
+        $locale = $options['locale'] ?? core()->getRequestedLocaleCode();
+        $channel = $options['channel'] ?? core()->getRequestedChannelCode();
         $family = $options['family'] ?? null;
 
         $resolved = $ctx->resolvedAttributes();
@@ -66,7 +66,7 @@ class ProductWriterService
         ImageProductContext $ctx,
     ): int|string {
         /** @var ProductRepository $repo */
-        $repo = app('Webkul\Product\Repositories\ProductRepository');
+        $repo = resolve(ProductRepository::class);
 
         $familyId = $this->resolveFamily($family);
 
@@ -103,8 +103,13 @@ class ProductWriterService
             }
 
             $value = $attributes[$attrCode] ?? null;
-
-            if ($value === null || $value === '' || $value === []) {
+            if ($value === null) {
+                continue;
+            }
+            if ($value === '') {
+                continue;
+            }
+            if ($value === []) {
                 continue;
             }
 
@@ -140,10 +145,10 @@ class ProductWriterService
             $channelLocaleValues['price'] = $this->buildPriceValue($estimatedPrice, $currencies);
         }
 
-        // Estimate cost from price (~60% of retail) if cost attribute exists and not set
+        // Estimate cost from price if the cost attribute exists and is not set
         if ($estimatedPrice && is_numeric($estimatedPrice) && isset($familyAttributes['cost']) && ! isset($channelSpecificValues['cost'])) {
             $channelSpecificValues['cost'] = $this->buildPriceValue(
-                round((float) $estimatedPrice * 0.6, 2),
+                round((float) $estimatedPrice * $this->costPriceRatio(), 2),
                 $currencies,
             );
         }
@@ -152,21 +157,21 @@ class ProductWriterService
         $values = $product->values ?? [];
         $values['common'] = array_merge($values['common'] ?? [], $commonValues);
 
-        if (! empty($channelLocaleValues)) {
+        if ($channelLocaleValues !== []) {
             $values['channel_locale_specific'][$channel][$locale] = array_merge(
                 $values['channel_locale_specific'][$channel][$locale] ?? [],
                 $channelLocaleValues,
             );
         }
 
-        if (! empty($channelSpecificValues)) {
+        if ($channelSpecificValues !== []) {
             $values['channel_specific'][$channel] = array_merge(
                 $values['channel_specific'][$channel] ?? [],
                 $channelSpecificValues,
             );
         }
 
-        if (! empty($localeSpecificValues)) {
+        if ($localeSpecificValues !== []) {
             $values['locale_specific'][$locale] = array_merge(
                 $values['locale_specific'][$locale] ?? [],
                 $localeSpecificValues,
@@ -176,7 +181,7 @@ class ProductWriterService
         // 5 — Save categories
         $categoryValues = $this->resolveCategories($ctx->category, $attributes['categories'] ?? null);
 
-        if (! empty($categoryValues)) {
+        if ($categoryValues !== []) {
             $values['categories'] = $categoryValues;
         }
 
@@ -264,15 +269,15 @@ class ProductWriterService
      */
     protected function resolveSelectValue(string $attrCode, mixed $value, int $attributeId): ?string
     {
-        if (! is_string($value) || empty($value)) {
+        if (! is_string($value) || ($value === '' || $value === '0')) {
             return null;
         }
 
         // Load available options for this attribute
         $options = DB::table('attribute_options as ao')
-            ->leftJoin('attribute_option_translations as aot', function ($join) {
+            ->leftJoin('attribute_option_translations as aot', function ($join): void {
                 $join->on('aot.attribute_option_id', '=', 'ao.id')
-                    ->where('aot.locale', '=', 'en_US');
+                    ->where('aot.locale', '=', config('app.fallback_locale', 'en_US'));
             })
             ->where('ao.attribute_id', $attributeId)
             ->select('ao.code', 'aot.label')
@@ -280,14 +285,14 @@ class ProductWriterService
 
         // Try exact code match first
         foreach ($options as $opt) {
-            if (strcasecmp($opt->code, $value) === 0) {
+            if (strcasecmp((string) $opt->code, $value) === 0) {
                 return $opt->code;
             }
         }
 
         // Try label match
         foreach ($options as $opt) {
-            if ($opt->label && strcasecmp($opt->label, $value) === 0) {
+            if ($opt->label && strcasecmp((string) $opt->label, $value) === 0) {
                 return $opt->code;
             }
         }
@@ -296,8 +301,8 @@ class ProductWriterService
         $valueLower = strtolower($value);
 
         foreach ($options as $opt) {
-            $codeLower = strtolower($opt->code);
-            $labelLower = $opt->label ? strtolower($opt->label) : '';
+            $codeLower = strtolower((string) $opt->code);
+            $labelLower = $opt->label ? strtolower((string) $opt->label) : '';
 
             if (str_contains($valueLower, $codeLower) || str_contains($codeLower, $valueLower)) {
                 return $opt->code;
@@ -362,7 +367,7 @@ class ProductWriterService
         }
 
         try {
-            $fileStorer = app(FileStorer::class);
+            $fileStorer = resolve(FileStorer::class);
             $storagePath = 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.'image';
 
             return $fileStorer->store(
@@ -370,7 +375,7 @@ class ProductWriterService
                 new File($imagePath),
                 [FileStorer::HASHED_FOLDER_NAME_KEY => true],
             );
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return null;
         }
     }
@@ -382,10 +387,20 @@ class ProductWriterService
      */
     protected function getActiveCurrencies(): array
     {
-        return DB::table('currencies')
+        $codes = DB::table('currencies')
             ->where('status', 1)
             ->pluck('code')
-            ->toArray() ?: ['USD'];
+            ->toArray();
+
+        if (empty($codes)) {
+            $codes = DB::table('currencies')
+                ->orderBy('id')
+                ->limit(1)
+                ->pluck('code')
+                ->toArray();
+        }
+
+        return $codes ?: ['USD'];
     }
 
     /**
@@ -403,11 +418,11 @@ class ProductWriterService
 
         if (is_array($categoriesAttr)) {
             $suggestions = array_merge($suggestions, $categoriesAttr);
-        } elseif (is_string($categoriesAttr) && ! empty($categoriesAttr)) {
+        } elseif (is_string($categoriesAttr) && ($categoriesAttr !== '' && $categoriesAttr !== '0')) {
             $suggestions[] = $categoriesAttr;
         }
 
-        if (empty($suggestions)) {
+        if ($suggestions === []) {
             return [];
         }
 
@@ -427,12 +442,12 @@ class ProductWriterService
             }
 
             // Try matching the last segment of "Electronics > Laptops" paths
-            $segments = array_map('trim', explode('>', $suggestion));
+            $segments = array_map(trim(...), explode('>', $suggestion));
             $lastSegment = end($segments);
             $slugged = Str::slug($lastSegment);
 
             foreach ($allCategories as $code) {
-                if (strcasecmp($code, $lastSegment) === 0 || $code === $slugged) {
+                if (strcasecmp((string) $code, $lastSegment) === 0 || $code === $slugged) {
                     $matched[] = $code;
                     break;
                 }
@@ -459,17 +474,18 @@ class ProductWriterService
      */
     protected function resolveFamily(?string $family): int
     {
-        if ($family && app()->bound('Webkul\Attribute\Repositories\AttributeFamilyRepository')) {
-            $repo = app('Webkul\Attribute\Repositories\AttributeFamilyRepository');
-            $model = $repo->findOneByField('code', $family);
+        if ($family !== null && $family !== '' && preg_match('/^[a-zA-Z0-9_-]+$/', $family)) {
+            $familyId = DB::table('attribute_families')
+                ->where('code', $family)
+                ->value('id');
 
-            if ($model) {
-                return $model->id;
+            if ($familyId) {
+                return (int) $familyId;
             }
         }
 
         // Fallback: use the first attribute family
-        return DB::table('attribute_families')->value('id') ?? 1;
+        return (int) (DB::table('attribute_families')->value('id') ?? 1);
     }
 
     // -------------------------------------------------------------------------
@@ -492,5 +508,25 @@ class ProductWriterService
     public function resolveSelectValuePublic(string $attrCode, mixed $value, int $attributeId): ?string
     {
         return $this->resolveSelectValue($attrCode, $value, $attributeId);
+    }
+
+    /**
+     * Public accessor for getActiveCurrencies.
+     *
+     * @return array<string>
+     */
+    public function getActiveCurrencyCodes(): array
+    {
+        return $this->getActiveCurrencies();
+    }
+
+    /**
+     * Cost-to-price ratio used when estimating a cost from a retail price.
+     */
+    public function costPriceRatio(): float
+    {
+        $ratio = core()->getConfigData('general.magic_ai.agentic_pim.cost_price_ratio');
+
+        return is_numeric($ratio) && (float) $ratio > 0 ? (float) $ratio : 0.6;
     }
 }

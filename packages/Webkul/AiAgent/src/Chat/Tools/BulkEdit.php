@@ -11,6 +11,7 @@ use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
+use Webkul\Product\Repositories\ProductRepository;
 
 class BulkEdit implements PimTool
 {
@@ -48,7 +49,7 @@ class BulkEdit implements PimTool
                     'filter_value'    => $schema->string()->description('Filter value (e.g. "active", category code, family code)'),
                     'changes_json'    => $schema->string()->description('JSON of attribute changes to SET (e.g. {"status":"inactive","brand":"Nike"})'),
                     'transforms_json' => $schema->string()->description('JSON of attribute transforms to MODIFY existing values. Each entry: {"attribute_code": {"action": "append|prepend|replace", "value": "text", "search": "old text (for replace)"}}. Example: {"url_key": {"action": "append", "value": "-webkul"}}'),
-                    'limit'           => $schema->integer()->description('Max products to update (default 50, max 500)'),
+                    'limit'           => $schema->integer()->description('Max products to update (default 50, max 100)'),
                 ];
             }
 
@@ -62,7 +63,7 @@ class BulkEdit implements PimTool
                 $filter_value = $request->string('filter_value')->toString() ?: null;
                 $changes_json = $request->string('changes_json')->toString() ?: null;
                 $transforms_json = $request->string('transforms_json')->toString() ?: null;
-                $limit = $request->has('limit') ? (int) $request->get('limit') : 50;
+                $limit = $request->integer('limit', 50);
 
                 $changes = $changes_json ? json_decode($changes_json, true) : [];
                 $transforms = $transforms_json ? json_decode($transforms_json, true) : [];
@@ -98,12 +99,12 @@ class BulkEdit implements PimTool
 
                 $updated = 0;
                 $errors = [];
-                $repo = app('Webkul\Product\Repositories\ProductRepository');
+                $repo = resolve(ProductRepository::class);
                 $currencies = DB::table('currencies')->where('status', 1)->pluck('code')->toArray() ?: ['USD'];
 
                 foreach ($products as $p) {
                     try {
-                        $values = json_decode($p->values, true) ?? [];
+                        $values = json_decode((string) $p->values, true) ?? [];
                         $familyAttrs = $this->writerService->getFamilyAttributesPublic($p->attribute_family_id);
                         $statusChanged = false;
 
@@ -151,10 +152,12 @@ class BulkEdit implements PimTool
 
                         // Apply transforms (append/prepend/replace on existing values)
                         foreach ($transforms as $code => $transform) {
-                            if (! is_array($transform) || empty($transform['action'])) {
+                            if (! is_array($transform)) {
                                 continue;
                             }
-
+                            if (empty($transform['action'])) {
+                                continue;
+                            }
                             $action = $transform['action'];
                             $transformValue = $transform['value'] ?? '';
 
@@ -178,8 +181,8 @@ class BulkEdit implements PimTool
 
                             // Apply the transformation
                             $newValue = match ($action) {
-                                'append'  => str_ends_with($currentValue, $transformValue) ? $currentValue : $currentValue.$transformValue,
-                                'prepend' => str_starts_with($currentValue, $transformValue) ? $currentValue : $transformValue.$currentValue,
+                                'append'  => str_ends_with($currentValue, (string) $transformValue) ? $currentValue : $currentValue.$transformValue,
+                                'prepend' => str_starts_with($currentValue, (string) $transformValue) ? $currentValue : $transformValue.$currentValue,
                                 'replace' => isset($transform['search']) ? str_replace($transform['search'], $transformValue, $currentValue) : $transformValue,
                                 default   => $currentValue,
                             };
@@ -213,7 +216,7 @@ class BulkEdit implements PimTool
                         'matched' => $products->count(),
                         'updated' => $updated,
                         'filter'  => "{$filter_by}={$filter_value}",
-                        'errors'  => empty($errors) ? null : array_slice($errors, 0, 5),
+                        'errors'  => $errors === [] ? null : array_slice($errors, 0, 5),
                     ],
                 ]);
             }

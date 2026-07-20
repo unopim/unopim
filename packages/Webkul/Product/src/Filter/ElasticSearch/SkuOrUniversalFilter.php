@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Filter\ElasticSearch;
 
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\ElasticSearch\QueryString;
 
@@ -21,17 +22,15 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
         $fields,
         $operator,
         $value,
-        $options = []
-    ) {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+        array $options = []
+    ): static {
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         $clauses = [];
 
         foreach ($fields as $attribute) {
             $attribute = $this->attributeService->findAttributeByCode($attribute);
-            if (! $attribute) {
+            if (! $attribute instanceof Attribute) {
                 continue;
             }
 

@@ -15,6 +15,7 @@ use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Jobs\TranslateProductValuesJob;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Product\Repositories\ProductRepository;
 
 class CreateProduct implements PimTool
 {
@@ -43,7 +44,7 @@ class CreateProduct implements PimTool
 
             public function description(): string
             {
-                return 'Create a product with attributes, categories, and image. Supports simple and configurable (with variants) product types. Pass all attributes in attributes_json. For configurable products, provide super_attributes and variants_json.';
+                return 'Create a product with attributes, categories, and image. Supports simple and configurable (with variants) product types. Pass all attributes in attributes_json. Pass family to choose the attribute family; otherwise the current product context or the configured default family is used. For configurable products, provide super_attributes and variants_json.';
             }
 
             public function schema(JsonSchema $schema): array
@@ -57,6 +58,7 @@ class CreateProduct implements PimTool
                     'meta_description'  => $schema->string()->description('SEO meta description'),
                     'meta_keywords'     => $schema->string()->description('SEO meta keywords'),
                     'categories'        => $schema->string()->description('Comma-separated category codes or paths to assign'),
+                    'family'            => $schema->string()->description('Attribute family code for the product. Defaults to the family of the product being edited, then the configured default family, then the first family.'),
                     'attach_image'      => $schema->boolean()->description('Set to true to attach the uploaded image (default: true)'),
                     'attributes_json'   => $schema->string()->description('JSON string of ALL additional attribute values including color, size, brand, price, cost, product_number, etc.'),
                     'product_type'      => $schema->string()->description('Product type: "simple" (default) or "configurable". Use configurable when the product has variants like different colors/sizes.'),
@@ -79,6 +81,7 @@ class CreateProduct implements PimTool
                 $meta_description = $request->string('meta_description')->toString() ?: null;
                 $meta_keywords = $request->string('meta_keywords')->toString() ?: null;
                 $categories = $request->string('categories')->toString() ?: null;
+                $family = $request->string('family')->toString() ?: null;
                 $attach_image = $request->has('attach_image') ? $request->boolean('attach_image') : true;
                 $attributes_json = $request->string('attributes_json')->toString() ?: null;
                 $product_type = $request->string('product_type')->toString() ?: 'simple';
@@ -110,7 +113,7 @@ class CreateProduct implements PimTool
                     'meta_title'        => $meta_title,
                     'meta_description'  => $meta_description,
                     'meta_keywords'     => $meta_keywords,
-                ]), fn ($v) => $v !== null && $v !== '');
+                ]), fn ($v): bool => $v !== null && $v !== '');
 
                 $sku = $sku ?: Str::slug($name).'-'.strtoupper(Str::random(6));
 
@@ -118,20 +121,27 @@ class CreateProduct implements PimTool
                     return json_encode(['error' => "SKU '{$sku}' already exists"]);
                 }
 
+                $familyResolution = $this->resolveFamilyId($family);
+
+                if (isset($familyResolution['error'])) {
+                    return json_encode($familyResolution);
+                }
+
+                $familyId = $familyResolution['id'];
+
                 if ($this->shouldQueueForApproval()) {
                     return $this->queueChange($this->context, "Create {$type} product: {$name}", [
                         'type'           => 'create_product',
-                        'data'           => ['sku' => $sku, 'name' => $name, 'product_type' => $type, 'attributes' => $allAttrs],
+                        'data'           => ['sku' => $sku, 'name' => $name, 'product_type' => $type, 'family' => $family, 'attributes' => $allAttrs],
                         'affected_count' => 1,
                     ]);
                 }
 
-                $familyId = DB::table('attribute_families')->value('id') ?? 1;
-                $repo = app('Webkul\Product\Repositories\ProductRepository');
+                $repo = resolve(ProductRepository::class);
 
                 // Create the product (simple or configurable parent)
                 if ($type === 'configurable' && $super_attributes) {
-                    $superAttrCodes = array_map('trim', explode(',', $super_attributes));
+                    $superAttrCodes = array_map(trim(...), explode(',', $super_attributes));
 
                     $product = $repo->create([
                         'sku'                 => $sku,
@@ -147,27 +157,33 @@ class CreateProduct implements PimTool
                     ]);
                 }
 
+                // Load family attributes for dynamic routing
+                $familyAttributes = $this->writerService->getFamilyAttributesPublic($familyId);
+
                 // Handle estimated_price → price mapping
                 if (! empty($allAttrs['estimated_price']) && empty($allAttrs['price'])) {
                     $allAttrs['price'] = $allAttrs['estimated_price'];
                 }
                 unset($allAttrs['estimated_price']);
 
-                // Ensure price has a value — default to 0 if not provided
-                // (price is typically required; 0 signals "price not set" to the admin)
-                if (empty($allAttrs['price']) || ! is_numeric($allAttrs['price'])) {
-                    $allAttrs['price'] = 0;
+                // Price/cost defaults only apply when the family carries those attributes
+                if (isset($familyAttributes['price'])) {
+                    // Price defaults to 0 — signals "price not set" to the admin
+                    if (empty($allAttrs['price']) || ! is_numeric($allAttrs['price'])) {
+                        $allAttrs['price'] = 0;
+                    }
+
+                    if (isset($familyAttributes['cost'])) {
+                        if ((float) $allAttrs['price'] > 0 && empty($allAttrs['cost'])) {
+                            $allAttrs['cost'] = round((float) $allAttrs['price'] * $this->writerService->costPriceRatio(), 2);
+                        } elseif (empty($allAttrs['cost'])) {
+                            $allAttrs['cost'] = 0;
+                        }
+                    }
                 }
 
-                // Handle estimated cost (~60% of price)
-                if ((float) $allAttrs['price'] > 0 && empty($allAttrs['cost'])) {
-                    $allAttrs['cost'] = round((float) $allAttrs['price'] * 0.6, 2);
-                } elseif (empty($allAttrs['cost'])) {
-                    $allAttrs['cost'] = 0;
-                }
-
-                // Auto-set product_number from SKU if not provided
-                if (empty($allAttrs['product_number'])) {
+                // Auto-set product_number from SKU if the family has it
+                if (isset($familyAttributes['product_number']) && empty($allAttrs['product_number'])) {
                     $allAttrs['product_number'] = $sku;
                 }
 
@@ -178,9 +194,7 @@ class CreateProduct implements PimTool
                 }
                 unset($allAttrs['categories'], $allAttrs['detected_name'], $allAttrs['product_type']);
 
-                // Load family attributes for dynamic routing
-                $familyAttributes = $this->writerService->getFamilyAttributesPublic($familyId);
-                $currencies = DB::table('currencies')->where('status', 1)->pluck('code')->toArray() ?: ['USD'];
+                $currencies = $this->writerService->getActiveCurrencyCodes();
 
                 // Get ALL channels and their locales for multi-channel/locale filling
                 $allChannels = core()->getAllChannels();
@@ -255,11 +269,11 @@ class CreateProduct implements PimTool
                 }
 
                 // Assign categories
-                if ($categories || (is_array($categoryValues) && ! empty($categoryValues))) {
+                if ($categories || (is_array($categoryValues) && $categoryValues !== [])) {
                     $catInputs = [];
 
                     if ($categories) {
-                        $catInputs = array_map('trim', explode(',', $categories));
+                        $catInputs = array_map(trim(...), explode(',', $categories));
                     }
 
                     if (is_array($categoryValues)) {
@@ -273,7 +287,7 @@ class CreateProduct implements PimTool
                             continue;
                         }
                         $candidates[] = $input;
-                        $segments = array_map('trim', explode('>', $input));
+                        $segments = array_map(trim(...), explode('>', $input));
                         $last = end($segments);
                         $candidates[] = $last;
                         $candidates[] = Str::slug($last);
@@ -299,7 +313,7 @@ class CreateProduct implements PimTool
 
                     if ($imagePath && file_exists($imagePath)) {
                         try {
-                            $fileStorer = app(FileStorer::class);
+                            $fileStorer = resolve(FileStorer::class);
                             $storagePath = 'product'.DIRECTORY_SEPARATOR.$product->id.DIRECTORY_SEPARATOR.'image';
 
                             $storedImage = $fileStorer->store(
@@ -340,7 +354,7 @@ class CreateProduct implements PimTool
                     $variants = json_decode($variants_json, true) ?? [];
 
                     if (! empty($variants) && $super_attributes) {
-                        $superAttrCodes = array_map('trim', explode(',', $super_attributes));
+                        $superAttrCodes = array_map(trim(...), explode(',', $super_attributes));
                         $superAttrs = $product->super_attributes;
 
                         foreach ($variants as $variantData) {
@@ -374,10 +388,12 @@ class CreateProduct implements PimTool
 
                             // Override variant-specific attributes (price, etc.)
                             foreach ($variantData as $vCode => $vValue) {
-                                if (\in_array($vCode, ['sku'], true) || \in_array($vCode, $superAttrCodes, true)) {
+                                if ($vCode === 'sku') {
                                     continue;
                                 }
-
+                                if (\in_array($vCode, $superAttrCodes, true)) {
+                                    continue;
+                                }
                                 if (isset($familyAttributes[$vCode])) {
                                     $vMeta = $familyAttributes[$vCode];
 
@@ -426,21 +442,16 @@ class CreateProduct implements PimTool
                 }
 
                 // Dispatch async translation for text fields to other locales
-                if (! empty($translatableFields)) {
-                    TranslateProductValuesJob::dispatch(
-                        productId: $product->id,
-                        sourceLocale: $this->context->locale,
-                        fieldsToTranslate: $translatableFields,
-                        channel: $this->context->channel,
-                    )->delay(now()->addSeconds(3));
+                if ($translatableFields !== []) {
+                    dispatch(new TranslateProductValuesJob(productId: $product->id, sourceLocale: $this->context->locale, fieldsToTranslate: $translatableFields, channel: $this->context->channel))->delay(now()->addSeconds(3));
                 }
 
                 $productUrl = route('admin.catalog.products.edit', $product->id);
 
                 // Collect all filled attributes across all channels/locales
                 $filledAttrs = array_keys($values['common'] ?? []);
-                foreach ($values['channel_locale_specific'] ?? [] as $ch => $locales) {
-                    foreach ($locales as $loc => $attrs) {
+                foreach ($values['channel_locale_specific'] ?? [] as $locales) {
+                    foreach ($locales as $attrs) {
                         $filledAttrs = array_merge($filledAttrs, array_keys($attrs));
                     }
                 }
@@ -458,17 +469,63 @@ class CreateProduct implements PimTool
                         'categories'       => $values['categories'] ?? [],
                         'has_image'        => ! empty($values['common']['image']),
                         'image_error'      => $imageAttachError,
-                        'skipped'          => empty($skippedAttrs) ? null : $skippedAttrs,
-                        'auto_translating' => ! empty($translatableFields),
+                        'skipped'          => $skippedAttrs === [] ? null : $skippedAttrs,
+                        'auto_translating' => $translatableFields !== [],
                     ],
                 ];
 
                 if ($type === 'configurable') {
                     $result['result']['variants_created'] = $variantsCreated;
-                    $result['result']['super_attributes'] = array_map('trim', explode(',', $super_attributes ?? ''));
+                    $result['result']['super_attributes'] = array_map(trim(...), explode(',', $super_attributes ?? ''));
                 }
 
                 return json_encode($result);
+            }
+
+            /**
+             * Resolve the attribute family id: explicit code, then the product
+             * context's family, then the configured default, then the first family.
+             *
+             * @return array{id?: int, error?: string, available_families?: array<string>}
+             */
+            protected function resolveFamilyId(?string $familyCode): array
+            {
+                if ($familyCode !== null) {
+                    if (! preg_match('/^[a-zA-Z0-9_-]+$/', $familyCode)) {
+                        return ['error' => 'Invalid family: only letters, numbers, underscores and hyphens are allowed.'];
+                    }
+
+                    $familyId = DB::table('attribute_families')->where('code', $familyCode)->value('id');
+
+                    if (! $familyId) {
+                        return [
+                            'error'              => "Attribute family not found: {$familyCode}",
+                            'available_families' => DB::table('attribute_families')->orderBy('code')->limit(20)->pluck('code')->toArray(),
+                        ];
+                    }
+
+                    return ['id' => (int) $familyId];
+                }
+
+                if ($this->context->hasProductContext()) {
+                    $familyId = DB::table('products')->where('id', $this->context->productId)->value('attribute_family_id');
+
+                    if ($familyId) {
+                        return ['id' => (int) $familyId];
+                    }
+                }
+
+                $defaultFamilyCode = core()->getConfigData('general.magic_ai.agentic_pim.default_family');
+
+                if ($defaultFamilyCode && core()->isValidScopeCode($defaultFamilyCode)) {
+                    $familyId = DB::table('attribute_families')->where('code', $defaultFamilyCode)->value('id');
+
+                    if ($familyId) {
+                        return ['id' => (int) $familyId];
+                    }
+                }
+
+                return ['id' => (int) (DB::table('attribute_families')->value('id') ?? 1)];
             }
         };
     }

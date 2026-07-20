@@ -28,6 +28,10 @@ class TinyMCEController extends Controller
      */
     public function upload(TinyMCEUploadRequest $request): JsonResponse
     {
+        abort_unless($request->authorize(), JsonResponse::HTTP_FORBIDDEN);
+
+        $request->validated();
+
         $media = $this->storeMedia($request);
 
         if (! empty($media)) {

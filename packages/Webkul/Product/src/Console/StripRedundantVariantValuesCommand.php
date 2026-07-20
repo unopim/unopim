@@ -2,29 +2,19 @@
 
 namespace Webkul\Product\Console;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Type\AbstractType;
 
+#[Description('Reconcile legacy variants: remove child attribute values that merely duplicate an inherited ancestor value, leaving genuine overrides intact.')]
+#[Signature('unopim:variants:strip-redundant
+                            {--apply : Delete redundant keys (omit for a dry-run report)}
+                            {--product= : Limit to a single configurable product id}')]
 class StripRedundantVariantValuesCommand extends Command
 {
-    /**
-     * The console command signature.
-     *
-     * @var string
-     */
-    protected $signature = 'unopim:variants:strip-redundant
-                            {--apply : Delete redundant keys (omit for a dry-run report)}
-                            {--product= : Limit to a single configurable product id}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Reconcile legacy variants: remove child attribute values that merely duplicate an inherited ancestor value, leaving genuine overrides intact.';
-
     /**
      * Execute the console command.
      */
@@ -46,7 +36,7 @@ class StripRedundantVariantValuesCommand extends Command
         $stripped = 0;
         $variantCount = 0;
 
-        $query->chunkById(200, function ($parents) use ($resolver, $common, $apply, &$scanned, &$stripped, &$variantCount) {
+        $query->chunkById(200, function ($parents) use ($resolver, $common, $apply, &$scanned, &$stripped, &$variantCount): void {
             foreach ($parents as $parent) {
                 $ancestorCommon = $resolver->resolve($parent)[$common] ?? [];
 

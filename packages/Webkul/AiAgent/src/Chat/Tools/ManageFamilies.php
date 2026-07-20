@@ -10,6 +10,7 @@ use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 
 class ManageFamilies implements PimTool
 {
@@ -52,7 +53,7 @@ class ManageFamilies implements PimTool
 
                 if ($action === 'list') {
                     $families = DB::table('attribute_families as af')
-                        ->leftJoin('attribute_family_translations as aft', function ($join) use ($context) {
+                        ->leftJoin('attribute_family_translations as aft', function ($join) use ($context): void {
                             $join->on('aft.attribute_family_id', '=', 'af.id')
                                 ->where('aft.locale', '=', $context->locale);
                         })
@@ -72,7 +73,7 @@ class ManageFamilies implements PimTool
                         return json_encode(['error' => "Family '{$code}' already exists"]);
                     }
 
-                    $repo = app('Webkul\Attribute\Repositories\AttributeFamilyRepository');
+                    $repo = resolve(AttributeFamilyRepository::class);
                     $family = $repo->create([
                         'code'           => $code,
                         'status'         => 1,

@@ -2,16 +2,18 @@
 
 namespace Webkul\Attribute\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Attribute\Contracts\AttributeFamilyTranslation as AttributeFamilyTranslationContract;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Fillable(['name'])]
+#[WithoutTimestamps]
 class AttributeFamilyTranslation extends Model implements AttributeFamilyTranslationContract, HistoryAuditable
 {
     use HistoryTrait;
-
-    public $timestamps = false;
 
     protected $historyTags = ['attributeFamily'];
 
@@ -21,8 +23,6 @@ class AttributeFamilyTranslation extends Model implements AttributeFamilyTransla
     protected $historyTranslatableFields = [
         'name' => 'Name',
     ];
-
-    protected $fillable = ['name'];
 
     /**
      * Id used for creating version for history

@@ -5,6 +5,9 @@ namespace Webkul\User\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\User\Models\Role;
 
+/**
+ * @extends Factory<Role>
+ */
 class RoleFactory extends Factory
 {
     /**
@@ -22,8 +25,8 @@ class RoleFactory extends Factory
     public function definition()
     {
         return [
-            'name'            => $this->faker->name,
-            'permission_type' => $this->faker->randomElement(['custom', 'all']),
+            'name'            => fake()->name,
+            'permission_type' => fake()->randomElement(['custom', 'all']),
         ];
     }
 }

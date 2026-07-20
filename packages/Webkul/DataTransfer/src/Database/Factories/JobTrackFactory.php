@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 
+/**
+ * @extends Factory<JobTrack>
+ */
 class JobTrackFactory extends Factory
 {
     /**
@@ -50,7 +53,7 @@ class JobTrackFactory extends Factory
      */
     public function completed(): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'state'        => 'completed',
             'started_at'   => now()->subMinutes(5),
             'completed_at' => now(),
@@ -65,7 +68,7 @@ class JobTrackFactory extends Factory
     {
         $jobInstance = JobInstances::factory()->exportJob()->create();
 
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'type'             => 'export',
             'action'           => 'export',
             'job_instances_id' => $jobInstance->id,

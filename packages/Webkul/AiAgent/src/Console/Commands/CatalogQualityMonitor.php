@@ -2,6 +2,8 @@
 
 namespace Webkul\AiAgent\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -12,15 +14,13 @@ use Illuminate\Support\Facades\Log;
  * Run via: php artisan ai-agent:quality-monitor
  * Schedule: daily or as configured in the kernel.
  */
-class CatalogQualityMonitor extends Command
-{
-    protected $signature = 'ai-agent:quality-monitor
+#[Description('Scan catalog for data quality issues (missing descriptions, images, categories)')]
+#[Signature('ai-agent:quality-monitor
                             {--channel=default : Channel to check}
                             {--locale=en_US : Locale to check}
-                            {--limit=500 : Max products to scan}';
-
-    protected $description = 'Scan catalog for data quality issues (missing descriptions, images, categories)';
-
+                            {--limit=500 : Max products to scan}')]
+class CatalogQualityMonitor extends Command
+{
     public function handle(): int
     {
         $agenticEnabled = core()->getConfigData('general.magic_ai.agentic_pim.enabled');
@@ -59,7 +59,7 @@ class CatalogQualityMonitor extends Command
         ];
 
         foreach ($products as $p) {
-            $values = json_decode($p->values, true) ?? [];
+            $values = json_decode((string) $p->values, true) ?? [];
             $common = $values['common'] ?? [];
             $cl = $values['channel_locale_specific'][$channel][$locale] ?? [];
 
@@ -71,7 +71,7 @@ class CatalogQualityMonitor extends Command
             }
             if (empty($desc)) {
                 $issues['missing_description'][] = $p->sku;
-            } elseif (mb_strlen($desc) < 50) {
+            } elseif (mb_strlen((string) $desc) < 50) {
                 $issues['short_description'][] = $p->sku;
             }
             if (empty($common['image'])) {
@@ -83,7 +83,7 @@ class CatalogQualityMonitor extends Command
         }
 
         $total = $products->count();
-        $issueCount = array_sum(array_map('count', $issues));
+        $issueCount = array_sum(array_map(count(...), $issues));
 
         $healthScore = $total > 0
             ? round((1 - ($issueCount / ($total * 4))) * 100)
@@ -92,7 +92,7 @@ class CatalogQualityMonitor extends Command
         $resultData = [
             'scanned'      => $total,
             'health_score' => $healthScore,
-            'issues'       => array_map(fn ($skus) => [
+            'issues'       => array_map(fn ($skus): array => [
                 'count' => count($skus),
                 'skus'  => array_slice($skus, 0, 20),
             ], $issues),
@@ -139,8 +139,8 @@ class CatalogQualityMonitor extends Command
         $this->info("Health Score: {$healthScore}/100");
         $this->table(
             ['Issue', 'Count'],
-            collect($issues)->map(fn ($skus, $key) => [
-                str_replace('_', ' ', ucfirst($key)),
+            collect($issues)->map(fn ($skus, $key): array => [
+                str_replace('_', ' ', ucfirst((string) $key)),
                 count($skus),
             ])->toArray(),
         );

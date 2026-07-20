@@ -37,7 +37,7 @@ class ManageChannels implements PimTool
                     ->select('c.id', 'c.code', 'c.root_category_id')
                     ->get();
 
-                $result = $channels->map(function ($ch) {
+                $result = $channels->map(function ($ch): array {
                     $locales = DB::table('channel_locales')
                         ->join('locales', 'locales.id', '=', 'channel_locales.locale_id')
                         ->where('channel_locales.channel_id', $ch->id)

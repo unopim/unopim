@@ -3,11 +3,12 @@
 namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Prettus\Repository\Events\RepositoryEntityUpdated;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\AppearanceForm;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Repositories\CoreConfigRepository;
@@ -33,15 +34,8 @@ class AppearanceController extends Controller
     /**
      * Update logo and favicon.
      */
-    public function update(Request $request): RedirectResponse
+    public function update(AppearanceForm $request): RedirectResponse
     {
-        $request->validate([
-            'logo_image'   => ['nullable'],
-            'logo_image.*' => ['nullable', 'image', 'mimes:bmp,jpeg,jpg,png,webp,svg', 'max:2048'],
-            'favicon'      => ['nullable'],
-            'favicon.*'    => ['nullable', 'file', 'mimes:ico,png,svg,webp', 'max:1024'],
-        ]);
-
         $this->handleUpload($request, 'logo_image', 'general.design.admin_logo.logo_image');
 
         $this->handleUpload($request, 'favicon', 'general.design.admin_logo.favicon');
@@ -54,20 +48,24 @@ class AppearanceController extends Controller
     }
 
     /**
-     * Persist a field submitted by the media.images component.
+     * Persist a field submitted by the media.image component.
      *
      * A new file replaces the stored value; an unchanged image is resubmitted
      * as its string path and left untouched; an absent field means the user
      * removed the image, so the config is cleared to fall back to the default.
      */
-    private function handleUpload(Request $request, string $field, string $code): void
+    private function handleUpload(AppearanceForm $request, string $field, string $code): void
     {
         if ($request->hasFile($field)) {
             $file = $request->file($field);
 
-            $path = $this->fileStorer->store(
+            $file = is_array($file) ? current($file) : $file;
+            $extension = $file->guessExtension() ?: strtolower($file->getClientOriginalExtension());
+
+            $path = $this->fileStorer->storeAs(
                 path: 'configuration',
-                file: is_array($file) ? current($file) : $file,
+                name: Str::random(40).'.'.$extension,
+                file: $file,
                 options: [FileStorer::HASHED_FOLDER_NAME_KEY => true],
             );
 

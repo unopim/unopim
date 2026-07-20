@@ -32,7 +32,7 @@ class FieldSchema
      */
     public function toArray(): array
     {
-        return array_map(fn (Field $field) => $field->toArray(), $this->fields);
+        return array_map(fn (Field $field): array => $field->toArray(), $this->fields);
     }
 
     /**

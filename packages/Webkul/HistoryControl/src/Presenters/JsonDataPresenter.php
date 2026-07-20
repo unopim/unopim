@@ -103,9 +103,9 @@ class JsonDataPresenter implements HistoryPresenterInterface
         foreach ($currentArray as $locale => $fields) {
             if (static::$channelAndLocaleSpecific === $sectionName) {
                 foreach ($fields as $channelOrLocale => $values) {
-                    $changed = ! empty($comparingArray[$locale][$channelOrLocale])
-                        ? static::calculateDifference($values, $comparingArray[$locale][$channelOrLocale])
-                        : $values;
+                    $changed = empty($comparingArray[$locale][$channelOrLocale])
+                        ? $values
+                        : static::calculateDifference($values, $comparingArray[$locale][$channelOrLocale]);
 
                     if (! empty($changed)) {
                         foreach ($changed as $key => $value) {
@@ -119,9 +119,9 @@ class JsonDataPresenter implements HistoryPresenterInterface
                 continue;
             }
 
-            $changed = ! empty($comparingArray[$locale])
-                ? static::calculateDifference($fields, $comparingArray[$locale])
-                : $fields;
+            $changed = empty($comparingArray[$locale])
+                ? $fields
+                : static::calculateDifference($fields, $comparingArray[$locale]);
 
             if (! empty($changed)) {
                 foreach ($changed as $key => $value) {

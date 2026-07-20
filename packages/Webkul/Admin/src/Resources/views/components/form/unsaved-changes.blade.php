@@ -45,7 +45,7 @@
                                     @lang('admin::app.components.form.unsaved-changes.discard')
                                 </button>
 
-                                <button type="button" class="primary-button whitespace-nowrap" @click="save">
+                                <button type="button" data-unsaved-save class="primary-button whitespace-nowrap" @click="save">
                                     @lang('admin::app.components.form.unsaved-changes.save')
                                 </button>
 
@@ -413,13 +413,19 @@
                 },
 
                 save() {
-                    this.toggleBeforeUnload(false);
-
                     const form = this.$refs.root.querySelector('form');
 
                     if (! form) {
                         return;
                     }
+
+                    // A slow save keeps the request in flight; ignore extra clicks so
+                    // requestSubmit can't queue a second AJAX before the first settles.
+                    if (form.dataset.ajaxSubmitting === "true") {
+                        return;
+                    }
+
+                    this.toggleBeforeUnload(false);
 
                     if (form.requestSubmit) {
                         form.requestSubmit();
@@ -444,7 +450,25 @@
                         return;
                     }
 
-                    form.querySelectorAll('button[type="submit"], button:not([type]), input[type="submit"]').forEach(btn => {
+                    const selector = 'button[type="submit"], button:not([type]), input[type="submit"]';
+
+                    // In-form buttons, plus buttons that live OUTSIDE <form> but are
+                    // associated to it via the `form="<id>"` attribute (e.g. a sticky
+                    // edit-page-header save button). querySelectorAll on the form element
+                    // can't reach the associated ones, so collect them from the document.
+                    const buttons = Array.from(form.querySelectorAll(selector));
+
+                    if (form.id) {
+                        const id = (window.CSS && CSS.escape) ? CSS.escape(form.id) : form.id;
+
+                        document.querySelectorAll(`[form="${id}"]`).forEach(el => {
+                            if (el.matches(selector) && ! buttons.includes(el)) {
+                                buttons.push(el);
+                            }
+                        });
+                    }
+
+                    buttons.forEach(btn => {
                         // Keep submit buttons that belong to a modal / dialog inside this
                         // form — they have their own submit and the bar can't handle them.
                         if (btn.closest('[data-unsaved-ignore]')) {

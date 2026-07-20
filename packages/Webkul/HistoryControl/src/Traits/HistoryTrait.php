@@ -16,8 +16,6 @@ trait HistoryTrait
 
     /**
      * Transform the audit data.
-     *
-     * @param  array  $audit
      */
     public function transformAudit(array $data): array
     {
@@ -81,13 +79,7 @@ trait HistoryTrait
         }
 
         if (isset($this->historyTranslatableFields)) {
-            foreach (array_keys($this->historyTranslatableFields) as $field) {
-                if (filled($this->{$field})) {
-                    return true;
-                }
-            }
-
-            return false;
+            return array_any(array_keys($this->historyTranslatableFields), fn (int|string $field): bool => filled($this->{$field}));
         }
 
         return true;

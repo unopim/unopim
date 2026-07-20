@@ -3,6 +3,7 @@
 namespace Webkul\Category\Database\Eloquent;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\Paginator;
 use Kalnoy\Nestedset\QueryBuilder as BaseBuilder;
 
@@ -11,6 +12,14 @@ use Kalnoy\Nestedset\QueryBuilder as BaseBuilder;
  */
 class Builder extends BaseBuilder
 {
+    /**
+     * The model being queried. Redeclared to correct the parent's docblock,
+     * which references the NodeTrait trait as if it were a class.
+     *
+     * @var Model
+     */
+    protected $model;
+
     /**
      * Paginate the given query.
      *

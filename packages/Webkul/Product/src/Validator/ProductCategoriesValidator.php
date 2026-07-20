@@ -10,7 +10,7 @@ class ProductCategoriesValidator extends ValuesValidator
     /**
      * Validation rules to be used on the data
      */
-    protected function generateRules(mixed $data, ?string $productId, array $options)
+    protected function generateRules(mixed $data, ?string $productId, array $options): array
     {
         return [
             '*' => [
@@ -29,7 +29,7 @@ class ProductCategoriesValidator extends ValuesValidator
     /**
      * Get validation messages for the validator
      */
-    protected function getMessages()
+    protected function getMessages(): array
     {
         return [
             '*.exists' => trans('validation.exists-value'),

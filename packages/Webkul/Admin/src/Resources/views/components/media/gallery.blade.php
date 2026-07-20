@@ -4,13 +4,18 @@
     'showPlaceholders' => false,
     'uploadedImages'   => [],
     'width'            => '120px',
-    'height'           => '120px'
+    'height'           => '120px',
+    'acceptedTypes'    => ['image/*', 'video/*'],
+    'acceptedExtensions' => [],
+    'instructions'       => '',
 ])
 
 @php
     $dynamicUploadedImages = $attributes->get('::uploaded-images') ?? $attributes->get(':uploaded-images');
     $rootAttributes = $attributes->except(['::uploaded-images', ':uploaded-images', 'uploaded-images']);
 @endphp
+
+<x-admin::media.field type="gallery" :name="$name" :instructions="$instructions">
 
 <v-media-gallery
     {{ $rootAttributes }}
@@ -24,106 +29,44 @@
     @endif
     width="{{ $width }}"
     height="{{ $height }}"
+    :accepted-types='@json($acceptedTypes)'
+    :accepted-extensions='@json($acceptedExtensions)'
     :errors="errors"
 >
-    <x-admin::shimmer.image class="w-[110px] h-[110px] rounded" />
+    <x-admin::shimmer.media />
 </v-media-gallery>
+</x-admin::media.field>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-media-gallery-template">
         <div class="grid">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {{-- Add Media tile (always first) --}}
-                <label
-                    class="group flex flex-col justify-center items-center rounded-md border border-dashed border-gray-300 bg-white text-center cursor-pointer transition-colors hover:border-unopim-primary hover:bg-gray-50 dark:border-cherry-700 dark:bg-cherry-900 dark:hover:border-unopim-primary dark:hover:bg-cherry-800"
-                    :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : ''"
-                    :style="tileStyle"
+                {{-- Add Media tile (shared dropzone; ordered last via CSS order) --}}
+                <v-media-add-tile
                     v-if="ai.enabled"
-                    :for="$.uid + '_imageInput'"
-                    aria-label="@lang('admin::app.components.media.images.add-media-btn')"
-                    @click="resetAIModal(); $refs.choiceImageModal.open()"
-                    @dragover.prevent="isDragging = true"
-                    @dragenter.prevent="isDragging = true"
-                    @dragleave.prevent="isDragging = false"
-                    @drop.prevent="onDrop"
-                >
-                    <span
-                        class="icon-image flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-500 transition-colors group-hover:border-unopim-primary/30 group-hover:text-unopim-primary dark:border-cherry-700 dark:bg-cherry-800 dark:text-gray-300"
-                        :class="isCompactTile ? 'h-8 w-8 text-xl' : 'h-9 w-9 text-2xl'"
-                    ></span>
-                    <p
-                        class="text-sm font-semibold leading-5 text-gray-800 dark:text-white"
-                        :class="isCompactTile ? 'mt-1.5' : 'mt-2'"
-                    >
-                        @lang('admin::app.components.media.images.add-media-btn')
-                    </p>
-                    <p
-                        v-if="! isCompactTile"
-                        class="mt-1 max-w-[9rem] px-2 text-xs leading-4 text-gray-500 dark:text-gray-400"
-                    >
-                        @lang('admin::app.components.media.images.drag-drop-hint')
-                    </p>
-                    <p
-                        class="px-2 text-[11px] leading-4 text-gray-400 dark:text-gray-500"
-                        :class="isCompactTile ? 'mt-0.5' : 'mt-1'"
-                    >
-                        @lang('admin::app.components.media.images.allowed-types')
-                        <template v-if="! isCompactTile">
-                            <br>
-                            @lang('admin::app.components.media.videos.allowed-types')
-                        </template>
-                    </p>
-                </label>
+                    :trigger-modal="true"
+                    :compact="isCompactTile"
+                    :style="{ order: 9999 }"
+                    title="@lang('admin::app.components.media.images.add-media-btn')"
+                    hint="@lang('admin::app.components.media.images.drag-drop-hint')"
+                    allowed-types="@lang('admin::app.components.media.images.allowed-types'), @lang('admin::app.components.media.videos.allowed-types')"
+                    @trigger="resetAIModal(); $refs.choiceImageModal.open()"
+                    @drop="onDrop"
+                ></v-media-add-tile>
 
-                <label
+                <v-media-add-tile
                     v-else
-                    class="group flex flex-col justify-center items-center rounded-md border border-dashed border-gray-300 bg-white text-center cursor-pointer transition-colors hover:border-unopim-primary hover:bg-gray-50 dark:border-cherry-700 dark:bg-cherry-900 dark:hover:border-unopim-primary dark:hover:bg-cherry-800"
-                    :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : ''"
-                    :style="tileStyle"
-                    :for="$.uid + '_imageInput'"
-                    aria-label="@lang('admin::app.components.media.images.add-media-btn')"
-                    @dragover.prevent="isDragging = true"
-                    @dragenter.prevent="isDragging = true"
-                    @dragleave.prevent="isDragging = false"
-                    @drop.prevent="onDrop"
-                >
-                    <span
-                        class="icon-image flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-500 transition-colors group-hover:border-unopim-primary/30 group-hover:text-unopim-primary dark:border-cherry-700 dark:bg-cherry-800 dark:text-gray-300"
-                        :class="isCompactTile ? 'h-8 w-8 text-xl' : 'h-9 w-9 text-2xl'"
-                    ></span>
-                    <p
-                        class="text-sm font-semibold leading-5 text-gray-800 dark:text-white"
-                        :class="isCompactTile ? 'mt-1.5' : 'mt-2'"
-                    >
-                        @lang('admin::app.components.media.images.add-media-btn')
-                    </p>
-                    <p
-                        v-if="! isCompactTile"
-                        class="mt-1 max-w-[9rem] px-2 text-xs leading-4 text-gray-500 dark:text-gray-400"
-                    >
-                        @lang('admin::app.components.media.images.drag-drop-hint')
-                    </p>
-                    <p
-                        class="px-2 text-[11px] leading-4 text-gray-400 dark:text-gray-500"
-                        :class="isCompactTile ? 'mt-0.5' : 'mt-1'"
-                    >
-                        @lang('admin::app.components.media.images.allowed-types')
-                        <template v-if="! isCompactTile">
-                            <br>
-                            @lang('admin::app.components.media.videos.allowed-types')
-                        </template>
-                    </p>
-
-                    <input
-                        type="file"
-                        class="hidden"
-                        :id="$.uid + '_imageInput'"
-                        accept="image/*, video/*"
-                        :multiple="allowMultiple"
-                        :ref="$.uid + '_imageInput'"
-                        @change="add"
-                    />
-                </label>
+                    :compact="isCompactTile"
+                    :multiple="allowMultiple"
+                    :style="{ order: 9999 }"
+                    title="@lang('admin::app.components.media.images.add-media-btn')"
+                    hint="@lang('admin::app.components.media.images.drag-drop-hint')"
+                    allowed-types="@lang('admin::app.components.media.images.allowed-types'), @lang('admin::app.components.media.videos.allowed-types')"
+                    :accept="acceptAttribute"
+                    :input-id="$.uid + '_imageInput'"
+                    @change="add"
+                    @drop="onDrop"
+                ></v-media-add-tile>
 
                 {{-- Uploaded Images / Videos (rendered after the upload tile) --}}
                 <draggable
@@ -142,18 +85,21 @@
                             :image="element"
                             :width="width"
                             :height="height"
+                            :accepted-types="acceptedTypes"
+                            :accepted-extensions="acceptedExtensions"
                             @onRemove="remove($event)"
                         >
                         </v-media-gallery-item>
                     </template>
                 </draggable>
+            </div>
 
-                <x-admin::form
-                    v-slot="{ meta, errors, handleSubmit }"
-                    as="div"
-                >
-                    <form>
-                        <x-admin::modal ref="choiceImageModal">
+            <x-admin::form
+                v-slot="{ meta, errors, handleSubmit }"
+                as="div"
+            >
+                <form>
+                    <x-admin::modal ref="choiceImageModal">
                             <x-slot:header>
                                 <p class="grid text-base text-gray-800 dark:text-gray-300 font-semibold text-center">
                                     @lang('admin::app.components.media.images.add-media-btn')
@@ -205,10 +151,9 @@
                                             type="file"
                                             class="hidden"
                                             :id="$.uid + '_imageInput_ai'"
-                                            accept="image/*,video/*"
+                                            :accept="acceptAttribute"
                                             :multiple="allowMultiple"
-                                            :ref="$.uid + '_imageInput'"
-                                            @change="add"
+                                            @change="add($event.target.files)"
                                         />
                                     </label>
                                 </div>
@@ -473,62 +418,40 @@
                         </x-admin::modal>
                     </form>
                 </x-admin::form>
-            </div>
         </div>
     </script>
 
     <script type="text/x-template" id="v-media-gallery-item-template">
-        <div class="group relative flex flex-col rounded-lg border border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900 overflow-hidden shadow-sm transition-all hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700">
-            <div
-                v-if="image.type?.startsWith('image/')"
-                class="relative w-full"
-            >
-                <img
-                    :src="image.url" :type="image.type"
-                    class="w-full h-[140px] object-cover bg-gray-100 dark:bg-cherry-800"
-                />
-                <x-admin::modal ref="mediaPreviewModal" type="large">
-                    <x-slot:header>
-                        <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
-                    </x-slot>
-                    <x-slot:content>
-                        <div>
-                            <img
-                                :src="image.url"
-                                class="w-full h-full object-cover object-top"
-                            />
-                        </div>
-                    </x-slot>
-                </x-admin::modal>
+        <div>
+            <v-media-card
+                :media="image"
+                :mode="image.type?.startsWith('video/') ? 'video' : 'image'"
+                width="100%"
+                height="176px"
+                object-fit="cover"
+                :allow-preview="true"
+                :allow-replace="true"
+                :allow-remove="true"
+                :allow-drag="true"
+                :show-drag-handle="true"
+                :show-extension="false"
+                :invalid="isInvalid"
+                @preview="previewMedia"
+                @replace="replace"
+                @remove="remove"
+            ></v-media-card>
 
-                <div class="absolute inset-0 flex items-end justify-center gap-2 p-2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
-                    <span class="icon-drag text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-grab active:cursor-grabbing"></span>
-                    <span
-                        class="icon-view text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
-                        @click="previewMedia"
-                    ></span>
-                    <label
-                        class="icon-edit text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
-                        :for="$.uid + '_imageInput_' + index"
-                    ></label>
-                    <span
-                        class="icon-delete text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-red-500/80 cursor-pointer"
-                        @click="remove"
-                    ></span>
-
-                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-                    <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-                    <input
-                        type="file"
-                        :name="name + '[]'"
-                        class="hidden"
-                        accept="image/*"
-                        :id="$.uid + '_imageInput_' + index"
-                        :ref="$.uid + '_imageInput_' + index"
-                        @change="edit"
-                    />
-                </div>
-            </div>
+            <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+            <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+            <input
+                type="file"
+                :name="name + '[]'"
+                class="hidden"
+                :accept="acceptAttribute"
+                :id="$.uid + '_imageInput_' + index"
+                :ref="$.uid + '_imageInput_' + index"
+                @change="edit"
+            />
 
             <x-admin::modal ref="mediaPreviewModal" type="large">
                 <x-slot:header>
@@ -547,69 +470,6 @@
                     </div>
                 </x-slot>
             </x-admin::modal>
-
-            <p
-                v-if="image.type?.startsWith('image/')"
-                class="px-2 py-1.5 text-xs text-gray-700 dark:text-gray-300 text-center truncate"
-                :title="image.name"
-            >
-                @{{ getDisplayFileName(image.name) }}
-            </p>
-
-            <div
-                v-else-if="image.type?.startsWith('video/')"
-                class="relative w-full"
-            >
-                <video
-                    class="w-full h-[140px] object-cover bg-gray-900"
-                    ref="videoPreview"
-                    v-if="image.url.length > 0"
-                    :key="image.url"
-                    muted
-                >
-                    <source :src="image.url" :type="image.type">
-                </video>
-
-                {{-- Play badge (always visible to indicate video) --}}
-                <div class="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center">
-                    <span class="icon-play text-base leading-none"></span>
-                </div>
-
-                <div class="absolute inset-0 flex items-end justify-center gap-2 p-2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
-                    <span
-                        class="icon-play text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
-                        @click="previewMedia"
-                    ></span>
-                    <label
-                        class="icon-edit text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-white/30 cursor-pointer"
-                        :for="$.uid + '_imageInput_' + index"
-                    ></label>
-                    <span
-                        class="icon-delete text-xl p-1.5 rounded-md text-white bg-white/10 hover:bg-red-500/80 cursor-pointer"
-                        @click="remove"
-                    ></span>
-
-                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-                    <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-                    <input
-                        type="file"
-                        :name="name + '[]'"
-                        class="hidden"
-                        accept="video/*"
-                        :id="$.uid + '_imageInput_' + index"
-                        :ref="$.uid + '_imageInput_' + index"
-                        @change="edit"
-                    />
-                </div>
-            </div>
-
-            <p
-                v-if="image.type?.startsWith('video/')"
-                class="px-2 py-1.5 text-xs text-gray-700 dark:text-gray-300 text-center truncate"
-                :title="image.name"
-            >
-                @{{ getDisplayFileName(image.name) }}
-            </p>
         </div>
     </script>
 
@@ -646,6 +506,16 @@
                 height: {
                     type: String,
                     default: '120px'
+                },
+
+                acceptedTypes: {
+                    type: Array,
+                    default: () => ['image/*', 'video/*'],
+                },
+
+                acceptedExtensions: {
+                    type: Array,
+                    default: () => [],
                 },
 
                 errors: {
@@ -693,6 +563,10 @@
             },
 
             computed: {
+                acceptAttribute() {
+                    return [...this.acceptedTypes, ...this.acceptedExtensions.map(extension => `.${extension.replace(/^\./, '')}`)].join(',');
+                },
+
                 isCompactTile() {
                     return this.parseDimension(this.width) <= 220
                         && this.parseDimension(this.height) <= 160;
@@ -700,11 +574,12 @@
 
                 tileStyle() {
                     return {
-                        width: this.width,
-                        height: this.height,
+                        width: '100%',
+                        height: '176px',
                         minWidth: '120px',
                         minHeight: '120px',
                         padding: this.isCompactTile ? '10px' : '14px',
+                        order: 9999,
                     };
                 },
 
@@ -738,18 +613,42 @@
             },
 
             methods: {
-                onDrop(event) {
-                    this.isDragging = false;
+                isFileAccepted(file) {
+                    const typeAccepted = this.acceptedTypes.length === 0 || this.acceptedTypes.some(type => type.endsWith('/*')
+                        ? file.type.startsWith(type.slice(0, -1))
+                        : file.type === type);
+                    const extension = file.name.split('.').pop()?.toLowerCase();
+                    const extensionAccepted = this.acceptedExtensions.length === 0
+                        || this.acceptedExtensions.map(value => value.replace(/^\./, '').toLowerCase()).includes(extension);
 
-                    let files = event.dataTransfer ? event.dataTransfer.files : null;
+                    return typeAccepted && extensionAccepted;
+                },
 
+                onDrop(files) {
+                    this.addFiles(files);
+                },
+
+                selectImage(image, allowMultiple) {
+                    if (allowMultiple) {
+                        image.selected =!image.selected;
+                    } else {
+                        this.ai.images.filter(image => image.selected = false)
+                        image.selected = true;
+                    }
+                },
+
+                add(files) {
+                    this.addFiles(files);
+                },
+
+                addFiles(files) {
                     if (! files || ! files.length) {
                         return;
                     }
 
                     let selectedFiles = Array.from(this.allowMultiple ? files : [files[0]]);
 
-                    const validFiles = selectedFiles.every(file => file.type.startsWith('image/') || file.type.startsWith('video/'));
+                    const validFiles = selectedFiles.every(file => this.isFileAccepted(file));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
@@ -774,50 +673,6 @@
 
                     if (this.ai.enabled) {
                         this.$refs.choiceImageModal.close();
-                    }
-                },
-
-                selectImage(image, allowMultiple) {
-                    if (allowMultiple) {
-                        image.selected =!image.selected;
-                    } else {
-                        this.ai.images.filter(image => image.selected = false)
-                        image.selected = true;
-                    }
-                },
-
-                add() {
-                    let imageInput = this.$refs[this.$.uid + '_imageInput'];
-
-                    if (imageInput.files == undefined) {
-                        return;
-                    }
-
-                    const validFiles = Array.from(imageInput.files).every(file => file.type.startsWith('image/') || file.type.startsWith('video/'));
-
-                    if (! validFiles) {
-                        this.$emitter.emit('add-flash', {
-                            type: 'warning',
-                            message: @json(trans('admin::app.components.media.gallery.not-allowed-error'))
-                        });
-
-                        return;
-                    }
-
-                    Array.from(imageInput.files).forEach((file, index) => {
-                        this.images.push({
-                            id: 'image_' + this.images.length,
-                            url: '',
-                            file: file,
-                            type: file.type,
-                            name: file.name
-                        });
-                    });
-
-                    this.signalChange();
-
-                    if (this.ai.enabled) {
-                        this.$refs.choiceImageModal.close()
                     }
                 },
 
@@ -864,7 +719,13 @@
                                 fillAttr: 'code',
                                 noMatchTemplate: @json(trans('admin::app.common.no-match-found')),
                                 selectTemplate: (item) => `@${item.original.code}`,
-                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
+                                menuItemTemplate: (item) => {
+                                    const element = document.createElement('div');
+                                    element.className = 'p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center';
+                                    element.textContent = item.original.name || '[' + item.original.code + ']';
+
+                                    return element.outerHTML;
+                                },
                             });
 
                             tribute.attach(this.$refs.imagePromptInput);
@@ -1051,7 +912,29 @@
         app.component('v-media-gallery-item', {
             template: '#v-media-gallery-item-template',
 
-            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height'],
+            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height', 'acceptedTypes', 'acceptedExtensions'],
+
+            computed: {
+                acceptAttribute() {
+                    return [...this.acceptedTypes, ...this.acceptedExtensions.map(extension => `.${extension.replace(/^\./, '')}`)].join(',');
+                },
+
+                isInvalid() {
+                    if (! this.acceptedExtensions || ! this.acceptedExtensions.length) {
+                        return false;
+                    }
+
+                    const extension = (this.image?.name || '').split('.').pop()?.toLowerCase();
+
+                    if (! extension) {
+                        return false;
+                    }
+
+                    return ! this.acceptedExtensions
+                        .map(value => value.toLowerCase().replace(/^\./, ''))
+                        .includes(extension);
+                },
+            },
 
             mounted() {
                 if (this.image.file instanceof File) {
@@ -1062,6 +945,21 @@
             },
 
             methods: {
+                isFileAccepted(file) {
+                    const typeAccepted = this.acceptedTypes.length === 0 || this.acceptedTypes.some(type => type.endsWith('/*')
+                        ? file.type.startsWith(type.slice(0, -1))
+                        : file.type === type);
+                    const extension = file.name.split('.').pop()?.toLowerCase();
+                    const extensionAccepted = this.acceptedExtensions.length === 0
+                        || this.acceptedExtensions.map(value => value.replace(/^\./, '').toLowerCase()).includes(extension);
+
+                    return typeAccepted && extensionAccepted;
+                },
+
+                replace() {
+                    this.$refs[this.$.uid + '_imageInput_' + this.index].click();
+                },
+
                 edit() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput_' + this.index];
 
@@ -1069,7 +967,7 @@
                         return;
                     }
 
-                    const validFiles = Array.from(imageInput.files).every(file => file.type.startsWith('image/') || file.type.startsWith('video/'));
+                    const validFiles = Array.from(imageInput.files).every(file => this.isFileAccepted(file));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {

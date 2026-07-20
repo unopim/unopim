@@ -122,8 +122,6 @@ class Export
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackRepository $jobTrackRepository,
@@ -176,10 +174,8 @@ class Export
 
     /**
      * Returns error helper instance.
-     *
-     * @return Error
      */
-    public function getErrorHelper()
+    public function getErrorHelper(): Error
     {
         return $this->errorHelper;
     }
@@ -189,11 +185,7 @@ class Export
      */
     public function isValid(): bool
     {
-        if ($this->export->state == self::STATE_FAILED) {
-            return false;
-        }
-
-        return true;
+        return $this->export->state != self::STATE_FAILED;
     }
 
     public function stateUpdate($state = self::STATE_VALIDATED): Export
@@ -364,7 +356,7 @@ class Export
         return in_array($this->export->state, [self::STATE_PAUSED, self::STATE_CANCELLED, self::STATE_FAILED]);
     }
 
-    public function flush($exportBuffer)
+    public function flush($exportBuffer): static
     {
         if (empty($exportBuffer)) {
             return $this;
@@ -376,7 +368,7 @@ class Export
         $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
         $fileName = $typeExporter->getFileName();
 
-        $buffer = app(FileExportFileBuffer::class)->initialize(
+        $buffer = resolve(FileExportFileBuffer::class)->initialize(
             $directory,
             $fileName,
             $typeExporter->getExportParameter()
@@ -446,7 +438,7 @@ class Export
     {
         $withMedia = (bool) ($filters['with_media'] ?? false);
         $filePath = $withMedia ? $temporaryPath : $filePath;
-        $export = $this->jobTrackRepository->update([
+        $this->jobTrackRepository->update([
             'file_path' => $filePath,
         ], $this->export->id);
     }
@@ -460,7 +452,7 @@ class Export
 
         if (! $this->typeExporter) {
             $entityType = $this->resolveEntityType($jobInstance->entity_type);
-            $exporterConfig = config('exporters.'.$entityType) ?? config('quick_exporters.'.$entityType);
+            $exporterConfig = config('exporters.'.$entityType, config('quick_exporters.'.$entityType));
 
             if (! is_array($exporterConfig) || ! isset($exporterConfig['exporter'], $exporterConfig['source'])) {
                 throw new \UnexpectedValueException(sprintf(

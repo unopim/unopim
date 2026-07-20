@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('webhook_settings', function (Blueprint $table) {
+        Schema::create('webhook_settings', function (Blueprint $table): void {
             $table->id();
             $table->string('field');
             $table->string('value')->nullable();

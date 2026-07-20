@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('category_fields', function (Blueprint $table) {
+        Schema::create('category_fields', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('code')->unique();
             $table->string('type');

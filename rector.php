@@ -5,8 +5,9 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
 use Rector\Set\ValueObject\SetList;
-use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
+use Rector\TypeDeclaration\Rector\ClassMethod\StrictArrayParamDimFetchRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
+use RectorLaravel\Rector\MethodCall\ContainerBindConcreteWithClosureOnlyRector;
 use RectorLaravel\Set\LaravelLevelSetList;
 use RectorLaravel\Set\LaravelSetList;
 
@@ -15,7 +16,7 @@ return RectorConfig::configure()
         __DIR__.'/app',
         __DIR__.'/packages/Webkul',
     ])
-    ->withPhpSets(php83: true)
+    ->withPhpSets(php84: true)
     ->withSets([
         SetList::CODE_QUALITY,
         SetList::DEAD_CODE,
@@ -34,6 +35,9 @@ return RectorConfig::configure()
         __DIR__.'/packages/Webkul/AdminApi',
         '*/tests/*',
         SafeDeclareStrictTypesRector::class,
-        DeclareStrictTypesRector::class,
         AddOverrideAttributeToOverriddenMethodsRector::class,
+        // Types Laravel container closures as `array $app` — fatal at boot ($app is the Application object).
+        StrictArrayParamDimFetchRector::class,
+        // Drops the explicit $abstract from singleton/bind calls; keep bindings explicit.
+        ContainerBindConcreteWithClosureOnlyRector::class,
     ]);

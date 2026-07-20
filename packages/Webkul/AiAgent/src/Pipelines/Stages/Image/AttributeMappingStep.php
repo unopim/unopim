@@ -64,12 +64,7 @@ class AttributeMappingStep implements PipelineStageContract
     {
         $detections = $payload->metadata['visionDetections'] ?? null;
 
-        if (! is_array($detections) || empty($detections)) {
-            throw new PipelineException(
-                'AttributeMappingStep: visionDetections is missing — VisionDetectionStep must run first.',
-                self::class,
-            );
-        }
+        throw_if(! is_array($detections) || $detections === [], PipelineException::class, 'AttributeMappingStep: visionDetections is missing — VisionDetectionStep must run first.', self::class);
 
         // Merge default map with any caller-supplied overrides
         $map = array_merge(
@@ -94,7 +89,7 @@ class AttributeMappingStep implements PipelineStageContract
             ->withAttributes($mappedAttributes);
 
         // Promote mapped category if not already set
-        if (empty($ctx->category) && ! empty($mappedAttributes['categories'])) {
+        if (in_array($ctx->category, [null, '', '0'], true) && ! empty($mappedAttributes['categories'])) {
             $firstCategory = is_array($mappedAttributes['categories'])
                 ? ($mappedAttributes['categories'][0] ?? null)
                 : $mappedAttributes['categories'];
@@ -120,11 +115,6 @@ class AttributeMappingStep implements PipelineStageContract
         // Arrays in join-list → comma string (e.g. color: "blue, white")
         if (in_array($detectionKey, self::ARRAY_JOIN_FIELDS, true) && is_array($value)) {
             return implode(', ', array_filter($value));
-        }
-
-        // suggestedCategories — keep as array for multi-select
-        if ($detectionKey === 'suggestedCategories' && is_array($value)) {
-            return $value;
         }
 
         return $value;

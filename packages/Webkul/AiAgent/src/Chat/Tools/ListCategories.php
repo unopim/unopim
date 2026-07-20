@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
 use Laravel\Ai\Contracts\Tool;
@@ -33,7 +34,7 @@ class ListCategories implements PimTool
             {
                 return [
                     'search' => $schema->string()->description('Search term to filter categories by code or name'),
-                    'limit'  => $schema->integer()->description('Maximum results (default 20)'),
+                    'limit'  => $schema->integer()->description('Maximum results (default 20, max 100)'),
                 ];
             }
 
@@ -44,7 +45,7 @@ class ListCategories implements PimTool
                 }
 
                 $search = $request->string('search')->toString() ?: null;
-                $limit = $request->has('limit') ? (int) $request->get('limit') : 20;
+                $limit = $request->integer('limit', 20);
 
                 $limit = min(max($limit, 1), 100);
 
@@ -56,7 +57,7 @@ class ListCategories implements PimTool
 
                 if ($search) {
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $search);
-                    $qb->where(function ($q) use ($escaped, $context, $grammar) {
+                    $qb->where(function (Builder $q) use ($escaped, $context, $grammar): void {
                         $q->where('code', 'like', "%{$escaped}%")
                             ->orWhereRaw($grammar->jsonExtract('additional_data', 'locale_specific', $context->locale, 'name').' LIKE ?', ["%{$escaped}%"]);
                     });
@@ -64,8 +65,8 @@ class ListCategories implements PimTool
 
                 $categories = $qb->orderBy('_lft')->limit($limit)->get();
 
-                $results = $categories->map(function ($cat) use ($context) {
-                    $data = json_decode($cat->additional_data, true) ?? [];
+                $results = $categories->map(function ($cat) use ($context): array {
+                    $data = json_decode((string) $cat->additional_data, true) ?? [];
                     $name = $data['locale_specific'][$context->locale]['name'] ?? $data['locale_specific']['en_US']['name'] ?? $cat->code;
 
                     return [

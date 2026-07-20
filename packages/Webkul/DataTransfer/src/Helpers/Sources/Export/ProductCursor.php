@@ -35,7 +35,7 @@ class ProductCursor extends AbstractCursor
         $query = $this->source->newQuery();
         $filters = $this->requestParams['filters'] ?? [];
 
-        app(ProductExportFilter::class)->applyToQuery($query, $filters);
+        resolve(ProductExportFilter::class)->applyToQuery($query, $filters);
 
         try {
             $ids = $query->select('id')
@@ -54,7 +54,7 @@ class ProductCursor extends AbstractCursor
             throw $e;
         }
 
-        return $ids->map(fn ($id) => ['id' => $id])->all();
+        return $ids->map(fn ($id): array => ['id' => $id])->all();
     }
 
     /**

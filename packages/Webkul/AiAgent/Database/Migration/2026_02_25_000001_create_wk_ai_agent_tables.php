@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ai_agent_credentials', function (Blueprint $table) {
+        Schema::create('ai_agent_credentials', function (Blueprint $table): void {
             $table->id();
             $table->string('label');
             $table->string('provider')->default('openai');
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('ai_agent_agents', function (Blueprint $table) {
+        Schema::create('ai_agent_agents', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
@@ -42,7 +42,7 @@ return new class extends Migration
                 ->onDelete('cascade');
         });
 
-        Schema::create('ai_agent_executions', function (Blueprint $table) {
+        Schema::create('ai_agent_executions', function (Blueprint $table): void {
             $table->id();
             $table->unsignedBigInteger('agentId')->nullable();
             $table->unsignedBigInteger('credentialId')->nullable();

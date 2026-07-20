@@ -89,9 +89,14 @@ class UserController extends Controller
         $admin = $this->adminRepository->create($data);
 
         if (request()->hasFile('image')) {
-            $admin->image = $this->fileStorer->store(
+            $image = request()->file('image');
+            $image = is_array($image) ? current($image) : $image;
+            $extension = $image->guessExtension() ?: strtolower($image->getClientOriginalExtension());
+
+            $admin->image = $this->fileStorer->storeAs(
                 path: 'admins'.DIRECTORY_SEPARATOR.$admin->id,
-                file: current(request()->file('image'))
+                name: Str::random(40).'.'.$extension,
+                file: $image,
             );
 
             $admin->save();
@@ -152,9 +157,14 @@ class UserController extends Controller
         $admin = $this->adminRepository->update($data, $id);
 
         if (request()->hasFile('image')) {
-            $admin->image = $this->fileStorer->store(
+            $image = request()->file('image');
+            $image = is_array($image) ? current($image) : $image;
+            $extension = $image->guessExtension() ?: strtolower($image->getClientOriginalExtension());
+
+            $admin->image = $this->fileStorer->storeAs(
                 path: 'admins'.DIRECTORY_SEPARATOR.$admin->id,
-                file: current(request()->file('image'))
+                name: Str::random(40).'.'.$extension,
+                file: $image,
             );
         } else {
             if (! request()->has('image') && $admin->image) {
@@ -229,8 +239,6 @@ class UserController extends Controller
 
     /**
      * Destroy current after confirming.
-     *
-     * @return Response
      */
     public function destroySelf(): JsonResponse
     {

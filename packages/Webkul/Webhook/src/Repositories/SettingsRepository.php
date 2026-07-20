@@ -17,15 +17,13 @@ class SettingsRepository extends Repository
 
     public function createOrUpdate(string $field, $value, array $extra = [])
     {
-        $config = $this->updateOrCreate(
+        return $this->updateOrCreate(
             ['field' => $field],
             [
                 'value' => $value,
                 'extra' => $extra,
             ]
         );
-
-        return $config;
     }
 
     public function getAllDataAndNormalize(): array

@@ -7,7 +7,7 @@ namespace Webkul\AiAgent\DTOs;
  * Constructed from the Credential model for type-safe passing
  * to the HTTP client and service layer.
  */
-final class CredentialConfig
+final readonly class CredentialConfig
 {
     /**
      * @param  int  $id  Credential record ID
@@ -19,13 +19,13 @@ final class CredentialConfig
      * @param  array<string, mixed>  $extras  Provider-specific configuration
      */
     public function __construct(
-        public readonly int $id,
-        public readonly string $label,
-        public readonly string $provider,
-        public readonly string $apiUrl,
-        public readonly string $apiKey,
-        public readonly string $model,
-        public readonly array $extras = [],
+        public int $id,
+        public string $label,
+        public string $provider,
+        public string $apiUrl,
+        public string $apiKey,
+        public string $model,
+        public array $extras = [],
     ) {}
 
     /**

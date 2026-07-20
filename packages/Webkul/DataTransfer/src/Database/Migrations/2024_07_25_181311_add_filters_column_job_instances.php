@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('job_instances', function (Blueprint $table) {
+        Schema::table('job_instances', function (Blueprint $table): void {
             $table->json('filters')->after('images_directory_path');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('job_instances', function (Blueprint $table) {
+        Schema::table('job_instances', function (Blueprint $table): void {
             //
         });
     }

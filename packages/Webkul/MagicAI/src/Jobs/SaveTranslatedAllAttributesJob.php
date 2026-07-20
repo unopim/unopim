@@ -2,37 +2,23 @@
 
 namespace Webkul\MagicAI\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Webkul\Product\Repositories\ProductRepository;
 
 class SaveTranslatedAllAttributesJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    protected $productId;
-
-    protected $translatedValues;
-
-    protected $channel;
+    use Queueable;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($productId, $translatedValues, $channel)
-    {
-        $this->productId = $productId;
-        $this->translatedValues = $translatedValues;
-        $this->channel = $channel;
-    }
+    public function __construct(protected $productId, protected $translatedValues, protected $channel) {}
 
     /**
      * Execute the job.
      */
-    public function handle(ProductRepository $productRepository)
+    public function handle(ProductRepository $productRepository): void
     {
         $product = $productRepository->find($this->productId);
         $data = $product->values;

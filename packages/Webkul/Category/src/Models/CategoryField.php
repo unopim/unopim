@@ -2,6 +2,7 @@
 
 namespace Webkul\Category\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,6 +14,19 @@ use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Fillable([
+    'code',
+    'type',
+    'enable_wysiwyg',
+    'position',
+    'status',
+    'section',
+    'is_required',
+    'is_unique',
+    'validation',
+    'value_per_locale',
+    'regex_pattern',
+])]
 class CategoryField extends TranslatableModel implements CategoryFieldContract, HistoryContract
 {
     use HasFactory;
@@ -40,25 +54,6 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
      */
     public $translatedAttributes = [
         'name',
-    ];
-
-    /**
-     * Fillable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'code',
-        'type',
-        'enable_wysiwyg',
-        'position',
-        'status',
-        'section',
-        'is_required',
-        'is_unique',
-        'validation',
-        'value_per_locale',
-        'regex_pattern',
     ];
 
     /**
@@ -126,9 +121,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
             };
         }
 
-        $validations = '{ '.implode(', ', array_filter($validations)).' }';
-
-        return $validations;
+        return '{ '.implode(', ', array_filter($validations)).' }';
     }
 
     /**
@@ -138,11 +131,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
     {
         $validations = [];
 
-        if ($this->is_required) {
-            $validations[] = 'required';
-        } else {
-            $validations[] = 'nullable';
-        }
+        $validations[] = $this->is_required ? 'required' : 'nullable';
 
         if ($this->validation) {
             $validations[] = match ($this->validation) {
@@ -161,50 +150,51 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
      *
      * @return string|null The validation rule string or null if no validation is required.
      */
-    public function getValidationUniqueField()
+    public function getValidationUniqueField(): ?string
     {
-        $validation = null;
-
         if ($this->value_per_locale && $this->is_unique) {
-            $validation = 'unique:categories,additional_data->locale_specific->%s->%s';
+            return 'unique:categories,additional_data->locale_specific->%s->%s';
         }
-
         if (! $this->value_per_locale && $this->is_unique) {
-            $validation = 'unique:categories,additional_data->common->%s';
+            return 'unique:categories,additional_data->common->%s';
         }
 
-        return $validation;
+        return null;
     }
 
     /**
      * Returns field validation rules for API and internal functions
      */
-    public function getValidationsFieldOnlyMedia(): array
+    public function getValidationsFieldOnlyMedia(?int $id = null): array
     {
         $validations = [];
 
-        if ($this->is_required) {
-            $validations[] = 'required';
-        } else {
-            $validations[] = 'nullable';
-        }
+        $validations[] = $this->is_required ? 'required' : 'nullable';
 
         if ($this->type === 'file') {
             $validations[] = 'file';
-            $validations[] = 'max:'.(core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? '5120');
+            $validations[] = 'max:'.(core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? '2048');
         }
 
         if ($this->type === 'image') {
             $validations[] = 'file';
             $validations[] = 'mimes:bmp,jpeg,jpg,png';
-            $retVal = core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? '5120';
+            $retVal = core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? '2048';
 
             if ($retVal) {
                 $validations[] = 'max:'.$retVal.'';
             }
         }
 
-        $validations[] = new FileOrImageValidValue(isImage: $this->type === 'image');
+        $maxKilobytes = $this->type === 'image'
+            ? (int) (core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? 2048)
+            : (int) (core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? 2048);
+
+        $validations[] = new FileOrImageValidValue(
+            isImage: $this->type === 'image',
+            maxKilobytes: $maxKilobytes,
+            allowedPathPrefixes: $id ? ['category/'.$id.'/'.$this->code] : [],
+        );
 
         return $validations;
     }
@@ -220,7 +210,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
     /**
      * check if possible to delete this attribute
      */
-    public function canBeDeleted()
+    public function canBeDeleted(): bool
     {
         return $this->code !== self::NON_DELETABLE_FIELD_CODE;
     }
@@ -237,7 +227,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
      * Validation rules for validator
      * used while validating category field values
      */
-    public function getValidationRules(?string $currentLocaleCode = null, ?int $id = null, bool $withUniqueValidation = true)
+    public function getValidationRules(?string $currentLocaleCode = null, ?int $id = null, bool $withUniqueValidation = true): array
     {
         $validations = $this->is_required ? ['required'] : ['nullable'];
 

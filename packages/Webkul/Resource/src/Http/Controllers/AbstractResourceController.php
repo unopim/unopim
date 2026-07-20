@@ -22,7 +22,7 @@ abstract class AbstractResourceController extends Controller
         $resource = $this->resource();
 
         if (request()->ajax()) {
-            return app($resource->dataGrid())->toJson();
+            return resolve($resource->dataGrid())->toJson();
         }
 
         return view('resource::index', [
@@ -50,7 +50,7 @@ abstract class AbstractResourceController extends Controller
     {
         $resource = $this->resource();
 
-        $record = app($resource->repository())->findOrFail($id);
+        $record = resolve($resource->repository())->findOrFail($id);
 
         return view('resource::edit', [
             'resource' => $resource->toViewModel(),
@@ -69,9 +69,9 @@ abstract class AbstractResourceController extends Controller
         $resource = $this->resource();
 
         // Resolving the FormRequest still runs validation (throws 422 on failure).
-        $request = app($resource->request());
+        $request = resolve($resource->request());
 
-        $record = app($resource->repository())->create($request->only($this->schemaFieldNames($resource)));
+        $record = resolve($resource->repository())->create($request->only($this->schemaFieldNames($resource)));
 
         session()->flash('success', trans('resource::app.create-success'));
 
@@ -89,9 +89,9 @@ abstract class AbstractResourceController extends Controller
         $resource = $this->resource();
 
         // Resolving the FormRequest still runs validation (throws 422 on failure).
-        $request = app($resource->request());
+        $request = resolve($resource->request());
 
-        app($resource->repository())->update($request->only($this->schemaFieldNames($resource)), $id);
+        resolve($resource->repository())->update($request->only($this->schemaFieldNames($resource)), $id);
 
         session()->flash('success', trans('resource::app.update-success'));
 
@@ -106,7 +106,7 @@ abstract class AbstractResourceController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $repository = app($this->resource()->repository());
+        $repository = resolve($this->resource()->repository());
 
         if (! $repository->find($id)) {
             return new JsonResponse(['message' => trans('resource::app.not-found')], 404);

@@ -2,9 +2,10 @@
 
 namespace Webkul\Core;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Intl\Currencies;
 use Symfony\Component\Intl\Exception\MissingResourceException;
@@ -14,10 +15,11 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\Core\Repositories\CurrencyRepository;
 use Webkul\Core\Repositories\LocaleRepository;
-use Webkul\Customer\Models\CustomerGroup;
 
 class Core
 {
+    public $exchangeRateRepository;
+
     /**
      * The UnoPim version.
      *
@@ -67,13 +69,6 @@ class Core
     protected $currentLocale;
 
     /**
-     * Guest Customer Group
-     *
-     * @var CustomerGroup
-     */
-    protected $guestCustomerGroup;
-
-    /**
      * Exchange rates
      *
      * @var array
@@ -95,18 +90,7 @@ class Core
     protected $singletonInstances = [];
 
     /**
-     * Register your core config keys here which you don't want to
-     * load in static array. These keys will load from database
-     * every time the `getConfigData` method is called.
-     */
-    private $coreConfigExceptions = [
-        'catalog.products.guest_checkout.allow_guest_checkout',
-    ];
-
-    /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected ChannelRepository $channelRepository,
@@ -117,10 +101,8 @@ class Core
 
     /**
      * Get the version number of the UnoPim.
-     *
-     * @return string
      */
-    public function version()
+    public function version(): string
     {
         return static::VERSION;
     }
@@ -155,8 +137,6 @@ class Core
 
     /**
      * Returns default channel models.
-     *
-     * @return Contracts\Channel
      */
     public function getDefaultChannel(): ?Channel
     {
@@ -251,7 +231,7 @@ class Core
             return $channelCode;
         }
 
-        return $channelCode ?: ($this->currentChannel?->code ?: app(CatalogScope::class)->channelCode());
+        return $channelCode ?: ($this->currentChannel?->code ?: resolve(CatalogScope::class)->channelCode());
     }
 
     /**
@@ -291,10 +271,10 @@ class Core
     {
         $langPath = base_path('packages/Webkul/Admin/src/Resources/lang');
 
-        $availableDirs = array_map('basename', glob($langPath.'/*', GLOB_ONLYDIR) ?: []);
+        $availableDirs = array_map(basename(...), glob($langPath.'/*', GLOB_ONLYDIR) ?: []);
 
         return $this->localeRepository->all()
-            ->filter(fn ($locale) => in_array($locale->code, $availableDirs))
+            ->filter(fn ($locale): bool => in_array($locale->code, $availableDirs))
             ->sortBy('name')
             ->values();
     }
@@ -322,7 +302,7 @@ class Core
     /**
      * Get locale from request.
      *
-     * @return string
+     * @return Contracts\Locale|null
      */
     public function getRequestedLocale()
     {
@@ -355,7 +335,7 @@ class Core
             return $localeCode;
         }
 
-        return $localeCode ?: app(CatalogScope::class)->localeCode();
+        return $localeCode ?: resolve(CatalogScope::class)->localeCode();
     }
 
     /**
@@ -442,15 +422,10 @@ class Core
      * Set currency.
      *
      * @param  string  $currencyCode
-     * @return void
      */
-    public function setCurrentCurrency($currencyCode)
+    public function setCurrentCurrency($currencyCode): void
     {
         $this->currentCurrency = $this->currencyRepository->findOneByField('code', $currencyCode);
-
-        if ($this->currentCurrency) {
-            return;
-        }
     }
 
     /**
@@ -485,10 +460,10 @@ class Core
     /**
      * Format and convert price with currency symbol.
      *
-     * @param  float  $price
+     * @param  float  $amount
      * @return string
      */
-    public function currency($amount = 0)
+    public function currency($amount = 0): string|false
     {
         if (is_null($amount)) {
             $amount = 0;
@@ -501,9 +476,8 @@ class Core
      * Return currency symbol from currency code.
      *
      * @param  string|Contracts\Currency  $currency
-     * @return string
      */
-    public function currencySymbol($currency)
+    public function currencySymbol($currency): string
     {
         $code = $currency instanceof Contracts\Currency ? $currency->code : $currency;
 
@@ -516,14 +490,15 @@ class Core
      * Format and convert price with currency symbol.
      *
      * @param  float  $price
-     * @param  string (optional)  $currencyCode
-     * @return string
+     * @param  string|null  $currencyCode
      */
-    public function formatPrice($price, $currencyCode)
+    public function formatPrice($price, $currencyCode = null): string|false
     {
         if (is_null($price)) {
             $price = 0;
         }
+
+        $currencyCode ??= $this->getBaseCurrencyCode();
 
         $currency = $this->getAllCurrencies()->where('code', $currencyCode)->first();
 
@@ -576,7 +551,7 @@ class Core
             $content = $formatter->formatCurrency($price, $this->getBaseCurrencyCode());
         }
 
-        return ! $isEncoded ? $content : htmlentities($content);
+        return $isEncoded ? htmlentities($content) : $content;
     }
 
     /**
@@ -585,7 +560,7 @@ class Core
      * @param  Contracts\Channel  $channel
      * @return int
      */
-    public function channelTimeStamp($channel)
+    public function channelTimeStamp($channel): int|false
     {
         $timezone = $channel->timezone;
 
@@ -604,9 +579,8 @@ class Core
      * Check whether sql date is empty.
      *
      * @param  string  $date
-     * @return bool
      */
-    public function is_empty_date($date)
+    public function is_empty_date($date): bool
     {
         return preg_replace('#[ 0:-]#', '', $date) === '';
     }
@@ -614,18 +588,16 @@ class Core
     /**
      * Format date using current channel.
      *
-     * @param  \Illuminate\Support\Carbon|string|null  $date
-     * @param  string  $format
-     * @return string
+     * @param  Carbon|string|null  $date
      */
-    public function formatDate($date = null, $format = 'd-m-Y H:i:s')
+    public function formatDate($date = null, string $format = 'd-m-Y H:i:s'): string
     {
         if (is_null($date)) {
-            $date = Carbon::now();
+            $date = Date::now();
         }
 
         if (is_string($date)) {
-            $date = Carbon::parse($date);
+            $date = Date::parse($date);
         }
 
         return $date->format($format);
@@ -634,20 +606,18 @@ class Core
     /**
      * Format date to current user timezone.
      *
-     * @param  \Illuminate\Support\Carbon|string|null  $date
-     * @param  string  $format
-     * @return string
+     * @param  Carbon|string|null  $date
      */
-    public function formatDateWithTimeZone($date = null, $format = 'd-m-Y H:i:s')
+    public function formatDateWithTimeZone($date = null, string $format = 'd-m-Y H:i:s'): string
     {
         if (is_null($date)) {
-            $date = Carbon::now();
+            $date = Date::now();
         }
 
         $userTimeZone = auth('admin')?->user()?->timezone ?? config('app.timezone', 'UTC');
 
         if (is_string($date)) {
-            $date = Carbon::parse($date);
+            $date = Date::parse($date);
         }
 
         $date->setTimezone($userTimeZone);
@@ -659,7 +629,7 @@ class Core
      * Retrieve information from payment configuration.
      *
      * @param  string  $field
-     * @param  int|string|null  $channelId
+     * @param  int|string|null  $channel
      * @param  string|null  $locale
      * @return mixed
      */
@@ -694,10 +664,8 @@ class Core
 
     /**
      * Return guest customer group.
-     *
-     * @return \Webkul\Customer\Contract\CustomerGroup
      */
-    public function getGuestCustomerGroup()
+    public function getGuestCustomerGroup(): null
     {
         return null;
     }
@@ -707,44 +675,33 @@ class Core
      *
      * @param  string  $date
      * @param  int  $day
-     * @return string
      */
-    public function xWeekRange($date, $day)
+    public function xWeekRange($date, $day): string
     {
         $ts = strtotime($date);
 
         if (! $day) {
-            $start = (date('D', $ts) == 'Sun') ? $ts : strtotime('last sunday', $ts);
+            $start = (date('D', $ts) === 'Sun') ? $ts : strtotime('last sunday', $ts);
 
             return date('Y-m-d', $start);
-        } else {
-            $end = (date('D', $ts) == 'Sat') ? $ts : strtotime('next saturday', $ts);
-
-            return date('Y-m-d', $end);
         }
+        $end = (date('D', $ts) === 'Sat') ? $ts : strtotime('next saturday', $ts);
+
+        return date('Y-m-d', $end);
     }
 
     /**
      * Method to sort through the acl items and put them in order.
-     *
-     * @param  array  $items
-     * @return array
      */
-    public function sortItems($items)
+    public function sortItems(array $items): array
     {
         foreach ($items as &$item) {
-            if (count($item['children'])) {
+            if (count($item['children']) > 0) {
                 $item['children'] = $this->sortItems($item['children']);
             }
         }
 
-        usort($items, function ($a, $b) {
-            if ($a['sort'] == $b['sort']) {
-                return 0;
-            }
-
-            return ($a['sort'] < $b['sort']) ? -1 : 1;
-        });
+        usort($items, fn (array $a, array $b): int => $a['sort'] <=> $b['sort']);
 
         return $this->convertToAssociativeArray($items);
     }
@@ -753,9 +710,8 @@ class Core
      * Get config field.
      *
      * @param  string  $fieldName
-     * @return array
      */
-    public function getConfigField($fieldName)
+    public function getConfigField($fieldName): ?array
     {
         foreach (config('core') as $coreData) {
             if (! isset($coreData['fields'])) {
@@ -770,22 +726,21 @@ class Core
                 }
             }
         }
+
+        return null;
     }
 
     /**
      * Convert to associative array.
-     *
-     * @param  array  $items
-     * @return array
      */
-    public function convertToAssociativeArray($items)
+    public function convertToAssociativeArray(array $items): array
     {
         foreach ($items as $key1 => $level1) {
             unset($items[$key1]);
 
             $items[$level1['key']] = $level1;
 
-            if (! count($level1['children'])) {
+            if (count($level1['children']) === 0) {
                 continue;
             }
 
@@ -798,7 +753,7 @@ class Core
 
                 $items[$level1['key']]['children'][$finalKey2] = $level2;
 
-                if (! count($level2['children'])) {
+                if (count($level2['children']) === 0) {
                     continue;
                 }
 
@@ -820,19 +775,15 @@ class Core
     /**
      * Array set.
      *
-     * @param  array  $items
-     * @param  string  $key
-     * @param  string|int|float  $value
-     * @return array
+     * @param  string|null  $key
      */
-    public function array_set(&$array, $key, $value)
+    public function array_set(array &$array, $key, array $value): array
     {
         if (is_null($key)) {
             return $array = $value;
         }
 
         $keys = explode('.', $key);
-        $count = count($keys);
 
         while (count($keys) > 1) {
             $key = array_shift($keys);
@@ -849,22 +800,15 @@ class Core
 
         $finalKey = array_shift($keys);
 
-        if (isset($array[$finalKey])) {
-            $array[$finalKey] = $this->arrayMerge($array[$finalKey], $value);
-        } else {
-            $array[$finalKey] = $value;
-        }
+        $array[$finalKey] = isset($array[$finalKey]) ? $this->arrayMerge($array[$finalKey], $value) : $value;
 
         return $array;
     }
 
     /**
      * Convert empty strings to null.
-     *
-     * @param  array  $array1
-     * @return array
      */
-    public function convertEmptyStringsToNull($array)
+    public function convertEmptyStringsToNull(array $array): array
     {
         foreach ($array as $key => $value) {
             if ($value == '' || $value == 'null') {
@@ -887,7 +831,7 @@ class Core
             return $this->singletonInstances[$className];
         }
 
-        return $this->singletonInstances[$className] = app($className);
+        return $this->singletonInstances[$className] = resolve($className);
     }
 
     /**
@@ -899,10 +843,10 @@ class Core
     }
 
     /**
-     * Create singleton object through single facade.
+     * Get tax category by its id.
      *
-     * @param  string  $className
-     * @return object
+     * @param  int|string|null  $id
+     * @return mixed
      */
     public function getTaxCategoryById($id)
     {
@@ -919,10 +863,8 @@ class Core
 
     /**
      * Get sender email details.
-     *
-     * @return array
      */
-    public function getSenderEmailDetails()
+    public function getSenderEmailDetails(): array
     {
         $senderName = $this->getConfigData('emails.configure.email_settings.sender_name') ?: config('mail.from.name');
 
@@ -936,10 +878,8 @@ class Core
 
     /**
      * Get Admin email details.
-     *
-     * @return array
      */
-    public function getAdminEmailDetails()
+    public function getAdminEmailDetails(): array
     {
         $adminName = $this->getConfigData('emails.configure.email_settings.admin_name')
             ?: (config('mail.admin.name')
@@ -956,10 +896,8 @@ class Core
 
     /**
      * Array merge.
-     *
-     * @return array
      */
-    protected function arrayMerge(array &$array1, array &$array2)
+    protected function arrayMerge(array &$array1, array &$array2): array
     {
         $merged = $array1;
 
@@ -1003,17 +941,15 @@ class Core
                     'channel_code' => $channel,
                 ]);
             }
+        } elseif (! empty($fields['locale_based'])) {
+            $coreConfigValue = $this->coreConfigRepository->findOneWhere([
+                'code'        => $field,
+                'locale_code' => $locale,
+            ]);
         } else {
-            if (! empty($fields['locale_based'])) {
-                $coreConfigValue = $this->coreConfigRepository->findOneWhere([
-                    'code'        => $field,
-                    'locale_code' => $locale,
-                ]);
-            } else {
-                $coreConfigValue = $this->coreConfigRepository->findOneWhere([
-                    'code' => $field,
-                ]);
-            }
+            $coreConfigValue = $this->coreConfigRepository->findOneWhere([
+                'code' => $field,
+            ]);
         }
 
         return $coreConfigValue;
@@ -1043,7 +979,7 @@ class Core
      *
      * @return string
      */
-    public function getMaxUploadSize()
+    public function getMaxUploadSize(): string|false
     {
         return ini_get('upload_max_filesize');
     }
@@ -1057,8 +993,8 @@ class Core
 
         $formattedTimezones = [];
 
-        foreach ($timezones as $index => $timezone) {
-            $now = Carbon::now($timezone);
+        foreach ($timezones as $timezone) {
+            $now = Date::now($timezone);
 
             $offset = $now->offset / 60;
 

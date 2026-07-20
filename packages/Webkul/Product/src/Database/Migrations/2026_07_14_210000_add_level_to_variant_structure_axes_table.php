@@ -12,14 +12,14 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('variant_structure_axes', function (Blueprint $table) {
+        Schema::table('variant_structure_axes', function (Blueprint $table): void {
             if (! Schema::hasColumn('variant_structure_axes', 'level')) {
                 $table->enum('level', ['level_1', 'level_2'])->default('level_1')->after('attribute_id');
             }
         });
 
         try {
-            Schema::table('variant_structure_axes', function (Blueprint $table) {
+            Schema::table('variant_structure_axes', function (Blueprint $table): void {
                 $table->dropUnique('vsax_structure_position_unique');
             });
         } catch (Throwable) {
@@ -27,7 +27,7 @@ return new class extends Migration
         }
 
         try {
-            Schema::table('variant_structure_axes', function (Blueprint $table) {
+            Schema::table('variant_structure_axes', function (Blueprint $table): void {
                 $table->unique(['variant_structure_id', 'level', 'position'], 'vsax_structure_level_position_unique');
             });
         } catch (Throwable) {
@@ -42,21 +42,21 @@ return new class extends Migration
         }
 
         try {
-            Schema::table('variant_structure_axes', function (Blueprint $table) {
+            Schema::table('variant_structure_axes', function (Blueprint $table): void {
                 $table->dropUnique('vsax_structure_level_position_unique');
             });
         } catch (Throwable) {
             //
         }
 
-        Schema::table('variant_structure_axes', function (Blueprint $table) {
+        Schema::table('variant_structure_axes', function (Blueprint $table): void {
             if (Schema::hasColumn('variant_structure_axes', 'level')) {
                 $table->dropColumn('level');
             }
         });
 
         try {
-            Schema::table('variant_structure_axes', function (Blueprint $table) {
+            Schema::table('variant_structure_axes', function (Blueprint $table): void {
                 $table->unique(['variant_structure_id', 'position'], 'vsax_structure_position_unique');
             });
         } catch (Throwable) {

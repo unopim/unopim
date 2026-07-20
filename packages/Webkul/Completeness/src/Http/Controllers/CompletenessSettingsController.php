@@ -17,7 +17,7 @@ class CompletenessSettingsController extends Controller
 
     public function edit($familyId)
     {
-        return app(AttributeCompletenessDataGrid::class)->setAttributeFamilyId($familyId)->toJson();
+        return resolve(AttributeCompletenessDataGrid::class)->setAttributeFamilyId($familyId)->toJson();
     }
 
     public function update()
@@ -37,7 +37,7 @@ class CompletenessSettingsController extends Controller
         $toInsert = array_diff($newCodes, $existingCodes);
         $toDelete = array_diff($existingCodes, $newCodes);
 
-        if (! empty($toInsert)) {
+        if ($toInsert !== []) {
             $channels = $this->channelRepository->findWhereIn('code', $toInsert);
 
             foreach ($channels as $channel) {
@@ -49,7 +49,7 @@ class CompletenessSettingsController extends Controller
             }
         }
 
-        if (! empty($toDelete)) {
+        if ($toDelete !== []) {
             $channels = $this->channelRepository->findWhereIn('code', $toDelete);
 
             foreach ($channels as $channel) {
@@ -61,8 +61,8 @@ class CompletenessSettingsController extends Controller
             }
         }
 
-        if (! empty($toDelete) || ! empty($toInsert)) {
-            BulkProductCompletenessJob::dispatch([], $familyId, auth()->guard('admin')->id());
+        if ($toDelete !== [] || $toInsert !== []) {
+            dispatch(new BulkProductCompletenessJob([], $familyId, auth()->guard('admin')->id()));
         }
 
         return response()->json([
@@ -91,7 +91,7 @@ class CompletenessSettingsController extends Controller
             $toInsert = array_diff($newCodes, $existingCodes);
             $toDelete = array_diff($existingCodes, $newCodes);
 
-            if (! empty($toInsert)) {
+            if ($toInsert !== []) {
                 $channels = $this->channelRepository->findWhereIn('code', $toInsert);
 
                 foreach ($channels as $channel) {
@@ -103,7 +103,7 @@ class CompletenessSettingsController extends Controller
                 }
             }
 
-            if (! empty($toDelete)) {
+            if ($toDelete !== []) {
                 $channels = $this->channelRepository->findWhereIn('code', $toDelete);
 
                 foreach ($channels as $channel) {
@@ -115,13 +115,13 @@ class CompletenessSettingsController extends Controller
                 }
             }
 
-            if (! empty($toDelete) || ! empty($toInsert)) {
+            if ($toDelete !== [] || $toInsert !== []) {
                 $hasChanged = true;
             }
         }
 
         if ($hasChanged) {
-            BulkProductCompletenessJob::dispatch([], $familyId, auth()->guard('admin')->id());
+            dispatch(new BulkProductCompletenessJob([], $familyId, auth()->guard('admin')->id()));
         }
 
         return response()->json([

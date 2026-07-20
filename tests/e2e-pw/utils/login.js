@@ -8,5 +8,12 @@ export async function login(page) {
   await page.getByRole('textbox', { name: 'Email Address' }).fill(email);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Sign In' }).click();
-  await page.waitForLoadState('networkidle');
+
+  // Wait for the post-login redirect off /admin/login. `networkidle` is unreliable
+  // on a dev server where Debugbar/Livewire keep polling, so key off the URL and
+  // fall back to DOM-ready rather than an idle network.
+  await page
+    .waitForURL((url) => !url.pathname.endsWith('/admin/login'), { timeout: 30000 })
+    .catch(() => {});
+  await page.waitForLoadState('domcontentloaded').catch(() => {});
 }

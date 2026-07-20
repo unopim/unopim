@@ -11,10 +11,8 @@ class Exporter extends AbstractExporter
 {
     /**
      * Initializes the export process.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         $this->initializeFileBuffer();
     }

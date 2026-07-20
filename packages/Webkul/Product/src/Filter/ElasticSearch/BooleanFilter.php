@@ -10,9 +10,6 @@ use Webkul\ElasticSearch\Enums\FilterOperators;
  */
 class BooleanFilter extends AbstractElasticSearchAttributeFilter
 {
-    /**
-     * @param  array  $supportedProperties
-     */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::BOOLEAN_FIELD_TYPE],
         array $allowedOperators = [
@@ -32,34 +29,20 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
         $attribute,
         $operator,
         $value,
-        $locale = null,
-        $channel = null,
+        ?string $locale = null,
+        ?string $channel = null,
         $options = []
-    ) {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+    ): static {
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
             case FilterOperators::IN:
-                $clause = [
-                    'terms' => [
-                        $attributePath => array_map(function ($val) {
-                            return ($val == '1') ? true : false;
-                        }, $value),
-                    ],
-                ];
-
-                $this->queryBuilder::where($clause);
-                break;
             case FilterOperators::EQUAL:
                 $clause = [
                     'terms' => [
-                        $attributePath => array_map(function ($val) {
-                            return ($val == '1') ? true : false;
-                        }, $value),
+                        $attributePath => array_map(fn ($val): bool => $val == '1', $value),
                     ],
                 ];
 

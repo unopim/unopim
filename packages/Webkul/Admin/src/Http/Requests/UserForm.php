@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -41,6 +42,13 @@ class UserForm extends FormRequest
     {
         $id = $this->id ?: null;
         $passwordMin = config('admin.auth.password_min');
+        $imageRules = [
+            'sometimes',
+            'image',
+            'mimes:jpeg,png,jpg,gif,webp',
+            'max:2048',
+            new FileMimeExtensionMatch,
+        ];
 
         if (! is_numeric($passwordMin)) {
             $passwordMin = 8;
@@ -61,12 +69,8 @@ class UserForm extends FormRequest
             'default_channel_id'    => 'nullable|integer|exists:channels,id',
             'role_id'               => 'required',
             'timezone'              => 'required',
-            'image.*'               => [
-                'sometimes',
-                'image',
-                'mimes:jpeg,png,jpg,svg,gif',
-                new FileMimeExtensionMatch,
-            ],
+            'image'                 => $this->file('image') instanceof UploadedFile ? $imageRules : ['nullable'],
+            'image.*'               => $imageRules,
         ];
     }
 

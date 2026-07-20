@@ -15,8 +15,6 @@ class Exporter extends AbstractExporter
 {
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -28,10 +26,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Initializes the channels and locales for the export process.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         $this->initializeFileBuffer();
     }
@@ -65,8 +61,10 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare attribute families from current batch
+     *
+     * @return array{code: mixed, locale: mixed, name: mixed, attribute_group: mixed, attributes: mixed, completeness: mixed}[]
      */
-    public function prepareAttributeFamilies(JobTrackBatchContract $batch, mixed $filePath)
+    public function prepareAttributeFamilies(JobTrackBatchContract $batch, mixed $filePath): array
     {
         $locales = core()->getAllActiveLocales()->pluck('code');
         $attributeFamilies = [];
@@ -93,9 +91,7 @@ class Exporter extends AbstractExporter
             ->select('completeness_settings.family_id', 'channels.code as channel_code', 'attributes.code as attribute_code')
             ->get();
 
-        $groupedCompleteness = $completenessSettings->groupBy(function ($item) {
-            return $item->family_id.'_'.$item->attribute_code;
-        });
+        $groupedCompleteness = $completenessSettings->groupBy(fn ($item): string => $item->family_id.'_'.$item->attribute_code);
 
         foreach ($batch->data as $rowData) {
             $translations = collect($rowData['translations'] ?? [])->keyBy('locale')->toArray();

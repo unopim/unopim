@@ -645,17 +645,17 @@
                                     </x-admin::form.control-group.label>
 
                                     <div class="hidden">
-                                        <x-admin::media.images
+                                        <x-admin::media.image
                                             name="swatch_value[]"
                                             ::uploaded-images='swatchValue.image'
                                         />
                                     </div>
 
-                                    <v-media-images
+                                    <v-media-image
                                         name="swatch_value"
                                         :uploaded-images='swatchValue.image'
                                     >
-                                    </v-media-images>
+                                    </v-media-image>
 
                                     <x-admin::form.control-group.error control-name="swatch_value" />
                                 </x-admin::form.control-group>

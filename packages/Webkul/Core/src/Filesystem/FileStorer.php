@@ -71,7 +71,7 @@ class FileStorer
      */
     protected function addHashedFolderName(string $path): string
     {
-        if (substr($path, -1) !== '/') {
+        if (! str_ends_with($path, '/')) {
             $path .= '/';
         }
 

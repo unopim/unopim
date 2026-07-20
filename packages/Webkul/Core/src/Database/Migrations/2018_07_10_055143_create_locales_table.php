@@ -8,12 +8,10 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('locales', function (Blueprint $table) {
+        Schema::create('locales', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('code')->unique();
             $table->boolean('status')->default(0);
@@ -23,10 +21,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('locales');
     }

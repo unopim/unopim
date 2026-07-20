@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('job_track', function (Blueprint $table) {
+        Schema::table('job_track', function (Blueprint $table): void {
             $table->string('file_path')->nullable()->change();
             $table->char('field_separator', 1)->nullable()->change();
         });
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('job_track', function (Blueprint $table) {
+        Schema::table('job_track', function (Blueprint $table): void {
             $table->string('file_path')->change();
             $table->char('field_separator', 1)->change();
         });
