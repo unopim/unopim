@@ -279,7 +279,6 @@
 
                     generateKey() {
                         let formData = new FormData();
-                        formData.append('admin_id', this.admin_id);
                         formData.append('name', this.name);
                         formData.append('apiId', this.apiId);
                         this.$axios.post("{{route('admin.configuration.integrations.generate_key')}}", formData)
@@ -298,7 +297,6 @@
 
                     reGenerateSecretKey() {
                         let formData = new FormData();
-                        formData.append('admin_id', this.admin_id);
                         formData.append('name', this.name);
                         formData.append('apiId', this.apiId);
                         formData.append('oauth_client_id', this.oauth_client_id);

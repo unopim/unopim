@@ -16,7 +16,6 @@ use Webkul\AdminApi\Http\Requests\Integrations\StoreApiKeyRequest;
 use Webkul\AdminApi\Http\Requests\Integrations\UpdateApiKeyRequest;
 use Webkul\AdminApi\Repositories\ApiKeyRepository;
 use Webkul\AdminApi\Traits\OauthClientGenerator;
-use Webkul\User\Repositories\AdminRepository;
 
 class ApiKeysController extends Controller
 {
@@ -28,7 +27,6 @@ class ApiKeysController extends Controller
      * @return void
      */
     public function __construct(
-        protected AdminRepository $adminRepository,
         protected ApiKeyRepository $apiKeyRepository,
         protected ClientRepository $clients
     ) {}

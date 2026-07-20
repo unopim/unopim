@@ -1,13 +1,4 @@
 @php
-    $adminUsers = app(\Webkul\User\Repositories\AdminRepository::class)
-        ->all(['id', 'name', 'email'])
-        ->map(fn ($admin) => [
-            'id'    => $admin->id,
-            'label' => $admin->name.' ('.$admin->email.')',
-        ])
-        ->values()
-        ->toJson();
-
     $permissionTypes = collect((new \Webkul\AdminApi\Models\Apikey)->getPermissionTypes())
         ->toJson();
 @endphp
@@ -60,25 +51,6 @@
                         />
 
                         <x-admin::form.control-group.error control-name="name" />
-                    </x-admin::form.control-group>
-
-                    <x-admin::form.control-group>
-                        <x-admin::form.control-group.label class="required">
-                            @lang('admin::app.configuration.integrations.create.assign-user')
-                        </x-admin::form.control-group.label>
-
-                        <x-admin::form.control-group.control
-                            type="select"
-                            name="admin_id"
-                            rules="required"
-                            :label="trans('admin::app.configuration.integrations.create.assign-user')"
-                            :placeholder="trans('admin::app.configuration.integrations.create.assign-user')"
-                            :options="$adminUsers"
-                            track-by="id"
-                            label-by="label"
-                        />
-
-                        <x-admin::form.control-group.error control-name="admin_id" />
                     </x-admin::form.control-group>
 
                     <x-admin::form.control-group>
