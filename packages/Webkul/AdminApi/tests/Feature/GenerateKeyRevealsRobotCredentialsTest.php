@@ -34,6 +34,29 @@ it('returns the robot username when generating an api key', function () {
         ->assertJson(['username' => 'shopify-robot@api.local']);
 });
 
+it('refuses to generate a key when the bound admin is a human', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+
+    $this->loginAsAdmin();
+
+    $human = Admin::factory()->create([
+        'type'  => 'user',
+        'email' => 'human-admin@example.local',
+    ]);
+
+    $apiKey = Apikey::factory()->create([
+        'admin_id'        => $human->id,
+        'permission_type' => 'all',
+    ]);
+
+    $response = $this->post(route('admin.configuration.integrations.generate_key'), [
+        'name'  => $apiKey->name,
+        'apiId' => $apiKey->id,
+    ]);
+
+    $response->assertNotFound();
+});
+
 it('flashes one-time robot credentials to the session on store', function () {
     $this->withoutMiddleware(PreventRequestForgery::class);
 

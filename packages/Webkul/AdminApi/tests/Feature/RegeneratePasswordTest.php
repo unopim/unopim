@@ -70,3 +70,28 @@ it('regenerates the robot password and revokes existing tokens', function () {
 
     expect($token->fresh()->revoked)->toBeTrue();
 });
+
+it('refuses to regenerate the password when the bound admin is a human', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+
+    $this->loginAsAdmin();
+
+    $human = Admin::factory()->create([
+        'type'     => 'user',
+        'email'    => 'human-admin@example.local',
+        'password' => Hash::make('old-password'),
+    ]);
+
+    $apiKey = Apikey::factory()->create([
+        'admin_id'        => $human->id,
+        'permission_type' => 'all',
+    ]);
+
+    $response = $this->post(route('admin.configuration.integrations.re_generate_password'), [
+        'apiId' => $apiKey->id,
+    ]);
+
+    $response->assertNotFound();
+
+    expect(Hash::check('old-password', $human->fresh()->password))->toBeTrue();
+});

@@ -165,6 +165,10 @@ class ApiKeysController extends Controller
 
         $apiKey = $this->apiKeyRepository->findOrFail($request->input('apiId'));
 
+        if (! $apiKey->admins?->isApiUser()) {
+            abort(404);
+        }
+
         $client = $this->generateClientIdAndSecretKey($apiKey->admin_id, $apiKey->name);
 
         $clientId = $client->getKey();
@@ -235,7 +239,7 @@ class ApiKeysController extends Controller
 
         $robot = $apiKey->admins;
 
-        if (! $robot) {
+        if (! $robot?->isApiUser()) {
             abort(404);
         }
 

@@ -284,6 +284,12 @@ class SessionController extends Controller
             return redirect()->route('admin.session.create')->withInput(['email' => $email]);
         }
 
+        if ($admin->isApiUser()) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create')->withInput(['email' => $email]);
+        }
+
         if (! $admin->status) {
             session()->flash('warning', trans('admin::app.settings.users.activate-warning'));
 
