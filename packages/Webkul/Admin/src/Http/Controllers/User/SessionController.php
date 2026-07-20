@@ -70,6 +70,20 @@ class SessionController extends Controller
             return redirect()->route('admin.session.create')->withInput(request()->only('email'));
         }
 
+        if (auth()->guard('admin')->user()->isApiUser()) {
+            auth()->guard('admin')->logout();
+
+            $message = trans('admin::app.settings.users.login-error');
+
+            if ($wantsJson) {
+                return response()->json(['message' => $message], 401);
+            }
+
+            session()->flash('error', $message);
+
+            return redirect()->route('admin.session.create')->withInput(request()->only('email'));
+        }
+
         if (! auth()->guard('admin')->user()->status) {
             auth()->guard('admin')->logout();
 
