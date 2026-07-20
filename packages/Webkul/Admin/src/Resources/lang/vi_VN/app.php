@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Đã sao chép vào khay nhớ tạm',
                 'regenerate-password-success' => 'Mật khẩu API đã được tạo lại thành công.',
                 'regenerate-password-btn'     => 'Tạo lại mật khẩu',
+                'api-docs-link'               => 'Xem tài liệu API',
                 'generate-btn'                => 'Tạo',
                 're-secret-btn'               => 'Tạo lại Khóa bí mật',
                 'permissions'                 => 'Quyền hạn',

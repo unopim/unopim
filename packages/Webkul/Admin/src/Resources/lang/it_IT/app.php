@@ -1993,6 +1993,7 @@ return [
                 'copied'                      => 'Copiato negli appunti',
                 'regenerate-password-success' => 'Password API rigenerata con successo.',
                 'regenerate-password-btn'     => 'Rigenera password',
+                'api-docs-link'               => 'Visualizza la documentazione API',
                 'generate-btn'                => 'Genera',
                 're-secret-btn'               => 'Rigenera Chiave Segreta',
                 'permissions'                 => 'Permessi',

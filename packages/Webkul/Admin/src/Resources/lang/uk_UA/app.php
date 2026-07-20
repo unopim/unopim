@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Скопійовано в буфер обміну',
                 'regenerate-password-success' => 'Пароль API успішно перегенеровано.',
                 'regenerate-password-btn'     => 'Перегенерувати пароль',
+                'api-docs-link'               => 'Переглянути документацію API',
                 'generate-btn'                => 'Згенерувати',
                 're-secret-btn'               => 'Перегенерувати секретний ключ',
                 'permissions'                 => 'Дозволи',

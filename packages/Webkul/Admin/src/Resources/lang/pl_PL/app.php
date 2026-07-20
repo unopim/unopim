@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Skopiowano do schowka',
                 'regenerate-password-success' => 'Hasło API zostało pomyślnie wygenerowane ponownie.',
                 'regenerate-password-btn'     => 'Wygeneruj hasło ponownie',
+                'api-docs-link'               => 'Zobacz dokumentację API',
                 'generate-btn'                => 'Generuj',
                 're-secret-btn'               => 'Przypisz tajny klucz',
                 'permissions'                 => 'Uprawnienia',

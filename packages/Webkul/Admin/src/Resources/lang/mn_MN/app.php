@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Санах ойд хуулагдлаа',
                 'regenerate-password-success' => 'API нууц үг амжилттай дахин үүслээ.',
                 'regenerate-password-btn'     => 'Нууц үг дахин үүсгэх',
+                'api-docs-link'               => 'API баримт бичгийг харах',
                 'generate-btn'                => 'Үйлдвэрлэх',
                 're-secret-btn'               => 'Нууц түлхүүрийг дахин үүсгэх',
                 'permissions'                 => 'Үнэмшил',

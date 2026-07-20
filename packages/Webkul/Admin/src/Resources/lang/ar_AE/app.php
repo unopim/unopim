@@ -1993,6 +1993,7 @@ return [
                 'copied'                      => 'تم النسخ إلى الحافظة',
                 'regenerate-password-success' => 'تمت إعادة إنشاء كلمة مرور واجهة برمجة التطبيقات بنجاح.',
                 'regenerate-password-btn'     => 'إعادة إنشاء كلمة المرور',
+                'api-docs-link'               => 'عرض وثائق API',
                 'generate-btn'                => 'يولد',
                 're-secret-btn'               => 'إعادة تجنيد المفتاح السري',
                 'permissions'                 => 'أذونات',

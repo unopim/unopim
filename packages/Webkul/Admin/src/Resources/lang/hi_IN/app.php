@@ -1993,6 +1993,7 @@ return [
                 'copied'                      => 'क्लिपबोर्ड पर कॉपी किया गया',
                 'regenerate-password-success' => 'API पासवर्ड सफलतापूर्वक पुनः जनरेट किया गया।',
                 'regenerate-password-btn'     => 'पासवर्ड पुनः जनरेट करें',
+                'api-docs-link'               => 'एपीआई दस्तावेज़ देखें',
                 'generate-btn'                => 'उत्पन्न',
                 're-secret-btn'               => 'फिर से सीक्रेट की-जनरेट करें',
                 'permissions'                 => 'अनुमतियां',

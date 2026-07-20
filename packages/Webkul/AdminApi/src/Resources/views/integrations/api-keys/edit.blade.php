@@ -177,6 +177,16 @@
                                     class="mb-4 rounded-md border border-blue-200 bg-blue-50 px-3 py-2.5 text-xs text-gray-700 dark:border-gray-600 dark:bg-cherry-800 dark:text-gray-300"
                                 >
                                     @lang('admin::app.configuration.integrations.edit.credentials-info')
+                                    @if (config('api.docs_url'))
+                                        <a
+                                            href="{{ config('api.docs_url') }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="font-medium text-primary-600 underline hover:text-primary-700 dark:text-primary-300 dark:hover:text-white"
+                                        >
+                                            @lang('admin::app.configuration.integrations.edit.api-docs-link')
+                                        </a>
+                                    @endif
                                 </div>
 
                                 <div class="flex gap-x-2.5 items-center" v-if="!oauth_client_id">

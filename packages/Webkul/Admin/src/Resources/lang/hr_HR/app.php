@@ -1993,6 +1993,7 @@ return [
                 'copied'                      => 'Kopirano u međuspremnik',
                 'regenerate-password-success' => 'API lozinka je uspješno ponovno generirana.',
                 'regenerate-password-btn'     => 'Ponovno generiraj lozinku',
+                'api-docs-link'               => 'Prikaži API dokumentaciju',
                 'generate-btn'                => 'Generiraj',
                 're-secret-btn'               => 'Ponovno generiraj tajni ključ',
                 'permissions'                 => 'Dopuštenja',

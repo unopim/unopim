@@ -1993,6 +1993,7 @@ return [
                 'copied'                      => 'クリップボードにコピーしました',
                 'regenerate-password-success' => 'APIパスワードが正常に再生成されました。',
                 'regenerate-password-btn'     => 'パスワードを再生成',
+                'api-docs-link'               => 'APIドキュメントを表示',
                 'generate-btn'                => '生成',
                 're-secret-btn'               => 'シークレット キーの再生成',
                 'permissions'                 => '権限',

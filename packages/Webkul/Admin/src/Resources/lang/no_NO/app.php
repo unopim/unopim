@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Kopiert til utklippstavlen',
                 'regenerate-password-success' => 'API-passordet er generert på nytt.',
                 'regenerate-password-btn'     => 'Generer nytt passord',
+                'api-docs-link'               => 'Vis API-dokumentasjon',
                 'generate-btn'                => 'Generer',
                 're-secret-btn'               => 'Generer på nytt sikkerhetsnøkkel',
                 'permissions'                 => 'Tillatelser',

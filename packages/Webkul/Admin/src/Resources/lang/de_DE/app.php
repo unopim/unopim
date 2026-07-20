@@ -1993,6 +1993,7 @@ return [
                 'copied'                      => 'In die Zwischenablage kopiert',
                 'regenerate-password-success' => 'API-Passwort erfolgreich neu generiert.',
                 'regenerate-password-btn'     => 'Passwort neu generieren',
+                'api-docs-link'               => 'API-Dokumentation anzeigen',
                 'generate-btn'                => 'Generieren',
                 're-secret-btn'               => 'Geheimschlüssel neu generieren',
                 'permissions'                 => 'Berechtigungen',

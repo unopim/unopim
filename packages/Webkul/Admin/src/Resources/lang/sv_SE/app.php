@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Kopierat till urklipp',
                 'regenerate-password-success' => 'API-lösenordet har genererats om.',
                 'regenerate-password-btn'     => 'Generera nytt lösenord',
+                'api-docs-link'               => 'Visa API-dokumentation',
                 'generate-btn'                => 'Generera',
                 're-secret-btn'               => 'Generera Om Sekret Nyckel',
                 'permissions'                 => 'Tillstånd',

@@ -1992,6 +1992,7 @@ return [
                 'copied'                      => 'Copié dans le presse-papiers',
                 'regenerate-password-success' => 'Mot de passe API régénéré avec succès.',
                 'regenerate-password-btn'     => 'Régénérer le mot de passe',
+                'api-docs-link'               => 'Voir la documentation de l\'API',
                 'generate-btn'                => 'Générer',
                 're-secret-btn'               => 'Re-générer la clé secrète',
                 'permissions'                 => 'Autorisation',

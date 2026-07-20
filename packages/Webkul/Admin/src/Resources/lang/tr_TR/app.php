@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Panoya kopyalandı',
                 'regenerate-password-success' => 'API şifresi başarıyla yeniden oluşturuldu.',
                 'regenerate-password-btn'     => 'Şifreyi yeniden oluştur',
+                'api-docs-link'               => 'API belgelerini görüntüle',
                 'generate-btn'                => 'Oluştur',
                 're-secret-btn'               => 'Gizli Anahtarı Yeniden Oluştur',
                 'permissions'                 => 'İzinler',

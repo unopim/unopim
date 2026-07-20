@@ -1993,6 +1993,7 @@ return [
                 'copied'                      => 'Disalin ke clipboard',
                 'regenerate-password-success' => 'Kata sandi API berhasil dibuat ulang.',
                 'regenerate-password-btn'     => 'Buat ulang kata sandi',
+                'api-docs-link'               => 'Lihat dokumentasi API',
                 'generate-btn'                => 'Menghasilkan',
                 're-secret-btn'               => 'Hasil ulang Kunci Rahasia',
                 'permissions'                 => 'Izin',

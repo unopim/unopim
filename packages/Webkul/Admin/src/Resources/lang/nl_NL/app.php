@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Gekopieerd naar klembord',
                 'regenerate-password-success' => 'API-wachtwoord succesvol opnieuw gegenereerd.',
                 'regenerate-password-btn'     => 'Wachtwoord opnieuw genereren',
+                'api-docs-link'               => 'API-documentatie bekijken',
                 'generate-btn'                => 'Genereren',
                 're-secret-btn'               => 'Nieuwe geheime sleutel genereren',
                 'permissions'                 => 'Rechten',

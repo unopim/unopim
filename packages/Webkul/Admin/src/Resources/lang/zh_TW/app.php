@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => '已複製到剪貼簿',
                 'regenerate-password-success' => 'API 密碼已成功重新產生。',
                 'regenerate-password-btn'     => '重新產生密碼',
+                'api-docs-link'               => '查看 API 文件',
                 'generate-btn'                => '生成',
                 're-secret-btn'               => '重新生成秘密密鑰',
                 'permissions'                 => '許可權',

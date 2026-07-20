@@ -1993,6 +1993,7 @@ return [
                 'copied'                      => 'Copiat al porta-retalls',
                 'regenerate-password-success' => 'La contrasenya de l\'API s\'ha regenerat correctament.',
                 'regenerate-password-btn'     => 'Regenera la contrasenya',
+                'api-docs-link'               => 'Veure la documentació de l\'API',
                 'generate-btn'                => 'Gerar',
                 're-secret-btn'               => 'Regenerar Chave Secreta',
                 'permissions'                 => 'Permissões',

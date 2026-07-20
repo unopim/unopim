@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Nakopya sa clipboard',
                 'regenerate-password-success' => 'Matagumpay na na-regenerate ang password ng API.',
                 'regenerate-password-btn'     => 'I-regenerate ang password',
+                'api-docs-link'               => 'Tingnan ang dokumentasyon ng API',
                 'generate-btn'                => 'Gumawa',
                 're-secret-btn'               => 'Re-Gumawa ng Sekreto Key',
                 'permissions'                 => 'Mga Pagpapahintulot',

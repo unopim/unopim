@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Copiat în clipboard',
                 'regenerate-password-success' => 'Parola API a fost regenerată cu succes.',
                 'regenerate-password-btn'     => 'Regenerează parola',
+                'api-docs-link'               => 'Vizualizează documentația API',
                 'generate-btn'                => 'Generare',
                 're-secret-btn'               => 'Generare Cheie Secretă din Nou',
                 'permissions'                 => 'Permisiuni',

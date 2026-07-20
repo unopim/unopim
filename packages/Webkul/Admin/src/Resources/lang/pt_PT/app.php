@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => 'Copiado para a área de transferência',
                 'regenerate-password-success' => 'Palavra-passe da API regenerada com sucesso.',
                 'regenerate-password-btn'     => 'Regenerar palavra-passe',
+                'api-docs-link'               => 'Ver documentação da API',
                 'generate-btn'                => 'Gerar',
                 're-secret-btn'               => 'Regenerar Chave Secreta',
                 'permissions'                 => 'Permissões',

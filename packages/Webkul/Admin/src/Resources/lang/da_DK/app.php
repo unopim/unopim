@@ -1993,6 +1993,7 @@ return [
                 'copied'                      => 'Kopieret til udklipsholder',
                 'regenerate-password-success' => 'API-adgangskoden er blevet gendannet.',
                 'regenerate-password-btn'     => 'Generer ny adgangskode',
+                'api-docs-link'               => 'Se API-dokumentation',
                 'generate-btn'                => 'Generer',
                 're-secret-btn'               => 'Regenerer hemmelig nøgle',
                 'permissions'                 => 'Tilladelser',

@@ -1993,6 +1993,7 @@ return [
                 'copied'                      => 'Kopioitu leikepöydälle',
                 'regenerate-password-success' => 'API-salasana luotiin uudelleen onnistuneesti.',
                 'regenerate-password-btn'     => 'Luo salasana uudelleen',
+                'api-docs-link'               => 'Näytä API-dokumentaatio',
                 'generate-btn'                => 'Luo',
                 're-secret-btn'               => 'Luo uudelleen salainen avain',
                 'permissions'                 => 'Oikeudet',

@@ -1995,6 +1995,7 @@ return [
                 'copied'                      => '클립보드에 복사됨',
                 'regenerate-password-success' => 'API 비밀번호가 성공적으로 재생성되었습니다.',
                 'regenerate-password-btn'     => '비밀번호 재생성',
+                'api-docs-link'               => 'API 문서 보기',
                 'generate-btn'                => '생성',
                 're-secret-btn'               => '비밀 키 다시 생성',
                 'permissions'                 => '권한',

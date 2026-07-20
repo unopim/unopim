@@ -2132,6 +2132,7 @@ return [
                 'copied'                      => 'Copied to clipboard',
                 'regenerate-password-success' => 'API password regenerated successfully.',
                 'regenerate-password-btn'     => 'Regenerate password',
+                'api-docs-link'               => 'View API documentation',
                 'generate-btn'                => 'Generate',
                 're-secret-btn'               => 'Re-Generate Secret Key',
                 'permissions'                 => 'Permissions',
