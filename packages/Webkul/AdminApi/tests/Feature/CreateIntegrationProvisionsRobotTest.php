@@ -15,12 +15,14 @@ it('creates an integration bound to a fresh robot without an admin_id input', fu
 
     $this->loginAsAdmin();
 
+    $integrationName = 'ZZ-Test-'.uniqid();
+
     $response = $this->post(route('admin.configuration.integrations.store'), [
-        'name'            => 'Shopify',
+        'name'            => $integrationName,
         'permission_type' => 'all',
     ]);
 
-    $key = Apikey::where('name', 'Shopify')->firstOrFail();
+    $key = Apikey::where('name', $integrationName)->firstOrFail();
     $robot = Admin::findOrFail($key->admin_id);
 
     expect($robot->isApiUser())->toBeTrue()

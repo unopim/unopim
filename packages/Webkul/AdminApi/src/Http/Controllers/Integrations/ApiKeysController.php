@@ -5,17 +5,21 @@ namespace Webkul\AdminApi\Http\Controllers\Integrations;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Token;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\AdminApi\DataGrids\Integrations\ApiKeysDataGrid;
 use Webkul\AdminApi\Http\Requests\Integrations\GenerateKeyRequest;
+use Webkul\AdminApi\Http\Requests\Integrations\RegeneratePasswordRequest;
 use Webkul\AdminApi\Http\Requests\Integrations\RegenerateSecretKeyRequest;
 use Webkul\AdminApi\Http\Requests\Integrations\StoreApiKeyRequest;
 use Webkul\AdminApi\Http\Requests\Integrations\UpdateApiKeyRequest;
 use Webkul\AdminApi\Repositories\ApiKeyRepository;
 use Webkul\AdminApi\Traits\OauthClientGenerator;
+use Webkul\User\Repositories\AdminRepository;
 
 class ApiKeysController extends Controller
 {
@@ -28,7 +32,8 @@ class ApiKeysController extends Controller
      */
     public function __construct(
         protected ApiKeyRepository $apiKeyRepository,
-        protected ClientRepository $clients
+        protected ClientRepository $clients,
+        protected AdminRepository $adminRepository
     ) {}
 
     /**
@@ -207,6 +212,44 @@ class ApiKeysController extends Controller
 
         return new JsonResponse([
             'secret_key' => $client->plainSecret,
+        ]);
+    }
+
+    /**
+     * Regenerates the robot admin's password for the specified API key.
+     *
+     * This is the recovery path for a lost robot password: the plaintext is only
+     * shown once at creation time, so regenerating issues a fresh one. Rotates
+     * the OAuth client's tokens too, since a leaked/lost password should not
+     * leave existing access tokens valid.
+     *
+     * @return JsonResponse The JSON response containing the robot's username and the new plaintext password.
+     */
+    public function regeneratePassword(RegeneratePasswordRequest $request): JsonResponse
+    {
+        if (! bouncer()->hasPermission('configuration.integrations.edit')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        $apiKey = $this->apiKeyRepository->findOrFail($request->input('apiId'));
+
+        $robot = $apiKey->admins;
+
+        if (! $robot) {
+            abort(404);
+        }
+
+        $password = Str::random(32);
+
+        $this->adminRepository->update(['password' => Hash::make($password)], $robot->id);
+
+        if ($apiKey->oauth_client_id) {
+            Token::where('client_id', $apiKey->oauth_client_id)->update(['revoked' => true]);
+        }
+
+        return new JsonResponse([
+            'username' => $robot->email,
+            'password' => $password,
         ]);
     }
 
