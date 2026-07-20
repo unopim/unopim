@@ -114,7 +114,7 @@
                         <x-admin::accordion>
                             <x-slot:header>
                                 <div class="flex items-center justify-between">
-                                    <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
+                                    <p class="text-base text-gray-800 dark:text-white font-semibold">
                                         @lang('admin::app.configuration.integrations.edit.general')
                                     </p>
                                 </div>
@@ -157,23 +157,6 @@
                                         :placeholder="trans('admin::app.configuration.integrations.edit.assign-user')"
                                     />
                                 </x-admin::form.control-group>
-
-                                <!-- API Username -->
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label>
-                                        @lang('admin::app.configuration.integrations.edit.api-username')
-                                    </x-admin::form.control-group.label>
-
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        class="cursor-not-allowed"
-                                        name="api_username"
-                                        value="{{ $username }}"
-                                        readonly
-                                        :label="trans('admin::app.configuration.integrations.edit.api-username')"
-                                        :placeholder="trans('admin::app.configuration.integrations.edit.api-username')"
-                                    />
-                                </x-admin::form.control-group>
                             </x-slot>
                         </x-admin::accordion>
 
@@ -181,89 +164,20 @@
                         <x-admin::accordion>
                             <x-slot:header>
                                 <div class="flex items-center justify-between">
-                                    <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
+                                    <p class="text-base text-gray-800 dark:text-white font-semibold">
                                         @lang('admin::app.configuration.integrations.edit.credentials')
                                     </p>
                                 </div>
                             </x-slot>
 
                             <x-slot:content>
-                                @if (session()->has('api_credentials'))
-                                    @php
-                                        $apiCredentials = session('api_credentials');
-                                    @endphp
-
-                                    <!-- One-time Robot Credentials -->
-                                    <div class="mb-4 p-2.5 rounded border border-yellow-300 bg-yellow-50 dark:border-yellow-500 dark:bg-yellow-900/20">
-                                        <p class="text-xs text-yellow-800 dark:text-yellow-200 font-semibold mb-2.5">
-                                            @lang('admin::app.configuration.integrations.edit.credentials-once-note')
-                                        </p>
-
-                                        <x-admin::form.control-group>
-                                            <x-admin::form.control-group.label>
-                                                @lang('admin::app.configuration.integrations.edit.api-username')
-                                            </x-admin::form.control-group.label>
-
-                                            {{-- Static, escaped, read-only display: intentionally NOT a named form control so it is never serialized into FormData / the Vue form model. --}}
-                                            <p class="cursor-not-allowed select-all break-all rounded border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-sm text-gray-800 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100">
-                                                {{ $apiCredentials['username'] }}
-                                            </p>
-                                        </x-admin::form.control-group>
-
-                                        <x-admin::form.control-group>
-                                            <x-admin::form.control-group.label>
-                                                @lang('admin::app.configuration.integrations.edit.api-password')
-                                            </x-admin::form.control-group.label>
-
-                                            {{-- Static, escaped, read-only display: intentionally NOT a named form control so it is never serialized into FormData / the Vue form model. --}}
-                                            <code class="block cursor-not-allowed select-all break-all rounded border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-sm text-gray-800 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100">
-                                                {{ $apiCredentials['password'] }}
-                                            </code>
-                                        </x-admin::form.control-group>
-                                    </div>
-                                @endif
-
-                                <!-- Client ID -->
-                                <x-admin::form.control-group v-if="client_id">
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.configuration.integrations.edit.client-id')
-                                    </x-admin::form.control-group.label>
-
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        class="cursor-not-allowed"
-                                        id="client_id"
-                                        name="client_id"
-                                        :value="old('client_id')"
-                                        v-model="client_id"
-                                        readonly
-                                        :label="trans('admin::app.configuration.integrations.edit.client-id')"
-                                        :placeholder="trans('admin::app.configuration.integrations.edit.client-id')"
-                                    />
-
-                                    <x-admin::form.control-group.error control-name="name" />
-                                </x-admin::form.control-group>
-
-                                <!-- Secret Key -->
-                                <x-admin::form.control-group v-if="secret_key">
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.configuration.integrations.edit.secret-key')
-                                    </x-admin::form.control-group.label>
-
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        class="cursor-not-allowed"
-                                        id="secret_key"
-                                        name="secret_key"
-                                        :value="old('secret_key')"
-                                        v-model="secret_key"
-                                        readonly
-                                        :label="trans('admin::app.configuration.integrations.edit.secret-key')"
-                                        :placeholder="trans('admin::app.configuration.integrations.edit.secret-key')"
-                                    />
-
-                                    <x-admin::form.control-group.error control-name="name" />
-                                </x-admin::form.control-group>
+                                {{-- Credential values are static v-text displays, not named form controls, so they never round-trip through FormData / the update request. --}}
+                                <div
+                                    v-if="oauth_client_id"
+                                    class="mb-4 rounded-md border border-blue-200 bg-blue-50 px-3 py-2.5 text-xs text-gray-700 dark:border-gray-600 dark:bg-cherry-800 dark:text-gray-300"
+                                >
+                                    @lang('admin::app.configuration.integrations.edit.credentials-info')
+                                </div>
 
                                 <div class="flex gap-x-2.5 items-center" v-if="!oauth_client_id">
                                     <button
@@ -274,15 +188,140 @@
                                         @lang('admin::app.configuration.integrations.edit.generate-btn')
                                     </button>
                                 </div>
-                                <div class="flex gap-x-2.5 items-center" v-if="oauth_client_id">
-                                    <button
-                                        type="button"
-                                        class="primary-button"
-                                        @click="reGenerateSecretKey"
-                                    >
-                                        @lang('admin::app.configuration.integrations.edit.re-secret-btn')
-                                    </button>
+
+                                <div v-if="oauth_client_id" class="divide-y divide-gray-200 dark:divide-cherry-800">
+                                    <!-- Client ID -->
+                                    <div class="flex items-start justify-between gap-2 py-3">
+                                        <div class="min-w-0">
+                                            <p class="mb-1 text-xs font-semibold text-primary-600 dark:text-primary-300">
+                                                @lang('admin::app.configuration.integrations.edit.client-id')
+                                            </p>
+
+                                            <p class="break-all select-all text-sm text-gray-600 dark:text-gray-300" v-text="client_id"></p>
+                                        </div>
+
+                                        <div class="flex shrink-0 items-center gap-1">
+                                            <button
+                                                type="button"
+                                                class="rounded p-1.5 text-gray-500 transition-all hover:bg-primary-50 hover:text-primary-600 dark:text-gray-400 dark:hover:bg-cherry-800 dark:hover:text-white"
+                                                :title="'@lang('admin::app.configuration.integrations.edit.copy')'"
+                                                @click="copy(client_id)"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                                    <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Secret -->
+                                    <div class="flex items-start justify-between gap-2 py-3">
+                                        <div class="min-w-0">
+                                            <p class="mb-1 text-xs font-semibold text-primary-600 dark:text-primary-300">
+                                                @lang('admin::app.configuration.integrations.edit.secret-key')
+                                            </p>
+
+                                            <p class="break-all select-all text-sm text-gray-600 dark:text-gray-300" v-text="secret_key"></p>
+                                        </div>
+
+                                        <div class="flex shrink-0 items-center gap-1">
+                                            <button
+                                                type="button"
+                                                class="rounded p-1.5 text-gray-500 transition-all hover:bg-primary-50 hover:text-primary-600 dark:text-gray-400 dark:hover:bg-cherry-800 dark:hover:text-white"
+                                                :title="'@lang('admin::app.configuration.integrations.edit.re-secret-btn')'"
+                                                @click="reGenerateSecretKey"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                                    <path d="M23 4v6h-6"></path>
+                                                    <path d="M1 20v-6h6"></path>
+                                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                                                </svg>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                class="rounded p-1.5 text-gray-500 transition-all hover:bg-primary-50 hover:text-primary-600 dark:text-gray-400 dark:hover:bg-cherry-800 dark:hover:text-white"
+                                                :title="'@lang('admin::app.configuration.integrations.edit.copy')'"
+                                                @click="copy(secret_key)"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                                    <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- API Username -->
+                                    <div class="flex items-start justify-between gap-2 py-3">
+                                        <div class="min-w-0">
+                                            <p class="mb-1 text-xs font-semibold text-primary-600 dark:text-primary-300">
+                                                @lang('admin::app.configuration.integrations.edit.api-username')
+                                            </p>
+
+                                            <p class="break-all select-all text-sm text-gray-600 dark:text-gray-300" v-text="api_username"></p>
+                                        </div>
+
+                                        <div class="flex shrink-0 items-center gap-1">
+                                            <button
+                                                type="button"
+                                                class="rounded p-1.5 text-gray-500 transition-all hover:bg-primary-50 hover:text-primary-600 dark:text-gray-400 dark:hover:bg-cherry-800 dark:hover:text-white"
+                                                :title="'@lang('admin::app.configuration.integrations.edit.copy')'"
+                                                @click="copy(api_username)"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                                    <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- API Password -->
+                                    <div class="flex items-start justify-between gap-2 py-3">
+                                        <div class="min-w-0">
+                                            <p class="mb-1 text-xs font-semibold text-primary-600 dark:text-primary-300">
+                                                @lang('admin::app.configuration.integrations.edit.api-password')
+                                            </p>
+
+                                            <p v-if="api_password" class="break-all select-all font-mono text-sm text-gray-600 dark:text-gray-300" v-text="api_password"></p>
+                                            <span v-else class="font-mono text-sm text-gray-400 dark:text-gray-500">••••••••••••</span>
+                                        </div>
+
+                                        <div class="flex shrink-0 items-center gap-1">
+                                            <button
+                                                type="button"
+                                                v-if="api_password"
+                                                class="rounded p-1.5 text-gray-500 transition-all hover:bg-primary-50 hover:text-primary-600 dark:text-gray-400 dark:hover:bg-cherry-800 dark:hover:text-white"
+                                                :title="'@lang('admin::app.configuration.integrations.edit.copy')'"
+                                                @click="copy(api_password)"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                                    <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                </svg>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                class="rounded p-1.5 text-gray-500 transition-all hover:bg-primary-50 hover:text-primary-600 dark:text-gray-400 dark:hover:bg-cherry-800 dark:hover:text-white"
+                                                :title="'@lang('admin::app.configuration.integrations.edit.regenerate-password-btn')'"
+                                                @click="confirmRegeneratePassword"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                                    <path d="M23 4v6h-6"></path>
+                                                    <path d="M1 20v-6h6"></path>
+                                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <p v-if="oauth_client_id" class="mt-3 text-xs text-gray-500 dark:text-gray-400">
+                                    @lang('admin::app.configuration.integrations.edit.password-forgot-note')
+                                </p>
                             </x-slot>
                         </x-admin::accordion>
 
@@ -311,6 +350,8 @@
                         name: "{{ $apiKey->name }}",
                         apiId: "{{ $apiKey->id }}",
                         oauth_client_id: "{{ $oauth_client_id }}",
+                        api_username: @js(session('api_credentials')['username'] ?? $username),
+                        api_password: @js(session('api_credentials')['password'] ?? ''),
                     };
                 },
 
@@ -338,13 +379,40 @@
                                 this.client_id = response.data.client_id;
                                 this.secret_key = response.data.secret_key;
                                 this.oauth_client_id = response.data.oauth_client_id;
+                                this.api_username = response.data.username;
                                 this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.configuration.integrations.generate-key-success')" });
 
                             })
                             .catch(error => {
-                                
+
                             });
 
+                    },
+
+                    copy(value) {
+                        navigator.clipboard.writeText(value).then(() => {
+                            this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.configuration.integrations.edit.copied')" });
+                        });
+                    },
+
+                    confirmRegeneratePassword() {
+                        this.$emitter.emit('open-confirm-modal', {
+                            agree: () => this.regeneratePassword(),
+                        });
+                    },
+
+                    regeneratePassword() {
+                        let formData = new FormData();
+                        formData.append('apiId', this.apiId);
+                        this.$axios.post("{{ route('admin.configuration.integrations.re_generate_password') }}", formData)
+                            .then((response) => {
+                                this.api_username = response.data.username;
+                                this.api_password = response.data.password;
+                                this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.configuration.integrations.edit.regenerate-password-success')" });
+                            })
+                            .catch(error => {
+
+                            });
                     },
 
                     reGenerateSecretKey() {
