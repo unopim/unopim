@@ -204,15 +204,10 @@
                                                 @lang('admin::app.configuration.integrations.edit.api-username')
                                             </x-admin::form.control-group.label>
 
-                                            <x-admin::form.control-group.control
-                                                type="text"
-                                                class="cursor-not-allowed"
-                                                name="one_time_api_username"
-                                                value="{{ $apiCredentials['username'] }}"
-                                                readonly
-                                                :label="trans('admin::app.configuration.integrations.edit.api-username')"
-                                                :placeholder="trans('admin::app.configuration.integrations.edit.api-username')"
-                                            />
+                                            {{-- Static, escaped, read-only display: intentionally NOT a named form control so it is never serialized into FormData / the Vue form model. --}}
+                                            <p class="cursor-not-allowed select-all break-all rounded border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-sm text-gray-800 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100">
+                                                {{ $apiCredentials['username'] }}
+                                            </p>
                                         </x-admin::form.control-group>
 
                                         <x-admin::form.control-group>
@@ -220,15 +215,10 @@
                                                 @lang('admin::app.configuration.integrations.edit.api-password')
                                             </x-admin::form.control-group.label>
 
-                                            <x-admin::form.control-group.control
-                                                type="text"
-                                                class="cursor-not-allowed"
-                                                name="one_time_api_password"
-                                                value="{{ $apiCredentials['password'] }}"
-                                                readonly
-                                                :label="trans('admin::app.configuration.integrations.edit.api-password')"
-                                                :placeholder="trans('admin::app.configuration.integrations.edit.api-password')"
-                                            />
+                                            {{-- Static, escaped, read-only display: intentionally NOT a named form control so it is never serialized into FormData / the Vue form model. --}}
+                                            <code class="block cursor-not-allowed select-all break-all rounded border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-sm text-gray-800 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100">
+                                                {{ $apiCredentials['password'] }}
+                                            </code>
                                         </x-admin::form.control-group>
                                     </div>
                                 @endif

@@ -49,3 +49,29 @@ it('flashes one-time robot credentials to the session on store', function () {
             && ! empty($credentials['password']);
     });
 });
+
+it('renders the one-time robot password as static text, not a submittable form field', function () {
+    $this->loginAsAdmin();
+
+    $robot = Admin::factory()->create([
+        'type'  => 'api',
+        'email' => 'shopify-robot@api.local',
+    ]);
+
+    $apiKey = Apikey::factory()->create([
+        'admin_id'        => $robot->id,
+        'permission_type' => 'all',
+    ]);
+
+    session(['api_credentials' => [
+        'username' => 'x@api.local',
+        'password' => 'SECRETVALUE123',
+    ]]);
+
+    $response = $this->get(route('admin.configuration.integrations.edit', $apiKey->id));
+
+    $response->assertOk()
+        ->assertSee('SECRETVALUE123')
+        ->assertDontSee('name="one_time_api_password"', false)
+        ->assertDontSee('name="one_time_api_username"', false);
+});
