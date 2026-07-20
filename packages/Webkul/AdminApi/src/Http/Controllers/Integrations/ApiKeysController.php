@@ -50,14 +50,9 @@ class ApiKeysController extends Controller
      */
     public function create(): View
     {
-        $adminUsers = json_encode($this->adminRepository->all(['id', 'name', 'email'])->toArray());
-
         $permissionTypes = json_encode($this->apiKeyRepository->getPermissionTypes());
 
-        return view('admin_api::integrations.api-keys.create', compact(
-            'adminUsers',
-            'permissionTypes',
-        ));
+        return view('admin_api::integrations.api-keys.create', compact('permissionTypes'));
     }
 
     /**
@@ -73,7 +68,6 @@ class ApiKeysController extends Controller
 
         $data = $request->only([
             'name',
-            'admin_id',
             'permission_type',
             'permissions',
         ]);
@@ -160,24 +154,15 @@ class ApiKeysController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $data = $request->only([
-            'name',
-            'admin_id',
-            'apiId',
-        ]);
+        $apiKey = $this->apiKeyRepository->findOrFail($request->input('apiId'));
 
-        $userId = $data['admin_id'];
-        $name = $data['name'];
-
-        $client = $this->generateClientIdAndSecretKey($userId, $name);
-
-        $id = $data['apiId'];
+        $client = $this->generateClientIdAndSecretKey($apiKey->admin_id, $apiKey->name);
 
         $clientId = $client->getKey();
 
         $apiKey = $this->apiKeyRepository->update([
             'oauth_client_id' => $clientId,
-        ], $id);
+        ], $apiKey->id);
 
         return new JsonResponse([
             'client_id'       => $clientId,
