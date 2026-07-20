@@ -74,6 +74,11 @@ class ApiKeysController extends Controller
 
         Event::dispatch('user.api_integration.create.after', $apiKey);
 
+        session()->flash('api_credentials', [
+            'username' => $apiKey->plainEmail,
+            'password' => $apiKey->plainPassword,
+        ]);
+
         session()->flash('success', trans('admin::app.configuration.integrations.create-success'));
 
         return redirect()->route('admin.configuration.integrations.edit', $apiKey->id);
@@ -133,6 +138,7 @@ class ApiKeysController extends Controller
             'oauth_client_id' => $oauthClientId,
             'client_id'       => $clientId,
             'secret_key'      => $secretKey,
+            'username'        => $apiKey->admins?->email,
             'permissionTypes' => json_encode($this->apiKeyRepository->getPermissionTypes()),
         ];
     }
@@ -166,6 +172,7 @@ class ApiKeysController extends Controller
             'client_id'       => $clientId,
             'secret_key'      => $client->plainSecret,
             'oauth_client_id' => $clientId,
+            'username'        => $apiKey->admins?->email,
         ]);
     }
 

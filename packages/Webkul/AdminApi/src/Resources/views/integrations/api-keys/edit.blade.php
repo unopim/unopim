@@ -157,6 +157,23 @@
                                         :placeholder="trans('admin::app.configuration.integrations.edit.assign-user')"
                                     />
                                 </x-admin::form.control-group>
+
+                                <!-- API Username -->
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label>
+                                        @lang('admin::app.configuration.integrations.edit.api-username')
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::form.control-group.control
+                                        type="text"
+                                        class="cursor-not-allowed"
+                                        name="api_username"
+                                        value="{{ $username }}"
+                                        readonly
+                                        :label="trans('admin::app.configuration.integrations.edit.api-username')"
+                                        :placeholder="trans('admin::app.configuration.integrations.edit.api-username')"
+                                    />
+                                </x-admin::form.control-group>
                             </x-slot>
                         </x-admin::accordion>
 
@@ -171,6 +188,51 @@
                             </x-slot>
 
                             <x-slot:content>
+                                @if (session()->has('api_credentials'))
+                                    @php
+                                        $apiCredentials = session('api_credentials');
+                                    @endphp
+
+                                    <!-- One-time Robot Credentials -->
+                                    <div class="mb-4 p-2.5 rounded border border-yellow-300 bg-yellow-50 dark:border-yellow-500 dark:bg-yellow-900/20">
+                                        <p class="text-xs text-yellow-800 dark:text-yellow-200 font-semibold mb-2.5">
+                                            @lang('admin::app.configuration.integrations.edit.credentials-once-note')
+                                        </p>
+
+                                        <x-admin::form.control-group>
+                                            <x-admin::form.control-group.label>
+                                                @lang('admin::app.configuration.integrations.edit.api-username')
+                                            </x-admin::form.control-group.label>
+
+                                            <x-admin::form.control-group.control
+                                                type="text"
+                                                class="cursor-not-allowed"
+                                                name="one_time_api_username"
+                                                value="{{ $apiCredentials['username'] }}"
+                                                readonly
+                                                :label="trans('admin::app.configuration.integrations.edit.api-username')"
+                                                :placeholder="trans('admin::app.configuration.integrations.edit.api-username')"
+                                            />
+                                        </x-admin::form.control-group>
+
+                                        <x-admin::form.control-group>
+                                            <x-admin::form.control-group.label>
+                                                @lang('admin::app.configuration.integrations.edit.api-password')
+                                            </x-admin::form.control-group.label>
+
+                                            <x-admin::form.control-group.control
+                                                type="text"
+                                                class="cursor-not-allowed"
+                                                name="one_time_api_password"
+                                                value="{{ $apiCredentials['password'] }}"
+                                                readonly
+                                                :label="trans('admin::app.configuration.integrations.edit.api-password')"
+                                                :placeholder="trans('admin::app.configuration.integrations.edit.api-password')"
+                                            />
+                                        </x-admin::form.control-group>
+                                    </div>
+                                @endif
+
                                 <!-- Client ID -->
                                 <x-admin::form.control-group v-if="client_id">
                                     <x-admin::form.control-group.label class="required">
