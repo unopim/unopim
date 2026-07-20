@@ -54,14 +54,16 @@
                                     @php
                                         $options = json_encode([
                                             [
-                                                'id'    => 'custom',
-                                                'label' => __('admin::app.settings.roles.create.custom'),
+                                                'id'          => 'custom',
+                                                'label'       => __('admin::app.settings.roles.create.custom'),
+                                                'description' => __('admin::app.settings.roles.create.custom-description'),
                                             ],
                                             [
-                                                'id'    => 'all',
-                                                'label' => __('admin::app.settings.roles.create.all'),
+                                                'id'          => 'all',
+                                                'label'       => __('admin::app.settings.roles.create.all'),
+                                                'description' => __('admin::app.settings.roles.create.all-description'),
                                             ]
-                                        ]);        
+                                        ]);
                                     
                                     @endphp
 

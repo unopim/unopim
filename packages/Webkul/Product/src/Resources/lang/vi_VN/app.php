@@ -17,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Cấu hình',
-        'simple'       => 'Đơn giản',
+        'configurable'  => 'Cấu hình',
+        'simple'        => 'Đơn giản',
+        'variant-group' => 'Nhóm biến thể',
     ],
 ];

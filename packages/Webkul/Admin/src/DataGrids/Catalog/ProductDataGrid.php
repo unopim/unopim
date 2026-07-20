@@ -476,6 +476,25 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return;
         }
 
+        if (isset($requestedParams['mass_action_ids']) && (bool) $requestedParams['mass_action_ids']) {
+            $this->setElasticSort($requestedParams['sort'] ?? []);
+            $this->setElasticFilters($requestedParams['filters'] ?? []);
+
+            $esQuery = ElasticSearchQuery::build();
+
+            $matchingParams = $requestedParams;
+            $matchingParams['pagination'] = [
+                'page'     => 1,
+                'per_page' => self::MASS_ACTION_ID_LIMIT,
+            ];
+
+            $result = ResultCursorFactory::createCursor($esQuery, $matchingParams);
+
+            $this->massActionIds = array_map('intval', $result->getAllIds());
+
+            return;
+        }
+
         try {
             $pagination = $requestedParams['pagination'] ?? [];
             $pagination['per_page'] ??= $this->itemsPerPage;
@@ -1035,16 +1054,17 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'search_placeholder' => __($this->searchPlaceholder),
             'records'            => $paginator['data'],
             'meta'               => [
-                'primary_column'   => $this->primaryColumn,
-                'default_order'    => $this->sortColumn,
-                'from'             => $paginator['from'],
-                'to'               => $paginator['to'],
-                'total'            => $paginator['total'],
-                'per_page_options' => [10, 20, 30, 40, 50],
-                'per_page'         => $paginator['per_page'],
-                'current_page'     => $paginator['current_page'],
-                'last_page'        => $paginator['last_page'],
-                'managedColumn'    => [
+                'primary_column'     => $this->primaryColumn,
+                'select_all_enabled' => $this->enableSelectAll,
+                'default_order'      => $this->sortColumn,
+                'from'               => $paginator['from'],
+                'to'                 => $paginator['to'],
+                'total'              => $paginator['total'],
+                'per_page_options'   => [10, 20, 30, 40, 50],
+                'per_page'           => $paginator['per_page'],
+                'current_page'       => $paginator['current_page'],
+                'last_page'          => $paginator['last_page'],
+                'managedColumn'      => [
                     'enabled' => $this->manageableColumn,
                     'columns' => $this->managedColumns,
                     'route'   => route('admin.datagrid.available_columns'),

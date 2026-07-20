@@ -4,8 +4,7 @@ namespace Webkul\Webhook\Listeners;
 
 use Webkul\Webhook\Jobs\SendBulkProductWebhook;
 use Webkul\Webhook\Jobs\SendProductWebhook;
-use Webkul\Webhook\Repositories\LogsRepository;
-use Webkul\Webhook\Repositories\SettingsRepository;
+use Webkul\Webhook\Repositories\WebhookRepository;
 use Webkul\Webhook\Services\WebhookService;
 
 class Product
@@ -14,8 +13,7 @@ class Product
      * Create a new listener instance.
      */
     public function __construct(
-        protected SettingsRepository $settingsRepository,
-        protected LogsRepository $logsRepository,
+        protected WebhookRepository $webhookRepository,
         protected WebhookService $webhookService
     ) {}
 
@@ -24,7 +22,7 @@ class Product
      */
     public function afterUpdate(\Webkul\Product\Contracts\Product $product): void
     {
-        if (! $this->settingsRepository->isWebhookActive()) {
+        if (! $this->webhookRepository->hasActiveForEvent(WebhookService::EVENT_PRODUCT_UPDATED)) {
             return;
         }
 
@@ -39,11 +37,12 @@ class Product
 
     public function afterCreate(\Webkul\Product\Contracts\Product $product): void
     {
-        if (! $this->settingsRepository->isWebhookActive()) {
+        if (! $this->webhookRepository->hasActiveForEvent(WebhookService::EVENT_PRODUCT_CREATED)) {
             return;
         }
 
         $changes = $this->webhookService->getProductChangesForWebhook($product);
+
         if ($changes === []) {
             return;
         }
@@ -53,7 +52,7 @@ class Product
 
     public function afterBulkUpdate(array $ids): void
     {
-        if (! $this->settingsRepository->isWebhookActive()) {
+        if (! $this->webhookRepository->hasActiveForEvent(WebhookService::EVENT_PRODUCT_UPDATED)) {
             return;
         }
 
@@ -68,7 +67,7 @@ class Product
      */
     public function afterBulkEdit(array $ids): void
     {
-        if (! $this->settingsRepository->isWebhookActive()) {
+        if (! $this->webhookRepository->hasActiveForEvent(WebhookService::EVENT_PRODUCT_UPDATED)) {
             return;
         }
 

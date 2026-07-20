@@ -15,7 +15,8 @@ return [
         'product-can-not-be-copied' => 'Ang mga produkto ng uri ng :type ay hindi maaaring kopyahin',
     ],
     'type' => [
-        'configurable' => 'Nakokontrol',
-        'simple'       => 'Simple',
+        'configurable'  => 'Nakokontrol',
+        'simple'        => 'Simple',
+        'variant-group' => 'Grupo ng Variant',
     ],
 ];

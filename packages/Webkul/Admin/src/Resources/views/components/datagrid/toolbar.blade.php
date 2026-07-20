@@ -88,12 +88,19 @@
                     </x-slot>
                 </x-admin::dropdown>
 
-                <div class="ltr:pl-2.5 rtl:pr-2.5">
+                <div class="ltr:pl-2.5 rtl:pr-2.5 flex items-center gap-2.5">
                     <p class="text-sm font-light text-gray-800 dark:text-white">
                         @{{ @json(trans('admin::app.components.datagrid.toolbar.length-of')).replace(':length', applied.massActions.indices.length) }}
 
                         @{{ @json(trans('admin::app.components.datagrid.toolbar.selected')).replace(':total', available.meta.total) }}
                     </p>
+
+                    <span
+                        class="rounded-full bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
+                        v-if="isAllMatchingSelected && available.meta.last_page > 1"
+                    >
+                        @lang('admin::app.components.datagrid.toolbar.all-selected')
+                    </span>
                 </div>
             </div>
 

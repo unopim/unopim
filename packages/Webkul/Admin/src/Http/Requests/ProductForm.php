@@ -51,6 +51,24 @@ class ProductForm extends FormRequest
         return $this->rules;
     }
 
+    /**
+     * Get custom attribute names for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        $attributes = [];
+
+        $position = 0;
+
+        foreach (array_keys((array) $this->input('variants', [])) as $variantKey) {
+            $attributes["variants.{$variantKey}.sku"] = trans('admin::app.catalog.products.index.variant-sku-label', ['position' => ++$position]);
+        }
+
+        return $attributes;
+    }
+
     public function prepareForValidation()
     {
         if (isset($this->uniqueFields['values.common.sku']) || isset($this->values['common']['sku'])) {

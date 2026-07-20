@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Webhook\DataGrids\LogsDataGrid;
+use Webkul\Webhook\Models\Webhook;
 use Webkul\Webhook\Repositories\LogsRepository;
 
 class WebhookLogsController
@@ -39,11 +40,18 @@ class WebhookLogsController
 
         $log = $this->logsRepository->findOrFail($id);
 
+        $webhookName = $log->webhook_id
+            ? Webhook::query()->whereKey($log->webhook_id)->value('name')
+            : null;
+
         return new JsonResponse([
             'id'         => $log->id,
+            'webhook'    => $webhookName,
             'sku'        => $log->sku,
+            'event'      => $log->event,
             'user'       => $log->user,
             'status'     => (bool) $log->status,
+            'http_code'  => $log->http_code,
             'created_at' => $log->created_at?->toDateTimeString(),
             'payload'    => ($log->extra ?? [])['payload'] ?? null,
             'response'   => ($log->extra ?? [])['response'] ?? null,

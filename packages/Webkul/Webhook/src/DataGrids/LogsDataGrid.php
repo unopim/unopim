@@ -17,20 +17,38 @@ class LogsDataGrid extends DataGrid
     protected $searchPlaceholder = 'admin::app.components.datagrid.toolbar.search_by.sku_or_user';
 
     /**
+     * Memoized webhook id => name map so the webhook column avoids an N+1
+     * lookup across a page of log rows.
+     *
+     * @var array<int, string>|null
+     */
+    protected ?array $webhookNames = null;
+
+    /**
      * Prepare query builder.
      *
      * @return Builder
      */
     public function prepareQueryBuilder()
     {
-        return DB::table('webhook_logs')->select(
+        $queryBuilder = DB::table('webhook_logs')->select(
             'id',
             'created_at',
+            'webhook_id',
             'sku',
+            'event',
             'user',
             'status',
-            'extra'
+            'http_code'
         );
+
+        $webhookId = request('webhook_id');
+
+        if (is_numeric($webhookId)) {
+            $queryBuilder->where('webhook_id', (int) $webhookId);
+        }
+
+        return $queryBuilder;
     }
 
     /**
@@ -68,10 +86,29 @@ class LogsDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
+            'index'      => 'webhook_id',
+            'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.webhook'),
+            'type'       => 'string',
+            'searchable' => false,
+            'filterable' => false,
+            'sortable'   => false,
+            'closure'    => fn ($row): string => $this->webhookName($row->webhook_id),
+        ]);
+
+        $this->addColumn([
             'index'      => 'sku',
             'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.sku'),
             'type'       => 'string',
             'searchable' => true,
+            'filterable' => true,
+            'sortable'   => false,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'event',
+            'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.event'),
+            'type'       => 'string',
+            'searchable' => false,
             'filterable' => true,
             'sortable'   => false,
         ]);
@@ -84,6 +121,7 @@ class LogsDataGrid extends DataGrid
             'filterable' => true,
             'sortable'   => true,
         ]);
+
         $this->addColumn([
             'index'      => 'status',
             'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.status'),
@@ -98,8 +136,7 @@ class LogsDataGrid extends DataGrid
                 ],
             ],
             'closure' => function ($row): string {
-                $extra = is_string($row->extra ?? null) ? json_decode($row->extra, true) : ($row->extra ?? []);
-                $code = $extra['response']['status'] ?? null;
+                $code = $row->http_code;
 
                 if ($row->status) {
                     $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.success');
@@ -125,16 +162,30 @@ class LogsDataGrid extends DataGrid
     }
 
     /**
-     * Build the status dropdown from the actual (status, http-code) pairs
-     * present in webhook_logs so the filter mirrors the column badges.
+     * Resolve a webhook name from the memoized map.
+     */
+    protected function webhookName(?int $webhookId): string
+    {
+        if ($webhookId === null) {
+            return '—';
+        }
+
+        if ($this->webhookNames === null) {
+            $this->webhookNames = DB::table('webhooks')->pluck('name', 'id')->all();
+        }
+
+        return $this->webhookNames[$webhookId] ?? '—';
+    }
+
+    /**
+     * Build the status dropdown from the actual (status, http_code) pairs in
+     * webhook_logs. Both are indexed real columns, so this is a cheap grouped
+     * scan even at millions of rows — no JSON-path extraction.
      */
     protected function buildStatusFilterOptions(): array
     {
-        // Laravel translates the `extra->response->status` JSON path to the
-        // right operator per driver (JSON_UNQUOTE/JSON_EXTRACT on MySQL, ->>
-        // on PostgreSQL), so this stays portable across both deployments.
         $rows = DB::table('webhook_logs')
-            ->select('status', 'extra->response->status as code')
+            ->select('status', 'http_code')
             ->distinct()
             ->get();
 
@@ -142,13 +193,13 @@ class LogsDataGrid extends DataGrid
         $hasTimeout = false;
 
         foreach ($rows as $row) {
-            if ($row->code === null || ! is_numeric($row->code) || (int) $row->code === 0) {
+            if ($row->http_code === null || (int) $row->http_code === 0) {
                 $hasTimeout = true;
 
                 continue;
             }
 
-            $pairs[] = [(int) $row->status, (int) $row->code];
+            $pairs[] = [(int) $row->status, (int) $row->http_code];
         }
 
         usort($pairs, fn (array $a, array $b): int => $b[0] <=> $a[0] ?: $a[1] <=> $b[1]);
@@ -181,9 +232,9 @@ class LogsDataGrid extends DataGrid
     }
 
     /**
-     * Translate each selected dropdown value into the matching SQL predicate.
-     * Values are either "<status>:<code>" pairs (mirroring rows in the DB) or
-     * the "timeout_or_error" sentinel for null/0 codes.
+     * Translate each selected dropdown value into the matching SQL predicate
+     * against the indexed status / http_code columns. Values are either
+     * "<status>:<code>" pairs or the "timeout_or_error" null/0 sentinel.
      */
     public function processRequestedFilters(array $requestedFilters)
     {
@@ -196,8 +247,7 @@ class LogsDataGrid extends DataGrid
                     $outer->orWhere(function ($q) use ($value): void {
                         if ($value === 'timeout_or_error') {
                             $q->where('status', 0)->where(function ($inner): void {
-                                $inner->whereNull('extra->response->status')
-                                    ->orWhere('extra->response->status', 0);
+                                $inner->whereNull('http_code')->orWhere('http_code', 0);
                             });
 
                             return;
@@ -211,8 +261,7 @@ class LogsDataGrid extends DataGrid
 
                         [$status, $code] = explode(':', $value, 2);
 
-                        $q->where('status', (int) $status)
-                            ->where('extra->response->status', (int) $code);
+                        $q->where('status', (int) $status)->where('http_code', (int) $code);
                     });
                 }
             });

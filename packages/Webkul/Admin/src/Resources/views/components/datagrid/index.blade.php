@@ -73,6 +73,8 @@
                 return {
                     isLoading: false,
 
+                    isSelectingAllMatching: false,
+
                     priceValue: '',
 
                     previousPriceValue: '',
@@ -186,6 +188,23 @@
 
                         return fields;
                     }, {});
+                },
+
+                isPageFullySelected() {
+                    return this.applied.massActions.meta.mode === 'all'
+                        && this.available.records.length > 0;
+                },
+
+                isAllMatchingSelected() {
+                    const total = this.available.meta?.total ?? 0;
+
+                    return total > 0 && this.applied.massActions.indices.length >= total;
+                },
+
+                canSelectAllMatching() {
+                    return this.isPageFullySelected
+                        && ! this.isAllMatchingSelected
+                        && (this.available.meta?.last_page ?? 1) > 1;
                 },
             },
 
@@ -866,6 +885,54 @@
 
                         this.applied.massActions.meta.mode = 'all';
                     }
+                },
+
+                /**
+                 * Select every record matching the current filters/search across all pages by
+                 * resolving their ids server-side, then filling them into the existing indices
+                 * array so mass actions keep sending a plain id list.
+                 *
+                 * @returns {void}
+                 */
+                selectAllMatching() {
+                    if (this.isSelectingAllMatching) {
+                        return;
+                    }
+
+                    let params = {
+                        sort: {},
+                        filters: {},
+                        mass_action_ids: 1,
+                    };
+
+                    if (this.applied.sort.column && this.applied.sort.order) {
+                        params.sort = this.applied.sort;
+                    }
+
+                    this.applied.filters.columns.forEach(column => {
+                        params.filters[column.index] = column.value;
+                    });
+
+                    this.isSelectingAllMatching = true;
+
+                    this.$axios
+                        .get(this.src, { params })
+                        .then(response => {
+                            const ids = response.data?.ids;
+
+                            if (Array.isArray(ids)) {
+                                this.applied.massActions.indices = ids;
+                                this.applied.massActions.meta.mode = 'all';
+                            }
+                        })
+                        .finally(() => {
+                            this.isSelectingAllMatching = false;
+                        });
+                },
+
+                clearMassSelection() {
+                    this.applied.massActions.indices = [];
+                    this.applied.massActions.meta.mode = 'none';
                 },
 
                 validateMassAction() {

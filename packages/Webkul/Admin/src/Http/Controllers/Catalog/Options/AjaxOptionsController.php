@@ -18,6 +18,12 @@ class AjaxOptionsController extends Controller
     const DEFAULT_PER_PAGE = 20;
 
     /**
+     * Upper bound for a client-requested page size, used by "select all" style
+     * actions that need every matching record in a single request.
+     */
+    const MAX_PER_PAGE = 5000;
+
+    /**
      * This is used for fetching attribute options for a specific attribute id
      */
     const ENTITY_ATTRIBUTE_OPTION = 'attribute';
@@ -63,13 +69,15 @@ class AjaxOptionsController extends Controller
         $page = request()->input('page');
         $query = request()->input('query') ?? request()->input('search') ?? '';
 
-        $queryParams = request()->except(['page', 'query', 'search', 'entityName', 'entity_name', 'attributeId', 'attribute_id']);
+        $perPage = $this->resolvePerPage(request()->input('perPage'));
+
+        $queryParams = request()->except(['page', 'perPage', 'query', 'search', 'entityName', 'entity_name', 'attributeId', 'attribute_id']);
 
         if (! $entityName) {
             return new JsonResponse(['options' => [], 'page' => 1, 'lastPage' => 1]);
         }
 
-        $options = $this->getOptionsByParams($attributeId, $entityName, $page, $query, $queryParams);
+        $options = $this->getOptionsByParams($attributeId, $entityName, $page, $query, $queryParams, $perPage);
 
         $currentLocaleCode = core()->getRequestedLocaleCode();
 
@@ -102,7 +110,8 @@ class AjaxOptionsController extends Controller
         string $entityName,
         int|string $page,
         string $query = '',
-        ?array $queryParams = []
+        ?array $queryParams = [],
+        int $perPage = self::DEFAULT_PER_PAGE
     ): LengthAwarePaginator {
         $repository = $this->getRepository($entityName);
 
@@ -130,7 +139,22 @@ class AjaxOptionsController extends Controller
             $repository = $repository->whereNotIn($queryParams['exclude']['columnName'], $queryParams['exclude']['values']);
         }
 
-        return $repository->orderBy($this->getSortColumn($entityName))->paginate(self::DEFAULT_PER_PAGE, ['*'], 'paginate', $page);
+        return $repository->orderBy($this->getSortColumn($entityName))->paginate($perPage, ['*'], 'paginate', $page);
+    }
+
+    /**
+     * Clamp a client-supplied page size into a safe range, falling back to the
+     * default when the value is absent or invalid.
+     */
+    protected function resolvePerPage(mixed $perPage): int
+    {
+        $perPage = (int) $perPage;
+
+        if ($perPage < 1) {
+            return self::DEFAULT_PER_PAGE;
+        }
+
+        return min($perPage, self::MAX_PER_PAGE);
     }
 
     /**

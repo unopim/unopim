@@ -324,6 +324,24 @@
                                     </button>
                                 </div>
 
+                                <!-- Select-all-across-pages banner -->
+                                <div
+                                    v-if="canSelectAllMatching || selectAllAcrossPages"
+                                    class="flex items-center justify-center gap-1.5 mb-2 rounded-md bg-unopim-primary-soft/50 dark:bg-cherry-900 px-3 py-1.5 text-xs text-gray-600 dark:text-gray-300"
+                                >
+                                    <span v-if="selectAllAcrossPages">@{{ allSelectedLabel }}</span>
+
+                                    <button
+                                        v-else
+                                        type="button"
+                                        class="text-unopim-primary font-medium hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+                                        :disabled="isSelectingAll"
+                                        @click="selectAllMatching"
+                                    >
+                                        @{{ selectAllMatchingLabel }}
+                                    </button>
+                                </div>
+
                                 <x-admin::catalog.families.bulk-assign
                                     :select-group-placeholder="trans('admin::app.catalog.families.edit.select-destination-group')"
                                 />
@@ -445,8 +463,13 @@
                             assignedSearchTerm: '',
                             params: {},
                             selectedAttrs: [],
+                            allMatchingAttributes: [],
+                            selectAllAcrossPages: false,
+                            isSelectingAll: false,
                             bulkGroup: null,
                             dirtyTick: 0,
+                            selectAllMatchingText: @json(trans('admin::app.catalog.families.edit.select-all-matching')),
+                            allSelectedText: @json(trans('admin::app.catalog.families.edit.all-selected')),
                         }
                     },
 
@@ -484,6 +507,26 @@
                             const option = this.bulkGroupOptions.find(o => o.code === this.bulkGroup);
 
                             return option ? JSON.stringify(option) : '';
+                        },
+
+                        bulkGroupName() {
+                            const option = this.bulkGroupOptions.find(o => o.code === this.bulkGroup);
+
+                            return option ? option.label : '';
+                        },
+
+                        canSelectAllMatching() {
+                            return this.pageAllSelected
+                                && ! this.selectAllAcrossPages
+                                && this.totalAttributes > this.customAttributes.length;
+                        },
+
+                        selectAllMatchingLabel() {
+                            return this.selectAllMatchingText.replace(':total', this.formattedTotalAttributes);
+                        },
+
+                        allSelectedLabel() {
+                            return this.allSelectedText.replace(':total', this.formattedTotalAttributes);
                         },
 
                         formattedTotalAttributes() {
@@ -586,6 +629,9 @@
                         },
 
                         toggleAttr(code) {
+                            this.selectAllAcrossPages = false;
+                            this.allMatchingAttributes = [];
+
                             const i = this.selectedAttrs.indexOf(code);
 
                             i >= 0 ? this.selectedAttrs.splice(i, 1) : this.selectedAttrs.push(code);
@@ -594,6 +640,8 @@
                         clearSelectedAttrs() {
                             this.selectedAttrs = [];
                             this.bulkGroup = null;
+                            this.selectAllAcrossPages = false;
+                            this.allMatchingAttributes = [];
                         },
 
                         onBulkGroup(value) {
@@ -607,6 +655,9 @@
                         },
 
                         selectPage(on) {
+                            this.selectAllAcrossPages = false;
+                            this.allMatchingAttributes = [];
+
                             if (on) {
                                 this.customAttributes.forEach(a => {
                                     const code = this.attributeCode(a);
@@ -622,6 +673,35 @@
                             }
                         },
 
+                        selectAllMatching() {
+                            if (this.isSelectingAll) {
+                                return;
+                            }
+
+                            this.isSelectingAll = true;
+
+                            const params = Object.assign({}, this.params, {
+                                entityName: 'attributes',
+                                page: 1,
+                                perPage: this.totalAttributes,
+                                exclude: {
+                                    columnName: 'code',
+                                    values: this.assignedAttributes,
+                                },
+                            });
+
+                            this.$axios
+                                .get(this.getAttributeRoute, { params })
+                                .then(result => {
+                                    this.allMatchingAttributes = result.data.options || [];
+                                    this.selectedAttrs = this.allMatchingAttributes.map(a => this.attributeCode(a));
+                                    this.selectAllAcrossPages = true;
+                                })
+                                .finally(() => {
+                                    this.isSelectingAll = false;
+                                });
+                        },
+
                         assignBulk() {
                             if (! this.bulkGroup) {
                                 this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('admin::app.catalog.families.edit.select-group')" });
@@ -635,7 +715,9 @@
                                 return;
                             }
 
-                            const moving = this.customAttributes.filter(a => this.selectedAttrs.includes(this.attributeCode(a)));
+                            const moving = this.selectAllAcrossPages
+                                ? this.allMatchingAttributes.slice()
+                                : this.customAttributes.filter(a => this.selectedAttrs.includes(this.attributeCode(a)));
 
                             moving.forEach(attribute => group.customAttributes.push(attribute));
 

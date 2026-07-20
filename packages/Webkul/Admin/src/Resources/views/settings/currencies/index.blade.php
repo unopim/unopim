@@ -168,6 +168,8 @@
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.currencies.index.create.code')
+
+                                    <a href="https://en.wikipedia.org/wiki/ISO_4217" target="_blank" rel="noopener noreferrer" class="inline-flex items-center cursor-pointer text-gray-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" title="{{ trans('admin::app.settings.currencies.index.create.code-hint') }}"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></a>
                                 </x-admin::form.control-group.label>
 
                                 <x-admin::form.control-group.control
@@ -177,7 +179,7 @@
                                     :value="old('code')"
                                     v-model="selectedCurrency.code"
                                     :label="trans('admin::app.settings.currencies.index.create.code')"
-                                    :placeholder="trans('admin::app.settings.currencies.index.create.code')"
+                                    :placeholder="trans('admin::app.settings.currencies.index.create.code-placeholder')"
                                     ::readonly="true !== codeIsNew"
                                 />
 

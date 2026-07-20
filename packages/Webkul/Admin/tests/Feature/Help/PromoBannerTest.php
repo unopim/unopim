@@ -49,6 +49,17 @@ it('always includes cloud banner when not dismissed', function () {
     expect($keys)->toContain('cloud');
 });
 
+it('excludes cloud banner on cloud installs', function () {
+    $this->loginAsAdmin();
+    seedLatestVersion(core()->version());
+
+    config()->set('help.is_cloud', true);
+
+    $keys = collect(app(PromoBanner::class)->visibleBanners())->pluck('key');
+
+    expect($keys)->not->toContain('cloud');
+});
+
 it('returns no banners when no admin is authenticated', function () {
     seedLatestVersion('9.9.9');
 

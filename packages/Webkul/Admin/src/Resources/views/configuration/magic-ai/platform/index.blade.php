@@ -22,18 +22,15 @@
 
     @pushOnce('scripts')
         <script type="text/x-template" id="v-magic-ai-platform-template">
-            <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                    @lang('admin::app.configuration.platform.title')
-                </p>
+            <x-admin::page-header :title="trans('admin::app.configuration.platform.title')">
                 @if ($canCreatePlatform)
-                    <div class="flex gap-x-2.5 items-center">
+                    <x-slot:actions>
                         <button type="button" class="primary-button" @click="openCreateModal()">
                             @lang('admin::app.configuration.platform.create-btn')
                         </button>
-                    </div>
+                    </x-slot>
                 @endif
-            </div>
+            </x-admin::page-header>
 
             <!-- Setup Guide Banner (no platforms configured) -->
             @if($platformCount === 0)

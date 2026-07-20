@@ -460,7 +460,10 @@
                                     </label>
                                 </x-admin::form.control-group>
 
-                                <x-admin::form.control-group class="flex gap-2.5 items-center !mb-0 opacity-70 select-none">
+                                <x-admin::form.control-group
+                                    class="flex gap-2.5 items-center !mb-0 opacity-70 select-none cursor-not-allowed"
+                                    :title="trans('admin::app.catalog.attributes.edit.locked-after-creation')"
+                                >
                                     <x-admin::form.control-group.control
                                         type="checkbox"
                                         id="is_unique"
@@ -493,7 +496,10 @@
                             </x-slot>
 
                             <x-slot:content>
-                                <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 opacity-70 select-none">
+                                <x-admin::form.control-group
+                                    class="flex gap-2.5 items-center !mb-2 opacity-70 select-none cursor-not-allowed"
+                                    :title="trans('admin::app.catalog.attributes.edit.locked-after-creation')"
+                                >
                                     @php
                                         $valuePerLocale = old('value_per_locale') ?? $attribute->value_per_locale;
                                     @endphp
@@ -552,7 +558,10 @@
                                         />
                                     </x-admin::form.control-group>
                                 @endif
-                                <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 opacity-70 select-none">
+                                <x-admin::form.control-group
+                                    class="flex gap-2.5 items-center !mb-2 opacity-70 select-none cursor-not-allowed"
+                                    :title="trans('admin::app.catalog.attributes.edit.locked-after-creation')"
+                                >
                                     @php
                                         $valuePerChannel = old('value_per_channel') ?? $attribute->value_per_channel
                                     @endphp

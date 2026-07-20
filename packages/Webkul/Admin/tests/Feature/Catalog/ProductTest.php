@@ -370,6 +370,54 @@ it('should create a new variant product for a configurable product without remov
     ]);
 });
 
+it('should show a readable message identifying the sku when variant skus are duplicated', function () {
+    $this->loginAsAdmin();
+
+    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+
+    $attribute = $configurableProduct->super_attributes->first();
+
+    $variantValue = $attribute->options->last()->code;
+
+    $existingVariant = $configurableProduct->variants->first();
+
+    $attributeCode = $attribute->code;
+
+    $duplicateSku = $existingVariant->sku;
+
+    $data = [
+        'sku'      => $configurableProduct->sku,
+        'values'   => $configurableProduct->values,
+        'variants' => [
+            $existingVariant->id => [
+                'sku'    => $existingVariant->sku,
+                'values' => [
+                    'common' => [
+                        'sku'          => $existingVariant->sku,
+                        $attributeCode => $existingVariant->values['common'][$attributeCode],
+                    ],
+                ],
+            ],
+            'variant_1' => [
+                'sku'    => $duplicateSku,
+                'values' => [
+                    'common' => [
+                        'sku'          => $duplicateSku,
+                        $attributeCode => $variantValue,
+                    ],
+                ],
+            ],
+        ],
+    ];
+
+    $response = $this->putJson(route('admin.catalog.products.update', $configurableProduct->id), $data);
+
+    $response->assertStatus(422);
+
+    expect($response->json('errors')['variants.variant_1.sku'][0])
+        ->toBe(trans('admin::app.catalog.products.index.variant-sku-already-taken', ['sku' => $duplicateSku]));
+});
+
 it('should edit already existing variant product through a configurable product', function () {
     $this->loginAsAdmin();
 

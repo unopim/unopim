@@ -52,7 +52,7 @@ class AttributeController extends Controller
             return app(AttributeDataGrid::class)->toJson();
         }
 
-        return view('admin::catalog.attributes.index');
+        return view('admin::catalog.attributes.index', ['swatchTypes' => SwatchTypeEnum::getValues()]);
     }
 
     /**
@@ -69,9 +69,8 @@ class AttributeController extends Controller
     public function store(): RedirectResponse
     {
         $this->validate(request(), [
-            'code'        => ['required', 'not_in:type,attribute_family_id', 'unique:attributes,code', new Code, new NotSupportedAttributes],
+            'code'        => ['required', 'unique:attributes,code', new Code, new NotSupportedAttributes],
             'type'        => 'required',
-            'validation'  => 'required',
             'swatch_type' => [
                 'required_if:type,select,multiselect',
                 'prohibited_unless:type,select,multiselect',

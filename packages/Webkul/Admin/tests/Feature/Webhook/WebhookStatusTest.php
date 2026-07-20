@@ -18,21 +18,20 @@ use Webkul\Webhook\Services\WebhookService;
 beforeEach(function () {
     $this->loginAsAdmin();
 
-    DB::table('webhook_settings')->updateOrInsert(
-        ['field' => 'webhook_url'],
-        ['value' => 'https://1.1.1.1/hook', 'updated_at' => now(), 'created_at' => now()]
-    );
-    DB::table('webhook_settings')->updateOrInsert(
-        ['field' => 'webhook_active'],
-        ['value' => '1', 'updated_at' => now(), 'created_at' => now()]
-    );
+    DB::table('webhooks')->insert([
+        'name'       => 'Status Test',
+        'url'        => 'https://1.1.1.1/hook',
+        'is_active'  => 1,
+        'events'     => json_encode(['product.created', 'product.updated']),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 
     DB::table('webhook_logs')->delete();
 });
 
 afterEach(function () {
     DB::table('webhook_logs')->delete();
-    DB::table('webhook_settings')->whereIn('field', ['webhook_url', 'webhook_active'])->delete();
 });
 
 it('logs status=1 with HTTP 200 in extra when the endpoint succeeds', function () {
@@ -128,6 +127,7 @@ function insertWebhookLogRow(int $status, ?int $code = null, ?string $error = nu
         'sku'        => 'DISPLAY-'.uniqid(),
         'user'       => 'tester',
         'status'     => $status,
+        'http_code'  => $code,
         'extra'      => $extra ? json_encode($extra) : null,
         'created_at' => now(),
         'updated_at' => now(),

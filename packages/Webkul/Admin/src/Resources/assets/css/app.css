@@ -194,7 +194,7 @@
 
     html.dark .active [class^="icon-"],
     html.dark .active [class*=" icon-"]{
-        @apply text-unopim-primary text-primary-700;
+        @apply text-primary-400;
     }
 
     .box-shadow {
@@ -589,6 +589,43 @@
 
 .tox .tox-tbtn:hover {
     @apply !bg-unopim-primary-muted !bg-primary-100;
+}
+
+/* Disabled multiselect keeps the library's light grey fill; give it a dark
+   surface so it doesn't render as a light slab in dark mode. */
+.dark .multiselect--disabled,
+.dark .multiselect--disabled .multiselect__tags,
+.dark .multiselect--disabled .multiselect__single,
+.dark .multiselect--disabled .multiselect__select {
+    background: #1F1C30 !important;
+    color: #9ca3af !important;
+}
+
+/* Match the TinyMCE (oxide-dark) chrome to the cherry palette so the editor
+   reads as a native dark field instead of the skin's default blue-grey. */
+.dark .tox.tox-tinymce {
+    @apply border-gray-600;
+}
+
+.dark .tox .tox-editor-header,
+.dark .tox .tox-toolbar-overlord,
+.dark .tox .tox-toolbar__primary,
+.dark .tox .tox-toolbar,
+.dark .tox .tox-statusbar {
+    background-color: #26283D !important;
+    background-image: none !important;
+    @apply border-cherry-700;
+}
+
+.dark .tox .tox-edit-area__iframe {
+    background-color: #1F1C30 !important;
+}
+
+.dark .tox .tox-statusbar,
+.dark .tox .tox-statusbar a,
+.dark .tox .tox-statusbar__path-item,
+.dark .tox .tox-statusbar__wordcount {
+    @apply text-gray-400;
 }
 
 .multiselect__option--highlight,

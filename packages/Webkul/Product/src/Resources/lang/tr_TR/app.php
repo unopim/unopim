@@ -17,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Ayarlanabilir',
-        'simple'       => 'Basit',
+        'configurable'  => 'Ayarlanabilir',
+        'simple'        => 'Basit',
+        'variant-group' => 'Varyant Grubu',
     ],
 ];

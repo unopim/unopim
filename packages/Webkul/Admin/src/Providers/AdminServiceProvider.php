@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Webkul\Admin\Console\Commands\RefreshDashboardCacheCommand;
 use Webkul\Admin\Fields\FieldConfig;
 use Webkul\Admin\Observers\CategoryObserver;
@@ -85,6 +86,8 @@ class AdminServiceProvider extends ServiceProvider
         $this->registerConfig();
 
         $this->app->singleton(FieldConfig::class);
+
+        $this->app->scoped('unopim.admin.menu', fn (): array => $this->buildAdminMenu());
     }
 
     /**
@@ -137,31 +140,12 @@ class AdminServiceProvider extends ServiceProvider
             'admin::components.layouts.header.index',
             'admin::components.layouts.sidebar.index',
             'admin::components.layouts.tabs',
+            'admin::components.breadcrumbs',
         ], function ($view) {
-            $tree = Tree::create();
-
-            foreach (config('menu.admin') as $index => $item) {
-                if (! bouncer()->hasPermission($item['key'])) {
-                    continue;
-                }
-
-                $tree->add($item, 'menu');
-            }
-
-            $tree->items = core()->sortItems($tree->items);
-            $tree->items = $tree->removeUnauthorizedUrls();
-
-            $landingUrl = null;
-
-            foreach ($tree->items as $item) {
-                if (! empty($item['url'])) {
-                    $landingUrl = $item['url'];
-                    break;
-                }
-            }
+            ['tree' => $tree, 'landingUrl' => $landingUrl] = app('unopim.admin.menu');
 
             $view->with('menu', $tree);
-            $view->with('adminLandingUrl', $landingUrl ?? route('admin.session.create'));
+            $view->with('adminLandingUrl', $landingUrl);
         });
 
         view()->composer([
@@ -176,6 +160,105 @@ class AdminServiceProvider extends ServiceProvider
 
             $view->with('systemPrompts', $systemPrompts);
         });
+    }
+
+    /**
+     * Build the authorized admin sidebar menu once per request. Shared by the
+     * header, sidebar, tabs and breadcrumb views via the `unopim.admin.menu`
+     * scoped binding instead of rebuilding the tree for each.
+     *
+     * @return array{tree: Tree, landingUrl: string}
+     */
+    protected function buildAdminMenu(): array
+    {
+        $tree = Tree::create();
+
+        foreach (config('menu.admin') as $item) {
+            if (! bouncer()->hasPermission($item['key'])) {
+                continue;
+            }
+
+            $tree->add($item, 'menu');
+        }
+
+        $tree->items = core()->sortItems($tree->items);
+        $tree->items = $tree->removeUnauthorizedUrls();
+
+        if (! $tree->currentKey) {
+            $tree->currentKey = $this->resolveActiveMenuKey();
+        }
+
+        $landing = collect($tree->items)->first(fn (array $item): bool => ! empty($item['url']));
+
+        return [
+            'tree'       => $tree,
+            'landingUrl' => $landing['url'] ?? route('admin.session.create'),
+        ];
+    }
+
+    /**
+     * Resolve the sidebar menu key for an off-menu route whose URL prefix-matched
+     * no menu item (e.g. a detail route `admin.magic_ai.prompt.edit` or a hub page
+     * like appearance). First matches the current route name against menu items by
+     * route-name ancestry (most specific wins), then falls back to the System
+     * Settings hub mapping.
+     */
+    protected function resolveActiveMenuKey(): ?string
+    {
+        $currentRoute = Route::currentRouteName();
+
+        if (! $currentRoute) {
+            return null;
+        }
+
+        $bestKey = null;
+        $bestLength = 0;
+
+        foreach (config('menu.admin') as $item) {
+            if (empty($item['route']) || empty($item['key'])) {
+                continue;
+            }
+
+            $routeBase = Str::beforeLast($item['route'], '.');
+
+            if ($currentRoute === $item['route'] || Str::startsWith($currentRoute, $routeBase.'.')) {
+                if (strlen($routeBase) > $bestLength) {
+                    $bestLength = strlen($routeBase);
+                    $bestKey = $item['key'];
+                }
+            }
+        }
+
+        return $bestKey ?? $this->resolveHubMenuKey();
+    }
+
+    /**
+     * Resolve the sidebar menu key that owns the current System Settings hub
+     * route. Returns the parent menu key (the hub row's `acl`) so off-menu hub
+     * pages activate their sidebar group, or null when the current route is not
+     * a hub page.
+     */
+    protected function resolveHubMenuKey(): ?string
+    {
+        $currentRoute = Route::currentRouteName();
+
+        if (! $currentRoute) {
+            return null;
+        }
+
+        foreach (config('system_settings') as $item) {
+            if (empty($item['route']) || empty($item['acl'])) {
+                continue;
+            }
+
+            $routeBase = Str::beforeLast($item['route'], '.');
+
+            if ($currentRoute === $item['route'] || Str::startsWith($currentRoute, $routeBase.'.')) {
+                return $item['acl'];
+            }
+        }
+
+        return null;
     }
 
     /**

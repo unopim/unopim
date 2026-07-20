@@ -76,14 +76,21 @@ return [
         'fallback_latest' => null,
     ],
 
+    /*
+     | Cloud installs set UNOPIM_CLOUD=true so banners flagged `hide_on_cloud`
+     | (e.g. the cloud-hosting promo) are suppressed for users already on cloud.
+     */
+    'is_cloud' => (bool) env('UNOPIM_CLOUD', false),
+
     'banners' => [
         'cloud' => [
-            'key'     => 'cloud',
-            'icon'    => '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.2 9.1 4 4 0 0 0 6.5 19z"></path></svg>',
-            'tag'     => 'admin::app.help.banners.cloud.tag',
-            'message' => 'admin::app.help.banners.cloud.message',
-            'cta'     => 'admin::app.help.banners.cloud.cta',
-            'url'     => 'https://unopim.com/cloud-hosting/',
+            'key'           => 'cloud',
+            'icon'          => '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.2 9.1 4 4 0 0 0 6.5 19z"></path></svg>',
+            'tag'           => 'admin::app.help.banners.cloud.tag',
+            'message'       => 'admin::app.help.banners.cloud.message',
+            'cta'           => 'admin::app.help.banners.cloud.cta',
+            'url'           => 'https://unopim.com/cloud-hosting/',
+            'hide_on_cloud' => true,
         ],
         'upgrade' => [
             'key'               => 'upgrade',

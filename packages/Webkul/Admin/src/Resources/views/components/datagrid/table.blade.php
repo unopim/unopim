@@ -18,11 +18,14 @@
 
                     <template v-else>
                         <div
-                            class="row grid gap-2.5 min-h-[47px] px-4 py-2.5 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 bg-primary-50 dark:bg-cherry-900 font-semibold items-center"
+                            class="row grid gap-2.5 min-h-[47px] px-4 py-2.5 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 bg-primary-50 dark:bg-cherry-800 font-semibold items-center"
                             :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
                         >
                             <!-- Mass Actions -->
-                            <p v-if="$parent.available.massActions.length">
+                            <p
+                                v-if="$parent.available.massActions.length"
+                                class="flex items-center gap-1"
+                            >
                                 <label for="mass_action_select_all_records">
                                     <input
                                         type="checkbox"
@@ -43,6 +46,53 @@
                                     >
                                     </span>
                                 </label>
+
+                                {{--
+                                    Selecting the current page is the checkbox's own job. This dropdown only
+                                    adds the cross-page actions, so it appears solely when the result set spans
+                                    more than one page (and the grid allows selecting all).
+                                --}}
+                                <x-admin::dropdown
+                                    position="bottom-left"
+                                    v-if="$parent.available.meta.select_all_enabled !== false && $parent.available.meta.last_page > 1"
+                                >
+                                    <x-slot:toggle>
+                                        <button
+                                            type="button"
+                                            class="icon-chevron-down cursor-pointer rounded-md text-xl leading-none text-gray-500 transition-all hover:text-primary-600 dark:text-gray-400 dark:hover:text-white"
+                                            :aria-label="'@lang('admin::app.components.datagrid.toolbar.selection-options')'"
+                                        >
+                                        </button>
+                                    </x-slot>
+
+                                    <x-slot:menu class="!py-2 min-w-[180px]">
+                                        <x-admin::dropdown.menu.item
+                                            ::class="$parent.isSelectingAllMatching ? 'pointer-events-none opacity-60' : ''"
+                                            @click="$parent.selectAllMatching()"
+                                        >
+                                            <span class="flex items-center gap-2">
+                                                <span
+                                                    class="text-lg text-primary-600"
+                                                    :class="$parent.isSelectingAllMatching ? 'icon-loader animate-spin' : 'icon-select-all'"
+                                                >
+                                                </span>
+
+                                                @{{ @json(trans('admin::app.components.datagrid.toolbar.select-all-matching')).replace(':total', $parent.available.meta.total) }}
+                                            </span>
+                                        </x-admin::dropdown.menu.item>
+
+                                        <x-admin::dropdown.menu.item
+                                            v-if="$parent.applied.massActions.indices.length"
+                                            @click="$parent.clearMassSelection()"
+                                        >
+                                            <span class="flex items-center gap-2">
+                                                <span class="icon-cross-large text-lg text-gray-500 dark:text-gray-400"></span>
+
+                                                @lang('admin::app.components.datagrid.toolbar.clear-selection')
+                                            </span>
+                                        </x-admin::dropdown.menu.item>
+                                    </x-slot>
+                                </x-admin::dropdown>
                             </p>
 
                             <!-- Columns -->

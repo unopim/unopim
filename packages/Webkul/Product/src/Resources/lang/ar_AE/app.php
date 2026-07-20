@@ -17,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'قابلة للتكوين',
-        'simple'       => 'بسيطة',
+        'configurable'  => 'قابلة للتكوين',
+        'simple'        => 'بسيطة',
+        'variant-group' => 'مجموعة المتغيرات',
     ],
 ];

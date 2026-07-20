@@ -14,7 +14,7 @@
         <div
             v-if="list.length"
             id="unopim-promo-bar"
-            class="sticky top-0 z-[9999] w-full overflow-hidden"
+            class="shrink-0 w-full overflow-hidden"
         >
             <div
                 v-for="(slide, slideIndex) in list"

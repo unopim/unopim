@@ -188,6 +188,7 @@ describe('Product fillable attributes', function () {
             'sku',
             'parent_id',
             'status',
+            'variant_structure_id',
         ]);
     });
 });

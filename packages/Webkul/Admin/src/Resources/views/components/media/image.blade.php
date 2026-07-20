@@ -190,7 +190,7 @@
                             <x-slot:header>
                                 <template v-if="! ai.images.length">
                                     <p class="flex gap-2.5 items-center text-lg text-gray-800 dark:text-white font-bold">
-                                        <span class="icon-magic text-2xl text-gray-800"></span>
+                                        <span class="icon-magic text-2xl text-gray-800 dark:text-white"></span>
 
                                         @lang('admin::app.components.media.images.ai-generation.title')
                                     </p>

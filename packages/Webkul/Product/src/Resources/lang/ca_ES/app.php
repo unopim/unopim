@@ -15,7 +15,8 @@ return [
         'product-can-not-be-copied' => 'Els productes de tipus :type no es poden copiar',
     ],
     'type' => [
-        'configurable' => 'Configurat',
-        'simple'       => 'Simple',
+        'configurable'  => 'Configurat',
+        'simple'        => 'Simple',
+        'variant-group' => 'Grup de variants',
     ],
 ];

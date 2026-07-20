@@ -2,57 +2,42 @@
 
 namespace Webkul\Admin\Validations;
 
-use Illuminate\Contracts\Validation\Rule;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Webkul\Product\Repositories\ProductRepository;
 
-class ConfigurableUniqueSku implements Rule
+class ConfigurableUniqueSku implements ValidationRule
 {
     /**
-     * Constructor.
-     *
-     * @param  array  $currentIds
+     * Create a new rule instance.
      */
     public function __construct(
-        protected $currentIds = null,
+        protected array $currentIds = [],
     ) {}
 
     /**
-     * Determine if the validation rule passes.
-     *
-     * @param  string  $attribute
-     * @param  mixed  $value
-     * @return bool
+     * Run the validation rule.
      */
-    public function passes($attribute, $value)
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return $this->isSkuExistsInProduct();
+        if ($this->isSkuUniqueAcrossVariants()) {
+            return;
+        }
+
+        $fail('admin::app.catalog.products.index.variant-sku-already-taken')->translate([
+            'sku' => (string) $value,
+        ]);
     }
 
     /**
-     * Get the validation error message.
-     *
-     * @return string
+     * Determine if the requested variant skus are unique across other products and within the request itself.
      */
-    public function message()
-    {
-        return trans('admin::app.catalog.products.index.already-taken', ['name' => ':attribute']);
-    }
-
-    /**
-     * Is SKU is exists in product.
-     *
-     * @return bool
-     */
-    protected function isSkuExistsInProduct()
+    protected function isSkuUniqueAcrossVariants(): bool
     {
         $requestedSkus = collect(request()->input('variants'))->pluck('sku')->toArray();
 
         $productRepository = app(ProductRepository::class);
 
-        /**
-         * First we will check sku in all the products except the
-         * current variant ids.
-         */
         if (
             $productRepository->whereIn('sku', $requestedSkus)
                 ->whereNotIn('id', $this->currentIds)
@@ -61,10 +46,6 @@ class ConfigurableUniqueSku implements Rule
             return false;
         }
 
-        /**
-         * Once, we don't found any sku in all the products then
-         * we will check uniqueness in the current requested variant's skus.
-         */
-        return ! (count($requestedSkus) !== count(array_unique($requestedSkus)));
+        return count($requestedSkus) === count(array_unique($requestedSkus));
     }
 }

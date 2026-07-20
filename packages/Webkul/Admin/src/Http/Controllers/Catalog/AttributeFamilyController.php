@@ -179,23 +179,32 @@ class AttributeFamilyController extends Controller
     {
         $attributeFamily = $this->attributeFamilyRepository->findOrFail($id);
 
-        if (request()->has('history')) {
+        // History is a drawer overlay that coexists with any tab, so the active
+        // tab must be resolved with the same precedence the edit view uses —
+        // otherwise `?completeness&history` (history opened on the completeness
+        // tab) would take the history fast-path and omit the completeness data
+        // the view still renders. Keep this match in sync with edit.blade.php.
+        $activeTab = match (true) {
+            request()->has('variants')     => 'variants',
+            request()->has('completeness') => 'completeness',
+            request()->has('history')      => 'history',
+            default                        => 'general',
+        };
+
+        if ($activeTab === 'history') {
             return view('admin::catalog.families.edit');
         }
 
-        $isCompletenessTab = request()->has('completeness');
-
-        $normalizedData = $isCompletenessTab
-            ? ['attributeFamilyId' => $id]
-            : $this->normalize($attributeFamily);
-
-        $allChannels = $isCompletenessTab
-            ? $this->channelRepository->getChannelAsOptions()->toJson()
-            : '[]';
+        if ($activeTab === 'completeness') {
+            return view('admin::catalog.families.edit', [
+                'attributeFamilyId' => $id,
+                'allChannels'       => $this->channelRepository->getChannelAsOptions()->toJson(),
+            ]);
+        }
 
         return view('admin::catalog.families.edit', [
-            ...$normalizedData,
-            'allChannels' => $allChannels,
+            ...$this->normalize($attributeFamily),
+            'allChannels' => '[]',
         ]);
     }
 

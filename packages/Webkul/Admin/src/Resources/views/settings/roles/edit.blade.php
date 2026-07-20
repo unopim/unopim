@@ -58,14 +58,16 @@
                                 @php
                                     $options = json_encode([
                                         [
-                                            'id'    => 'custom',
-                                            'label' => __('admin::app.settings.roles.edit.custom'),
+                                            'id'          => 'custom',
+                                            'label'       => __('admin::app.settings.roles.edit.custom'),
+                                            'description' => __('admin::app.settings.roles.edit.custom-description'),
                                         ],
                                         [
-                                            'id'    => 'all',
-                                            'label' => __('admin::app.settings.roles.edit.all'),
+                                            'id'          => 'all',
+                                            'label'       => __('admin::app.settings.roles.edit.all'),
+                                            'description' => __('admin::app.settings.roles.edit.all-description'),
                                         ]
-                                    ]);        
+                                    ]);
                                     
                                 @endphp
 
@@ -136,7 +138,7 @@
                                 </x-admin::form.control-group>
 
                                 <x-admin::form.control-group class="!mb-0">
-                                    <x-admin::form.control-group.label class="required">
+                                    <x-admin::form.control-group.label>
                                         @lang('admin::app.settings.roles.edit.description')
                                     </x-admin::form.control-group.label>
 
@@ -144,7 +146,6 @@
                                         type="textarea"
                                         id="description"
                                         name="description"
-                                        rules="required"
                                         value="{{ old('description') ?: $role->description }}"
                                         :label="trans('admin::app.settings.roles.edit.description')"
                                         :placeholder="trans('admin::app.settings.roles.edit.description')"

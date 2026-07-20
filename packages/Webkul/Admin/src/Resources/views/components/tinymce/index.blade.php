@@ -21,7 +21,7 @@
                     <!-- Modal Header -->
                     <x-slot:header>
                         <p class="flex gap-2.5 items-center text-lg text-gray-800 dark:text-white font-bold">
-                            <span class="icon-magic text-2xl text-gray-800"></span>
+                            <span class="icon-magic text-2xl text-gray-800 dark:text-white"></span>
                             @lang('admin::app.components.tinymce.ai-generation.title')
                         </p>
                     </x-slot>
@@ -349,6 +349,9 @@
                                 ...extraConfiguration,
                                 skin: self.currentSkin,
                                 content_css: self.currentContentCSS,
+                                content_style: self.currentSkin === 'oxide-dark'
+                                    ? 'body{background-color:#1F1C30;color:#E5E7EB;} a{color:#A78BFA;}'
+                                    : '',
                             };
 
                             const image_upload_handler = (blobInfo, progress) => new Promise((resolve,reject) => {

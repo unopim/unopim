@@ -15,12 +15,13 @@ use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Admin\Http\Requests\ProductForm;
 use Webkul\Admin\Traits\AttributeColumnTrait;
-use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Sku;
+use Webkul\Product\Contracts\VariantStructurePlanner;
 use Webkul\Product\Helpers\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Repositories\VariantStructureRepository;
 use Webkul\Product\Type\AbstractType;
 use Webkul\Product\Validator\ProductValuesValidator;
 
@@ -39,11 +40,12 @@ class ProductController extends Controller
      * @return void
      */
     public function __construct(
-        protected AttributeFamilyRepository $attributeFamilyRepository,
         protected ProductRepository $productRepository,
         protected ProductValuesValidator $valuesValidator,
         protected ChannelRepository $channelRepository,
         protected AttributeRepository $attributeRepository,
+        protected VariantStructureRepository $variantStructureRepository,
+        protected VariantStructurePlanner $variantStructurePlanner,
     ) {}
 
     /**
@@ -65,56 +67,60 @@ class ProductController extends Controller
      */
     public function store(): JsonResponse
     {
-        if (request()->has('super_attributes')) {
-            request()->merge([
-                'super_attributes' => json_decode(request()->input('super_attributes'), true),
-            ]);
-        }
-
         $this->validate(request(), [
             'type'                => 'required',
             'attribute_family_id' => 'required',
             'sku'                 => ['required', 'unique:products,sku', new Sku],
-            'super_attributes'    => 'array|min:1',
         ]);
 
         $data = request()->only([
             'type',
             'attribute_family_id',
             'sku',
-            'super_attributes',
             'family',
+            'variant_structure_id',
         ]);
 
-        if (
-            ProductType::hasVariants($data['type'])
-            && ! isset($data['super_attributes'])
-        ) {
-            $configurableFamily = $this->attributeFamilyRepository->find($data['attribute_family_id']);
+        $data['variant_structure_id'] = request()->input('variant_structure_id');
 
-            $configurableAttributes = [];
-
-            foreach ($configurableFamily->getConfigurableAttributes() as $attribute) {
-                $configurableAttributes[] = [
-                    'code' => $attribute->code,
-                    'name' => $attribute->name,
-                    'id'   => $attribute->id,
-                ];
-            }
-
-            if (empty($configurableAttributes)) {
-                return new JsonResponse([
-                    'errors' => [
-                        'attribute_family_id' => [trans('admin::app.catalog.products.index.create.not-config-family-error')],
-                    ],
-                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
-            }
-
-            return new JsonResponse([
-                'data' => [
-                    'attributes' => $configurableAttributes,
-                ],
+        if (ProductType::hasVariants($data['type'])) {
+            $structures = $this->variantStructureRepository->findWhere([
+                'attribute_family_id' => $data['attribute_family_id'],
             ]);
+
+            if (! empty($data['variant_structure_id'])) {
+                $structure = $structures->firstWhere('id', (int) $data['variant_structure_id']);
+
+                if (! $structure) {
+                    return new JsonResponse([
+                        'errors' => [
+                            'variant_structure_id' => [trans('admin::app.catalog.products.index.create.invalid-variant-structure')],
+                        ],
+                    ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+                }
+
+                $data['variant_structure_id'] = $structure->id;
+                $data['super_attributes'] = $this->variantStructurePlanner->allAxisCodes($structure);
+            } else {
+                if ($structures->isEmpty()) {
+                    return new JsonResponse([
+                        'errors' => [
+                            'attribute_family_id' => [trans('admin::app.catalog.products.index.create.no-variant-structure')],
+                        ],
+                    ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+                }
+
+                return new JsonResponse([
+                    'data' => [
+                        'variant_structures' => $structures->map(fn ($s) => [
+                            'id'     => $s->id,
+                            'name'   => $s->name ?: $s->code,
+                            'code'   => $s->code,
+                            'levels' => $s->levels,
+                        ])->values(),
+                    ],
+                ]);
+            }
         }
 
         Event::dispatch('catalog.product.create.before');

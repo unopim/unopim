@@ -211,6 +211,40 @@ return [
             ],
         ],
     ], [
+        'key'  => 'general.microsoft_sso',
+        'name' => 'admin::app.configuration.index.general.microsoft-sso.title',
+        'info' => 'admin::app.configuration.index.general.microsoft-sso.info',
+        'sort' => 5,
+    ], [
+        'key'    => 'general.microsoft_sso.settings',
+        'name'   => 'admin::app.configuration.index.general.microsoft-sso.settings.title',
+        'info'   => 'admin::app.configuration.index.general.microsoft-sso.settings.info',
+        'sort'   => 1,
+        'fields' => [
+            [
+                'name'          => 'enabled',
+                'title'         => 'admin::app.configuration.index.general.microsoft-sso.settings.enabled',
+                'type'          => 'boolean',
+                'default_value' => env('MICROSOFT_SSO_ENABLED', false) ? '1' : '0',
+            ], [
+                'name'          => 'tenant',
+                'title'         => 'admin::app.configuration.index.general.microsoft-sso.settings.tenant',
+                'type'          => 'text',
+                'default_value' => env('MICROSOFT_SSO_TENANT', ''),
+                'placeholder'   => 'common',
+            ], [
+                'name'          => 'client_id',
+                'title'         => 'admin::app.configuration.index.general.microsoft-sso.settings.client-id',
+                'type'          => 'text',
+                'default_value' => env('MICROSOFT_SSO_CLIENT_ID', ''),
+            ], [
+                'name'        => 'client_secret',
+                'title'       => 'admin::app.configuration.index.general.microsoft-sso.settings.client-secret',
+                'type'        => 'password',
+                'placeholder' => '••••••••',
+            ],
+        ],
+    ], [
         'key'  => 'emails',
         'name' => 'admin::app.configuration.index.emails.title',
         'info' => 'admin::app.configuration.index.emails.info',

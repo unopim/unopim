@@ -7,7 +7,7 @@
     ];
 @endphp
 
-<header class="unopim-header flex justify-between items-center px-4 py-2.5 bg-white dark:bg-cherry-700  border-b dark:border-cherry-800 sticky top-0 z-[10001]">
+<header class="unopim-header flex justify-between items-center px-4 py-2.5 bg-white dark:bg-cherry-700  border-b dark:border-cherry-800 relative shrink-0 z-[10001]">
     <div class="flex gap-1.5 items-center">
         <i
             class="hidden icon-menu text-2xl p-1.5 rounded-md cursor-pointer hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800 max-lg:block"

@@ -321,11 +321,13 @@ class SessionController extends Controller
      */
     private function microsoftSsoConfig(): array
     {
+        $prefix = 'general.microsoft_sso.settings.';
+
         return [
-            'enabled'       => (bool) config('services.microsoft_sso.enabled', false),
-            'tenant'        => (string) config('services.microsoft_sso.tenant', ''),
-            'client_id'     => (string) config('services.microsoft_sso.client_id', ''),
-            'client_secret' => (string) config('services.microsoft_sso.client_secret', ''),
+            'enabled'       => (bool) (core()->getConfigData($prefix.'enabled') ?? config('services.microsoft_sso.enabled', false)),
+            'tenant'        => (string) (core()->getConfigData($prefix.'tenant') ?: config('services.microsoft_sso.tenant', '')),
+            'client_id'     => (string) (core()->getConfigData($prefix.'client_id') ?: config('services.microsoft_sso.client_id', '')),
+            'client_secret' => (string) (core()->getConfigData($prefix.'client_secret') ?: config('services.microsoft_sso.client_secret', '')),
         ];
     }
 }

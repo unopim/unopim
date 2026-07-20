@@ -3,180 +3,115 @@
 namespace Webkul\Webhook\Services;
 
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\Product\Contracts\Product;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Webhook\Helpers\ProductComparer;
+use Webkul\Webhook\Models\Webhook;
 use Webkul\Webhook\Repositories\LogsRepository;
-use Webkul\Webhook\Repositories\SettingsRepository;
+use Webkul\Webhook\Repositories\WebhookRepository;
 use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 /**
- * Service responsible for sending product data to an external webhook and storing logs.
+ * Sends product data to every active webhook subscribed to the fired event
+ * and records a per-webhook delivery log.
  */
 class WebhookService
 {
+    public const EVENT_PRODUCT_CREATED = 'product.created';
+
+    public const EVENT_PRODUCT_UPDATED = 'product.updated';
+
     public function __construct(
-        protected SettingsRepository $settingsRepository,
+        protected WebhookRepository $webhookRepository,
         protected LogsRepository $logsRepository,
         protected ProductRepository $productRepository
     ) {}
 
     /**
-     * Send product data to configured webhook URL.
+     * Send a product.updated event to every subscribed webhook.
      */
     public function sendDataToWebhook(Product $product, array $productChanges = []): ?Response
     {
-        $webhookData = [];
-
-        $webhookUrl = $this->settingsRepository->getWebhookUrl();
-
-        if (in_array($webhookUrl, [null, '', '0'], true)) {
-            return null;
-        }
-
-        $admin = auth('admin')->user()
-            ?? auth('api')->user()
-            ?? request()->user('admin')
-            ?? request()->user('api');
-
-        $timezone = is_array($admin)
-            ? ($admin['timezone'] ?? config('app.timezone'))
-            : ($admin?->timezone ?? config('app.timezone'));
-
-        $webhookData = [
-            'event'         => 'product.updated',
-            'timestamp'     => now()->toDateTimeString(),
-            'user_timezone' => $timezone,
-            'data'          => [
-                $this->normalizeWebhookData($product, $productChanges),
-            ],
-        ];
-
-        try {
-            $safety = SafeWebhookUrl::validate($webhookUrl);
-            if (! $safety['valid']) {
-                Log::warning('Webhook dispatch blocked — unsafe URL', [
-                    'reason' => $safety['reason'],
-                    'ip'     => $safety['ip'] ?? null,
-                ]);
-
-                return null;
-            }
-
-            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhookUrl))->post($webhookUrl, $webhookData);
-        } catch (\Exception $e) {
-            $response = null;
-
-            report($e);
-        }
-
-        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e), $webhookData);
-
-        return $response;
+        return $this->fanOutSingle($product, $productChanges, self::EVENT_PRODUCT_UPDATED);
     }
 
     /**
-     * Send product.created event to configured webhook URL.
+     * Send a product.created event to every subscribed webhook.
      */
     public function sendCreatedToWebhook(Product $product, array $productChanges = []): ?Response
     {
-        $webhookData = [];
+        return $this->fanOutSingle($product, $productChanges, self::EVENT_PRODUCT_CREATED);
+    }
 
-        $webhookUrl = $this->settingsRepository->getWebhookUrl();
+    /**
+     * Send a batch of products to every subscribed webhook by their IDs.
+     */
+    public function sendBatchByIds(array $ids): ?Response
+    {
+        return $this->sendBatch($this->productRepository->findWhereIn('id', $ids));
+    }
 
-        if (in_array($webhookUrl, [null, '', '0'], true)) {
+    /**
+     * Send a batch of products to every subscribed webhook without requiring
+     * change detection. Used for bulk-edit where no per-product diff exists.
+     */
+    public function sendBatchForBulkEdit(array $ids): ?Response
+    {
+        return $this->sendBatch($this->productRepository->findWhereIn('id', $ids), requireChanges: false);
+    }
+
+    /**
+     * Send a batch of products to every subscribed webhook by their SKUs.
+     */
+    public function sendBatchBySkus(array $skus): ?Response
+    {
+        return $this->sendBatch($this->productRepository->findWhereIn('sku', $skus));
+    }
+
+    /**
+     * Build a single-product payload and deliver it to each subscribed webhook.
+     */
+    protected function fanOutSingle(Product $product, array $productChanges, string $event): ?Response
+    {
+        $webhooks = $this->webhookRepository->getActiveForEvent($event);
+
+        if ($webhooks->isEmpty()) {
             return null;
         }
 
-        // Resolve the acting admin (session or API) so we can include their timezone
-        // in the created event payload. Fall back to app timezone when not set.
-        $admin = auth('admin')->user()
-            ?? auth('api')->user()
-            ?? request()->user('admin')
-            ?? request()->user('api');
-
-        $timezone = is_array($admin)
-            ? ($admin['timezone'] ?? config('app.timezone'))
-            : ($admin?->timezone ?? config('app.timezone'));
-
-        $webhookData = [
-            'event'         => 'product.created',
+        $payload = [
+            'event'         => $event,
             'timestamp'     => now()->toDateTimeString(),
-            'user_timezone' => $timezone,
+            'user_timezone' => $this->actingTimezone(),
             'data'          => [
                 $this->normalizeWebhookData($product, $productChanges),
             ],
         ];
 
-        try {
-            $safety = SafeWebhookUrl::validate($webhookUrl);
-            if (! $safety['valid']) {
-                Log::warning('Webhook dispatch blocked — unsafe URL', [
-                    'reason' => $safety['reason'],
-                    'ip'     => $safety['ip'] ?? null,
-                ]);
+        $lastResponse = null;
 
-                return null;
-            }
-
-            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhookUrl))->post($webhookUrl, $webhookData);
-        } catch (\Exception $e) {
-            $response = null;
-
-            report($e);
+        foreach ($webhooks as $webhook) {
+            $lastResponse = $this->deliver($webhook, $payload, $product->sku, $event);
         }
 
-        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e), $webhookData);
-
-        return $response;
+        return $lastResponse;
     }
 
     /**
-     * Send a batch of products to the webhook by their IDs.
-     */
-    public function sendBatchByIds(array $ids): ?Response
-    {
-        $products = $this->productRepository->findWhereIn('id', $ids);
-
-        return $this->sendBatch($products);
-    }
-
-    /**
-     * Send a batch of products to the webhook without requiring change detection.
-     * Used for bulk-edit operations where no per-product audit diff may exist.
-     */
-    public function sendBatchForBulkEdit(array $ids): ?Response
-    {
-        $products = $this->productRepository->findWhereIn('id', $ids);
-
-        return $this->sendBatch($products, requireChanges: false);
-    }
-
-    /**
-     * Send a batch of products to the webhook by their SKUs.
-     */
-    public function sendBatchBySkus(array $skus): ?Response
-    {
-        $products = $this->productRepository->findWhereIn('sku', $skus);
-
-        return $this->sendBatch($products);
-    }
-
-    /**
-     * Internal helper to send a collection of product models as a single batch payload.
+     * Internal helper to send a collection of products as a single batch
+     * payload to each subscribed webhook.
      *
-     * @param  bool  $requireChanges  When false, every product is included regardless
-     *                                of whether an audit diff was detected (e.g. bulk-edit).
+     * @param  bool  $requireChanges  When false, every product is included
+     *                                regardless of whether an audit diff exists.
      */
     protected function sendBatch($products, bool $requireChanges = true): ?Response
     {
-        $webhookData = [];
+        $webhooks = $this->webhookRepository->getActiveForEvent(self::EVENT_PRODUCT_UPDATED);
 
-        $webhookUrl = $this->settingsRepository->getWebhookUrl();
-
-        if (in_array($webhookUrl, [null, '', '0'], true)) {
+        if ($webhooks->isEmpty()) {
             return null;
         }
 
@@ -198,74 +133,144 @@ class WebhookService
             return null;
         }
 
-        $webhookData = [
-            'event'     => 'product.updated',
+        $payload = [
+            'event'     => self::EVENT_PRODUCT_UPDATED,
             'timestamp' => now()->toDateTimeString(),
             'data'      => $normalized,
         ];
 
+        $lastResponse = null;
+
+        foreach ($webhooks as $webhook) {
+            $lastResponse = $this->deliver($webhook, $payload, null, self::EVENT_PRODUCT_UPDATED, $products);
+        }
+
+        return $lastResponse;
+    }
+
+    /**
+     * Deliver a payload to a single webhook: SSRF-guard, sign, send, log.
+     *
+     * @param  Collection|null  $batchProducts  When set, a
+     *                                          log row is written per product.
+     */
+    protected function deliver(Webhook $webhook, array $payload, ?string $sku, string $event, $batchProducts = null): ?Response
+    {
+        $safety = SafeWebhookUrl::validate($webhook->url);
+
+        if (! $safety['valid']) {
+            Log::warning('Webhook dispatch blocked — unsafe URL', [
+                'webhook_id' => $webhook->id,
+                'reason'     => $safety['reason'],
+                'ip'         => $safety['ip'] ?? null,
+            ]);
+
+            return null;
+        }
+
+        $body = json_encode($payload);
+        $exception = null;
+
         try {
-            $safety = SafeWebhookUrl::validate($webhookUrl);
-            if (! $safety['valid']) {
-                Log::warning('Webhook dispatch blocked — unsafe URL', [
-                    'reason' => $safety['reason'],
-                    'ip'     => $safety['ip'] ?? null,
-                ]);
-
-                return null;
-            }
-
-            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhookUrl))->post($webhookUrl, $normalized);
+            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhook->url))
+                ->withHeaders($this->buildHeaders($webhook, $event, $body))
+                ->withBody($body, 'application/json')
+                ->post($webhook->url);
         } catch (\Exception $e) {
             $response = null;
+            $exception = $e;
 
             report($e);
         }
 
         $status = $response?->successful() ? 1 : 0;
+        $httpCode = $response?->status() ?? ($exception?->getCode() ?: null);
+        $logResponse = $this->normalizeResponseForLog($response ?? $exception);
 
-        $this->storeBatchLogs($products, $status, $this->normalizeResponseForLog($response ?? $e), $webhookData);
+        if ($batchProducts !== null) {
+            $this->storeBatchLogs($webhook, $batchProducts, $status, $httpCode, $event, $logResponse, $payload);
+        } else {
+            $this->storeLogs($webhook, $sku, $status, $httpCode, $event, $logResponse, $payload);
+        }
 
         return $response;
     }
 
-    protected function storeLogs(string $code, int $status, $response = null, array $payload = []): void
+    /**
+     * Outgoing headers for a delivery: custom headers plus, when a secret is
+     * set, an HMAC-SHA256 signature so the receiver can verify authenticity.
+     *
+     * @return array<string, string>
+     */
+    protected function buildHeaders(Webhook $webhook, string $event, string $body): array
     {
-        $admin = auth('admin')->user()
-            ?? auth('api')->user()
-            ?? request()->user('admin')
-            ?? request()->user('api');
-
-        $adminName = is_array($admin) ? $admin['name'] ?? null : $admin?->name ?? null;
-
-        $data = [
-            'user'   => $adminName,
-            'sku'    => $code,
-            'status' => $status,
-            'extra'  => ['payload' => $payload, 'response' => $response],
+        $headers = [
+            'X-Unopim-Event'      => $event,
+            'X-Unopim-Webhook-Id' => (string) $webhook->id,
         ];
 
-        $this->logsRepository->create($data);
+        foreach ((array) $webhook->headers as $key => $value) {
+            if (is_string($key) && $key !== '') {
+                $headers[$key] = (string) $value;
+            }
+        }
+
+        if (! empty($webhook->secret)) {
+            $headers['X-Unopim-Signature'] = 'sha256='.hash_hmac('sha256', $body, (string) $webhook->secret);
+        }
+
+        return $headers;
     }
 
-    protected function storeBatchLogs($products, int $status, $response = null, array $payload = []): void
+    protected function actingTimezone(): string
     {
         $admin = auth('admin')->user()
             ?? auth('api')->user()
             ?? request()->user('admin')
             ?? request()->user('api');
 
-        $adminName = is_array($admin) ? ($admin['name'] ?? null) : ($admin?->name ?? null);
+        return is_array($admin)
+            ? ($admin['timezone'] ?? config('app.timezone'))
+            : ($admin?->timezone ?? config('app.timezone'));
+    }
+
+    protected function actingName(): ?string
+    {
+        $admin = auth('admin')->user()
+            ?? auth('api')->user()
+            ?? request()->user('admin')
+            ?? request()->user('api');
+
+        return is_array($admin) ? ($admin['name'] ?? null) : ($admin?->name ?? null);
+    }
+
+    protected function storeLogs(Webhook $webhook, ?string $code, int $status, ?int $httpCode, string $event, $response = null, array $payload = []): void
+    {
+        $this->logsRepository->create([
+            'webhook_id' => $webhook->id,
+            'user'       => $this->actingName(),
+            'sku'        => $code,
+            'event'      => $event,
+            'status'     => $status,
+            'http_code'  => $httpCode,
+            'extra'      => ['payload' => $payload, 'response' => $response],
+        ]);
+    }
+
+    protected function storeBatchLogs(Webhook $webhook, $products, int $status, ?int $httpCode, string $event, $response = null, array $payload = []): void
+    {
+        $adminName = $this->actingName();
 
         foreach ($products as $product) {
-            $data = [
-                'user'   => $adminName ?? null,
-                'sku'    => $product->sku ?? ($product['sku'] ?? null),
-                'status' => $status,
-                'extra'  => ['payload' => $payload, 'response' => $response],
-            ];
-
-            $this->logsRepository->create($data);
+            $this->logsRepository->create([
+                'webhook_id' => $webhook->id,
+                'user'       => $adminName,
+                'sku'        => $product->sku ?? ($product['sku'] ?? null),
+                'event'      => $event,
+                'status'     => $status,
+                'http_code'  => $httpCode,
+                'extra'      => ['payload' => $payload, 'response' => $response],
+            ]);
         }
     }
 
