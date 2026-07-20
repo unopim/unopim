@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\Token;
 use Webkul\AdminApi\Models\Apikey;
 use Webkul\AdminApi\Services\ApiUserProvisioner;
@@ -21,13 +22,15 @@ return new class extends Migration
                     continue;
                 }
 
-                $robot = $provisioner->provisionForIntegration($key->name)['admin'];
+                DB::transaction(function () use ($provisioner, $key) {
+                    $robot = $provisioner->provisionForIntegration($key->name)['admin'];
 
-                $key->forceFill(['admin_id' => $robot->id])->save();
+                    $key->forceFill(['admin_id' => $robot->id])->save();
 
-                if ($key->oauth_client_id) {
-                    Token::where('client_id', $key->oauth_client_id)->update(['revoked' => true]);
-                }
+                    if ($key->oauth_client_id) {
+                        Token::where('client_id', $key->oauth_client_id)->update(['revoked' => true]);
+                    }
+                });
             }
         });
     }
