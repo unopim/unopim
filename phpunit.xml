@@ -79,6 +79,10 @@
             <directory suffix="Test.php">packages/Webkul/Resource/tests/Feature</directory>
         </testsuite>
 
+        <testsuite name="Publication Feature Test">
+            <directory suffix="Test.php">packages/Webkul/Publication/tests/Feature</directory>
+        </testsuite>
+
     </testsuites>
 
     <source>
@@ -91,6 +95,8 @@
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_DEBUG" value="true"/>
+
+        <env name="DB_DATABASE" value="unopim_test"/>
 
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
