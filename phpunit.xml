@@ -82,7 +82,6 @@
         <testsuite name="Publication Feature Test">
             <directory suffix="Test.php">packages/Webkul/Publication/tests/Feature</directory>
         </testsuite>
-
     </testsuites>
 
     <source>
