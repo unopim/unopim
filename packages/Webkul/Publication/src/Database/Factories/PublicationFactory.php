@@ -27,7 +27,7 @@ class PublicationFactory extends Factory
     public function definition(): array
     {
         return [
-            'uuid'       => (string) Str::uuid7(),
+            'uuid'       => (string) Str::uuid(),
             'product_id' => ProductFactory::new(),
             'channel_id' => Channel::first()?->id ?? Channel::factory(),
             'type'       => 'dpp',

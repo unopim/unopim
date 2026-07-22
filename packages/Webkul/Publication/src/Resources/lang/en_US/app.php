@@ -6,6 +6,7 @@ return [
             'draft'     => 'Draft',
             'published' => 'Published',
             'withdrawn' => 'Withdrawn',
+            'redacted'  => 'Redacted',
         ],
     ],
 ];

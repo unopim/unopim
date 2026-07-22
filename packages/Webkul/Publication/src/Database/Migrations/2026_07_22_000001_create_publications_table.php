@@ -13,15 +13,22 @@ return new class extends Migration
 
             $table->uuid('uuid')->unique();
 
+            // Nullable and unused today: reserved so a future GS1/other identifier
+            // scheme can be attached to an existing passport without a
+            // multi-terabyte ALTER once this table is at production scale.
+            $table->string('alias_identifier')->nullable()->unique();
+
             // Retention obligation outlives the catalog record: a product with an
             // attested passport cannot be deleted out from under it.
             $table->unsignedInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->restrictOnDelete();
 
             // Same rationale: a channel cannot be deleted while it still carries
-            // attested passports.
+            // attested passports. Declared explicitly (not just left to the FK)
+            // because MySQL auto-indexes FK columns but PostgreSQL does not.
             $table->unsignedInteger('channel_id');
             $table->foreign('channel_id')->references('id')->on('channels')->restrictOnDelete();
+            $table->index('channel_id');
 
             $table->string('type');
 
