@@ -15,6 +15,7 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -466,6 +467,24 @@ class AttributeFamilyController extends Controller
             foreach ($codes as $attributeCode) {
                 if (! $familyAttributes->has($attributeCode) || in_array($attributeCode, $activeAxes, true)) {
                     abort(422, trans('validation.exists', ['attribute' => $attributeCode]));
+                }
+            }
+        }
+
+        if (! empty($structureData['id'])) {
+            $existing = VariantStructure::query()
+                ->with('axes.attribute')
+                ->where('attribute_family_id', $attributeFamily->id)
+                ->find($structureData['id']);
+
+            if ($existing) {
+                $currentAxes = $existing->axes->map(fn ($axis) => $axis->attribute?->code)->filter()->sort()->values()->all();
+                $newAxes = collect($activeAxes)->sort()->values()->all();
+
+                $structureChanged = $currentAxes !== $newAxes || (int) $existing->levels !== $levels;
+
+                if ($structureChanged && Product::query()->where('variant_structure_id', $existing->id)->whereHas('variants')->exists()) {
+                    abort(422, trans('admin::app.catalog.families.edit.variant-structure-locked'));
                 }
             }
         }

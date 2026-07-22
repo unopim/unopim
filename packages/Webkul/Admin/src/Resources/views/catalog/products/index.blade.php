@@ -31,6 +31,9 @@
     <x-admin::datagrid
         src="{{ route('admin.catalog.products.index') }}"
         filter-attributes-src="{{ route('admin.catalog.products.filterable_attributes') }}"
+        views-src="{{ route('admin.catalog.products.grid_views.index') }}"
+        scope-channel="{{ core()->getRequestedChannelCode() }}"
+        scope-locale="{{ core()->getRequestedLocaleCode() }}"
         :isMultiRow="true"
     >
 

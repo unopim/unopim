@@ -18,7 +18,12 @@ class DateTimeFilter extends AbstractPropertyFilter
 
     public function __construct(
         array $supportedProperties = [self::CREATED_AT_PROPERTY, self::UPDATED_AT_PROPERTY],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::RANGE]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::RANGE,
+            FilterOperators::LESS_THAN,
+            FilterOperators::GREATER_THAN,
+        ]
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
@@ -64,6 +69,26 @@ class DateTimeFilter extends AbstractPropertyFilter
                 ];
 
                 $this->queryBuilder::where($clause);
+                break;
+
+            case FilterOperators::LESS_THAN:
+                $this->queryBuilder::where([
+                    'range' => [
+                        $property => [
+                            $operator->value => $this->getFormattedDateTime($property, $this->scalarValue($value).' 00:00:01'),
+                        ],
+                    ],
+                ]);
+                break;
+
+            case FilterOperators::GREATER_THAN:
+                $this->queryBuilder::where([
+                    'range' => [
+                        $property => [
+                            $operator->value => $this->getFormattedDateTime($property, $this->scalarValue($value).' 23:59:59'),
+                        ],
+                    ],
+                ]);
                 break;
         }
 

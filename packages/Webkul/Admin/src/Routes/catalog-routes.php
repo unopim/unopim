@@ -10,6 +10,7 @@ use Webkul\Admin\Http\Controllers\Catalog\CategoryFieldController;
 use Webkul\Admin\Http\Controllers\Catalog\Options\AjaxOptionsController;
 use Webkul\Admin\Http\Controllers\Catalog\ProductBulkEditController;
 use Webkul\Admin\Http\Controllers\Catalog\ProductController;
+use Webkul\Admin\Http\Controllers\Catalog\ProductGridViewController;
 use Webkul\Admin\Http\Middleware\EnsureChannelLocaleIsValid;
 
 /**
@@ -166,6 +167,10 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::post('copy/{id}', 'copy')->name('admin.catalog.products.copy');
 
+            Route::post('{configurableId}/variant-node', 'createVariantNode')->name('admin.catalog.products.variant_node.create');
+
+            Route::get('{configurableId}/variant-children', 'variantChildren')->name('admin.catalog.products.variant_children');
+
             Route::get('edit/{id}', 'edit')->name('admin.catalog.products.edit')->middleware(EnsureChannelLocaleIsValid::class);
 
             Route::put('edit/{id}', 'update')->name('admin.catalog.products.update');
@@ -185,6 +190,14 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::get('get/locale', 'getLocale')->name('admin.catalog.product.get_locale');
 
             Route::get('get/attributes', 'getAttribute')->name('admin.catalog.product.get_attribute');
+        });
+
+        Route::controller(ProductGridViewController::class)->prefix('products/grid-views')->group(function () {
+            Route::get('', 'index')->name('admin.catalog.products.grid_views.index');
+
+            Route::post('', 'store')->name('admin.catalog.products.grid_views.store');
+
+            Route::delete('{id}', 'destroy')->name('admin.catalog.products.grid_views.delete');
         });
 
         Route::controller(ProductBulkEditController::class)->prefix('products/bulkedit')->group(function () {

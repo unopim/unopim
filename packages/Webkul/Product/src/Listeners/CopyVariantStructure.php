@@ -36,6 +36,7 @@ class CopyVariantStructure
             foreach ($structure->axes as $axis) {
                 $clone->axes()->create([
                     'attribute_id' => $axis->attribute_id,
+                    'level'        => $axis->level,
                     'position'     => $axis->position,
                 ]);
             }

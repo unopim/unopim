@@ -47,15 +47,37 @@ test.describe('Product Creation - Variant Structure selector', () => {
     await selectMultiselect(adminPage, 'type', 'Configurable');
     await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
     await adminPage.locator('input[name="sku"]').fill(sku);
-    await clickSave(adminPage, 'Save Product');
+
+    // Scope submits to the modal: the datagrid's pagination also exposes a "Next"
+    // button, and a configurable is created in two steps (Next, then Save Product).
+    const createModal = adminPage.locator('.fixed').filter({ hasText: 'Create New Product' }).first();
+
+    await createModal.getByRole('button', { name: 'Next', exact: true }).click();
 
     // Step 2: the variant structure selector replaces the type/family/sku view.
     await expect(adminPage.locator('#app').getByText('Variant Structure').first()).toBeVisible({ timeout: 10000 });
-    await selectMultiselect(adminPage, 'variant_structure_id', 'Test (1-level)');
-    await clickSave(adminPage, 'Save Product');
+    await selectMultiselect(adminPage, 'variant_structure_id', 'product by color,size and brand (1-level)');
+    // Step 2 swaps the modal content, so scope this submit to the page instead.
+    await adminPage.getByRole('button', { name: 'Save Product', exact: true }).click();
 
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/products\/edit\//);
+
+    // A level that splits on several axes is labelled by all of them, and its
+    // "add" modal asks for one option per axis before it will create anything.
+    await expect(adminPage.getByText(/^\s*color,\s*size,\s*brand\s*$/i).first()).toBeVisible({ timeout: 15000 });
+
+    await adminPage.getByRole('button', { name: /Select Color, Size, Brand/i }).click();
+    await adminPage.getByRole('button', { name: 'Add New', exact: true }).click();
+
+    const addModal = adminPage.locator('.fixed').filter({ hasText: /Add a new Color, Size, Brand/i }).first();
+
+    await addModal.waitFor({ state: 'visible', timeout: 10000 });
+
+    await expect(addModal.locator('.multiselect')).toHaveCount(3);
+    await expect(addModal.getByRole('button', { name: 'Create', exact: true })).toBeDisabled();
+
+    await addModal.getByRole('button', { name: 'Cancel', exact: true }).click();
 
     // Cleanup
     await deleteProductBySku(adminPage, sku);

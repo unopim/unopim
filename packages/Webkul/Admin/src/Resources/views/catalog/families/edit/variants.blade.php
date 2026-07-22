@@ -68,7 +68,6 @@
                                     name="variant_structure_name"
                                     v-model="draft.name"
                                     placeholder="{{ trans('admin::app.catalog.families.edit.variant-name-placeholder') }}"
-                                    @input="onDraftNameInput"
                                 />
                             </x-admin::form.control-group>
 
@@ -187,6 +186,16 @@
                 };
             },
 
+            watch: {
+                'draft.name'(value) {
+                    if (this.draft.codeEdited) {
+                        return;
+                    }
+
+                    this.draft.code = this.slug(value);
+                },
+            },
+
             methods: {
                 emptyDraft() {
                     return {
@@ -218,14 +227,6 @@
                         .toLowerCase()
                         .replace(/[^a-z0-9]+/g, '_')
                         .replace(/^_+|_+$/g, '');
-                },
-
-                onDraftNameInput() {
-                    if (this.draft.codeEdited) {
-                        return;
-                    }
-
-                    this.draft.code = this.slug(this.draft.name);
                 },
 
                 draftAxisValue(level) {

@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Filter\Database\Property;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\AbstractPropertyFilter;
 
@@ -16,7 +17,12 @@ class DateTimeFilter extends AbstractPropertyFilter
 
     public function __construct(
         array $supportedProperties = [self::CREATED_AT_PROPERTY, self::UPDATED_AT_PROPERTY],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::RANGE]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::RANGE,
+            FilterOperators::LESS_THAN,
+            FilterOperators::GREATER_THAN,
+        ]
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
@@ -39,13 +45,20 @@ class DateTimeFilter extends AbstractPropertyFilter
             );
         }
 
+        $column = sprintf('%s.%s', $this->getSearchTablePath($options), $property);
+
+        /** raw statements bypass the builder, so the prefix is applied here */
+        $rawColumn = DB::getTablePrefix().$column;
+
         match ($operator) {
-            FilterOperators::IN    => $this->queryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value),
-            FilterOperators::RANGE => $this->queryBuilder->whereBetween(sprintf('%s.%s', $this->getSearchTablePath($options), $property), [
+            FilterOperators::IN    => $this->queryBuilder->whereIn($column, $value),
+            FilterOperators::RANGE => $this->queryBuilder->whereBetween($column, [
                 ($value[0] ?? '').' 00:00:01',
                 ($value[1] ?? '').' 23:59:59',
             ]),
-            default => $this,
+            FilterOperators::LESS_THAN    => $this->queryBuilder->whereRaw("$rawColumn < ?", [$this->scalarValue($value).' 00:00:01']),
+            FilterOperators::GREATER_THAN => $this->queryBuilder->whereRaw("$rawColumn > ?", [$this->scalarValue($value).' 23:59:59']),
+            default                       => $this,
         };
 
         return $this;

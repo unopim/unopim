@@ -67,7 +67,7 @@
         app.component('v-datagrid', {
             template: '#v-datagrid-template',
 
-            props: ['src', 'filterAttributesSrc', 'compact'],
+            props: ['src', 'filterAttributesSrc', 'viewsSrc', 'scopeChannel', 'scopeLocale', 'compact'],
 
             data() {
                 return {
@@ -86,6 +86,26 @@
                     defaultFilterIndices: [],
 
                     activeFilterIndices: [],
+
+                    expandedFilter: null,
+
+                    savedViews: [],
+
+                    viewScope: null,
+
+                    appliedViewId: null,
+
+                    viewName: '',
+
+                    viewShared: false,
+
+                    viewSnapshot: null,
+
+                    viewSearch: '',
+
+                    viewSearchTimer: null,
+
+                    viewsLoading: false,
 
                     showFilterPicker: false,
 
@@ -159,6 +179,10 @@
             mounted() {
                 this.boot();
 
+                if (this.viewsSrc) {
+                    this.loadViews();
+                }
+
                 this._onShareLinkChanged = () => this.get();
                 this.$emitter.on('share-link-changed', this._onShareLinkChanged);
             },
@@ -180,8 +204,8 @@
                         fields[column.index] = {
                             name:        column.index,
                             type:        types[column.type] ?? 'text',
-                            label:       column.label,
-                            placeholder: column.label,
+                            label:       column.filter_label ?? column.label,
+                            placeholder: column.filter_label ?? column.label,
                             options:     [],
                             async:       false,
                         };
@@ -226,6 +250,12 @@
 
                     this.filterPickerSearchTimer = setTimeout(() => this.loadFilterAttributes(true), 300);
                 },
+
+                viewSearch() {
+                    clearTimeout(this.viewSearchTimer);
+
+                    this.viewSearchTimer = setTimeout(() => this.loadViews(), 300);
+                },
             },
 
             methods: {
@@ -267,9 +297,11 @@
                                 this.activeFilterIndices = currentDatagrid.activeFilterIndices;
                             }
 
-                            if (currentDatagrid.defaultFilterIndices?.length) {
-                                this.defaultFilterIndices = currentDatagrid.defaultFilterIndices;
-                            }
+                            this.appliedViewId = currentDatagrid.appliedViewId ?? null;
+                            this.viewSnapshot = currentDatagrid.viewSnapshot ?? null;
+                            this.viewScope = currentDatagrid.viewScope ?? null;
+
+                            // derived from the columns, so never restored from storage
 
                             if (urlParams.has('search')) {
                                 let searchAppliedColumn = this.findAppliedColumn('all');
@@ -313,6 +345,14 @@
                     this.applied.filters.columns.forEach(column => {
                         params.filters[column.index] = column.value;
                     });
+
+                    if (this.viewScope?.channel) {
+                        params.channel = this.viewScope.channel;
+                    }
+
+                    if (this.viewScope?.locale) {
+                        params.locale = this.viewScope.locale;
+                    }
 
                     params.managedColumns = this.available.meta?.managedColumn?.columns;
                     params.manageableColumn = this.available.meta?.managedColumn?.columns;
@@ -374,17 +414,18 @@
 
                             this.available.searchPlaceholder = search_placeholder;
 
+                            const defaultFilterColumns = this.available.columns
+                                .filter(col => col.filterable && col.visible !== false && col.default_filter !== false)
+                                .map(col => col.index);
+
                             // Initialize active filters on first load
                             if (this.activeFilterIndices.length === 0) {
-                                this.activeFilterIndices = this.available.columns
-                                    .filter(col => col.filterable && col.visible !== false)
-                                    .map(col => col.index);
+                                this.activeFilterIndices = [...defaultFilterColumns];
                             }
 
-                            // Track default filter indices so they cannot be removed
                             if (this.defaultFilterIndices.length === 0) {
                                 this.defaultFilterIndices = this.available.columns
-                                    .filter(col => col.filterable && col.visible !== false)
+                                    .filter(col => defaultFilterColumns.includes(col.index) && col.removable_filter !== true)
                                     .map(col => col.index);
                             }
 
@@ -1085,7 +1126,9 @@
                                         available: this.available,
                                         applied: appliedForStorage,
                                         activeFilterIndices: this.activeFilterIndices,
-                                        defaultFilterIndices: this.defaultFilterIndices,
+                                        appliedViewId: this.appliedViewId,
+                                        viewSnapshot: this.viewSnapshot,
+                                        viewScope: this.viewScope,
                                     };
                                 }
 
@@ -1118,7 +1161,9 @@
                         available: this.available,
                         applied: appliedForStorage,
                         activeFilterIndices: this.activeFilterIndices,
-                        defaultFilterIndices: this.defaultFilterIndices,
+                        appliedViewId: this.appliedViewId,
+                        viewSnapshot: this.viewSnapshot,
+                        viewScope: this.viewScope,
                     };
                 },
 
@@ -1245,10 +1290,292 @@
                     document.body.removeChild(textarea);
                 },
 
-                getActiveFilterColumns() {
-                    return this.available.columns.filter(
-                        col => col.filterable && this.activeFilterIndices.includes(col.index)
+                filterLabel(column) {
+                    return column.filter_label ?? column.label;
+                },
+
+                currentViewSignature() {
+                    return JSON.stringify(this.currentViewPayload());
+                },
+
+                hasUnsavedFilters() {
+                    if (this.viewSnapshot) {
+                        return this.currentViewSignature() !== this.viewSnapshot;
+                    }
+
+                    return this.hasAppliedFilters();
+                },
+
+                hasAppliedFilters() {
+                    return this.applied.filters.columns.some(
+                        column => column.index !== 'all' && (column.value?.length ?? 0) > 0
                     );
+                },
+
+                clearAllFilters() {
+                    if (! this.hasAppliedFilters() && ! this.appliedViewId) {
+                        this.closeSavedFilters();
+
+                        return;
+                    }
+
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        column => column.index === 'all'
+                    );
+
+                    this.attributeConditions = {};
+
+                    this.appliedViewId = null;
+                    this.viewSnapshot = null;
+
+                    this.closeSavedFilters();
+
+                    this.get();
+                },
+
+                closeSavedFilters() {
+                    const dropdown = this.$refs.savedFilters;
+
+                    if (dropdown) {
+                        dropdown.isActive = false;
+                    }
+                },
+
+                loadViews() {
+                    this.viewsLoading = true;
+
+                    this.$axios.get(this.viewsSrc, { params: { query: this.viewSearch } })
+                        .then(response => {
+                            this.savedViews = response.data.views ?? [];
+                        })
+                        .catch(() => {
+                            this.savedViews = [];
+                        })
+                        .finally(() => {
+                            this.viewsLoading = false;
+                        });
+                },
+
+                activeViewId() {
+                    return this.hasUnsavedFilters() ? null : this.appliedViewId;
+                },
+
+                appliedViewName() {
+                    return this.savedViews.find(view => view.id === this.activeViewId())?.name
+                        ?? '@lang('admin::app.components.datagrid.filters.saved-filters.title')';
+                },
+
+                applyView(view) {
+                    const payload = view.payload ?? {};
+
+                    this.attributeConditions = {};
+
+                    this.applied.filters.columns = (payload.filters ?? []).map(column => ({
+                        index: column.index,
+                        value: column.value,
+                    }));
+
+                    if (! this.findAppliedColumn('all')) {
+                        this.applied.filters.columns.push({ index: 'all', value: [] });
+                    }
+
+                    this.activeFilterIndices = [...(payload.activeFilterIndices ?? [])];
+
+                    this.applied.sort = {
+                        column: payload.sort?.column ?? null,
+                        order: payload.sort?.order ?? null,
+                    };
+
+                    this.applied.pagination.page = 1;
+                    this.applied.pagination.perPage = payload.perPage ?? this.applied.pagination.perPage;
+
+                    if (this.available.meta?.managedColumn) {
+                        this.available.meta.managedColumn.columns = payload.columns ?? [];
+                    }
+
+                    this.viewScope = {
+                        channel: payload.channel ?? null,
+                        locale: payload.locale ?? null,
+                    };
+
+                    this.appliedViewId = view.id;
+                    this.viewSnapshot = this.currentViewSignature();
+
+                    this.closeSavedFilters();
+
+                    this.get();
+                },
+
+                currentViewPayload() {
+                    return {
+                        filters: this.applied.filters.columns.map(column => ({
+                            index: column.index,
+                            value: column.value,
+                        })),
+                        activeFilterIndices: [...this.activeFilterIndices],
+                        columns: this.available.meta?.managedColumn?.columns ?? [],
+                        sort: {
+                            column: this.applied.sort.column ?? null,
+                            order: this.applied.sort.order ?? null,
+                        },
+                        perPage: this.applied.pagination.perPage,
+                        channel: this.viewScope?.channel ?? this.scopeChannel ?? null,
+                        locale: this.viewScope?.locale ?? this.scopeLocale ?? null,
+                    };
+                },
+
+                saveView() {
+                    if (! this.viewName.trim()) {
+                        return;
+                    }
+
+                    this.$axios.post(this.viewsSrc, {
+                        name: this.viewName.trim(),
+                        is_shared: this.viewShared,
+                        payload: this.currentViewPayload(),
+                    })
+                        .then(response => {
+                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+
+                            this.appliedViewId = response.data.view?.id ?? null;
+                            this.viewSnapshot = this.currentViewSignature();
+                            this.viewName = '';
+                            this.viewShared = false;
+
+                            this.updateDatagrids();
+
+                            this.closeSavedFilters();
+
+                            this.loadViews();
+                        })
+                        .catch(error => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: error.response?.data?.message ?? '',
+                            });
+                        });
+                },
+
+                deleteView(view) {
+                    this.$emitter.emit('open-delete-modal', {
+                        agree: () => this.destroyView(view),
+                    });
+                },
+
+                destroyView(view) {
+                    this.$axios.delete(`${this.viewsSrc}/${view.id}`)
+                        .then(response => {
+                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+
+                            if (this.appliedViewId === view.id) {
+                                this.appliedViewId = null;
+                                this.viewSnapshot = null;
+
+                                this.updateDatagrids();
+                            }
+
+                            this.loadViews();
+                        })
+                        .catch(error => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: error.response?.data?.message ?? '',
+                            });
+                        });
+                },
+
+                isFilterExpanded(columnIndex) {
+                    return this.expandedFilter === columnIndex;
+                },
+
+                toggleFilterEditor(columnIndex) {
+                    this.expandedFilter = this.isFilterExpanded(columnIndex) ? null : columnIndex;
+                },
+
+                filterHasValue(column) {
+                    if (this.isAttributeFilter(column)) {
+                        return !! this.findAppliedColumn(column.index);
+                    }
+
+                    return this.hasAnyAppliedColumnValues(column.index);
+                },
+
+                filterSummary(column) {
+                    if (! this.filterHasValue(column)) {
+                        return '';
+                    }
+
+                    if (this.isAttributeFilter(column)) {
+                        return this.attributeConditionSummary(column);
+                    }
+
+                    return this.appliedValuesSummary(column, this.getAppliedColumnValues(column.index));
+                },
+
+                attributeConditionSummary(column) {
+                    const condition = this.attributeCondition(column.index);
+                    const control = this.attributeValueControl(column);
+
+                    const parts = [this.attributeOperatorLabel(column)];
+
+                    if (column.type === 'price' && condition.currency) {
+                        parts.push(this.attributeCurrencyLabel(column));
+                    }
+
+                    if (control === 'boolean') {
+                        parts.push(this.attributeValueLabel(column));
+                    } else if (control !== 'none') {
+                        parts.push(Array.isArray(condition.value) ? condition.value.join(', ') : condition.value);
+                    }
+
+                    if (this.hasConditionValue(condition.value2)) {
+                        parts.push('–', condition.value2);
+                    }
+
+                    return parts.filter(part => `${part ?? ''}`.length).join(' ');
+                },
+
+                appliedValuesSummary(column, values) {
+                    if (column.type === 'boolean') {
+                        return values
+                            .map(value => column.options?.find(option => option.value == value)?.label ?? value)
+                            .join(', ');
+                    }
+
+                    if (column.type === 'dropdown') {
+                        if (column.options?.type === 'basic') {
+                            return values
+                                .map(value => column.options.params.options.find(option => option.value == value)?.label ?? value)
+                                .join(', ');
+                        }
+
+                        return '@lang('admin::app.components.datagrid.filters.values-selected')'.replace(':count', values.length);
+                    }
+
+                    return values
+                        .map(value => Array.isArray(value) ? value.filter(Boolean).join(' – ') : value)
+                        .join(', ');
+                },
+
+                clearFilter(column) {
+                    if (this.isAttributeFilter(column)) {
+                        const condition = this.attributeCondition(column.index);
+
+                        condition.value = '';
+                        condition.value2 = '';
+
+                        this.applyAttributeCondition(column);
+
+                        return;
+                    }
+
+                    this.removeAppliedColumnAllValues(column.index);
+                },
+
+                getActiveFilterColumns() {
+                    return this.activeFilterIndices
+                        .map(index => this.available.columns.find(col => col.index === index && col.filterable))
+                        .filter(Boolean);
                 },
 
                 getInactiveFilterColumns() {
@@ -1266,13 +1593,23 @@
                 },
 
                 filterPickerList() {
-                    if (this.filterAttributesSrc) {
-                        return this.pickerOptions.filter(col => ! this.activeFilterIndices.includes(col.index));
-                    }
-
                     const search = this.filterPickerSearch.toLowerCase();
 
-                    return this.getInactiveFilterColumns().filter(col => ! search || col.label.toLowerCase().includes(search));
+                    const matchesSearch = col => ! search || this.filterLabel(col).toLowerCase().includes(search);
+
+                    const local = this.getInactiveFilterColumns().filter(matchesSearch);
+
+                    if (! this.filterAttributesSrc) {
+                        return local;
+                    }
+
+                    const localIndices = local.map(col => col.index);
+
+                    return local.concat(
+                        this.pickerOptions.filter(
+                            col => ! this.activeFilterIndices.includes(col.index) && ! localIndices.includes(col.index)
+                        )
+                    );
                 },
 
                 toggleFilterPicker() {
@@ -1307,6 +1644,8 @@
 
                     this.addActiveFilter(column.index);
 
+                    this.expandedFilter = column.index;
+
                     this.syncAttributeConditions();
                 },
 
@@ -1339,6 +1678,15 @@
                         .find(operator => operator.value === condition.operator);
 
                     return operator ? operator.control : 'text';
+                },
+
+                attributeValueSpansRow(column) {
+                    return column.type === 'price'
+                        || ['options', 'number_range', 'date_range'].includes(this.attributeValueControl(column));
+                },
+
+                attributeOperatorSpansRow(column) {
+                    return column.type !== 'price' && this.attributeValueControl(column) === 'none';
                 },
 
                 attributeValueOptions(column) {
@@ -1390,6 +1738,12 @@
 
                 setAttributeCurrency(column, currency) {
                     this.attributeCondition(column.index).currency = currency;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                setAttributeConditionValue(column, key, value) {
+                    this.attributeCondition(column.index)[key] = value;
 
                     this.applyAttributeCondition(column);
                 },

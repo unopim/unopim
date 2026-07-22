@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Catalog\Options;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
@@ -10,6 +11,7 @@ use Webkul\Attribute\Repositories\AttributeGroupRepository;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldOptionRepository;
+use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Core\Eloquent\TranslatableModel;
 
@@ -49,6 +51,11 @@ class AjaxOptionsController extends Controller
     const ENTITY_ATTRIBUTE = 'attributes';
 
     /**
+     * This is used for fetching categories
+     */
+    const ENTITY_CATEGORY = 'category';
+
+    /**
      * Return instance of Controller
      */
     public function __construct(
@@ -56,7 +63,8 @@ class AjaxOptionsController extends Controller
         protected AttributeOptionRepository $attributeOptionsRepository,
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected AttributeGroupRepository $attributeGroupRepository,
-        protected AttributeRepository $attributeRepository
+        protected AttributeRepository $attributeRepository,
+        protected CategoryRepository $categoryRepository
     ) {}
 
     /**
@@ -66,7 +74,7 @@ class AjaxOptionsController extends Controller
     {
         $attributeId = request()->input('attributeId') ?? request()->input('attribute_id');
         $entityName = request()->input('entityName') ?? request()->input('entity_name');
-        $page = request()->input('page');
+        $page = max(1, (int) request()->input('page', 1));
         $query = request()->input('query') ?? request()->input('search') ?? '';
 
         $perPage = $this->resolvePerPage(request()->input('perPage'));
@@ -84,7 +92,9 @@ class AjaxOptionsController extends Controller
         $formattedOptions = [];
 
         foreach ($options as $option) {
-            $translatedOptionLabel = $this->getTranslatedLabel($currentLocaleCode, $option, $entityName);
+            $translatedOptionLabel = $entityName === self::ENTITY_CATEGORY
+                ? $option->name
+                : $this->getTranslatedLabel($currentLocaleCode, $option, $entityName);
 
             $formattedOptions[] = [
                 'id'    => $option->id,
@@ -108,18 +118,22 @@ class AjaxOptionsController extends Controller
     protected function getOptionsByParams(
         int|string|null $id,
         string $entityName,
-        int|string $page,
+        int $page,
         string $query = '',
         ?array $queryParams = [],
         int $perPage = self::DEFAULT_PER_PAGE
     ): LengthAwarePaginator {
-        $repository = $this->getRepository($entityName);
+        $isCategory = $entityName === self::ENTITY_CATEGORY;
 
-        if ($id) {
+        $repository = $isCategory
+            ? $this->categoryQuery($query)
+            : $this->getRepository($entityName);
+
+        if ($id && ! $isCategory) {
             $repository = $repository->where($entityName.'_id', $id);
         }
 
-        if (! empty($query)) {
+        if (! empty($query) && ! $isCategory) {
             $repository = $repository->where(function ($queryBuilder) use ($query, $entityName) {
                 $queryBuilder->whereTranslationLike($this->getTranslationColumnName($entityName), '%'.$query.'%')
                     ->orWhere('code', $query);
@@ -139,7 +153,30 @@ class AjaxOptionsController extends Controller
             $repository = $repository->whereNotIn($queryParams['exclude']['columnName'], $queryParams['exclude']['values']);
         }
 
+        if ($isCategory) {
+            return $repository->defaultOrder()->paginate($perPage, ['*'], 'paginate', $page);
+        }
+
         return $repository->orderBy($this->getSortColumn($entityName))->paginate($perPage, ['*'], 'paginate', $page);
+    }
+
+    /**
+     * Category labels live in an `additional_data` JSON column, not a translations table.
+     */
+    protected function categoryQuery(string $query): Builder
+    {
+        $locale = core()->getRequestedLocaleCode();
+
+        $builder = $this->categoryRepository->getModel()->newQuery();
+
+        if ($query !== '') {
+            $builder->where(function ($builder) use ($query, $locale) {
+                $builder->where('additional_data->locale_specific->'.$locale.'->name', 'LIKE', '%'.$query.'%')
+                    ->orWhere('code', 'LIKE', '%'.$query.'%');
+            });
+        }
+
+        return $builder;
     }
 
     /**

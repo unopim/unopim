@@ -3,30 +3,9 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 
-/**
- * Load tests/e2e-pw/.env (if present) into process.env without pulling in a
- * dotenv dependency. Existing env vars win, so `BASE_URL=... npx playwright test`
- * still overrides the file. See .env.example for the supported keys.
- */
-(() => {
-  const envPath = path.resolve(__dirname, '.env');
+const { loadEnv } = require('./utils/load-env');
 
-  if (! fs.existsSync(envPath)) {
-    return;
-  }
-
-  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
-    const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/i);
-
-    if (! match) {
-      continue;
-    }
-
-    if (process.env[match[1]] === undefined) {
-      process.env[match[1]] = match[2].replace(/^["']|["']$/g, '');
-    }
-  }
-})();
+loadEnv();
 
 const isCI = !!process.env.CI;
 const STORAGE_STATE = path.resolve(__dirname, '.state/admin-auth.json');

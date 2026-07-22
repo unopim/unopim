@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Webkul\Admin\Validations\ConfigurableUniqueSku;
 use Webkul\Product\Contracts\VariantStructurePlanner;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Repositories\ProductRepository;
 
 class Configurable extends AbstractType
@@ -160,23 +161,25 @@ class Configurable extends AbstractType
             return $this->updateVariantGroups($product, $data, $productSuperAttributes, $uniqueAttributes);
         }
 
+        if (! isset($data['variants'])) {
+            return $product;
+        }
+
         $previousVariantIds = $product->variants->pluck('id');
 
-        if (isset($data['variants'])) {
-            foreach ($data['variants'] as $variantId => $variantData) {
-                if (Str::contains($variantId, 'variant_')) {
-                    $variant = $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
+        foreach ($data['variants'] as $variantId => $variantData) {
+            if (Str::contains($variantId, 'variant_')) {
+                $variant = $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
 
-                    Event::dispatch('catalog.product.create.after', $variant);
-                } else {
-                    if (is_numeric($index = $previousVariantIds->search($variantId))) {
-                        $previousVariantIds->forget($index);
-                    }
-
-                    $variantData['super_attributes'] = $productSuperAttributes;
-
-                    $this->updateVariant($variantData, $variantId);
+                Event::dispatch('catalog.product.create.after', $variant);
+            } else {
+                if (is_numeric($index = $previousVariantIds->search($variantId))) {
+                    $previousVariantIds->forget($index);
                 }
+
+                $variantData['super_attributes'] = $productSuperAttributes;
+
+                $this->updateVariant($variantData, $variantId);
             }
         }
 
@@ -352,6 +355,15 @@ class Configurable extends AbstractType
 
         $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
 
+        if ($structure = $product->variantStructure) {
+            $this->applyVariantLevelAttributes(
+                $variantValues,
+                $structure,
+                $data,
+                collect($productSuperAttributes)->pluck('code')->all()
+            );
+        }
+
         $variant->values = $variantValues;
 
         $variant->save();
@@ -397,11 +409,72 @@ class Configurable extends AbstractType
 
         $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
 
+        if (
+            ($configurable = $this->resolveConfigurableAncestor($variant))
+            && $structure = $configurable->variantStructure
+        ) {
+            $this->applyVariantLevelAttributes(
+                $variantValues,
+                $structure,
+                $data,
+                collect($data['super_attributes'] ?? [])->pluck('code')->all()
+            );
+        }
+
         $variant->values = $variantValues;
 
         $variant->update(['sku' => $data['sku']]);
 
         return $variant;
+    }
+
+    /**
+     * Persist the structure's `variant`-level, common-scope, non-axis
+     * attributes submitted on the leaf's payload. Axis/super-attribute codes
+     * are already written by the caller's axis loop above and must not be
+     * duplicated here; `sku` is handled separately. A code absent from the
+     * submitted `values.common` payload is skipped rather than failed - a
+     * leaf may legitimately omit some variant-level attributes. Only
+     * `common` scope is resolved (Phase-1 resolver only handles common).
+     *
+     * @param  array<string, array<string, mixed>>  $variantValues
+     * @param  array<int, string>  $axisCodes
+     */
+    protected function applyVariantLevelAttributes(array &$variantValues, VariantStructure $structure, array $data, array $axisCodes): void
+    {
+        $planner = resolve(VariantStructurePlanner::class);
+
+        $suppliedCommonValues = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY] ?? [];
+
+        foreach ($planner->attributeCodesAtLevel($structure, 'variant') as $attributeCode) {
+            if (
+                $attributeCode === 'sku'
+                || in_array($attributeCode, $axisCodes, true)
+                || ! array_key_exists($attributeCode, $suppliedCommonValues)
+            ) {
+                continue;
+            }
+
+            $variantValues[self::COMMON_VALUES_KEY][$attributeCode] = $suppliedCommonValues[$attributeCode];
+        }
+    }
+
+    /**
+     * Walk up from a leaf variant to its owning configurable: a 2-level
+     * leaf's parent is a `variant_group` whose parent is the configurable; a
+     * 1-level leaf's parent IS the configurable. Returns null for a broken
+     * or legacy chain (no ancestor found).
+     */
+    protected function resolveConfigurableAncestor(Product $variant): ?Product
+    {
+        $ancestor = $variant->parent;
+        $guard = 0;
+
+        while ($ancestor && $ancestor->type !== 'configurable' && $guard++ < 10) {
+            $ancestor = $ancestor->parent;
+        }
+
+        return $ancestor;
     }
 
     /**

@@ -81,6 +81,7 @@ services:
         HOST_GID: "${HOST_GID:-33}"
     volumes:
       - .:/var/www/html
+      - ./dockerfiles/php-dev.ini:/usr/local/etc/php/conf.d/zz-unopim-dev.ini:ro
     restart: unless-stopped
     env_file: .env
     environment:
@@ -101,6 +102,7 @@ services:
         HOST_GID: "${HOST_GID:-33}"
     volumes:
       - .:/var/www/html
+      - ./dockerfiles/php-dev.ini:/usr/local/etc/php/conf.d/zz-unopim-dev.ini:ro
     restart: unless-stopped
     env_file: .env
     environment:
@@ -123,6 +125,7 @@ services:
     entrypoint: ["/var/www/html/dockerfiles/scheduler-entrypoint.sh"]
     volumes:
       - .:/var/www/html
+      - ./dockerfiles/php-dev.ini:/usr/local/etc/php/conf.d/zz-unopim-dev.ini:ro
     restart: unless-stopped
     env_file: .env
     environment:

@@ -249,7 +249,7 @@
                                                 item-key="id"
                                                 group="attributes"
                                                 :move="onAttributeMove"
-                                                @change="onChange"
+                                                @change="onChange($event, element)"
                                             >
                                                 <template #item="{ element, index }">
                                                     <x-admin::catalog.families.assigned-attribute-row />
@@ -814,15 +814,18 @@
                             });
                         },
 
-                        onChange(e) {
+                        onChange(e, group) {
+                            if (e.added?.element && group) {
+                                e.added.element.group_id = this.groupFormId(group);
+                            }
+
                             this.$emitter.emit('assigned-attributes-changed', e);
                             this.signalUnsaved();
                         },
 
                         onUnassignedChange(e) {
-                            const changedAttribute = e.added?.element || e.removed?.element;
-
-                            if (changedAttribute) {
+                            if (e.added?.element) {
+                                const changedAttribute = e.added.element;
                                 const code = this.attributeCode(changedAttribute);
 
                                 delete changedAttribute.group_id;

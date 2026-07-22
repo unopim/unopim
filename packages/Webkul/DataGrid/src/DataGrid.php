@@ -177,6 +177,9 @@ abstract class DataGrid
             visible: $column['visible'] ?? true,
             attribute_type: isset($column['attribute_type']) && is_string($column['attribute_type']) ? $column['attribute_type'] : null,
             operators: isset($column['operators']) && is_array($column['operators']) ? array_values($column['operators']) : null,
+            filter_label: isset($column['filter_label']) && is_string($column['filter_label']) ? $column['filter_label'] : null,
+            default_filter: (bool) ($column['default_filter'] ?? true),
+            removable_filter: (bool) ($column['removable_filter'] ?? false),
         );
     }
 

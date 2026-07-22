@@ -45,8 +45,12 @@
                                     @lang('admin::app.components.form.unsaved-changes.discard')
                                 </button>
 
-                                <button type="button" data-unsaved-save class="primary-button whitespace-nowrap" @click="save">
-                                    @lang('admin::app.components.form.unsaved-changes.save')
+                                <button type="button" data-unsaved-save class="primary-button whitespace-nowrap" :class="{ 'opacity-75 cursor-not-allowed': saving }" :disabled="saving" @click="save">
+                                    <span v-if="saving" class="flex items-center gap-1.5">
+                                        <span class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                        @lang('admin::app.components.form.unsaved-changes.saving')
+                                    </span>
+                                    <span v-else>@lang('admin::app.components.form.unsaved-changes.save')</span>
                                 </button>
 
                                 {!! view_render_event('unopim.admin.components.form.unsaved_changes.actions.after') !!}
@@ -85,6 +89,7 @@
                     onCustomTouch: null,
                     hasTrusted: false,
                     barOpen: false,
+                    saving: false,
                 };
             },
 
@@ -201,6 +206,8 @@
                 }
 
                 this.$emitter.off('form-saved', this.onFormSaved);
+
+                clearInterval(this._savingWatch);
 
                 this.toggleBeforeUnload(false);
                 this.setBarOpen(false);
@@ -421,17 +428,77 @@
 
                     // A slow save keeps the request in flight; ignore extra clicks so
                     // requestSubmit can't queue a second AJAX before the first settles.
-                    if (form.dataset.ajaxSubmitting === "true") {
+                    if (form.dataset.ajaxSubmitting === "true" || this.saving) {
                         return;
                     }
 
                     this.toggleBeforeUnload(false);
 
-                    if (form.requestSubmit) {
-                        form.requestSubmit();
-                    } else {
+                    // Native submit navigates away; the AJAX watcher would only false-alarm.
+                    if (! form.requestSubmit) {
                         form.submit();
+
+                        return;
                     }
+
+                    form.requestSubmit();
+
+                    clearInterval(this._savingWatch);
+
+                    let wasBusy = false;
+                    let idleTicks = 0;
+
+                    this._savingWatch = setInterval(() => {
+                        const busy = form.dataset.ajaxSubmitting === "true";
+
+                        this.saving = busy;
+
+                        if (busy) {
+                            wasBusy = true;
+
+                            return;
+                        }
+
+                        if (wasBusy) {
+                            clearInterval(this._savingWatch);
+
+                            return;
+                        }
+
+                        if (++idleTicks >= 4) {
+                            clearInterval(this._savingWatch);
+
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: form.dataset.ajaxErrorMessage || "@lang('admin::app.components.form.unsaved-changes.save-failed')",
+                            });
+
+                            this.focusFirstInvalid(form);
+                        }
+                    }, 100);
+                },
+
+                focusFirstInvalid(form) {
+                    setTimeout(() => {
+                        const firstError = form.querySelector('p.text-red-600.italic');
+                        const group = firstError ? firstError.closest('[data-control-group]') : null;
+
+                        (group || firstError)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                        const field = (group || form).querySelector('textarea[name], input[name]:not([type="hidden"]), select[name]');
+
+                        if (! field) {
+                            return;
+                        }
+
+                        const editor = (window.tinymce && field.id) ? window.tinymce.get(field.id) : null;
+
+                        if (editor) {
+                            editor.focus();
+                        } else {
+                            field.focus({ preventScroll: true });
+                        }
+                    }, 350);
                 },
 
                 removeInFormSave() {

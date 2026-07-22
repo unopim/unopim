@@ -879,11 +879,17 @@
                 }
             },
             mounted() {
-                this.$refs['taggingselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
+                this.$nextTick(() => {
+                    const list = this.$refs['taggingselect__handler__']?._?.refs?.list;
 
-                if (this.selectedValue && typeof this.selectedValue != 'object') {
-                    this.initializeValue();
-                }
+                    if (list) {
+                        list.addEventListener('scroll', this.onScroll);
+                    }
+
+                    if (this.selectedValue && typeof this.selectedValue != 'object') {
+                        this.initializeValue();
+                    }
+                });
             },
             computed: {
                 formattedOptions() {
@@ -945,7 +951,12 @@
                     }
                 },
                 onScroll(e) {
-                    const element = this.$refs['taggingselect__handler__']._.refs.list;
+                    const element = this.$refs['taggingselect__handler__']?._?.refs?.list;
+
+                    if (! element) {
+                        return;
+                    }
+
                     const tolerance = 10;
 
                     if (
@@ -1306,7 +1317,12 @@
                     });
                 },
                 onScroll(e) {
-                    const element = this.$refs['multiselect__handler__']._.refs.list;
+                    const element = this.$refs['multiselect__handler__']?._?.refs?.list;
+
+                    if (! element) {
+                        return;
+                    }
+
                     const tolerance = 10;
 
                     if (

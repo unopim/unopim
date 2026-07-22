@@ -1,11 +1,9 @@
 // Dedicated fixture for the attribute-family suite.
 //
-// The default e2e target (127.0.0.1:8000) currently runs an OLDER checkout whose
-// route group is `/admin/catalog/families`. The variant/family work under test
-// lives in this branch, served at 192.168.15.243:8023 where the routes were
-// renamed to `/admin/catalog/attribute-families`. These fixtures pin the suite to
-// that server + its own saved storage state (auto-regenerated on demand) so they
-// are independent of the shared default config.
+// This suite needs the `/admin/catalog/attribute-families` routes, so it keeps
+// its own storage state (auto-regenerated on demand) rather than sharing the
+// default one, which may have been captured against another host. The target
+// itself follows BASE_URL (see ensure-family-state.js).
 const base = require('@playwright/test');
 const { ensureFamilyState, STATE_PATH, FAMILY_BASE_URL } = require('./ensure-family-state');
 

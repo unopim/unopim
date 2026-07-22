@@ -166,6 +166,13 @@
 
         {!! view_render_event('unopim.admin.catalog.product.edit.form.before', ['product' => $product]) !!}
 
+        @php
+            $variantAxisCodes = ($variantTree ?? null)
+                ? collect($variantTree['attributes'])->where('isAxis', true)->pluck('code')->all()
+                : [];
+
+            $variantHiddenCodes = array_merge($variantAxisCodes, ($variantFieldLocks['hidden'] ?? []));
+        @endphp
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto">
                 @foreach ($product->attribute_family->familyGroups()->orderBy('position')->get() as $group)
@@ -173,6 +180,16 @@
 
                         @php
                             $customAttributes = $product->getEditableAttributes($group);
+
+                            if (! $customAttributes instanceof \Illuminate\Support\Collection) {
+                                $customAttributes = $customAttributes->get();
+                            }
+
+                            if (! empty($variantHiddenCodes)) {
+                                $customAttributes = $customAttributes->reject(fn ($attribute) => in_array($attribute->code, $variantHiddenCodes))->values();
+                            }
+
+                            $customAttributes->loadMissing(['translations', 'options.translations']);
 
                             $groupLabel = $group->name;
                             $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;
@@ -196,6 +213,7 @@
                                         :channelCurrencies="$currentChannel->currencies"
                                         :variantFields="$product?->parent ? $product->parent->super_attributes->pluck('code')->toArray() : []"
                                         :completeness-attributes="$requiredAttributes"
+                                        :locked-fields="($variantFieldLocks['locks'] ?? [])"
                                         fieldsWrapper="values"
                                     >
                                     </x-admin::products.dynamic-attribute-fields>
@@ -210,11 +228,22 @@
                 @endforeach
             </div>
             <div class="right-column flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
+                @if ($variantTree ?? null)
+                    <v-variant-axis-nav></v-variant-axis-nav>
+                @endif
+
                 @include('admin::catalog.products.edit.product-info')
 
                 @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->values['categories'] ?? []])
 
-                @includeIf('admin::catalog.products.edit.types.' . $product->type)
+                @if ($variantTree ?? null)
+                    {{-- The structured UI replaces the flat type view; its render events stay. --}}
+                    {!! view_render_event('unopim.admin.catalog.product.edit.form.types.' . $product->type . '.before', ['product' => $product]) !!}
+
+                    {!! view_render_event('unopim.admin.catalog.product.edit.form.types.' . $product->type . '.after', ['product' => $product]) !!}
+                @else
+                    @includeIf('admin::catalog.products.edit.types.' . $product->type)
+                @endif
 
                 <!-- Related, Cross Sells, Up Sells View Blade File -->
                 @include('admin::catalog.products.edit.links', ['linkedProducts' => $linkedProducts])
@@ -224,6 +253,10 @@
                 @endforeach
             </div>
         </div>
+
+        @if ($variantTree ?? null)
+            @include('admin::catalog.products.edit.variant-inheritance-editor', ['variantTree' => $variantTree])
+        @endif
 
         {!! view_render_event('unopim.admin.catalog.product.edit.form.after', ['product' => $product]) !!}
     </x-admin::form>

@@ -59,7 +59,8 @@
     </script>
 
     <script type="text/x-template" id="v-form-field-template">
-        <x-admin::form.control-group ::class="field.full_width ? 'col-span-2' : ''">
+        {{-- filter drawers space their own blocks; the control group margin would stack on top --}}
+        <x-admin::form.control-group ::class="[field.full_width ? 'col-span-2' : '', context === 'filter' ? '!mb-0' : '']">
             <x-admin::form.control-group.label
                 v-if="showLabel"
                 ::class="field.required ? 'required' : ''"

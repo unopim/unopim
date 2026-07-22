@@ -110,71 +110,186 @@
                 </div>
             </div>
 
-            <div
-                class="grid gap-4 rounded bg-white p-4 box-shadow dark:bg-cherry-900"
-                :class="structure.levels === 2 ? 'xl:grid-cols-3' : 'xl:grid-cols-2'"
+            <div class="grid gap-4 rounded bg-white p-4 box-shadow dark:bg-cherry-900 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
+                :class="structure.levels === 2 ? 'xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]' : ''"
             >
-                <x-admin::catalog.families.variant-level-column
-                    :title="trans('admin::app.catalog.families.edit.parent-product')"
-                    :description="trans('admin::app.catalog.families.edit.parent-product-info')"
-                    count="commonAttributes.length"
-                    searching="searching.common"
-                    search-model="search.common"
-                    search-key="common"
-                    list="commonList"
-                    visible-count="visibleCommonCount"
-                    :empty-title="trans('admin::app.catalog.families.edit.no-parent-attributes')"
-                    :empty-description="trans('admin::app.catalog.families.edit.no-parent-attributes-info')"
-                    selection="selected.common"
-                    :primary-label="trans('admin::app.catalog.families.edit.move-to-child')"
-                    primary-click="moveSelected('common', 'variant')"
-                    :secondary-label="trans('admin::app.catalog.families.edit.move-to-sub-parent')"
-                    secondary-click="moveSelected('common', 'sub_parent')"
-                    secondary-if="structure.levels === 2"
-                />
+                {{-- Common pool: the only column that shows the full group tree. --}}
+                <div class="min-w-0">
+                    <x-admin::list.panel-header
+                        :title="trans('admin::app.catalog.families.edit.parent-product')"
+                        :description="trans('admin::app.catalog.families.edit.parent-product-info')"
+                        searching="searching.common"
+                    >
+                        <x-admin::search.field
+                            icon-position="left"
+                            :placeholder="trans('admin::app.catalog.families.edit.search')"
+                            v-model.trim="search.common"
+                            clear-when="search.common"
+                            clear-action="search.common = ''"
+                        />
+                    </x-admin::list.panel-header>
 
-                <x-admin::catalog.families.variant-level-column
+                    <div class="-mt-2 mb-3 flex min-h-[34px] items-center justify-between gap-3">
+                        <span
+                            class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-cherry-800 dark:text-gray-300"
+                            v-text="commonList.length"
+                        >
+                        </span>
+
+                        {{-- Bulk actions stay out of the way until something is ticked. --}}
+                        <div class="flex flex-wrap justify-end gap-2" v-if="selected.common.length">
+                            <button
+                                type="button"
+                                class="secondary-button !py-1.5 text-xs"
+                                v-if="structure.levels === 2"
+                                @click="moveSelected('common', 'sub_parent')"
+                            >
+                                @lang('admin::app.catalog.families.edit.add-to-level', ['number' => 1])
+                            </button>
+
+                            <button
+                                type="button"
+                                class="secondary-button !py-1.5 text-xs"
+                                @click="moveSelected('common', 'variant')"
+                            >
+                                @{{ addToLeafLabel }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <draggable
+                        class="grid h-[calc(100vh-305px)] content-start gap-1.5 overflow-auto pb-4 ltr:pr-3 rtl:pl-3"
+                        ghost-class="draggable-ghost"
+                        handle=".icon-drag"
+                        v-bind="{animation: 200}"
+                        :list="commonList"
+                        item-key="code"
+                        group="variant-levels"
+                        @change="syncPlacements"
+                    >
+                        <template #item="{ element }">
+                            <div v-show="matchesSearch(element, 'common')">
+                                <x-admin::catalog.families.variant-group-heading
+                                    list="commonList"
+                                    search-key="common"
+                                />
+
+                                <div v-show="! isVariantGroupCollapsed('common', element.groupCode)">
+                                    <x-admin::catalog.families.variant-attribute-row selection="selected.common" />
+                                </div>
+                            </div>
+                        </template>
+
+                        <template #footer>
+                            <x-admin::list.empty-state
+                                v-if="! visibleCommonCount"
+                                :title="trans('admin::app.catalog.families.edit.no-parent-attributes')"
+                                :description="trans('admin::app.catalog.families.edit.no-parent-attributes-info')"
+                            />
+                        </template>
+                    </draggable>
+                </div>
+
+                <div class="flex items-center justify-center text-gray-300 dark:text-cherry-800 max-xl:hidden">
+                    <span class="icon-right text-2xl"></span>
+                </div>
+
+                <x-admin::catalog.families.variant-level-card
                     v-if="structure.levels === 2"
-                    :title="trans('admin::app.catalog.families.edit.sub-parent-product')"
-                    :description="trans('admin::app.catalog.families.edit.sub-parent-product-info')"
-                    count="structure.placements.sub_parent.length"
-                    count-class="bg-unopim-primary-muted text-unopim-primary dark:bg-cherry-800 dark:text-unopim-primary"
-                    searching="searching.sub_parent"
-                    search-model="search.sub_parent"
-                    search-key="sub_parent"
+                    level="sub_parent"
+                    number="1"
                     list="subParentAttributes"
-                    visible-count="visibleSubParentCount"
-                    :empty-title="trans('admin::app.catalog.families.edit.no-sub-parent-attributes')"
-                    :empty-description="trans('admin::app.catalog.families.edit.drop-or-search-info')"
-                    selection="selected.sub_parent"
-                    :primary-label="trans('admin::app.catalog.families.edit.move-to-parent')"
-                    primary-click="moveSelected('sub_parent', 'common')"
-                    :secondary-label="trans('admin::app.catalog.families.edit.move-to-child')"
-                    secondary-click="moveSelected('sub_parent', 'variant')"
-                    :removable="true"
+                    axis-label="axisGroupLabel(structure.axes.level_1)"
                 />
 
-                <x-admin::catalog.families.variant-level-column
-                    :title="trans('admin::app.catalog.families.edit.variant-child-product')"
-                    :description="trans('admin::app.catalog.families.edit.variant-child-product-info')"
-                    count="structure.placements.variant.length"
-                    count-class="bg-amber-100 text-amber-700 dark:bg-cherry-800 dark:text-amber-300"
-                    searching="searching.variant"
-                    search-model="search.variant"
-                    search-key="variant"
+                <div
+                    class="flex items-center justify-center text-gray-300 dark:text-cherry-800 max-xl:hidden"
+                    v-if="structure.levels === 2"
+                >
+                    <span class="icon-right text-2xl"></span>
+                </div>
+
+                <x-admin::catalog.families.variant-level-card
+                    level="variant"
+                    number="structure.levels"
                     list="variantAttributes"
-                    visible-count="visibleVariantCount"
-                    :empty-title="trans('admin::app.catalog.families.edit.no-child-attributes')"
-                    :empty-description="trans('admin::app.catalog.families.edit.drop-or-search-info')"
-                    selection="selected.variant"
-                    :primary-label="trans('admin::app.catalog.families.edit.move-to-parent')"
-                    primary-click="moveSelected('variant', 'common')"
-                    :secondary-label="trans('admin::app.catalog.families.edit.move-to-sub-parent')"
-                    secondary-click="moveSelected('variant', 'sub_parent')"
-                    secondary-if="structure.levels === 2"
-                    :removable="true"
+                    axis-label="leafAxisLabel"
                 />
             </div>
+
+            {{-- Add-attributes picker: the click-driven alternative to dragging. --}}
+            <x-admin::modal ref="addAttributesModal" prevent-submit @close="cancelAddPicker">
+                <x-slot:header>
+                    <div>
+                        <p class="text-lg font-bold text-gray-800 dark:text-white">
+                            @{{ addPickerTitle }}
+                        </p>
+
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            @lang('admin::app.catalog.families.edit.move-to-level-info')
+                        </p>
+                    </div>
+                </x-slot>
+
+                <x-slot:content>
+                    <x-admin::search.field
+                        icon-position="left"
+                        :placeholder="trans('admin::app.catalog.families.edit.search')"
+                        v-model.trim="picker.query"
+                        clear-when="picker.query"
+                        clear-action="picker.query = ''"
+                    />
+
+                    <div class="mt-3 grid max-h-[22rem] content-start gap-1 overflow-auto">
+                        <button
+                            type="button"
+                            class="grid grid-cols-[18px_minmax(0,1fr)_auto] items-center gap-2 rounded-md px-2 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-cherry-800"
+                            v-for="attribute in pickerAttributes"
+                            :key="attribute.code"
+                            @click="togglePick(attribute.code)"
+                        >
+                            <span
+                                class="text-2xl leading-none"
+                                :class="picker.codes.includes(attribute.code) ? 'icon-checkbox-check text-unopim-primary' : 'icon-checkbox-normal text-gray-500'"
+                            >
+                            </span>
+
+                            <span class="min-w-0 ltr:text-left rtl:text-right">
+                                <span class="block truncate" v-text="attribute.label"></span>
+
+                                <span class="block truncate text-[10px] uppercase tracking-wide text-gray-400" v-text="attribute.groupLabel"></span>
+                            </span>
+
+                            <span
+                                class="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500 dark:bg-cherry-800 dark:text-gray-300"
+                                v-text="attribute.type"
+                            >
+                            </span>
+                        </button>
+
+                        <p v-if="! pickerAttributes.length" class="px-2 py-6 text-center text-xs text-gray-400">
+                            @lang('admin::app.catalog.families.edit.no-parent-attributes')
+                        </p>
+                    </div>
+                </x-slot>
+
+                <x-slot:footer>
+                    <div class="flex gap-2">
+                        <button type="button" class="secondary-button" @click="cancelAddPicker">
+                            @lang('admin::app.catalog.families.edit.cancel')
+                        </button>
+
+                        <button
+                            type="button"
+                            class="primary-button"
+                            :disabled="! picker.codes.length"
+                            @click="confirmAddPicker"
+                        >
+                            @lang('admin::app.catalog.families.edit.add-attributes')
+                        </button>
+                    </div>
+                </x-slot>
+            </x-admin::modal>
 
             <x-admin::modal ref="variantSettingsModal" type="large">
                 <x-slot:header>
@@ -196,7 +311,6 @@
                                     name="variant_structure_name"
                                     v-model="draft.name"
                                     placeholder="{{ trans('admin::app.catalog.families.edit.variant-name-placeholder') }}"
-                                    @input="onDraftNameInput"
                                 />
                             </x-admin::form.control-group>
 
@@ -298,6 +412,9 @@
     </script>
 
     <script type="module">
+        const LEVEL_BADGE = @json(trans('admin::app.catalog.families.edit.level-badge', ['number' => ':number']));
+        const ADD_TO_LEVEL = @json(trans('admin::app.catalog.families.edit.add-to-level', ['number' => ':number']));
+
         app.component('v-variant-structure-editor', {
             template: '#v-variant-structure-editor-template',
 
@@ -315,30 +432,19 @@
                 return {
                     structure,
                     draft: JSON.parse(JSON.stringify(structure)),
-                    search: {
-                        common: '',
-                        sub_parent: '',
-                        variant: '',
-                    },
-                    searching: {
-                        common: false,
-                        sub_parent: false,
-                        variant: false,
-                    },
+                    search: { common: '', sub_parent: '', variant: '' },
+                    searching: { common: false },
                     isSaving: false,
                     selected: {
                         common: [],
                         sub_parent: [],
                         variant: [],
                     },
-                    collapsedGroups: {
-                        common: {},
-                        sub_parent: {},
-                        variant: {},
-                    },
+                    collapsedGroups: { common: {}, sub_parent: {}, variant: {} },
                     commonList: [],
                     subParentList: [],
                     variantList: [],
+                    picker: { target: null, query: '', codes: [] },
                 };
             },
 
@@ -365,6 +471,33 @@
                     return this.activeAxisCodes(this.structure);
                 },
 
+                attributesByCode() {
+                    const byCode = {};
+
+                    this.allAttributes.forEach(attribute => {
+                        byCode[attribute.code] = attribute;
+                    });
+
+                    return byCode;
+                },
+
+                // An axis belongs to the level it splits on: level_1 axes make the
+                // sub parent, level_2 (or the only level) axes make the leaf.
+                subParentAxisAttributes() {
+                    if (this.structure.levels !== 2) {
+                        return [];
+                    }
+
+                    return this.mapAxisAttributes(this.structure.axes.level_1);
+                },
+
+                variantAxisAttributes() {
+                    return this.mapAxisAttributes(
+                        this.structure.levels === 2 ? this.structure.axes.level_2 : this.structure.axes.level_1
+                    );
+                },
+
+
                 commonAttributes() {
                     const assigned = new Set([
                         ...this.structure.placements.sub_parent,
@@ -379,12 +512,30 @@
                     return this.commonList.filter(attribute => this.matchesSearch(attribute, 'common')).length;
                 },
 
-                visibleSubParentCount() {
-                    return this.subParentList.filter(attribute => this.matchesSearch(attribute, 'sub_parent')).length;
+                leafAxisLabel() {
+                    return this.axisGroupLabel(this.structure.levels === 2 ? this.structure.axes.level_2 : this.structure.axes.level_1);
                 },
 
-                visibleVariantCount() {
-                    return this.variantList.filter(attribute => this.matchesSearch(attribute, 'variant')).length;
+                addToLeafLabel() {
+                    return this.addToLevelLabel(this.structure.levels);
+                },
+
+                addPickerTitle() {
+                    if (! this.picker.target) {
+                        return '';
+                    }
+
+                    return this.picker.target === 'sub_parent'
+                        ? this.addToLevelLabel(1)
+                        : this.addToLevelLabel(this.structure.levels);
+                },
+
+                pickerAttributes() {
+                    const query = this.picker.query.trim().toLowerCase();
+
+                    return this.commonList.filter(attribute => ! query
+                        || String(attribute.label || attribute.code).toLowerCase().includes(query)
+                        || String(attribute.groupLabel || '').toLowerCase().includes(query));
                 },
 
                 subParentAttributes() {
@@ -398,6 +549,16 @@
 
             created() {
                 this.refreshLists();
+            },
+
+            watch: {
+                'draft.name'(value) {
+                    if (this.draft.codeEdited) {
+                        return;
+                    }
+
+                    this.draft.code = this.slug(value);
+                },
             },
 
             methods: {
@@ -456,14 +617,6 @@
                         .replace(/^_+|_+$/g, '');
                 },
 
-                onDraftNameInput() {
-                    if (this.draft.codeEdited) {
-                        return;
-                    }
-
-                    this.draft.code = this.slug(this.draft.name);
-                },
-
                 draftAxisValue(level) {
                     return JSON.stringify(this.draft.axes[level] || []);
                 },
@@ -496,6 +649,65 @@
                     this.draft.axes.level_2 = this.draft.axes.level_2.filter(code => ! levelOne.has(code));
                 },
 
+                levelBadge(number) {
+                    return LEVEL_BADGE.replace(':number', number);
+                },
+
+                addToLevelLabel(number) {
+                    return ADD_TO_LEVEL.replace(':number', number);
+                },
+
+                openAddPicker(target) {
+                    this.picker = { target: target, query: '', codes: [] };
+
+                    this.$nextTick(() => {
+                        if (this.$refs.addAttributesModal) {
+                            this.$refs.addAttributesModal.open();
+                        }
+                    });
+                },
+
+                togglePick(code) {
+                    this.picker.codes = this.picker.codes.includes(code)
+                        ? this.picker.codes.filter(item => item !== code)
+                        : [...this.picker.codes, code];
+                },
+
+                cancelAddPicker() {
+                    const target = this.picker.target;
+
+                    this.picker = { target: null, query: '', codes: [] };
+
+                    // close() flips isOpen before it emits, so this re-entry from @close stops here.
+                    if (target && this.$refs.addAttributesModal && this.$refs.addAttributesModal.isOpen) {
+                        this.$refs.addAttributesModal.close();
+                    }
+                },
+
+                confirmAddPicker() {
+                    const target = this.picker.target;
+                    const codes = this.picker.codes;
+
+                    if (! target || ! codes.length) {
+                        return;
+                    }
+
+                    this.structure.placements[target] = [
+                        ...this.structure.placements[target].filter(code => ! codes.includes(code)),
+                        ...codes,
+                    ];
+
+                    const other = target === 'variant' ? 'sub_parent' : 'variant';
+
+                    this.structure.placements[other] = this.structure.placements[other].filter(code => ! codes.includes(code));
+
+                    this.selected.common = this.selected.common.filter(code => ! codes.includes(code));
+
+                    this.refreshLists();
+
+                    this.cancelAddPicker();
+                },
+
                 axisLabel(code) {
                     const option = this.axisOptions.find(axis => axis.code === code);
 
@@ -512,6 +724,13 @@
                     return Number(levels) === 2
                         ? "@lang('admin::app.catalog.families.edit.parent-sub-parent-child')"
                         : "@lang('admin::app.catalog.families.edit.parent-child')";
+                },
+
+                mapAxisAttributes(codes) {
+                    return (codes || [])
+                        .map(code => this.attributesByCode[code])
+                        .filter(Boolean)
+                        .map(attribute => ({ ...attribute, locked: true }));
                 },
 
                 activeAxisCodes(structure) {
@@ -607,10 +826,12 @@
                 },
 
                 sanitizeSelection() {
+                    const selectable = list => new Set(list.filter(attribute => ! attribute.locked).map(attribute => attribute.code));
+
                     const available = {
-                        common: new Set(this.commonList.map(attribute => attribute.code)),
-                        sub_parent: new Set(this.subParentList.map(attribute => attribute.code)),
-                        variant: new Set(this.variantList.map(attribute => attribute.code)),
+                        common: selectable(this.commonList),
+                        sub_parent: selectable(this.subParentList),
+                        variant: selectable(this.variantList),
                     };
 
                     this.selected.common = this.selected.common.filter(code => available.common.has(code));
@@ -622,16 +843,25 @@
                     const byCode = Object.fromEntries(this.allAttributes.map(attribute => [attribute.code, attribute]));
 
                     this.commonList = this.sortAttributes(this.commonAttributes);
-                    this.subParentList = this.sortAttributes(this.structure.placements.sub_parent.map(code => byCode[code]).filter(Boolean));
-                    this.variantList = this.sortAttributes(this.structure.placements.variant.map(code => byCode[code]).filter(Boolean));
+
+                    this.subParentList = this.sortAttributes([
+                        ...this.structure.placements.sub_parent.map(code => byCode[code]).filter(Boolean),
+                        ...this.subParentAxisAttributes,
+                    ]);
+
+                    this.variantList = this.sortAttributes([
+                        ...this.structure.placements.variant.map(code => byCode[code]).filter(Boolean),
+                        ...this.variantAxisAttributes,
+                    ]);
+
                     this.sanitizeSelection();
                 },
 
                 syncPlacements() {
                     this.emitVariantEvent('placements.sync.before');
 
-                    this.structure.placements.sub_parent = this.subParentList.map(attribute => attribute.code);
-                    this.structure.placements.variant = this.variantList.map(attribute => attribute.code);
+                    this.structure.placements.sub_parent = this.subParentList.filter(attribute => ! attribute.locked).map(attribute => attribute.code);
+                    this.structure.placements.variant = this.variantList.filter(attribute => ! attribute.locked).map(attribute => attribute.code);
 
                     const subCodes = new Set(this.structure.placements.sub_parent);
                     const variantCodes = new Set(this.structure.placements.variant);
@@ -752,8 +982,12 @@
                                 common: this.allAttributes
                                     .filter(attribute => ! assigned.has(attribute.code))
                                     .map(attribute => attribute.code),
+                                // A single-level structure has no sub parent: fold anything
+                                // sitting there into the leaf rather than dropping it.
                                 sub_parent: structure.levels === 2 ? structure.placements.sub_parent : [],
-                                variant: structure.placements.variant,
+                                variant: structure.levels === 2
+                                    ? structure.placements.variant
+                                    : [...new Set([...structure.placements.variant, ...structure.placements.sub_parent])],
                             },
                         },
                     };
