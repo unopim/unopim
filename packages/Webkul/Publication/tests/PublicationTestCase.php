@@ -12,6 +12,10 @@ use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductProxy;
+use Webkul\Publication\Models\PublicationVersion;
+use Webkul\Publication\Providers\PublicationServiceProvider;
+use Webkul\Publication\Services\Publisher;
+use Webkul\Publication\Tests\Support\StubPayloadBuilder;
 use Webkul\User\Tests\Concerns\UserAssertions;
 
 class PublicationTestCase extends TestCase
@@ -87,5 +91,29 @@ class PublicationTestCase extends TestCase
         }
 
         return [$product, $channel, $incomplete, $complete];
+    }
+
+    protected function publishedPassportFixture(): PublicationVersion
+    {
+        [$product, $channel, , $complete] = $this->seedPassportFixture();
+
+        config()->set('publication.types.dpp', [
+            'label'           => 'publication::app.publications.status.published',
+            'payload_builder' => StubPayloadBuilder::class,
+            'template'        => 'publication::public.stub',
+            'required_group'  => 'dpp',
+            'route_prefix'    => 'p',
+        ]);
+
+        // PublicationServiceProvider::boot() has already run by the time this
+        // test body executes, against config as it stood before the `dpp`
+        // type above was added — so the `/p/...` routes do not exist yet on
+        // this test's Router instance. Re-trigger registration now that the
+        // type is present; production ordering is a consuming package's own
+        // responsibility (merge its type into config before this provider's
+        // boot() runs, or call this same method itself).
+        $this->app->getProvider(PublicationServiceProvider::class)->registerPublicRoutes();
+
+        return resolve(Publisher::class)->publish($product, $channel, $complete, 'dpp');
     }
 }

@@ -26,4 +26,31 @@ return [
     |
     */
     'types' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Global Kill Switch
+    |--------------------------------------------------------------------------
+    |
+    | A pre-routing, env-only, non-channel-scoped emergency switch for the
+    | entire public tier. Deliberately NOT a core_config field: it must never
+    | require a DB round trip or a channel to resolve, so it works even if the
+    | channel/locale tables themselves are the thing being firefought.
+    |
+    */
+    'enabled' => (bool) env('PUBLICATION_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Global Rate Limit Ceiling
+    |--------------------------------------------------------------------------
+    |
+    | An unkeyed ceiling shared by every client, on top of the per-IP limit
+    | below. TRUSTED_PROXIES must be the real proxy CIDR in production — never
+    | "*" — or every request presents its own X-Forwarded-For and defeats the
+    | per-IP limiter, at which point this global ceiling is the only thing
+    | standing between one bad actor and every other visitor.
+    |
+    */
+    'global_rate_limit' => (int) env('PUBLICATION_GLOBAL_RATE_LIMIT', 6000),
 ];
