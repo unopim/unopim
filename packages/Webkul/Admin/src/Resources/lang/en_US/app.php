@@ -466,6 +466,7 @@ return [
             'saved-inventory-message' => 'Product saved successfully',
             'update-success'          => 'Product updated successfully',
             'unique-validation'       => 'This value is already taken.',
+            'sku-already-used'        => 'This SKU is already used by another product: ":name" (ID: :id). Please choose a different SKU.',
             'invalid-type'            => 'Product type with value ":type" could not be found',
             'product-not-found'       => 'Product with sku ":sku" could not be found',
             'parent-not-found'        => 'Parent with sku ":sku" could not be found',
