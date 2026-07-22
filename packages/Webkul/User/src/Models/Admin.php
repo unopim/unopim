@@ -34,6 +34,7 @@ use Webkul\User\Database\Factories\AdminFactory;
     'catalog_locale_id',
     'default_channel_id',
     'status',
+    'type',
     'timezone',
 ])]
 #[Hidden([
@@ -49,6 +50,16 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
      * @var array<int, string>
      */
     protected array $historyTags = ['admin'];
+
+    /**
+     * Mirrors the DB column default so a freshly instantiated model reflects
+     * 'user' before an insert round-trip populates it from the schema default.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'type' => 'user',
+    ];
 
     /**
      * Get image url for the product image.
@@ -162,6 +173,22 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
         }
 
         return in_array($permission, $role->permissions);
+    }
+
+    /**
+     * Determine whether this admin is a non-interactive API (robot) account.
+     */
+    public function isApiUser(): bool
+    {
+        return $this->type === 'api';
+    }
+
+    /**
+     * Scope to interactive human admins only, excluding API robots.
+     */
+    public function scopeHumans(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('type', 'user');
     }
 
     /**

@@ -526,6 +526,10 @@
     box-shadow: 0 6px 20px rgb(var(--c-primary-600) / 0.5);
 }
 
+/* Lift the FAB above the sticky unsaved-changes save bar (bottom-0, ~60px tall)
+   so it never overlaps the Save button. Body class set by v-unsaved-changes. */
+body.unsaved-bar-open .ap-fab { bottom: 84px; }
+
 /* Tablet & mobile: full-screen overlay above navbar */
 @media (max-width: 1024px) {
     .ap-panel {
@@ -1618,40 +1622,8 @@ app.component('v-agenting-pim', {
         },
 
         toolStatusLabel(tool, step) {
-            const labels = {
-                search_products: 'Searching products...',
-                get_product_details: 'Reading product details...',
-                create_product: 'Creating product...',
-                update_product: 'Updating product...',
-                delete_products: 'Deleting products...',
-                bulk_edit: 'Applying bulk changes...',
-                export_products: 'Exporting products...',
-                analyze_image: 'Analyzing image...',
-                attach_image: 'Attaching image...',
-                edit_image: 'Editing image...',
-                generate_image: 'Generating image...',
-                generate_content: 'Generating content...',
-                list_categories: 'Loading categories...',
-                assign_categories: 'Assigning categories...',
-                create_category: 'Creating category...',
-                category_tree: 'Loading category tree...',
-                list_attributes: 'Loading attributes...',
-                create_attribute: 'Creating attribute...',
-                find_similar_products: 'Finding similar products...',
-                catalog_summary: 'Analyzing catalog...',
-                data_quality_report: 'Scanning data quality...',
-                verify_product: 'Verifying product...',
-                remember_fact: 'Saving to memory...',
-                recall_memory: 'Checking memory...',
-                plan_tasks: 'Planning steps...',
-                manage_users: 'Loading users...',
-                manage_roles: 'Loading roles...',
-                manage_channels: 'Loading channels...',
-                manage_families: 'Loading families...',
-                manage_attribute_options: 'Loading options...',
-                rate_content: 'Recording feedback...',
-            };
-            return labels[tool] || `Running ${tool.replace(/_/g, ' ')}...`;
+            const labels = this.trans.toolStatus || {};
+            return labels[tool] || (this.trans.runningTool || 'Running :tool…').replace(':tool', tool.replace(/_/g, ' '));
         },
 
         async downloadFile(url) {
@@ -1829,11 +1801,12 @@ app.component('v-agenting-pim', {
         const appEl = document.getElementById('app');
         if (appEl) appEl.style.marginRight = '';
 
-        // Clear sensitive AI chat data from browser storage on component teardown.
-        try {
-            localStorage.removeItem('agenting_pim_sessions');
-            sessionStorage.removeItem('agenting_pim_state');
-        } catch (e) {}
+        // NOTE: do NOT clear storage here. Admin navigation is PJAX
+        // (navigation.js unmount/remount the Vue app on every page change), so
+        // this hook fires on each navigation — wiping it would defeat the
+        // sessionStorage panel-state persistence (panel would reopen from the
+        // open_by_default default) and drop saved chat sessions across pages.
+        // sessionStorage state clears naturally when the tab/session ends.
     },
 });
 </script>

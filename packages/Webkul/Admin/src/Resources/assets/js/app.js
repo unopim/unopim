@@ -158,7 +158,10 @@ const appOptions = {
                             }
                         }
 
-                        const validationMessage = (response.data && response.data.message) || form.dataset.ajaxErrorMessage;
+                        // A custom 422 may carry `errors` without any `message`.
+                        const validationMessage = errors[firstField]
+                            || (response.data && response.data.message)
+                            || form.dataset.ajaxErrorMessage;
 
                         if (validationMessage) {
                             this.$emitter.emit(EMITTER_EVENTS.ADD_FLASH, { type: "error", message: validationMessage });

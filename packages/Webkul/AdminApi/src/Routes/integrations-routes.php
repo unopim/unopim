@@ -28,6 +28,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::post('generate', 'generateKey')->name('admin.configuration.integrations.generate_key');
 
             Route::post('re-generate-secrete', 'regenerateSecretKey')->name('admin.configuration.integrations.re_generate_secret_key');
+
+            Route::post('re-generate-password', 'regeneratePassword')->name('admin.configuration.integrations.re_generate_password');
         });
     });
 });

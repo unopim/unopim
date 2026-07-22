@@ -28,7 +28,7 @@
 
 # ─── Shared configuration (reused via YAML anchors) ─────────────────
 x-app-environment: &app-environment
-  APP_URL: "http://localhost:${APP_PORT:-8000}"
+  APP_URL: "${APP_URL:-http://localhost:${APP_PORT:-8000}}"
   DB_HOST: unopim-mysql
   DB_PORT: 3306
   REDIS_HOST: unopim-redis
@@ -76,8 +76,12 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/fpm.Dockerfile
+      args:
+        HOST_UID: "${HOST_UID:-33}"
+        HOST_GID: "${HOST_GID:-33}"
     volumes:
       - .:/var/www/html
+      - ./dockerfiles/php-dev.ini:/usr/local/etc/php/conf.d/zz-unopim-dev.ini:ro
     restart: unless-stopped
     env_file: .env
     environment:
@@ -93,8 +97,12 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/q.Dockerfile
+      args:
+        HOST_UID: "${HOST_UID:-33}"
+        HOST_GID: "${HOST_GID:-33}"
     volumes:
       - .:/var/www/html
+      - ./dockerfiles/php-dev.ini:/usr/local/etc/php/conf.d/zz-unopim-dev.ini:ro
     restart: unless-stopped
     env_file: .env
     environment:
@@ -111,9 +119,13 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/q.Dockerfile
+      args:
+        HOST_UID: "${HOST_UID:-33}"
+        HOST_GID: "${HOST_GID:-33}"
     entrypoint: ["/var/www/html/dockerfiles/scheduler-entrypoint.sh"]
     volumes:
       - .:/var/www/html
+      - ./dockerfiles/php-dev.ini:/usr/local/etc/php/conf.d/zz-unopim-dev.ini:ro
     restart: unless-stopped
     env_file: .env
     environment:

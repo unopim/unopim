@@ -17,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Konfigurowalny',
-        'simple'       => 'Prosty',
+        'configurable'  => 'Konfigurowalny',
+        'simple'        => 'Prosty',
+        'variant-group' => 'Grupa wariantów',
     ],
 ];

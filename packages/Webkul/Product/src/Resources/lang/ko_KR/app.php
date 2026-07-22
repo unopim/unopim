@@ -17,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => '설정 가능한',
-        'simple'       => '단순한',
+        'configurable'  => '설정 가능한',
+        'simple'        => '단순한',
+        'variant-group' => '변형 그룹',
     ],
 ];

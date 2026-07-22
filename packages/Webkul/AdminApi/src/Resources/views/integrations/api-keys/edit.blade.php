@@ -114,7 +114,7 @@
                         <x-admin::accordion>
                             <x-slot:header>
                                 <div class="flex items-center justify-between">
-                                    <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
+                                    <p class="text-base text-gray-800 dark:text-white font-semibold">
                                         @lang('admin::app.configuration.integrations.edit.general')
                                     </p>
                                 </div>
@@ -164,54 +164,30 @@
                         <x-admin::accordion>
                             <x-slot:header>
                                 <div class="flex items-center justify-between">
-                                    <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
+                                    <p class="text-base text-gray-800 dark:text-white font-semibold">
                                         @lang('admin::app.configuration.integrations.edit.credentials')
                                     </p>
                                 </div>
                             </x-slot>
 
                             <x-slot:content>
-                                <!-- Client ID -->
-                                <x-admin::form.control-group v-if="client_id">
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.configuration.integrations.edit.client-id')
-                                    </x-admin::form.control-group.label>
-
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        class="cursor-not-allowed"
-                                        id="client_id"
-                                        name="client_id"
-                                        :value="old('client_id')"
-                                        v-model="client_id"
-                                        readonly
-                                        :label="trans('admin::app.configuration.integrations.edit.client-id')"
-                                        :placeholder="trans('admin::app.configuration.integrations.edit.client-id')"
-                                    />
-
-                                    <x-admin::form.control-group.error control-name="name" />
-                                </x-admin::form.control-group>
-
-                                <!-- Secret Key -->
-                                <x-admin::form.control-group v-if="secret_key">
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.configuration.integrations.edit.secret-key')
-                                    </x-admin::form.control-group.label>
-
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        class="cursor-not-allowed"
-                                        id="secret_key"
-                                        name="secret_key"
-                                        :value="old('secret_key')"
-                                        v-model="secret_key"
-                                        readonly
-                                        :label="trans('admin::app.configuration.integrations.edit.secret-key')"
-                                        :placeholder="trans('admin::app.configuration.integrations.edit.secret-key')"
-                                    />
-
-                                    <x-admin::form.control-group.error control-name="name" />
-                                </x-admin::form.control-group>
+                                {{-- Credential values are static v-text displays, not named form controls, so they never round-trip through FormData / the update request. --}}
+                                <div
+                                    v-if="oauth_client_id"
+                                    class="mb-4 rounded-md border border-blue-200 bg-blue-50 px-3 py-2.5 text-xs text-gray-700 dark:border-gray-600 dark:bg-cherry-800 dark:text-gray-300"
+                                >
+                                    @lang('admin::app.configuration.integrations.edit.credentials-info')
+                                    @if (config('api.docs_url'))
+                                        <a
+                                            href="{{ config('api.docs_url') }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="font-medium text-primary-600 underline hover:text-primary-700 dark:text-primary-300 dark:hover:text-white"
+                                        >
+                                            @lang('admin::app.configuration.integrations.edit.api-docs-link')
+                                        </a>
+                                    @endif
+                                </div>
 
                                 <div class="flex gap-x-2.5 items-center" v-if="!oauth_client_id">
                                     <button
@@ -222,15 +198,71 @@
                                         @lang('admin::app.configuration.integrations.edit.generate-btn')
                                     </button>
                                 </div>
-                                <div class="flex gap-x-2.5 items-center" v-if="oauth_client_id">
-                                    <button
-                                        type="button"
-                                        class="primary-button"
-                                        @click="reGenerateSecretKey"
-                                    >
-                                        @lang('admin::app.configuration.integrations.edit.re-secret-btn')
-                                    </button>
+
+                                @php
+                                    $copyIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+                                    $regenerateIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>';
+                                    $iconBtn = 'rounded p-1.5 text-gray-500 transition-all hover:bg-primary-50 hover:text-primary-600 dark:text-gray-400 dark:hover:bg-cherry-800 dark:hover:text-white';
+                                @endphp
+
+                                <div v-if="oauth_client_id" class="divide-y divide-gray-200 dark:divide-cherry-800">
+                                    <!-- Client ID -->
+                                    <div class="flex items-center gap-2 py-2.5">
+                                        <p class="w-24 shrink-0 text-xs font-semibold text-primary-600 dark:text-primary-300">
+                                            @lang('admin::app.configuration.integrations.edit.client-id')
+                                        </p>
+
+                                        <p class="min-w-0 flex-1 truncate select-all text-sm text-gray-600 dark:text-gray-300" :title="client_id" v-text="client_id"></p>
+
+                                        <button type="button" class="{{ $iconBtn }}" :title="'@lang('admin::app.configuration.integrations.edit.copy')'" @click="copy(client_id)">{!! $copyIcon !!}</button>
+                                    </div>
+
+                                    <!-- Secret -->
+                                    <div class="flex items-center gap-2 py-2.5">
+                                        <p class="w-24 shrink-0 text-xs font-semibold text-primary-600 dark:text-primary-300">
+                                            @lang('admin::app.configuration.integrations.edit.secret-key')
+                                        </p>
+
+                                        <p class="min-w-0 flex-1 truncate select-all font-mono text-sm text-gray-600 dark:text-gray-300" :title="secret_key" v-text="secret_key"></p>
+
+                                        <div class="flex shrink-0 items-center gap-1">
+                                            <button type="button" class="{{ $iconBtn }}" :title="'@lang('admin::app.configuration.integrations.edit.re-secret-btn')'" @click="reGenerateSecretKey">{!! $regenerateIcon !!}</button>
+
+                                            <button type="button" v-if="secret_revealed" class="{{ $iconBtn }}" :title="'@lang('admin::app.configuration.integrations.edit.copy')'" @click="copy(secret_key)">{!! $copyIcon !!}</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- API Username -->
+                                    <div class="flex items-center gap-2 py-2.5">
+                                        <p class="w-24 shrink-0 text-xs font-semibold text-primary-600 dark:text-primary-300">
+                                            @lang('admin::app.configuration.integrations.edit.api-username')
+                                        </p>
+
+                                        <p class="min-w-0 flex-1 truncate select-all text-sm text-gray-600 dark:text-gray-300" :title="api_username" v-text="api_username"></p>
+
+                                        <button type="button" class="{{ $iconBtn }}" :title="'@lang('admin::app.configuration.integrations.edit.copy')'" @click="copy(api_username)">{!! $copyIcon !!}</button>
+                                    </div>
+
+                                    <!-- API Password -->
+                                    <div class="flex items-center gap-2 py-2.5">
+                                        <p class="w-24 shrink-0 text-xs font-semibold text-primary-600 dark:text-primary-300">
+                                            @lang('admin::app.configuration.integrations.edit.api-password')
+                                        </p>
+
+                                        <p v-if="api_password" class="min-w-0 flex-1 truncate select-all font-mono text-sm text-gray-600 dark:text-gray-300" :title="api_password" v-text="api_password"></p>
+                                        <span v-else class="min-w-0 flex-1 font-mono text-sm text-gray-400 dark:text-gray-500">••••••••••••</span>
+
+                                        <div class="flex shrink-0 items-center gap-1">
+                                            <button type="button" class="{{ $iconBtn }}" :title="'@lang('admin::app.configuration.integrations.edit.regenerate-password-btn')'" @click="confirmRegeneratePassword">{!! $regenerateIcon !!}</button>
+
+                                            <button type="button" v-if="api_password" class="{{ $iconBtn }}" :title="'@lang('admin::app.configuration.integrations.edit.copy')'" @click="copy(api_password)">{!! $copyIcon !!}</button>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <p v-if="oauth_client_id" class="mt-3 text-xs text-gray-500 dark:text-gray-400">
+                                    @lang('admin::app.configuration.integrations.edit.password-forgot-note')
+                                </p>
                             </x-slot>
                         </x-admin::accordion>
 
@@ -259,6 +291,9 @@
                         name: "{{ $apiKey->name }}",
                         apiId: "{{ $apiKey->id }}",
                         oauth_client_id: "{{ $oauth_client_id }}",
+                        api_username: @js(session('api_credentials')['username'] ?? $username),
+                        api_password: @js(session('api_credentials')['password'] ?? ''),
+                        secret_revealed: false,
                     };
                 },
 
@@ -279,7 +314,6 @@
 
                     generateKey() {
                         let formData = new FormData();
-                        formData.append('admin_id', this.admin_id);
                         formData.append('name', this.name);
                         formData.append('apiId', this.apiId);
                         this.$axios.post("{{route('admin.configuration.integrations.generate_key')}}", formData)
@@ -287,24 +321,73 @@
                                 this.client_id = response.data.client_id;
                                 this.secret_key = response.data.secret_key;
                                 this.oauth_client_id = response.data.oauth_client_id;
+                                this.secret_revealed = true;
+                                this.api_username = response.data.username;
                                 this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.configuration.integrations.generate-key-success')" });
 
                             })
                             .catch(error => {
-                                
+
                             });
 
                     },
 
+                    copy(value) {
+                        const onCopied = () => this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.configuration.integrations.edit.copied')" });
+
+                        // navigator.clipboard only exists in a secure context (HTTPS/localhost);
+                        // fall back to execCommand so copy still works over plain HTTP / LAN IP.
+                        if (navigator.clipboard && window.isSecureContext) {
+                            navigator.clipboard.writeText(value).then(onCopied);
+
+                            return;
+                        }
+
+                        const textarea = document.createElement('textarea');
+                        textarea.value = value;
+                        textarea.style.position = 'fixed';
+                        textarea.style.opacity = '0';
+                        document.body.appendChild(textarea);
+                        textarea.focus();
+                        textarea.select();
+
+                        try {
+                            document.execCommand('copy');
+                            onCopied();
+                        } finally {
+                            document.body.removeChild(textarea);
+                        }
+                    },
+
+                    confirmRegeneratePassword() {
+                        this.$emitter.emit('open-confirm-modal', {
+                            agree: () => this.regeneratePassword(),
+                        });
+                    },
+
+                    regeneratePassword() {
+                        let formData = new FormData();
+                        formData.append('apiId', this.apiId);
+                        this.$axios.post("{{ route('admin.configuration.integrations.re_generate_password') }}", formData)
+                            .then((response) => {
+                                this.api_username = response.data.username;
+                                this.api_password = response.data.password;
+                                this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.configuration.integrations.edit.regenerate-password-success')" });
+                            })
+                            .catch(error => {
+
+                            });
+                    },
+
                     reGenerateSecretKey() {
                         let formData = new FormData();
-                        formData.append('admin_id', this.admin_id);
                         formData.append('name', this.name);
                         formData.append('apiId', this.apiId);
                         formData.append('oauth_client_id', this.oauth_client_id);
                         this.$axios.post("{{route('admin.configuration.integrations.re_generate_secret_key')}}", formData)
                             .then((response) => {
                                 this.secret_key = response.data.secret_key;
+                                this.secret_revealed = true;
                                 this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.configuration.integrations.re-generate-secret-key-success')" });
 
                             })

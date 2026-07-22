@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -18,7 +18,10 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
+            'index'  => 'Webhook',
+            'create' => 'Opprett',
+            'edit'   => 'Rediger',
+            'delete' => 'Slett',
         ],
         'settings' => [
             'index'  => 'Innstillinger',
@@ -31,12 +34,91 @@ return [
             'mass-delete' => 'Massesletting',
         ],
     ],
+
+    'events' => [
+        'product' => [
+            'created' => 'Produkt opprettet',
+            'updated' => 'Produkt oppdatert',
+        ],
+    ],
+
+    'webhooks' => [
+        'index' => [
+            'title'        => 'Webhooks',
+            'create-btn'   => 'Opprett Webhook',
+            'logs-btn'     => 'Logger',
+            'back-btn'     => 'Tilbake til Webhooks',
+            'default-name' => 'Standard',
+            'datagrid'     => [
+                'id'         => 'ID',
+                'name'       => 'Navn',
+                'url'        => 'URL',
+                'events'     => 'Hendelser',
+                'status'     => 'Status',
+                'active'     => 'Aktiv',
+                'inactive'   => 'Inaktiv',
+                'created_at' => 'Opprettet',
+                'edit'       => 'Rediger',
+                'delete'     => 'Slett',
+            ],
+        ],
+        'create' => [
+            'title'    => 'Opprett Webhook',
+            'cancel'   => 'Avbryt',
+            'save-btn' => 'Lagre',
+        ],
+        'edit' => [
+            'title'    => 'Rediger Webhook',
+            'cancel'   => 'Avbryt',
+            'save-btn' => 'Lagre',
+        ],
+        'form' => [
+            'general'       => 'Generelt',
+            'name'          => 'Navn',
+            'url'           => 'URL',
+            'events'        => 'Hendelser',
+            'select-events' => 'Velg hendelser',
+            'secret'        => 'Signeringshemmelighet',
+            'secret-set'    => 'En hemmelighet er allerede angitt',
+            'secret-hint'   => 'Brukes til å signere hver nyttelast med en HMAC SHA-256-signatur. La feltet stå tomt for å beholde den nåværende hemmeligheten.',
+            'settings'      => 'Innstillinger',
+            'active'        => 'Aktiv',
+            'test'          => 'Test tilkobling',
+            'test-hint'     => 'Send en testforespørsel til URL-en ovenfor.',
+            'test-btn'      => 'Send test',
+            'test-no-url'   => 'Vennligst skriv inn en URL først.',
+            'test-failed'   => 'Testforespørselen mislyktes.',
+            'headers'       => 'Egendefinerte headere',
+            'add-header'    => 'Legg til header',
+            'no-headers'    => 'Ingen egendefinerte headere lagt til.',
+            'header-key'    => 'Header',
+            'header-value'  => 'Verdi',
+        ],
+        'create-success' => 'Webhook opprettet',
+        'update-success' => 'Webhook oppdatert',
+        'delete-success' => 'Webhook slettet',
+        'delete-failed'  => 'Sletting av Webhook mislyktes',
+        'validation'     => [
+            'unsafe-url' => 'URL-en peker til en privat, loopback- eller intern adresse og er ikke tillatt.',
+            'scheme'     => 'URL-en må begynne med http:// eller https://.',
+        ],
+        'test' => [
+            'payload-message'   => 'Unopim webhook-testforespørsel',
+            'connection-failed' => 'URL-en kunne ikke nås. Vennligst sjekk URL-en.',
+            'unreachable'       => 'URL-en er ikke tilgjengelig (HTTP :code).',
+            'reachable'         => 'URL-en er tilgjengelig.',
+        ],
+        'prune' => [
+            'disabled' => 'Oppbevaring av webhook-logger er deaktivert; ingenting ble slettet.',
+            'done'     => 'Slettet :count webhook-logg(er) eldre enn :days dag(er).',
+        ],
+    ],
+
     'configuration' => [
         'webhook' => [
             'settings' => [
                 'index' => [
                     'name'    => 'Innstillinger',
-                    'title'   => 'Webhook-innstillinger',
                     'save'    => 'Lagre',
                     'general' => 'Generelt',
                     'active'  => [
@@ -51,14 +133,18 @@ return [
                         'unsafe'            => 'Webhook-URL-en peker til en privat, loopback- eller intern adresse og er ikke tillatt.',
                     ],
                     'success'    => 'Webhook-innstillinger lagret',
+                    'title'      => 'Webhook-innstillinger',
                     'logs-title' => 'Logger',
                 ],
             ],
+
             'logs' => [
                 'index' => [
                     'datagrid' => [
                         'id'               => 'ID',
+                        'webhook'          => 'Webhook',
                         'sku'              => 'SKU',
+                        'event'            => 'Hendelse',
                         'created_at'       => 'Dato/Tid',
                         'user'             => 'Bruker',
                         'status'           => 'Status',
@@ -75,6 +161,7 @@ return [
                     'response'       => 'Svar',
                     'back'           => 'Back to Logs',
                     'no-payload'     => 'Ingen nyttelast registrert for denne loggen.',
+                    'load-failed'    => 'Kunne ikke laste inn loggdetaljer.',
                     'delete-success' => 'Webhook-logger slettet',
                     'delete-failed'  => 'Sletting av Webhook-logger mislyktes uventet',
                     'unauthorized'   => 'Denne handlingen er ikke autorisert',

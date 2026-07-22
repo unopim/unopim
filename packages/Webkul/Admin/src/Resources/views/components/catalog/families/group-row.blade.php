@@ -31,7 +31,7 @@
         </span>
     </span>
 
-    <span class="rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-cherry-900 dark:text-gray-300">
+    <span class="rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-cherry-800 dark:text-gray-300">
         @{{ element.customAttributes.length }}
     </span>
 

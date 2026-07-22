@@ -119,6 +119,10 @@ class UserController extends Controller
     {
         $user = $this->adminRepository->findOrFail($id);
 
+        if ($user->isApiUser()) {
+            abort(404);
+        }
+
         $roles = $this->roleRepository->all();
 
         $timezone = ['id' => $user?->timezone, 'label' => $user?->timezone];
@@ -194,6 +198,12 @@ class UserController extends Controller
      */
     public function destroy($id): JsonResponse
     {
+        $user = $this->adminRepository->findOrFail($id);
+
+        if ($user->isApiUser()) {
+            abort(404);
+        }
+
         if ($this->adminRepository->count() == 1) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.last-delete-error'),
@@ -281,6 +291,10 @@ class UserController extends Controller
         $data = $request->validated();
 
         $user = $this->adminRepository->find($id);
+
+        if ($user->isApiUser()) {
+            abort(404);
+        }
 
         /**
          * Password check.

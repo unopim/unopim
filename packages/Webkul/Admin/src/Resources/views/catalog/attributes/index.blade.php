@@ -7,15 +7,33 @@
         ->values()
         ->toJson();
 
-    $validations = collect(['none', 'number', 'decimal', 'email', 'url', 'regex'])
-        ->map(fn ($validation) => [
-            'id'    => $validation,
-            'label' => $validation === 'none'
-                ? trans('admin::app.catalog.attributes.create.no')
-                : trans('admin::app.catalog.attributes.create.'.$validation),
+    $swatchOptions = collect($swatchTypes)
+        ->map(fn ($swatchType) => [
+            'id'    => $swatchType,
+            'label' => trans('admin::app.catalog.attributes.edit.option.'.$swatchType),
         ])
         ->values()
         ->toJson();
+
+    $creationToggles = collect([
+        [
+            'name'  => 'is_unique',
+            'label' => trans('admin::app.catalog.attributes.edit.is-unique'),
+            'hint'  => trans('admin::app.catalog.attributes.create.is-unique-hint'),
+            'types' => ['text'],
+        ],
+        [
+            'name'  => 'value_per_locale',
+            'label' => trans('admin::app.catalog.attributes.edit.value-per-locale'),
+            'hint'  => trans('admin::app.catalog.attributes.create.value-per-locale-hint'),
+        ],
+        [
+            'name'  => 'value_per_channel',
+            'label' => trans('admin::app.catalog.attributes.edit.value-per-channel'),
+            'hint'  => trans('admin::app.catalog.attributes.create.value-per-channel-hint'),
+        ],
+    ])->toJson();
+
 @endphp
 
 <x-admin::layouts>
@@ -35,12 +53,15 @@
                     :name-placeholder="trans('admin::app.catalog.attributes.index.datagrid.name')"
                     :code-label="trans('admin::app.catalog.attributes.create.code')"
                     :code-placeholder="trans('admin::app.catalog.attributes.create.code')"
+                    :code-hint="trans('admin::app.catalog.attributes.create.code-hint')"
                     :type-label="trans('admin::app.catalog.attributes.create.type')"
                     :type-placeholder="trans('admin::app.catalog.attributes.create.select-type')"
                     :type-options="$attributeTypes"
-                    :validation-label="trans('admin::app.catalog.attributes.create.input-validation')"
-                    :validation-placeholder="trans('admin::app.catalog.attributes.create.input-validation')"
-                    :validation-options="$validations"
+                    :type-hint="trans('admin::app.catalog.attributes.create.type-hint')"
+                    :swatch-label="trans('admin::app.catalog.attributes.create.swatch')"
+                    :swatch-placeholder="trans('admin::app.catalog.attributes.create.swatch')"
+                    :swatch-options="$swatchOptions"
+                    :toggles="$creationToggles"
                     :save-label="trans('admin::app.catalog.attributes.create.save-btn')"
                 />
             @endif

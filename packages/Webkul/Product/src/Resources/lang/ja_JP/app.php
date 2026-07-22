@@ -17,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => '設定可能',
-        'simple'       => 'シンプル',
+        'configurable'  => '設定可能',
+        'simple'        => 'シンプル',
+        'variant-group' => 'バリアントグループ',
     ],
 ];

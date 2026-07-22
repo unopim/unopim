@@ -32,6 +32,8 @@ trait AttributeColumnTrait
             'sortable'       => true,
             'attribute_type' => $attributeType,
             'operators'      => ProductFilterOperators::optionsForType($attributeType),
+
+            'removable_filter' => true,
         ];
 
         return $this->applyFilterTypeOptions($column, $attribute);

@@ -69,6 +69,24 @@ exports.test = base.test.extend({
     await context.close();
   },
 
+  /**
+   * Widget-visible fixture WITHOUT the per-navigation sessionStorage re-seed.
+   * `adminPageWithWidget` re-injects `{ isOpen: false }` on every navigation,
+   * which masks any regression in the widget's own cross-page state persistence.
+   * This fixture lets the widget manage its own state exactly as a real user's
+   * browser would, so tests can assert that a manually-closed panel stays closed
+   * after PJAX navigation (navigation.js unmounts/remounts the Vue app per page).
+   */
+  adminPageWithWidgetNoSeed: async ({ browser }, use) => {
+    const context = await browser.newContext({ storageState: STORAGE_STATE });
+    const page = await context.newPage();
+
+    await use(page);
+
+    await page.close();
+    await context.close();
+  },
+
   /** Unique identifier for test data isolation in parallel execution */
   uid: async ({}, use) => {
     const { randomBytes } = require('crypto');

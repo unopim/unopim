@@ -176,6 +176,28 @@ class CategoryDataGrid extends DataGrid
 
             $indexPrefix = config('elasticsearch.prefix');
 
+            if (isset($params['mass_action_ids']) && (bool) $params['mass_action_ids']) {
+                $matching = ElasticSearch::search([
+                    'index' => strtolower($indexPrefix.'_categories'),
+                    'body'  => [
+                        'from'          => 0,
+                        'size'          => self::MASS_ACTION_ID_LIMIT,
+                        'stored_fields' => [],
+                        'sort'          => $this->getElasticSort($params['sort'] ?? []),
+                        'query'         => [
+                            'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                        ],
+                    ],
+                ]);
+
+                $this->massActionIds = collect($matching['hits']['hits'])
+                    ->pluck('_id')
+                    ->map(fn ($id): int => (int) $id)
+                    ->all();
+
+                return;
+            }
+
             $results = ElasticSearch::search([
                 'index' => strtolower($indexPrefix.'_categories'),
                 'body'  => [

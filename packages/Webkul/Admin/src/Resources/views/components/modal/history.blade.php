@@ -79,7 +79,7 @@
                                         <table class="w-full">
                                             <!-- Table Header -->
                                             <thead>
-                                                <tr class="bg-gray-100 dark:bg-cherry-800">
+                                                <tr class="bg-gray-100 dark:bg-cherry-700">
                                                     <th class="py-2 px-4 text-left">
                                                         <span>@{{ nameLabel }}</span>
                                                     </th>

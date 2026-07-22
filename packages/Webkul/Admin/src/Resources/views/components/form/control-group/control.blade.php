@@ -85,7 +85,7 @@
                 type="{{ $type }}"
                 :class="[errors.length ? 'border border-red-500' : '']"
                 v-bind="field"
-                {{ $attributes->except(['value'])->merge(['class' => 'w-full appearance-none border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400']) }}
+                {{ $attributes->except(['value'])->merge(['class' => 'w-full appearance-none border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:border-gray-600 transition-all hover:border-gray-400 dark:hover:border-gray-400']) }}
             >
         </v-field>
         @break
@@ -406,15 +406,23 @@
                 @select="selectOption"
                 @remove="removeOption"
             >
+                <template v-slot:option="{ option }">
+                    <span v-text="option[labelBy ?? 'label'] ?? option.label"></span>
 
-            </v-multiselect>   
+                    <span
+                        v-if="option.description"
+                        class="block text-xs text-gray-500 dark:text-gray-300 whitespace-normal mt-0.5"
+                        v-text="option.description"
+                    ></span>
+                </template>
+            </v-multiselect>
             <input
                 v-model="selectedOption"
                 :name="name"
                 type="hidden"
             >
         </div>
-         
+
     </script>
 
     <script type="module">
@@ -871,11 +879,17 @@
                 }
             },
             mounted() {
-                this.$refs['taggingselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
+                this.$nextTick(() => {
+                    const list = this.$refs['taggingselect__handler__']?._?.refs?.list;
 
-                if (this.selectedValue && typeof this.selectedValue != 'object') {
-                    this.initializeValue();
-                }
+                    if (list) {
+                        list.addEventListener('scroll', this.onScroll);
+                    }
+
+                    if (this.selectedValue && typeof this.selectedValue != 'object') {
+                        this.initializeValue();
+                    }
+                });
             },
             computed: {
                 formattedOptions() {
@@ -937,7 +951,12 @@
                     }
                 },
                 onScroll(e) {
-                    const element = this.$refs['taggingselect__handler__']._.refs.list;
+                    const element = this.$refs['taggingselect__handler__']?._?.refs?.list;
+
+                    if (! element) {
+                        return;
+                    }
+
                     const tolerance = 10;
 
                     if (
@@ -1298,7 +1317,12 @@
                     });
                 },
                 onScroll(e) {
-                    const element = this.$refs['multiselect__handler__']._.refs.list;
+                    const element = this.$refs['multiselect__handler__']?._?.refs?.list;
+
+                    if (! element) {
+                        return;
+                    }
+
                     const tolerance = 10;
 
                     if (
@@ -1402,7 +1426,7 @@
         <div :class="[errors.length ? 'flex items-center justify-center w-full border !border-red-600 hover:border-red-600' : 'flex items-center justify-center w-full']">
             <label
                 :for="$.uid + '_dropzone-file'"
-                class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-primary-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 transition-colors"
+                class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-primary-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 transition-colors"
                 @dragover.prevent="isDragging = true"
                 @dragleave.prevent="isDragging = false"
                 @drop.prevent="onDrop($event)"

@@ -6,7 +6,8 @@
     'fieldValues'            => [],
     'channelCurrencies'      => [],
     'variantFields'          => [],
-    'completenessAttributes' => []
+    'completenessAttributes' => [],
+    'lockedFields'           => []
 ])
 
 @php
@@ -48,6 +49,16 @@
 
         $value = old($flatFieldName) ?? $value;
 
+        $isLocked = isset($lockedFields[$field->code]);
+
+        $lockLevel = $isLocked ? ($lockedFields[$field->code]['level'] ?? 'common') : null;
+
+        $lockOwnerId = $isLocked ? ($lockedFields[$field->code]['ownerId'] ?? null) : null;
+
+        if ($isLocked) {
+            $value = $lockedFields[$field->code]['value'] ?? null;
+        }
+
         $fieldLabel = $field->translate($currentLocaleCode)['name'] ?? '';
 
         $fieldLabel = empty($fieldLabel) ? '['.$field->code.']' : $fieldLabel;
@@ -86,6 +97,20 @@
             </x-admin::form.control-group.label>
 
             <div class="self-end mb-2 text-xs flex gap-1 items-center">
+                @if ($isLocked)
+                    <a
+                        @if ($lockOwnerId) href="{{ route('admin.catalog.products.edit', $lockOwnerId) }}" @endif
+                        class="inline-flex items-center gap-1 uppercase p-1 px-2 h-5 rounded-full bg-primary-50 dark:bg-cherry-800 border border-primary-200 dark:border-cherry-700 text-primary-600 dark:text-primary-400 {{ $lockOwnerId ? 'hover:bg-primary-100 dark:hover:bg-cherry-700 cursor-pointer' : 'cursor-default' }}"
+                        title="@lang('admin::app.catalog.products.edit.types.configurable.variant-inheritance.locked', ['level' => trans('admin::app.catalog.products.edit.types.configurable.variant-inheritance.level-'.$lockLevel)])"
+                    >
+                        <svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        {{ trans('admin::app.catalog.products.edit.types.configurable.variant-inheritance.level-'.$lockLevel) }}
+                    </a>
+                @endif
+
                 @if (
                     $globaltranslationEnabled == 1
                     && ($fieldType == 'text' || $fieldType == 'textarea')
@@ -119,6 +144,7 @@
 
         {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.control.'.$fieldType.'.before', ['field' => $field, 'value' => $value, 'fieldName' => $fieldName]) !!}
 
+        <fieldset @disabled($isLocked) class="border-0 p-0 m-0 min-w-0 {{ $isLocked ? 'opacity-90' : '' }}">
         @switch ($fieldType)
             @case ('checkbox')
                 @if (! empty($value))
@@ -434,6 +460,7 @@
                 </x-admin::form.control-group.control>
 
         @endswitch
+        </fieldset>
 
         @php
             if ($isConfigurableAttribute) {

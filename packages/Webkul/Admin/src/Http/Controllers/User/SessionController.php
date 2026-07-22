@@ -70,6 +70,20 @@ class SessionController extends Controller
             return redirect()->route('admin.session.create')->withInput(request()->only('email'));
         }
 
+        if (auth()->guard('admin')->user()->isApiUser()) {
+            auth()->guard('admin')->logout();
+
+            $message = trans('admin::app.settings.users.login-error');
+
+            if ($wantsJson) {
+                return response()->json(['message' => $message], 401);
+            }
+
+            session()->flash('error', $message);
+
+            return redirect()->route('admin.session.create')->withInput(request()->only('email'));
+        }
+
         if (! auth()->guard('admin')->user()->status) {
             auth()->guard('admin')->logout();
 
@@ -270,6 +284,12 @@ class SessionController extends Controller
             return redirect()->route('admin.session.create')->withInput(['email' => $email]);
         }
 
+        if ($admin->isApiUser()) {
+            session()->flash('error', trans('admin::app.settings.users.login-error'));
+
+            return redirect()->route('admin.session.create')->withInput(['email' => $email]);
+        }
+
         if (! $admin->status) {
             session()->flash('warning', trans('admin::app.settings.users.activate-warning'));
 
@@ -301,11 +321,13 @@ class SessionController extends Controller
      */
     private function microsoftSsoConfig(): array
     {
+        $prefix = 'general.microsoft_sso.settings.';
+
         return [
-            'enabled'       => (bool) config('services.microsoft_sso.enabled', false),
-            'tenant'        => (string) config('services.microsoft_sso.tenant', ''),
-            'client_id'     => (string) config('services.microsoft_sso.client_id', ''),
-            'client_secret' => (string) config('services.microsoft_sso.client_secret', ''),
+            'enabled'       => (bool) (core()->getConfigData($prefix.'enabled') ?? config('services.microsoft_sso.enabled', false)),
+            'tenant'        => (string) (core()->getConfigData($prefix.'tenant') ?: config('services.microsoft_sso.tenant', '')),
+            'client_id'     => (string) (core()->getConfigData($prefix.'client_id') ?: config('services.microsoft_sso.client_id', '')),
+            'client_secret' => (string) (core()->getConfigData($prefix.'client_secret') ?: config('services.microsoft_sso.client_secret', '')),
         ];
     }
 }

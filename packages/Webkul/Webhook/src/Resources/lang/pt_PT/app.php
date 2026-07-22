@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -18,7 +18,10 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
+            'index'  => 'Webhook',
+            'create' => 'Criar',
+            'edit'   => 'Editar',
+            'delete' => 'Eliminar',
         ],
         'settings' => [
             'index'  => 'Definições',
@@ -31,12 +34,91 @@ return [
             'mass-delete' => 'Eliminação em massa',
         ],
     ],
+
+    'events' => [
+        'product' => [
+            'created' => 'Produto criado',
+            'updated' => 'Produto atualizado',
+        ],
+    ],
+
+    'webhooks' => [
+        'index' => [
+            'title'        => 'Webhooks',
+            'create-btn'   => 'Criar Webhook',
+            'logs-btn'     => 'Registos',
+            'back-btn'     => 'Voltar aos Webhooks',
+            'default-name' => 'Predefinido',
+            'datagrid'     => [
+                'id'         => 'ID',
+                'name'       => 'Nome',
+                'url'        => 'URL',
+                'events'     => 'Eventos',
+                'status'     => 'Estado',
+                'active'     => 'Ativo',
+                'inactive'   => 'Inativo',
+                'created_at' => 'Criado em',
+                'edit'       => 'Editar',
+                'delete'     => 'Eliminar',
+            ],
+        ],
+        'create' => [
+            'title'    => 'Criar Webhook',
+            'cancel'   => 'Cancelar',
+            'save-btn' => 'Guardar',
+        ],
+        'edit' => [
+            'title'    => 'Editar Webhook',
+            'cancel'   => 'Cancelar',
+            'save-btn' => 'Guardar',
+        ],
+        'form' => [
+            'general'       => 'Geral',
+            'name'          => 'Nome',
+            'url'           => 'URL',
+            'events'        => 'Eventos',
+            'select-events' => 'Selecionar eventos',
+            'secret'        => 'Segredo de assinatura',
+            'secret-set'    => 'Já existe um segredo definido',
+            'secret-hint'   => 'Utilizado para assinar cada payload com uma assinatura HMAC SHA-256. Deixe em branco para manter o segredo atual.',
+            'settings'      => 'Definições',
+            'active'        => 'Ativo',
+            'test'          => 'Testar ligação',
+            'test-hint'     => 'Envie um pedido de teste para o URL acima.',
+            'test-btn'      => 'Enviar teste',
+            'test-no-url'   => 'Por favor, introduza primeiro um URL.',
+            'test-failed'   => 'O pedido de teste falhou.',
+            'headers'       => 'Cabeçalhos personalizados',
+            'add-header'    => 'Adicionar cabeçalho',
+            'no-headers'    => 'Nenhum cabeçalho personalizado adicionado.',
+            'header-key'    => 'Cabeçalho',
+            'header-value'  => 'Valor',
+        ],
+        'create-success' => 'Webhook criado com sucesso',
+        'update-success' => 'Webhook atualizado com sucesso',
+        'delete-success' => 'Webhook eliminado com sucesso',
+        'delete-failed'  => 'Falha ao eliminar o Webhook',
+        'validation'     => [
+            'unsafe-url' => 'O URL aponta para um endereço privado, de loopback ou interno e não é permitido.',
+            'scheme'     => 'O URL deve começar com http:// ou https://.',
+        ],
+        'test' => [
+            'payload-message'   => 'Pedido de teste do webhook Unopim',
+            'connection-failed' => 'Não foi possível aceder ao URL. Verifique o URL.',
+            'unreachable'       => 'O URL não está acessível (HTTP :code).',
+            'reachable'         => 'O URL está acessível.',
+        ],
+        'prune' => [
+            'disabled' => 'A retenção de registos do webhook está desativada; nada foi removido.',
+            'done'     => ':count registo(s) de webhook mais antigo(s) que :days dia(s) removido(s).',
+        ],
+    ],
+
     'configuration' => [
         'webhook' => [
             'settings' => [
                 'index' => [
                     'name'    => 'Definições',
-                    'title'   => 'Definições do Webhook',
                     'save'    => 'Guardar',
                     'general' => 'Geral',
                     'active'  => [
@@ -51,14 +133,18 @@ return [
                         'unsafe'            => 'O URL do webhook aponta para um endereço privado, de loopback ou interno e não é permitido.',
                     ],
                     'success'    => 'Definições do Webhook guardadas com sucesso',
+                    'title'      => 'Definições do Webhook',
                     'logs-title' => 'Registos',
                 ],
             ],
+
             'logs' => [
                 'index' => [
                     'datagrid' => [
                         'id'               => 'ID',
+                        'webhook'          => 'Webhook',
                         'sku'              => 'SKU',
+                        'event'            => 'Evento',
                         'created_at'       => 'Data/Hora',
                         'user'             => 'Utilizador',
                         'status'           => 'Estado',
@@ -75,6 +161,7 @@ return [
                     'response'       => 'Resposta',
                     'back'           => 'Back to Logs',
                     'no-payload'     => 'Nenhum payload registado para este registo.',
+                    'load-failed'    => 'Falha ao carregar os detalhes do registo.',
                     'delete-success' => 'Registos do Webhook eliminados com sucesso',
                     'delete-failed'  => 'A eliminação dos registos do Webhook falhou inesperadamente',
                     'unauthorized'   => 'Esta ação não está autorizada',

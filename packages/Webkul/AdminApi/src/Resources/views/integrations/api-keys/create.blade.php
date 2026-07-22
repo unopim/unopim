@@ -126,30 +126,6 @@
 
                                         <x-admin::form.control-group.error control-name="name" />
                                     </x-admin::form.control-group>
-
-                                    <!-- User -->
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.configuration.integrations.create.assign-user')
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            id="admin_id"
-                                            class="cursor-pointer"
-                                            name="admin_id"
-                                            rules="required"
-                                            :value="old('admin_id')"
-                                            v-model="attributeType"
-                                            :label="trans('admin::app.configuration.integrations.create.assign-user')"
-                                            :options="$adminUsers"
-                                            track-by="id"
-                                            label-by="name"
-                                        >
-                                        </x-admin::form.control-group.control>
-
-                                        <x-admin::form.control-group.error control-name="admin_id" />
-                                    </x-admin::form.control-group>
                                 </x-slot>
                             </x-admin::accordion>
 

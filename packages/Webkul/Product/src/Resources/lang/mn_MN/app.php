@@ -17,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Тохируулах боломжтой',
-        'simple'       => 'Энгийн',
+        'configurable'  => 'Тохируулах боломжтой',
+        'simple'        => 'Энгийн',
+        'variant-group' => 'Хувилбарын бүлэг',
     ],
 ];

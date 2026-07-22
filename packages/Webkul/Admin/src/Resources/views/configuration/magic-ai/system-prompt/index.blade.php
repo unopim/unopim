@@ -20,12 +20,8 @@
     </v-create-system-prompt-form>
     @pushOnce('scripts')
         <script type="text/x-template" id="v-create-system-prompt-form-template">
-            <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                    @lang('admin::app.configuration.system-prompt.create.title')
-                </p>
-
-                <div class="flex gap-x-2.5 items-center">
+            <x-admin::page-header :title="trans('admin::app.configuration.system-prompt.index.title')">
+                <x-slot:actions>
                     <button
                         type="button"
                         class="primary-button"
@@ -33,8 +29,8 @@
                     >
                         @lang('admin::app.configuration.system-prompt.create.create-btn')
                     </button>
-                </div>
-            </div>
+                </x-slot>
+            </x-admin::page-header>
 
             <x-admin::datagrid src="{{ route('admin.magic_ai.system_prompt.index') }}" ref="datagrid">
 

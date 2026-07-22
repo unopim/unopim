@@ -17,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Dapat dikonfigurasi',
-        'simple'       => 'Sederhana',
+        'configurable'  => 'Dapat dikonfigurasi',
+        'simple'        => 'Sederhana',
+        'variant-group' => 'Grup Varian',
     ],
 ];

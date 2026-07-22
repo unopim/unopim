@@ -29,25 +29,25 @@
                         <!-- Active Card -->
                         <a
                             href="{{ route('admin.catalog.products.index') }}?filters[status][]=1"
-                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity border-emerald-100 bg-emerald-50"
+                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity border-emerald-100 bg-emerald-50 dark:border-emerald-900/40 dark:bg-emerald-900/20"
                         >
                             <div class="flex items-center gap-1.5 mb-1">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                <p class="text-xs text-emerald-800">@lang('admin::app.dashboard.index.active')</p>
+                                <p class="text-xs text-emerald-800 dark:text-emerald-300">@lang('admin::app.dashboard.index.active')</p>
                             </div>
-                            <p class="text-2xl font-bold leading-none text-emerald-800">@{{ stats.statusBreakdown.active || 0 }}</p>
+                            <p class="text-2xl font-bold leading-none text-emerald-800 dark:text-emerald-300">@{{ stats.statusBreakdown.active || 0 }}</p>
                         </a>
 
                         <!-- Inactive Card -->
                         <a
                             href="{{ route('admin.catalog.products.index') }}?filters[status][]=0"
-                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity border-amber-100 bg-amber-50"
+                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity border-amber-100 bg-amber-50 dark:border-amber-900/40 dark:bg-amber-900/20"
                         >
                             <div class="flex items-center gap-1.5 mb-1">
                                 <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                                <p class="text-xs text-amber-800">@lang('admin::app.dashboard.index.inactive')</p>
+                                <p class="text-xs text-amber-800 dark:text-amber-300">@lang('admin::app.dashboard.index.inactive')</p>
                             </div>
-                            <p class="text-2xl font-bold leading-none text-amber-800">@{{ stats.statusBreakdown.inactive || 0 }}</p>
+                            <p class="text-2xl font-bold leading-none text-amber-800 dark:text-amber-300">@{{ stats.statusBreakdown.inactive || 0 }}</p>
                         </a>
                     </div>
 

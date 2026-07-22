@@ -87,10 +87,10 @@
         {!! view_render_event('unopim.admin.layout.head') !!}
     </head>
 
-    <body class="h-full dark:bg-cherry-800">
+    <body class="h-screen overflow-hidden dark:bg-cherry-800">
         {!! view_render_event('unopim.admin.layout.body.before') !!}
 
-        <div id="app" class="h-full">
+        <div id="app" class="flex flex-col h-screen">
             <x-admin::flash-group />
 
             <x-admin::modal.history />
@@ -102,12 +102,12 @@
             <x-admin::layouts.header />
 
             <div
-                class="flex gap-4 group/container {{ (request()->cookie('sidebar_collapsed') ?? 0) ? 'sidebar-collapsed' : 'sidebar-not-collapsed' }}"
+                class="flex flex-1 min-h-0 group/container {{ (request()->cookie('sidebar_collapsed') ?? 1) ? 'sidebar-collapsed' : 'sidebar-not-collapsed' }}"
                 ref="appLayout"
             >
                 <x-admin::layouts.sidebar />
 
-                <div class="flex-1 max-w-full px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 ltr:pl-[286px] rtl:pr-[286px] max-lg:!px-4 transition-all duration-300 group-[.sidebar-collapsed]/container:ltr:pl-[85px] group-[.sidebar-collapsed]/container:rtl:pr-[85px]">
+                <main id="main-content" class="flex-1 min-w-0 overflow-y-auto px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 transition-all duration-300">
                     @php
                         $hasPermission = bouncer()->hasPermission('history');
 
@@ -136,8 +136,12 @@
                             ];
                     @endphp
 
-                    <div class="js-sticky-header sticky top-[57px] z-20 -mx-4 -mt-3 border-b border-gray-200 bg-unopim-primary-page px-4 pt-3 transition-shadow dark:border-gray-800 dark:bg-cherry-800">
-                        {{ $pageHeader ?? '' }}
+                    <div class="js-sticky-header sticky -top-3 z-20 -mx-4 -mt-3 border-b border-gray-200 bg-unopim-primary-page px-4 pt-3 transition-shadow dark:border-gray-800 dark:bg-cherry-800">
+                        @isset($pageHeader)
+                            {{ $pageHeader }}
+                        @else
+                            <x-admin::page-title :title="$title ?? ''" />
+                        @endisset
 
                         <x-admin::layouts.edit-tabs
                             :items="$tabItems"
@@ -166,7 +170,7 @@
                             {!! view_render_event('unopim.admin.layout.history.after') !!}
                         @endif
                     </div>
-                </div>
+                </main>
             </div>
 
             {!! view_render_event('unopim.admin.layout.content.after') !!}

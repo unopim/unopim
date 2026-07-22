@@ -82,8 +82,9 @@ test.describe.serial('Attribute Family — Variants tab', () => {
 
     // Ownership editor mounts (SPA render can lag on a large catalog).
     await expect(page.getByRole('button', { name: 'Save Variant' })).toBeVisible({ timeout: 30000 });
-    await expect(page.locator('#app').getByText(/Parent Product/i).first()).toBeVisible({ timeout: 15000 });
-    await expect(page.locator('#app').getByText(/Child Product/i).first()).toBeVisible();
+    // Common pool on the left, one card per variant level on the right.
+    await expect(page.locator('#app').getByText('Common', { exact: true }).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('[data-variant-level-card]')).toHaveCount(1);
 
     // Saving from the editor persists ownership and redirects back to the list.
     await Promise.all([

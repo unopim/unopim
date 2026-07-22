@@ -103,6 +103,34 @@ class Tree
     }
 
     /**
+     * Build the active menu trail from the top level down to the deepest active
+     * item, following the active branch at each level. Used to render breadcrumbs
+     * for the current page.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getActiveTrail(): array
+    {
+        $trail = [];
+
+        $nodes = $this->items;
+
+        while (! empty($nodes)) {
+            $activeItem = collect($nodes)->first(fn (array $item): bool => (bool) $this->getActive($item));
+
+            if (! $activeItem) {
+                break;
+            }
+
+            $trail[] = $activeItem;
+
+            $nodes = $activeItem['children'] ?? [];
+        }
+
+        return $trail;
+    }
+
+    /**
      * Remove unauthorized urls.
      */
     public function removeUnauthorizedUrls(): array

@@ -160,7 +160,7 @@ export default function initAjaxNavigation() {
                 window.history.pushState({ ajaxNav: true }, '', finalUrl);
             }
 
-            window.scrollTo(0, 0);
+            (document.getElementById('main-content') ?? window).scrollTo(0, 0);
 
             // The new page is mounted and live: modules re-initialise any
             // non-Vue widgets (third-party libraries, charts, editors) here.

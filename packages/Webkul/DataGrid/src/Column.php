@@ -40,6 +40,9 @@ class Column
         public bool $visible = true,
         public ?string $attribute_type = null,
         public ?array $operators = null,
+        public ?string $filter_label = null,
+        public bool $default_filter = true,
+        public bool $removable_filter = false,
     ) {
         $this->init();
     }

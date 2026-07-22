@@ -61,4 +61,14 @@ return [
         'acl'          => 'configuration.system_settings',
         'sort'         => 3,
     ],
+
+    [
+        'key'          => 'system.microsoft_sso',
+        'name'         => 'admin::app.settings.system-settings.microsoft-sso.title',
+        'info'         => 'admin::app.settings.system-settings.microsoft-sso.info',
+        'icon'         => 'icon-configuration',
+        'config_group' => 'general.microsoft_sso.settings',
+        'acl'          => 'configuration.system_settings',
+        'sort'         => 4,
+    ],
 ];

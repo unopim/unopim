@@ -36,6 +36,7 @@ use Webkul\Product\Type\AbstractType;
     'sku',
     'parent_id',
     'status',
+    'variant_structure_id',
 ])]
 class Product extends Model implements HistoryAuditable, PresentableHistoryInterface, ProductContract
 {
@@ -67,6 +68,14 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     public function attribute_family(): BelongsTo
     {
         return $this->belongsTo(AttributeFamilyProxy::modelClass());
+    }
+
+    /**
+     * Get the variant structure that owns the product.
+     */
+    public function variantStructure(): BelongsTo
+    {
+        return $this->belongsTo(VariantStructureProxy::modelClass(), 'variant_structure_id');
     }
 
     /**

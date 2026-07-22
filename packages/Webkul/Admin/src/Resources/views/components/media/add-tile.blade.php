@@ -26,8 +26,8 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-media-add-tile-template">
         <label
-            class="group flex min-h-[176px] w-full cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-gray-300 bg-white p-3.5 text-center transition-colors hover:border-unopim-primary hover:bg-gray-50 dark:border-cherry-700 dark:bg-cherry-900 dark:hover:border-unopim-primary dark:hover:bg-cherry-800"
-            :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-800 shadow-md' : ''"
+            class="group flex min-h-[176px] w-full cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-gray-300 bg-gray-50 p-3.5 text-center transition-colors hover:border-unopim-primary hover:bg-gray-100 dark:border-gray-600 dark:bg-cherry-800 dark:hover:border-unopim-primary dark:hover:bg-cherry-700"
+            :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-700 shadow-md' : ''"
             :for="triggerModal ? null : inputId"
             :aria-label="title"
             :title="allowedTypes"
@@ -38,7 +38,7 @@
             @drop.prevent="onDrop"
         >
             <span
-                class="flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-500 transition-colors group-hover:border-unopim-primary/30 group-hover:text-unopim-primary dark:border-cherry-700 dark:bg-cherry-800 dark:text-gray-300"
+                class="flex items-center justify-center rounded-md border border-gray-200 bg-white text-gray-500 transition-colors group-hover:border-unopim-primary/30 group-hover:text-unopim-primary dark:border-cherry-700 dark:bg-cherry-900 dark:text-gray-300"
                 :class="[icon, compact ? 'h-8 w-8 text-xl' : 'h-9 w-9 text-2xl']"
             ></span>
 

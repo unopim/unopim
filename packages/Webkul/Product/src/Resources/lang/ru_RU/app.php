@@ -17,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Настраиваемый',
-        'simple'       => 'Простой',
+        'configurable'  => 'Настраиваемый',
+        'simple'        => 'Простой',
+        'variant-group' => 'Группа вариантов',
     ],
 ];

@@ -7,6 +7,7 @@
     <x-admin::layouts.page-header
         :title="$title"
         :description="$description"
+        :breadcrumb="false"
     >
         @isset($actions)
             <x-slot:actions>

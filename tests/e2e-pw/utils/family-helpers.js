@@ -1,4 +1,4 @@
-// Reusable operations for the attribute-family E2E suite (runs against 8023 via
+// Reusable operations for the attribute-family E2E suite (runs against BASE_URL via
 // family-fixtures). Selectors verified against the live rendered admin.
 //
 // NOTE: the admin polls /admin/get-notifications, so `networkidle` never settles.
@@ -8,7 +8,7 @@ const { generateUid } = require('./helpers');
 const { ensureFamilyState, STATE_PATH, FAMILY_BASE_URL } = require('./ensure-family-state');
 
 /**
- * Run a callback with a fresh authenticated page against 8023 (used from
+ * Run a callback with a fresh authenticated page against the suite's target (used from
  * beforeAll/afterAll where the adminPage fixture is unavailable). Ensures the
  * saved session is valid first.
  */

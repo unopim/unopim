@@ -15,7 +15,8 @@ return [
         'product-can-not-be-copied' => 'Products of type :type cannot be copied',
     ],
     'type' => [
-        'configurable' => 'Configurable',
-        'simple'       => 'Simple',
+        'configurable'  => 'Configurable',
+        'simple'        => 'Simple',
+        'variant-group' => 'Variant Group',
     ],
 ];

@@ -74,7 +74,7 @@ test.describe('Product DataGrid attribute filters', () => {
     await chooseFromDropdown(price, '[data-filter-operator]', 'Greater than');
     await price.locator('[data-filter-value]').fill('100');
 
-    await adminPage.locator('.primary-button').filter({ hasText: 'Save' }).click();
+    await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
     await adminPage.waitForLoadState('networkidle');
 
     const after = await resultCount(adminPage);
@@ -94,7 +94,7 @@ test.describe('Product DataGrid attribute filters', () => {
     await chooseFromDropdown(price, '[data-filter-operator]', 'Less than');
     await price.locator('[data-filter-value]').fill('100');
 
-    await adminPage.locator('.primary-button').filter({ hasText: 'Save' }).click();
+    await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
     await adminPage.waitForLoadState('networkidle');
 
     const after = await resultCount(adminPage);
@@ -147,7 +147,7 @@ test.describe('Product DataGrid attribute filters', () => {
     await chooseFromDropdown(price, '[data-filter-operator]', 'Greater than');
     await price.locator('[data-filter-value]').fill('100');
 
-    await adminPage.locator('.primary-button').filter({ hasText: 'Save' }).click();
+    await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
     await adminPage.waitForLoadState('networkidle');
 
     const applied = await resultCount(adminPage);
@@ -175,14 +175,14 @@ test.describe('Product DataGrid attribute filters', () => {
     await chooseFromDropdown(price, '[data-filter-operator]', 'Greater than');
     await price.locator('[data-filter-value]').fill('100');
 
-    await adminPage.locator('.primary-button').filter({ hasText: 'Save' }).click();
+    await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
     await adminPage.waitForLoadState('networkidle');
 
     expect(await resultCount(adminPage)).toBeLessThan(before);
 
     await adminPage.getByText('Filter', { exact: true }).click();
     await adminPage.locator('[data-attribute-filter="price"] .icon-cancel').click();
-    await adminPage.locator('.primary-button').filter({ hasText: 'Save' }).click();
+    await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
     await adminPage.waitForLoadState('networkidle');
 
     expect(await resultCount(adminPage)).toBe(before);

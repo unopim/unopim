@@ -17,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => '可配置的',
-        'simple'       => '簡單的',
+        'configurable'  => '可配置的',
+        'simple'        => '簡單的',
+        'variant-group' => '變體組',
     ],
 ];
