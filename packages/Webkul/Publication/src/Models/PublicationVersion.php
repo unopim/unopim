@@ -11,6 +11,12 @@ use Webkul\Publication\Contracts\PublicationVersion as PublicationVersionContrac
 use Webkul\Publication\Database\Factories\PublicationVersionFactory;
 use Webkul\Publication\Exceptions\ImmutableVersionException;
 
+/**
+ * The immutability guard below only fires on instance-level `save()`/`delete()`.
+ * Bulk query-builder writes (`update()`, `delete()`, `upsert()`) and
+ * `withoutEvents()`/`saveQuietly()`/`updateQuietly()` bypass Eloquent events
+ * entirely and will silently mutate or destroy attested versions.
+ */
 #[Table(name: 'publication_versions')]
 class PublicationVersion extends Model implements PublicationVersionContract
 {

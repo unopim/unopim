@@ -2,6 +2,7 @@
 
 namespace Webkul\Publication\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,17 +16,27 @@ use Webkul\Publication\Contracts\Publication as PublicationContract;
 use Webkul\Publication\Database\Factories\PublicationFactory;
 use Webkul\Publication\Enums\PublicationStatus;
 
+#[Fillable([
+    'uuid',
+    'product_id',
+    'channel_id',
+    'type',
+    'status',
+])]
 #[Table(name: 'publications')]
 class Publication extends Model implements HistoryContract, PublicationContract
 {
     use HasFactory;
     use HistoryTrait;
 
-    protected $guarded = [];
-
     protected $historyTags = ['publication'];
 
-    protected $historyFields = ['status'];
+    /**
+     * `uuid` and `product_id` are audited: the uuid is the permanent public
+     * identifier printed on the product, and re-pointing a passport at a
+     * different product must leave a trail.
+     */
+    protected $historyFields = ['status', 'uuid', 'product_id'];
 
     protected function casts(): array
     {

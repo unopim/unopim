@@ -14,8 +14,10 @@ return new class extends Migration
             $table->unsignedBigInteger('publication_id');
             $table->foreign('publication_id')->references('id')->on('publications')->cascadeOnDelete();
 
+            // Retention obligation outlives the catalog record: a locale cannot be
+            // deleted while attested versions still exist in that language.
             $table->unsignedInteger('locale_id');
-            $table->foreign('locale_id')->references('id')->on('locales')->cascadeOnDelete();
+            $table->foreign('locale_id')->references('id')->on('locales')->restrictOnDelete();
 
             $table->unsignedInteger('version');
 

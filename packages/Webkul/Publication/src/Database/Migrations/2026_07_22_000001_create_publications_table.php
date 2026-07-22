@@ -13,11 +13,15 @@ return new class extends Migration
 
             $table->uuid('uuid')->unique();
 
+            // Retention obligation outlives the catalog record: a product with an
+            // attested passport cannot be deleted out from under it.
             $table->unsignedInteger('product_id');
-            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
+            $table->foreign('product_id')->references('id')->on('products')->restrictOnDelete();
 
+            // Same rationale: a channel cannot be deleted while it still carries
+            // attested passports.
             $table->unsignedInteger('channel_id');
-            $table->foreign('channel_id')->references('id')->on('channels')->cascadeOnDelete();
+            $table->foreign('channel_id')->references('id')->on('channels')->restrictOnDelete();
 
             $table->string('type');
 

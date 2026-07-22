@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Webkul\Publication\Exceptions\ImmutableVersionException;
 use Webkul\Publication\Models\PublicationVersion;
 
@@ -17,4 +18,14 @@ it('allows the current pointer to be flipped', function (): void {
     $version->markSuperseded();
 
     expect($version->fresh()->is_current)->toBeFalse();
+});
+
+it('refuses to delete a product that still has an attested publication', function (): void {
+    $version = PublicationVersion::factory()->create();
+
+    $product = $version->publication->product;
+
+    expect(fn (): bool => (bool) $product->delete())->toThrow(QueryException::class);
+
+    expect(PublicationVersion::query()->find($version->id))->not->toBeNull();
 });
