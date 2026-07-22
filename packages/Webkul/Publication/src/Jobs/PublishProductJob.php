@@ -19,6 +19,17 @@ class PublishProductJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * A transient failure (deadlock while waiting on the publication row
+     * lock, DB blip) should retry rather than die silently with no attempts.
+     */
+    public int $tries = 3;
+
+    /**
+     * @var array<int, int>
+     */
+    public array $backoff = [10, 30, 60];
+
     public function __construct(
         private readonly int $productId,
         private readonly int $channelId,

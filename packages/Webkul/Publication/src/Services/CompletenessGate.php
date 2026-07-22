@@ -16,8 +16,13 @@ class CompletenessGate
      */
     public function passes(Product $product, Channel $channel, Locale $locale): bool
     {
-        $threshold = (int) core()->getConfigData('catalog.product_passport.settings.completeness_threshold', $channel->code)
-            ?: 100;
+        $configured = core()->getConfigData('catalog.product_passport.settings.completeness_threshold', $channel->code);
+
+        // Only an unconfigured (null/empty) setting falls back to 100. A
+        // deliberately configured threshold of 0 must mean 0, not "unset".
+        $threshold = $configured === null || $configured === ''
+            ? 100
+            : (int) $configured;
 
         $score = ProductCompletenessScore::query()
             ->where('product_id', $product->id)
