@@ -9,7 +9,7 @@ use Webkul\DataTransfer\Contracts\JobTrack as ImportJobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as ImportJobBatchContract;
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Import;
-use Webkul\DataTransfer\Helpers\Source;
+use Webkul\DataTransfer\Helpers\Sources\AbstractSource as Source;
 use Webkul\DataTransfer\Jobs\Import\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Import\ImportBatch as ImportBatchJob;
 use Webkul\DataTransfer\Jobs\Import\IndexBatch as IndexBatchJob;

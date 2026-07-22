@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
+  <file src="packages/Webkul/AdminApi/src/ApiDataSource.php">
+    <TaintedSql>
+      <code><![CDATA[$requestedColumn]]></code>
+    </TaintedSql>
+  </file>
+  <file src="packages/Webkul/AdminApi/src/ApiDataSource/Catalog/CategoryDataSource.php">
+    <TaintedSql>
+      <code><![CDATA[$filterTable.$requestedColumn]]></code>
+    </TaintedSql>
+  </file>
+  <file src="packages/Webkul/AdminApi/src/ApiDataSource/Catalog/ProductDataSource.php">
+    <TaintedSql>
+      <code><![CDATA[$filterTable.$requestedColumn]]></code>
+    </TaintedSql>
+  </file>
+  <file src="packages/Webkul/AiAgent/src/Agents/ImageProductAgent.php">
+    <TaintedFile>
+      <code><![CDATA[$filePath]]></code>
+    </TaintedFile>
+  </file>
+  <file src="packages/Webkul/Core/src/Filesystem/FileStorer.php">
+    <TaintedFile>
+      <code><![CDATA[$name]]></code>
+      <code><![CDATA[$path]]></code>
+    </TaintedFile>
+  </file>
+</files>

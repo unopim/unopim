@@ -23,7 +23,7 @@ class ElasticSearch
      * Make a new connection.
      *
      *
-     * @return \Elasticsearch\Client
+     * @return \Elastic\Elasticsearch\Client
      */
     protected function makeConnection(?string $name = null): Client
     {
