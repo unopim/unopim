@@ -13,6 +13,17 @@ class PublicationResolver
     private const LANGUAGE_TAG_PATTERN = '/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/';
 
     /**
+     * The per-channel public-tier kill switch: `general.publication.settings.enabled`.
+     * Distinct from the publish-time-only status gate — shared by every public-facing
+     * controller (page and asset alike) so a disabled channel takes the whole
+     * publication, including its documents, off the air consistently.
+     */
+    public function isChannelEnabled(Publication $publication): bool
+    {
+        return (bool) (core()->getConfigData('general.publication.settings.enabled', $publication->channel->code) ?? true);
+    }
+
+    /**
      * Finds a publication by uuid/type with its channel locales and current versions eager loaded.
      */
     public function findPublication(string $uuid, string $type): ?Publication

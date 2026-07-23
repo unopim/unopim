@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Services\Publisher;
 
@@ -46,6 +47,19 @@ it('revokes a document immediately on redaction', function (): void {
     [$version, $path] = $this->passportWithDocumentFixture();
 
     resolve(Publisher::class)->redactAll($version->publication, $this->loginAsAdmin()->id, 'gdpr request');
+
+    $this->get('/p/'.$version->publication->uuid.'/asset/'.$path)->assertNotFound();
+});
+
+it('404s a document once the per-channel kill switch is disabled, even though the file exists and is referenced by a current published version', function (): void {
+    [$version, $path] = $this->passportWithDocumentFixture();
+
+    DB::table('core_config')->updateOrInsert(
+        ['code' => 'general.publication.settings.enabled', 'channel_code' => $version->publication->channel->code],
+        ['value' => '0']
+    );
+
+    app('config')->set('core_config', null);
 
     $this->get('/p/'.$version->publication->uuid.'/asset/'.$path)->assertNotFound();
 });

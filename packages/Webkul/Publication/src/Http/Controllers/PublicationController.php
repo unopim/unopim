@@ -132,7 +132,7 @@ class PublicationController extends Controller
             return null;
         }
 
-        if (! (bool) (core()->getConfigData('general.publication.settings.enabled', $publication->channel->code) ?? true)) {
+        if (! $this->resolver->isChannelEnabled($publication)) {
             return null;
         }
 

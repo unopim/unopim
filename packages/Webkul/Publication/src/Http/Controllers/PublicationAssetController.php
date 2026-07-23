@@ -50,6 +50,11 @@ class PublicationAssetController extends Controller
         // the publication is no longer actively Published.
         abort_if($publication === null || $publication->status !== PublicationStatus::Published, 404);
 
+        // Same per-channel kill switch the page controller enforces: a disabled
+        // channel must take the publication's documents off the air too, not
+        // just its rendered page.
+        abort_unless($this->resolver->isChannelEnabled($publication), 404);
+
         $sanitizedPath = $this->sanitizePath($path);
 
         abort_if($sanitizedPath === null, 404);
