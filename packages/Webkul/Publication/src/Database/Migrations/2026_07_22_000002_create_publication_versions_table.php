@@ -24,7 +24,7 @@ return new class extends Migration
             // Declared explicitly: MySQL auto-indexes FK columns, PostgreSQL does not.
             $table->unsignedInteger('locale_id');
             $table->foreign('locale_id')->references('id')->on('locales')->restrictOnDelete();
-            $table->index('locale_id');
+            $table->index('locale_id', 'pubver_locale_idx');
 
             $table->unsignedInteger('version');
 
@@ -51,7 +51,7 @@ return new class extends Migration
 
             $table->unsignedInteger('published_by_id')->nullable();
             $table->foreign('published_by_id')->references('id')->on('admins')->nullOnDelete();
-            $table->index('published_by_id');
+            $table->index('published_by_id', 'pubver_pubby_idx');
 
             // GDPR Art. 17: the one sanctioned exception to immutability. See
             // PublicationVersion::redact() — payload is nulled, checksum is kept
@@ -64,14 +64,18 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['publication_id', 'locale_id', 'version']);
-            $table->unique(['publication_id', 'current_locale_id']);
+            // Explicit, short index names: Laravel derives auto names from the
+            // *prefixed* table name, and `publication_versions` plus a table
+            // prefix overruns MySQL's 64-char identifier limit. Explicit names
+            // are not prefixed, so they stay valid for any prefix length.
+            $table->unique(['publication_id', 'locale_id', 'version'], 'pubver_pub_loc_ver_uq');
+            $table->unique(['publication_id', 'current_locale_id'], 'pubver_pub_curloc_uq');
             // (publication_id, is_current, locale_id): is_current before locale_id
             // because every hot-path lookup filters by is_current and is either
             // scoped to one locale or none, never the reverse.
-            $table->index(['publication_id', 'is_current', 'locale_id']);
-            $table->index(['publication_id', 'published_at']);
-            $table->index('published_at');
+            $table->index(['publication_id', 'is_current', 'locale_id'], 'pubver_pub_cur_loc_idx');
+            $table->index(['publication_id', 'published_at'], 'pubver_pub_pubat_idx');
+            $table->index('published_at', 'pubver_pubat_idx');
         });
     }
 

@@ -16,7 +16,10 @@ return new class extends Migration
             // publication_versions itself): if the parent version is ever
             // removed there is nothing left worth keeping.
             $table->unsignedBigInteger('publication_version_id')->primary();
-            $table->foreign('publication_version_id')->references('id')->on('publication_versions')->cascadeOnDelete();
+            // Explicit short FK name: the auto name is derived from the
+            // *prefixed* table name and overruns MySQL's 64-char identifier
+            // limit on prefixed installs. Explicit names are not prefixed.
+            $table->foreign('publication_version_id', 'pubverpay_version_fk')->references('id')->on('publication_versions')->cascadeOnDelete();
 
             // gzip-9 compressed JSON (~4.9x measured ratio). Nullable because
             // redaction (PublicationVersion::redact()) nulls this column while
@@ -35,7 +38,12 @@ return new class extends Migration
         // column that can never be deleted. Postgres' bytea has no such tiers,
         // so this only applies to MySQL.
         if (Schema::getConnection()->getDriverName() === 'mysql') {
-            DB::statement('ALTER TABLE publication_version_payloads MODIFY payload MEDIUMBLOB NULL');
+            // Prefix the table name explicitly: a raw statement bypasses the
+            // schema builder, so it must honour the install's table prefix or
+            // it targets a nonexistent table on any prefixed install.
+            $table = Schema::getConnection()->getTablePrefix().'publication_version_payloads';
+
+            DB::statement('ALTER TABLE `'.$table.'` MODIFY payload MEDIUMBLOB NULL');
         }
     }
 
