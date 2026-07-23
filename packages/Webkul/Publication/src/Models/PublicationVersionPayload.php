@@ -12,10 +12,9 @@ use Webkul\Publication\Contracts\PublicationVersionPayload as PublicationVersion
 use Webkul\Publication\Exceptions\ImmutableVersionException;
 
 /**
- * Derived storage for `PublicationVersion::payload`, externalised so the
- * attested-metadata table stays thin (see the 000003 migration). `payload` is
- * gzip-9 compressed JSON; only PublicationVersion::redact() may ever write to
- * it after creation, and only to null.
+ * Derived storage for `PublicationVersion::payload` (see the 000003 migration).
+ * `payload` is gzip-9 compressed JSON; only PublicationVersion::redact() may
+ * ever write to it after creation, and only to null.
  */
 #[Fillable([
     'publication_version_id',

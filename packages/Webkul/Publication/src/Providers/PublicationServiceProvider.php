@@ -17,11 +17,17 @@ use Webkul\Publication\Registry\PublicationTypeRegistry;
 
 class PublicationServiceProvider extends ServiceProvider
 {
+    /**
+     * Registers the request-scoped publication type registry.
+     */
     public function register(): void
     {
         $this->app->scoped(PublicationTypeRegistry::class);
     }
 
+    /**
+     * Boots the package: config, translations, migrations, views, and routes.
+     */
     public function boot(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../Config/publication.php', 'publication');
@@ -38,13 +44,10 @@ class PublicationServiceProvider extends ServiceProvider
     }
 
     /**
-     * Public so a consuming package's own provider (or a test that mutates
-     * `publication.types` after this provider has already booted) can
-     * re-trigger registration once its type is actually present in config.
-     * Safe to call more than once as long as each type is only added to
-     * config once: middleware aliases and the rate limiter definition are
-     * simple overwrites, and a type present at the first call contributes
-     * no routes to re-add on a later call.
+     * Public so a consuming provider (or a test that mutates
+     * `publication.types` post-boot) can re-trigger registration. Safe to
+     * call more than once: aliases/rate limiter are simple overwrites, and
+     * an already-registered type contributes no routes to re-add.
      */
     public function registerPublicRoutes(): void
     {
@@ -60,27 +63,17 @@ class PublicationServiceProvider extends ServiceProvider
             ];
         });
 
-        // Reads config directly (never database, so this stays static and
-        // route:cache remains valid) rather than resolving the scoped
-        // PublicationTypeRegistry singleton: that instance memoizes all()
-        // permanently on first call, and consuming it here — at boot, before
-        // any request-time config mutation — would freeze every request for
-        // the rest of this container's lifetime onto the boot-time type list.
+        // Reads config directly rather than resolving the scoped PublicationTypeRegistry:
+        // that registry memoizes all() on first call, so consuming it here at boot would
+        // freeze every request onto the boot-time type list.
         foreach (collect(config('publication.types', []))->map(
             fn (array $config, string $code): PublicationType => PublicationType::fromConfig($code, $config)
         ) as $type) {
-            // Deliberately NO ->whereUuid()/->where('locale', ...) constraints:
-            // a route whose regex fails to match throws NotFoundHttpException
-            // OUTSIDE any route's own middleware (routing itself fails before
-            // a route, and therefore its group's publication.errors/enabled
-            // middleware, is ever selected) — bootstrap/app.php's blanket
-            // handler would render admin::errors.index for that request,
-            // unconditionally, regardless of anything this package does.
-            // Segment COUNT (1 vs 2 vs Task 6's 3) already disambiguates these
-            // routes without needing shape constraints, and Locale.code has no
-            // fixed format in this codebase (confirmed: LocaleFactory yields
-            // bare 2-letter codes, not always "xx_XX") — so validating shape
-            // is the controller's job, which returns a safe 404 either way.
+            // No ->whereUuid()/->where('locale', ...) constraints: a route regex failure
+            // throws NotFoundHttpException outside this group's own middleware, so
+            // Laravel's Pipeline renders it via the global handler (admin::errors.index)
+            // instead. Segment count alone disambiguates these routes; shape validation
+            // is the controller's job, which always returns our own 404.
             Route::middleware(['publication.errors', 'publication.enabled', 'publication.ratelimit'])
                 ->prefix($type->routePrefix)
                 ->group(function () use ($type): void {
@@ -88,11 +81,8 @@ class PublicationServiceProvider extends ServiceProvider
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.show');
 
-                    // Task 6 inserts `/{uuid}/asset/{path}` here, BEFORE the
-                    // locale route below — a `{locale}` segment would
-                    // otherwise swallow the literal `asset` path segment.
-                    // See Task 6 Step 4 for the full, final group in
-                    // registration order.
+                    // A future `/{uuid}/asset/{path}` route must be inserted here, before
+                    // the locale route below, or `{locale}` would swallow `asset`.
 
                     Route::get('/{uuid}/{locale}', [PublicationController::class, 'show'])
                         ->defaults('type', $type->code)
@@ -100,16 +90,10 @@ class PublicationServiceProvider extends ServiceProvider
                 });
         }
 
-        // RouteCollection::add() snapshots $route->getName() the instant
-        // Route::get() runs, BEFORE the fluent ->name() call above has set
-        // it — so the name list is only ever populated by Laravel's own
-        // Application::booted() callback (Illuminate\Foundation\Support\
-        // Providers\RouteServiceProvider), which fires exactly once, early
-        // in the normal boot sequence. Any registration that happens after
-        // that point (e.g. this method being re-invoked once a consuming
-        // package's type lands in config) needs its own explicit refresh, or
-        // route('publication.public.{type}.show.locale', ...) throws
-        // RouteNotFoundException despite the route matching requests fine.
+        // RouteCollection snapshots the route name before ->name() sets it, and the
+        // name-lookup cache is only rebuilt once during normal boot. A late
+        // re-invocation of this method needs its own explicit refresh, or route()
+        // throws RouteNotFoundException despite the route matching requests fine.
         $router->getRoutes()->refreshNameLookups();
     }
 }

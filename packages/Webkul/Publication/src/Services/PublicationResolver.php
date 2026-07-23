@@ -12,6 +12,9 @@ class PublicationResolver
 
     private const LANGUAGE_TAG_PATTERN = '/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/';
 
+    /**
+     * Finds a publication by uuid/type with its channel locales and current versions eager loaded.
+     */
     public function findPublication(string $uuid, string $type): ?Publication
     {
         return PublicationProxy::modelClass()::query()
@@ -24,6 +27,9 @@ class PublicationResolver
             ->first();
     }
 
+    /**
+     * Resolves the best-match current version by explicit locale, falling back to Accept-Language preference.
+     */
     public function resolveVersion(Publication $publication, ?string $localeCode, ?string $acceptLanguage): ?PublicationVersion
     {
         $currentByLocale = $publication->versions->keyBy(fn (PublicationVersion $version): string => $version->locale->code);
@@ -51,11 +57,9 @@ class PublicationResolver
     }
 
     /**
-     * Caps the token count, validates each tag against a real BCP-47-ish
-     * shape, and honours `q=` weights instead of discarding them — the
-     * 2026-07-22 draft did neither, so a malformed or hostile header could
-     * not be trusted and preference order silently ignored the client's
-     * actual ranking.
+     * Caps the token count, validates each tag against a BCP-47-ish shape,
+     * and honours `q=` weights so a malformed or hostile header can't be
+     * trusted and client ranking isn't silently ignored.
      *
      * @return list<string>
      */

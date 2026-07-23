@@ -24,13 +24,10 @@ class PublicationController extends Controller
     ) {}
 
     /**
-     * Every not-found branch below RETURNS a response instead of calling
-     * abort(): see PublicationErrorBoundary's doc comment — a thrown
-     * NotFoundHttpException is rendered by Illuminate\Routing\Pipeline via the
-     * global ExceptionHandler at the exact pipe that threw it, and
-     * bootstrap/app.php's own unconditional callback (admin::errors.index,
-     * admin email) always wins that race. Returning a Response directly is
-     * the only way this route group's 404s reach our own template.
+     * Every not-found branch below returns a Response instead of calling
+     * abort(): a thrown exception is rendered by Laravel's routing Pipeline
+     * via the global handler at the pipe that threw it, bypassing this
+     * package's own template (see PublicationErrorBoundary).
      */
     public function redirect(Request $request, string $uuid): Response
     {
@@ -58,6 +55,9 @@ class PublicationController extends Controller
             ->header('Vary', 'Accept-Language');
     }
 
+    /**
+     * Renders the publication, honouring If-None-Match against a checksum-derived ETag.
+     */
     public function show(Request $request, string $uuid, string $locale): Response
     {
         $type = $this->routeType($request);
@@ -108,16 +108,10 @@ class PublicationController extends Controller
     }
 
     /**
-     * Reads the `type` route default via the Request rather than accepting it
-     * as a method parameter: Laravel's ControllerDispatcher binds non-class
-     * method parameters POSITIONALLY (`array_values($route->parametersWithoutNulls())`),
-     * never by name — confirmed by execution during development, where a
-     * `string $type` parameter silently received the `{uuid}` segment's value
-     * instead, because `defaults()` values are appended AFTER real URI
-     * captures in that array, not in method-signature order. `uuid`/`locale`
-     * stay as ordinary parameters above because they ARE real URI captures in
-     * URI declaration order, which Laravel does guarantee; `type` never
-     * appears in the URI at all, so it is not safe to bind positionally.
+     * Reads the `type` route default via the Request rather than as a method
+     * parameter: ControllerDispatcher binds non-class parameters positionally,
+     * and `defaults()` values are appended after real URI captures — a
+     * `string $type` parameter would silently receive `{uuid}`'s value instead.
      */
     private function routeType(Request $request): string
     {
@@ -125,13 +119,10 @@ class PublicationController extends Controller
     }
 
     /**
-     * Resolves the publication and enforces every scope-derived gate against
-     * values read from the resolved row itself — never from request input.
-     * `general.publication.settings.enabled` (Task 7) is per-channel and is
-     * the operational "unplug this channel's public tier" switch; it is
-     * distinct from `catalog.product_passport.settings.enabled` (Task 8),
-     * which only blocks *new* dpp publishes and is enforced solely in the
-     * publish path (Tasks 12–13), never here.
+     * Resolves the publication and enforces scope gates against the resolved
+     * row itself, never request input. `general.publication.settings.enabled`
+     * is the per-channel public-tier kill switch; it's distinct from the
+     * publish-time-only gate enforced elsewhere, never here.
      */
     private function resolveEnabledPublication(string $uuid, string $type): ?Publication
     {
