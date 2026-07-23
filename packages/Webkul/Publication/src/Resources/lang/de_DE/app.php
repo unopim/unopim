@@ -27,13 +27,13 @@ return [
 
     'public' => [
         '404' => [
-            'heading' => 'Passport nicht gefunden.',
+            'heading' => 'Produktpass nicht gefunden.',
         ],
         '429' => [
             'heading' => 'Zu viele Anfragen. Bitte versuchen Sie es in Kürze erneut.',
         ],
         'withdrawn' => [
-            'heading' => 'Dieser Passport ist nicht mehr verfügbar.',
+            'heading' => 'Dieser Produktpass ist nicht mehr verfügbar.',
         ],
     ],
 ];
