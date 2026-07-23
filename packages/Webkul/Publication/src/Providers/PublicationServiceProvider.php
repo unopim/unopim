@@ -37,6 +37,8 @@ class PublicationServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../Config/publication.php', 'publication');
+        $this->mergeConfigFrom(__DIR__.'/../Config/publication_settings.php', 'core');
+        $this->mergeConfigFrom(__DIR__.'/../Config/system_settings.php', 'system_settings');
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'publication');
 
