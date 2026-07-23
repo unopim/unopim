@@ -17,7 +17,7 @@ class Bouncer
     public function handle($request, \Closure $next, $guard = 'admin')
     {
         if (! auth()->guard($guard)->check()) {
-            return redirect()->route('admin.session.create');
+            return to_route('admin.session.create');
         }
 
         /**
@@ -27,7 +27,7 @@ class Bouncer
         if (! (bool) auth()->guard($guard)->user()->status) {
             auth()->guard($guard)->logout();
 
-            return redirect()->route('admin.session.create');
+            return to_route('admin.session.create');
         }
 
         /**
@@ -39,7 +39,7 @@ class Bouncer
 
             session()->flash('error', __('admin::app.errors.403.message'));
 
-            return redirect()->route('admin.session.create');
+            return to_route('admin.session.create');
         }
 
         $userLocaleCode = auth($guard)?->user()?->uiLocale()?->first()?->code;
@@ -55,14 +55,10 @@ class Bouncer
 
     /**
      * Check for user, if they have empty permissions or not except admin.
-     *
-     * @return bool
      */
-    public function isPermissionsEmpty()
+    public function isPermissionsEmpty(): bool
     {
-        if (! $role = auth()->guard('admin')->user()->role) {
-            abort(403, 'This action is unauthorized.');
-        }
+        abort_unless($role = auth()->guard('admin')->user()->role, 403, 'This action is unauthorized.');
 
         if ($role->permission_type === 'all') {
             return false;
@@ -82,12 +78,10 @@ class Bouncer
 
     /**
      * Check authorization.
-     *
-     * @return null
      */
-    public function checkIfAuthorized()
+    public function checkIfAuthorized(): void
     {
-        $acl = app('acl');
+        $acl = resolve('acl');
 
         if (! $acl) {
             return;

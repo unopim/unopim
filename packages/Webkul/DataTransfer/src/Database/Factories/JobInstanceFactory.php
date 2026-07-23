@@ -7,6 +7,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Models\JobInstances;
 
+/**
+ * @extends Factory<JobInstances>
+ */
 class JobInstanceFactory extends Factory
 {
     /**
@@ -42,48 +45,40 @@ class JobInstanceFactory extends Factory
             $validation = 'skip-erros';
         }
 
-        return $this->state(function () use ($action, $validation) {
-            return [
-                'type'                  => 'import',
-                'images_directory_path' => '',
-                'allowed_errors'        => fake()->numberBetween(0, 20),
-                'file_path'             => UploadedFile::fake()->create('product.csv')->path(),
-                'action'                => $action,
-                'validation_strategy'   => $validation,
-            ];
-        });
+        return $this->state(fn (): array => [
+            'type'                  => 'import',
+            'images_directory_path' => '',
+            'allowed_errors'        => fake()->numberBetween(0, 20),
+            'file_path'             => UploadedFile::fake()->create('product.csv')->path(),
+            'action'                => $action,
+            'validation_strategy'   => $validation,
+        ]);
     }
 
     public function entityProduct(): JobInstanceFactory
     {
-        return $this->state(function () {
-            return [
-                'entity_type' => 'products',
-            ];
-        });
+        return $this->state(fn (): array => [
+            'entity_type' => 'products',
+        ]);
     }
 
     public function entityCategory(): JobInstanceFactory
     {
-        return $this->state(function () {
-            return [
-                'entity_type' => 'categories',
-            ];
-        });
+        return $this->state(fn (): array => [
+            'entity_type' => 'categories',
+        ]);
     }
 
     public function exportJob(): JobInstanceFactory
     {
-        return $this->state(function () {
-            return [
-                'type'                  => 'export',
-                'action'                => 'export',
-                'validation_strategy'   => '',
-                'filters'               => [
-                    'file_format' => 'Csv',
-                    'with_media'  => 1,
-                ],
-            ];
-        });
+        return $this->state(fn (): array => [
+            'type'                  => 'export',
+            'action'                => 'export',
+            'validation_strategy'   => '',
+            'filters'               => [
+                'file_format' => 'Csv',
+                'with_media'  => 1,
+            ],
+        ]);
     }
 }

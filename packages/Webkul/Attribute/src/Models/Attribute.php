@@ -2,6 +2,8 @@
 
 namespace Webkul\Attribute\Models;
 
+use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,6 +22,24 @@ use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Validator\Rule\AttributeOptionRule;
 use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
 
+#[Fillable([
+    'code',
+    'type',
+    'enable_wysiwyg',
+    'position',
+    'swatch_type',
+    'is_required',
+    'is_unique',
+    'validation',
+    'regex_pattern',
+    'value_per_locale',
+    'value_per_channel',
+    'is_filterable',
+    'ai_translate',
+    'usable_in_grid',
+    'allowed_extensions',
+    'max_file_size',
+])]
 class Attribute extends TranslatableModel implements AttributeContract, HistoryContract, PresentableHistoryInterface
 {
     use HasFactory;
@@ -49,25 +69,41 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
     const GALLERY_ATTRIBUTE_TYPE = 'gallery';
 
-    public $translatedAttributes = ['name'];
+    public $translatedAttributes = ['name', 'instructions'];
 
     protected $historyTags = ['attribute'];
 
-    protected $fillable = [
-        'code',
-        'type',
-        'enable_wysiwyg',
-        'position',
-        'swatch_type',
-        'is_required',
-        'is_unique',
-        'validation',
-        'regex_pattern',
-        'value_per_locale',
-        'value_per_channel',
-        'is_filterable',
-        'ai_translate',
-    ];
+    /**
+     * The attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'allowed_extensions' => 'array',
+        ];
+    }
+
+    /**
+     * Resolve the max upload size in kilobytes, preferring the per-attribute
+     * value (stored in MB) over the given global fallback.
+     */
+    public function resolvedMaxKilobytes(int $fallbackKilobytes): int
+    {
+        return $this->max_file_size ? (int) $this->max_file_size * 1024 : $fallbackKilobytes;
+    }
+
+    /**
+     * Per-attribute allowed extensions, or an empty array to fall back to the
+     * FileOrImageValidValue defaults.
+     *
+     * @return array<int, string>
+     */
+    public function resolvedAllowedExtensions(): array
+    {
+        return empty($this->allowed_extensions) ? [] : array_values($this->allowed_extensions);
+    }
 
     const NON_DELETABLE_ATTRIBUTE_CODE = 'sku';
 
@@ -88,10 +124,8 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
     /**
      * Returns attribute validation rules
-     *
-     * @return string
      */
-    public function getValidationsField()
+    public function getValidationsField(): string
     {
         $validations = [];
 
@@ -127,22 +161,27 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             };
         }
 
-        $validations = '{ '.implode(', ', array_filter($validations)).' }';
-
-        return $validations;
+        return '{ '.implode(', ', array_filter($validations)).' }';
     }
 
     /**
      * Validation rules for validator
      * used while validating product values
+     *
+     * @return mixed[]
      */
-    public function getValidationRules(?string $currentChannelCode = null, ?string $currentLocaleCode = null, ?int $id = null, bool $withUniqueValidation = true)
-    {
+    public function getValidationRules(
+        ?string $currentChannelCode = null,
+        ?string $currentLocaleCode = null,
+        ?int $id = null,
+        bool $withUniqueValidation = true,
+        array $allowedPathPrefixes = [],
+    ): array {
         $validations = [
             $this->is_required ? 'required' : 'nullable',
         ];
 
-        $validations = array_merge($validations, $this->fieldTypeValidations());
+        $validations = array_merge($validations, $this->fieldTypeValidations($id, $allowedPathPrefixes));
 
         if ($this->type == 'price') {
             $validations[] = "regex:/^\d+(\.\d+)?$/";
@@ -183,38 +222,53 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     /**
      * Returns field validation rules for API and internal functions
      */
-    public function getValidationsOnlyMedia(): array
+    public function getValidationsOnlyMedia(?int $id = null): array
     {
         $validations = [];
 
-        if ($this->is_required) {
-            $validations[] = 'required';
-        } else {
-            $validations[] = 'nullable';
-        }
+        $validations[] = $this->is_required ? 'required' : 'nullable';
 
         if ($this->type === 'file') {
+            $fileMax = $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? 2048));
             $validations[] = 'file';
-            $validations[] = 'max:'.(core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? '2048');
-            $validations[] = new FileOrImageValidValue;
+            $validations[] = 'max:'.$fileMax;
+            $validations[] = new FileOrImageValidValue(
+                allowedExtensions: $this->resolvedAllowedExtensions(),
+                maxKilobytes: $fileMax,
+                allowedPathPrefixes: $id ? ['product/'.$id.'/'.$this->code] : [],
+            );
         }
 
         if ($this->type === 'image') {
+            $imageMax = $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? 2048));
             $validations[] = 'file';
-            $validations[] = 'mimes:bmp,jpeg,jpg,png';
-            $retVal = core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? '2048';
-
-            if ($retVal) {
-                $validations[] = 'max:'.$retVal.'';
-            }
-
-            $validations[] = new FileOrImageValidValue(isImage: true);
+            $validations[] = 'max:'.$imageMax;
+            $validations[] = new FileOrImageValidValue(
+                isImage: true,
+                allowedExtensions: $this->resolvedAllowedExtensions(),
+                maxKilobytes: $imageMax,
+                allowedPathPrefixes: $id ? ['product/'.$id.'/'.$this->code] : [],
+            );
         }
 
         if ($this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE) {
-            $validations[] = (new FileOrImageValidValue(isImage: true, isMultiple: true))
-                ->mergeAllowedExtensions(['mp4', 'webm', 'mkv'])
-                ->mergeAllowedMimes(['mp4', 'webm', 'mkv']);
+            $galleryValue = new FileOrImageValidValue(
+                isImage: true,
+                allowedExtensions: $this->resolvedAllowedExtensions(),
+                isMultiple: true,
+                maxKilobytes: $this->resolvedMaxKilobytes((int) config('media.gallery.max_file_size_kilobytes', 15360)),
+                minFiles: (int) config('media.gallery.min_files', 0),
+                maxFiles: (int) config('media.gallery.max_files', 50),
+                maxTotalKilobytes: (int) config('media.gallery.max_total_size_kilobytes', 51200),
+                allowedPathPrefixes: $id ? ['product/'.$id.'/'.$this->code] : [],
+            );
+
+            if (empty($this->allowed_extensions)) {
+                $galleryValue->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS)
+                    ->mergeAllowedMimes(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
+            }
+
+            $validations[] = $galleryValue;
         }
 
         return $validations;
@@ -249,7 +303,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
      */
     public function isLocaleAndChannelBasedAttribute(): bool
     {
-        return (bool) ($this->isLocaleBasedAttribute() && $this->isChannelBasedAttribute());
+        return $this->isLocaleBasedAttribute() && $this->isChannelBasedAttribute();
     }
 
     /**
@@ -358,7 +412,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     /**
      * check if possible to delete this attribute
      */
-    public function canBeDeleted()
+    public function canBeDeleted(): bool
     {
         return $this->code !== self::NON_DELETABLE_ATTRIBUTE_CODE;
     }
@@ -396,9 +450,14 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     /**
      * Attribute type validations for value formats and options existance
      */
-    public function fieldTypeValidations(): array
+    public function fieldTypeValidations(?int $id = null, array $allowedPathPrefixes = []): array
     {
         $rules = [];
+        $mediaPathPrefixes = $allowedPathPrefixes;
+
+        if ($id) {
+            $mediaPathPrefixes[] = 'product/'.$id.'/'.$this->code;
+        }
 
         switch ($this->type) {
             case self::BOOLEAN_FIELD_TYPE:
@@ -425,17 +484,40 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
                 break;
             case AttributeTypes::FILE_ATTRIBUTE_TYPE:
-                $rules[] = new FileOrImageValidValue;
+                $rules[] = new FileOrImageValidValue(
+                    allowedExtensions: $this->resolvedAllowedExtensions(),
+                    maxKilobytes: $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? 2048)),
+                    allowedPathPrefixes: $mediaPathPrefixes,
+                );
 
                 break;
             case AttributeTypes::GALLERY_ATTRIBUTE_TYPE:
-                $rules[] = (new FileOrImageValidValue(isImage: true, isMultiple: true))
-                    ->mergeAllowedExtensions(['mp4', 'webm', 'mkv'])
-                    ->mergeAllowedMimes(['mp4', 'webm', 'mkv']);
+                $galleryRule = new FileOrImageValidValue(
+                    isImage: true,
+                    allowedExtensions: $this->resolvedAllowedExtensions(),
+                    isMultiple: true,
+                    maxKilobytes: $this->resolvedMaxKilobytes((int) config('media.gallery.max_file_size_kilobytes', 15360)),
+                    minFiles: (int) config('media.gallery.min_files', 0),
+                    maxFiles: (int) config('media.gallery.max_files', 50),
+                    maxTotalKilobytes: (int) config('media.gallery.max_total_size_kilobytes', 51200),
+                    allowedPathPrefixes: $mediaPathPrefixes,
+                );
+
+                if (empty($this->allowed_extensions)) {
+                    $galleryRule->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS)
+                        ->mergeAllowedMimes(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
+                }
+
+                $rules[] = $galleryRule;
 
                 break;
             case AttributeTypes::IMAGE_ATTRIBUTE_TYPE:
-                $rules[] = new FileOrImageValidValue(isImage: true);
+                $rules[] = new FileOrImageValidValue(
+                    isImage: true,
+                    allowedExtensions: $this->resolvedAllowedExtensions(),
+                    maxKilobytes: $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? 2048)),
+                    allowedPathPrefixes: $mediaPathPrefixes,
+                );
 
                 break;
         }
@@ -446,38 +528,18 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     /**
      * Get attribute filter type
      */
-    public function getFilterType()
+    public function getFilterType(): string
     {
-        switch ($this->type) {
-            case self::BOOLEAN_FIELD_TYPE:
-                $filterType = 'boolean';
-                break;
-            case self::DATETIME_FIELD_TYPE:
-                $filterType = 'datetime_range';
-                break;
-            case self::DATE_FIELD_TYPE:
-                $filterType = 'date_range';
-                break;
-            case self::SELECT_FIELD_TYPE:
-            case self::MULTISELECT_FIELD_TYPE:
-            case self::CHECKBOX_FIELD_TYPE:
-                $filterType = 'dropdown';
-                break;
-            case self::GALLERY_ATTRIBUTE_TYPE:
-                $filterType = 'gallery';
-                break;
-            case self::IMAGE_ATTRIBUTE_TYPE:
-                $filterType = 'image';
-                break;
-            case self::PRICE_FIELD_TYPE:
-                $filterType = 'price';
-                break;
-            default:
-                $filterType = 'string';
-                break;
-        }
-
-        return $filterType;
+        return match ($this->type) {
+            self::BOOLEAN_FIELD_TYPE                                                         => 'boolean',
+            self::DATETIME_FIELD_TYPE                                                        => 'datetime_range',
+            self::DATE_FIELD_TYPE                                                            => 'date_range',
+            self::SELECT_FIELD_TYPE, self::MULTISELECT_FIELD_TYPE, self::CHECKBOX_FIELD_TYPE => 'dropdown',
+            self::GALLERY_ATTRIBUTE_TYPE                                                     => 'gallery',
+            self::IMAGE_ATTRIBUTE_TYPE                                                       => 'image',
+            self::PRICE_FIELD_TYPE                                                           => 'price',
+            default                                                                          => 'string',
+        };
     }
 
     /**
@@ -499,12 +561,12 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
      */
     public function getOptionsByCodeAndLocale($codes, $locale = null)
     {
-        $locale = $locale ?? core()->getRequestedLocaleCode();
+        $locale ??= core()->getRequestedLocaleCode();
 
         return $this->options()
             ->leftJoin('attribute_option_translations as aot', 'aot.attribute_option_id', 'attribute_options.id')
             ->whereIn('attribute_options.code', $codes)
-            ->where(function ($query) use ($locale) {
+            ->where(function (Builder $query) use ($locale): void {
                 $query->where('aot.locale', $locale)
                     ->orWhereNull('aot.locale'); // Fallback if translation not found
             })

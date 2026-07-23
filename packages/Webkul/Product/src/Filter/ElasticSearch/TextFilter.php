@@ -11,12 +11,17 @@ use Webkul\ElasticSearch\QueryString;
  */
 class TextFilter extends AbstractElasticSearchAttributeFilter
 {
-    /**
-     * @param  array  $supportedProperties
-     */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[1]],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS, FilterOperators::WILDCARD]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::CONTAINS,
+            FilterOperators::WILDCARD,
+            FilterOperators::EQUAL,
+            FilterOperators::NOT_IN,
+            FilterOperators::IS_EMPTY,
+            FilterOperators::IS_NOT_EMPTY,
+        ]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -29,13 +34,11 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
         $attribute,
         $operator,
         $value,
-        $locale = null,
-        $channel = null,
+        ?string $locale = null,
+        ?string $channel = null,
         $options = []
-    ) {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+    ): static {
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
@@ -94,6 +97,30 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 ];
 
                 $this->queryBuilder::where($clause);
+                break;
+
+            case FilterOperators::EQUAL:
+                $this->queryBuilder::where([
+                    'term' => [$attributePath.'.keyword' => current((array) $value)],
+                ]);
+
+                break;
+
+            case FilterOperators::NOT_IN:
+                $this->queryBuilder::whereNot([
+                    'terms' => [$attributePath.'.keyword' => (array) $value],
+                ]);
+
+                break;
+
+            case FilterOperators::IS_EMPTY:
+                $this->queryBuilder::whereNot(['exists' => ['field' => $attributePath]]);
+
+                break;
+
+            case FilterOperators::IS_NOT_EMPTY:
+                $this->queryBuilder::where(['exists' => ['field' => $attributePath]]);
+
                 break;
         }
 

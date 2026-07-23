@@ -2,39 +2,36 @@
 
 namespace Webkul\Core\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use OwenIt\Auditing\Auditable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Webkul\Core\Contracts\Locale as LocaleContract;
 use Webkul\Core\Database\Factories\LocaleFactory;
+use Webkul\HistoryControl\Contracts\HistoryAuditable;
+use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\User\Models\AdminProxy;
 
-class Locale extends Model implements AuditableContract, LocaleContract
+#[Appends([
+    'name',
+])]
+#[Fillable([
+    'code',
+    'status',
+])]
+class Locale extends Model implements HistoryAuditable, LocaleContract
 {
-    use Auditable;
     use HasFactory;
+    use HistoryTrait;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
+     * @var array<int, string>
      */
-    protected $fillable = [
-        'code',
-        'status',
-    ];
-
-    /**
-     * Extra fields/properties that do not exist in the table and are added to the object
-     */
-    protected $appends = [
-        'name',
-    ];
+    protected array $historyTags = ['locale'];
 
     /**
      * Create a new factory instance for the model.
@@ -66,14 +63,11 @@ class Locale extends Model implements AuditableContract, LocaleContract
      */
     public function isLocaleBeingUsed(): bool
     {
-        if (
-            $this->user()->get()?->first()?->exists()
-            || $this->channel()?->get()?->first()?->exists()
-        ) {
+        if ($this->user()->exists()) {
             return true;
         }
 
-        return false;
+        return $this->channel()->exists();
     }
 
     /**

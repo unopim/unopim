@@ -8,7 +8,12 @@ import.meta.glob(["../images/**", "../fonts/**"]);
  */
 import { createApp } from "vue/dist/vue.esm-bundler";
 
+import DOMPurify from "dompurify";
+
 import { HEADERS, EMITTER_EVENTS } from "./constants";
+
+// Expose DOMPurify for inline component scripts (e.g. AI chat widget); no CDN.
+window.DOMPurify = DOMPurify;
 
 /**
  * Main root application registry.
@@ -49,22 +54,53 @@ const appOptions = {
          * FormData (so `_method` spoofing and file inputs are preserved), flashes
          * the server message, and maps Laravel 422 errors back onto the fields.
          */
-        onAjaxSubmit(values, { evt, setErrors }) {
+        onAjaxSubmit(values, { evt, setErrors, setFieldValue }) {
             const form = evt?.target;
 
             if (! form) return;
 
-            const buttons = form.querySelectorAll('button[type="submit"], button:not([type])');
+            // Re-entrancy guard: a large payload keeps the request in flight long
+            // enough for the user to click Save again (or hit Enter). Every submit
+            // path funnels through here, so one flag on the form dedupes them all.
+            if (form.dataset.ajaxSubmitting === "true") {
+                return;
+            }
 
-            const toggleButtons = (disabled) => {
+            const submitSelector = 'button[type="submit"], button:not([type]), input[type="submit"]';
+
+            const buttonSet = new Set(form.querySelectorAll('button[type="submit"], button:not([type])'));
+
+            // On tracked forms the in-form save is removed and the real button is the
+            // unsaved-changes bar's "Save changes" (type=button, outside the form).
+            // Include it, plus any button associated via form="<id>", so the visible
+            // button also disables while the save is in flight.
+            const root = form.closest(".unsaved-root");
+
+            if (root) {
+                root.querySelectorAll("[data-unsaved-save]").forEach(el => buttonSet.add(el));
+            }
+
+            if (form.id) {
+                document.querySelectorAll('[form="' + CSS.escape(form.id) + '"]').forEach(el => {
+                    if (el.matches(submitSelector)) {
+                        buttonSet.add(el);
+                    }
+                });
+            }
+
+            const buttons = Array.from(buttonSet);
+
+            const setBusy = (busy) => {
+                form.dataset.ajaxSubmitting = busy ? "true" : "false";
+
                 buttons.forEach(button => {
-                    button.disabled = disabled;
-                    button.classList.toggle("opacity-50", disabled);
-                    button.classList.toggle("cursor-not-allowed", disabled);
+                    button.disabled = busy;
+                    button.classList.toggle("opacity-50", busy);
+                    button.classList.toggle("cursor-not-allowed", busy);
                 });
             };
 
-            toggleButtons(true);
+            setBusy(true);
 
             this.$axios.post(form.getAttribute("action") || form.action, new FormData(form), {
                 headers: {
@@ -85,10 +121,17 @@ const appOptions = {
                         return;
                     }
 
-                    toggleButtons(false);
+                    setBusy(false);
                 })
                 .catch(error => {
-                    toggleButtons(false);
+                    setBusy(false);
+
+                    // No page reload on failure, so clear the password field instead of leaving the secret on screen.
+                    form.querySelectorAll('input[autocomplete="current-password"]').forEach(input => {
+                        if (input.name) {
+                            setFieldValue(input.name, "");
+                        }
+                    });
 
                     const response = error.response;
 
@@ -113,6 +156,15 @@ const appOptions = {
                             if (element) {
                                 element.scrollIntoView({ behavior: "smooth", block: "center" });
                             }
+                        }
+
+                        // A custom 422 may carry `errors` without any `message`.
+                        const validationMessage = errors[firstField]
+                            || (response.data && response.data.message)
+                            || form.dataset.ajaxErrorMessage;
+
+                        if (validationMessage) {
+                            this.$emitter.emit(EMITTER_EVENTS.ADD_FLASH, { type: "error", message: validationMessage });
                         }
 
                         return;
@@ -148,6 +200,8 @@ import Tribute from "./plugins/tribute";
 import Slugify from "./directives/slugify";
 import Debounce from "./directives/debounce";
 import Code from "./directives/code";
+import CodeGenerator from "./directives/code-generator";
+import { generateCode, sanitizeCode } from "./utils/code";
 
 /**
  * Ajax navigation (progressive enhancement).
@@ -179,6 +233,10 @@ function createAdminApp() {
     app.directive("slugify", Slugify);
     app.directive("debounce", Debounce);
     app.directive("code", Code);
+    app.directive("code-generator", CodeGenerator);
+
+    app.config.globalProperties.$generateCode = generateCode;
+    app.config.globalProperties.$sanitizeCode = sanitizeCode;
 
     /**
      * Canonical post-action navigation helper, available on every component as
@@ -201,6 +259,21 @@ function createAdminApp() {
 }
 
 window.createAdminApp = createAdminApp;
+
+// Ref-counted body scroll lock so a closing overlay doesn't restore page scroll while another is still open.
+window.lockBodyScroll = () => {
+    window.__scrollLocks = (window.__scrollLocks || 0) + 1;
+
+    document.body.style.overflow = "hidden";
+};
+
+window.unlockBodyScroll = () => {
+    window.__scrollLocks = Math.max(0, (window.__scrollLocks || 1) - 1);
+
+    if (! window.__scrollLocks) {
+        document.body.style.overflow = "";
+    }
+};
 
 createAdminApp();
 

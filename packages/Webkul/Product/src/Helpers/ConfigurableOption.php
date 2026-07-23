@@ -32,7 +32,7 @@ class ConfigurableOption
      */
     public function getAllowedVariants($product)
     {
-        if (count($this->allowedVariants)) {
+        if (count($this->allowedVariants) > 0) {
             return $this->allowedVariants;
         }
 
@@ -60,9 +60,8 @@ class ConfigurableOption
      * Returns the allowed variants JSON.
      *
      * @param  \Webkul\Product\Models\Product  $product
-     * @return array
      */
-    public function getConfigurationConfig($product)
+    public function getConfigurationConfig($product): array
     {
         $options = $this->getOptions($product, $this->getAllowedVariants($product));
 
@@ -99,9 +98,8 @@ class ConfigurableOption
      *
      * @param  Product  $currentProduct
      * @param  array  $allowedProducts
-     * @return array
      */
-    public function getOptions($currentProduct, $allowedProducts)
+    public function getOptions($currentProduct, $allowedProducts): array
     {
         $options = [];
 
@@ -126,9 +124,8 @@ class ConfigurableOption
      * Get product attributes.
      *
      * @param  Product  $product
-     * @return array
      */
-    public function getAttributesData($product, array $options = [])
+    public function getAttributesData($product, array $options = []): array
     {
         $attributes = [];
 
@@ -138,7 +135,7 @@ class ConfigurableOption
             $attributes[] = [
                 'id'          => $attribute->id,
                 'code'        => $attribute->code,
-                'label'       => $attribute->name ? $attribute->name : $attribute->admin_name,
+                'label'       => $attribute->name ?: $attribute->admin_name,
                 'swatch_type' => $attribute->swatch_type,
                 'options'     => $this->getAttributeOptionsData($attribute, $options),
             ];
@@ -151,10 +148,8 @@ class ConfigurableOption
      * Get attribute options data.
      *
      * @param  Attribute  $attribute
-     * @param  array  $options
-     * @return array
      */
-    protected function getAttributeOptionsData($attribute, $options)
+    protected function getAttributeOptionsData($attribute, array $options): array
     {
         $attributeOptionsData = [];
 
@@ -167,7 +162,7 @@ class ConfigurableOption
 
             $attributeOptionsData[] = [
                 'id'           => $optionId,
-                'label'        => $attributeOption->label ? $attributeOption->label : $attributeOption->admin_name,
+                'label'        => $attributeOption->label ?: $attributeOption->admin_name,
                 'swatch_value' => $attribute->swatch_type == 'image' ? $attributeOption->swatch_value_url : $attributeOption->swatch_value,
                 'products'     => $options[$attribute->id][$optionId],
             ];
@@ -180,9 +175,8 @@ class ConfigurableOption
      * Get product prices for configurable variations.
      *
      * @param  Product  $product
-     * @return array
      */
-    protected function getVariantPrices($product)
+    protected function getVariantPrices($product): array
     {
         $prices = [];
 
@@ -197,9 +191,8 @@ class ConfigurableOption
      * Get product images for configurable variations.
      *
      * @param  Product  $product
-     * @return array
      */
-    protected function getVariantImages($product)
+    protected function getVariantImages($product): array
     {
         $images = [];
 
@@ -214,9 +207,8 @@ class ConfigurableOption
      * Get product videos for configurable variations.
      *
      * @param  Product  $product
-     * @return array
      */
-    protected function getVariantVideos($product)
+    protected function getVariantVideos($product): array
     {
         $videos = [];
 

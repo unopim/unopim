@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Request;
 
 class Controller extends BaseController
 {
@@ -41,15 +42,11 @@ class Controller extends BaseController
     {
         $templateConfig = $this->getTemplate($template);
 
-        if (! $templateConfig) {
-            abort(404, 'Template not found.');
-        }
+        abort_unless($templateConfig, 404, 'Template not found.');
 
         $path = $this->getImagePath($filename);
 
-        if (! file_exists($path)) {
-            abort(404, 'Image not found.');
-        }
+        abort_unless(file_exists($path), 404, 'Image not found.');
 
         try {
             $image = image_manager()->read($path);
@@ -112,9 +109,7 @@ class Controller extends BaseController
 
         $data = @file_get_contents($url, false, $context);
 
-        if ($data === false) {
-            throw new Exception('Unable to fetch from URL: '.$url);
-        }
+        throw_if($data === false, Exception::class, 'Unable to fetch from URL: '.$url);
 
         return $data;
     }
@@ -126,9 +121,7 @@ class Controller extends BaseController
     {
         $path = $this->getImagePath($filename);
 
-        if (! file_exists($path)) {
-            abort(404, 'Image not found.');
-        }
+        abort_unless(file_exists($path), 404, 'Image not found.');
 
         $content = file_get_contents($path);
 
@@ -142,9 +135,7 @@ class Controller extends BaseController
     {
         $path = $this->getImagePath($filename);
 
-        if (! file_exists($path)) {
-            abort(404, 'Image not found.');
-        }
+        abort_unless(file_exists($path), 404, 'Image not found.');
 
         $content = file_get_contents($path);
         $response = $this->buildResponse($content);
@@ -162,7 +153,7 @@ class Controller extends BaseController
         $paths = config('imagecache.paths', []);
 
         foreach ($paths as $basePath) {
-            $fullPath = rtrim($basePath, '/').'/'.ltrim($filename, '/');
+            $fullPath = rtrim((string) $basePath, '/').'/'.ltrim($filename, '/');
 
             if (file_exists($fullPath)) {
                 return $fullPath;
@@ -207,7 +198,7 @@ class Controller extends BaseController
     {
         $mime = finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $content);
         $eTag = md5($content);
-        $notModified = isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] === $eTag;
+        $notModified = isset($_SERVER['HTTP_IF_NONE_MATCH']) && Request::server('HTTP_IF_NONE_MATCH') === $eTag;
         $statusCode = $notModified ? 304 : 200;
         $responseContent = $notModified ? null : $content;
         $maxAge = ($this->template === 'logo' ? 10080 : (int) config('imagecache.lifetime', 43200)) * 60;

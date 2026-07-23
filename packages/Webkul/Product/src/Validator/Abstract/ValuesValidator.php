@@ -18,9 +18,7 @@ abstract class ValuesValidator
 
         $validator = Validator::make($data, $rules, $this->getMessages());
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
+        throw_if($validator->fails(), ValidationException::class, $validator);
     }
 
     /**

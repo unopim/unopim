@@ -58,14 +58,23 @@ class CategoryFieldController extends Controller
     public function store(): RedirectResponse|JsonResponse
     {
         $this->validate(request(), [
-            'code'     => ['required', 'unique:category_fields,code', new Code, new NotSupportedFields],
-            'type'     => 'required',
-            'status'   => 'required',
-            'position' => 'required|min:0',
-            'section'  => 'required',
+            'code'       => ['required', 'unique:category_fields,code', new Code, new NotSupportedFields],
+            'type'       => 'required',
+            'validation' => 'required',
+            'status'     => 'sometimes',
+            'position'   => 'sometimes|min:0',
+            'section'    => 'sometimes',
         ]);
 
-        $requestData = request()->all();
+        $requestData = array_merge([
+            'status'   => 1,
+            'position' => 0,
+            'section'  => 'left',
+        ], request()->all());
+
+        if (($requestData['validation'] ?? null) === 'none') {
+            $requestData['validation'] = null;
+        }
 
         Event::dispatch('catalog.category_field.create.before');
 
@@ -75,7 +84,7 @@ class CategoryFieldController extends Controller
 
         session()->flash('success', trans('admin::app.catalog.category_fields.create-success'));
 
-        return redirect()->route('admin.catalog.category_fields.index');
+        return redirect()->route('admin.catalog.category_fields.edit', $attribute->id);
     }
 
     /**

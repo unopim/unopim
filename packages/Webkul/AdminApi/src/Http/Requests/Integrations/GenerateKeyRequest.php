@@ -22,9 +22,8 @@ class GenerateKeyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'     => 'required',
-            'admin_id' => 'required',
-            'apiId'    => 'required',
+            'name'  => 'required',
+            'apiId' => 'required',
         ];
     }
 }

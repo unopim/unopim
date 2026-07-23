@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'वैरिएंट संरचनाएँ',
+        'ai-suggest'         => 'AI सुझाव',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'की प्रति -:value',
@@ -13,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'कॉन्फ़िगर करने योग्य',
-        'simple'       => 'सरल',
+        'configurable'  => 'कॉन्फ़िगर करने योग्य',
+        'simple'        => 'सरल',
+        'variant-group' => 'वैरिएंट समूह',
     ],
 ];

@@ -3,19 +3,16 @@
         @lang('admin::app.configuration.system-prompt.index.title')
     </x-slot>
     <v-create-system-prompt-form>
-        <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.configuration.system-prompt.index.title')
-            </p>
-            <div class="flex gap-x-2.5 items-center">
+        <x-admin::page-header :title="trans('admin::app.configuration.system-prompt.index.title')">
+            <x-slot:actions>
                 <button
                     type="button"
                     class="primary-button"
                 >
                     @lang('admin::app.configuration.system-prompt.create.create-btn')
                 </button>
-            </div>
-        </div>
+            </x-slot>
+        </x-admin::page-header>
 
         <!-- DataGrid Shimmer -->
         <x-admin::shimmer.datagrid />
@@ -23,12 +20,8 @@
     </v-create-system-prompt-form>
     @pushOnce('scripts')
         <script type="text/x-template" id="v-create-system-prompt-form-template">
-            <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                    @lang('admin::app.configuration.system-prompt.create.title')
-                </p>
-
-                <div class="flex gap-x-2.5 items-center">
+            <x-admin::page-header :title="trans('admin::app.configuration.system-prompt.index.title')">
+                <x-slot:actions>
                     <button
                         type="button"
                         class="primary-button"
@@ -36,15 +29,16 @@
                     >
                         @lang('admin::app.configuration.system-prompt.create.create-btn')
                     </button>
-                </div>
-            </div>
+                </x-slot>
+            </x-admin::page-header>
 
             <x-admin::datagrid src="{{ route('admin.magic_ai.system_prompt.index') }}" ref="datagrid">
 
                 <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                        :key="record.id"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                         @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)"
                     >
@@ -74,7 +68,7 @@
                                 <span
                                     :class="record.actions.find(action => action.index === 'action_1')?.icon"
                                     title="@lang('admin::app.configuration.system-prompt.datagrid.edit')"
-                                    class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                    class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 >
                                 </span>
                             </a>
@@ -82,7 +76,7 @@
                                 <span
                                     :class="record.actions.find(action => action.index === 'action_2')?.icon"
                                     title="@lang('admin::app.configuration.system-prompt.datagrid.delete')"
-                                    class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                    class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 >
                                 </span>
                             </a>
@@ -155,10 +149,9 @@
                                  <x-admin::form.control-group>
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.configuration.system-prompt.create.max-tokens')
-                                          <span 
-                                            class="icon tooltip-icon" 
-                                            title="Allowed Max Output Token range: 100 to 5000 tokens"
-                                            style="cursor: pointer; margin-left: 6px;"
+                                          <span
+                                            class="icon tooltip-icon cursor-pointer ltr:ml-1.5 rtl:mr-1.5"
+                                            title="{{ trans('admin::app.configuration.system-prompt.create.max-tokens-tooltip') }}"
                                         >
                                             &#9432;
                                         </span>
@@ -180,10 +173,9 @@
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.configuration.system-prompt.create.temperature')
 
-                                       <span 
-                                            class="icon tooltip-icon" 
-                                            title="Temperature controls creativity. Range: 0 to 2. Lower values (e.g., 0.4) give more accurate and focused responses."
-                                            style="cursor: pointer; margin-left: 6px;"
+                                       <span
+                                            class="icon tooltip-icon cursor-pointer ltr:ml-1.5 rtl:mr-1.5"
+                                            title="{{ trans('admin::app.configuration.system-prompt.create.temperature-tooltip') }}"
                                         >
                                             &#9432;
                                         </span>
@@ -298,17 +290,7 @@
                     },
 
                     editModal(url) {
-                        this.$axios.get(url)
-                            .then((response) => {
-                                let data = response.data.data;
-                                this.id = data.id;
-                                this.title = data.title;
-                                this.is_enabled = data.is_enabled;
-                                this.tone = data.tone;
-                                this.max_tokens = data.max_tokens;
-                                this.temperature = data.temperature;
-                                this.$refs.promptUpdateOrCreateModal.toggle();
-                            })
+                        this.$navigate(url);
                     },
 
                     resetForm() {

@@ -28,7 +28,7 @@
                     ::rules="{ 'required': isTranslationEnabled }"
                     ref="localeRef"
                     ::label="label"
-                    ::value="value"
+                    ::value="localValue"
                     ::options="localeOption"
                     @input="emitChangeEvent($event)"
                 />
@@ -48,7 +48,7 @@
             data() {
                 return {
                     localeOption: null,
-                    value: this.value,
+                    localValue: this.value,
                     isTranslationEnabled: Boolean('{{ core()->getConfigData("general.magic_ai.translation.enabled") == 1 }}'),
                 };
             },

@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
 
 /**
  * Fill a TinyMCE editor by its textarea ID.
@@ -59,7 +59,7 @@ async function createSimpleProduct(adminPage, sku) {
   await selectMultiselect(adminPage, 'type', 'Simple');
   await selectMultiselect(adminPage, 'attribute_family_id');
   await adminPage.locator('input[name="sku"]').fill(sku);
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await clickSave(adminPage, 'Save Product');
   // After creation, the app redirects to the product edit page
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await adminPage.waitForLoadState('networkidle').catch(() => {});
@@ -91,7 +91,7 @@ test.describe('Product Creation - Validation', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(`val1_${generateUid()}`);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
   });
 
@@ -100,7 +100,7 @@ test.describe('Product Creation - Validation', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
     await adminPage.locator('input[name="sku"]').fill(`val2_${generateUid()}`);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText('The Family field is required')).toBeVisible();
   });
 
@@ -109,7 +109,7 @@ test.describe('Product Creation - Validation', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
     await selectMultiselect(adminPage, 'attribute_family_id');
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
   });
 
@@ -117,7 +117,7 @@ test.describe('Product Creation - Validation', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.locator('input[name="sku"]').fill(`val4_${generateUid()}`);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Family field is required')).toBeVisible();
   });
@@ -126,7 +126,7 @@ test.describe('Product Creation - Validation', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'attribute_family_id');
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
   });
@@ -135,7 +135,7 @@ test.describe('Product Creation - Validation', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText('The Family field is required')).toBeVisible();
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
   });
@@ -143,7 +143,7 @@ test.describe('Product Creation - Validation', () => {
   test('7 - with all fields empty', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Family field is required')).toBeVisible();
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
@@ -196,7 +196,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `-PROD001-${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     // Should not create — either validation error or no success toast
     await expect(adminPage.locator('#app').getByText(/Product created successfully/i)).not.toBeVisible({ timeout: 3000 }).catch(() => {});
     await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
@@ -209,7 +209,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `_INVALID-${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
   });
 
@@ -220,7 +220,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `PROD--${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
   });
 
@@ -231,7 +231,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `PROD@${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
   });
 
@@ -242,7 +242,7 @@ test.describe('Product Creation - SKU Formats', () => {
     await selectMultiselect(adminPage, 'attribute_family_id');
     const sku = `PROD ${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
   });
 });
@@ -267,7 +267,7 @@ test.describe('Simple Product CRUD', () => {
     await selectMultiselect(adminPage, 'type', 'Simple');
     await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The sku has already been taken.');
     // Cleanup
     await deleteProductBySku(adminPage, sku);
@@ -302,7 +302,7 @@ test.describe('Simple Product CRUD', () => {
     await fillTinyMCE(adminPage, 'short_description', 'Short description text');
     await fillTinyMCE(adminPage, 'description', 'Full description text');
 
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
@@ -332,12 +332,12 @@ test.describe('Configurable Product CRUD', () => {
     await selectMultiselect(adminPage, 'type', 'Configurable');
     await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
 
     // Remove one of the default-selected configurable attributes so the
     // family has at least one remaining. Default family uses Color/Size.
     await adminPage.locator('p').filter({ hasText: /^Color/ }).locator('span').first().click();
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     // After creation, the app redirects to the product edit page
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await adminPage.waitForLoadState('networkidle').catch(() => {});
@@ -356,9 +356,9 @@ test.describe('Configurable Product CRUD', () => {
     await selectMultiselect(adminPage, 'type', 'Configurable');
     await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await adminPage.locator('p').filter({ hasText: /^Color/ }).locator('span').first().click();
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await adminPage.waitForLoadState('networkidle').catch(() => {});
 
@@ -387,7 +387,7 @@ test.describe('Configurable Product CRUD', () => {
     await fillTinyMCE(adminPage, 'short_description', 'Short description text');
     await fillTinyMCE(adminPage, 'description', 'Full description text');
 
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
@@ -403,9 +403,9 @@ test.describe('Configurable Product CRUD', () => {
     await selectMultiselect(adminPage, 'type', 'Configurable');
     await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await adminPage.locator('p').filter({ hasText: /^Color/ }).locator('span').first().click();
-    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await clickSave(adminPage, 'Save Product');
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await adminPage.waitForLoadState('networkidle').catch(() => {});
 

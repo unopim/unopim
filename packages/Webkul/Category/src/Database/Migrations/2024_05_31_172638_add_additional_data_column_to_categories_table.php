@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('categories', function (Blueprint $table) {
+        Schema::table('categories', function (Blueprint $table): void {
             $table->json('additional_data')->nullable();
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('categories', function (Blueprint $table) {
+        Schema::table('categories', function (Blueprint $table): void {
             $table->dropColumn('additional_data');
         });
     }

@@ -8,17 +8,13 @@ class EnvironmentManager
 {
     /**
      * Create a helper instance.
-     *
-     * @return void
      */
     public function __construct(protected DatabaseManager $databaseManager) {}
 
     /**
      * Generate ENV File and Installation.
-     *
-     * @param [object] $request
      */
-    public function generateEnv($request)
+    public function generateEnv(array $request): bool|Exception
     {
         $envExamplePath = base_path('.env.example');
 
@@ -45,10 +41,8 @@ class EnvironmentManager
 
     /**
      * Set the ENV file configuration.
-     *
-     * @return string
      */
-    public function setEnvConfiguration($request)
+    public function setEnvConfiguration(array $request): bool
     {
         $envDBParams = [];
 
@@ -114,7 +108,7 @@ class EnvironmentManager
 
             // Use a callback so "$" in values (e.g. passwords) is not read as a backreference.
             if (preg_match("/^{$key}=.*/m", $data)) {
-                $data = preg_replace_callback("/^{$key}=.*/m", fn () => "{$key}={$value}", $data);
+                $data = preg_replace_callback("/^{$key}=.*/m", fn (): string => "{$key}={$value}", $data);
             } else {
                 $data = rtrim($data, "\r\n").PHP_EOL."{$key}={$value}".PHP_EOL;
             }
@@ -122,7 +116,7 @@ class EnvironmentManager
 
         try {
             file_put_contents(base_path('.env'), $data);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
 

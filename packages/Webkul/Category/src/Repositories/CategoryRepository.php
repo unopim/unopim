@@ -141,7 +141,7 @@ class CategoryRepository extends Repository
      *
      * @param  Category  $category  The category instance to start from.
      * @param  bool  $present  Whether to include the present category in the result.
-     * @return array The branch of categories from the given category to its parent(s).
+     * @return \Kalnoy\Nestedset\Collection|null The branch of categories from the given category to its parent(s).
      */
     public function getTreeBranchToParent(Category $category, bool $present = true)
     {
@@ -178,6 +178,38 @@ class CategoryRepository extends Repository
     }
 
     /**
+     * Resolve breadcrumb paths (e.g. "Root / Child / Leaf") for the given category
+     * ids using the nested-set `ancestors` relation.
+     *
+     * Runs a fixed number of queries regardless of tree depth or size (one to load
+     * the categories, one to eager-load all their ancestors), so it stays cheap for
+     * paginated listings instead of walking the whole tree.
+     *
+     * @param  int[]  $ids
+     * @return array<int, string> Map of category id => breadcrumb path.
+     */
+    public function getBreadcrumbsForIds(array $ids): array
+    {
+        $ids = array_values(array_unique(array_filter(array_map(intval(...), $ids))));
+
+        if ($ids === []) {
+            return [];
+        }
+
+        return $this->model
+            ->whereIn('id', $ids)
+            ->with(['ancestors' => fn ($query) => $query->defaultOrder()])
+            ->get()
+            ->mapWithKeys(fn ($category): array => [
+                (int) $category->id => $category->ancestors
+                    ->push($category)
+                    ->map(fn ($node) => $node->name)
+                    ->implode(' / '),
+            ])
+            ->all();
+    }
+
+    /**
      * Get root categories.
      *
      * @return Collection
@@ -198,7 +230,7 @@ class CategoryRepository extends Repository
     {
         $query = $this->getModel()->where('parent_id', $parentId);
 
-        if ($categoryId) {
+        if ($categoryId !== 0) {
             $query->where('id', '!=', $categoryId);
         }
 
@@ -212,7 +244,7 @@ class CategoryRepository extends Repository
 
         $query = $this->getModel()->where('parent_id', $parentId);
 
-        if ($categoryId) {
+        if ($categoryId !== 0) {
             $query->where('id', '!=', $categoryId);
         }
 
@@ -247,9 +279,8 @@ class CategoryRepository extends Repository
      * Get partials.
      *
      * @param  array|null  $columns
-     * @return array
      */
-    public function getPartial($columns = null)
+    public function getPartial($columns = null): array
     {
         $categories = $this->model->all();
 
@@ -275,9 +306,8 @@ class CategoryRepository extends Repository
      * this created method.
      *
      * @param  string  $attributeNames
-     * @return array
      */
-    private function setSameAttributeValueToAllLocale(array $data, ...$attributeNames)
+    private function setSameAttributeValueToAllLocale(array $data, ...$attributeNames): array
     {
         $requestedLocale = core()->getRequestedLocaleCode();
 
@@ -341,9 +371,9 @@ class CategoryRepository extends Repository
         }
 
         if (isset($category->additional_data[self::LOCALE_VALUES_KEY])) {
-            $localeValues = ! empty($localeValues)
-                ? array_merge($category->additional_data[self::LOCALE_VALUES_KEY], $localeValues)
-                : $category->additional_data[self::LOCALE_VALUES_KEY];
+            $localeValues = empty($localeValues)
+                ? $category->additional_data[self::LOCALE_VALUES_KEY]
+                : array_merge($category->additional_data[self::LOCALE_VALUES_KEY], $localeValues);
         }
 
         $localeValues = is_array($localeValues)
@@ -379,9 +409,9 @@ class CategoryRepository extends Repository
     protected function processAdditionalDataValues(int $categoryId, array $values, array $categoryValues = []): array
     {
         $values = array_filter(
-            ! empty($categoryValues)
-                ? array_merge($categoryValues, $values)
-                : $values
+            $categoryValues === []
+                ? $values
+                : array_merge($categoryValues, $values)
         );
 
         foreach ($values as $field => $fieldValue) {

@@ -55,7 +55,7 @@
                 @input="handleModelChange"
             />
 
-            <p v-if="loading" class="mt-1 text-xs text-violet-600">
+            <p v-if="loading" class="mt-1 text-xs text-primary-600">
                 @lang('admin::app.configuration.prompt.create.loading-models')
             </p>
             <p v-if="!currentOptions.length && !loading" class="mt-1 text-xs text-gray-400">
@@ -77,7 +77,9 @@
             },
 
             mounted() {
-                this.translationPlatformHandler = (event) => {
+                this.platformEventName = 'magic-ai-platform-changed:' + this.platformSelectId;
+
+                this.platformChangeHandler = (event) => {
                     try {
                         const selected = event.detail ? JSON.parse(event.detail) : null;
                         this.loadModelsForPlatform(selected?.id || '');
@@ -86,12 +88,12 @@
                     }
                 };
 
-                document.addEventListener('magic-ai-translation-platform-changed', this.translationPlatformHandler);
+                document.addEventListener(this.platformEventName, this.platformChangeHandler);
             },
 
             beforeUnmount() {
-                if (this.translationPlatformHandler) {
-                    document.removeEventListener('magic-ai-translation-platform-changed', this.translationPlatformHandler);
+                if (this.platformChangeHandler) {
+                    document.removeEventListener(this.platformEventName, this.platformChangeHandler);
                 }
             },
 

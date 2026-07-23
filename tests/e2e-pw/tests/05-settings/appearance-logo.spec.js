@@ -18,7 +18,7 @@ const path = require('path');
  * and it doubles as coverage for the drag-and-drop feature.
  */
 test.describe('Appearance — admin logo', () => {
-  const SETTINGS_URL = '/admin/configuration/system-settings';
+  const SETTINGS_URL = '/admin/settings/appearance';
   const FIXTURE_B64 = fs.readFileSync(path.resolve(__dirname, '../../assets/dotted.png')).toString('base64');
 
   const gotoSettings = (page) =>

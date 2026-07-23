@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Structuri de variante',
+        'ai-suggest'         => 'Sugestie AI',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => 'copie-de-:value',
         'copy-of'                       => 'Copie de :value',
@@ -12,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Configurabil',
-        'simple'       => 'Simplu',
+        'configurable'  => 'Configurabil',
+        'simple'        => 'Simplu',
+        'variant-group' => 'Grup de variante',
     ],
 ];

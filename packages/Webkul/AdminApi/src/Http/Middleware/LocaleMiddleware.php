@@ -52,9 +52,9 @@ class LocaleMiddleware
      *
      * @return array|null
      */
-    public function getLocales()
+    public function getLocales(Request $request)
     {
-        $requestData = request()->all();
+        $requestData = $request->all();
         $locales = $this->checkKeyExists($requestData, 'labels');
         if (! $locales) {
             $locales = $this->checkKeyExists($requestData, 'locale_specific');

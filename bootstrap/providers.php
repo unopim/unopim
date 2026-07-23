@@ -18,6 +18,8 @@ use Webkul\Installer\Providers\InstallerServiceProvider;
 use Webkul\MagicAI\Providers\MagicAIServiceProvider;
 use Webkul\Notification\Providers\NotificationServiceProvider;
 use Webkul\Product\Providers\ProductServiceProvider;
+use Webkul\Publication\Providers\PublicationServiceProvider;
+use Webkul\Resource\Providers\ResourceServiceProvider;
 use Webkul\Theme\Providers\ThemeServiceProvider;
 use Webkul\User\Providers\UserServiceProvider;
 use Webkul\Webhook\Providers\WebhookServiceProvider;
@@ -42,6 +44,7 @@ return [
     MagicAIServiceProvider::class,
     NotificationServiceProvider::class,
     ProductServiceProvider::class,
+    ResourceServiceProvider::class,
     ThemeServiceProvider::class,
     UserServiceProvider::class,
     ElasticSearchServiceProvider::class,
@@ -49,4 +52,5 @@ return [
     CompletenessServiceProvider::class,
     AiAgentServiceProvider::class,
     AppUrlGuardServiceProvider::class,
+    PublicationServiceProvider::class,
 ];

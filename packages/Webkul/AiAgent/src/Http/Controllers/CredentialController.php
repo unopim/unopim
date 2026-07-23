@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
@@ -18,9 +19,7 @@ class CredentialController extends Controller
         protected AiApiClient $apiClient,
     ) {
         $this->middleware(function ($request, $next) {
-            if (! bouncer()->hasPermission('ai-agent.credentials')) {
-                abort(403, trans('ai-agent::app.common.unauthorized'));
-            }
+            abort_unless(bouncer()->hasPermission('ai-agent.credentials'), 403, trans('ai-agent::app.common.unauthorized'));
 
             return $next($request);
         });
@@ -34,7 +33,7 @@ class CredentialController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            return app(CredentialDataGrid::class)->toJson();
+            return resolve(CredentialDataGrid::class)->toJson();
         }
 
         return view('ai-agent::credentials.index');
@@ -45,7 +44,7 @@ class CredentialController extends Controller
      *
      * @return View
      */
-    public function create()
+    public function create(): Factory|\Illuminate\Contracts\View\View
     {
         return view('ai-agent::credentials.create');
     }
@@ -68,11 +67,11 @@ class CredentialController extends Controller
      *
      * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): Factory|\Illuminate\Contracts\View\View
     {
         $credential = $this->credentialRepository->findOrFail($id);
 
-        return view('ai-agent::credentials.edit', compact('credential'));
+        return view('ai-agent::credentials.edit', ['credential' => $credential]);
     }
 
     /**

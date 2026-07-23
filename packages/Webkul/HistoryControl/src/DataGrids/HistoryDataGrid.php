@@ -27,36 +27,27 @@ class HistoryDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        if (! $this->entityName) {
-            throw new \Exception('entityName cannot be empty');
-        }
+        throw_unless($this->entityName, \Exception::class, 'entityName cannot be empty');
+        throw_unless($this->entityId, \Exception::class, 'entityId cannot be empty');
 
-        if (! $this->entityId) {
-            throw new \Exception('entityId cannot be empty');
-        }
-
-        $queryBuilder = DB::table('audits as his')
+        return DB::table('audits as his')
             ->leftJoin('admins', 'his.user_id', '=', 'admins.id')
             ->select(
                 'admins.name as user',
                 'his.updated_at',
                 'his.version_id'
             )
-            ->where(function ($query) {
+            ->where(function (\Illuminate\Contracts\Database\Query\Builder $query): void {
                 $query->where('his.tags', '=', $this->entityName)
                     ->where('his.history_id', '=', $this->entityId);
             })
             ->groupBy('his.updated_at', 'his.user_id', 'his.version_id', 'admins.name');
-
-        return $queryBuilder;
     }
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'updated_at',
@@ -65,9 +56,7 @@ class HistoryDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
-                return '<span class="icon-calendar"> '.core()->formatDateWithTimeZone($row->updated_at, 'D, d-m-Y H:i:s').' ('.$this->calculateTimeAgo($row->updated_at).')</span>';
-            },
+            'closure'    => fn ($row): string => '<span class="icon-calendar"> '.core()->formatDateWithTimeZone($row->updated_at, 'D, d-m-Y H:i:s').' ('.$this->calculateTimeAgo($row->updated_at).')</span>',
         ]);
 
         $this->addColumn([
@@ -86,19 +75,15 @@ class HistoryDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
-                return '<span class="icon-user">'.$row->user.'</span>';
-            },
+            'closure'    => fn ($row): string => '<span class="icon-user">'.$row->user.'</span>',
         ]);
 
     }
 
     /**
      * Prepare actions.
-     *
-     * @return void
      */
-    public function prepareActions()
+    public function prepareActions(): void
     {
         if (bouncer()->hasPermission('history.view')) {
             $this->addAction([
@@ -118,9 +103,9 @@ class HistoryDataGrid extends DataGrid
     /**
      * Calculate time ago.
      */
-    public function calculateTimeAgo($dateTime)
+    public function calculateTimeAgo($dateTime): string
     {
-        $time = strtotime($dateTime);
+        $time = strtotime((string) $dateTime);
         $current = time();
         $diff = $current - $time;
 
@@ -130,38 +115,41 @@ class HistoryDataGrid extends DataGrid
         $day = 24 * 60 * 60;
         $month = 30 * 24 * 60 * 60;
         $year = 365 * 24 * 60 * 60;
-
         if ($diff < $minute) {
             $ago = round($diff / $second);
             $timeUnit = $ago > 1 ? 'seconds' : 'second';
 
             return $ago." $timeUnit ago";
-        } elseif ($diff < $hour) {
+        }
+        if ($diff < $hour) {
             $ago = round($diff / $minute);
             $timeUnit = $ago > 1 ? 'minutes' : 'minute';
 
             return $ago." $timeUnit ago";
-        } elseif ($diff < $day) {
+        }
+        if ($diff < $day) {
             $ago = round($diff / $hour);
             $timeUnit = $ago > 1 ? 'hours' : 'hour';
 
             return $ago." $timeUnit ago";
-        } elseif ($diff < $month) {
+        }
+        if ($diff < $month) {
             $ago = round($diff / $day);
             $timeUnit = $ago > 1 ? 'days' : 'day';
 
             return $ago." $timeUnit ago";
-        } elseif ($diff < $year) {
+        }
+
+        if ($diff < $year) {
             $ago = round($diff / $month);
             $timeUnit = $ago > 1 ? 'months' : 'month';
 
             return $ago." $timeUnit ago";
-        } else {
-            $ago = round($diff / $year);
-            $timeUnit = $ago > 1 ? 'years' : 'year';
-
-            return $ago." $timeUnit ago";
         }
+        $ago = round($diff / $year);
+        $timeUnit = $ago > 1 ? 'years' : 'year';
+
+        return $ago." $timeUnit ago";
     }
 
     /**

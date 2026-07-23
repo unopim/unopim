@@ -1,6 +1,14 @@
-@props(['isMultiRow' => false])
+@props([
+    'isMultiRow' => false,
+    'compact' => false,
+])
 
-<v-datagrid {{ $attributes }}>
+<x-admin::form.fields.load :types="['text', 'number']" />
+
+<v-datagrid
+    compact="{{ $compact ? 'true' : 'false' }}"
+    {{ $attributes }}
+>
     <x-admin::shimmer.datagrid :isMultiRow="$isMultiRow" />
 
     {{ $slot }}
@@ -11,7 +19,7 @@
         type="text/x-template"
         id="v-datagrid-template"
     >
-        <div>
+        <div :class="{'compact-datagrid': isCompact()}">
             <x-admin::datagrid.toolbar />
 
             <div class="flex mt-4">
@@ -59,11 +67,13 @@
         app.component('v-datagrid', {
             template: '#v-datagrid-template',
 
-            props: ['src', 'filterAttributesSrc'],
+            props: ['src', 'filterAttributesSrc', 'viewsSrc', 'scopeChannel', 'scopeLocale', 'compact'],
 
             data() {
                 return {
                     isLoading: false,
+
+                    isSelectingAllMatching: false,
 
                     priceValue: '',
 
@@ -77,6 +87,28 @@
 
                     activeFilterIndices: [],
 
+                    expandedFilter: null,
+
+                    savedViews: [],
+
+                    viewScope: null,
+
+                    appliedViewId: null,
+
+                    appliedViewLabel: null,
+
+                    viewName: '',
+
+                    viewShared: false,
+
+                    viewSnapshot: null,
+
+                    viewSearch: '',
+
+                    viewSearchTimer: null,
+
+                    viewsLoading: false,
+
                     showFilterPicker: false,
 
                     filterPickerSearch: '',
@@ -84,6 +116,8 @@
                     pickerOptions: [],
 
                     addedFilterColumns: {},
+
+                    attributeConditions: {},
 
                     filterPickerPage: 1,
 
@@ -147,6 +181,10 @@
             mounted() {
                 this.boot();
 
+                if (this.viewsSrc) {
+                    this.loadViews();
+                }
+
                 this._onShareLinkChanged = () => this.get();
                 this.$emitter.on('share-link-changed', this._onShareLinkChanged);
             },
@@ -155,6 +193,45 @@
                 if (this._onShareLinkChanged) {
                     this.$emitter.off('share-link-changed', this._onShareLinkChanged);
                 }
+            },
+
+            computed: {
+                filterFields() {
+                    const types = {
+                        string:  'text',
+                        integer: 'number',
+                    };
+
+                    return (this.available.columns ?? []).reduce((fields, column) => {
+                        fields[column.index] = {
+                            name:        column.index,
+                            type:        types[column.type] ?? 'text',
+                            label:       column.filter_label ?? column.label,
+                            placeholder: column.filter_label ?? column.label,
+                            options:     [],
+                            async:       false,
+                        };
+
+                        return fields;
+                    }, {});
+                },
+
+                isPageFullySelected() {
+                    return this.applied.massActions.meta.mode === 'all'
+                        && this.available.records.length > 0;
+                },
+
+                isAllMatchingSelected() {
+                    const total = this.available.meta?.total ?? 0;
+
+                    return total > 0 && this.applied.massActions.indices.length >= total;
+                },
+
+                canSelectAllMatching() {
+                    return this.isPageFullySelected
+                        && ! this.isAllMatchingSelected
+                        && (this.available.meta?.last_page ?? 1) > 1;
+                },
             },
 
             watch: {
@@ -175,9 +252,19 @@
 
                     this.filterPickerSearchTimer = setTimeout(() => this.loadFilterAttributes(true), 300);
                 },
+
+                viewSearch() {
+                    clearTimeout(this.viewSearchTimer);
+
+                    this.viewSearchTimer = setTimeout(() => this.loadViews(), 300);
+                },
             },
 
             methods: {
+                isCompact() {
+                    return this.compact === true || this.compact === 'true';
+                },
+
                 /**
                  * Initialization: This function checks for any previously saved filters in local storage and applies them as needed.
                  *
@@ -212,9 +299,12 @@
                                 this.activeFilterIndices = currentDatagrid.activeFilterIndices;
                             }
 
-                            if (currentDatagrid.defaultFilterIndices?.length) {
-                                this.defaultFilterIndices = currentDatagrid.defaultFilterIndices;
-                            }
+                            this.appliedViewId = currentDatagrid.appliedViewId ?? null;
+                            this.appliedViewLabel = currentDatagrid.appliedViewLabel ?? null;
+                            this.viewSnapshot = currentDatagrid.viewSnapshot ?? null;
+                            this.viewScope = currentDatagrid.viewScope ?? null;
+
+                            // derived from the columns, so never restored from storage
 
                             if (urlParams.has('search')) {
                                 let searchAppliedColumn = this.findAppliedColumn('all');
@@ -258,6 +348,14 @@
                     this.applied.filters.columns.forEach(column => {
                         params.filters[column.index] = column.value;
                     });
+
+                    if (this.viewScope?.channel) {
+                        params.channel = this.viewScope.channel;
+                    }
+
+                    if (this.viewScope?.locale) {
+                        params.locale = this.viewScope.locale;
+                    }
 
                     params.managedColumns = this.available.meta?.managedColumn?.columns;
                     params.manageableColumn = this.available.meta?.managedColumn?.columns;
@@ -319,17 +417,18 @@
 
                             this.available.searchPlaceholder = search_placeholder;
 
+                            const defaultFilterColumns = this.available.columns
+                                .filter(col => col.filterable && col.visible !== false && col.default_filter !== false)
+                                .map(col => col.index);
+
                             // Initialize active filters on first load
                             if (this.activeFilterIndices.length === 0) {
-                                this.activeFilterIndices = this.available.columns
-                                    .filter(col => col.filterable && col.visible !== false)
-                                    .map(col => col.index);
+                                this.activeFilterIndices = [...defaultFilterColumns];
                             }
 
-                            // Track default filter indices so they cannot be removed
                             if (this.defaultFilterIndices.length === 0) {
                                 this.defaultFilterIndices = this.available.columns
-                                    .filter(col => col.filterable && col.visible !== false)
+                                    .filter(col => defaultFilterColumns.includes(col.index) && col.removable_filter !== true)
                                     .map(col => col.index);
                             }
 
@@ -345,6 +444,8 @@
 
                                 this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index === 'all' || (filterableColumns.includes(column.index)));
                             }
+
+                            this.syncAttributeConditions();
 
                             this.setCurrentSelectionMode();
 
@@ -520,6 +621,8 @@
                 },
 
                 runFilters() {
+                    this.applied.pagination.page = 1;
+
                     this.get();
                 },
 
@@ -739,6 +842,24 @@
                     return appliedColumn?.value ?? [];
                 },
 
+                setAppliedColumnValues(column, values) {
+                    if (! values.length) {
+                        this.applied.filters.columns = this.applied.filters.columns.filter(
+                            appliedColumn => appliedColumn.index !== column.index
+                        );
+
+                        return;
+                    }
+
+                    let appliedColumn = this.findAppliedColumn(column.index);
+
+                    if (appliedColumn) {
+                        appliedColumn.value = values;
+                    } else {
+                        this.applied.filters.columns.push({ index: column.index, value: values });
+                    }
+                },
+
                 removeAppliedColumnValue(columnIndex, appliedColumnValue) {
                     let appliedColumn = this.findAppliedColumn(columnIndex);
 
@@ -810,6 +931,54 @@
 
                         this.applied.massActions.meta.mode = 'all';
                     }
+                },
+
+                /**
+                 * Select every record matching the current filters/search across all pages by
+                 * resolving their ids server-side, then filling them into the existing indices
+                 * array so mass actions keep sending a plain id list.
+                 *
+                 * @returns {void}
+                 */
+                selectAllMatching() {
+                    if (this.isSelectingAllMatching) {
+                        return;
+                    }
+
+                    let params = {
+                        sort: {},
+                        filters: {},
+                        mass_action_ids: 1,
+                    };
+
+                    if (this.applied.sort.column && this.applied.sort.order) {
+                        params.sort = this.applied.sort;
+                    }
+
+                    this.applied.filters.columns.forEach(column => {
+                        params.filters[column.index] = column.value;
+                    });
+
+                    this.isSelectingAllMatching = true;
+
+                    this.$axios
+                        .get(this.src, { params })
+                        .then(response => {
+                            const ids = response.data?.ids;
+
+                            if (Array.isArray(ids)) {
+                                this.applied.massActions.indices = ids;
+                                this.applied.massActions.meta.mode = 'all';
+                            }
+                        })
+                        .finally(() => {
+                            this.isSelectingAllMatching = false;
+                        });
+                },
+
+                clearMassSelection() {
+                    this.applied.massActions.indices = [];
+                    this.applied.massActions.meta.mode = 'none';
                 },
 
                 validateMassAction() {
@@ -962,7 +1131,10 @@
                                         available: this.available,
                                         applied: appliedForStorage,
                                         activeFilterIndices: this.activeFilterIndices,
-                                        defaultFilterIndices: this.defaultFilterIndices,
+                                        appliedViewId: this.appliedViewId,
+                                        appliedViewLabel: this.appliedViewLabel,
+                                        viewSnapshot: this.viewSnapshot,
+                                        viewScope: this.viewScope,
                                     };
                                 }
 
@@ -995,7 +1167,10 @@
                         available: this.available,
                         applied: appliedForStorage,
                         activeFilterIndices: this.activeFilterIndices,
-                        defaultFilterIndices: this.defaultFilterIndices,
+                        appliedViewId: this.appliedViewId,
+                        appliedViewLabel: this.appliedViewLabel,
+                        viewSnapshot: this.viewSnapshot,
+                        viewScope: this.viewScope,
                     };
                 },
 
@@ -1122,10 +1297,339 @@
                     document.body.removeChild(textarea);
                 },
 
-                getActiveFilterColumns() {
-                    return this.available.columns.filter(
-                        col => col.filterable && this.activeFilterIndices.includes(col.index)
+                filterLabel(column) {
+                    return column.filter_label ?? column.label;
+                },
+
+                currentViewSignature() {
+                    return JSON.stringify(this.currentViewPayload());
+                },
+
+                /**
+                 * Signature of only the meaningful applied filter values (+ scope). Paging,
+                 * sorting, column changes or opening an empty filter row must NOT read as
+                 * "unsaved changes" against an applied saved filter.
+                 */
+                dirtySignature() {
+                    const filters = this.applied.filters.columns
+                        .filter(column => column.index !== 'all' && (column.value?.length ?? 0) > 0)
+                        .map(column => ({ index: column.index, value: column.value }))
+                        .sort((a, b) => a.index.localeCompare(b.index));
+
+                    return JSON.stringify({
+                        filters,
+                        channel: this.viewScope?.channel ?? this.scopeChannel ?? null,
+                        locale: this.viewScope?.locale ?? this.scopeLocale ?? null,
+                    });
+                },
+
+                hasUnsavedFilters() {
+                    if (this.viewSnapshot) {
+                        return this.dirtySignature() !== this.viewSnapshot;
+                    }
+
+                    return this.hasAppliedFilters();
+                },
+
+                hasAppliedFilters() {
+                    return this.applied.filters.columns.some(
+                        column => column.index !== 'all' && (column.value?.length ?? 0) > 0
                     );
+                },
+
+                clearAllFilters() {
+                    if (! this.hasAppliedFilters() && ! this.appliedViewId) {
+                        this.closeSavedFilters();
+
+                        return;
+                    }
+
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        column => column.index === 'all'
+                    );
+
+                    this.attributeConditions = {};
+
+                    this.appliedViewId = null;
+                    this.appliedViewLabel = null;
+                    this.viewSnapshot = null;
+
+                    this.applied.pagination.page = 1;
+
+                    this.closeSavedFilters();
+
+                    this.get();
+                },
+
+                closeSavedFilters() {
+                    const dropdown = this.$refs.savedFilters;
+
+                    if (dropdown) {
+                        dropdown.isActive = false;
+                    }
+                },
+
+                loadViews() {
+                    this.viewsLoading = true;
+
+                    this.$axios.get(this.viewsSrc, { params: { query: this.viewSearch } })
+                        .then(response => {
+                            this.savedViews = response.data.views ?? [];
+                        })
+                        .catch(() => {
+                            this.savedViews = [];
+                        })
+                        .finally(() => {
+                            this.viewsLoading = false;
+                        });
+                },
+
+                activeViewId() {
+                    return this.hasUnsavedFilters() ? null : this.appliedViewId;
+                },
+
+                appliedViewName() {
+                    if (! this.activeViewId()) {
+                        return '@lang('admin::app.components.datagrid.filters.saved-filters.title')';
+                    }
+
+                    /**
+                     * Prefer the cached name so searching the dropdown (which replaces the
+                     * savedViews list with a filtered set) can't blank the toolbar label.
+                     */
+                    return this.appliedViewLabel
+                        ?? this.savedViews.find(view => view.id === this.appliedViewId)?.name
+                        ?? '@lang('admin::app.components.datagrid.filters.saved-filters.title')';
+                },
+
+                applyView(view) {
+                    const payload = view.payload ?? {};
+
+                    this.attributeConditions = {};
+
+                    this.applied.filters.columns = (payload.filters ?? []).map(column => ({
+                        index: column.index,
+                        value: column.value,
+                    }));
+
+                    if (! this.findAppliedColumn('all')) {
+                        this.applied.filters.columns.push({ index: 'all', value: [] });
+                    }
+
+                    this.activeFilterIndices = [...(payload.activeFilterIndices ?? [])];
+
+                    this.applied.sort = {
+                        column: payload.sort?.column ?? null,
+                        order: payload.sort?.order ?? null,
+                    };
+
+                    this.applied.pagination.page = 1;
+                    this.applied.pagination.perPage = payload.perPage ?? this.applied.pagination.perPage;
+
+                    if (this.available.meta?.managedColumn) {
+                        this.available.meta.managedColumn.columns = payload.columns ?? [];
+                    }
+
+                    this.viewScope = {
+                        channel: payload.channel ?? null,
+                        locale: payload.locale ?? null,
+                    };
+
+                    this.appliedViewId = view.id;
+                    this.appliedViewLabel = view.name;
+                    this.viewSnapshot = this.dirtySignature();
+
+                    this.closeSavedFilters();
+
+                    this.get();
+                },
+
+                currentViewPayload() {
+                    return {
+                        filters: this.applied.filters.columns.map(column => ({
+                            index: column.index,
+                            value: column.value,
+                        })),
+                        activeFilterIndices: [...this.activeFilterIndices],
+                        columns: this.available.meta?.managedColumn?.columns ?? [],
+                        sort: {
+                            column: this.applied.sort.column ?? null,
+                            order: this.applied.sort.order ?? null,
+                        },
+                        perPage: this.applied.pagination.perPage,
+                        channel: this.viewScope?.channel ?? this.scopeChannel ?? null,
+                        locale: this.viewScope?.locale ?? this.scopeLocale ?? null,
+                    };
+                },
+
+                saveView() {
+                    if (! this.viewName.trim()) {
+                        return;
+                    }
+
+                    const name = this.viewName.trim();
+
+                    this.$axios.post(this.viewsSrc, {
+                        name: name,
+                        is_shared: this.viewShared,
+                        payload: this.currentViewPayload(),
+                    })
+                        .then(response => {
+                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+
+                            this.appliedViewId = response.data.view?.id ?? null;
+                            this.appliedViewLabel = response.data.view?.name ?? name;
+                            this.viewSnapshot = this.dirtySignature();
+                            this.viewName = '';
+                            this.viewShared = false;
+
+                            this.updateDatagrids();
+
+                            this.closeSavedFilters();
+
+                            this.loadViews();
+                        })
+                        .catch(error => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: error.response?.data?.message ?? '',
+                            });
+                        });
+                },
+
+                deleteView(view) {
+                    this.$emitter.emit('open-delete-modal', {
+                        agree: () => this.destroyView(view),
+                    });
+                },
+
+                destroyView(view) {
+                    this.$axios.delete(`${this.viewsSrc}/${view.id}`)
+                        .then(response => {
+                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+
+                            if (this.appliedViewId === view.id) {
+                                this.appliedViewId = null;
+                                this.appliedViewLabel = null;
+                                this.viewSnapshot = null;
+
+                                this.updateDatagrids();
+                            }
+
+                            this.loadViews();
+                        })
+                        .catch(error => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: error.response?.data?.message ?? '',
+                            });
+                        });
+                },
+
+                isFilterExpanded(columnIndex) {
+                    return this.expandedFilter === columnIndex;
+                },
+
+                toggleFilterEditor(columnIndex) {
+                    this.expandedFilter = this.isFilterExpanded(columnIndex) ? null : columnIndex;
+                },
+
+                filterHasValue(column) {
+                    if (this.isAttributeFilter(column)) {
+                        return !! this.findAppliedColumn(column.index);
+                    }
+
+                    return this.hasAnyAppliedColumnValues(column.index);
+                },
+
+                filterSummary(column) {
+                    if (! this.filterHasValue(column)) {
+                        return '';
+                    }
+
+                    if (this.isAttributeFilter(column)) {
+                        return this.attributeConditionSummary(column);
+                    }
+
+                    return this.appliedValuesSummary(column, this.getAppliedColumnValues(column.index));
+                },
+
+                collapsedSummary(column) {
+                    return this.filterHasValue(column)
+                        ? this.filterSummary(column)
+                        : '@lang('admin::app.components.datagrid.filters.no-value')';
+                },
+
+                attributeConditionSummary(column) {
+                    const condition = this.attributeCondition(column.index);
+                    const control = this.attributeValueControl(column);
+
+                    const parts = [this.attributeOperatorLabel(column)];
+
+                    if (column.type === 'price' && condition.currency) {
+                        parts.push(this.attributeCurrencyLabel(column));
+                    }
+
+                    if (control === 'boolean') {
+                        parts.push(this.attributeValueLabel(column));
+                    } else if (control !== 'none') {
+                        parts.push(Array.isArray(condition.value) ? condition.value.join(', ') : condition.value);
+                    }
+
+                    if (this.hasConditionValue(condition.value2)) {
+                        parts.push('–', condition.value2);
+                    }
+
+                    return parts.filter(part => `${part ?? ''}`.length).join(' ');
+                },
+
+                appliedValuesSummary(column, values) {
+                    if (column.type === 'boolean') {
+                        return values
+                            .map(value => column.options?.find(option => option.value == value)?.label ?? value)
+                            .join(', ');
+                    }
+
+                    if (column.type === 'dropdown') {
+                        if (column.options?.type === 'basic') {
+                            return values
+                                .map(value => column.options.params.options.find(option => option.value == value)?.label ?? value)
+                                .join(', ');
+                        }
+
+                        return '@lang('admin::app.components.datagrid.filters.values-selected')'.replace(':count', values.length);
+                    }
+
+                    return values
+                        .map(value => Array.isArray(value) ? value.filter(Boolean).join(' – ') : value)
+                        .join(', ');
+                },
+
+                clearFilter(column) {
+                    if (this.isAttributeFilter(column)) {
+                        const condition = this.attributeCondition(column.index);
+
+                        condition.value = '';
+                        condition.value2 = '';
+
+                        this.applyAttributeCondition(column);
+
+                        return;
+                    }
+
+                    /**
+                     * State-only reset; the grid refetches on Apply, matching every other
+                     * drawer edit instead of reloading mid-session.
+                     */
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        appliedColumn => appliedColumn.index !== column.index
+                    );
+                },
+
+                getActiveFilterColumns() {
+                    return this.activeFilterIndices
+                        .map(index => this.available.columns.find(col => col.index === index && col.filterable))
+                        .filter(Boolean);
                 },
 
                 getInactiveFilterColumns() {
@@ -1143,21 +1647,35 @@
                 },
 
                 filterPickerList() {
-                    if (this.filterAttributesSrc) {
-                        return this.pickerOptions.filter(col => ! this.activeFilterIndices.includes(col.index));
-                    }
-
                     const search = this.filterPickerSearch.toLowerCase();
 
-                    return this.getInactiveFilterColumns().filter(col => ! search || col.label.toLowerCase().includes(search));
+                    const matchesSearch = col => ! search || this.filterLabel(col).toLowerCase().includes(search);
+
+                    const local = this.getInactiveFilterColumns().filter(matchesSearch);
+
+                    if (! this.filterAttributesSrc) {
+                        return local;
+                    }
+
+                    const localIndices = local.map(col => col.index);
+
+                    return local.concat(
+                        this.pickerOptions.filter(
+                            col => ! this.activeFilterIndices.includes(col.index) && ! localIndices.includes(col.index)
+                        )
+                    );
                 },
 
                 toggleFilterPicker() {
                     this.showFilterPicker = ! this.showFilterPicker;
                     this.filterPickerSearch = '';
 
-                    if (this.showFilterPicker && this.filterAttributesSrc) {
-                        this.loadFilterAttributes(true);
+                    if (this.showFilterPicker) {
+                        if (this.filterAttributesSrc) {
+                            this.loadFilterAttributes(true);
+                        }
+
+                        this.$nextTick(() => this.$refs.filterPickerSearchInput?.focus());
                     }
                 },
 
@@ -1183,6 +1701,206 @@
                     this.showFilterPicker = false;
 
                     this.addActiveFilter(column.index);
+
+                    this.expandedFilter = column.index;
+
+                    this.syncAttributeConditions();
+                },
+
+                isAttributeFilter(column) {
+                    return !! column.attribute_type
+                        && ! this.defaultFilterIndices.includes(column.index);
+                },
+
+                attributeCondition(columnIndex) {
+                    if (! this.attributeConditions[columnIndex]) {
+                        this.attributeConditions[columnIndex] = {
+                            operator: '',
+                            value:    '',
+                            value2:   '',
+                            currency: '',
+                        };
+                    }
+
+                    return this.attributeConditions[columnIndex];
+                },
+
+                attributeOperators(column) {
+                    return column.operators ?? [];
+                },
+
+                attributeValueControl(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    const operator = this.attributeOperators(column)
+                        .find(operator => operator.value === condition.operator);
+
+                    return operator ? operator.control : 'text';
+                },
+
+                attributeValueSpansRow(column) {
+                    return column.type === 'price'
+                        || ['options', 'number_range', 'date_range'].includes(this.attributeValueControl(column));
+                },
+
+                attributeOperatorSpansRow(column) {
+                    return column.type !== 'price' && this.attributeValueControl(column) === 'none';
+                },
+
+                attributeValueOptions(column) {
+                    return Array.isArray(column.options) ? column.options : (column.options?.params?.options ?? []);
+                },
+
+                setAttributeOptionValue(column, event) {
+                    let parsed = null;
+
+                    try {
+                        parsed = event ? JSON.parse(event) : null;
+                    } catch (error) {
+                        parsed = null;
+                    }
+
+                    this.attributeCondition(column.index).value = Array.isArray(parsed)
+                        ? parsed.map(option => option?.code ?? option).filter(Boolean)
+                        : [];
+
+                    this.applyAttributeCondition(column);
+                },
+
+                attributeOptionValue(column) {
+                    const value = this.attributeCondition(column.index).value;
+
+                    return Array.isArray(value) ? value.join(',') : `${value ?? ''}`;
+                },
+
+                attributeOperatorLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeOperators(column)
+                        .find(operator => operator.value === condition.operator)?.label ?? '';
+                },
+
+                attributeCurrencyLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeValueOptions(column)
+                        .find(option => option.value === condition.currency)?.label ?? '';
+                },
+
+                attributeValueLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeValueOptions(column)
+                        .find(option => `${option.value}` === `${condition.value}`)?.label ?? '';
+                },
+
+                setAttributeCurrency(column, currency) {
+                    this.attributeCondition(column.index).currency = currency;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                setAttributeConditionValue(column, key, value) {
+                    this.attributeCondition(column.index)[key] = value;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                setAttributeValue(column, value) {
+                    this.attributeCondition(column.index).value = value;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                syncAttributeConditions() {
+                    (this.available.columns ?? []).forEach(column => {
+                        if (! this.isAttributeFilter(column)) {
+                            return;
+                        }
+
+                        const condition = this.attributeCondition(column.index);
+                        const applied = this.findAppliedColumn(column.index)?.value?.[0];
+
+                        if (applied && typeof applied === 'object') {
+                            condition.operator = applied.operator ?? '';
+                            condition.value    = applied.value ?? '';
+                            condition.value2   = applied.value2 ?? '';
+                            condition.currency = applied.currency ?? '';
+                        }
+
+                        if (! condition.operator) {
+                            condition.operator = this.attributeOperators(column)[0]?.value ?? '';
+                        }
+                    });
+                },
+
+                setAttributeOperator(column, operator) {
+                    const condition = this.attributeCondition(column.index);
+                    const previous = this.attributeValueControl(column);
+
+                    condition.operator = operator;
+
+                    if (this.attributeValueControl(column) !== previous) {
+                        condition.value = '';
+                        condition.value2 = '';
+                    }
+
+                    this.applyAttributeCondition(column);
+                },
+
+                hasConditionValue(value) {
+                    return Array.isArray(value) ? value.length > 0 : `${value ?? ''}`.length > 0;
+                },
+
+                isConditionComplete(column, condition, control) {
+                    if (! condition.operator) {
+                        return false;
+                    }
+
+                    if (column.type === 'price' && ! condition.currency) {
+                        return false;
+                    }
+
+                    if (control === 'none') {
+                        return true;
+                    }
+
+                    if (control === 'number_range' || control === 'date_range') {
+                        return this.hasConditionValue(condition.value) && this.hasConditionValue(condition.value2);
+                    }
+
+                    return this.hasConditionValue(condition.value);
+                },
+
+                applyAttributeCondition(column) {
+                    const condition = this.attributeCondition(column.index);
+                    const control = this.attributeValueControl(column);
+
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        appliedColumn => appliedColumn.index !== column.index
+                    );
+
+                    if (! this.isConditionComplete(column, condition, control)) {
+                        return;
+                    }
+
+                    const payload = {
+                        operator: condition.operator,
+                        value:    control === 'none' ? '' : condition.value,
+                    };
+
+                    if (control === 'number_range' || control === 'date_range') {
+                        payload.value2 = condition.value2;
+                    }
+
+                    if (column.type === 'price') {
+                        payload.currency = condition.currency;
+                    }
+
+                    this.applied.filters.columns.push({
+                        index: column.index,
+                        value: [payload],
+                    });
                 },
 
                 loadFilterAttributes(reset = false) {

@@ -25,14 +25,15 @@ class ListAttributes implements PimTool
 
             public function description(): string
             {
-                return 'List attributes for a product family with types and options.';
+                return 'List attributes for a product family with types and options. Defaults to the family of the product currently being edited when no SKU or family is given; pass family_code to list another family explicitly.';
             }
 
             public function schema(JsonSchema $schema): array
             {
                 return [
-                    'sku'       => $schema->string()->description('Product SKU to get attributes for (uses its attribute family)'),
-                    'family_id' => $schema->integer()->description('Attribute family ID (alternative to SKU)'),
+                    'sku'         => $schema->string()->description('Product SKU to get attributes for (uses its attribute family)'),
+                    'family_code' => $schema->string()->description('Attribute family code to list attributes for (overrides SKU and the current product context)'),
+                    'family_id'   => $schema->integer()->description('Attribute family ID (alternative to SKU or family_code)'),
                 ];
             }
 
@@ -43,11 +44,33 @@ class ListAttributes implements PimTool
                 }
 
                 $sku = $request->string('sku')->toString() ?: null;
-                $familyId = $request->has('family_id') ? (int) $request->get('family_id') : null;
+                $familyCode = $request->string('family_code')->toString() ?: null;
+                $familyId = $request->has('family_id') ? $request->integer('family_id') : null;
+
+                if ($familyCode !== null) {
+                    if (! preg_match('/^[a-zA-Z0-9_-]+$/', $familyCode)) {
+                        return json_encode(['error' => 'Invalid family_code: only letters, numbers, underscores and hyphens are allowed.']);
+                    }
+
+                    $familyId = DB::table('attribute_families')
+                        ->where('code', $familyCode)
+                        ->value('id');
+
+                    if (! $familyId) {
+                        return json_encode(['error' => "Attribute family not found: {$familyCode}"]);
+                    }
+                }
 
                 if ($sku && ! $familyId) {
                     $familyId = DB::table('products')
                         ->where('sku', $sku)
+                        ->value('attribute_family_id');
+                }
+
+                if (! $familyId && $this->context->hasProductContext()) {
+                    // Default to the family of the product being edited.
+                    $familyId = DB::table('products')
+                        ->where('id', $this->context->productId)
                         ->value('attribute_family_id');
                 }
 
@@ -69,7 +92,7 @@ class ListAttributes implements PimTool
 
                 $context = $this->context;
 
-                $result = $attributes->map(function ($attr) use ($context) {
+                $result = $attributes->map(function ($attr) use ($context): array {
                     $info = [
                         'code'              => $attr->code,
                         'type'              => $attr->type,
@@ -81,7 +104,7 @@ class ListAttributes implements PimTool
                     // Include options for select/multiselect attributes
                     if (\in_array($attr->type, ['select', 'multiselect'])) {
                         $options = DB::table('attribute_options as ao')
-                            ->leftJoin('attribute_option_translations as aot', function ($join) use ($context) {
+                            ->leftJoin('attribute_option_translations as aot', function ($join) use ($context): void {
                                 $join->on('aot.attribute_option_id', '=', 'ao.id')
                                     ->where('aot.locale', '=', $context->locale);
                             })
@@ -89,7 +112,7 @@ class ListAttributes implements PimTool
                             ->select('ao.code', 'aot.label')
                             ->orderBy('ao.sort_order')
                             ->get()
-                            ->map(fn ($o) => ['code' => $o->code, 'label' => $o->label ?? $o->code])
+                            ->map(fn ($o): array => ['code' => $o->code, 'label' => $o->label ?? $o->code])
                             ->toArray();
 
                         $info['options'] = $options;
@@ -99,8 +122,9 @@ class ListAttributes implements PimTool
                 });
 
                 return json_encode([
-                    'family_id'  => $familyId,
-                    'attributes' => $result->toArray(),
+                    'family_id'   => $familyId,
+                    'family_code' => $familyCode ?? DB::table('attribute_families')->where('id', $familyId)->value('code'),
+                    'attributes'  => $result->toArray(),
                 ]);
             }
         };

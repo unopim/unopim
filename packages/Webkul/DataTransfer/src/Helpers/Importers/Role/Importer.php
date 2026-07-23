@@ -49,8 +49,6 @@ class Importer extends AbstractImporter
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
@@ -95,9 +93,9 @@ class Importer extends AbstractImporter
         }
 
         $validator = Validator::make($rowData, [
-            'name'            => 'required|string',
-            'permission_type' => 'required|in:all,custom',
-            'description'     => 'nullable|string',
+            'name'            => ['required', 'string'],
+            'permission_type' => ['required', 'in:all,custom'],
+            'description'     => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -149,11 +147,9 @@ class Importer extends AbstractImporter
 
         $idsToDelete = array_unique($idsToDelete);
 
-        if (! empty($idsToDelete)) {
-            foreach ($idsToDelete as $id) {
-                $this->roleRepository->delete($id);
-                $this->deletedItemsCount++;
-            }
+        foreach ($idsToDelete as $id) {
+            $this->roleRepository->delete($id);
+            $this->deletedItemsCount++;
         }
 
         return true;
@@ -170,7 +166,7 @@ class Importer extends AbstractImporter
                 'name'            => EscapeFormulaOperators::unescapeValue($rowData['name']),
                 'description'     => EscapeFormulaOperators::unescapeValue($rowData['description'] ?? ''),
                 'permission_type' => $rowData['permission_type'],
-                'permissions'     => ! empty($rowData['permissions']) ? explode(',', $rowData['permissions']) : [],
+                'permissions'     => empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']),
             ];
 
             if ($id) {

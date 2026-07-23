@@ -150,14 +150,12 @@ class Dashboard
                 ->where('updated_at', '>=', $startDate)
                 ->whereColumn('updated_at', '!=', 'created_at')
                 ->groupBy(DB::raw('DATE(updated_at)'))
-                ->get()
                 ->pluck('count', 'date');
 
             $creationRaw = DB::table('products')
                 ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
                 ->where('created_at', '>=', $startDate)
                 ->groupBy(DB::raw('DATE(created_at)'))
-                ->get()
                 ->pluck('count', 'date');
 
             // Fill missing days with 0
@@ -370,7 +368,6 @@ class Dashboard
         $jobSummary = DB::table('job_track')
             ->select('state', DB::raw('COUNT(*) as count'))
             ->groupBy('state')
-            ->get()
             ->pluck('count', 'state')
             ->toArray();
 

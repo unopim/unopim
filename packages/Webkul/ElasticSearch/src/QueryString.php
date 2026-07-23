@@ -15,7 +15,7 @@ class QueryString
     {
         $regex = '#[-+=|! &(){}\[\]^"~*<>?:/\\\]#';
 
-        return preg_replace($regex, '\\\$0', $value);
+        return preg_replace($regex, '\\\$0', (string) $value);
     }
 
     public static function escapeArrayValue(?array $values): array

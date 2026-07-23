@@ -28,9 +28,8 @@ class ScopeMiddleware
      * Checks if user allowed or not for certain action
      *
      * @param  string  $permission
-     * @return void
      */
-    public function hasPermission($permission)
+    public function hasPermission($permission): bool
     {
         $user = auth()->guard('api')->check() ? auth()->guard('api')->user() : null;
 

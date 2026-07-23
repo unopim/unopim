@@ -3,6 +3,7 @@
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeGroup;
+use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Product\Models\Product;
 
 it('should return the family index datgrid page', function () {
@@ -11,14 +12,6 @@ it('should return the family index datgrid page', function () {
     $this->get(route('admin.catalog.families.index'))
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.families.index.title'));
-});
-
-it('should return the family create page successfully', function () {
-    $this->loginAsAdmin();
-
-    $this->get(route('admin.catalog.families.create'))
-        ->assertOk()
-        ->assertSeeText(trans('admin::app.catalog.families.create.title'));
 });
 
 it('should return the attribute family datagrid', function () {
@@ -50,81 +43,102 @@ it('should return validation error for unique family code', function () {
     $this->loginAsAdmin();
 
     $family = AttributeFamily::factory()->create();
+    $locale = core()->getRequestedLocaleCode();
 
-    $this->post(route('admin.catalog.families.store'), ['code' => $family->code])
-        ->assertRedirect()
-        ->assertInvalid('code');
+    $this->postJson(route('admin.catalog.families.store'), [
+        'code'  => $family->code,
+        $locale => [
+            'name' => 'Duplicate Family',
+        ],
+    ])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('code');
 });
 
 it('should return validation error for invalid code with special characters or spaces', function () {
     $this->loginAsAdmin();
+    $locale = core()->getRequestedLocaleCode();
 
-    $this->post(route('admin.catalog.families.store'), ['code' => 'Test -Family'])
-        ->assertRedirect()
-        ->assertInvalid('code');
+    $this->postJson(route('admin.catalog.families.store'), [
+        'code'  => 'Test -Family',
+        $locale => [
+            'name' => 'Test Family',
+        ],
+    ])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('code');
 });
 
-it('should create the family sucessfully', function () {
+it('should return validation error for an unknown based_on family', function () {
+    $this->loginAsAdmin();
+    $locale = core()->getRequestedLocaleCode();
+
+    $this->postJson(route('admin.catalog.families.store'), [
+        'code'     => 'family_bad_source',
+        $locale    => [
+            'name' => 'Family Bad Source',
+        ],
+        'based_on' => 99999999,
+    ])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('based_on');
+});
+
+it('should create a family without a name', function () {
     $this->loginAsAdmin();
 
-    $data = [
-        'code' => 'attribute_family_1092345629823_s',
-    ];
+    $this->postJson(route('admin.catalog.families.store'), [
+        'code' => 'family_without_name',
+    ])->assertOk();
 
-    $groups = AttributeGroup::factory()->count(3)->create();
+    $family = AttributeFamily::where('code', 'family_without_name')->firstOrFail();
 
-    $attributes = Attribute::factory()->count(6)->create()->chunk(2)->toArray();
+    expect($family->name)->toBeNull();
+});
 
-    $attributeGroupId = null;
+it('should create a family with a general group holding sku and redirect to its edit page', function () {
+    $this->loginAsAdmin();
+    $locale = core()->getRequestedLocaleCode();
 
-    $attributeId = null;
+    $response = $this->postJson(route('admin.catalog.families.store'), [
+        'code'  => 'family_from_modal',
+        $locale => [
+            'name' => 'Family From Modal',
+        ],
+    ])->assertOk();
 
-    $position = 1;
+    $family = AttributeFamily::where('code', 'family_from_modal')->firstOrFail();
 
-    foreach ($groups as $group) {
-        $groupId = $group['id'];
+    $response->assertJsonPath('data.redirect_url', route('admin.catalog.families.edit', $family->id));
 
-        $attributeGroupId ??= $groupId;
+    $mapping = $family->attributeFamilyGroupMappings()->firstOrFail();
 
-        $data['attribute_groups'][$groupId] = [
-            'position'          => $position,
-            'custom_attributes' => [],
-        ];
+    expect($family->translate($locale)->name)->toBe('Family From Modal');
+    expect($mapping->attributeGroups->first()->code)->toBe('general');
+    expect($mapping->customAttributes->pluck('code')->all())->toBe(['sku']);
+});
 
-        $pos = 1;
+it('should clone the structure of the based_on family', function () {
+    $this->loginAsAdmin();
+    $locale = core()->getRequestedLocaleCode();
 
-        foreach ($attributes[$position - 1] as $key => $attr) {
-            $attributeId ??= $attr['id'];
+    $source = app(AttributeFamilyRepository::class)
+        ->createScaffolded('family_clone_source');
 
-            $data['attribute_groups'][$groupId]['custom_attributes'][] = [
-                'id'       => $attr['id'],
-                'position' => $pos,
-            ];
+    $this->postJson(route('admin.catalog.families.store'), [
+        'code'     => 'family_clone_target',
+        $locale    => [
+            'name' => 'Family Clone Target',
+        ],
+        'based_on' => $source->id,
+    ])->assertOk();
 
-            $pos++;
-        }
+    $clone = AttributeFamily::where('code', 'family_clone_target')->firstOrFail();
 
-        $position++;
-    }
+    $mapping = $clone->attributeFamilyGroupMappings()->firstOrFail();
 
-    $this->post(route('admin.catalog.families.store'), $data)
-        ->assertRedirect(route('admin.catalog.families.index'))
-        ->assertSessionHas('success', trans('admin::app.catalog.families.create-success'));
-
-    $family = AttributeFamily::where('code', $data['code'])->first();
-
-    $this->assertTrue($family instanceof AttributeFamily);
-
-    $familyGroupMappingId = $family->familyGroups()->where('attribute_group_id', $attributeGroupId)
-        ->pluck('attribute_family_group_mappings.id')
-        ->first();
-
-    $this->assertIsInt($familyGroupMappingId);
-
-    $this->assertDatabaseHas('attribute_group_mappings', [
-        'attribute_family_group_id' => $familyGroupMappingId,
-        'attribute_id'              => $attributeId,
-    ]);
+    expect($mapping->attributeGroups->first()->code)->toBe('general');
+    expect($mapping->customAttributes->pluck('code')->all())->toBe(['sku']);
 });
 
 it('should return the family edit page', function () {

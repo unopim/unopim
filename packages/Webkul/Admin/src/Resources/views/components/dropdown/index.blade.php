@@ -92,12 +92,10 @@
             },
 
             mounted() {
-                this.toggleBlockWidth = this.$refs.toggleBlock.clientWidth;
-
-                this.toggleBlockHeight = this.$refs.toggleBlock.clientHeight;
+                this.measureToggle();
             },
 
-            beforeDestroy() {
+            beforeUnmount() {
                 window.removeEventListener('click', this.handleFocusOut);
             },
 
@@ -120,21 +118,21 @@
 
                         case 'top-left':
                             return [
-                                `min-width: ${this.toggleBlockWidth}px`
+                                `min-width: ${this.toggleBlockWidth}px`,
                                 `bottom: ${this.toggleBlockHeight*2}px`,
                                 'left: 0',
                             ];
 
                         case 'top-right':
                             return [
-                                `min-width: ${this.toggleBlockWidth}px`
+                                `min-width: ${this.toggleBlockWidth}px`,
                                 `bottom: ${this.toggleBlockHeight*2}px`,
                                 'right: 0',
                             ];
 
                         default:
                             return [
-                                `min-width: ${this.toggleBlockWidth}px`
+                                `min-width: ${this.toggleBlockWidth}px`,
                                 `top: ${this.toggleBlockHeight}px`,
                                 'left: 0',
                             ];
@@ -145,6 +143,31 @@
             methods: {
                 toggle() {
                     this.isActive = ! this.isActive;
+
+                    /**
+                     * Re-measure the toggle when opening. Dropdowns mounted inside a hidden
+                     * container (e.g. a collapsed filter row or a closed drawer) measure 0 in
+                     * mounted(), which collapses the menu to content width and pins it top-left.
+                     */
+                    if (this.isActive) {
+                        this.measureToggle();
+                    }
+                },
+
+                measureToggle() {
+                    const block = this.$refs.toggleBlock;
+
+                    if (! block) {
+                        return;
+                    }
+
+                    if (block.clientWidth) {
+                        this.toggleBlockWidth = block.clientWidth;
+                    }
+
+                    if (block.clientHeight) {
+                        this.toggleBlockHeight = block.clientHeight;
+                    }
                 },
 
                 handleFocusOut(e) {

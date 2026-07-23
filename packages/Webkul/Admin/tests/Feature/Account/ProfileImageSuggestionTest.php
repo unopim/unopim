@@ -3,7 +3,7 @@
 describe('Profile image AI generation should not have @ suggestions', function () {
 
     it('media images component supports show-suggestions prop', function () {
-        $viewPath = base_path('packages/Webkul/Admin/src/Resources/views/components/media/images.blade.php');
+        $viewPath = base_path('packages/Webkul/Admin/src/Resources/views/components/media/image.blade.php');
         $content = file_get_contents($viewPath);
 
         // Verify the showSuggestions prop exists in @props

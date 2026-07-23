@@ -8,6 +8,16 @@
         @lang('admin::app.catalog.attribute-groups.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.catalog.attribute-groups.edit.title')"
+            :back-url="route('admin.catalog.attribute.groups.index')"
+            :back-label="trans('admin::app.catalog.attribute-groups.edit.back-btn')"
+            form="attribute-group-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
     <!-- Edit Attributes Vue Components -->
     <v-edit-attribute-groups :locales="{{ $locales->toJson() }}"></v-edit-attribute-groups>
 
@@ -20,6 +30,7 @@
 
             <!-- Input Form -->
             <x-admin::form
+                id="attribute-group-edit-form"
                 ajax
                 :action="route('admin.catalog.attribute.groups.update', $attributeGroup->id)"
                 enctype="multipart/form-data"
@@ -28,34 +39,10 @@
                 
                 {!! view_render_event('unopim.admin.catalog.attribute.groups.create._form_controls.before') !!}
 
-                <div class="flex justify-between items-center">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.catalog.attribute-groups.edit.title')
-                    </p>
-
-                    <div class="flex gap-x-2.5 items-center">
-                        <!-- Back Button -->
-                        <a
-                            href="{{ route('admin.catalog.attribute.groups.index') }}"
-                            class="transparent-button"
-                        >
-                            @lang('admin::app.catalog.attribute-groups.edit.back-btn')
-                        </a>
-
-                        <!-- Save Button -->
-                        <button
-                            type="submit"
-                            class="primary-button"
-                        >
-                            @lang('admin::app.catalog.attribute-groups.edit.save-btn')
-                        </button>
-                    </div>
-                </div>
-
                 <!-- body content -->
-                <div class="flex gap-2.5 mt-3.5">
+                <div class="flex gap-2.5 max-xl:flex-wrap">
                     <!-- Left sub Component -->
-                    <div class="flex flex-col flex-1 gap-2 overflow-auto">
+                    <div class="flex flex-col flex-1 gap-2 max-xl:flex-auto">
 
                         {!! view_render_event('unopim.admin.catalog.attributes.edit.card.label.before', ['attributeGroup' => $attributeGroup]) !!}
 
@@ -108,8 +95,12 @@
                                 <!-- Locales Inputs -->
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label>
-                                            {{ $locale->name }}
+                                        <x-admin::form.control-group.label
+                                            class="w-full"
+                                            localizable="true"
+                                            :current-locale-code="$locale->code"
+                                        >
+                                            @lang('admin::app.catalog.attribute-groups.edit.label')
                                         </x-admin::form.control-group.label>
 
                                         <x-admin::form.control-group.control
@@ -125,12 +116,9 @@
                         </div>
                     </div>
 
-                    <!-- Right sub-component -->
-                    <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                        {!! view_render_event('unopim.admin.catalog.attribute.groups.edit.card.accordian.validations.before', ['attributeGroup' => $attributeGroup]) !!}
+                    {!! view_render_event('unopim.admin.catalog.attribute.groups.edit.card.accordian.validations.before', ['attributeGroup' => $attributeGroup]) !!}
 
-                        {!! view_render_event('unopim.admin.catalog.attribute.groups.edit.card.accordian.configuration.configuration.after', ['attributeGroup' => $attributeGroup]) !!}
-                    </div>
+                    {!! view_render_event('unopim.admin.catalog.attribute.groups.edit.card.accordian.configuration.configuration.after', ['attributeGroup' => $attributeGroup]) !!}
                 </div>
             </x-admin::form>
 

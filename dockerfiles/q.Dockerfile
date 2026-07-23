@@ -28,7 +28,7 @@ RUN composer install \
 # ---------------------------------------------------------------------------
 # Stage 2: Production image
 # ---------------------------------------------------------------------------
-FROM php:8.3-cli
+FROM php:8.4-cli
 
 LABEL maintainer="Webkul <support@webkul.com>"
 LABEL org.opencontainers.image.title="UnoPim Queue Worker"
@@ -69,6 +69,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-enable redis \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Align www-data with the host user so bind-mounted storage stays
+# writable on both sides (defaults keep the stock image behavior).
+ARG HOST_UID=33
+ARG HOST_GID=33
+RUN groupmod -o -g "${HOST_GID}" www-data \
+    && usermod -o -u "${HOST_UID}" -g "${HOST_GID}" www-data
 
 # PHP production configuration
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"

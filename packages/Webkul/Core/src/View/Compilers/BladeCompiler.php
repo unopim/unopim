@@ -18,8 +18,8 @@ class BladeCompiler extends BaseBladeCompiler
 
         if (
             config('view.tracer')
-            && strpos($this->getPath(), 'tracer/style.blade.php') == false
-            && strpos($this->getPath(), 'master.blade.php') == false
+            && ! str_contains($this->getPath(), 'tracer/style.blade.php')
+            && ! str_contains($this->getPath(), 'master.blade.php')
         ) {
             $finalPath = str_replace('/Providers/..', '', str_replace(base_path(), '', $this->getPath()));
 

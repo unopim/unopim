@@ -15,7 +15,7 @@ class ProxyValueSyncEventListener
     /**
      * Handle the event.
      */
-    public function handle($event, $data): void
+    public function handle($event, array $data): void
     {
         $oldValues = $data['old_values'];
 
@@ -25,7 +25,7 @@ class ProxyValueSyncEventListener
 
         if ($model instanceof HistoryContract) {
 
-            $eventName = ucfirst(substr($event, strlen(self::EVENT_KEY)));
+            $eventName = ucfirst(substr((string) $event, strlen(self::EVENT_KEY)));
 
             if ($oldValues !== $newValues) {
                 $model->auditCustomOld['common'][$eventName] = $oldValues;

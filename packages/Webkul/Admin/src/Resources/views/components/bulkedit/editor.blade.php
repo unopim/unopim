@@ -241,7 +241,7 @@
             </div>
         </div>
 
-        <div class="h-[calc(100vh-170px)] mb-16 overflow-auto rounded-md shadow-sm border border-gray-200 dark:border-cherry-700 bg-white dark:bg-cherry-900" style="--active-cell-color: #7c3aed;">
+        <div class="h-[calc(100vh-170px)] mb-16 overflow-auto rounded-md shadow-sm border border-gray-200 dark:border-cherry-700 bg-white dark:bg-cherry-900 [--active-cell-color:rgb(var(--c-primary-600))]">
             <table class="table-fixed border border-gray-200 border-collapse w-full dark:border-cherry-700">
                 <v-spreadsheet-header 
                     :columns="columns" 
@@ -329,7 +329,7 @@
 
             data() {
                 return {
-                    allRows: this.initialRows || [],
+                    allRows: this.initialData || [],
                     rowsPerPage: 100,
                     currentPage: 1,
                     isLoading: false,
@@ -387,21 +387,21 @@
                     if (Object.keys(this.updatedEntityData).length === 0) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.catalog.products.bulk-edit.no-changes')",
+                            message: @json(trans('admin::app.catalog.products.bulk-edit.no-changes')),
                         });
                         return;
                     }
 
-                    this.loading = true;
+                    this.isLoading = true;
 
                     this.$axios.post(this.entitySaveUrl, {
                         data: this.updatedEntityData,
                     })
                     .then(response => {
-                        this.updatedEntityData = [];
+                        this.updatedEntityData = {};
                         this.$emitter.emit('add-flash', {
                             type: 'success',
-                            message: response.data.message ||  "@lang('admin::app.catalog.products.bulk-edit.success')",
+                            message: response.data.message ||  @json(trans('admin::app.catalog.products.bulk-edit.success')),
                         });
 
                         setTimeout(() => window.location.href= "{{ route('admin.catalog.products.index') }}", 1000);
@@ -410,7 +410,7 @@
                         console.error(error);
                     })
                     .finally(() => {
-                        this.loading = false;
+                        this.isLoading = false;
                     });
                 },
             },

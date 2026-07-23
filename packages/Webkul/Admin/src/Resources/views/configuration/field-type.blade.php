@@ -45,7 +45,6 @@
         id="v-configurable-template"
     >
         <x-admin::form.control-group class="last:!mb-0">
-            <!-- Title of the input field -->
             <div    
                 v-if="field"
                 class="flex justify-between"
@@ -55,7 +54,6 @@
                 </x-admin::form.control-group.label>
             </div>
         
-            <!-- Text input -->
             <template v-if="field.type == 'text'">
                 <x-admin::form.control-group.control
                     type="text"
@@ -69,7 +67,19 @@
                 />
             </template>
         
-            <!-- Password input -->
+            <template v-if="field.type == 'textarea'">
+                <x-admin::form.control-group.control
+                    type="textarea"
+                    ::id="name"
+                    ::name="name"
+                    ::value="value"
+                    ::rules="validations"
+                    ::label="label"
+                    ::placeholder="placeholder"
+                    @input="emitChangeEvent($event.target.value, name)"
+                />
+            </template>
+
             <template v-if="field.type == 'password'">
                 <x-admin::form.control-group.control
                     type="password"
@@ -83,7 +93,6 @@
                 />
             </template>
         
-            <!-- Number input -->
             <template v-if="field.type == 'number'">
                 <x-admin::form.control-group.control
                     type="number"
@@ -98,7 +107,6 @@
                 />
             </template>
 
-            <!-- Color Input -->
             <template v-if="field.type == 'color'">
                 <v-field
                     v-slot="{ field, errors }"
@@ -118,7 +126,6 @@
                 </v-field>
             </template>
 
-            <!-- Select input -->
             <template v-if="field.type == 'select'">
                 <x-admin::form.control-group.control
                     type="select"
@@ -135,7 +142,6 @@
                 </x-admin::form.control-group.control>
             </template>
 
-            <!-- Boolean/Switch input -->
             <template v-if="field.type == 'boolean'">
                 <input
                     type="hidden"
@@ -154,11 +160,10 @@
                         @input="emitChangeEvent($event.target.checked ? '1' : '0', name)"
                     >
 
-                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-violet-700"></div>
+                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-700"></div>
                 </label>
             </template>
 
-            <!-- validation message -->
             <v-error-message
                 :name="name"
                 v-slot="{ message }"
@@ -201,7 +206,7 @@
                 },
 
                 maskedPassword() {
-                    return this.value ? '*'.repeat(this.value.length) : '';
+                    return this.value ? '********' : '';
                 },
 
                 placeholder() {

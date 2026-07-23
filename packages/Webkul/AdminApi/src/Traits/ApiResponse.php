@@ -65,7 +65,7 @@ trait ApiResponse
      * Handles and logs exceptions that occur during the execution of the application
      *
      * @param  \Exception|ModelNotFoundException  $e  The exception to be handled.
-     * @return \Illuminate\Http\JsonResponse*
+     * @return JsonResponse
      */
     protected function storeExceptionLog($e)
     {

@@ -1,17 +1,11 @@
 <x-admin::layouts>
-    <!-- Title of the page -->
     <x-slot:title>
         @lang('admin::app.settings.users.index.title')
     </x-slot>
 
     <v-users>
-        <div class="flex justify-between items-center">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.settings.users.index.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
-                <!-- Create User Button -->
+        <x-admin::page-header :title="trans('admin::app.settings.users.index.title')">
+            <x-slot:actions>
                 @if (bouncer()->hasPermission('settings.users.users.create'))
                     <button
                         type="button"
@@ -20,10 +14,9 @@
                         @lang('admin::app.settings.users.index.create.title')
                     </button>
                 @endif
-            </div>
-        </div>
+            </x-slot>
+        </x-admin::page-header>
 
-        <!-- DataGrid Shimmer -->
         <x-admin::shimmer.datagrid />
     </v-users>
 
@@ -32,13 +25,8 @@
             type="text/x-template"
             id="v-users-template"
         >
-            <div class="flex justify-between items-center">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                    @lang('admin::app.settings.users.index.title')
-                </p>
-
-                <div class="flex gap-x-2.5 items-center">
-                    <!-- User Create Button -->
+            <x-admin::page-header :title="trans('admin::app.settings.users.index.title')">
+                <x-slot:actions>
                     @if (bouncer()->hasPermission('settings.users.users.create'))
                         <button
                             type="button"
@@ -48,10 +36,9 @@
                             @lang('admin::app.settings.users.index.create.title')
                         </button>
                     @endif
-                </div>
-            </div>
+                </x-slot>
+            </x-admin::page-header>
 
-            <!-- Datagrid -->
             <x-admin::datagrid
                 src="{{ route('admin.settings.users.index') }}"
                 ref="datagrid"
@@ -59,12 +46,12 @@
                 @php
                     $hasPermission = bouncer()->hasPermission('settings.users.users.edit') || bouncer()->hasPermission('settings.users.users.delete');
                 @endphp
-                <!-- DataGrid Header -->
                 <template #header="{columns, records, sortPage, applied}">
                     <div class="row grid {{ $hasPermission ? 'grid-cols-6' : 'grid-cols-5' }} grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-cherry-800 font-semibold">
                         <div
                             class="flex gap-2.5 cursor-pointer"
                             v-for="(columnGroup, index) in ['user_id', 'user_name', 'status', 'email', 'role_name']"
+                            :key="index"
                         >
                             <p class="text-gray-600 dark:text-gray-300">
                                 <span class="[&>*]:after:content-['_/_']">
@@ -82,7 +69,6 @@
                                     </span>
                                 </span>
 
-                                <!-- Filter Arrow Icon -->
                                 <i
                                     class="ltr:ml-1.5 rtl:mr-1.5 text-base  text-gray-800 dark:text-white align-text-bottom"
                                     :class="[applied.sort.order === 'asc' ? 'icon-down-stat': 'icon-up-stat']"
@@ -91,7 +77,6 @@
                             </p>
                         </div>
 
-                        <!-- Actions -->
                         @if ($hasPermission)
                             <p class="flex gap-2.5 justify-end">
                                 @lang('admin::app.components.datagrid.table.actions')
@@ -100,18 +85,16 @@
                     </div>
                 </template>
 
-                <!-- DataGrid Body -->
                 <template #body="{ columns, records, performAction }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                        :key="record.id"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="'grid-template-columns: repeat(' + (record.actions.length ? 6 : 5) + ', minmax(0, 1fr));'"
                         @click="id=1; editModal(record.actions.find(action => action.index === 'edit')?.url)"
                     >
-                        <!-- Id -->
                         <p v-text="record.user_id"></p>
 
-                        <!-- User Profile -->
                         <p>
                             <div class="flex gap-2.5 items-center">
                                 <div
@@ -131,7 +114,7 @@
                                     v-else
                                 >
                                     <button
-                                        class="flex justify-center items-center w-9 h-9 bg-violet-400 rounded-full text-sm text-white font-semibold cursor-pointer leading-6 transition-all hover:bg-violet-700 focus:bg-violet-700"
+                                        class="flex justify-center items-center w-9 h-9 bg-primary-400 rounded-full text-sm text-white font-semibold cursor-pointer leading-6 transition-all hover:bg-primary-700 focus:bg-primary-700"
                                         v-text="record.user_name[0]?.toUpperCase()"
                                     >
                                     </button>
@@ -146,22 +129,18 @@
                             </div>
                         </p>
 
-                        <!-- Status -->
                         <p v-html="record.status"></p>
 
-                        <!-- Email -->
                         <p class="truncate" v-text="record.email" :title="record.email"></p>
 
-                        <!-- Role -->
                         <p v-text="record.role_name" class="truncate" :title="record.role_name"></p>
 
-                        <!-- Actions -->
                         <div class="flex justify-end" @click.stop>
                             <a @click="id=1; editModal(record.actions.find(action => action.index === 'edit')?.url)">
                                 <span
                                     :class="record.actions.find(action => action.index === 'edit')?.icon"
                                     title="@lang('admin::app.settings.users.index.datagrid.edit')"
-                                    class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                    class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 >
                                 </span>
                             </a>
@@ -170,7 +149,7 @@
                                 <span
                                     :class="record.actions.find(action => action.index === 'delete')?.icon"
                                     title="@lang('admin::app.settings.users.index.datagrid.delete')"
-                                    class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                    class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 >
                                 </span>
                             </a>
@@ -179,7 +158,6 @@
                 </template>
             </x-admin::datagrid>
 
-            <!-- Modal Form -->
             <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
                 as="div"
@@ -189,9 +167,7 @@
                     @submit="handleSubmit($event, updateOrCreate)"
                     ref="userCreateForm"
                 >
-                    <!-- User Create Modal -->
                     <x-admin::modal ref="userUpdateOrCreateModal">
-                        <!-- Modal Header -->
                         <x-slot:header>
                             <p
                                 class="text-lg text-gray-800 dark:text-white font-bold"
@@ -209,9 +185,7 @@
 
                         </x-slot>
 
-                        <!-- Modal Content -->
                         <x-slot:content>
-                            <!-- Name -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.users.index.create.name')
@@ -236,7 +210,6 @@
                                 <x-admin::form.control-group.error control-name="name" />
                             </x-admin::form.control-group>
 
-                            <!-- Email -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.users.index.create.email')
@@ -256,7 +229,6 @@
                             </x-admin::form.control-group>
 
                             <div class="flex gap-4">
-                                <!-- Password -->
                                 <x-admin::form.control-group class="flex-1 mb-2.5">
                                     <x-admin::form.control-group.label ::class="isUpdating ? '' : 'required'">
                                         @lang('admin::app.settings.users.index.create.password')
@@ -276,7 +248,6 @@
                                     <x-admin::form.control-group.error control-name="password" />
                                 </x-admin::form.control-group>
 
-                                <!-- Confirm Password -->
                                 <x-admin::form.control-group class="flex-1">
                                     <x-admin::form.control-group.label ::class="isUpdating ? '' : 'required'">
                                         @lang('admin::app.settings.users.index.create.confirm-password')
@@ -296,6 +267,7 @@
                                 </x-admin::form.control-group>
                             </div>
 
+                            <template v-if="isUpdating">
                             <x-admin::form.control-group class="mb-4">
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.channels.edit.ui-locale')
@@ -321,6 +293,63 @@
                                 </x-admin::form.control-group.control>
 
                                 <x-admin::form.control-group.error control-name="ui_locale_id" />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group class="mb-4">
+                                <x-admin::form.control-group.label
+                                    :title="trans('admin::app.settings.users.index.create.catalog-locale-info')"
+                                >
+                                    @lang('admin::app.settings.users.index.create.catalog-locale')
+
+                                    <span class="icon-information text-base align-middle cursor-help"></span>
+                                </x-admin::form.control-group.label>
+
+                                @php
+                                    $catalogLocales = core()->getAllActiveLocales();
+                                @endphp
+
+                                <x-admin::form.control-group.control
+                                    type="select"
+                                    id="catalog_locale_id"
+                                    name="catalog_locale_id"
+                                    v-model="data.user.catalog_locale_id"
+                                    :label="trans('admin::app.settings.users.index.create.catalog-locale')"
+                                    :placeholder="trans('admin::app.settings.users.index.create.catalog-locale')"
+                                    :options="$catalogLocales"
+                                    track-by="id"
+                                    label-by="name"
+                                >
+                                </x-admin::form.control-group.control>
+
+                                <x-admin::form.control-group.error control-name="catalog_locale_id" />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group class="mb-4">
+                                <x-admin::form.control-group.label>
+                                    @lang('admin::app.settings.users.index.create.default-channel')
+                                </x-admin::form.control-group.label>
+
+                                @php
+                                    $userChannels = core()->getAllChannels()->map(fn ($channel) => [
+                                        'id'   => $channel->id,
+                                        'name' => $channel->name ?: '['.$channel->code.']',
+                                    ])->values()->toJson();
+                                @endphp
+
+                                <x-admin::form.control-group.control
+                                    type="select"
+                                    id="default_channel_id"
+                                    name="default_channel_id"
+                                    v-model="data.user.default_channel_id"
+                                    :label="trans('admin::app.settings.users.index.create.default-channel')"
+                                    :placeholder="trans('admin::app.settings.users.index.create.default-channel')"
+                                    :options="$userChannels"
+                                    track-by="id"
+                                    label-by="name"
+                                >
+                                </x-admin::form.control-group.control>
+
+                                <x-admin::form.control-group.error control-name="default_channel_id" />
                             </x-admin::form.control-group>
 
                                 <!-- TImezone -->
@@ -349,8 +378,8 @@
 
                                 <x-admin::form.control-group.error control-name="timezone" />
                             </x-admin::form.control-group>
+                            </template>
 
-                            <!-- Role -->
                             <x-admin::form.control-group class="flex-1 w-full">
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.users.index.create.role')
@@ -405,19 +434,12 @@
                                 </template>
                             </div>
 
-                            <x-admin::form.control-group>
-                                <div class="hidden">
-                                    <x-admin::media.images
-                                        name="image"
-                                        ::uploaded-images='data.images'
-                                    />
-                                </div>
-
-                                <v-media-images
+                            <x-admin::form.control-group v-if="isUpdating">
+                                <x-admin::media.image
                                     name="image"
-                                    :uploaded-images='data.images'
-                                >
-                                </v-media-images>
+                                    ::uploaded-images="data.images"
+                                    :show-suggestions="false"
+                                />
 
                                 <x-admin::form.control-group.error control-name="image" />
 
@@ -427,7 +449,6 @@
                             </x-admin::form.control-group>
                         </x-slot>
 
-                        <!-- Modal Footer -->
                         <x-slot:footer>
                             <div class="flex gap-x-2.5 items-center">
                                 <button
@@ -442,7 +463,6 @@
                 </form>
             </x-admin::form>
 
-            <!-- User Delete Password Form -->
             <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
                 as="div"
@@ -452,19 +472,16 @@
                     ref="confirmPassword"
                 >
                     <x-admin::modal ref="confirmPasswordModal">
-                        <!-- Modal Header -->
                         <x-slot:header>
                             <p class="text-lg text-gray-800 dark:text-white font-bold">
-                                @lang('Confirm Password Before DELETE')
+                                @lang('admin::app.settings.users.index.confirm-password-before-delete')
                             </p>
                         </x-slot>
 
-                        <!-- Modal Content -->
                         <x-slot:content>
-                            <!-- Password -->
                             <x-admin::form.control-group class="mb-2.5">
                                 <x-admin::form.control-group.label class="required">
-                                    @lang('Enter Current Password')
+                                    @lang('admin::app.settings.users.index.enter-current-password')
                                 </x-admin::form.control-group.label>
 
                                 <x-admin::form.control-group.control
@@ -472,22 +489,21 @@
                                     id="password"
                                     name="password"
                                     rules="required"
-                                    :label="trans('Password')"
-                                    :placeholder="trans('Password')"
+                                    :label="trans('admin::app.settings.users.index.password')"
+                                    :placeholder="trans('admin::app.settings.users.index.password')"
                                 />
 
                                 <x-admin::form.control-group.error control-name="password" />
                             </x-admin::form.control-group>
                         </x-slot>
 
-                        <!-- Modal Footer -->
                         <x-slot:footer>
                             <div class="flex gap-x-2.5 items-center">
                                 <button
                                     type="submit"
                                     class="primary-button"
                                 >
-                                    @lang('Confirm Delete This Account')
+                                    @lang('admin::app.settings.users.index.confirm-delete-account')
                                 </button>
                             </div>
                         </x-slot>
@@ -533,6 +549,12 @@
 
                                 this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
 
+                                if (response.data.redirect_url) {
+                                    this.$navigate(response.data.redirect_url);
+
+                                    return;
+                                }
+
                                 this.resetForm();
                             })
                             .catch(error => {
@@ -543,29 +565,7 @@
                     },
 
                     editModal(url) {
-                        this.isUpdating = true;
-
-                        this.$axios.get(url)
-                            .then((response) => {
-                                this.data = {
-                                    ...response.data,
-                                        images: response.data.user.image_url
-                                        ? [{ id: 'image', url: response.data.user.image_url, value: response.data.user.image }]
-                                        : [],
-                                        user: {
-                                            ...response.data.user,
-                                            password:'',
-                                            password_confirmation:'',
-                                        },
-                                };
-
-                                this.$refs.modalForm.setValues(response.data.user);
-
-                                this.$refs.userUpdateOrCreateModal.toggle();
-                            })
-                            .catch(error => this.$emitter.emit('add-flash', { 
-                                type: 'error', message: error.response.data.message 
-                            }));
+                        this.$navigate(url);
                     },
 
                     UserConfirmModal() {

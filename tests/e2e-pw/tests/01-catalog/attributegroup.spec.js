@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute group via UI and return its code.
@@ -10,7 +10,7 @@ async function createAttributeGroup(adminPage, code, name) {
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await clickSaveAndExpect(adminPage, 'Save Attribute Group', /Attribute Group Created Successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Group Created Successfully/i);
 }
 
 /**
@@ -36,7 +36,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await adminPage.getByRole('link', { name: 'Create Attribute Group' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Description');
-    await adminPage.getByRole('button', { name: 'Save Attribute Group' }).click();
+    await clickSave(adminPage, 'Save Attribute Group');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
 
@@ -88,7 +88,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Edit"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attributegroups\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-groups\/edit/);
 
     // Go back and verify Delete action shows confirmation
     await navigateTo(adminPage, 'attributeGroups');
@@ -119,7 +119,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('After Update');
-    await clickSaveAndExpect(adminPage, 'Save Attribute Group', /Attribute Group Updated Successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Group Updated Successfully/i);
 
     // Cleanup
     await deleteAttributeGroup(adminPage, code);

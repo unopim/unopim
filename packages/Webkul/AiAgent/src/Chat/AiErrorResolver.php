@@ -82,7 +82,7 @@ class AiErrorResolver
 
     protected static function sanitizeRawMessage(Throwable $e): string
     {
-        $message = trim((string) $e->getMessage());
+        $message = trim($e->getMessage());
 
         if ($message === '' || str_contains($message, 'Unknown error')) {
             $upstream = self::extractUpstreamBody($e);
@@ -99,7 +99,7 @@ class AiErrorResolver
         $message = (string) preg_replace('/\s*Details:\s*\[\s*\]\s*$/', '', $message);
 
         if (mb_strlen($message) > 500) {
-            $message = mb_substr($message, 0, 497).'...';
+            return mb_substr($message, 0, 497).'...';
         }
 
         return $message;
@@ -109,7 +109,7 @@ class AiErrorResolver
     {
         $current = $e;
 
-        while ($current !== null) {
+        while ($current instanceof Throwable) {
             if ($current instanceof RequestException && $current->response !== null) {
                 $status = $current->response->status();
                 $body = trim((string) $current->response->body());
@@ -141,7 +141,7 @@ class AiErrorResolver
     {
         $current = $e;
 
-        while ($current !== null) {
+        while ($current instanceof Throwable) {
             if ($current instanceof DecryptException) {
                 return true;
             }
@@ -156,7 +156,7 @@ class AiErrorResolver
     {
         $current = $e;
 
-        while ($current !== null) {
+        while ($current instanceof Throwable) {
             if ($current instanceof RequestException && $current->response !== null
                 && $current->response->status() === 413) {
                 return true;

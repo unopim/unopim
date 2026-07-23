@@ -8,10 +8,10 @@
  *   2. Pin session-cookie expiry so chromium doesn't drop "session" cookies
  *      (expires=-1) as already-expired on reload.
  *   3. Open chromium with that storage state, navigate directly to
- *      `/admin/integrations/api-keys/create`, create a new integration.
+ *      `/admin/configuration/integrations/create`, create a new integration.
  *   4. If the admin user already owns an integration (UnoPim enforces
  *      one-integration-per-admin), fall through to reading the existing
- *      integration's credentials at `/admin/integrations/api-keys/edit/{id}`
+ *      integration's credentials at `/admin/configuration/integrations/edit/{id}`
  *      and re-generating its secret if missing.
  *
  * The chromium leg is needed only for the integration form, which posts
@@ -100,11 +100,11 @@ async function readCredentialsOnEditPage(page) {
  * Returns its credentials, regenerating the secret if necessary.
  */
 async function reuseExistingIntegration(page, baseUrl) {
-  await page.goto(`${baseUrl}/admin/integrations/api-keys`, { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto(`${baseUrl}/admin/configuration/integrations`, { waitUntil: 'networkidle', timeout: 30000 });
   const editIcon = page.locator('[title="Edit"], .icon-edit').first();
   if (!await editIcon.isVisible({ timeout: 5000 }).catch(() => false)) return null;
   await editIcon.click();
-  await page.waitForURL(/\/admin\/integrations\/api-keys\/edit\//, { timeout: 15000 });
+  await page.waitForURL(/\/admin\/configuration\/integrations\/edit\//, { timeout: 15000 });
   await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
   return readCredentialsOnEditPage(page);
 }
@@ -115,7 +115,7 @@ async function reuseExistingIntegration(page, baseUrl) {
  * one — UnoPim enforces unique admin_id on integrations).
  */
 async function tryCreateNewIntegration(page, baseUrl, integrationName) {
-  await page.goto(`${baseUrl}/admin/integrations/api-keys/create`, { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto(`${baseUrl}/admin/configuration/integrations/create`, { waitUntil: 'networkidle', timeout: 30000 });
   await page.locator('input[name="name"]').first().waitFor({ state: 'visible', timeout: 10000 });
   await page.locator('input[name="name"]').first().fill(integrationName);
 
@@ -125,7 +125,7 @@ async function tryCreateNewIntegration(page, baseUrl, integrationName) {
   await page.locator('#admin_id .multiselect__element').first().click();
 
   const postPromise = page.waitForResponse(
-    (r) => r.request().method() === 'POST' && r.url().includes('integrations/api-keys'),
+    (r) => r.request().method() === 'POST' && r.url().includes('configuration/integrations'),
     { timeout: 15000 },
   ).catch(() => null);
   await page.locator('button:has-text("Save")').first().click();
@@ -165,7 +165,7 @@ async function createApiIntegration({ baseUrl, adminEmail, adminPassword, integr
     if (!creds) {
       throw new Error(
         'Could not obtain API credentials. Try creating an integration manually at ' +
-        `${baseUrl}/admin/integrations/api-keys then paste client_id + client_secret into .api-config.json.`,
+        `${baseUrl}/admin/configuration/integrations then paste client_id + client_secret into .api-config.json.`,
       );
     }
 

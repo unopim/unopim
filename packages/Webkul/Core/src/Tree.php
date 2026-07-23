@@ -9,9 +9,9 @@ class Tree
     /**
      * Contains tree item
      *
-     * @var array
+     * @var array<int|string, mixed>
      */
-    public $items = [];
+    public array $items = [];
 
     /**
      * Contains acl roles
@@ -36,8 +36,6 @@ class Tree
 
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -48,10 +46,9 @@ class Tree
      * Shortcut method for create a Config with a callback.
      * This will allow you to do things like fire an event on creation.
      *
-     * @param  callable  $callback  Callback to use after the Config creation
-     * @return object
+     * @param  callable|null  $callback  Callback to use after the Config creation
      */
-    public static function create($callback = null)
+    public static function create($callback = null): self
     {
         $tree = new Tree;
 
@@ -65,17 +62,16 @@ class Tree
     /**
      * Add a Config item to the item stack
      *
-     * @param  string  $item
-     * @return void
+     * @param  array<string, mixed>  $item
      */
-    public function add($item, $type = '')
+    public function add(array $item, $type = ''): void
     {
         $item['children'] = [];
 
         if ($type == 'menu') {
             $item['url'] = route($item['route'], $item['params'] ?? []);
 
-            if (strpos($this->current, $item['url']) !== false) {
+            if (str_contains($this->current, $item['url'])) {
                 $this->currentKey = $item['key'];
             }
         } elseif ($type == 'acl') {
@@ -91,20 +87,47 @@ class Tree
 
     /**
      * Method to find the active links
-     *
-     * @param  array  $item
-     * @return string|void
      */
-    public function getActive($item)
+    public function getActive(array $item): ?bool
     {
         $url = trim($item['url'], '/');
 
         if (
-            strpos($this->current, $url) !== false
-            || (strpos($this->currentKey, $item['key']) === 0)
+            str_contains($this->current, $url)
+            || (str_starts_with($this->currentKey, $item['key']))
         ) {
             return true;
         }
+
+        return null;
+    }
+
+    /**
+     * Build the active menu trail from the top level down to the deepest active
+     * item, following the active branch at each level. Used to render breadcrumbs
+     * for the current page.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getActiveTrail(): array
+    {
+        $trail = [];
+
+        $nodes = $this->items;
+
+        while (! empty($nodes)) {
+            $activeItem = collect($nodes)->first(fn (array $item): bool => (bool) $this->getActive($item));
+
+            if (! $activeItem) {
+                break;
+            }
+
+            $trail[] = $activeItem;
+
+            $nodes = $activeItem['children'] ?? [];
+        }
+
+        return $trail;
     }
 
     /**
@@ -112,7 +135,7 @@ class Tree
      */
     public function removeUnauthorizedUrls(): array
     {
-        return collect($this->items)->map(function ($item) {
+        return collect($this->items)->map(function (array $item): array {
             $this->removeChildrenUnauthorizedUrls($item);
 
             return $item;

@@ -21,7 +21,7 @@ test.describe('Attribute History - View Tooltip (#703)', () => {
     await adminPage.waitForTimeout(300);
     await adminPage.getByRole('option', { name: 'Text' }).first().click();
 
-    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute created successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Attribute created successfully/i);
 
     // Step 2: Navigate to the attribute's History tab
     await navigateTo(adminPage, 'attributes');

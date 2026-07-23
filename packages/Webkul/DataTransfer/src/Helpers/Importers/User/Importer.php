@@ -74,8 +74,6 @@ class Importer extends AbstractImporter
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
@@ -131,14 +129,14 @@ class Importer extends AbstractImporter
         }
 
         $validator = Validator::make($rowData, [
-            'name'            => 'required|string',
-            'email'           => 'required|email',
-            'role_name'       => 'required|string',
-            'permission_type' => 'nullable|in:all,custom',
-            'permissions'     => 'nullable|string',
-            'status'          => 'nullable|in:active,inactive',
-            'timezone'        => 'nullable|string',
-            'ui_locale_code'  => 'nullable|string',
+            'name'            => ['required', 'string'],
+            'email'           => ['required', 'email'],
+            'role_name'       => ['required', 'string'],
+            'permission_type' => ['nullable', 'in:all,custom'],
+            'permissions'     => ['nullable', 'string'],
+            'status'          => ['nullable', 'in:active,inactive'],
+            'timezone'        => ['nullable', 'string'],
+            'ui_locale_code'  => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -160,10 +158,11 @@ class Importer extends AbstractImporter
 
     protected function shouldImportRow(array $rowData): bool
     {
-        return ! (
-            $this->getStatusFilter() === self::FILTER_STATUS_ACTIVE
-            && ($rowData['status'] ?? self::FILTER_STATUS_ACTIVE) !== self::FILTER_STATUS_ACTIVE
-        );
+        if ($this->getStatusFilter() !== self::FILTER_STATUS_ACTIVE) {
+            return true;
+        }
+
+        return ($rowData['status'] ?? self::FILTER_STATUS_ACTIVE) === self::FILTER_STATUS_ACTIVE;
     }
 
     protected function getStatusFilter(): string
@@ -213,11 +212,9 @@ class Importer extends AbstractImporter
 
         $idsToDelete = array_unique($idsToDelete);
 
-        if (! empty($idsToDelete)) {
-            foreach ($idsToDelete as $id) {
-                $this->adminRepository->delete($id);
-                $this->deletedItemsCount++;
-            }
+        foreach ($idsToDelete as $id) {
+            $this->adminRepository->delete($id);
+            $this->deletedItemsCount++;
         }
 
         return true;
@@ -238,7 +235,7 @@ class Importer extends AbstractImporter
                 $roleData = [
                     'name'            => $rowData['role_name'],
                     'permission_type' => $rowData['permission_type'],
-                    'permissions'     => ! empty($rowData['permissions']) ? explode(',', $rowData['permissions']) : null,
+                    'permissions'     => empty($rowData['permissions']) ? null : explode(',', $rowData['permissions']),
                 ];
 
                 if ($roleId) {
@@ -322,6 +319,6 @@ class Importer extends AbstractImporter
 
         $basePath = trim((string) ($this->import->images_directory_path ?? ''), '/');
 
-        return $basePath ? $basePath.'/'.$image : $image;
+        return $basePath !== '' && $basePath !== '0' ? $basePath.'/'.$image : $image;
     }
 }

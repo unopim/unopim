@@ -17,6 +17,7 @@
     "@vee-validate/i18n": "^4.9.1",
     "@vee-validate/rules": "^4.9.1",
     "@vitejs/plugin-vue": "^5.0.0",
+    "dompurify": "^3.4.11",
     "flatpickr": "^4.6.13",
     "mitt": "^3.0.1",
     "tributejs": "^5.1.3",

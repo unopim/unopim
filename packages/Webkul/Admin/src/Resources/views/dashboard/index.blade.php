@@ -4,50 +4,46 @@
     </x-slot>
 
     <!-- Welcome Banner -->
-    <div class="flex gap-4 justify-between items-center mb-5 max-sm:flex-wrap">
-        <div class="grid gap-1.5">
-            <p class="text-xl text-zinc-800 dark:text-slate-50 font-bold !leading-normal">
-                @lang('admin::app.dashboard.index.user-name', ['user_name' => auth()->guard('admin')->user()->name]),
-            </p>
+    <x-admin::page-header
+        :title="trans('admin::app.dashboard.index.user-name', ['user_name' => auth()->guard('admin')->user()->name]) . ','"
+        :subtitle="trans('admin::app.dashboard.index.user-info')"
+        class="mb-5"
+    >
+        <x-slot:actions>
+            <!-- Quick Actions -->
+            <div class="flex gap-2 max-sm:flex-wrap">
+                @if (bouncer()->hasPermission('catalog.products.create'))
+                    <a
+                        href="{{ route('admin.catalog.products.index') }}"
+                        class="primary-button text-xs no-underline"
+                    >
+                        <span class="icon-add text-sm"></span>
+                        @lang('admin::app.dashboard.index.create-product')
+                    </a>
+                @endif
 
-            <p class="text-sm text-zinc-600 !leading-normal dark:text-slate-300">
-                @lang('admin::app.dashboard.index.user-info')
-            </p>
-        </div>
+                @if (bouncer()->hasPermission('data_transfer.imports'))
+                    <a
+                        href="{{ route('admin.settings.data_transfer.imports.index') }}"
+                        class="secondary-button text-xs no-underline"
+                    >
+                        <svg class="w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        @lang('admin::app.dashboard.index.import-data')
+                    </a>
+                @endif
 
-        <!-- Quick Actions -->
-        <div class="flex gap-2 max-sm:flex-wrap">
-            @if (bouncer()->hasPermission('catalog.products.create'))
-                <a
-                    href="{{ route('admin.catalog.products.index') }}"
-                    class="primary-button text-xs no-underline"
-                >
-                    <span class="icon-add text-sm"></span>
-                    @lang('admin::app.dashboard.index.create-product')
-                </a>
-            @endif
-
-            @if (bouncer()->hasPermission('data_transfer.imports'))
-                <a
-                    href="{{ route('admin.settings.data_transfer.imports.index') }}"
-                    class="secondary-button text-xs no-underline"
-                >
-                    <svg class="w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    @lang('admin::app.dashboard.index.import-data')
-                </a>
-            @endif
-
-            @if (bouncer()->hasPermission('data_transfer.export'))
-                <a
-                    href="{{ route('admin.settings.data_transfer.exports.index') }}"
-                    class="secondary-button text-xs no-underline"
-                >
-                    <svg class="w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="transform: rotate(180deg); transform-origin: center;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    @lang('admin::app.dashboard.index.export-data')
-                </a>
-            @endif
-        </div>
-    </div>
+                @if (bouncer()->hasPermission('data_transfer.export'))
+                    <a
+                        href="{{ route('admin.settings.data_transfer.exports.index') }}"
+                        class="secondary-button text-xs no-underline"
+                    >
+                        <svg class="w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="transform: rotate(180deg); transform-origin: center;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        @lang('admin::app.dashboard.index.export-data')
+                    </a>
+                @endif
+            </div>
+        </x-slot>
+    </x-admin::page-header>
 
     <!-- ═══ OVERVIEW ═══ -->
 

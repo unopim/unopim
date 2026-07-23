@@ -25,7 +25,7 @@ RUN composer install \
 # ---------------------------------------------------------------------------
 # Stage 2: Production image
 # ---------------------------------------------------------------------------
-FROM php:8.3-fpm
+FROM php:8.4-fpm
 
 LABEL maintainer="Webkul <support@webkul.com>"
 LABEL org.opencontainers.image.title="UnoPim FPM"
@@ -79,6 +79,13 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
+
+# Align www-data with the host user so bind-mounted storage stays
+# writable on both sides (defaults keep the stock image behavior).
+ARG HOST_UID=33
+ARG HOST_GID=33
+RUN groupmod -o -g "${HOST_GID}" www-data \
+    && usermod -o -u "${HOST_UID}" -g "${HOST_GID}" www-data
 
 # Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \

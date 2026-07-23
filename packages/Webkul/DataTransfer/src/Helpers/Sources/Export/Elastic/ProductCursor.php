@@ -15,7 +15,7 @@ class ProductCursor extends AbstractElasticCursor
      *
      * @var array|\stdClass|null
      */
-    protected $cachedBoolQuery = null;
+    protected $cachedBoolQuery;
 
     public function __construct(
         array $requestParams,
@@ -43,7 +43,7 @@ class ProductCursor extends AbstractElasticCursor
             'stored_fields'    => [],
         ];
 
-        if (! empty($this->searchAfter)) {
+        if ($this->searchAfter !== []) {
             $query['search_after'] = $this->searchAfter;
         }
 
@@ -67,7 +67,7 @@ class ProductCursor extends AbstractElasticCursor
             if (! empty($hits)) {
                 $this->searchAfter = end($hits)['sort'];
 
-                return array_map(fn ($hit) => ['id' => $hit['_id']], $hits);
+                return array_map(fn (array $hit): array => ['id' => $hit['_id']], $hits);
             }
         } catch (\Throwable $e) {
             \Log::error('Elasticsearch search error: '.$e->getMessage());
@@ -79,7 +79,7 @@ class ProductCursor extends AbstractElasticCursor
 
     protected function buildBoolQuery(array $filters): array
     {
-        $filter = app(ProductExportFilter::class);
+        $filter = resolve(ProductExportFilter::class);
 
         $clauses = [];
 
@@ -104,9 +104,9 @@ class ProductCursor extends AbstractElasticCursor
         $range = array_filter([
             'gte' => $filter->updatedAfter($filters),
             'lte' => $filter->updatedBefore($filters),
-        ], fn ($bound) => ! empty($bound));
+        ], fn (?string $bound): bool => ! in_array($bound, [null, '', '0'], true));
 
-        if (! empty($range)) {
+        if ($range !== []) {
             $clauses[] = ['range' => ['updated_at' => $range]];
         }
 
@@ -116,7 +116,7 @@ class ProductCursor extends AbstractElasticCursor
             $clauses[] = ['terms' => ['id' => $valueFilteredIds]];
         }
 
-        return $clauses ? ['filter' => $clauses] : [];
+        return $clauses !== [] ? ['filter' => $clauses] : [];
     }
 
     /**

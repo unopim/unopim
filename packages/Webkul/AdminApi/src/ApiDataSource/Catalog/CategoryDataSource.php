@@ -141,7 +141,6 @@ class CategoryDataSource extends ApiDataSource
     /**
      * Retrieves the ID of a product based on its code.
      *
-     * @param Builder
      * @return int|null The ID of the product if found, otherwise null.
      */
     private function getParentIdByCode($queryBuilder, string $code)

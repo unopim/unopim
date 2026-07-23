@@ -3,6 +3,7 @@
 namespace Webkul\Category\Repositories;
 
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Webkul\Category\Contracts\CategoryField;
@@ -121,16 +122,16 @@ class CategoryFieldRepository extends Repository
     {
         $query = DB::table('category_fields')
             ->select($columns)
-            ->leftJoin('category_field_translations as requested_category_field_translation', function ($join) {
+            ->leftJoin('category_field_translations as requested_category_field_translation', function ($join): void {
                 $join->on('requested_category_field_translation.category_field_id', '=', 'category_fields.id')
                     ->where('requested_category_field_translation.locale', '=', core()->getRequestedLocaleCode());
             })
-            ->where(function ($query) use ($search) {
+            ->where(function (Builder $query) use ($search): void {
                 $query->where('category_fields.code', 'LIKE', '%'.$search.'%')
                     ->orWhere('requested_category_field_translation.name', 'LIKE', '%'.$search.'%');
             });
 
-        if ($excludeTypes) {
+        if ($excludeTypes !== []) {
             $query->whereNotIn('category_fields.type', $excludeTypes);
         }
 

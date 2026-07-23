@@ -20,8 +20,6 @@ class Excel extends AbstractSource
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(string $filePath)
     {
@@ -43,7 +41,7 @@ class Excel extends AbstractSource
             $this->columnNames = $headerRow;
         } catch (\LogicException $e) {
             throw $e;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }
     }
@@ -53,6 +51,8 @@ class Excel extends AbstractSource
      */
     protected function getNextRow(): array|bool
     {
+        $rowData = [];
+
         for ($column = 1; $column <= $this->totalColumns; $column++) {
             $cellValue = $this->reader->getCellByColumnAndRow($column, $this->currentRowNumber)->getValue();
             $rowData[] = $cellValue !== null ? (string) $cellValue : null;
@@ -60,7 +60,7 @@ class Excel extends AbstractSource
 
         $filteredRowData = array_filter($rowData);
 
-        if (empty($filteredRowData)) {
+        if ($filteredRowData === []) {
             return false;
         }
 

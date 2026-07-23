@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Category\Models\CategoryField;
 use Webkul\Category\Models\CategoryFieldOption;
 
+/**
+ * @extends Factory<CategoryField>
+ */
 class CategoryFieldFactory extends Factory
 {
     /**
@@ -46,71 +49,59 @@ class CategoryFieldFactory extends Factory
         ];
 
         return [
-            'name'             => $this->faker->word,
-            'code'             => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'name'             => fake()->word,
+            'code'             => fake()->regexify('/^[a-zA-Z]+\w+$/'),
             'type'             => array_rand($types),
             'validation'       => '',
-            'position'         => $this->faker->randomDigit,
+            'position'         => fake()->randomDigit,
             'is_required'      => false,
             'is_unique'        => false,
             'value_per_locale' => false,
-            'section'          => $this->faker->randomElement(['left', 'right']),
-            'status'           => $this->faker->boolean ? 1 : 0,
+            'section'          => fake()->randomElement(['left', 'right']),
+            'status'           => fake()->boolean ? 1 : 0,
         ];
     }
 
     public function validation_numeric(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'numeric',
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'validation' => 'numeric',
+        ]);
     }
 
     public function validation_email(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'email',
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'validation' => 'email',
+        ]);
     }
 
     public function validation_decimal(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'decimal',
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'validation' => 'decimal',
+        ]);
     }
 
     public function validation_url(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'url',
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'validation' => 'url',
+        ]);
     }
 
     public function required(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_required' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'is_required' => true,
+        ]);
     }
 
     public function unique(): CategoryFieldFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_unique' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'is_unique' => true,
+        ]);
     }
 
     /**
@@ -118,7 +109,7 @@ class CategoryFieldFactory extends Factory
      */
     public function configure()
     {
-        return $this->afterCreating(function (CategoryField $field) {
+        return $this->afterCreating(function (CategoryField $field): void {
             if (in_array($field->type, ['select', 'multiselect', 'checkbox'])) {
                 CategoryFieldOption::factory()->count(2)->create(['category_field_id' => $field->id]);
             }

@@ -24,11 +24,9 @@ class SkuFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         if (! in_array($property, $this->supportedProperties)) {
             throw new \InvalidArgumentException(
@@ -40,21 +38,16 @@ class SkuFilter extends AbstractPropertyFilter
             );
         }
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $this->queryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value);
-
-                break;
-            case FilterOperators::CONTAINS:
-                $this->queryBuilder->where(function ($query) use ($options, $property, $value) {
-                    foreach ($value as $val) {
-                        $escapedValue = QueryString::escapeValue($val);
-                        $query->orWhere(sprintf('%s.%s', $this->getSearchTablePath($options), $property), 'LIKE', "%{$escapedValue}%");
-                    }
-                });
-
-                break;
-        }
+        match ($operator) {
+            FilterOperators::IN       => $this->queryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value),
+            FilterOperators::CONTAINS => $this->queryBuilder->where(function ($query) use ($options, $property, $value): void {
+                foreach ($value as $val) {
+                    $escapedValue = QueryString::escapeValue($val);
+                    $query->orWhere(sprintf('%s.%s', $this->getSearchTablePath($options), $property), 'LIKE', "%{$escapedValue}%");
+                }
+            }),
+            default => $this,
+        };
 
         return $this;
     }

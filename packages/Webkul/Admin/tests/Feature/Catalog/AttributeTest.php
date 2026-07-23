@@ -3,6 +3,7 @@
 use Illuminate\Support\Str;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Core\Models\Locale;
 
 use function Pest\Laravel\deleteJson;
@@ -17,6 +18,69 @@ it('should return the Attribute index page', function () {
 
     $response->assertStatus(200)
         ->assertSeeText(trans('admin::app.catalog.attributes.index.title'));
+});
+
+it('should render the swatch type field in the attribute quick create modal', function () {
+    $this->loginAsAdmin();
+
+    $response = get(route('admin.catalog.attributes.index'));
+
+    $response->assertStatus(200)
+        ->assertSee('name="swatch_type"', false)
+        ->assertSeeText(trans('admin::app.catalog.attributes.create.swatch'));
+});
+
+it('should render the creation-only toggles in the attribute quick create modal', function () {
+    $this->loginAsAdmin();
+
+    $response = get(route('admin.catalog.attributes.index'));
+
+    $response->assertStatus(200)
+        ->assertSee('id="is_unique"', false)
+        ->assertSee('id="value_per_locale"', false)
+        ->assertSee('id="value_per_channel"', false);
+});
+
+it('should create a select attribute with swatch type and creation-only flags from the quick create payload', function () {
+    $this->loginAsAdmin();
+
+    $attribute = [
+        'code'              => 'quick_select_attribute',
+        'type'              => 'select',
+        'swatch_type'       => 'color',
+        'value_per_locale'  => 1,
+        'value_per_channel' => 1,
+    ];
+
+    $response = postJson(route('admin.catalog.attributes.store'), $attribute);
+
+    $response->assertStatus(302);
+
+    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), [
+        'code'              => 'quick_select_attribute',
+        'type'              => 'select',
+        'swatch_type'       => 'color',
+        'value_per_locale'  => 1,
+        'value_per_channel' => 1,
+    ]);
+});
+
+it('should return a clear reserved code message when the attribute code is reserved', function () {
+    $this->loginAsAdmin();
+
+    $response = postJson(route('admin.catalog.attributes.store'), [
+        'code'       => 'type',
+        'type'       => 'text',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonPath(
+            'errors.code.0',
+            trans('core::validation.not-supported', [
+                'attribute'   => 'code',
+                'unsupported' => implode(', ', NotSupportedAttributes::ATTRIBUTE_CODES),
+            ])
+        );
 });
 
 it('should create the Attribute', function () {

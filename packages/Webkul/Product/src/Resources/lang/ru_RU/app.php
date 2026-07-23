@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Структуры вариантов',
+        'ai-suggest'         => 'Предложение ИИ',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'копия - :value',
@@ -13,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Настраиваемый',
-        'simple'       => 'Простой',
+        'configurable'  => 'Настраиваемый',
+        'simple'        => 'Простой',
+        'variant-group' => 'Группа вариантов',
     ],
 ];

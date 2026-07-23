@@ -25,7 +25,7 @@
 
             <div
                 v-if="isOpen"
-                class="absolute right-0.5 top-0.8 w-36 max-sm:left-1/2 bg-white dark:bg-cherry-900 shadow-lg z-[10001] text-gray-700 border-2 border-violet-100 dark:border-cherry-800 min-h[110px] rounded-md"
+                class="absolute right-0.5 top-0.8 w-36 max-sm:left-1/2 bg-white dark:bg-cherry-900 shadow-lg z-[10001] text-gray-700 border-2 border-primary-100 dark:border-cherry-800 min-h[110px] rounded-md"
             >
                 <ul class="text-gray-700 rounded">
                     {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.list.before', ['product' => $product]) !!}

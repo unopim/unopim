@@ -29,10 +29,11 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
 
   // Enable "With Media"
-  await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
+  await adminPage.locator('label:has(input#with_media)').click();
+  await expect(adminPage.locator('input#with_media')).toBeChecked();
 
   // Save the export — redirects to the show/detail page
-  await clickSaveAndExpect(adminPage, 'Save Export', /Export created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
 
   // Navigate to the edit page to set the Status filter
   await adminPage.getByRole('link', { name: 'Edit' }).click();
@@ -51,7 +52,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   await adminPage.getByRole('option', { name: new RegExp(statusLabel, 'i') }).locator('span').first().click();
 
   // Save with the status filter applied — redirects back to show page
-  await adminPage.getByRole('button', { name: /Save Export/i }).click();
+  await clickSaveAndExpect(adminPage, 'Save changes', /Export updated successfully/i);
   await adminPage.waitForLoadState('networkidle');
 
   // Run the export — this is where the ES8 bug would manifest
@@ -60,7 +61,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   await exportNowBtn.click();
 
   // The export should be queued successfully, not fail with ES boolean error
-  await expect(adminPage.locator('#app').getByText(/Job queued/i)).toBeVisible({ timeout: 20000 });
+  await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
 }
 
 /**

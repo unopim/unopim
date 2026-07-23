@@ -4,15 +4,10 @@
     </x-slot>
 
     {{-- Page header --}}
-    <div class="flex flex-col gap-1 mt-3.5">
-        <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-            {{ trans('admin::app.help.system-info.title') }}
-        </p>
-
-        <p class="text-gray-600 dark:text-gray-300 leading-[140%] max-w-[720px]">
-            {{ trans('admin::app.help.system-info.subtitle') }}
-        </p>
-    </div>
+    <x-admin::page-header
+        :title="trans('admin::app.help.system-info.title')"
+        :subtitle="trans('admin::app.help.system-info.subtitle')"
+    />
 
     @php
         $sectionIcons = [
@@ -28,7 +23,7 @@
         @foreach ($sections as $sectionKey => $rows)
             <div class="flex flex-col bg-white dark:bg-cherry-900 rounded-lg box-shadow p-4">
                 <div class="flex items-center gap-3 pb-3 mb-2 border-b dark:border-cherry-800">
-                    <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-300 text-xl {{ $sectionIcons[$sectionKey] ?? 'icon-information' }}"></span>
+                    <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-primary-100 text-primary-600 dark:bg-primary-900/40 dark:text-primary-300 text-xl {{ $sectionIcons[$sectionKey] ?? 'icon-information' }}"></span>
 
                     <p class="text-base font-semibold text-gray-800 dark:text-slate-50">
                         {{ trans('admin::app.help.system-info.sections.'.$sectionKey) }}
@@ -59,7 +54,7 @@
 
     <div class="flex flex-col bg-white dark:bg-cherry-900 rounded-lg box-shadow p-4 mt-4">
         <div class="flex items-center gap-3 pb-3 mb-3 border-b dark:border-cherry-800">
-            <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-300 text-xl icon-configuration"></span>
+            <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-primary-100 text-primary-600 dark:bg-primary-900/40 dark:text-primary-300 text-xl icon-configuration"></span>
 
             <p class="text-base font-semibold text-gray-800 dark:text-slate-50">
                 {{ trans('admin::app.help.system-info.sections.extensions') }}
@@ -93,7 +88,7 @@
             <div class="flex flex-col">
                 <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b dark:border-cherry-800">
                     <div class="flex items-center gap-3">
-                        <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-300 text-xl icon-catalog"></span>
+                        <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-primary-100 text-primary-600 dark:bg-primary-900/40 dark:text-primary-300 text-xl icon-catalog"></span>
 
                         <p class="text-base font-semibold text-gray-800 dark:text-slate-50">
                             @lang('admin::app.help.system-info.sections.packages')

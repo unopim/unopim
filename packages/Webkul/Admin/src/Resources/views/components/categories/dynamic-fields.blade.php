@@ -121,7 +121,7 @@
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
-                <x-admin::media.images
+                <x-admin::media.image
                     name="{{ $fieldName }}"
                     ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
                     :id="$field->code"

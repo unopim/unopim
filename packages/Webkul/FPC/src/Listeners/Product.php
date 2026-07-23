@@ -11,8 +11,6 @@ class Product
 {
     /**
      * Create a new listener instance.
-     *
-     * @return void
      */
     public function __construct(
         protected ProductRepository $productRepository,
@@ -24,9 +22,8 @@ class Product
      * Update or create product page cache
      *
      * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
      */
-    public function afterUpdate($product)
+    public function afterUpdate($product): void
     {
         $urls = $this->getForgettableUrls($product);
 
@@ -37,9 +34,8 @@ class Product
      * Delete product page c
      *
      * @param  int  $productId
-     * @return void
      */
-    public function beforeDelete($productId)
+    public function beforeDelete($productId): void
     {
         $product = $this->productRepository->find($productId);
 
@@ -52,9 +48,8 @@ class Product
      * Returns product urls
      *
      * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
      */
-    public function getForgettableUrls($product)
+    public function getForgettableUrls($product): array
     {
         $urls = [];
 
@@ -71,9 +66,8 @@ class Product
      * Returns parents bundle products associated with simple product
      *
      * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
      */
-    public function getAllRelatedProducts($product)
+    public function getAllRelatedProducts($product): array
     {
         $products = [$product];
 
@@ -107,9 +101,8 @@ class Product
      * Returns parents bundle products associated with simple product
      *
      * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
      */
-    public function getParentBundleProducts($product)
+    public function getParentBundleProducts($product): array
     {
         $bundleOptionProducts = $this->productBundleOptionProductRepository->findWhere([
             'product_id' => $product->id,
@@ -128,9 +121,8 @@ class Product
      * Returns parents group products associated with simple product
      *
      * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
      */
-    public function getParentGroupProducts($product)
+    public function getParentGroupProducts($product): array
     {
         $groupedOptionProducts = $this->productGroupedProductRepository->findWhere([
             'associated_product_id' => $product->id,

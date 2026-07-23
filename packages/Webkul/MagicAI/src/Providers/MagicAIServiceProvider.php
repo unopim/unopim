@@ -21,18 +21,14 @@ class MagicAIServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $loader = AliasLoader::getInstance();
 
         $loader->alias('magic_ai', MagicAIFacade::class);
 
-        $this->app->singleton('magic_ai', function () {
-            return new MagicAI;
-        });
+        $this->app->singleton('magic_ai', fn (): MagicAI => new MagicAI);
 
         $this->registerConfig();
     }

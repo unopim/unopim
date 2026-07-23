@@ -1,9 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Bus;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Tools\ImportProducts;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\Product\Models\Product;
 
@@ -28,7 +30,7 @@ it('denies AI import when the user lacks import execute permission', function ()
     $admin = $this->loginWithPermissions('custom', ['catalog', 'catalog.products', 'catalog.products.create']);
     $context = buildAiImportChatContext($admin);
 
-    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request(['mode' => 'create_only'])));
+    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request([])));
 
     expect($result['error'])->toContain('data_transfer.imports.execute');
 });
@@ -37,12 +39,14 @@ it('denies AI import when the user has import execute permission but no product 
     $admin = $this->loginWithPermissions('custom', ['data_transfer', 'data_transfer.imports.execute']);
     $context = buildAiImportChatContext($admin);
 
-    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request(['mode' => 'create_or_update'])));
+    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request([])));
 
     expect($result['error'])->toContain('catalog.products.create or catalog.products.edit');
 });
 
-it('creates new products during AI import when the user has execute and create permission', function () {
+it('queues eligible rows through the core import pipeline when the user has execute and create permission', function () {
+    Bus::fake();
+
     $admin = $this->loginWithPermissions('custom', [
         'data_transfer',
         'data_transfer.imports.execute',
@@ -57,14 +61,18 @@ it('creates new products during AI import when the user has execute and create p
     ]);
 
     $context = buildAiImportChatContext($admin, $filePath);
-    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request(['mode' => 'create_only'])));
+    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request([])));
 
-    expect(data_get($result, 'result.created'))->toBe(1)
-        ->and(data_get($result, 'result.updated'))->toBe(0)
-        ->and(Product::query()->where('sku', 'AI-NEW-100')->exists())->toBeTrue();
+    expect(data_get($result, 'result.queued_rows'))->toBe(1)
+        ->and(data_get($result, 'result.skipped'))->toBe(0)
+        ->and(data_get($result, 'result.tracker_id'))->not->toBeNull();
+
+    Bus::assertDispatched(ImportTrackBatch::class);
 });
 
-it('skips existing products during mixed AI import when the user lacks edit permission', function () {
+it('skips existing products a user cannot edit and queues only the eligible new rows', function () {
+    Bus::fake();
+
     Product::factory()->simple()->withInitialValues()->create([
         'sku'    => 'AI-EXISTING-100',
         'status' => 0,
@@ -85,15 +93,18 @@ it('skips existing products during mixed AI import when the user lacks edit perm
     ]);
 
     $context = buildAiImportChatContext($admin, $filePath);
-    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request(['mode' => 'create_or_update'])));
+    $result = decodeToolResult(app(ImportProducts::class)->register($context)->handle(new Request([])));
 
-    expect(data_get($result, 'result.created'))->toBe(1)
-        ->and(data_get($result, 'result.updated'))->toBe(0)
+    expect(data_get($result, 'result.queued_rows'))->toBe(1)
         ->and(data_get($result, 'result.skipped'))->toBe(1)
         ->and(data_get($result, 'result.errors.0'))->toContain('catalog.products.edit');
 
+    Bus::assertDispatched(ImportTrackBatch::class);
+
+    // The existing product is filtered out, not modified, and the eligible
+    // new row is queued rather than created inline.
     expect((int) Product::query()->where('sku', 'AI-EXISTING-100')->value('status'))->toBe(0)
-        ->and(Product::query()->where('sku', 'AI-NEW-101')->exists())->toBeTrue();
+        ->and(Product::query()->where('sku', 'AI-NEW-101')->exists())->toBeFalse();
 });
 
 /**

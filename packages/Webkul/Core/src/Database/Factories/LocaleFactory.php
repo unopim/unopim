@@ -5,6 +5,9 @@ namespace Webkul\Core\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Core\Models\Locale;
 
+/**
+ * @extends Factory<Locale>
+ */
 class LocaleFactory extends Factory
 {
     /**
@@ -25,14 +28,14 @@ class LocaleFactory extends Factory
     public function definition(): array
     {
         do {
-            $languageCode = $this->faker->languageCode;
+            $languageCode = fake()->languageCode;
         } while (Locale::query()
             ->where('code', $languageCode)
             ->exists());
 
         return [
             'code'   => $languageCode,
-            'status' => $this->faker->boolean ? 1 : 0,
+            'status' => fake()->boolean ? 1 : 0,
         ];
     }
 }

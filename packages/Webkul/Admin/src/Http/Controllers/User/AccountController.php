@@ -4,11 +4,14 @@ namespace Webkul\Admin\Http\Controllers\User;
 
 use Hash;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Core\Rules\FileMimeExtensionMatch;
 
 class AccountController extends Controller
 {
@@ -36,14 +39,25 @@ class AccountController extends Controller
     {
         $user = auth()->guard('admin')->user();
 
+        $imageRules = [
+            'nullable',
+            'image',
+            'mimes:bmp,jpeg,jpg,png,webp',
+            'max:2048',
+            new FileMimeExtensionMatch,
+        ];
+
         $this->validate(request(), [
-            'name'             => 'required',
-            'email'            => 'email|unique:admins,email,'.$user->id,
-            'password'         => 'nullable|confirmed|min:'.config('admin.auth.password_min'),
-            'current_password' => 'required',
-            'image.*'          => 'nullable|mimes:bmp,jpeg,jpg,png,webp,svg',
-            'timezone'         => 'required',
-            'ui_locale_id'     => 'required',
+            'name'               => 'required',
+            'email'              => 'email|unique:admins,email,'.$user->id,
+            'password'           => 'nullable|confirmed|min:'.config('admin.auth.password_min'),
+            'current_password'   => 'required',
+            'image'              => request()->file('image') instanceof UploadedFile ? $imageRules : ['nullable'],
+            'image.*'            => $imageRules,
+            'timezone'           => 'required',
+            'ui_locale_id'       => 'required',
+            'catalog_locale_id'  => 'nullable|integer|exists:locales,id,status,1',
+            'default_channel_id' => 'nullable|integer|exists:channels,id',
         ]);
 
         $data = request()->only([
@@ -55,9 +69,11 @@ class AccountController extends Controller
             'image',
             'timezone',
             'ui_locale_id',
+            'catalog_locale_id',
+            'default_channel_id',
         ]);
 
-        if (! Hash::check($data['current_password'], $user->password)) {
+        if (! Hash::check($data['current_password'] ?? '', $user->password)) {
             session()->flash('warning', trans('admin::app.account.edit.invalid-password'));
 
             return redirect()->back();
@@ -65,7 +81,7 @@ class AccountController extends Controller
 
         $isPasswordChanged = false;
 
-        if (! $data['password']) {
+        if (empty($data['password'])) {
             unset($data['password']);
         } else {
             $isPasswordChanged = true;
@@ -74,9 +90,14 @@ class AccountController extends Controller
         }
 
         if (request()->hasFile('image')) {
-            $data['image'] = $this->fileStorer->store(
+            $image = request()->file('image');
+            $image = is_array($image) ? current($image) : $image;
+            $extension = $image->guessExtension() ?: strtolower($image->getClientOriginalExtension());
+
+            $data['image'] = $this->fileStorer->storeAs(
                 path: 'admins'.DIRECTORY_SEPARATOR.$user->id,
-                file: current(request()->file('image'))
+                name: Str::random(40).'.'.$extension,
+                file: $image,
             );
         } else {
             if (! isset($data['image'])) {
@@ -93,8 +114,6 @@ class AccountController extends Controller
         $user->update($data);
 
         if ($isPasswordChanged) {
-            // Revoke all Passport access tokens issued to this admin so previously-issued API
-            // credentials stop working after a password change (security best practice).
             $user->tokens()->update(['revoked' => true]);
 
             Event::dispatch('admin.password.update.after', $user);

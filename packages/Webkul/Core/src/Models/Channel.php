@@ -2,6 +2,8 @@
 
 namespace Webkul\Core\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,12 +15,16 @@ use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Fillable([
+    'code',
+    'name',
+    'root_category_id',
+])]
+#[Table(name: 'channels')]
 class Channel extends TranslatableModel implements ChannelContract, HistoryContract
 {
     use HasFactory;
     use HistoryTrait;
-
-    protected $table = 'channels';
 
     /** Tags for History */
     protected $historyTags = ['channel'];
@@ -34,26 +40,7 @@ class Channel extends TranslatableModel implements ChannelContract, HistoryContr
         'locales',
     ];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'code',
-        'name',
-        'root_category_id',
-    ];
-
     protected $guarded = [];
-
-    /**
-     * Castable.
-     *
-     * @var array
-     */
-    protected $casts = [
-    ];
 
     /**
      * Translated attributes.
@@ -94,5 +81,14 @@ class Channel extends TranslatableModel implements ChannelContract, HistoryContr
     protected static function newFactory(): Factory
     {
         return ChannelFactory::new();
+    }
+
+    /**
+     * Castable.
+     */
+    protected function casts(): array
+    {
+        return [
+        ];
     }
 }

@@ -97,12 +97,12 @@ it('should return the category edit page', function () {
 
     $categoryId = Category::factory()->create()->id;
 
+    // Save lives in the unsaved-changes bar, which only appears once the form is dirty.
     $this->get(route('admin.catalog.categories.edit', $categoryId))
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.categories.edit.title'))
-        ->assertSeeText(trans('admin::app.catalog.categories.edit.save-btn'))
-        ->assertSeeText(trans('admin::app.catalog.categories.edit.save-btn'))
-        ->assertSeeText(trans('admin::app.catalog.categories.edit.code'));
+        ->assertSeeText(trans('admin::app.catalog.categories.edit.code'))
+        ->assertSee('v-unsaved-changes', false);
 });
 
 it('should update the category successfully', function () {

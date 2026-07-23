@@ -56,9 +56,13 @@ class LocaleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id): JsonResponse
+    public function edit(int $id): View|JsonResponse
     {
         $locale = $this->localeRepository->findOrFail($id);
+
+        if (! request()->expectsJson()) {
+            return view('admin::settings.locales.edit', compact('locale'));
+        }
 
         return new JsonResponse([
             'data' => [
@@ -90,7 +94,8 @@ class LocaleController extends Controller
         ]), request()->id);
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.locales.index.update-success'),
+            'message'      => trans('admin::app.settings.locales.index.update-success'),
+            'redirect_url' => route('admin.settings.locales.index'),
         ]);
     }
 

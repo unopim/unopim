@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table): void {
             $table->index('updated_at', 'products_updated_at_idx');
             $table->index(['status', 'id'], 'products_status_id_idx');
         });
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table): void {
             $table->dropIndex('products_updated_at_idx');
             $table->dropIndex('products_status_id_idx');
         });

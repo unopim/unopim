@@ -1,12 +1,10 @@
 <x-admin::layouts.anonymous>
-    <!-- Page Title -->
     <x-slot:title>
         @lang('admin::app.users.sessions.title')
     </x-slot>
 
-    <div class="flex min-h-screen w-full items-center justify-center p-6 bg-gradient-to-b from-violet-50 to-gray-50 dark:from-cherry-900 dark:to-cherry-900">
+    <div class="flex min-h-screen w-full items-center justify-center p-6 bg-gradient-to-b from-primary-50 to-gray-50 dark:from-cherry-900 dark:to-cherry-900">
         <div class="w-full max-w-[400px]">
-            <!-- Logo -->
             <div class="mb-8 flex justify-center">
                 @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
                     <img
@@ -40,7 +38,7 @@
                 </p>
 
                 @if ($isMicrosoftSsoConfigured ?? false)
-                    <!-- SSO (primary when configured) -->
+                    {{-- SSO (primary when configured) --}}
                     <a
                         href="{{ route('admin.session.microsoft.redirect') }}"
                         class="flex justify-center items-center gap-2 w-full px-4 py-2.5 mb-4 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-cherry-700 transition-colors"
@@ -60,9 +58,7 @@
                     </div>
                 @endif
 
-                <!-- Login Form -->
                 <x-admin::form :action="route('admin.session.store')" :track-dirty="false" ajax="true">
-                    <!-- Email -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.users.sessions.email')
@@ -84,7 +80,6 @@
                         <x-admin::form.control-group.error control-name="email" />
                     </x-admin::form.control-group>
 
-                    <!-- Password -->
                     <x-admin::form.control-group class="relative w-full">
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.users.sessions.password')
@@ -114,7 +109,6 @@
                         <x-admin::form.control-group.error control-name="password" />
                     </x-admin::form.control-group>
 
-                    <!-- Remember me + Forgot -->
                     <div class="flex justify-between items-center mt-1 mb-5">
                         <x-admin::form.control-group class="flex gap-2 items-center !mb-0">
                             <x-admin::form.control-group.control
@@ -134,14 +128,13 @@
                         </x-admin::form.control-group>
 
                         <a
-                            class="text-sm text-violet-700 dark:text-violet-400 font-semibold hover:underline"
+                            class="text-sm text-primary-700 dark:text-primary-400 font-semibold hover:underline"
                             href="{{ route('admin.forget_password.create') }}"
                         >
                             @lang('admin::app.users.sessions.forget-password-link')
                         </a>
                     </div>
 
-                    <!-- Submit -->
                     <button
                         type="submit"
                         class="primary-button w-full justify-center py-2.5"
@@ -152,16 +145,15 @@
                 </x-admin::form>
             </div>
 
-            <!-- Powered By -->
             <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
                 <div>
                     @lang('admin::app.users.sessions.powered-by', [
-                        'unopim' => '<a class="text-violet-700 dark:text-violet-400 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>',
+                        'unopim' => '<a class="text-primary-700 dark:text-primary-400 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>',
                     ])
                 </div>
                 <div>
                     @lang('admin::app.users.sessions.open-source-project-by', [
-                        'webkul' => '<a class="text-violet-700 dark:text-violet-400 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
+                        'webkul' => '<a class="text-primary-700 dark:text-primary-400 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
                     ])
                 </div>
             </div>

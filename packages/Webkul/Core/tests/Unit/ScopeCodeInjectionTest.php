@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Core\CatalogScope;
 use Webkul\Core\Helpers\Database\Grammars\MySQLGrammar;
 use Webkul\Core\Helpers\Database\Grammars\PostgresGrammar;
 
@@ -24,9 +25,13 @@ it('rejects non-string scope codes', function () {
 });
 
 it('falls back to the default locale when the request locale is malicious', function () {
-    request()->merge(['locale' => "en_US',(select version()),'"]);
+    $injected = "en_US',(select version()),'";
 
-    expect(core()->getRequestedLocaleCode())->toBe(app()->getLocale());
+    request()->merge(['locale' => $injected]);
+
+    expect(core()->getRequestedLocaleCode())
+        ->toBe(resolve(CatalogScope::class)->localeCode())
+        ->not->toBe($injected);
 });
 
 it('returns null for a malicious locale when fallback is disabled', function () {

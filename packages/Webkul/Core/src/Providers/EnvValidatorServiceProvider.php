@@ -3,6 +3,7 @@
 namespace Webkul\Core\Providers;
 
 use Dotenv\Exception\InvalidFileException;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -29,26 +30,22 @@ class EnvValidatorServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->validateEnvVariables();
     }
 
     /**
      * Validate environment variables.
-     *
-     * @return void
      */
-    private function validateEnvVariables()
+    private function validateEnvVariables(): void
     {
         $validator = Validator::make($_ENV, $this->rules, $this->messages);
 
         if ($validator->fails()) {
             $errorKey = collect($validator->errors()->keys())->first();
-            $errorValue = env($errorKey);
+            $errorValue = Env::get($errorKey, '');
 
             $this->writeErrorAndDie(new InvalidFileException(
                 $this->getErrorMessage('some invalid values', $errorValue)
@@ -59,11 +56,9 @@ class EnvValidatorServiceProvider extends ServiceProvider
     /**
      * Generate a friendly error message.
      *
-     * @param  string  $cause
      * @param  string  $subject
-     * @return string
      */
-    private function getErrorMessage($cause, $subject)
+    private function getErrorMessage(string $cause, $subject): string
     {
         return sprintf(
             'Failed to parse dotenv file due to %s. Failed at [%s].',
@@ -74,10 +69,8 @@ class EnvValidatorServiceProvider extends ServiceProvider
 
     /**
      * Write the error information to the screen and exit.
-     *
-     * @return void
      */
-    private function writeErrorAndDie(InvalidFileException $e)
+    private function writeErrorAndDie(InvalidFileException $e): void
     {
         if (app()->runningInConsole()) {
             $output = (new ConsoleOutput)->getErrorOutput();
@@ -86,8 +79,7 @@ class EnvValidatorServiceProvider extends ServiceProvider
             $output->writeln($e->getMessage());
 
             exit(1);
-        } else {
-            throw $e;
         }
+        throw $e;
     }
 }

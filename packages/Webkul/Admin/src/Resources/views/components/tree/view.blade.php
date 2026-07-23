@@ -138,8 +138,8 @@
 
                 getLabel(item) {
                     return item[this.labelField]
-                        ? item[this.labelField]
-                        : item.translations.filter((translation) => translation.locale === this.fallbackLocale)[0][this.labelField];
+                        || (item.translations?.find((translation) => translation.locale === this.fallbackLocale)?.[this.labelField]
+                        || `[${item[this.idField]}]`);
                 },
 
                 generateToggleIconComponent(props) {
@@ -223,7 +223,7 @@
                                     this.generateToggleIconComponent({
                                         class: [
                                             hasChildren ? (hasSelectedValue ? 'icon-chevron-down' :'icon-chevron-right') : '',
-                                            'text-xl rounded-md cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800'
+                                            'text-xl rounded-md cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800'
                                         ],
                                     }),
 

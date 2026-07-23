@@ -10,4 +10,10 @@ return [
      * imported.
      */
     'max_entry_size' => env('IMAGE_IMPORT_MAX_ENTRY_SIZE', 15728640),
+
+    'max_entries' => env('IMAGE_IMPORT_MAX_ENTRIES', 1000),
+
+    'max_total_size' => env('IMAGE_IMPORT_MAX_TOTAL_SIZE', 524288000),
+
+    'max_compression_ratio' => env('IMAGE_IMPORT_MAX_COMPRESSION_RATIO', 100),
 ];

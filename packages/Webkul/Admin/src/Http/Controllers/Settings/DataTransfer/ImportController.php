@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
@@ -68,7 +69,7 @@ class ImportController extends Controller
         $importers = array_keys($importerConfig);
 
         $this->validate(request(), [
-            'code'                => 'required|unique:job_instances,code',
+            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/', 'unique:job_instances,code'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
@@ -146,7 +147,7 @@ class ImportController extends Controller
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         $this->validate(request(), [
-            'code'                => 'required',
+            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
@@ -155,7 +156,6 @@ class ImportController extends Controller
             request()->only([
                 'entity_type',
                 'action',
-                'validation_strategy',
                 'validation_strategy',
                 'allowed_errors',
                 'field_separator',
@@ -305,6 +305,10 @@ class ImportController extends Controller
      */
     public function validateImport(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         $isValid = $this->importHelper
@@ -322,6 +326,10 @@ class ImportController extends Controller
      */
     public function start(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         if (! $import->processed_rows_count) {
@@ -382,6 +390,10 @@ class ImportController extends Controller
      */
     public function link(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         if (! $import->processed_rows_count) {
@@ -443,6 +455,10 @@ class ImportController extends Controller
      */
     public function indexData(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         if (! $import->processed_rows_count) {
@@ -557,6 +573,10 @@ class ImportController extends Controller
      */
     public function stats(int $id, $state = Import::STATE_PROCESSED): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
         $jobInstance = json_decode($import->meta, true);
         $summary = $this->normalizeSummary($import->summary);
@@ -612,6 +632,10 @@ class ImportController extends Controller
      */
     public function download(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.imports')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         return Storage::disk('private')->download($import->file_path);
@@ -622,6 +646,10 @@ class ImportController extends Controller
      */
     public function downloadErrorReport(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.imports')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         return Storage::disk('private')->download($import->error_file_path);
@@ -646,6 +674,14 @@ class ImportController extends Controller
         $zip = new \ZipArchive;
 
         if ($zip->open($file->getPathname()) !== true) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.data-transfer.imports.invalid-zip'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if (! $this->archiveIsWithinLimits($zip)) {
+            $zip->close();
+
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.invalid-zip'),
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
@@ -678,10 +714,12 @@ class ImportController extends Controller
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
 
         $maxEntrySize = (int) config('image_import.max_entry_size', 15 * 1024 * 1024);
+        $maxTotalSize = (int) config('image_import.max_total_size', 500 * 1024 * 1024);
 
         $fileInfo = new \finfo(FILEINFO_MIME_TYPE);
 
         $extractedCount = 0;
+        $totalExtractedBytes = 0;
 
         for ($index = 0; $index < $zip->numFiles; $index++) {
             $entryName = $zip->getNameIndex($index);
@@ -714,11 +752,25 @@ class ImportController extends Controller
                 continue;
             }
 
-            $contents = stream_get_contents($stream);
+            $contents = $maxEntrySize > 0
+                ? stream_get_contents($stream, $maxEntrySize + 1)
+                : stream_get_contents($stream);
 
             fclose($stream);
 
-            if ($contents === false || ! str_starts_with((string) $fileInfo->buffer($contents), 'image/')) {
+            if ($contents === false) {
+                continue;
+            }
+
+            $actualSize = strlen($contents);
+
+            $mimeType = (string) $fileInfo->buffer($contents);
+
+            if (
+                ($maxEntrySize > 0 && $actualSize > $maxEntrySize)
+                || ($maxTotalSize > 0 && ($totalExtractedBytes + $actualSize) > $maxTotalSize)
+                || ! in_array($extension, MimeTypes::getDefault()->getExtensions($mimeType), true)
+            ) {
                 continue;
             }
 
@@ -740,8 +792,48 @@ class ImportController extends Controller
             file_put_contents($targetPath, $contents);
 
             $extractedCount++;
+            $totalExtractedBytes += $actualSize;
         }
 
         return $extractedCount;
+    }
+
+    protected function archiveIsWithinLimits(\ZipArchive $zip): bool
+    {
+        $maxEntries = (int) config('image_import.max_entries', 1000);
+        $maxTotalSize = (int) config('image_import.max_total_size', 500 * 1024 * 1024);
+        $maxCompressionRatio = (float) config('image_import.max_compression_ratio', 100);
+
+        if ($maxEntries > 0 && $zip->numFiles > $maxEntries) {
+            return false;
+        }
+
+        $totalSize = 0;
+
+        for ($index = 0; $index < $zip->numFiles; $index++) {
+            $stat = $zip->statIndex($index);
+
+            if ($stat === false) {
+                return false;
+            }
+
+            $size = (int) ($stat['size'] ?? 0);
+            $compressedSize = (int) ($stat['comp_size'] ?? 0);
+            $totalSize += $size;
+
+            if ($maxTotalSize > 0 && $totalSize > $maxTotalSize) {
+                return false;
+            }
+
+            if (
+                $maxCompressionRatio > 0
+                && $size > 0
+                && ($compressedSize === 0 || ($size / $compressedSize) > $maxCompressionRatio)
+            ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

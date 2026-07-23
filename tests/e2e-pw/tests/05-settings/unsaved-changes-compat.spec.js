@@ -73,4 +73,40 @@ test.describe('Unsaved changes — cross-page', () => {
     await adminPage.locator('button.danger-button').first().click().catch(() => {});
     expect(errors, `JS errors on product edit: ${errors.join(' | ')}`).toHaveLength(0);
   });
+
+  test('account edit: header save button (associated via form=) is removed, only the bar saves', async ({ adminPage }) => {
+    const errors = [];
+    adminPage.on('pageerror', (e) => errors.push(e.message));
+
+    await adminPage.goto('/admin/account', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
+    await adminPage.waitForTimeout(1500);
+
+    await expect(adminPage.locator('.unsaved-root').first()).toBeAttached();
+    await expect(adminPage.getByText('You have unsaved changes')).toBeHidden();
+
+    // The account save button lives OUTSIDE the <form>, associated via form="account-edit-form".
+    // The tracker must still remove it so the bar's "Save changes" is the only save button.
+    const headerSave = adminPage.locator('button[form="account-edit-form"]');
+    await expect(headerSave).toHaveCount(0);
+
+    const field = adminPage
+      .locator('.unsaved-root input[type="text"]:not([readonly]):visible, .unsaved-root input[type="email"]:visible')
+      .first();
+    await field.waitFor({ state: 'visible', timeout: 15000 });
+    const original = await field.inputValue();
+    await field.click();
+    await field.type('X');
+
+    await expect(adminPage.getByText('You have unsaved changes').first()).toBeVisible({ timeout: 10000 });
+
+    // Still exactly one save button: the bar's "Save changes".
+    await expect(adminPage.locator('button[form="account-edit-form"]')).toHaveCount(0);
+    await expect(adminPage.getByRole('button', { name: 'Save changes' })).toBeVisible();
+
+    // Revert without persisting.
+    await field.fill(original);
+    await adminPage.getByRole('button', { name: 'Discard' }).first().click().catch(() => {});
+    await adminPage.locator('button.danger-button').first().click().catch(() => {});
+    expect(errors, `JS errors on account edit: ${errors.join(' | ')}`).toHaveLength(0);
+  });
 });

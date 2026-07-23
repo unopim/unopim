@@ -41,11 +41,13 @@ class RememberFact implements PimTool
                 $scope = $request->string('scope')->toString() ?: 'catalog';
 
                 $userId = $scope === 'user' ? $this->context->user?->id : null;
+                $channel = $scope === 'catalog' ? $this->context->channel : null;
 
                 $existing = DB::table('ai_agent_memories')
                     ->where('scope', $scope)
                     ->where('key', $key)
                     ->where('user_id', $userId)
+                    ->where('channel', $channel)
                     ->first();
 
                 if ($existing) {
@@ -58,6 +60,7 @@ class RememberFact implements PimTool
                         'scope'      => $scope,
                         'key'        => $key,
                         'user_id'    => $userId,
+                        'channel'    => $channel,
                         'value'      => $value,
                         'created_at' => now(),
                         'updated_at' => now(),

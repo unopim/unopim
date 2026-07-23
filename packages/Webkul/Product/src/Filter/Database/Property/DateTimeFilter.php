@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Filter\Database\Property;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\AbstractPropertyFilter;
 
@@ -16,7 +17,12 @@ class DateTimeFilter extends AbstractPropertyFilter
 
     public function __construct(
         array $supportedProperties = [self::CREATED_AT_PROPERTY, self::UPDATED_AT_PROPERTY],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::RANGE]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::RANGE,
+            FilterOperators::LESS_THAN,
+            FilterOperators::GREATER_THAN,
+        ]
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
@@ -25,11 +31,9 @@ class DateTimeFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         if (! in_array($property, $this->supportedProperties)) {
             throw new \InvalidArgumentException(
@@ -41,20 +45,21 @@ class DateTimeFilter extends AbstractPropertyFilter
             );
         }
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $this->queryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value);
+        $column = sprintf('%s.%s', $this->getSearchTablePath($options), $property);
 
-                break;
+        /** raw statements bypass the builder, so the prefix is applied here */
+        $rawColumn = DB::getTablePrefix().$column;
 
-            case FilterOperators::RANGE:
-                $this->queryBuilder->whereBetween(sprintf('%s.%s', $this->getSearchTablePath($options), $property), [
-                    ($value[0] ?? '').' 00:00:01',
-                    ($value[1] ?? '').' 23:59:59',
-                ]);
-
-                break;
-        }
+        match ($operator) {
+            FilterOperators::IN    => $this->queryBuilder->whereIn($column, $value),
+            FilterOperators::RANGE => $this->queryBuilder->whereBetween($column, [
+                ($value[0] ?? '').' 00:00:01',
+                ($value[1] ?? '').' 23:59:59',
+            ]),
+            FilterOperators::LESS_THAN    => $this->queryBuilder->whereRaw("$rawColumn < ?", [$this->scalarValue($value).' 00:00:01']),
+            FilterOperators::GREATER_THAN => $this->queryBuilder->whereRaw("$rawColumn > ?", [$this->scalarValue($value).' 23:59:59']),
+            default                       => $this,
+        };
 
         return $this;
     }

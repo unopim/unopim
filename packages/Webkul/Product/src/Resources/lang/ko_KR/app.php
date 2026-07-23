@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => '변형 구조',
+        'ai-suggest'         => 'AI 제안',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => '복사본-:value',
         'copy-of'                       => ':value의 복사본',
@@ -12,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => '설정 가능한',
-        'simple'       => '단순한',
+        'configurable'  => '설정 가능한',
+        'simple'        => '단순한',
+        'variant-group' => '변형 그룹',
     ],
 ];

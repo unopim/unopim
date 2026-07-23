@@ -10,9 +10,7 @@ class Prompt
     {
         $typeInstance = $this->getTypeInstance($resourceType);
 
-        $prompt = $typeInstance ? $this->getTypeInstance($resourceType)->updatePrompt($prompt, $resourceId) : $prompt;
-
-        return $prompt;
+        return $typeInstance ? $this->getTypeInstance($resourceType)->updatePrompt($prompt, $resourceId) : $prompt;
     }
 
     public function getTypeInstance($resourceType)

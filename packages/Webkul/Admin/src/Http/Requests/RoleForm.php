@@ -24,7 +24,7 @@ class RoleForm extends FormRequest
         return [
             'name'            => 'required',
             'permission_type' => $this->id ? 'required|in:all,custom' : 'required',
-            'description'     => 'required',
+            'description'     => 'nullable',
         ];
     }
 }

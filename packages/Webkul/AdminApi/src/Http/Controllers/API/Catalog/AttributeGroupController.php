@@ -46,8 +46,6 @@ class AttributeGroupController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(StoreAttributeGroupRequest $request): JsonResponse
     {
@@ -70,8 +68,6 @@ class AttributeGroupController extends ApiController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function update(UpdateAttributeGroupRequest $request, string $code): JsonResponse
     {

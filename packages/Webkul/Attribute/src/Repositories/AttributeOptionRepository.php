@@ -18,7 +18,7 @@ class AttributeOptionRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeOption';
+        return AttributeOption::class;
     }
 
     /**
@@ -43,7 +43,6 @@ class AttributeOptionRepository extends Repository
 
     /**
      * @param  int  $id
-     * @param  string  $attribute
      * @return AttributeOption
      */
     public function update(array $data, $id)
@@ -96,11 +95,9 @@ class AttributeOptionRepository extends Repository
     }
 
     /**
-     * @param  array  $data
      * @param  int  $optionId
-     * @return void
      */
-    public function uploadSwatchImage($data, $optionId)
+    public function uploadSwatchImage(array $data, $optionId): void
     {
         if (empty($data['swatch_value'])) {
             return;

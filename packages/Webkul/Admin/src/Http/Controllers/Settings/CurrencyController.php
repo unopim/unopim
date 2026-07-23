@@ -63,9 +63,13 @@ class CurrencyController extends Controller
     /**
      * Currency Details
      */
-    public function edit(int $id): JsonResponse
+    public function edit(int $id): View|JsonResponse
     {
         $currency = $this->currencyRepository->findOrFail($id);
+
+        if (! request()->expectsJson()) {
+            return view('admin::settings.currencies.edit', compact('currency'));
+        }
 
         return new JsonResponse($currency);
     }
@@ -97,7 +101,8 @@ class CurrencyController extends Controller
         ]), $id);
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.currencies.index.update-success'),
+            'message'      => trans('admin::app.settings.currencies.index.update-success'),
+            'redirect_url' => route('admin.settings.currencies.index'),
         ]);
     }
 

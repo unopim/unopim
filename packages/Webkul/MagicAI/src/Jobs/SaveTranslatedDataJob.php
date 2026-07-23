@@ -2,40 +2,23 @@
 
 namespace Webkul\MagicAI\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Webkul\Product\Repositories\ProductRepository;
 
 class SaveTranslatedDataJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    protected $productId;
-
-    protected $translatedData;
-
-    protected $channel;
-
-    protected $field;
+    use Queueable;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($productId, $translatedData, $channel, $field)
-    {
-        $this->productId = $productId;
-        $this->translatedData = $translatedData;
-        $this->channel = $channel;
-        $this->field = $field;
-    }
+    public function __construct(protected $productId, protected $translatedData, protected $channel, protected $field) {}
 
     /**
      * Execute the job.
      */
-    public function handle(ProductRepository $productRepository)
+    public function handle(ProductRepository $productRepository): void
     {
         $product = $productRepository->find($this->productId);
         $data = $product->values;
@@ -56,10 +39,8 @@ class SaveTranslatedDataJob implements ShouldQueue
 
             if (core()->getConfigData('general.magic_ai.translation.replace') == 1) {
                 $existingData[$this->field] = $value;
-            } else {
-                if (! isset($existingData[$this->field])) {
-                    $existingData[$this->field] = $value;
-                }
+            } elseif (! isset($existingData[$this->field])) {
+                $existingData[$this->field] = $value;
             }
 
             $data['channel_locale_specific'][$this->channel][$locale] = $existingData;

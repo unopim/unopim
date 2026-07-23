@@ -6,10 +6,8 @@ class ServerRequirements
 {
     /**
      * Minimum PHP Version Supported (Override is in installer.php config file).
-     *
-     * @var string
      */
-    private $minPhpVersion = '8.2.0';
+    private string $minPhpVersion = '8.2.0';
 
     /**
      * Check for the server requirements.
@@ -58,10 +56,8 @@ class ServerRequirements
 
     /**
      * Check PHP version requirement.
-     *
-     * @return array
      */
-    public function checkPHPversion(?string $minPhpVersion = null)
+    public function checkPHPversion(?string $minPhpVersion = null): array
     {
         $minVersionPhp = $minPhpVersion ?? $this->minPhpVersion;
 
@@ -79,10 +75,8 @@ class ServerRequirements
 
     /**
      * Get current Php version information.
-     *
-     * @return array
      */
-    private static function getPhpVersionInfo()
+    private function getPhpVersionInfo(): array
     {
         $currentVersionFull = PHP_VERSION;
 

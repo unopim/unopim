@@ -24,7 +24,7 @@ class DatabaseProductQueryBuilder extends AbstractFilterableQueryBuilder
         $operator,
         $value,
         array $context
-    ) {
+    ): static {
         $locale = $attribute->value_per_locale ? $context['locale'] : null;
         $channel = $attribute->value_per_channel ? $context['channel'] : null;
 
@@ -53,7 +53,7 @@ class DatabaseProductQueryBuilder extends AbstractFilterableQueryBuilder
         $operator,
         $value,
         array $context
-    ) {
+    ): static {
 
         $filter->setQueryManager($this->getQueryManager());
 

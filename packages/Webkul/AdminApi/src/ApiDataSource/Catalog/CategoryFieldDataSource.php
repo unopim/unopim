@@ -63,7 +63,6 @@ class CategoryFieldDataSource extends ApiDataSource
                 'value_per_locale' => $data['value_per_locale'],
                 'enable_wysiwyg'   => $data['enable_wysiwyg'],
                 'section'          => $data['section'],
-                'regex_pattern'    => $data['regex_pattern'],
                 'labels'           => $this->getTranslations($data),
             ];
         }, $paginator['data'] ?? []);
@@ -112,7 +111,6 @@ class CategoryFieldDataSource extends ApiDataSource
             'value_per_locale' => $categoryField['value_per_locale'],
             'enable_wysiwyg'   => $categoryField['enable_wysiwyg'],
             'section'          => $categoryField['section'],
-            'regex_pattern'    => $categoryField['regex_pattern'],
             'labels'           => $this->getTranslations($categoryField),
         ];
     }

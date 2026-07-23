@@ -11,6 +11,8 @@ use Webkul\Product\Models\AssociationTypeFieldTranslation;
 use Webkul\Product\Models\AssociationTypeTranslation;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductAssociation;
+use Webkul\Product\Models\ProductGridView;
+use Webkul\Product\Models\VariantStructure;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
@@ -23,5 +25,7 @@ class ModuleServiceProvider extends CoreModuleServiceProvider
         AssociationTypeFieldOption::class,
         AssociationTypeFieldOptionTranslation::class,
         ProductAssociation::class,
+        ProductGridView::class,
+        VariantStructure::class,
     ];
 }

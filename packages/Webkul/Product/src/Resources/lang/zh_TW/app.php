@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => '變體結構',
+        'ai-suggest'         => 'AI 建議',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => '複本-:value',
         'copy-of'                       => ':value 的複本',
@@ -12,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => '可配置的',
-        'simple'       => '簡單的',
+        'configurable'  => '可配置的',
+        'simple'        => '簡單的',
+        'variant-group' => '變體組',
     ],
 ];

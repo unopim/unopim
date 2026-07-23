@@ -16,7 +16,7 @@ class BooleanString implements ValidationRule
             $fail('core::validation.boolean-string')->translate();
         }
 
-        if (! in_array(strtolower($value), ['true', 'false'])) {
+        if (! in_array(strtolower((string) $value), ['true', 'false'])) {
             $fail('core::validation.boolean-string')->translate();
         }
     }

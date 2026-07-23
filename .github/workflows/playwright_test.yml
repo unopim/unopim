@@ -66,24 +66,16 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@2.37.1
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
           coverage: none
 
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v5
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
         with:
-          path: |
-            vendor
-            ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+          composer-options: "--optimize-autoloader"
 
       - name: Cache npm dependencies
         uses: actions/cache@v5
@@ -104,9 +96,6 @@ jobs:
           npm install --no-progress --prefer-offline
           npx playwright install --with-deps chromium
 
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
-
       - name: Setting Environment
         run: |
           cp .env.example .env
@@ -118,6 +107,14 @@ jobs:
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          # The API E2E specs fire many requests back-to-back; lift the REST rate
+          # limit for the test server so they don't trip the 120/min throttle (429).
+          echo "REST_API_RATE_LIMIT=100000" >> .env
+          # Login-heavy shards (loginpage, notifications re-auth, ajax-nav, security)
+          # sign in as the same admin many times within a minute; raise the admin
+          # login throttle so those legitimate logins don't cascade into 429s. The
+          # rate-limit security spec reads this same value to still assert throttling.
+          echo "ADMIN_LOGIN_RATE_LIMIT=20" >> .env
 
       - name: Running UnoPim Installer & Start Server
         env:

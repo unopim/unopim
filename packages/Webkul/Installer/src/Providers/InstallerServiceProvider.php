@@ -34,11 +34,11 @@ class InstallerServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__.'/../Config/installer.php', 'installer');
+
         $this->registerCommands();
     }
 

@@ -33,7 +33,7 @@
                     ::rules="{ 'required': isTranslationEnabled }"
                     ref="localeRef"
                     ::label="label"
-                    ::value="targetLocales"
+                    ::value="selectedTargets"
                     ::options="localeOption"
                 />
                 <x-admin::form.control-group.error ::control-name="name" />
@@ -54,7 +54,7 @@
             data() {
                 return {
                     localeOption: null,
-                    targetLocales: this.targetLocales,
+                    selectedTargets: this.targetLocales,
                     localeSource: this.sourceLocale,
                     sourceChannel: this.channel,
                     channelTarget: this.targetChannel,
@@ -121,7 +121,7 @@
                             }
 
                             if (options.length == 1) {
-                                this.targetLocales = options[0].id;
+                                this.selectedTargets = options[0].id;
                                 if (this.$refs['localeRef']) {
                                     this.$refs['localeRef'].selectedValue = options;
                                 }

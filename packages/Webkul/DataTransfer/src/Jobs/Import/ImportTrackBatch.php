@@ -3,11 +3,8 @@
 namespace Webkul\DataTransfer\Jobs\Import;
 
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
 use Webkul\User\Models\AdminProxy;
@@ -15,12 +12,7 @@ use Webkul\User\Models\AdminProxy;
 class ImportTrackBatch implements ShouldQueue
 {
     use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
-
-    protected $importBatch;
 
     public $tries = 3;
 
@@ -30,26 +22,20 @@ class ImportTrackBatch implements ShouldQueue
      * Create a new job instance.
      *
      * @param  mixed  $importBatch
-     * @return void
      */
-    public function __construct($importBatch)
-    {
-        $this->importBatch = $importBatch;
-    }
+    public function __construct(protected $importBatch) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         if (! auth()->guard('admin')->check()) {
             $user = AdminProxy::find($this->importBatch->user_id);
             auth('admin')->login($user);
         }
 
-        $importHelper = app(ImportHelper::class);
+        $importHelper = resolve(ImportHelper::class);
 
         $importHelper->setImport($this->importBatch);
 
@@ -90,13 +76,11 @@ class ImportTrackBatch implements ShouldQueue
 
                 return;
             }
-        } else {
+        } elseif ($importHelper->isLinkingRequired()) {
             // Handle linking or indexing if required
-            if ($importHelper->isLinkingRequired()) {
-                $importHelper->linking();
-            } else {
-                $importHelper->completed();
-            }
+            $importHelper->linking();
+        } else {
+            $importHelper->completed();
         }
 
         // Determine final state based on current state
@@ -107,10 +91,10 @@ class ImportTrackBatch implements ShouldQueue
         };
 
         // Gather stats
-        $stats = $importHelper->stats($state);
+        $importHelper->stats($state);
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         $logger = JobLogger::make($this->importBatch->id);
 

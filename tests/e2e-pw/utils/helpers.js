@@ -10,17 +10,17 @@ const ROUTES = {
   categories:        '/admin/catalog/categories',
   categoryFields:    '/admin/catalog/category-fields',
   attributes:        '/admin/catalog/attributes',
-  attributeGroups:   '/admin/catalog/attributegroups',
-  attributeFamilies: '/admin/catalog/families',
+  attributeGroups:   '/admin/catalog/attribute-groups',
+  attributeFamilies: '/admin/catalog/attribute-families',
   channels:          '/admin/settings/channels',
   currencies:        '/admin/settings/currencies',
   locales:           '/admin/settings/locales',
   roles:             '/admin/settings/roles',
   users:             '/admin/settings/users',
-  integrations:      '/admin/integrations/api-keys',
-  webhook:           '/admin/webhook/settings',
-  exports:           '/admin/settings/data-transfer/exports',
-  imports:           '/admin/settings/data-transfer/imports',
+  integrations:      '/admin/configuration/integrations',
+  webhook:           '/admin/configuration/webhook',
+  exports:           '/admin/data-transfer/exports',
+  imports:           '/admin/data-transfer/imports',
   configuration:     '/admin/configuration',
   notifications:     '/admin/notifications',
 };
@@ -61,7 +61,10 @@ async function searchInDataGrid(page, text, placeholder = 'Search') {
  * @param {string} rowText — text to identify the row
  */
 async function clickEditOnRow(page, rowText) {
-  const row = page.locator('#app div').filter({ hasText: rowText }).first();
+  // Scope to an actual DataGrid record row (div.row.grid.cursor-pointer) so the
+  // Edit icon belongs to the matched row and not to some earlier row folded into
+  // a broader container match.
+  const row = page.locator('div.row.grid.cursor-pointer').filter({ hasText: rowText }).first();
   await row.locator('span[title="Edit"]').first().click();
   await page.waitForLoadState('networkidle');
 }
@@ -72,7 +75,7 @@ async function clickEditOnRow(page, rowText) {
  * @param {string} rowText — text to identify the row
  */
 async function clickDeleteOnRow(page, rowText) {
-  const row = page.locator('#app div').filter({ hasText: rowText }).first();
+  const row = page.locator('div.row.grid.cursor-pointer').filter({ hasText: rowText }).first();
   await row.locator('span[title="Delete"]').first().click();
 }
 
@@ -98,6 +101,38 @@ async function expectSuccessToast(page, pattern, timeout = 20000) {
 }
 
 /**
+ * Click a form's save action, tolerant of the global unsaved-changes bar.
+ *
+ * Forms that track changes hide their in-form submit button once dirty and move
+ * saving to the sticky "Save changes" bar. Modal sub-forms and non-tracked forms
+ * (e.g. login) keep their own button. This clicks the named button when it is
+ * actually visible, otherwise falls back to the bar.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} buttonName — the in-form save button label (e.g. 'Save Product')
+ */
+async function clickSave(page, buttonName) {
+  const named = page.getByRole('button', { name: buttonName });
+  const bar = page.getByRole('button', { name: 'Save changes' });
+
+  // Wait for whichever save affordance the form exposes: the in-form button
+  // (non-tracked / modal forms) or the unsaved-changes bar (tracked forms),
+  // which may take a moment to appear once the form is dirty.
+  await Promise.race([
+    named.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {}),
+    bar.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {}),
+  ]);
+
+  if (await named.isVisible().catch(() => false)) {
+    await named.click();
+
+    return;
+  }
+
+  await bar.click();
+}
+
+/**
  * Click Save and verify success — accepts either toast message OR URL redirect.
  * Solves the CI issue where the page redirects before the toast is visible.
  * @param {import('@playwright/test').Page} page
@@ -114,7 +149,7 @@ async function clickSaveAndExpect(page, buttonName, toastPattern, urlPattern) {
     ? page.waitForURL(urlPattern, { timeout: 20000 })
     : page.waitForURL((url) => url.toString() !== currentUrl, { timeout: 20000 });
 
-  await page.getByRole('button', { name: buttonName }).click();
+  await clickSave(page, buttonName);
 
   const toastPromise = page.locator('#app').getByText(regex).first().waitFor({ state: 'visible', timeout: 20000 });
 
@@ -140,6 +175,7 @@ module.exports = {
   clickDeleteOnRow,
   confirmDelete,
   expectSuccessToast,
+  clickSave,
   clickSaveAndExpect,
   generateUid,
 };

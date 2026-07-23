@@ -10,11 +10,8 @@ class RolesTableSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
      */
-    public function run($parameters = [])
+    public function run(array $parameters = []): void
     {
         DatabaseSequenceHelper::fixSequence('roles');
 

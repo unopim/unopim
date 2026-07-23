@@ -8,12 +8,10 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('admin_password_resets', function (Blueprint $table) {
+        Schema::create('admin_password_resets', function (Blueprint $table): void {
             $table->string('email')->index();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
@@ -22,10 +20,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('admin_password_resets');
     }

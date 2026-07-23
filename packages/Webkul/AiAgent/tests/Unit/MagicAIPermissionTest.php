@@ -1,5 +1,10 @@
 <?php
 
+use Webkul\AiAgent\Services\EnrichmentService;
+use Webkul\AiAgent\Services\ImageToProductService;
+use Webkul\AiAgent\Services\ProductWriterService;
+use Webkul\AiAgent\Services\VisionService;
+
 describe('Magic AI permission guard (Issue #647)', function () {
 
     it('translation controller methods check ai-agent permission', function () {
@@ -40,7 +45,7 @@ describe('Magic AI permission guard (Issue #647)', function () {
         );
 
         $imagesSource = file_get_contents(
-            base_path('packages/Webkul/Admin/src/Resources/views/components/media/images.blade.php')
+            base_path('packages/Webkul/Admin/src/Resources/views/components/media/image.blade.php')
         );
 
         expect($fileSource)->toContain("bouncer()->hasPermission('ai-agent')");
@@ -89,4 +94,35 @@ describe('Magic AI permission guard (Issue #647)', function () {
         // content, platforms, suggestionValues, defaultPrompt + the 6 translation methods = at least 10 guards
         expect($guardCount)->toBeGreaterThanOrEqual(10);
     });
+
+    it('guards platform administration in the controller', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Http/Controllers/MagicAI/MagicAIPlatformController.php')
+        );
+
+        expect($source)->toContain("bouncer()->hasPermission('ai-agent.platform')");
+    });
+
+    it('guards system prompt administration in the controller', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Http/Controllers/MagicAI/MagicAISystemPromptController.php')
+        );
+
+        expect($source)->toContain("bouncer()->hasPermission('ai-agent.system-prompt')");
+    });
+
+    it('isolates mutable AI services between request scopes', function (string $service) {
+        $firstScopeInstance = app($service);
+
+        expect(app($service))->toBe($firstScopeInstance);
+
+        app()->forgetScopedInstances();
+
+        expect(app($service))->not->toBe($firstScopeInstance);
+    })->with([
+        VisionService::class,
+        EnrichmentService::class,
+        ProductWriterService::class,
+        ImageToProductService::class,
+    ]);
 });

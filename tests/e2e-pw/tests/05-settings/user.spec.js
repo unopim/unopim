@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Fill user creation modal with all fields.
@@ -122,7 +122,7 @@ test.describe('User Management', () => {
       password: 'testing123',
       confirmPassword: 'testing123',
     });
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
+    await clickSave(adminPage, 'Save User');
     await expect(adminPage.locator('#app').getByText(/The Name field is required/i)).toBeVisible();
   });
 
@@ -136,7 +136,7 @@ test.describe('User Management', () => {
       password: 'testing123',
       confirmPassword: 'testing123',
     });
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
+    await clickSave(adminPage, 'Save User');
     await expect(adminPage.locator('#app').getByText(/The Email field is required/i)).toBeVisible();
   });
 
@@ -150,7 +150,7 @@ test.describe('User Management', () => {
       password: '',
       confirmPassword: 'testing123',
     });
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
+    await clickSave(adminPage, 'Save User');
     await expect(adminPage.locator('#app').getByText(/The Password field is required/i)).toBeVisible();
   });
 
@@ -164,7 +164,7 @@ test.describe('User Management', () => {
       password: 'testing123',
       confirmPassword: '',
     });
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
+    await clickSave(adminPage, 'Save User');
     await expect(adminPage.locator('#app').getByText(/The Password field is required/i)).toBeVisible();
   });
 
@@ -178,7 +178,7 @@ test.describe('User Management', () => {
       password: 'testing123',
       confirmPassword: 'testing456',
     });
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
+    await clickSave(adminPage, 'Save User');
     await expect(adminPage.locator('#app').getByText(/The Password field confirmation does not match/i)).toBeVisible();
   });
 
@@ -193,7 +193,7 @@ test.describe('User Management', () => {
       confirmPassword: 'testing123',
       selectLocale: false,
     });
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
+    await clickSave(adminPage, 'Save User');
     await expect(adminPage.locator('#app').getByText(/The UI Locale field is required/i)).toBeVisible();
   });
 
@@ -208,7 +208,7 @@ test.describe('User Management', () => {
       confirmPassword: 'testing456',
       selectTimezone: false,
     });
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
+    await clickSave(adminPage, 'Save User');
     await expect(adminPage.locator('#app').getByText(/The Timezone field is required/i)).toBeVisible();
   });
 
@@ -223,7 +223,7 @@ test.describe('User Management', () => {
       confirmPassword: 'testing456',
       selectRole: false,
     });
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
+    await clickSave(adminPage, 'Save User');
     await expect(adminPage.locator('#app').getByText(/The Role field is required/i)).toBeVisible();
   });
 

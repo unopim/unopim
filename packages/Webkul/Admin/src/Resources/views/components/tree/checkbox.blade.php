@@ -14,7 +14,7 @@
                 @change="inputChanged()"
             >
 
-            <span class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700">
+            <span class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-primary-700">
             </span>
 
             <div

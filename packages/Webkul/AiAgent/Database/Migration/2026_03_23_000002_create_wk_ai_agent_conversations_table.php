@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // Persistent conversation storage
-        Schema::create('ai_agent_conversations', function (Blueprint $table) {
+        Schema::create('ai_agent_conversations', function (Blueprint $table): void {
             $table->id();
             $table->unsignedInteger('user_id');
             $table->string('title', 255)->default('New conversation');
@@ -21,7 +21,7 @@ return new class extends Migration
         });
 
         // Individual messages within conversations
-        Schema::create('ai_agent_messages', function (Blueprint $table) {
+        Schema::create('ai_agent_messages', function (Blueprint $table): void {
             $table->id();
             $table->unsignedBigInteger('conversation_id');
             $table->enum('role', ['user', 'assistant', 'system']);
@@ -35,7 +35,7 @@ return new class extends Migration
         });
 
         // Agent memory — persistent facts the agent learns
-        Schema::create('ai_agent_memories', function (Blueprint $table) {
+        Schema::create('ai_agent_memories', function (Blueprint $table): void {
             $table->id();
             $table->unsignedInteger('user_id')->nullable();
             $table->enum('scope', ['user', 'product', 'catalog', 'global']);
@@ -50,7 +50,7 @@ return new class extends Migration
         });
 
         // Changeset tracking for rollback capability
-        Schema::create('ai_agent_changesets', function (Blueprint $table) {
+        Schema::create('ai_agent_changesets', function (Blueprint $table): void {
             $table->id();
             $table->unsignedInteger('user_id')->nullable();
             $table->string('description', 500);
@@ -66,7 +66,7 @@ return new class extends Migration
         });
 
         // Background task queue for autonomous agents
-        Schema::create('ai_agent_tasks', function (Blueprint $table) {
+        Schema::create('ai_agent_tasks', function (Blueprint $table): void {
             $table->id();
             $table->string('type', 100);
             $table->enum('status', ['pending', 'running', 'completed', 'failed', 'paused'])->default('pending');

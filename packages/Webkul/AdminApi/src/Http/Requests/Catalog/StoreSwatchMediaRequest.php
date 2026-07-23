@@ -5,6 +5,7 @@ namespace Webkul\AdminApi\Http\Requests\Catalog;
 use Illuminate\Validation\Rule;
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
 use Webkul\Core\Rules\Code;
+use Webkul\Core\Rules\FileMimeExtensionMatch;
 
 class StoreSwatchMediaRequest extends ApiFormRequest
 {
@@ -28,7 +29,13 @@ class StoreSwatchMediaRequest extends ApiFormRequest
                 Rule::exists('attributes', 'code'),
                 new Code,
             ],
-            'file' => 'required|file|mimes:jpeg,png,jpg,webp,svg|max:2048',
+            'file' => [
+                'required',
+                'file',
+                'mimes:jpeg,png,jpg,webp,svg',
+                'max:2048',
+                new FileMimeExtensionMatch,
+            ],
         ];
     }
 }

@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an export job with given parameters.
@@ -12,9 +12,9 @@ async function createExport(adminPage, code, format = 'CSV', withMedia = true) {
   await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: format }).locator('span').first().click();
   if (withMedia) {
-    await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
+    await adminPage.locator('#with_media + div').click();
   }
-  await clickSaveAndExpect(adminPage, 'Save Export', /Export created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
 }
 
 /**
@@ -43,8 +43,8 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
-    await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await adminPage.getByText('With Media').click();
+    await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
 
@@ -57,8 +57,8 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
     await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
-    await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await adminPage.getByText('With Media').click();
+    await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
   });
 
@@ -67,8 +67,8 @@ test.describe('UnoPim Export Jobs', () => {
     await navigateTo(adminPage, 'exports');
     await adminPage.getByRole('link', { name: 'Create Export' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(`exp-fmt-${uid}`);
-    await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await adminPage.getByText('With Media').click();
+    await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The File Format field is required')).toBeVisible();
   });
 
@@ -78,8 +78,8 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('#export-type').locator('.multiselect__single, .multiselect__placeholder').first().click();
     await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
-    await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await adminPage.getByText('With Media').click();
+    await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The File Format field is required')).toBeVisible();
@@ -112,7 +112,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await clickSave(adminPage, 'Save Export');
     await expect(adminPage.locator('#app').getByText(/Code has already been taken|already exists/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
@@ -176,24 +176,24 @@ test.describe('UnoPim Export Jobs', () => {
 
     // Test Export action
     await itemRow.locator('span[title="Export"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/exports\/export/);
+    await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/exports\/export/);
     await adminPage.goBack();
     await adminPage.waitForLoadState('networkidle');
 
-    // Search again after going back
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    // Search again after returning to the listing
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
 
     // Test Edit action
     const itemRow2 = adminPage.locator('div', { hasText: code });
     await itemRow2.locator('span[title="Edit"]').first().click();
-    await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/exports\/edit/);
+    await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/exports\/edit/);
     await adminPage.goBack();
     await adminPage.waitForLoadState('networkidle');
 
-    // Search again after going back
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    // Search again after returning to the listing
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
 
@@ -216,7 +216,7 @@ test.describe('UnoPim Export Jobs', () => {
     await createExport(adminPage, code, 'XLS', false);
     await expect(adminPage.getByRole('button', { name: 'Export Now' })).toBeVisible();
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
-    await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
+    await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/job-tracker\/track\//);
 
     // Cleanup
     await deleteExport(adminPage, code);

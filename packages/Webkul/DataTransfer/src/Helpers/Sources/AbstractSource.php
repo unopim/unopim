@@ -59,12 +59,9 @@ abstract class AbstractSource
     {
         $row = $this->currentRowData;
 
-        if (count($row) != $this->totalColumns) {
-            if ($this->foundWrongQuoteFlag) {
-                throw new \InvalidArgumentException(AbstractImporter::ERROR_CODE_WRONG_QUOTES);
-            } else {
-                throw new \InvalidArgumentException(AbstractImporter::ERROR_CODE_COLUMNS_NUMBER);
-            }
+        if (count($row) !== $this->totalColumns) {
+            throw_if($this->foundWrongQuoteFlag, \InvalidArgumentException::class, AbstractImporter::ERROR_CODE_WRONG_QUOTES);
+            throw new \InvalidArgumentException(AbstractImporter::ERROR_CODE_COLUMNS_NUMBER);
         }
 
         return array_combine($this->columnNames, $row);

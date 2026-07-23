@@ -2,9 +2,9 @@
 
 namespace Webkul\Installer\Database\Seeders;
 
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -70,7 +70,7 @@ class ProductTableSeeder extends Seeder
                     ];
                 }
 
-                if (! empty($variantRows)) {
+                if ($variantRows !== []) {
                     DB::table('products')->insert($variantRows);
                 }
 
@@ -133,7 +133,7 @@ class ProductTableSeeder extends Seeder
             return null;
         }
 
-        $now = Carbon::now();
+        $now = Date::now();
         $parents = [];
         $variants = [];
         $superAttributes = [];
@@ -236,7 +236,7 @@ class ProductTableSeeder extends Seeder
      */
     protected function insertSuperAttributes(array $superAttributes, $parentMap): void
     {
-        if (empty($superAttributes)) {
+        if ($superAttributes === []) {
             return;
         }
 
@@ -292,7 +292,7 @@ class ProductTableSeeder extends Seeder
             }
         }
 
-        if (! empty($pivotRows)) {
+        if ($pivotRows !== []) {
             DB::table('product_super_attributes')->insertOrIgnore($pivotRows);
         }
     }
@@ -303,7 +303,7 @@ class ProductTableSeeder extends Seeder
      */
     protected function storeProductImage(?string $imagePath): ?string
     {
-        if (empty($imagePath)) {
+        if (in_array($imagePath, [null, '', '0'], true)) {
             return null;
         }
 

@@ -1,26 +1,42 @@
 <?php
 
-it('should not display the webhook logs tab if user does not have logs permission', function () {
-    $this->loginWithPermissions(permissions: ['configuration', 'configuration.webhook', 'configuration.webhook.settings']);
+use Illuminate\Support\Facades\DB;
 
-    $this->get(route('webhook.settings.index', ['logs' => true]))
+beforeEach(function () {
+    $this->webhookId = DB::table('webhooks')->insertGetId([
+        'name'       => 'Logs Acl',
+        'url'        => 'https://example.com/logs-acl',
+        'is_active'  => 1,
+        'events'     => json_encode(['product.created']),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+});
+
+afterEach(function () {
+    DB::table('webhooks')->where('id', $this->webhookId)->delete();
+});
+
+it('should not display the webhook logs tab if user does not have logs permission', function () {
+    $this->loginWithPermissions(permissions: ['configuration', 'configuration.webhook', 'configuration.webhook.edit']);
+
+    $this->get(route('webhook.edit', $this->webhookId))
         ->assertOk()
-        ->assertDontSeeText(trans('webhook::app.configuration.webhook.settings.index.logs-title'));
+        ->assertDontSee(route('webhook.edit', ['id' => $this->webhookId, 'logs' => 1]), false);
 });
 
 it('should display the webhook logs tab if user has logs permission', function () {
-    $this->loginWithPermissions(permissions: ['configuration', 'configuration.webhook', 'configuration.webhook.settings', 'configuration.webhook.logs']);
+    $this->loginWithPermissions(permissions: ['configuration', 'configuration.webhook', 'configuration.webhook.edit', 'configuration.webhook.logs']);
 
-    $this->get(route('webhook.settings.index'))
+    $this->get(route('webhook.edit', $this->webhookId))
         ->assertOk()
-        ->assertSeeText(trans('webhook::app.configuration.webhook.settings.index.logs-title'));
+        ->assertSee(route('webhook.edit', ['id' => $this->webhookId, 'logs' => 1]), false);
 });
 
 it('should not render webhook logs content when user lacks logs permission even if logs query param is present', function () {
-    $this->loginWithPermissions(permissions: ['configuration', 'configuration.webhook', 'configuration.webhook.settings']);
+    $this->loginWithPermissions(permissions: ['configuration', 'configuration.webhook', 'configuration.webhook.edit']);
 
-    $response = $this->get(route('webhook.settings.index', ['logs' => true]));
-
-    $response->assertOk();
-    $response->assertDontSeeText(trans('webhook::app.configuration.webhook.logs.index.title'));
+    $this->get(route('webhook.edit', ['id' => $this->webhookId, 'logs' => 1]))
+        ->assertOk()
+        ->assertDontSee(route('webhook.logs.for-webhook', $this->webhookId), false);
 });

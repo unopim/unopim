@@ -85,7 +85,7 @@
                 type="{{ $type }}"
                 :class="[errors.length ? 'border border-red-500' : '']"
                 v-bind="field"
-                {{ $attributes->except(['value'])->merge(['class' => 'w-full appearance-none border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400']) }}
+                {{ $attributes->except(['value'])->merge(['class' => 'w-full appearance-none border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:border-gray-600 transition-all hover:border-gray-400 dark:hover:border-gray-400']) }}
             >
         </v-field>
         @break
@@ -280,7 +280,7 @@
              {{ 
                 $attributes
                     ->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])
-                    ->merge(['class' => 'icon-checkbox-normal text-2xl peer-checked:icon-checkbox-check peer-checked:text-violet-700'])
+                    ->merge(['class' => 'icon-checkbox-normal text-2xl peer-checked:icon-checkbox-check peer-checked:text-primary-700'])
                     ->merge(['class' => $attributes->get('disabled') ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'])
             }}
         >
@@ -306,7 +306,7 @@
         </v-field>
 
         <label
-            class="icon-radio-normal text-2xl peer-checked:icon-radio-selected peer-checked:text-violet-700 cursor-pointer"
+            class="icon-radio-normal text-2xl peer-checked:icon-radio-selected peer-checked:text-primary-700 cursor-pointer"
             {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
         >
         </label>
@@ -340,7 +340,7 @@
             </v-field>
 
             <label
-                class="rounded-full w-9 h-5 bg-gray-200 cursor-pointer peer-focus:ring-violet-300 after:bg-white dark:after:bg-white after:border-gray-300 dark:after:border-white peer-checked:bg-violet-700 dark:peer-checked:bg-violet-700 peer peer-checked:after:border-white peer-checked:after:ltr:translate-x-full peer-checked:after:rtl:-translate-x-full after:content-[''] after:absolute after:top-0.5 after:ltr:left-0.5 after:rtl:right-0.5 peer-focus:outline-none after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:bg-cherry-800"
+                class="rounded-full w-9 h-5 bg-gray-200 cursor-pointer peer-focus:ring-primary-300 after:bg-white dark:after:bg-white after:border-gray-300 dark:after:border-white peer-checked:bg-primary-700 dark:peer-checked:bg-primary-700 peer peer-checked:after:border-white peer-checked:after:ltr:translate-x-full peer-checked:after:rtl:-translate-x-full after:content-[''] after:absolute after:top-0.5 after:ltr:left-0.5 after:rtl:right-0.5 peer-focus:outline-none after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:bg-cherry-800"
                 for="{{ $name }}"
             ></label>
         </label>
@@ -348,7 +348,7 @@
         @break
 
     @case('image')
-        <x-admin::media.images
+        <x-admin::media.image
             name="{{ $name }}"
             ::class="[errors && errors['{{ $name }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
             {{ $attributes }}
@@ -377,6 +377,7 @@
                     return;
                 }
 
+                {{-- TODO: mutates injected `field` prop; kept because it is the VeeValidate v-slot field API. --}}
                 this.field.checked = true;
 
                 this.field.onChange();
@@ -405,16 +406,23 @@
                 @select="selectOption"
                 @remove="removeOption"
             >
+                <template v-slot:option="{ option }">
+                    <span v-text="option[labelBy ?? 'label'] ?? option.label"></span>
 
-            </v-multiselect>   
+                    <span
+                        v-if="option.description"
+                        class="block text-xs text-gray-500 dark:text-gray-300 whitespace-normal mt-0.5"
+                        v-text="option.description"
+                    ></span>
+                </template>
+            </v-multiselect>
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
         </div>
-         
+
     </script>
 
     <script type="module">
@@ -531,7 +539,6 @@
             </v-multiselect>   
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -668,7 +675,6 @@
             </v-multiselect>   
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -819,7 +825,6 @@
             </v-multiselect>   
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -848,12 +853,11 @@
                 entityName: String,
                 attributeId: String,
                 multiple: Boolean,
-                isLoading: Boolean,
                 listRoute: {
                     type: String,
                     default: '{{ route('admin.catalog.options.fetch-all') }}'
                 },
-                queryParams: Array,
+                queryParams: [Array, Object],
             },
             
             data() {
@@ -861,7 +865,7 @@
                     selectedValue: this.parseValue() ? this.parseOptions().filter(option =>  this.parseValue() instanceof Array && this.parseValue()?.some(valueItem => option[this.trackBy] === valueItem)) : [],
                     isLoading: false,
                     optionsList: [],
-                    timeout: null,
+                    timer: null,
                     delayTime: 500,
                     lastPage: 1,
 
@@ -875,11 +879,17 @@
                 }
             },
             mounted() {
-                this.$refs['taggingselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
+                this.$nextTick(() => {
+                    const list = this.$refs['taggingselect__handler__']?._?.refs?.list;
 
-                if (this.selectedValue && typeof this.selectedValue != 'object') {
-                    this.initializeValue();
-                }
+                    if (list) {
+                        list.addEventListener('scroll', this.onScroll);
+                    }
+
+                    if (this.selectedValue && typeof this.selectedValue != 'object') {
+                        this.initializeValue();
+                    }
+                });
             },
             computed: {
                 formattedOptions() {
@@ -941,7 +951,12 @@
                     }
                 },
                 onScroll(e) {
-                    const element = this.$refs['taggingselect__handler__']._.refs.list;
+                    const element = this.$refs['taggingselect__handler__']?._?.refs?.list;
+
+                    if (! element) {
+                        return;
+                    }
+
                     const tolerance = 10;
 
                     if (
@@ -986,7 +1001,7 @@
                         clearTimeout(this.timer);
                     }
 
-                    this.timer = setTimeout(this.search(query), this.delayTime);
+                    this.timer = setTimeout(() => this.search(query), this.delayTime);
                 },
 
                 parseOptions() {
@@ -1060,8 +1075,11 @@
                 :hide-selected="false"
                 :disabled="disabled ?? false"
                 :multiple="multiple ?? false"
+                :taggable="taggable ?? false"
+                :tag-placeholder="tagPlaceholder"
                 :name="name"
                 @search-change="handleSearch"
+                @tag="createOption"
                 @open="openedSelect"
                 @scroll="onScroll"
                 @select="selectOption"
@@ -1090,7 +1108,6 @@
             </v-multiselect>
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -1131,7 +1148,6 @@
                 field: Array,
                 placeholder: String,
                 disabled: Boolean,
-                isLoading: Boolean,
                 entityName: String,
                 attributeId: String,
                 multiple: Boolean,
@@ -1143,7 +1159,19 @@
                     type: String,
                     default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
-                queryParams: Array,
+                queryParams: [Array, Object],
+                taggable: {
+                    type: Boolean,
+                    default: false
+                },
+                createRoute: {
+                    type: String,
+                    default: ''
+                },
+                tagPlaceholder: {
+                    type: String,
+                    default: ''
+                },
             },
 
             data() {
@@ -1152,7 +1180,7 @@
 
                     isLoading: false,
                     optionsList: [],
-                    timeout: null,
+                    timer: null,
                     delayTime: 500,
                     lastPage: 1,
 
@@ -1248,7 +1276,7 @@
                         clearTimeout(this.timer);
                     }
 
-                    this.timer = setTimeout(this.search(query), this.delayTime);
+                    this.timer = setTimeout(() => this.search(query), this.delayTime);
                 },
 
                 search(query) {
@@ -1289,7 +1317,12 @@
                     });
                 },
                 onScroll(e) {
-                    const element = this.$refs['multiselect__handler__']._.refs.list;
+                    const element = this.$refs['multiselect__handler__']?._?.refs?.list;
+
+                    if (! element) {
+                        return;
+                    }
+
                     const tolerance = 10;
 
                     if (
@@ -1346,6 +1379,42 @@
                     });
                 },
 
+                createOption(query) {
+                    if (! this.createRoute) {
+                        return;
+                    }
+
+                    const code = query.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+
+                    if (! code) {
+                        return;
+                    }
+
+                    this.isLoading = true;
+
+                    this.$axios.post(this.createRoute, { code: code, name: query.trim() })
+                        .then((response) => {
+                            const option = response.data.data;
+
+                            this.optionsList.unshift(option);
+
+                            this.selectedValue = option;
+
+                            this.selectOption(option);
+
+                            this.isLoading = false;
+                        })
+                        .catch((error) => {
+                            this.isLoading = false;
+
+                            const message = error.response?.data?.errors?.code?.[0]
+                                ?? error.response?.data?.message
+                                ?? '';
+
+                            this.$emitter.emit('add-flash', { type: 'warning', message: message });
+                        });
+                },
+
                 previewImage(option) {
                     this.fileUrl = option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}';
                     this.$refs.imagePreviewModal.toggle();
@@ -1357,29 +1426,29 @@
         <div :class="[errors.length ? 'flex items-center justify-center w-full border !border-red-600 hover:border-red-600' : 'flex items-center justify-center w-full']">
             <label
                 :for="$.uid + '_dropzone-file'"
-                class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 transition-colors"
+                class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-primary-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 transition-colors"
                 @dragover.prevent="isDragging = true"
                 @dragleave.prevent="isDragging = false"
                 @drop.prevent="onDrop($event)"
-                :class="{ '!border-violet-500 !bg-violet-50 dark:!bg-violet-900/20': isDragging }"
+                :class="{ '!border-primary-500 !bg-primary-50 dark:!bg-primary-900/20': isDragging }"
             >
                 <div class="flex flex-col items-center justify-center py-6">
                     <template v-if="fieldData.value && (fieldData.value.name || field.value)">
                         <span class="icon-product text-4xl mb-4 mr-4"></span>
                         <div class="flex justify-between items-center mb-2 text-sm text-gray-500 dark:text-gray-400">
-                            <p class="text-sm text-gray-500 dark:text-gray-400" v-html="fieldData.value.name || field.value"></p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400" v-text="fieldData.value.name || field.value"></p>
                             <button
                                 type="button"
                                 @click="clearFile"
-                                class="icon-cancel text-3xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                class="icon-cancel text-3xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                             >
                             </button>
                         </div>
                     </template>
                     <template v-else>
                         <span class="icon-export text-gray-500 dark:text-gray-400 text-4xl"></span>
-                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400" v-html="info"></p>
+                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">@lang('admin::app.components.form.file-uploader.upload-cta')</span> @lang('admin::app.components.form.file-uploader.upload-hint')</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400" v-text="info"></p>
                     </template>
                 </div>
                             
@@ -1414,6 +1483,7 @@
 
             data() {
                 return {
+                    {{-- TODO: `fieldData` aliases the injected `field` prop; writes mutate it by design so the VeeValidate field value drives the multipart submit. --}}
                     fieldData: this.field,
                     isDragging: false,
                 }

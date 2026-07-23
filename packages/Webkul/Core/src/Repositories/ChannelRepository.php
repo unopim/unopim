@@ -2,20 +2,32 @@
 
 namespace Webkul\Core\Repositories;
 
+use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Contracts\Channel;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Core\Services\ChannelActivationSyncer;
 
 class ChannelRepository extends Repository
 {
+    /**
+     * Create a new repository instance.
+     */
+    public function __construct(
+        protected ChannelActivationSyncer $channelActivationSyncer,
+        Container $container
+    ) {
+        parent::__construct($container);
+    }
+
     /**
      * Specify model class name.
      */
     public function model(): string
     {
-        return 'Webkul\Core\Contracts\Channel';
+        return Channel::class;
     }
 
     /**
@@ -64,11 +76,15 @@ class ChannelRepository extends Repository
         $channel = parent::create($data);
 
         if (isset($data['locales'])) {
-            $channel->locales()->sync($data['locales']);
+            $synced = $channel->locales()->sync($data['locales']);
+
+            $this->channelActivationSyncer->syncLocales($synced['attached'], []);
         }
 
         if (isset($data['currencies'])) {
-            $channel->currencies()->sync($data['currencies']);
+            $synced = $channel->currencies()->sync($data['currencies']);
+
+            $this->channelActivationSyncer->syncCurrencies($synced['attached'], []);
         }
 
         return $channel;
@@ -78,36 +94,59 @@ class ChannelRepository extends Repository
      * Update.
      *
      * @param  int  $id
-     * @param  string  $attribute
      * @return Channel
      */
-    public function update(array $data, $id, $attribute = 'id')
+    public function update(array $data, $id)
     {
         $model = $this->getModel();
 
         $data = $this->removeEmptyTranslations($data, $model);
 
-        $channel = parent::update($data, $id, $attribute);
+        $channel = parent::update($data, $id);
 
-        // Sync the Channel Locales
         $oldLocales = $channel->locales()->pluck('code')->toArray();
 
-        $channel->locales()->sync($data['locales']);
+        $syncedLocales = $channel->locales()->sync($data['locales']);
 
         $newLocales = $channel->locales()->pluck('code')->toArray();
 
         Event::dispatch('core.model.proxy.sync.locales', ['old_values' => $oldLocales, 'new_values' => $newLocales, 'model' => $channel]);
 
-        // Sync the Channel Currencies
+        $this->channelActivationSyncer->syncLocales($syncedLocales['attached'], $syncedLocales['detached']);
+
         $oldCurrencies = $channel->currencies()->pluck('code')->toArray();
 
-        $channel->currencies()->sync($data['currencies']);
+        $syncedCurrencies = $channel->currencies()->sync($data['currencies']);
 
         $newCurrencies = $channel->currencies()->pluck('code')->toArray();
 
         Event::dispatch('core.model.proxy.sync.currencies', ['old_values' => $oldCurrencies, 'new_values' => $newCurrencies, 'model' => $channel]);
 
+        $this->channelActivationSyncer->syncCurrencies($syncedCurrencies['attached'], $syncedCurrencies['detached']);
+
         return $channel;
+    }
+
+    /**
+     * Delete.
+     *
+     * @param  int  $id
+     * @return mixed
+     */
+    public function delete($id)
+    {
+        $channel = $this->find($id);
+
+        $localeIds = $channel?->locales()->pluck('locales.id')->toArray() ?? [];
+        $currencyIds = $channel?->currencies()->pluck('currencies.id')->toArray() ?? [];
+
+        $deleted = parent::delete($id);
+
+        $this->channelActivationSyncer->syncLocales([], $localeIds);
+
+        $this->channelActivationSyncer->syncCurrencies([], $currencyIds);
+
+        return $deleted;
     }
 
     /**
@@ -117,8 +156,10 @@ class ChannelRepository extends Repository
     {
         foreach (core()->getAllActiveLocales() as $locale) {
             $localeCode = $locale->code;
-
-            if (! isset($data[$localeCode]) || ! is_array($data[$localeCode])) {
+            if (! isset($data[$localeCode])) {
+                continue;
+            }
+            if (! is_array($data[$localeCode])) {
                 continue;
             }
 
@@ -159,7 +200,7 @@ class ChannelRepository extends Repository
 
     public function getChannelAsOptions(): Collection
     {
-        return $this->all()->map(function ($channel) {
+        return $this->all()->map(function ($channel): array {
             $channelLabel = $channel->name;
 
             return [

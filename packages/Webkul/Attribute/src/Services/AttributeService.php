@@ -10,14 +10,12 @@ class AttributeService
 {
     private array $cachedAttributes = [];
 
-    private array $cachedAttributeRules = [];
-
     private array $nonExistingCodes = [];
 
     /**
      * Create service object
      */
-    public function __construct(private AttributeRepository $attributeRepository) {}
+    public function __construct(private readonly AttributeRepository $attributeRepository) {}
 
     /**
      * Get Attribute object throught attribute code
@@ -46,7 +44,7 @@ class AttributeService
 
         $attributes = [];
 
-        if (! empty($codesToFetch)) {
+        if ($codesToFetch !== []) {
             $attributes = $this->attributeRepository
                 ->whereIn('code', $codesToFetch)
                 ->get();
@@ -61,7 +59,7 @@ class AttributeService
             unset($codesToFetch[$attrCode]);
         }
 
-        if (! empty($codesToFetch)) {
+        if ($codesToFetch !== []) {
             $this->nonExistingCodes = array_merge($this->nonExistingCodes, $codesToFetch);
         }
 

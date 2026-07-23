@@ -10,10 +10,8 @@ class SecureHeaders
 {
     /**
      * Unwanted header list.
-     *
-     * @var array
      */
-    private $unwantedHeaderList = [
+    private array $unwantedHeaderList = [
         'X-Powered-By',
         'Server',
     ];
@@ -39,9 +37,8 @@ class SecureHeaders
      * Set headers.
      *
      * @param  Response  $response
-     * @return void
      */
-    private function setHeaders($response)
+    private function setHeaders($response): void
     {
         $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
@@ -54,10 +51,8 @@ class SecureHeaders
 
     /**
      * Remove unwanted headers.
-     *
-     * @return void
      */
-    private function removeUnwantedHeaders()
+    private function removeUnwantedHeaders(): void
     {
         if (headers_sent()) {
             return;

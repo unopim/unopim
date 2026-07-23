@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Fill channel creation form and submit.
@@ -55,7 +55,7 @@ async function createChannel(adminPage, code, name) {
   await navigateTo(adminPage, 'channels');
   await adminPage.getByRole('link', { name: 'Create Channel' }).click();
   await fillChannelForm(adminPage, { code, name });
-  await clickSaveAndExpect(adminPage, 'Save Channel', /Channel created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Channel created successfully/i);
 }
 
 /**
@@ -86,7 +86,7 @@ test.describe('Channel Management', () => {
     await navigateTo(adminPage, 'channels');
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: '', name: 'E-Commerce' });
-    await adminPage.getByRole('button', { name: 'Save Channel' }).click();
+    await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
 
@@ -95,7 +95,7 @@ test.describe('Channel Management', () => {
     await navigateTo(adminPage, 'channels');
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: `${uid}rc`, name: 'E-Commerce', selectRootCategory: false });
-    await adminPage.getByRole('button', { name: 'Save Channel' }).click();
+    await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Root Category field is required')).toBeVisible();
   });
 
@@ -104,7 +104,7 @@ test.describe('Channel Management', () => {
     await navigateTo(adminPage, 'channels');
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: `${uid}lc`, name: 'E-Commerce', selectLocale: false });
-    await adminPage.getByRole('button', { name: 'Save Channel' }).click();
+    await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Locales field is required')).toBeVisible();
   });
 
@@ -113,7 +113,7 @@ test.describe('Channel Management', () => {
     await navigateTo(adminPage, 'channels');
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: `${uid}cu`, name: 'E-Commerce', selectCurrency: false });
-    await adminPage.getByRole('button', { name: 'Save Channel' }).click();
+    await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Currencies field is required')).toBeVisible();
   });
 
@@ -122,7 +122,7 @@ test.describe('Channel Management', () => {
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('E-Commerce');
-    await adminPage.getByRole('button', { name: 'Save Channel' }).click();
+    await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Root Category field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Locales field is required')).toBeVisible();
@@ -148,7 +148,7 @@ test.describe('Channel Management', () => {
     await navigateTo(adminPage, 'channels');
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code, name: '' });
-    await clickSaveAndExpect(adminPage, 'Save Channel', /Channel created successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Channel created successfully/i);
 
     // Cleanup
     await deleteChannel(adminPage, code);
@@ -166,7 +166,7 @@ test.describe('Channel Management', () => {
     await navigateTo(adminPage, 'channels');
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code, name: 'Other Name' });
-    await adminPage.getByRole('button', { name: 'Save Channel' }).click();
+    await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Code has already been taken.')).toBeVisible();
 
     // Cleanup
@@ -194,7 +194,7 @@ test.describe('Channel Management', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill(`${uid} Updated`);
-    await clickSaveAndExpect(adminPage, 'Save Channel', /Update Channel Successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Update Channel Successfully/i);
 
     // Cleanup
     await deleteChannel(adminPage, code);

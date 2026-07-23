@@ -11,9 +11,8 @@ class Channel
      * After category update
      *
      * @param  Category  $category
-     * @return void
      */
-    public function afterUpdate($category)
+    public function afterUpdate($category): void
     {
         ResponseCache::clear();
     }

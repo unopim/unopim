@@ -18,12 +18,11 @@ class JSONFileBuffer implements \Iterator
         $this->openFile();
     }
 
-    public static function initialize($export)
+    public static function initialize($export): self
     {
         $filename = sprintf('%s%s_', JSONFileBuffer::FILE_PREFIX, $export->id);
-        $jsonFileBuffer = new self($filename, true);
 
-        return $jsonFileBuffer;
+        return new self($filename);
     }
 
     protected function openFile(): void
@@ -34,9 +33,7 @@ class JSONFileBuffer implements \Iterator
 
     public static function load(string $filename): self
     {
-        if (! file_exists($filename)) {
-            throw new \InvalidArgumentException("File not found: $filename");
-        }
+        throw_unless(file_exists($filename), \InvalidArgumentException::class, "File not found: $filename");
 
         $instance = new self;
         $instance->filename = $filename;
@@ -45,11 +42,11 @@ class JSONFileBuffer implements \Iterator
         return $instance;
     }
 
-    public function write($item, array $options = [])
+    public function write($item, array $options = []): void
     {
         if (! is_array($item) && ! is_scalar($item)) {
             throw new \Exception(
-                sprintf('%s only supports items of type scalar or array', __CLASS__)
+                sprintf('%s only supports items of type scalar or array', self::class)
             );
         }
 
@@ -88,7 +85,7 @@ class JSONFileBuffer implements \Iterator
 
     public function delete(): void
     {
-        unset($this->file);
+        $this->file = null;
 
         if ($this->filename && is_file($this->filename)) {
             @unlink($this->filename);
@@ -109,6 +106,6 @@ class JSONFileBuffer implements \Iterator
 
     public function __destruct()
     {
-        unset($this->file);
+        $this->file = null;
     }
 }

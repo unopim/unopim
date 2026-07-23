@@ -30,7 +30,7 @@ it('should return the currency json for edit if have permission', function () {
     $this->loginWithPermissions('custom', ['settings', 'settings.currencies.edit']);
     $currency = Currency::first();
 
-    $this->get(route('admin.settings.currencies.edit', ['id' => $currency->id]))
+    $this->getJson(route('admin.settings.currencies.edit', ['id' => $currency->id]))
         ->assertOk()
         ->assertJsonFragment($currency->toArray());
 });

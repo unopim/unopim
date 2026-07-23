@@ -1,6 +1,9 @@
 @props([
     'activeTab' => 'general',
     'historyId' => null,
+    'generalUrl' => '?',
+    'historyUrl' => '?history',
+    'tabItems' => [],
 ])
 
 @php
@@ -8,7 +11,7 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="ltr" class="{{ $darkModePreference === 'dark' || $darkModePreference === '1' ? 'dark' : '' }}">
+<html lang="{{ app()->getLocale() }}" dir="{{ in_array(app()->getLocale(), ['ar_AE']) ? 'rtl' : 'ltr' }}" class="{{ $darkModePreference === 'dark' || $darkModePreference === '1' ? 'dark' : '' }}">
     <head>
         <title>{{ $title ?? '' }}</title>
 
@@ -58,7 +61,6 @@
             rel="stylesheet"
         />
 
-        <!-- <link rel="preload" as="image" href="{{ url('cache/logo/pim.png') }}"> -->
 
         @if ($favicon = core()->getConfigData('general.design.admin_logo.favicon'))
             <link
@@ -85,87 +87,90 @@
         {!! view_render_event('unopim.admin.layout.head') !!}
     </head>
 
-    <body class="h-full dark:bg-cherry-800">
+    <body class="h-screen overflow-hidden dark:bg-cherry-800">
         {!! view_render_event('unopim.admin.layout.body.before') !!}
 
-        <div id="app" class="h-full">
-            <!-- Flash Message Blade Component -->
+        <div id="app" class="flex flex-col h-screen">
             <x-admin::flash-group />
 
-            <!-- Confirm Modal Blade Component -->
             <x-admin::modal.history />
 
-            <!-- Confirm Modal Blade Component -->
             <x-admin::modal.confirm />
 
             {!! view_render_event('unopim.admin.layout.content.before') !!}
 
-            <!-- Page Header Blade Component -->
             <x-admin::layouts.header />
 
             <div
-                class="flex gap-4 group/container {{ (request()->cookie('sidebar_collapsed') ?? 0) ? 'sidebar-collapsed' : 'sidebar-not-collapsed' }}"
+                class="flex flex-1 min-h-0 group/container {{ (request()->cookie('sidebar_collapsed') ?? 1) ? 'sidebar-collapsed' : 'sidebar-not-collapsed' }}"
                 ref="appLayout"
             >
-                <!-- Page Sidebar Blade Component -->
                 <x-admin::layouts.sidebar />
 
-                <div class="flex-1 max-w-full px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 ltr:pl-[286px] rtl:pr-[286px] max-lg:!px-4 transition-all duration-300 group-[.sidebar-collapsed]/container:ltr:pl-[85px] group-[.sidebar-collapsed]/container:rtl:pr-[85px]">
-                    <div class="tabs">    
-                        @php
-                            $hasPermission = bouncer()->hasPermission('history');
+                <main id="main-content" class="flex-1 min-w-0 overflow-y-auto px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 transition-all duration-300">
+                    @php
+                        $hasPermission = bouncer()->hasPermission('history');
 
-                            $activeTab = $hasPermission
-                                ? (request()->has('history') ? 'history' : $activeTab)
-                                : ($activeTab ?? 'general');
+                        $activeTab = $hasPermission
+                            ? (request()->has('history') ? 'history' : $activeTab)
+                            : ($activeTab ?? 'general');
 
-                            $items = [
+                        $currentQuery = request()->query();
+                        $generalQuery = $currentQuery;
+                        unset($generalQuery['history']);
+
+                        $defaultGeneralUrl = request()->url().(count($generalQuery) ? '?'.http_build_query($generalQuery) : '?');
+                        $defaultHistoryUrl = request()->url().'?'.http_build_query(array_merge($generalQuery, ['history' => 1]));
+
+                        $generalUrl = $generalUrl === '?' ? $defaultGeneralUrl : $generalUrl;
+                        $historyUrl = $historyUrl === '?history' ? $defaultHistoryUrl : $historyUrl;
+
+                        $tabItems = count($tabItems)
+                            ? $tabItems
+                            : [
                                 [
-                                    'url'    => '?',
-                                    'name'   => 'admin::app.components.layouts.sidebar.general',
-                                    'active' => $activeTab === 'general',
+                                    'key'   => 'general',
+                                    'url'   => $generalUrl,
+                                    'label' => 'admin::app.components.layouts.sidebar.general',
                                 ],
                             ];
-                        @endphp
+                    @endphp
 
-                        <div class="flex gap-4 mb-4 pt-2 border-b-2 max-sm:hidden dark:border-gray-800">
-                            {{-- First: default tabs --}}
-                            @foreach ($items as $item)
-                                <a href="{{ $item['url'] }}">
-                                    <div class="{{ $item['active'] ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
-                                        @lang($item['name'])
-                                    </div>
-                                </a>
-                            @endforeach
+                    <div class="js-sticky-header sticky -top-3 z-20 -mx-4 -mt-3 border-b border-gray-200 bg-unopim-primary-page px-4 pt-3 transition-shadow dark:border-gray-800 dark:bg-cherry-800">
+                        @isset($pageHeader)
+                            {{ $pageHeader }}
+                        @else
+                            <x-admin::page-title :title="$title ?? ''" />
+                        @endisset
 
+                        <x-admin::layouts.edit-tabs
+                            :items="$tabItems"
+                            :active="$activeTab"
+                            :history-url="$historyUrl"
+                            :show-history="$hasPermission"
+                        >
                             {{ $tabs ?? '' }}
-
-                            @if ($hasPermission)
-                                <a href="?history">
-                                    <div class="{{ $activeTab === 'history' ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
-                                        @lang('admin::app.components.layouts.sidebar.history')
-                                    </div>
-                                </a>
-                            @endif
-                        </div>
+                        </x-admin::layouts.edit-tabs>
                     </div>
 
-                    @if ($activeTab === 'general')
-                        {{ $slot }}
-                    @endif
+                    <div class="pt-4">
+                        @if ($activeTab === 'general')
+                            {{ $slot }}
+                        @endif
 
-                    {{ $tabContents ?? '' }}
+                        {{ $tabContents ?? '' }}
 
-                    @if ($activeTab === 'history')
-                        {!! view_render_event('unopim.admin.layout.history.before') !!}
+                        @if ($activeTab === 'history')
+                            {!! view_render_event('unopim.admin.layout.history.before') !!}
 
-                        <x-admin::history src="{{ route('admin.history.index',[$entityName, ($historyId ?? request()->id)]) }}" >
+                            <x-admin::history src="{{ route('admin.history.index',[$entityName, ($historyId ?? request()->id)]) }}" >
 
-                        </x-admin::history>
+                            </x-admin::history>
 
-                        {!! view_render_event('unopim.admin.layout.history.after') !!}
-                    @endif
-                </div>
+                            {!! view_render_event('unopim.admin.layout.history.after') !!}
+                        @endif
+                    </div>
+                </main>
             </div>
 
             {!! view_render_event('unopim.admin.layout.content.after') !!}

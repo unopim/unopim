@@ -2,6 +2,8 @@
 
 namespace Webkul\Category\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +19,11 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\JsonDataPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Appends(['name'])]
+#[Fillable([
+    'code',
+    'parent_id',
+])]
 class Category extends Model implements CategoryContract, HistoryContract, PresentableHistoryInterface
 {
     use HasFactory, NodeTrait, Visitable;
@@ -32,32 +39,6 @@ class Category extends Model implements CategoryContract, HistoryContract, Prese
     ];
 
     protected $historyTags = ['category'];
-
-    /**
-     * Fillable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'code',
-        'parent_id',
-    ];
-
-    /**
-     * Typecasts the defined columns into given types
-     *
-     * @var array
-     */
-    protected $casts = [
-        'additional_data' => 'array',
-    ];
-
-    /**
-     * Appends.
-     *
-     * @var array
-     */
-    protected $appends = ['name'];
 
     /**
      * Use fallback for category.
@@ -120,9 +101,21 @@ class Category extends Model implements CategoryContract, HistoryContract, Prese
 
     /**
      * Get the category that is the parent of this category.
+     *
+     * @return BelongsTo<Category, $this>
      */
     public function parent_category(): BelongsTo
     {
         return $this->belongsTo(static::class, 'parent_id');
+    }
+
+    /**
+     * Typecasts the defined columns into given types
+     */
+    protected function casts(): array
+    {
+        return [
+            'additional_data' => 'array',
+        ];
     }
 }

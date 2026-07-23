@@ -7,11 +7,13 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Enums\FilterOperators;
@@ -151,18 +153,20 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                         'entityName' => 'attribute_family',
                     ],
                 ],
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
+                'searchable'       => false,
+                'filterable'       => true,
+                'sortable'         => true,
+                'removable_filter' => true,
             ],
             'status' => [
-                'index'      => 'status',
-                'label'      => trans('admin::app.catalog.products.index.datagrid.status'),
-                'type'       => 'boolean',
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
-                'options'    => [
+                'index'            => 'status',
+                'label'            => trans('admin::app.catalog.products.index.datagrid.status'),
+                'type'             => 'boolean',
+                'searchable'       => false,
+                'filterable'       => true,
+                'sortable'         => true,
+                'removable_filter' => true,
+                'options'          => [
                     'type'   => 'basic',
                     'params' => [
                         'options' => [
@@ -213,37 +217,24 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                             ->toArray(),
                     ],
                 ],
-                'closure'    => fn ($row) => trans('product::app.type.'.$row->type),
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
+                'closure'          => fn ($row) => trans('product::app.type.'.$row->type),
+                'searchable'       => false,
+                'filterable'       => true,
+                'sortable'         => true,
+                'removable_filter' => true,
             ],
 
-            'created_at' => [
-                'index'      => 'created_at',
-                'label'      => trans('admin::app.catalog.products.index.datagrid.created-at'),
-                'type'       => 'date_range',
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
-            ],
+            'created_at' => ProductPropertyFilters::get(ProductPropertyFilters::CREATED_AT),
 
-            'updated_at' => [
-                'index'      => 'updated_at',
-                'label'      => trans('admin::app.catalog.products.index.datagrid.updated-at'),
-                'type'       => 'date_range',
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
-                'closure'    => function ($row) {
+            'updated_at' => ProductPropertyFilters::get(ProductPropertyFilters::UPDATED_AT) + [
+                'closure' => function ($row) {
                     return core()->formatDateWithTimeZone($row->updated_at, 'Y-m-d H:i:s');
                 },
             ],
 
-            'completeness' => [
-                'index'   => 'completeness',
-                'label'   => trans('completeness::app.catalog.products.index.datagrid.completeness'),
-                'type'    => 'integer',
+            'categories' => ProductPropertyFilters::get(ProductPropertyFilters::CATEGORIES),
+
+            'completeness' => ProductPropertyFilters::get(ProductPropertyFilters::COMPLETENESS) + [
                 'closure' => function ($row) {
                     if (is_null($row->completeness)) {
                         return '<span class="label-info break-words">'.trans('completeness::app.catalog.products.index.datagrid.missing-completeness-setting').'</span>';
@@ -262,9 +253,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     return '<span class="inline-flex items-center justify-center text-center px-2 py-1 w-10 rounded-md text-xs fon-base text-white '.$bgClass.'">'
                         .$score.'%</span>';
                 },
-                'searchable' => false,
-                'filterable' => false,
-                'sortable'   => true,
             ],
         ];
     }
@@ -293,7 +281,39 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $this->addColumn($propertyColumns[$column]);
         }
 
+        $this->addRequestedPropertyFilters($propertyColumns);
+
         $this->addFilterableAttributes();
+    }
+
+    /**
+     * Register opt-in property filters (dates, completeness, categories) picked from the
+     * "Add Filter" list. They are not grid columns, so they are added hidden and only when
+     * the request actually filters on them.
+     *
+     * @param  array<string, array<string, mixed>>  $propertyColumns
+     */
+    protected function addRequestedPropertyFilters(array $propertyColumns): void
+    {
+        $requestedFilters = array_keys(request()->input('filters', []));
+
+        foreach ($requestedFilters as $index) {
+            if (! is_string($index)
+                || in_array($index, $this->defaultColumns, true)
+                || ! ProductPropertyFilters::has($index)
+                || ! isset($propertyColumns[$index])
+            ) {
+                continue;
+            }
+
+            $column = $propertyColumns[$index];
+
+            unset($column['closure']);
+
+            $column['visible'] = false;
+
+            $this->addColumn($column);
+        }
     }
 
     public function prepareAttributeColumns($column)
@@ -475,6 +495,25 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return;
         }
 
+        if (isset($requestedParams['mass_action_ids']) && (bool) $requestedParams['mass_action_ids']) {
+            $this->setElasticSort($requestedParams['sort'] ?? []);
+            $this->setElasticFilters($requestedParams['filters'] ?? []);
+
+            $esQuery = ElasticSearchQuery::build();
+
+            $matchingParams = $requestedParams;
+            $matchingParams['pagination'] = [
+                'page'     => 1,
+                'per_page' => self::MASS_ACTION_ID_LIMIT,
+            ];
+
+            $result = ResultCursorFactory::createCursor($esQuery, $matchingParams);
+
+            $this->massActionIds = array_map('intval', $result->getAllIds());
+
+            return;
+        }
+
         try {
             $pagination = $requestedParams['pagination'] ?? [];
             $pagination['per_page'] ??= $this->itemsPerPage;
@@ -559,9 +598,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $sortOrder = strtolower(trim((string) $sortOrder)) === 'asc' ? 'asc' : 'desc';
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
-            $attribute = $this->attributeService->findAttributeByCode($sortColumn) ?? 'text';
+            $attribute = $this->attributeService->findAttributeByCode($sortColumn);
 
-            $castType = $attribute?->type === 'price' || $attribute->validation === 'numeric'
+            $castType = $attribute && ($attribute->type === 'price' || $attribute->validation === 'numeric')
                 ? 'DECIMAL'
                 : null;
 
@@ -645,6 +684,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $column = reset($column);
 
+        if ($column instanceof Column && $condition = $this->getRequestedCondition($value)) {
+            return $this->resolveCondition($column, $condition);
+        }
+
         switch ($column->type) {
             case 'datetime_range':
             case 'date_range':
@@ -666,6 +709,67 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return [$operator, $value];
+    }
+
+    /**
+     * Pull the {operator, value, value2, currency} payload sent by an attribute filter,
+     * or null when the request uses the plain value format.
+     *
+     * @return array<array-key, mixed>|null
+     */
+    protected function getRequestedCondition(mixed $value): ?array
+    {
+        $condition = is_array($value) ? reset($value) : null;
+
+        if (! is_array($condition) || empty($condition['operator'])) {
+            return null;
+        }
+
+        return $condition;
+    }
+
+    /**
+     * Turn an attribute filter's condition into the [operator, value] pair its filter expects.
+     *
+     * @param  array<array-key, mixed>  $condition
+     * @return array{0: FilterOperators|null, 1: mixed}
+     */
+    protected function resolveCondition(Column $column, array $condition): array
+    {
+        $operator = is_string($condition['operator'])
+            ? FilterOperators::tryFrom($condition['operator'])
+            : null;
+
+        if (! $operator) {
+            return [null, null];
+        }
+
+        $value = $condition['value'] ?? '';
+
+        if (in_array($operator, [FilterOperators::IS_EMPTY, FilterOperators::IS_NOT_EMPTY], true)) {
+            return [
+                $operator,
+                $column->type === 'price' ? [$condition['currency'] ?? '', ''] : [''],
+            ];
+        }
+
+        if ($column->type === 'price') {
+            return [$operator, [$condition['currency'] ?? '', $value, $condition['value2'] ?? '']];
+        }
+
+        if ($operator === FilterOperators::RANGE) {
+            return [$operator, [$value, $condition['value2'] ?? '']];
+        }
+
+        if (in_array($operator, [FilterOperators::IN, FilterOperators::NOT_IN], true)) {
+            if (is_array($value)) {
+                return [$operator, array_values($value)];
+            }
+
+            return [$operator, array_filter(explode(',', is_scalar($value) ? (string) $value : ''))];
+        }
+
+        return [$operator, is_array($value) ? array_values($value) : [$value]];
     }
 
     /**
@@ -969,16 +1073,17 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'search_placeholder' => __($this->searchPlaceholder),
             'records'            => $paginator['data'],
             'meta'               => [
-                'primary_column'   => $this->primaryColumn,
-                'default_order'    => $this->sortColumn,
-                'from'             => $paginator['from'],
-                'to'               => $paginator['to'],
-                'total'            => $paginator['total'],
-                'per_page_options' => [10, 20, 30, 40, 50],
-                'per_page'         => $paginator['per_page'],
-                'current_page'     => $paginator['current_page'],
-                'last_page'        => $paginator['last_page'],
-                'managedColumn'    => [
+                'primary_column'     => $this->primaryColumn,
+                'select_all_enabled' => $this->enableSelectAll,
+                'default_order'      => $this->sortColumn,
+                'from'               => $paginator['from'],
+                'to'                 => $paginator['to'],
+                'total'              => $paginator['total'],
+                'per_page_options'   => [10, 20, 30, 40, 50],
+                'per_page'           => $paginator['per_page'],
+                'current_page'       => $paginator['current_page'],
+                'last_page'          => $paginator['last_page'],
+                'managedColumn'      => [
                     'enabled' => $this->manageableColumn,
                     'columns' => $this->managedColumns,
                     'route'   => route('admin.datagrid.available_columns'),

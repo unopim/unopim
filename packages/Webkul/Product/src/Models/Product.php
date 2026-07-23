@@ -3,6 +3,8 @@
 namespace Webkul\Product\Models;
 
 use Exception;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,36 +24,26 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\BooleanPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Contracts\Product as ProductContract;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Database\Factories\ProductFactory;
 use Webkul\Product\Presenters\ProductValuesPresenter;
 use Webkul\Product\Type\AbstractType;
 
+#[Fillable([
+    'type',
+    'attribute_family_id',
+    'sku',
+    'parent_id',
+    'status',
+    'variant_structure_id',
+])]
 class Product extends Model implements HistoryAuditable, PresentableHistoryInterface, ProductContract
 {
     use HasFactory, Visitable;
     use HistoryTrait;
 
     protected $historyTags = ['product'];
-
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = [
-        'type',
-        'attribute_family_id',
-        'sku',
-        'parent_id',
-        'status',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     */
-    protected $casts = [
-        'additional' => 'array',
-        'values'     => 'array',
-    ];
 
     /**
      * The type of product.
@@ -62,6 +54,8 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
 
     /**
      * Get the product that owns the product.
+     *
+     * @return BelongsTo<Product, $this>
      */
     public function parent(): BelongsTo
     {
@@ -74,6 +68,14 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     public function attribute_family(): BelongsTo
     {
         return $this->belongsTo(AttributeFamilyProxy::modelClass());
+    }
+
+    /**
+     * Get the variant structure that owns the product.
+     */
+    public function variantStructure(): BelongsTo
+    {
+        return $this->belongsTo(VariantStructureProxy::modelClass(), 'variant_structure_id');
     }
 
     /**
@@ -95,6 +97,8 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
 
     /**
      * Get the product variants that owns the product.
+     *
+     * @return HasMany<Product, $this>
      */
     public function variants(): HasMany
     {
@@ -113,7 +117,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
             return $this->typeInstance;
         }
 
-        $this->typeInstance = app(config('product_types.'.$this->type.'.class'));
+        $this->typeInstance = resolve(config('product_types.'.$this->type.'.class'));
 
         if (! $this->typeInstance instanceof AbstractType) {
             throw new Exception("Please ensure the product type '{$this->type}' is configured in your application.");
@@ -126,14 +130,14 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
 
     /**
      * The images that belong to the product.
-     *
-     * @return string
      */
-    public function getBaseImageUrlAttribute()
+    protected function baseImageUrl(): Attribute
     {
-        $image = $this->images->first();
+        return Attribute::make(get: function () {
+            $image = $this->images->first();
 
-        return $image->url ?? null;
+            return $image->url ?? null;
+        });
     }
 
     /**
@@ -144,22 +148,17 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      */
     public function getAttribute($key)
     {
-        if (! method_exists(static::class, $key)
-            && ! in_array($key, [
-                'pivot',
-                'parent_id',
-                'attribute_family_id',
-            ])
-            && ! isset($this->attributes[$key])
-        ) {
-            if (isset($this->id) && $this->attribute_family?->id) {
-                $attribute = $this->checkInLoadedFamilyAttributes()->where('code', $key)->first();
-                if ($attribute) {
-                    $this->attributes[$key] = $this->getCustomAttributeValue($attribute);
-                }
-
-                return $this->getAttributeValue($key);
+        if (! method_exists(static::class, $key) && ! in_array($key, [
+            'pivot',
+            'parent_id',
+            'attribute_family_id',
+        ]) && ! isset($this->attributes[$key]) && (isset($this->id) && $this->attribute_family?->id)) {
+            $attribute = $this->checkInLoadedFamilyAttributes()->where('code', $key)->first();
+            if ($attribute) {
+                $this->attributes[$key] = $this->getCustomAttributeValue($attribute);
             }
+
+            return $this->getAttributeValue($key);
         }
 
         return parent::getAttribute($key);
@@ -215,6 +214,16 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
+     * Resolve this product's `values` across its ancestor chain (read-time
+     * variant inheritance). Returns the effective values array: the product's
+     * own values overlaid on every ancestor's, root -> leaf.
+     */
+    public function resolvedValues(): array
+    {
+        return resolve(VariantValueResolver::class)->resolve($this);
+    }
+
+    /**
      * Get an product attribute value.
      *
      * @return mixed
@@ -254,24 +263,21 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
                     ->where('attribute_id', $attribute->id)
                     ->first();
             }
-        } else {
-            if ($attribute->value_per_locale) {
+        } elseif ($attribute->value_per_locale) {
+            $attributeValue = $this->attribute_values
+                ->where('locale', $locale)
+                ->where('attribute_id', $attribute->id)
+                ->first();
+            if (empty($attributeValue[$attribute->column_name])) {
                 $attributeValue = $this->attribute_values
-                    ->where('locale', $locale)
-                    ->where('attribute_id', $attribute->id)
-                    ->first();
-
-                if (empty($attributeValue[$attribute->column_name])) {
-                    $attributeValue = $this->attribute_values
-                        ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel())
-                        ->where('attribute_id', $attribute->id)
-                        ->first();
-                }
-            } else {
-                $attributeValue = $this->attribute_values
+                    ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel())
                     ->where('attribute_id', $attribute->id)
                     ->first();
             }
+        } else {
+            $attributeValue = $this->attribute_values
+                ->where('attribute_id', $attribute->id)
+                ->first();
         }
 
         return $attributeValue[$attribute->column_name] ?? $attribute->default_value;
@@ -354,7 +360,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      */
     public function normalizeWithImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): array
     {
-        $image = $this->getProductDisplayImage();
+        $image = $this->getProductDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
 
         $image = $image ? Storage::url($image) : null;
 
@@ -365,6 +371,17 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
             'values'          => $this->values,
             'additional_data' => $this->additional_data,
             'image'           => $image,
+        ];
+    }
+
+    /**
+     * The attributes that should be cast.
+     */
+    protected function casts(): array
+    {
+        return [
+            'additional' => 'array',
+            'values'     => 'array',
         ];
     }
 }

@@ -791,6 +791,30 @@ it('should successfully upload an image swatch', function () {
     expect($option->swatch_value_url)->toContain('storage');
 });
 
+it('should reject a swatch whose image content uses an active-content filename', function () {
+    $attribute = Attribute::factory()->create([
+        'code'        => 'secure_color_attribute',
+        'type'        => 'select',
+        'swatch_type' => 'image',
+    ]);
+
+    $option = AttributeOption::factory()->create([
+        'attribute_id' => $attribute->id,
+        'code'         => 'secure_red_option',
+    ]);
+
+    $this->withHeaders($this->headers)->postJson(
+        route('admin.api.media-files.attribute.options.store'),
+        [
+            'attribute_code' => $attribute->code,
+            'code'           => $option->code,
+            'file'           => UploadedFile::fake()->image('swatch.html'),
+        ]
+    )
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['file']);
+});
+
 it('should return validation error for missing file', function () {
     $attribute = Attribute::factory()->create([
         'code'        => 'color_attribute',

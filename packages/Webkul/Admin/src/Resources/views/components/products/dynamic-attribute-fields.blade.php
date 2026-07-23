@@ -6,7 +6,8 @@
     'fieldValues'            => [],
     'channelCurrencies'      => [],
     'variantFields'          => [],
-    'completenessAttributes' => []
+    'completenessAttributes' => [],
+    'lockedFields'           => []
 ])
 
 @php
@@ -48,9 +49,33 @@
 
         $value = old($flatFieldName) ?? $value;
 
+        $isLocked = isset($lockedFields[$field->code]);
+
+        $lockLevel = $isLocked ? ($lockedFields[$field->code]['level'] ?? 'common') : null;
+
+        $lockOwnerId = $isLocked ? ($lockedFields[$field->code]['ownerId'] ?? null) : null;
+
+        if ($isLocked) {
+            $value = $lockedFields[$field->code]['value'] ?? null;
+        }
+
         $fieldLabel = $field->translate($currentLocaleCode)['name'] ?? '';
 
         $fieldLabel = empty($fieldLabel) ? '['.$field->code.']' : $fieldLabel;
+
+        $fieldInstructions = $field->translate($currentLocaleCode)['instructions'] ?? '';
+
+        $imageExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : \Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS;
+
+        $galleryExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : array_merge(\Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS, \Webkul\Core\Rules\FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
+
+        $fileExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : \Webkul\Core\Rules\FileOrImageValidValue::FILE_ALLOWED_EXTENSION;
 
         $fieldType = $field->type;
     @endphp
@@ -72,6 +97,20 @@
             </x-admin::form.control-group.label>
 
             <div class="self-end mb-2 text-xs flex gap-1 items-center">
+                @if ($isLocked)
+                    <a
+                        @if ($lockOwnerId) href="{{ route('admin.catalog.products.edit', $lockOwnerId) }}" @endif
+                        class="inline-flex items-center gap-1 uppercase p-1 px-2 h-5 rounded-full bg-primary-50 dark:bg-cherry-800 border border-primary-200 dark:border-cherry-700 text-primary-600 dark:text-primary-400 {{ $lockOwnerId ? 'hover:bg-primary-100 dark:hover:bg-cherry-700 cursor-pointer' : 'cursor-default' }}"
+                        title="@lang('admin::app.catalog.products.edit.types.configurable.variant-inheritance.locked', ['level' => trans('admin::app.catalog.products.edit.types.configurable.variant-inheritance.level-'.$lockLevel)])"
+                    >
+                        <svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        {{ trans('admin::app.catalog.products.edit.types.configurable.variant-inheritance.level-'.$lockLevel) }}
+                    </a>
+                @endif
+
                 @if (
                     $globaltranslationEnabled == 1
                     && ($fieldType == 'text' || $fieldType == 'textarea')
@@ -105,6 +144,7 @@
 
         {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.control.'.$fieldType.'.before', ['field' => $field, 'value' => $value, 'fieldName' => $fieldName]) !!}
 
+        <fieldset @disabled($isLocked) class="border-0 p-0 m-0 min-w-0 {{ $isLocked ? 'opacity-90' : '' }}">
         @switch ($fieldType)
             @case ('checkbox')
                 @if (! empty($value))
@@ -169,18 +209,21 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!-- Emoty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
-                <x-admin::media.images
+                <x-admin::media.image
                     name="{{ $fieldName }}"
-                    ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
-                    :responsive="true"
+                    :accepted-extensions="$imageExtensions"
+                    :instructions="$fieldInstructions"
+                    width="270px"
+                    height="140px"
                     :has-context="true"
+                    :full-preview="true"
                 />
                 @break
             @case('gallery')
@@ -200,18 +243,20 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!-- Empty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
                 <x-admin::media.gallery
                     name="{{ $fieldName }}"
-                    ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? $savedData : []"
+                    :accepted-extensions="$galleryExtensions"
+                    :instructions="$fieldInstructions"
                     :allow-multiple=true
-                    width='210px'
+                    width="270px"
+                    height="140px"
                 />
                 @break
             @case('file')
@@ -228,19 +273,20 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!--  Emoty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
                 <x-admin::media.files
-                    type="video"
                     :id="$field->code"
                     :name="$fieldName"
                     ::rules="{{ $field->getValidationsField() }}"
                     :label="$fieldLabel"
                     :uploaded-files="! empty($value) ? [$savedFile] : []"
+                    :accepted-extensions="$fileExtensions"
+                    :instructions="$fieldInstructions"
                     value="{{$value}}"
-                    class="mt-3" 
+                    class="mt-3"
                 />
                 @break
             @case('price')
@@ -269,7 +315,7 @@
                 </div>
             @break
             @case('multiselect')
-                <!-- NO BREAK -->
+                {{-- NO BREAK --}}
                 @php
                     if (! is_array($value)) {
                         $value = str_contains((string) $value, ',')
@@ -278,7 +324,7 @@
                     }
                 @endphp
             @case('select')
-                <!-- NO BREAK -->
+                {{-- NO BREAK --}}
                 @php
                     $selectedValue = [];
                     foreach ($field->options->whereIn('code', $value) as $option) {
@@ -318,7 +364,6 @@
 
                 <x-slot:option>
                     <div class="flex items-center space-x-2">
-                        <!-- Image swatch -->
                         <div
                             v-if="option.attribute.swatch_type == 'image'"
                             class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
@@ -329,19 +374,17 @@
                             <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                 <div class="flex justify-between">
                                     <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                         @click.stop.prevent="previewImage(option)"
                                     ></span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Color swatch -->
                         <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
                             :style="{ backgroundColor: option.swatch_value }"
                             class="w-6 h-6 rounded border"></div>
 
-                        <!-- Label -->
                         <span>@{{ option[labelBy] }}</span>
                     </div>
                 </x-slot:option>
@@ -358,7 +401,7 @@
                             <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                 <div class="flex justify-between">
                                     <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                         @mousedown.stop.prevent="previewImage(option)"
                                     ></span>
                                 </div>
@@ -385,7 +428,7 @@
                                 <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                     <div class="flex justify-between">
                                         <span
-                                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                             @mousedown.stop.prevent="previewImage(option)"
                                         ></span>
                                     </div>
@@ -417,6 +460,7 @@
                 </x-admin::form.control-group.control>
 
         @endswitch
+        </fieldset>
 
         @php
             if ($isConfigurableAttribute) {

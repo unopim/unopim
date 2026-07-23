@@ -44,16 +44,31 @@ it('should return the category field datagrid', function () {
     ]);
 });
 
-it('should show validations for code,type,status,position and section fields on creating category field', function () {
+it('should show validations for code, type and validation fields on creating category field', function () {
     $this->loginAsAdmin();
 
     $this->post(route('admin.catalog.category_fields.store'))
         ->assertRedirect()
         ->assertInvalid('code')
         ->assertInvalid('type')
-        ->assertInvalid('status')
-        ->assertInvalid('position')
-        ->assertInvalid('section');
+        ->assertInvalid('validation');
+});
+
+it('should default status, position and section when they are omitted', function () {
+    $this->loginAsAdmin();
+
+    $this->post(route('admin.catalog.category_fields.store'), [
+        'code'       => 'Defaulted_category_Field_0_0',
+        'type'       => 'text',
+        'validation' => 'none',
+    ])->assertSessionHas('success', trans('admin::app.catalog.category_fields.create-success'));
+
+    $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), [
+        'code'     => 'Defaulted_category_Field_0_0',
+        'status'   => 1,
+        'position' => 0,
+        'section'  => 'left',
+    ]);
 });
 
 it('should show validation error on creation of category field with not allowed codes', function () {
@@ -62,11 +77,12 @@ it('should show validation error on creation of category field with not allowed 
     $code = Arr::random(NotSupportedFields::FILED_CODES);
 
     $data = [
-        'code'     => $code,
-        'type'     => 'text',
-        'status'   => 1,
-        'position' => 1,
-        'section'  => 'left',
+        'code'       => $code,
+        'type'       => 'text',
+        'validation' => 'none',
+        'status'     => 1,
+        'position'   => 1,
+        'section'    => 'left',
     ];
 
     $this->post(route('admin.catalog.category_fields.store'), $data)
@@ -80,29 +96,31 @@ it('should create category field successfully', function () {
     $this->loginAsAdmin();
 
     $data = [
-        'code'     => 'Test_category_Field_0_0',
-        'type'     => 'text',
-        'status'   => 1,
-        'position' => 1,
-        'section'  => 'left',
+        'code'       => 'Test_category_Field_0_0',
+        'type'       => 'text',
+        'validation' => 'none',
+        'status'     => 1,
+        'position'   => 1,
+        'section'    => 'left',
     ];
 
     $this->post(route('admin.catalog.category_fields.store'), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.category_fields.create-success'))
-        ->assertRedirect(route('admin.catalog.category_fields.index'));
+        ->assertRedirect(route('admin.catalog.category_fields.edit', CategoryField::where('code', $data['code'])->value('id')));
 
-    $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), $data);
+    $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), collect($data)->except(['validation', 'options'])->all());
 });
 
 it('converts the create redirect into a json redirect_url for an ajax-form submit (ConvertAjaxFormRedirect middleware)', function () {
     $this->loginAsAdmin();
 
     $data = [
-        'code'     => 'Test_category_Field_ajax_1',
-        'type'     => 'text',
-        'status'   => 1,
-        'position' => 1,
-        'section'  => 'left',
+        'code'       => 'Test_category_Field_ajax_1',
+        'type'       => 'text',
+        'validation' => 'none',
+        'status'     => 1,
+        'position'   => 1,
+        'section'    => 'left',
     ];
 
     $this->withHeader('X-Ajax-Form', 'true')
@@ -110,10 +128,10 @@ it('converts the create redirect into a json redirect_url for an ajax-form submi
         ->assertOk()
         ->assertJson([
             'message'      => trans('admin::app.catalog.category_fields.create-success'),
-            'redirect_url' => route('admin.catalog.category_fields.index'),
+            'redirect_url' => route('admin.catalog.category_fields.edit', CategoryField::where('code', $data['code'])->value('id')),
         ]);
 
-    $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), $data);
+    $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), collect($data)->except(['validation', 'options'])->all());
 });
 
 it('should show the category field edit form', function () {
@@ -306,12 +324,13 @@ it('should create a select,multiselect,checkbox type category field with options
     $this->loginAsAdmin();
 
     $data = [
-        'code'     => 'Select_Test_field_0_0',
-        'type'     => 'select',
-        'status'   => 1,
-        'position' => 1,
-        'section'  => 'left',
-        'options'  => [
+        'code'       => 'Select_Test_field_0_0',
+        'type'       => 'select',
+        'validation' => 'none',
+        'status'     => 1,
+        'position'   => 1,
+        'section'    => 'left',
+        'options'    => [
             [
                 'code'       => 'option_1',
                 'sort_order' => 1,
@@ -324,7 +343,7 @@ it('should create a select,multiselect,checkbox type category field with options
 
     $this->post(route('admin.catalog.category_fields.store'), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.category_fields.create-success'))
-        ->assertRedirect(route('admin.catalog.category_fields.index'));
+        ->assertRedirect(route('admin.catalog.category_fields.edit', CategoryField::where('code', $data['code'])->value('id')));
 
     $categoryField = CategoryField::where('code', 'Select_Test_field_0_0')->first();
 

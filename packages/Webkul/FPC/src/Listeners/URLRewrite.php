@@ -9,8 +9,6 @@ class URLRewrite
 {
     /**
      * Create a new listener instance.
-     *
-     * @return void
      */
     public function __construct(protected URLRewriteRepository $urlRewriteRepository) {}
 
@@ -18,9 +16,8 @@ class URLRewrite
      * After URL Rewrite update
      *
      * @param  \Webkul\Marketing\Contracts\URLRewrite  $urlRewrite
-     * @return void
      */
-    public function afterUpdate($urlRewrite)
+    public function afterUpdate($urlRewrite): void
     {
         ResponseCache::forget('/'.$urlRewrite->request_path);
     }
@@ -29,9 +26,8 @@ class URLRewrite
      * Before URL Rewrite delete
      *
      * @param  int  $urlRewriteId
-     * @return void
      */
-    public function beforeDelete($urlRewriteId)
+    public function beforeDelete($urlRewriteId): void
     {
         $urlRewrite = $this->urlRewriteRepository->find($urlRewriteId);
 

@@ -53,9 +53,9 @@ class ProductExportFilter
             true
         );
 
-        $hasCustomAttributes = ! empty($this->parseCustomAttributes($filters[ProductFilter::CUSTOM_ATTRIBUTES->value] ?? null));
+        $hasCustomAttributes = $this->parseCustomAttributes($filters[ProductFilter::CUSTOM_ATTRIBUTES->value] ?? null) !== [];
 
-        $hasSkus = ! empty($this->skuValues($filters));
+        $hasSkus = $this->skuValues($filters) !== [];
 
         if (! $hasCompleteness && ! $hasCustomAttributes && ! $hasSkus) {
             return null;
@@ -82,14 +82,14 @@ class ProductExportFilter
             return [];
         }
 
-        return array_values(array_filter(array_map(fn ($sku) => trim((string) $sku), $value)));
+        return array_values(array_filter(array_map(fn ($sku): string => trim((string) $sku), $value)));
     }
 
     public function attributeFamilyIds(array $filters): array
     {
         $codes = ScopeFilterValue::toCodes($filters[ProductFilter::ATTRIBUTE_FAMILIES->value] ?? null);
 
-        if (empty($codes)) {
+        if ($codes === []) {
             return [];
         }
 
@@ -137,7 +137,7 @@ class ProductExportFilter
     {
         $skus = $this->skuValues($filters);
 
-        if (empty($skus)) {
+        if ($skus === []) {
             return;
         }
 
@@ -148,7 +148,7 @@ class ProductExportFilter
     {
         $codes = ScopeFilterValue::toCodes($filters[ProductFilter::ATTRIBUTE_FAMILIES->value] ?? null);
 
-        if (empty($codes)) {
+        if ($codes === []) {
             return;
         }
 
@@ -159,11 +159,11 @@ class ProductExportFilter
     {
         $codes = $this->categoryCodes($filters);
 
-        if (empty($codes)) {
+        if ($codes === []) {
             return;
         }
 
-        $query->where(function (Builder $query) use ($codes) {
+        $query->where(function (Builder $query) use ($codes): void {
             foreach ($codes as $code) {
                 $query->orWhereJsonContains('values->categories', $code);
             }
@@ -174,7 +174,7 @@ class ProductExportFilter
     {
         $date = $this->updatedAfter($filters);
 
-        if (empty($date)) {
+        if (in_array($date, [null, '', '0'], true)) {
             return;
         }
 
@@ -185,7 +185,7 @@ class ProductExportFilter
     {
         $date = $this->updatedBefore($filters);
 
-        if (empty($date)) {
+        if (in_array($date, [null, '', '0'], true)) {
             return;
         }
 
@@ -203,7 +203,7 @@ class ProductExportFilter
         $channelIds = $this->resolveChannelIds($filters);
         $localeIds = $this->resolveLocaleIds($filters);
 
-        if (empty($channelIds) || empty($localeIds)) {
+        if ($channelIds === [] || $localeIds === []) {
             $query->whereRaw('1 = 0');
 
             return;
@@ -229,7 +229,7 @@ class ProductExportFilter
     {
         $rows = $this->parseCustomAttributes($filters[ProductFilter::CUSTOM_ATTRIBUTES->value] ?? null);
 
-        if (empty($rows)) {
+        if ($rows === []) {
             return;
         }
 
@@ -253,11 +253,11 @@ class ProductExportFilter
     protected function attributesByCode(array $rows): Collection
     {
         $codes = array_values(array_filter(
-            array_map(fn ($row) => $row['attribute'] ?? null, $rows),
-            fn ($code) => $code && $code !== self::COLUMN_ATTRIBUTE
+            array_map(fn (array $row) => $row['attribute'] ?? null, $rows),
+            fn ($code): bool => $code && $code !== self::COLUMN_ATTRIBUTE
         ));
 
-        if (empty($codes)) {
+        if ($codes === []) {
             return collect();
         }
 
@@ -275,7 +275,7 @@ class ProductExportFilter
         if (in_array($operator, [AttributeConditionOperators::IN, AttributeConditionOperators::NOT_IN], true)) {
             $values = $this->normalizeFilterValues($value);
 
-            if (! empty($values)) {
+            if ($values !== []) {
                 $this->applyOptionMatch($query, $code, $attribute, $values, $operator === AttributeConditionOperators::NOT_IN);
             }
 
@@ -328,7 +328,7 @@ class ProductExportFilter
 
         $paths = $this->valuePaths($code, $attribute);
 
-        $query->where(function (Builder $query) use ($paths, $notEmpty) {
+        $query->where(function (Builder $query) use ($paths, $notEmpty): void {
             foreach ($paths as $path) {
                 $notEmpty ? $query->orWhereNotNull($path) : $query->whereNull($path);
             }
@@ -337,7 +337,7 @@ class ProductExportFilter
 
     protected function applyOptionMatch(Builder $query, string $code, ?Attribute $attribute, array $values, bool $negate): void
     {
-        if (empty($values)) {
+        if ($values === []) {
             return;
         }
 
@@ -354,7 +354,7 @@ class ProductExportFilter
             Attribute::CHECKBOX_FIELD_TYPE,
         ], true);
 
-        $matches = function (Builder $query) use ($paths, $values, $isMultiValue) {
+        $matches = function (Builder $query) use ($paths, $values, $isMultiValue): void {
             foreach ($paths as $path) {
                 foreach ($values as $value) {
                     if ($isMultiValue) {
@@ -374,8 +374,8 @@ class ProductExportFilter
             return;
         }
 
-        $query->where(function (Builder $query) use ($matches, $paths) {
-            $query->whereNot($matches)->orWhere(function (Builder $query) use ($paths) {
+        $query->where(function (Builder $query) use ($matches, $paths): void {
+            $query->whereNot($matches)->orWhere(function (Builder $query) use ($paths): void {
                 foreach ($paths as $path) {
                     $query->whereNull($path);
                 }
@@ -395,7 +395,7 @@ class ProductExportFilter
 
         $grammar = DB::rawQueryGrammar();
 
-        $query->where(function (Builder $query) use ($code, $attribute, $grammar, $escaped) {
+        $query->where(function (Builder $query) use ($code, $attribute, $grammar, $escaped): void {
             foreach ($this->valuePathSegments($code, $attribute) as $segments) {
                 $extract = $grammar->jsonExtract('values', ...$segments);
 
@@ -444,12 +444,12 @@ class ProductExportFilter
         $castType = $isDate ? 'DATE' : 'DECIMAL(30,10)';
         $pattern = $isDate ? '^[0-9]{4}-[0-9]{2}-[0-9]{2}' : '^-?[0-9]+([.][0-9]+)?$';
 
-        $query->where(function (Builder $query) use ($code, $attribute, $grammar, $regexOperator, $castType, $pattern, $comparisons) {
+        $query->where(function (Builder $query) use ($code, $attribute, $grammar, $regexOperator, $castType, $pattern, $comparisons): void {
             foreach ($this->valuePathSegments($code, $attribute) as $segments) {
                 $extract = $grammar->jsonExtract('values', ...$segments);
                 $expr = "CASE WHEN {$extract} {$regexOperator} '{$pattern}' THEN CAST({$extract} AS {$castType}) END";
 
-                $query->orWhere(function (Builder $query) use ($expr, $comparisons) {
+                $query->orWhere(function (Builder $query) use ($expr, $comparisons): void {
                     foreach ($comparisons as [$sqlOperator, $value]) {
                         $query->whereRaw("{$expr} {$sqlOperator} ?", [$value]);
                     }
@@ -472,7 +472,7 @@ class ProductExportFilter
     protected function isBlank(mixed $value): bool
     {
         if (is_array($value)) {
-            return empty(array_filter($value, fn ($item) => trim((string) $item) !== ''));
+            return array_filter($value, fn ($item): bool => trim((string) $item) !== '') === [];
         }
 
         return $value === null || trim((string) $value) === '';
@@ -482,7 +482,7 @@ class ProductExportFilter
     {
         $escaped = addcslashes($value, '%_\\');
 
-        $query->orWhere(function (Builder $query) use ($path, $value, $escaped) {
+        $query->orWhere(function (Builder $query) use ($path, $value, $escaped): void {
             $query->where($path, $value)
                 ->orWhere($path, 'like', "{$escaped},%")
                 ->orWhere($path, 'like', "%,{$escaped},%")
@@ -495,8 +495,8 @@ class ProductExportFilter
         $values = is_array($value) ? $value : [$value];
 
         return array_values(array_filter(
-            array_map(fn ($value) => trim((string) $value), $values),
-            fn ($value) => $value !== ''
+            array_map(fn ($value): string => trim((string) $value), $values),
+            fn (string $value): bool => $value !== ''
         ));
     }
 
@@ -504,7 +504,7 @@ class ProductExportFilter
     {
         $paths = ["values->common->{$code}"];
 
-        if (! $attribute) {
+        if (! $attribute instanceof Attribute) {
             return $paths;
         }
 
@@ -535,13 +535,13 @@ class ProductExportFilter
 
     protected function valuePathSegments(string $code, ?Attribute $attribute): array
     {
-        if (! preg_match('/^[A-Za-z0-9_]+$/', $code)) {
+        if (! preg_match('/^\w+$/', $code)) {
             return [];
         }
 
         $segments = [['common', $code]];
 
-        if (! $attribute) {
+        if (! $attribute instanceof Attribute) {
             return $segments;
         }
 
@@ -574,7 +574,7 @@ class ProductExportFilter
     {
         $codes = ScopeFilterValue::toCodes($filters[ProductExportScope::CHANNELS->value] ?? null);
 
-        if (empty($codes)) {
+        if ($codes === []) {
             return $this->channelRepository->all()->pluck('id')->all();
         }
 
@@ -585,7 +585,7 @@ class ProductExportFilter
     {
         $codes = ScopeFilterValue::toCodes($filters[ProductExportScope::LOCALES->value] ?? null);
 
-        if (empty($codes)) {
+        if ($codes === []) {
             return $this->localeRepository->getActiveLocales()->pluck('id')->all();
         }
 
@@ -618,6 +618,6 @@ class ProductExportFilter
             return [];
         }
 
-        return array_values(array_filter($value, fn ($row) => is_array($row) && ! empty($row['attribute'])));
+        return array_values(array_filter($value, fn ($row): bool => is_array($row) && ! empty($row['attribute'])));
     }
 }

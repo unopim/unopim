@@ -4,12 +4,19 @@ namespace Webkul\Product\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Product\Console\ResyncVariantsCommand;
+use Webkul\Product\Console\StripRedundantVariantValuesCommand;
+use Webkul\Product\Contracts\VariantPlacementSuggester as VariantPlacementSuggesterContract;
+use Webkul\Product\Contracts\VariantStructurePlanner as VariantStructurePlannerContract;
+use Webkul\Product\Contracts\VariantValueResolver as VariantValueResolverContract;
 use Webkul\Product\Facades\ProductImage as ProductImageFacade;
 use Webkul\Product\Facades\ProductVideo as ProductVideoFacade;
 use Webkul\Product\Facades\ValueSetter as ProductValueSetter;
 use Webkul\Product\Filter\Database\BooleanFilter as DatabaseBooleanFilter;
 use Webkul\Product\Filter\Database\DateFilter as DatabaseDateFilter;
 use Webkul\Product\Filter\Database\PriceFilter as DatabasePriceFilter;
+use Webkul\Product\Filter\Database\Property\CategoryFilter as DatabaseCategoryFilter;
+use Webkul\Product\Filter\Database\Property\CompletenessFilter as DatabaseCompletenessFilter;
 use Webkul\Product\Filter\Database\Property\DateTimeFilter as DatabaseDateTimeFilter;
 use Webkul\Product\Filter\Database\Property\FamilyFilter as DatabaseFamilyFilter;
 use Webkul\Product\Filter\Database\Property\IdFilter as DatabaseIdFilter;
@@ -24,6 +31,8 @@ use Webkul\Product\Filter\ElasticSearch\DateTimeFilter as ElasticSearchDateTimeA
 use Webkul\Product\Filter\ElasticSearch\DefaultFilter as ElasticSearchDefaultFilter;
 use Webkul\Product\Filter\ElasticSearch\OptionFilter as ElasticSearchOptionFilter;
 use Webkul\Product\Filter\ElasticSearch\PriceFilter as ElasticSearchPriceFilter;
+use Webkul\Product\Filter\ElasticSearch\Property\CategoryFilter as ElasticSearchCategoryFilter;
+use Webkul\Product\Filter\ElasticSearch\Property\CompletenessFilter as ElasticSearchCompletenessFilter;
 use Webkul\Product\Filter\ElasticSearch\Property\DateTimeFilter as ElasticSearchDateTimeFilter;
 use Webkul\Product\Filter\ElasticSearch\Property\FamilyFilter as ElasticSearchFamilyFilter;
 use Webkul\Product\Filter\ElasticSearch\Property\IdFilter as ElasticSearchIdFilter;
@@ -37,6 +46,10 @@ use Webkul\Product\Observers\ProductObserver;
 use Webkul\Product\ProductImage;
 use Webkul\Product\ProductVideo;
 use Webkul\Product\Services\ProductValueMapper;
+use Webkul\Product\Services\SuggestionManager;
+use Webkul\Product\Services\VariantPlacementSuggester;
+use Webkul\Product\Services\VariantStructurePlanner;
+use Webkul\Product\Services\VariantValueResolver;
 use Webkul\Product\ValueSetter;
 
 class ProductServiceProvider extends ServiceProvider
@@ -55,6 +68,13 @@ class ProductServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
 
         ProductProxy::observe(ProductObserver::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                StripRedundantVariantValuesCommand::class,
+                ResyncVariantsCommand::class,
+            ]);
+        }
     }
 
     /**
@@ -67,6 +87,19 @@ class ProductServiceProvider extends ServiceProvider
         $this->registerFacades();
 
         $this->registerTags();
+
+        $this->registerBindings();
+    }
+
+    /**
+     * Register overridable service bindings.
+     */
+    protected function registerBindings(): void
+    {
+        $this->app->bind(VariantValueResolverContract::class, VariantValueResolver::class);
+        $this->app->bind(VariantPlacementSuggesterContract::class, VariantPlacementSuggester::class);
+        $this->app->bind(VariantStructurePlannerContract::class, VariantStructurePlanner::class);
+        $this->app->singleton(SuggestionManager::class);
     }
 
     /**
@@ -77,6 +110,10 @@ class ProductServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/product_types.php', 'product_types');
 
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/association_field_types.php', 'association_field_types');
+
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/suggesters.php', 'suggesters');
+
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/acl.php', 'acl');
     }
 
     /**
@@ -91,34 +128,26 @@ class ProductServiceProvider extends ServiceProvider
 
         $loader->alias('product_image', ProductImageFacade::class);
 
-        $this->app->singleton('product_image', function () {
-            return app()->make(ProductImage::class);
-        });
+        $this->app->singleton('product_image', fn () => app()->make(ProductImage::class));
 
         /**
          * Product video.
          */
         $loader->alias('product_video', ProductVideoFacade::class);
 
-        $this->app->singleton('product_video', function () {
-            return app()->make(ProductVideo::class);
-        });
+        $this->app->singleton('product_video', fn () => app()->make(ProductVideo::class));
 
         /**
          * Product Values setter
          */
         $loader->alias('value_setter', ProductValueSetter::class);
 
-        $this->app->singleton('value_setter', function () {
-            return app()->make(ValueSetter::class);
-        });
+        $this->app->singleton('value_setter', fn () => app()->make(ValueSetter::class));
 
         /**
          * Product value mapper
          */
-        $this->app->singleton('product_value_mapper', function ($app) {
-            return new ProductValueMapper;
-        });
+        $this->app->singleton('product_value_mapper', fn ($app): ProductValueMapper => new ProductValueMapper);
     }
 
     protected function registerTags(): void
@@ -143,6 +172,8 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchSkuFilter::class,
             ElasticSearchDateTimeFilter::class,
             ElasticSearchParentFilter::class,
+            ElasticSearchCompletenessFilter::class,
+            ElasticSearchCategoryFilter::class,
         ], 'unopim.elasticsearch.product.property.filters');
 
         // Register database attribute type filters
@@ -162,6 +193,8 @@ class ProductServiceProvider extends ServiceProvider
             DatabaseTypeFilter::class,
             DatabaseParentFilter::class,
             DatabaseDateTimeFilter::class,
+            DatabaseCompletenessFilter::class,
+            DatabaseCategoryFilter::class,
         ], 'unopim.database.product.property.filters');
     }
 }

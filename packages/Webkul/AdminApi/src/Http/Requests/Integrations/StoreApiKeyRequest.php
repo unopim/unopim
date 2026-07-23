@@ -2,9 +2,7 @@
 
 namespace Webkul\AdminApi\Http\Requests\Integrations;
 
-use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreApiKeyRequest extends FormRequest
 {
@@ -25,8 +23,8 @@ class StoreApiKeyRequest extends FormRequest
     {
         return [
             'name'            => 'required',
-            'admin_id'        => ['required', Rule::unique('api_keys')->where(fn (Builder $query) => $query->where('revoked', 0))],
             'permission_type' => 'required',
+            'permissions'     => 'array',
         ];
     }
 }

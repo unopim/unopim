@@ -5,9 +5,9 @@ test.describe('UnoPim Export Jobs', () => {
 
   test('create attribute options export with CSV, switch to XLS, then delete', async ({ adminPage }) => {
 
-    const uniqueCode = 'Attribute Options Export CSV ' + Math.random().toString(36).slice(2, 6);
+    const uniqueCode = 'Attribute_Options_Export_CSV_' + Math.random().toString(36).slice(2, 6);
 
-    await adminPage.goto('/admin/settings/data-transfer/exports/create', { waitUntil: 'networkidle' });
+    await adminPage.goto('/admin/data-transfer/exports/create', { waitUntil: 'networkidle' });
 
     // Fill Code
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(uniqueCode);
@@ -40,7 +40,7 @@ test.describe('UnoPim Export Jobs', () => {
       .click();
 
     // Save Export
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await adminPage.getByRole('button', { name: 'Save changes' }).click();
 
     await expect(
       adminPage.locator('#app').getByText(/Export created successfully/i)
@@ -70,7 +70,7 @@ test.describe('UnoPim Export Jobs', () => {
       .first()
       .click();
 
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await adminPage.getByRole('button', { name: 'Save changes' }).click();
 
     await expect(
       adminPage.locator('#app').getByText(/Export updated successfully/i)

@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { navigateTo, clickSave } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -277,7 +277,7 @@ test('5.0 - Setup: Create OpenAI platform for chat tests', async ({ adminPageWit
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — skipping platform setup');
   test.setTimeout(60000);
 
-  await adminPageWithWidget.goto('/admin/magic-ai/platform', { waitUntil: 'networkidle' });
+  await adminPageWithWidget.goto('/admin/magic-ai/platforms', { waitUntil: 'networkidle' });
 
   // Check if platform already exists in the datagrid (before opening modal)
   const existingPlatform = adminPageWithWidget.locator('span[title="Edit"]');
@@ -313,7 +313,7 @@ test('5.0 - Setup: Create OpenAI platform for chat tests', async ({ adminPageWit
     }
   });
 
-  await adminPageWithWidget.getByRole('button', { name: 'Save' }).click();
+  await clickSave(adminPageWithWidget, 'Save');
   await expect(adminPageWithWidget.getByText(/saved successfully|created successfully|updated successfully/i)).toBeVisible({ timeout: 30000 });
 });
 
@@ -472,5 +472,70 @@ test('8.4 - AI Settings link navigates to Magic AI config', async ({ adminPageWi
   const href = await settingsLink.getAttribute('href');
   expect(href).toMatch(/\/admin\/ai-agent\/settings/);
 });
+
+});
+
+// ═════════════════════════════════════════════════
+// SECTION 9: Regression — state survives PJAX nav; FAB clears the save bar
+//
+// Uses adminPageWithWidgetNoSeed so the widget manages its own state exactly as
+// a real browser would. adminPageWithWidget re-seeds { isOpen: false } on every
+// navigation, which would mask a regression in the widget's own persistence.
+// ═════════════════════════════════════════════════
+
+test.describe('UnoPim Agenting PIM — regression', () => {
+
+  test.beforeEach(async ({ adminPageWithWidgetNoSeed }) => {
+    await adminPageWithWidgetNoSeed.goto('/admin/dashboard', { waitUntil: 'networkidle' });
+    // The widget is omitted when its seed platform api_key can't be decrypted
+    // (different APP_KEY). `.ap-shell` is absent then — skip instead of timing out.
+    const active = await adminPageWithWidgetNoSeed
+      .locator('.ap-shell')
+      .waitFor({ state: 'attached', timeout: 3000 })
+      .then(() => true)
+      .catch(() => false);
+    test.skip(!active, 'Agenting PIM widget not active in this environment');
+  });
+
+  test('9.1 - manually-closed panel stays closed after PJAX navigation', async ({ adminPageWithWidgetNoSeed }) => {
+    const page = adminPageWithWidgetNoSeed;
+    const fab = page.getByRole('button', { name: 'Open Agenting PIM' });
+
+    // Reach a deterministic user-closed state. open_by_default may auto-open the
+    // panel (FAB hidden); if so, close it. If already closed, open then close so
+    // a real user-close is recorded in sessionStorage.
+    if (await fab.isVisible().catch(() => false)) {
+      await fab.click();
+    }
+    await page.getByRole('button', { name: 'Close' }).click();
+    await expect(fab).toBeVisible();
+
+    // Real in-app navigation is PJAX: navigation.js unmounts then remounts the
+    // Vue app (window.unopim.visit), unlike page.goto's full reload. This is the
+    // path that triggered the bug.
+    await page.evaluate(() => window.unopim.visit('/admin/catalog/products'));
+    await page.waitForLoadState('networkidle');
+
+    // Before the fix, the widget's beforeUnmount wiped agenting_pim_state on every
+    // unmount; the remounted widget fell back to open_by_default (true) and the
+    // panel reopened, hiding the FAB. It must stay closed across navigation.
+    await expect(fab).toBeVisible();
+  });
+
+  test('9.2 - FAB lifts above the sticky save bar when the bar is open', async ({ adminPageWithWidgetNoSeed }) => {
+    const page = adminPageWithWidgetNoSeed;
+
+    // The FAB stays in the DOM regardless of open/closed state (v-show toggles
+    // display only), so computed `bottom` is readable either way.
+    const withoutBar = await page.evaluate(() => getComputedStyle(document.querySelector('.ap-fab')).bottom);
+
+    const withBar = await page.evaluate(() => {
+      document.body.classList.add('unsaved-bar-open');
+      return getComputedStyle(document.querySelector('.ap-fab')).bottom;
+    });
+
+    expect(withoutBar).toBe('24px');
+    expect(withBar).toBe('84px');
+  });
 
 });

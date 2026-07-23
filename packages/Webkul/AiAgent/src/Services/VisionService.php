@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Services;
 
+use Illuminate\Support\Sleep;
 use Webkul\AiAgent\DTOs\CredentialConfig;
 use Webkul\AiAgent\DTOs\ImageProductContext;
 use Webkul\AiAgent\Exceptions\ApiException;
@@ -100,7 +101,7 @@ class VisionService
     public function analyze(string $imageContent, int $credentialId = 0, ?AiApiClient $apiClient = null, array $options = []): ImageProductContext
     {
         // Use pre-configured client if provided, otherwise build from credential/config
-        if ($apiClient) {
+        if ($apiClient instanceof AiApiClient) {
             $this->apiClient = $apiClient;
             $provider = $apiClient->getProvider();
             $model = $apiClient->getModel();
@@ -128,7 +129,7 @@ class VisionService
         $messages = $this->buildVisionMessages($provider, $imageContent, $systemPrompt, $locale);
 
         $rawResponse = $this->callWithRetry(
-            fn () => $this->apiClient->chat($messages, $maxTokens, $temperature),
+            fn (): array => $this->apiClient->chat($messages, $maxTokens, $temperature),
             $maxAttempts,
             $baseDelayMs,
             $capDelayMs,
@@ -155,11 +156,7 @@ class VisionService
     ): ImageProductContext {
         $imagePath = $ctx->imagePath;
 
-        if (empty($imagePath)) {
-            throw new \InvalidArgumentException(
-                'VisionService::analyzeContext requires a non-empty ImageProductContext::$imagePath.',
-            );
-        }
+        throw_if(in_array($imagePath, [null, '', '0'], true), \InvalidArgumentException::class, 'VisionService::analyzeContext requires a non-empty ImageProductContext::$imagePath.');
 
         $result = $this->analyze($imagePath, $credentialId, $options);
 
@@ -316,7 +313,6 @@ class VisionService
             enrichment: [],
             confidence: [],
             rawAiResponse: $raw,
-            productId: null,
         );
     }
 
@@ -357,13 +353,13 @@ class VisionService
                 // For color/size, use only the first detected value (PIM expects single value)
                 if (in_array($detectionKey, ['colors', 'sizes'], true)) {
                     $value = array_filter($value);
-                    $value = ! empty($value) ? reset($value) : null;
+                    $value = $value === [] ? null : reset($value);
                 } else {
                     $value = implode(', ', array_filter($value));
                 }
             }
 
-            if ($value !== null && $value !== '' && $value !== []) {
+            if (! in_array($value, [null, '', []], true)) {
                 $attributes[$pimKey] = $value;
             }
         }
@@ -422,14 +418,12 @@ class VisionService
             } catch (ApiException $e) {
                 $lastException = $e;
 
-                if (! $this->isRetryable($e) || $attempt === $maxAttempts - 1) {
-                    throw $e;
-                }
+                throw_if(! $this->isRetryable($e) || $attempt === $maxAttempts - 1, $e);
 
                 $ceilMs = min($capDelayMs, $baseDelayMs * (2 ** $attempt));
                 $delayMs = random_int(0, $ceilMs);
 
-                usleep($delayMs * 1_000);
+                Sleep::usleep($delayMs * 1_000);
             }
         }
 
@@ -463,7 +457,7 @@ class VisionService
         $domain = (string) (core()->getConfigData('general.magic_ai.settings.api_domain') ?? '');
         $model = trim(explode(',', $models)[0]);
 
-        if (! $domain) {
+        if ($domain === '' || $domain === '0') {
             $domain = match ($platform) {
                 'openai' => 'https://api.openai.com/v1',
                 'gemini' => 'https://generativelanguage.googleapis.com',

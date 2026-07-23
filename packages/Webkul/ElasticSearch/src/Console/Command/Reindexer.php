@@ -2,22 +2,17 @@
 
 namespace Webkul\ElasticSearch\Console\Command;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 
+#[Description('Clear all indexes for this project from Elasticsearch.')]
+#[Signature('unopim:elastic:clear')]
 class Reindexer extends Command
 {
-    protected $signature = 'unopim:elastic:clear';
-
-    protected $description = 'Clear all indexes for this project from Elasticsearch.';
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    public function handle()
+    public function handle(): void
     {
         if (config('elasticsearch.enabled')) {
             if ($this->confirm('This action will clear all indexes for this project. Do you want to continue? (y/n) or', false)) {

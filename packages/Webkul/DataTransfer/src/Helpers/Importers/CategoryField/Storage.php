@@ -21,8 +21,6 @@ class Storage
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(protected CategoryFieldRepository $categoryFieldRepository) {}
 
@@ -44,7 +42,7 @@ class Storage
         $query = $this->categoryFieldRepository->query()
             ->select($this->selectColumns);
 
-        if (! empty($codes)) {
+        if ($codes !== []) {
             $query->whereIn('category_fields.code', $codes);
         }
 
@@ -90,6 +88,6 @@ class Storage
      */
     public function isEmpty(): bool
     {
-        return empty($this->items);
+        return $this->items === [];
     }
 }

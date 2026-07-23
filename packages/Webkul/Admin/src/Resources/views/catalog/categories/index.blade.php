@@ -3,12 +3,8 @@
         @lang('admin::app.catalog.categories.index.title')
     </x-slot>
 
-    <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-        <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-            @lang('admin::app.catalog.categories.index.title')
-        </p>
-
-        <div class="flex gap-x-2.5 items-center">
+    <x-admin::page-header :title="trans('admin::app.catalog.categories.index.title')">
+        <x-slot:actions>
             {!! view_render_event('unopim.admin.catalog.categories.index.create-button.before') !!}
 
             @if (bouncer()->hasPermission('catalog.categories.create'))
@@ -20,8 +16,8 @@
             @endif
 
             {!! view_render_event('unopim.admin.catalog.categories.index.create-button.after') !!}
-        </div>        
-    </div>
+        </x-slot>
+    </x-admin::page-header>
 
     {!! view_render_event('unopim.admin.catalog.categories.list.before') !!}
 
@@ -37,7 +33,7 @@
         <template #header="{ columns, records, sortPage, selectAllRecords, applied, isLoading, actions}">
             <template v-if="! isLoading">
                 <div
-                    class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-violet-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
+                    class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-primary-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
                     :style="'grid-template-columns: 2fr repeat(' + (actions.length ? columns.length : (columns.length -1 )) + ', 1fr)'"
                 >
                     <div
@@ -62,8 +58,8 @@
                                 <span
                                     class="icon-checkbox-normal cursor-pointer rounded-md text-2xl"
                                     :class="[
-                                        applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-violet-700' : (
-                                            applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-violet-700' : ''
+                                        applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-primary-700' : (
+                                            applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-primary-700' : ''
                                         ),
                                     ]"
                                 >
@@ -123,7 +119,7 @@
             <template v-if="! isLoading">
                 <div
                     v-for="record in records"
-                    class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                    class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                     :style="'grid-template-columns: 2fr repeat(' + (actions.length ? columns.length : (columns.length -1 )) + ', 1fr)'"
                     @click="handleRowClick($event, record)"
                 >
@@ -140,7 +136,7 @@
                                     @change="setCurrentSelectionMode"
                                 >
                                 <label
-                                    class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
+                                    class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-primary-700"
                                     :for="`mass_action_select_record_${record.category_id}`"
                                 >
                                 </label>
@@ -157,7 +153,7 @@
                     <!-- Actions -->
                     <div class="flex justify-end" @click.stop>
                         <span
-                            class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                            class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                             :class="action.icon"
                             v-text="!action.icon ? action.title : ''"
                             v-for="action in record.actions"

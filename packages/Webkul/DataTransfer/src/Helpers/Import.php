@@ -128,8 +128,6 @@ class Import
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackRepository $jobTrackRepository,
@@ -175,10 +173,8 @@ class Import
 
     /**
      * Returns error helper instance.
-     *
-     * @return Error
      */
-    public function getErrorHelper()
+    public function getErrorHelper(): Error
     {
         return $this->errorHelper;
     }
@@ -243,7 +239,7 @@ class Import
             'error_file_path'      => $this->uploadErrorReport(),
         ];
 
-        if ($this->getProcessedRowsCount() === 0 && empty($this->getFormattedErrors())) {
+        if ($this->getProcessedRowsCount() === 0 && $this->getFormattedErrors() === []) {
             $updatedData['state'] = self::STATE_COMPLETED;
             $updatedData['summary'] = [
                 'created' => 0,
@@ -256,7 +252,7 @@ class Import
 
         $this->setImport($import);
 
-        if ($state == self::STATE_FAILED) {
+        if ($state === self::STATE_FAILED) {
             Event::dispatch('data_transfer.import.validate.state_failed', $import);
         }
 
@@ -272,11 +268,7 @@ class Import
             return false;
         }
 
-        if ($this->import->processed_rows_count <= $this->import->invalid_rows_count) {
-            return false;
-        }
-
-        return true;
+        return $this->import->processed_rows_count > $this->import->invalid_rows_count;
     }
 
     /**
@@ -284,14 +276,8 @@ class Import
      */
     public function isErrorLimitExceeded(): bool
     {
-        if (
-            $this->import->validation_strategy == self::VALIDATION_STRATEGY_STOP_ON_ERROR
-            && $this->import->errors_count > $this->import->allowed_errors
-        ) {
-            return true;
-        }
-
-        return false;
+        return $this->import->validation_strategy == self::VALIDATION_STRATEGY_STOP_ON_ERROR
+        && $this->import->errors_count > $this->import->allowed_errors;
     }
 
     /**
@@ -585,11 +571,7 @@ class Import
 
         foreach ($this->errorHelper->getAllErrorsGroupedByCode() as $groupedErrors) {
             foreach ($groupedErrors as $errorMessage => $rowNumbers) {
-                if (! empty($rowNumbers)) {
-                    $errors[] = 'Row(s) '.implode(', ', $rowNumbers).': '.$errorMessage;
-                } else {
-                    $errors[] = $errorMessage;
-                }
+                $errors[] = empty($rowNumbers) ? $errorMessage : 'Row(s) '.implode(', ', $rowNumbers).': '.$errorMessage;
             }
         }
 
@@ -604,14 +586,14 @@ class Import
         /**
          * Return null if there are no errors
          */
-        if (! $this->errorHelper->getErrorsCount()) {
+        if ($this->errorHelper->getErrorsCount() === 0) {
             return null;
         }
 
         /**
          * Return null if there are no invalid rows
          */
-        if (! $this->errorHelper->getInvalidRowsCount()) {
+        if ($this->errorHelper->getInvalidRowsCount() === 0) {
             return null;
         }
 
@@ -640,7 +622,7 @@ class Import
         while ($source->valid()) {
             try {
                 $rowData = $source->current();
-            } catch (\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException) {
                 $source->next();
 
                 continue;

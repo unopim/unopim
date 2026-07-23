@@ -3,7 +3,6 @@
 namespace Webkul\AiAgent\Chat\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Http\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -13,29 +12,39 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
-use Webkul\AiAgent\Jobs\ImportProductsJob;
+use Webkul\AiAgent\Services\ProductImportCsvNormalizer;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
+use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 
 /**
- * Import/update products from an uploaded CSV or XLSX file.
+ * Import or update products from an uploaded CSV or XLSX file.
  *
- * Reads the first uploaded spreadsheet, maps columns to product attributes,
- * and creates or updates products row by row. Requires a "sku" column.
+ * The uploaded spreadsheet is normalized into the core product-CSV shape and
+ * handed to the core DataTransfer batch importer (validate → chunk → queued
+ * batches → bulk upsert → index → completeness). This reuses the pipeline's
+ * chunking, resume/pause/cancel, and full error-report capture, so large
+ * catalogs (tens of thousands of SKUs) import reliably instead of being
+ * processed in a single monolithic in-memory job. Existing SKUs are updated,
+ * new SKUs are created (create-or-update).
  */
 class ImportProducts implements PimTool
 {
     use ChecksPermission;
 
     /**
-     * Detected CSV delimiter for the current import.
+     * Upper bound on rows parsed in the web request before hand-off to the
+     * queued importer. Bounds worst-case memory for a hostile/oversized
+     * upload; larger catalogs should use the standard Data Transfer import,
+     * which streams the file from disk.
      */
-    public string $detectedDelimiter = ',';
+    public const MAX_IMPORT_ROWS = 100000;
 
     public function __construct(
         protected ProductWriterService $writerService,
+        protected ProductImportCsvNormalizer $normalizer,
         protected JobInstancesRepository $jobInstancesRepository,
         protected JobTrackRepository $jobTrackRepository,
     ) {}
@@ -60,23 +69,21 @@ class ImportProducts implements PimTool
 
             public function description(): string
             {
-                return 'Import or update products from an uploaded CSV/XLSX file. The file must have a "sku" column. Existing SKUs are updated, new SKUs are created. Call this when the user uploads a spreadsheet file.';
+                return 'Import or update products from an uploaded CSV/XLSX file. The file must have a "sku" column. Existing SKUs are updated, new SKUs are created. Runs through the batched background importer, so large files are processed reliably. Call this when the user uploads a spreadsheet file.';
             }
 
             public function schema(JsonSchema $schema): array
             {
                 return [
-                    'mode'        => $schema->string()->enum(['create_or_update', 'update_only', 'create_only'])->description('Import mode'),
                     'family_code' => $schema->string()->description('Attribute family code to use for new products (default: first available)'),
                 ];
             }
 
             public function handle(Request $request): string
             {
-                $mode = $request->string('mode')->toString() ?: 'create_or_update';
                 $family_code = $request->string('family_code')->toString() ?: null;
 
-                if ($denied = $this->outer->denyImportExecution($this->context, $mode)) {
+                if ($denied = $this->outer->denyImportExecution($this->context)) {
                     return $denied;
                 }
 
@@ -85,14 +92,12 @@ class ImportProducts implements PimTool
                 }
 
                 $filePath = $this->context->uploadedFilePaths[0];
-                $originalFileName = basename($filePath);
 
                 if (! file_exists($filePath)) {
                     return json_encode(['error' => trans('ai-agent::app.common.invalid-file-path')]);
                 }
 
                 $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                $this->outer->detectedDelimiter = ',';
 
                 $rows = match ($ext) {
                     'csv'         => $this->outer->parseCsv($filePath),
@@ -101,32 +106,36 @@ class ImportProducts implements PimTool
                 };
 
                 if ($rows === null) {
-                    return json_encode(['error' => 'Unsupported file format. Please upload a CSV or XLSX file.']);
+                    return json_encode(['error' => trans('ai-agent::app.common.import-unsupported-format')]);
                 }
 
-                if (empty($rows)) {
-                    return json_encode(['error' => 'The file is empty or could not be parsed.']);
+                if ($rows === []) {
+                    return json_encode(['error' => trans('ai-agent::app.common.import-empty-file')]);
                 }
 
-                // Normalize headers to lowercase
-                $headers = array_map(fn ($h) => strtolower(trim((string) $h)), array_keys($rows[0]));
-                $skuIndex = array_search('sku', $headers, true);
-
-                if ($skuIndex === false) {
+                if (count($rows) > ImportProducts::MAX_IMPORT_ROWS) {
                     return json_encode([
-                        'error'   => 'CSV must have a "sku" column. Found columns: '.implode(', ', $headers),
+                        'error' => trans('ai-agent::app.common.import-too-large', ['max' => ImportProducts::MAX_IMPORT_ROWS]),
+                    ]);
+                }
+
+                $headers = array_map(fn (string $h): string => strtolower(trim($h)), array_keys($rows[0]));
+
+                if (! \in_array('sku', $headers, true)) {
+                    return json_encode([
+                        'error'   => trans('ai-agent::app.common.import-missing-sku-column', ['columns' => implode(', ', $headers)]),
                         'columns' => $headers,
                     ]);
                 }
 
-                // Resolve attribute family
                 $familyId = $this->outer->resolveFamilyId($family_code);
 
                 if (! $familyId) {
-                    return json_encode(['error' => "Attribute family '{$family_code}' not found."]);
+                    return json_encode(['error' => trans('ai-agent::app.common.import-family-not-found', ['family' => (string) $family_code])]);
                 }
 
-                // Normalize all rows to lowercase keys before dispatching
+                $familyCode = $this->outer->resolveFamilyCode($familyId);
+
                 $normalizedRows = [];
                 $skippedInvalidSku = [];
 
@@ -138,8 +147,8 @@ class ImportProducts implements PimTool
 
                     $sku = trim((string) ($normalizedRow['sku'] ?? ''));
 
-                    if (empty($sku) || ! $this->outer->validateSku($sku)) {
-                        $skippedInvalidSku[] = 'Row '.($i + 2).': Invalid or empty SKU.';
+                    if ($sku === '' || $sku === '0' || ! $this->outer->validateSku($sku)) {
+                        $skippedInvalidSku[] = trans('ai-agent::app.common.import-invalid-sku-row', ['row' => $i + 2]);
 
                         continue;
                     }
@@ -147,27 +156,42 @@ class ImportProducts implements PimTool
                     $normalizedRows[] = $normalizedRow;
                 }
 
-                // Per-row ACL filtering: skip rows the user is not permitted to touch
                 $canCreate = $this->context->hasPermission('catalog.products.create');
                 $canEdit = $this->context->hasPermission('catalog.products.edit');
                 $aclSkipped = 0;
                 $aclErrors = [];
                 $filteredRows = [];
 
+                $existingSkus = $this->outer->existingSkuSet(array_merge(
+                    array_map(fn (array $row): string => trim((string) ($row['sku'] ?? '')), $normalizedRows),
+                    array_map(fn (array $row): string => trim((string) ($row['parent'] ?? '')), $normalizedRows),
+                ));
+
                 foreach ($normalizedRows as $row) {
                     $sku = trim((string) ($row['sku'] ?? ''));
-                    $productExists = DB::table('products')->where('sku', $sku)->exists();
+                    $parent = trim((string) ($row['parent'] ?? ''));
+                    $productExists = isset($existingSkus[$sku]);
 
                     if ($productExists && ! $canEdit) {
                         $aclSkipped++;
-                        $aclErrors[] = "SKU '{$sku}' skipped: updating existing products requires 'catalog.products.edit' permission.";
+                        $aclErrors[] = trans('ai-agent::app.common.import-acl-skip-update', ['sku' => $sku]);
 
                         continue;
                     }
 
                     if (! $productExists && ! $canCreate) {
                         $aclSkipped++;
-                        $aclErrors[] = "SKU '{$sku}' skipped: creating new products requires 'catalog.products.create' permission.";
+                        $aclErrors[] = trans('ai-agent::app.common.import-acl-skip-create', ['sku' => $sku]);
+
+                        continue;
+                    }
+
+                    // Attaching a variant to an already-existing parent mutates
+                    // that parent, so it requires edit rights even when the
+                    // variant row itself is a create.
+                    if ($parent !== '' && isset($existingSkus[$parent]) && ! $canEdit) {
+                        $aclSkipped++;
+                        $aclErrors[] = trans('ai-agent::app.common.import-acl-skip-parent', ['sku' => $sku, 'parent' => $parent]);
 
                         continue;
                     }
@@ -175,51 +199,40 @@ class ImportProducts implements PimTool
                     $filteredRows[] = $row;
                 }
 
-                $storedFilePath = $this->outer->storeImportFile($filePath, $originalFileName);
-                $jobInstance = $this->outer->createJobInstance(
-                    $storedFilePath,
-                    $mode,
-                    $family_code,
-                    $this->context,
-                );
-                $jobTrack = $this->outer->createJobTrack($jobInstance);
+                if ($filteredRows === []) {
+                    return json_encode([
+                        'error'   => trans('ai-agent::app.common.import-no-eligible-rows'),
+                        'skipped' => count($skippedInvalidSku) + $aclSkipped,
+                    ]);
+                }
 
                 $familyAttrs = $this->outer->writerService()->getFamilyAttributesPublic($familyId);
                 $currencies = DB::table('currencies')->where('status', 1)->pluck('code')->toArray() ?: ['USD'];
 
-                ImportProductsJob::dispatch(
-                    $jobTrack->id,
+                $csv = $this->outer->normalizer()->toCsv(
                     $filteredRows,
-                    $mode,
-                    $familyId,
                     $familyAttrs,
                     $currencies,
+                    $familyCode,
                     $this->context->channel,
                     $this->context->locale,
                 );
 
-                // When QUEUE_CONNECTION=sync the job runs inline; read back the actual counts.
-                $jobTrack->refresh();
-                $summary = $jobTrack->summary;
+                $storedFilePath = $this->outer->storeNormalizedCsv($csv);
+                $jobInstance = $this->outer->createJobInstance($storedFilePath, $familyCode, $this->context);
+                $jobTrack = $this->outer->createJobTrack($jobInstance);
 
-                if ($summary && isset($summary['created'])) {
-                    return json_encode([
-                        'result' => [
-                            'created' => $summary['created'],
-                            'updated' => $summary['updated'],
-                            'skipped' => $aclSkipped,
-                            'errors'  => $aclErrors,
-                        ],
-                    ]);
-                }
+                dispatch(new ImportTrackBatch($jobTrack));
 
                 return json_encode([
                     'result' => [
                         'total_rows'  => count($rows),
                         'queued_rows' => count($filteredRows),
                         'skipped'     => count($skippedInvalidSku) + $aclSkipped,
+                        'errors'      => $aclErrors === [] ? null : array_slice($aclErrors, 0, 5),
                         'tracker_id'  => $jobTrack->id,
-                        'message'     => 'Import job has been queued. All '.count($filteredRows).' rows will be processed in the background. Check the tracker for progress.',
+                        'tracker_url' => route('admin.settings.data_transfer.imports.import-view', $jobInstance->id),
+                        'message'     => trans('ai-agent::app.common.import-queued', ['count' => count($filteredRows)]),
                     ],
                 ]);
             }
@@ -227,7 +240,7 @@ class ImportProducts implements PimTool
     }
 
     /**
-     * Public accessor for protected writerService dependency.
+     * Public accessor for the product writer service.
      */
     public function writerService(): ProductWriterService
     {
@@ -235,24 +248,34 @@ class ImportProducts implements PimTool
     }
 
     /**
-     * Store the uploaded import file on the private disk for history/tracker access.
+     * Public accessor for the CSV normalizer.
      */
-    public function storeImportFile(string $filePath, string $originalFileName): string
+    public function normalizer(): ProductImportCsvNormalizer
     {
-        return Storage::disk('private')->putFileAs(
-            'imports',
-            new File($filePath),
-            time().'-'.$originalFileName
-        );
+        return $this->normalizer;
     }
 
     /**
-     * Create a job instance so the AI import appears in import history.
+     * Store the normalized core-compatible CSV on the private disk (where the
+     * core CSV source reads from) with a `.csv` name so the importer selects
+     * the CSV source.
+     */
+    public function storeNormalizedCsv(string $csv): string
+    {
+        $path = 'imports/ai-import-'.time().'-'.Str::random(12).'.csv';
+
+        Storage::disk('private')->put($path, $csv);
+
+        return $path;
+    }
+
+    /**
+     * Create a job instance so the AI import appears in import history and can
+     * be paused/resumed/cancelled from the standard import tracker.
      */
     public function createJobInstance(
         string $storedFilePath,
-        string $mode,
-        ?string $familyCode,
+        string $familyCode,
         ChatContext $context,
     ): mixed {
         return $this->jobInstancesRepository->create([
@@ -262,10 +285,9 @@ class ImportProducts implements PimTool
             'action'              => ImportHelper::ACTION_APPEND,
             'validation_strategy' => ImportHelper::VALIDATION_STRATEGY_SKIP_ERRORS,
             'allowed_errors'      => 0,
-            'field_separator'     => $this->detectedDelimiter,
+            'field_separator'     => ProductImportCsvNormalizer::DELIMITER,
             'file_path'           => $storedFilePath,
             'filters'             => [
-                'mode'        => $mode,
                 'family_code' => $familyCode,
                 'channel'     => $context->channel,
                 'locale'      => $context->locale,
@@ -329,9 +351,7 @@ class ImportProducts implements PimTool
             $delimiter = "\t";
         }
 
-        $this->detectedDelimiter = $delimiter;
-
-        $headers = fgetcsv($handle, 0, $delimiter);
+        $headers = fgetcsv($handle, 0, $delimiter, escape: '\\');
 
         if (! $headers) {
             fclose($handle);
@@ -344,15 +364,19 @@ class ImportProducts implements PimTool
 
         $rows = [];
 
-        while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
+        while (($data = fgetcsv($handle, 0, $delimiter, escape: '\\')) !== false) {
             if (count($data) !== count($headers)) {
                 continue;
             }
 
             $row = array_combine($headers, $data);
 
-            if ($row !== false) {
-                $rows[] = $row;
+            $rows[] = $row;
+
+            // Stop past the cap so a hostile file cannot exhaust memory; the
+            // caller rejects the oversized upload.
+            if (count($rows) > self::MAX_IMPORT_ROWS) {
+                break;
             }
         }
 
@@ -373,7 +397,6 @@ class ImportProducts implements PimTool
         }
 
         try {
-            $this->detectedDelimiter = ',';
             $spreadsheet = IOFactory::load($filePath);
             $worksheet = $spreadsheet->getActiveSheet();
             $data = $worksheet->toArray();
@@ -388,9 +411,11 @@ class ImportProducts implements PimTool
             foreach ($data as $rowData) {
                 if (count($rowData) === count($headers)) {
                     $row = array_combine($headers, $rowData);
-                    if ($row !== false) {
-                        $rows[] = $row;
-                    }
+                    $rows[] = $row;
+                }
+
+                if (count($rows) > self::MAX_IMPORT_ROWS) {
+                    break;
                 }
             }
 
@@ -426,9 +451,41 @@ class ImportProducts implements PimTool
     }
 
     /**
-     * Ensure the current user can execute AI imports for the requested mode.
+     * Resolve the attribute family CODE from its id (the importer expects the
+     * code, not the id, in the CSV `attribute_family` column).
      */
-    public function denyImportExecution(ChatContext $context, string $mode): ?string
+    public function resolveFamilyCode(int $familyId): string
+    {
+        return (string) DB::table('attribute_families')->where('id', $familyId)->value('code');
+    }
+
+    /**
+     * Build a lookup set of the SKUs that already exist, resolved in chunked
+     * `whereIn` queries so a large import stays a handful of queries rather
+     * than one existence query per row.
+     *
+     * @param  array<int, string>  $skus
+     * @return array<string, true>
+     */
+    public function existingSkuSet(array $skus): array
+    {
+        $unique = array_values(array_unique(array_filter($skus, fn (string $sku): bool => $sku !== '')));
+
+        $existing = [];
+
+        foreach (array_chunk($unique, 5000) as $chunk) {
+            foreach (DB::table('products')->whereIn('sku', $chunk)->pluck('sku') as $sku) {
+                $existing[$sku] = true;
+            }
+        }
+
+        return $existing;
+    }
+
+    /**
+     * Ensure the current user can execute AI imports.
+     */
+    public function denyImportExecution(ChatContext $context): ?string
     {
         if ($denied = $this->denyUnlessAllowed($context, 'data_transfer.imports.execute')) {
             return $denied;
@@ -437,11 +494,7 @@ class ImportProducts implements PimTool
         $canCreate = $context->hasPermission('catalog.products.create');
         $canEdit = $context->hasPermission('catalog.products.edit');
 
-        return match ($mode) {
-            'create_only' => $canCreate ? null : $this->formatPermissionDenied('catalog.products.create'),
-            'update_only' => $canEdit ? null : $this->formatPermissionDenied('catalog.products.edit'),
-            default       => ($canCreate || $canEdit) ? null : $this->formatPermissionDenied('catalog.products.create or catalog.products.edit'),
-        };
+        return ($canCreate || $canEdit) ? null : $this->formatPermissionDenied('catalog.products.create or catalog.products.edit');
     }
 
     /**
@@ -450,7 +503,7 @@ class ImportProducts implements PimTool
     public function formatPermissionDenied(string $permission): string
     {
         return json_encode([
-            'error' => "Permission denied: you do not have '{$permission}' access. Contact your administrator.",
+            'error' => trans('ai-agent::app.common.permission-denied', ['permission' => $permission]),
         ]);
     }
 }

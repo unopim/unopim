@@ -23,7 +23,7 @@ class DatabaseSequenceHelper
         }
     }
 
-    public static function fixSequence(string $table, ?string $tablePrefix = null)
+    public static function fixSequence(string $table, ?string $tablePrefix = null): void
     {
         if (DB::getDriverName() !== 'pgsql') {
             return;

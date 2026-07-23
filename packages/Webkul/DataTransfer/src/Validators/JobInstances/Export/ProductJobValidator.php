@@ -78,7 +78,7 @@ class ProductJobValidator extends JobValidator
     {
         $channelCodes = ScopeFilterValue::toCodes($filters[ProductExportScope::CHANNELS->value] ?? null);
 
-        if (empty($channelCodes)) {
+        if ($channelCodes === []) {
             return;
         }
 
@@ -99,7 +99,7 @@ class ProductJobValidator extends JobValidator
             )
         );
 
-        if (empty($messages)) {
+        if ($messages === []) {
             return;
         }
 

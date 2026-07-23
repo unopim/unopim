@@ -127,19 +127,11 @@ class ModelRecommender
      */
     public static function recommend(array $models): array
     {
-        if (empty($models)) {
+        if ($models === []) {
             return [];
         }
 
-        $recommended = array_values(array_filter($models, static function ($model) {
-            foreach (self::EXCLUDE_PATTERNS as $pattern) {
-                if (preg_match($pattern, $model)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }));
+        $recommended = array_values(array_filter($models, static fn ($model): bool => array_all(self::EXCLUDE_PATTERNS, fn (string $pattern): bool => ! preg_match($pattern, (string) $model))));
 
         return $recommended ?: $models;
     }
@@ -162,7 +154,7 @@ class ModelRecommender
      */
     public static function pickTextModel(array $models): ?string
     {
-        if (empty($models)) {
+        if ($models === []) {
             return null;
         }
 
@@ -177,12 +169,6 @@ class ModelRecommender
 
     protected static function isImageOnly(string $model): bool
     {
-        foreach (self::IMAGE_ONLY_PATTERNS as $pattern) {
-            if (preg_match($pattern, $model)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any(self::IMAGE_ONLY_PATTERNS, fn (string $pattern): int|false => preg_match($pattern, $model));
     }
 }

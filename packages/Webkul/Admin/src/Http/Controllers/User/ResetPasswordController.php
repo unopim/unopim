@@ -5,7 +5,6 @@ namespace Webkul\Admin\Http\Controllers\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\PasswordBroker;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -25,7 +24,6 @@ class ResetPasswordController extends Controller
      * If no token is present, display the link request form.
      *
      * @param  string|null  $token
-     * @return Factory|View
      */
     public function create($token = null): View
     {

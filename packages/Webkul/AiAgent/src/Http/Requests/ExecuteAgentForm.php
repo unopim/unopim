@@ -25,11 +25,11 @@ class ExecuteAgentForm extends FormRequest
     public function rules(): array
     {
         return [
-            'agentId'      => 'required|exists:ai_agent_agents,id',
-            'credentialId' => 'required|exists:ai_agent_credentials,id',
-            'instruction'  => 'required|string|max:50000',
-            'context'      => 'nullable|array',
-            'async'        => 'sometimes|boolean',
+            'agentId'      => ['required', 'exists:ai_agent_agents,id'],
+            'credentialId' => ['required', 'exists:ai_agent_credentials,id'],
+            'instruction'  => ['required', 'string', 'max:50000'],
+            'context'      => ['nullable', 'array'],
+            'async'        => ['sometimes', 'boolean'],
         ];
     }
 }

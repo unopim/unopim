@@ -2,8 +2,8 @@
 
 namespace Webkul\ElasticSearch\Filter;
 
-use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
+use Illuminate\Support\Facades\Date;
 use Webkul\ElasticSearch\Contracts\Filter as FilterContract;
 use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 
@@ -12,7 +12,7 @@ abstract class AbstractFilter implements FilterContract
     protected $dateFormat = 'Y-m-d H:i:s';
 
     /** @var ElasticSearchQuery */
-    protected $queryBuilder = null;
+    protected $queryBuilder;
 
     /** @var array */
     protected $allowedOperators = [];
@@ -36,7 +36,7 @@ abstract class AbstractFilter implements FilterContract
     /**
      * {@inheritdoc}
      */
-    public function setQueryManager($queryBuilder)
+    public function setQueryManager($queryBuilder): void
     {
         if (! $queryBuilder instanceof ElasticSearchQuery) {
             throw new \InvalidArgumentException(
@@ -52,8 +52,8 @@ abstract class AbstractFilter implements FilterContract
         try {
             $utcTimeZone = 'UTC';
 
-            $dateTime = Carbon::parse($value, $utcTimeZone);
-        } catch (InvalidFormatException $e) {
+            $dateTime = Date::parse($value, $utcTimeZone);
+        } catch (InvalidFormatException) {
             throw new \LogicException(
                 sprintf(
                     'Invalid date format for field "%s", expected "Y-m-d H:i:s", but "%s" given',

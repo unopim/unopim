@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Strukture varijanti',
+        'ai-suggest'         => 'AI prijedlog',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => 'kopija-:value',
         'copy-of'                       => 'Kopija :value',
@@ -12,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Konfigurabilan',
-        'simple'       => 'Jednostavan',
+        'configurable'  => 'Konfigurabilan',
+        'simple'        => 'Jednostavan',
+        'variant-group' => 'Grupa varijanti',
     ],
 ];

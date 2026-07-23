@@ -12,12 +12,15 @@ const STORAGE_STATE = path.resolve(__dirname, '../../.state/admin-auth.json');
 async function navigateToNotifications(page) {
   await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
 
-  // If redirected to login, re-auth and save fresh state for other tests
+  // If redirected to login, re-auth and save fresh state for other tests.
+  // Use the field names and submit button class directly — the "Sign In" role
+  // name also substring-matches the "Sign in with Microsoft" SSO button, which
+  // makes getByRole('button', { name: 'Sign In' }) ambiguous.
   if (page.url().includes('/admin/login')) {
-    await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
-    await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
-    await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.waitForLoadState('networkidle');
+    await page.locator('input[name="email"]').fill('admin@example.com');
+    await page.locator('input[name="password"]').fill('admin123');
+    await page.locator('.primary-button').click();
+    await page.waitForURL(/\/admin\/(?!login)/, { timeout: 15000 });
     await page.context().storageState({ path: STORAGE_STATE });
     await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
   }
@@ -31,8 +34,9 @@ async function navigateToNotifications(page) {
 test.describe('Notification Page', () => {
   test('1 - should load the notifications page', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
-    // Target the page title specifically (not the dropdown header)
-    await expect(adminPage.locator('p.text-xl').filter({ hasText: 'Notifications' })).toBeVisible();
+    // Target the page title specifically (not the dropdown header). The page title
+    // now renders through x-admin::page-header (<h1>), so match the heading role.
+    await expect(adminPage.getByRole('heading', { name: 'Notifications' })).toBeVisible();
     await expect(adminPage.getByText('List all the Notifications')).toBeVisible();
   });
 
@@ -51,17 +55,17 @@ test.describe('Notification Page', () => {
     // Click Unread tab
     await tabContainer.getByText('Unread', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(tabContainer.locator('div.text-violet-700').getByText('Unread')).toBeVisible();
+    await expect(tabContainer.locator('div.text-primary-700').getByText('Unread')).toBeVisible();
 
     // Click Read tab
     await tabContainer.getByText('Read', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(tabContainer.locator('div.text-violet-700').getByText('Read', { exact: true })).toBeVisible();
+    await expect(tabContainer.locator('div.text-primary-700').getByText('Read', { exact: true })).toBeVisible();
 
     // Click All tab
     await tabContainer.getByText('All', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(tabContainer.locator('div.text-violet-700').getByText('All')).toBeVisible();
+    await expect(tabContainer.locator('div.text-primary-700').getByText('All')).toBeVisible();
   });
 
   test('4 - should show empty state or notification list', async ({ adminPage }) => {
@@ -92,7 +96,7 @@ test.describe('Notification Page', () => {
     await navigateToNotifications(adminPage);
 
     // Check if there are unread notifications via the badge
-    const unreadBadge = adminPage.locator('.bg-violet-100');
+    const unreadBadge = adminPage.locator('.bg-primary-100');
     const hasUnread = await unreadBadge.isVisible({ timeout: 3000 }).catch(() => false);
 
     if (hasUnread) {

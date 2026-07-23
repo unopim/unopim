@@ -286,6 +286,11 @@ return [
         'route' => 'admin.catalog.attribute.groups.store',
         'sort'  => 1,
     ], [
+        'key'   => 'catalog.attribute_groups.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.catalog.attribute.groups.quick-store',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.attribute_groups.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.catalog.attribute.groups.edit',
@@ -308,11 +313,6 @@ return [
     ], [
         'key'   => 'catalog.families.create',
         'name'  => 'admin::app.acl.create',
-        'route' => 'admin.catalog.families.create',
-        'sort'  => 1,
-    ], [
-        'key'   => 'catalog.families.create',
-        'name'  => 'admin::app.acl.create',
         'route' => 'admin.catalog.families.store',
         'sort'  => 1,
     ], [
@@ -331,10 +331,25 @@ return [
         'route' => 'admin.catalog.families.delete',
         'sort'  => 3,
     ], [
-        'key'   => 'catalog.families.copy',
-        'name'  => 'admin::app.acl.copy',
-        'route' => 'admin.catalog.families.copy',
+        'key'   => 'catalog.families.variant-structures',
+        'name'  => 'admin::app.acl.variant-structures',
+        'route' => 'admin.catalog.families.variant-structures.index',
         'sort'  => 4,
+    ], [
+        'key'   => 'catalog.families.variant-structures.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.variant-structures.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.variant-structures.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.families.variant-structures.save',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.families.variant-structures.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.catalog.families.variant-structures.delete',
+        'sort'  => 3,
     ], [
         'key'   => 'catalog.families.edit',
         'name'  => 'admin::app.acl.edit',
@@ -359,6 +374,21 @@ return [
         'key'   => 'history.view',
         'name'  => 'admin::app.acl.view',
         'route' => 'admin.history.view',
+        'sort'  => 1,
+    ], [
+        'key'   => 'history.view',
+        'name'  => 'admin::app.acl.view',
+        'route' => 'admin.history.version.view',
+        'sort'  => 1,
+    ], [
+        'key'   => 'history.view',
+        'name'  => 'admin::app.acl.view',
+        'route' => 'admin.history.version.restore',
+        'sort'  => 1,
+    ], [
+        'key'   => 'history.view',
+        'name'  => 'admin::app.acl.view',
+        'route' => 'admin.history.version.delete',
         'sort'  => 1,
     ],
 
@@ -669,17 +699,17 @@ return [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.integrations.index',
-        'sort'   => 9,
+        'sort'   => 10,
     ], [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.store',
-        'sort'   => 9,
+        'sort'   => 10,
     ], [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.download',
-        'sort'   => 9,
+        'sort'   => 10,
     ], [
         'key'   => 'configuration.integrations',
         'name'  => 'admin::app.acl.integrations',
@@ -751,7 +781,17 @@ return [
     ], [
         'key'   => 'configuration.system_settings',
         'name'  => 'admin::app.acl.system-settings',
-        'route' => 'admin.configuration.system.settings',
+        'route' => 'admin.settings.system.index',
+        'sort'  => 5,
+    ], [
+        'key'   => 'configuration.system_settings',
+        'name'  => 'admin::app.acl.system-settings',
+        'route' => 'admin.settings.system.edit',
+        'sort'  => 5,
+    ], [
+        'key'   => 'configuration.system_settings',
+        'name'  => 'admin::app.acl.system-settings',
+        'route' => 'admin.settings.system.update',
         'sort'  => 5,
     ], [
         'key'   => 'configuration.system_settings.edit',

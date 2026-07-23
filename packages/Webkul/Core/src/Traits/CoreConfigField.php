@@ -19,9 +19,8 @@ trait CoreConfigField
      * Get name field for forms in configuration page.
      *
      * @param  string  $key
-     * @return string
      */
-    public function getNameField($key)
+    public function getNameField($key): string
     {
         $nameField = '';
 
@@ -35,12 +34,11 @@ trait CoreConfigField
     /**
      * Get validations for forms in configuration page.
      *
-     * @param  array  $field
      * @return string
      */
-    public function getValidations($field)
+    public function getValidations(array $field)
     {
-        $field['validation'] = $field['validation'] ?? '';
+        $field['validation'] ??= '';
 
         foreach ($this->veeValidateMappings as $laravelRule => $veeValidateRule) {
             $field['validation'] = str_replace($laravelRule, $veeValidateRule, $field['validation']);
@@ -52,15 +50,14 @@ trait CoreConfigField
     /**
      * Get value from repositories, if developer wants to do.
      *
-     * @param  array  $field
      * @return mixed
      */
-    public function getValueByRepository($field)
+    public function getValueByRepository(array $field)
     {
         if (isset($field['repository'])) {
             [$class, $method] = Str::parseCallback($field['repository']);
 
-            return app($class)->$method();
+            return resolve($class)->$method();
         }
 
         return null;
@@ -69,11 +66,10 @@ trait CoreConfigField
     /**
      * Get dependent field or value based on arguments.
      *
-     * @param  array  $field
      * @param  string  $fieldOrValue
      * @return string
      */
-    public function getDependentFieldOrValue($field, $fieldOrValue = 'field')
+    public function getDependentFieldOrValue(array $field, $fieldOrValue = 'field')
     {
         $depends = explode(':', $field['depends']);
 
@@ -84,11 +80,9 @@ trait CoreConfigField
     /**
      * Get dependent field options.
      *
-     * @param  array  $field
      * @param  array  $dependentValues
-     * @return mixed
      */
-    public function getDependentFieldOptions($field, $dependentValues)
+    public function getDependentFieldOptions(array $field, $dependentValues): string|array
     {
         if (
             empty($field['options'])
@@ -113,12 +107,10 @@ trait CoreConfigField
      * Get channel/locale indicator for form fields. So, that form fields can be detected,
      * whether it is channel based or locale based or both.
      *
-     * @param  array  $field
      * @param  string  $channel
      * @param  string  $locale
-     * @return string
      */
-    public function getChannelLocaleInfo($field, $channel, $locale)
+    public function getChannelLocaleInfo(array $field, $channel, $locale): string
     {
         $info = [];
 
@@ -130,6 +122,6 @@ trait CoreConfigField
             $info[] = $locale;
         }
 
-        return ! empty($info) ? '['.implode(' - ', $info).']' : '';
+        return empty($info) ? '' : '['.implode(' - ', $info).']';
     }
 }

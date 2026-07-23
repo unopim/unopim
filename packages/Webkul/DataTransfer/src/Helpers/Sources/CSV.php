@@ -19,8 +19,6 @@ class CSV extends AbstractSource
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         string $filePath,
@@ -32,9 +30,7 @@ class CSV extends AbstractSource
             throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
         }
 
-        if ($detectedSeparator != $delimiter) {
-            throw new \LogicException("Separator '{$delimiter}' is not supported in the provided file.");
-        }
+        throw_if($detectedSeparator !== $delimiter, \LogicException::class, "Separator '{$delimiter}' is not supported in the provided file.");
 
         try {
             $this->reader = fopen(Storage::disk('private')->path($filePath), 'r');
@@ -47,13 +43,11 @@ class CSV extends AbstractSource
                 stream_set_read_buffer($this->reader, 65536);
             }
 
-            $headerRow = fgetcsv($this->reader, $this->maxLineLength, $delimiter);
+            $headerRow = fgetcsv($this->reader, $this->maxLineLength, $delimiter, escape: '\\');
 
             if (
-                $headerRow === false
-                || $headerRow === null
-                || $headerRow === [null]
-                || count(array_filter($headerRow, fn ($v) => $v !== null && $v !== '')) === 0
+                in_array($headerRow, [false, null, [null]], true)
+                || count(array_filter($headerRow, fn ($v): bool => $v !== null && $v !== '')) === 0
             ) {
                 throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
             }
@@ -63,7 +57,7 @@ class CSV extends AbstractSource
             $this->totalColumns = count($this->columnNames);
         } catch (\LogicException $e) {
             throw $e;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }
     }
@@ -97,8 +91,6 @@ class CSV extends AbstractSource
 
     /**
      * Close file handle
-     *
-     * @return void
      */
     public function __destruct()
     {
@@ -114,11 +106,11 @@ class CSV extends AbstractSource
      */
     protected function getNextRow(): array
     {
-        $parsed = fgetcsv($this->reader, $this->maxLineLength, $this->delimiter);
+        $parsed = fgetcsv($this->reader, $this->maxLineLength, $this->delimiter, escape: '\\');
 
-        if (is_array($parsed) && count($parsed) != $this->totalColumns) {
+        if (is_array($parsed) && count($parsed) !== $this->totalColumns) {
             foreach ($parsed as $element) {
-                if ($element && strpos($element, "'") !== false) {
+                if ($element && str_contains($element, "'")) {
                     $this->foundWrongQuoteFlag = true;
 
                     break;

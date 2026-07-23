@@ -43,13 +43,13 @@ class MySQLGrammar implements Grammar
 
     public function jsonExtract(string $column, string ...$pathSegments): string
     {
-        $segments = array_map([$this, 'escapeJsonPathSegment'], $pathSegments);
+        $segments = array_map($this->escapeJsonPathSegment(...), $pathSegments);
 
         $jsonPath = '$.'.implode('.', $segments);
 
         // Escape column name — handles both 'values' and 'table.values'
         $parts = explode('.', $column);
-        $escaped = implode('.', array_map(fn ($p) => "`{$p}`", $parts));
+        $escaped = implode('.', array_map(fn ($p): string => "`{$p}`", $parts));
 
         return "JSON_UNQUOTE(JSON_EXTRACT({$escaped}, '{$jsonPath}'))";
     }
@@ -57,8 +57,8 @@ class MySQLGrammar implements Grammar
     public function jsonContains(string $column, array $pathSegments, string $value): string
     {
         $parts = explode('.', $column);
-        $escaped = implode('.', array_map(fn ($p) => "`{$p}`", $parts));
-        $jsonPath = '$.'.implode('.', array_map([$this, 'escapeJsonPathSegment'], $pathSegments));
+        $escaped = implode('.', array_map(fn ($p): string => "`{$p}`", $parts));
+        $jsonPath = '$.'.implode('.', array_map($this->escapeJsonPathSegment(...), $pathSegments));
 
         return "JSON_CONTAINS(JSON_EXTRACT({$escaped}, '{$jsonPath}'), {$value})";
     }
@@ -84,7 +84,7 @@ class MySQLGrammar implements Grammar
         return 'REGEXP';
     }
 
-    public function getBooleanValue(mixed $value)
+    public function getBooleanValue(mixed $value): int
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
     }

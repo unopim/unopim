@@ -3,6 +3,7 @@
 namespace Webkul\MagicAI\Repository;
 
 use Webkul\Core\Eloquent\Repository;
+use Webkul\MagicAI\Contracts\MagicAISystemPrompt;
 
 class MagicAISystemPromptRepository extends Repository
 {
@@ -11,7 +12,7 @@ class MagicAISystemPromptRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\MagicAI\Contracts\MagicAISystemPrompt';
+        return MagicAISystemPrompt::class;
     }
 
     /**
@@ -19,13 +20,11 @@ class MagicAISystemPromptRepository extends Repository
      */
     public function getAllPromptOptions(): array
     {
-        return $this->all()->map(function ($prompt) {
-            return [
-                'id'         => $prompt->id,
-                'label'      => ucfirst($prompt->title),
-                'is_enabled' => (bool) $prompt->is_enabled,
-            ];
-        })->toArray();
+        return $this->all()->map(fn ($prompt): array => [
+            'id'         => $prompt->id,
+            'label'      => ucfirst((string) $prompt->title),
+            'is_enabled' => (bool) $prompt->is_enabled,
+        ])->toArray();
     }
 
     /**

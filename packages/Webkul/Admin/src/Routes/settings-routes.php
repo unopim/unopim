@@ -114,123 +114,123 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::put('confirm', 'destroySelf')->name('admin.settings.users.destroy');
         });
+    });
+
+    /**
+     * Data Transfer routes — top-level (its own sidebar section), not under settings/.
+     */
+    Route::prefix('data-transfer')->group(function () {
 
         /**
-         * Data Transfer routes.
+         * Sync Tracker routes.
          */
-        Route::prefix('data-transfer')->group(function () {
+        Route::controller(TrackerController::class)->prefix('job-tracker')->group(function () {
+            Route::get('', 'index')->name('admin.settings.data_transfer.tracker.index');
+            Route::get('track/{batch_id}', 'view')->name('admin.settings.data_transfer.tracker.view');
+            Route::get('track/download/{batch_id}', 'download')->name('admin.settings.data_transfer.tracker.download');
+            Route::get('track/archive/download/{batch_id}', 'downloadArchive')->name('admin.settings.data_transfer.tracker.archive.download');
+            Route::get('track/download-log/{track_id}', 'downloadLogFile')->name('admin.settings.data_transfer.tracker.log.download');
+        });
+        /**
+         * Import routes.
+         */
+        Route::controller(ImportController::class)->prefix('imports')->group(function () {
+            Route::get('', 'index')->name('admin.settings.data_transfer.imports.index');
 
-            /**
-             * Sync Tracker routes.
-             */
-            Route::controller(TrackerController::class)->prefix('tracker')->group(function () {
-                Route::get('', 'index')->name('admin.settings.data_transfer.tracker.index');
-                Route::get('track/{batch_id}', 'view')->name('admin.settings.data_transfer.tracker.view');
-                Route::get('track/download/{batch_id}', 'download')->name('admin.settings.data_transfer.tracker.download');
-                Route::get('track/archive/download/{batch_id}', 'downloadArchive')->name('admin.settings.data_transfer.tracker.archive.download');
-                Route::get('track/download-log/{track_id}', 'downloadLogFile')->name('admin.settings.data_transfer.tracker.log.download');
-            });
-            /**
-             * Import routes.
-             */
-            Route::controller(ImportController::class)->prefix('imports')->group(function () {
-                Route::get('', 'index')->name('admin.settings.data_transfer.imports.index');
+            Route::get('create', 'create')->name('admin.settings.data_transfer.imports.create');
 
-                Route::get('create', 'create')->name('admin.settings.data_transfer.imports.create');
+            Route::post('create', 'store')->name('admin.settings.data_transfer.imports.store');
 
-                Route::post('create', 'store')->name('admin.settings.data_transfer.imports.store');
+            Route::get('edit/{id}', 'edit')->name('admin.settings.data_transfer.imports.edit');
 
-                Route::get('edit/{id}', 'edit')->name('admin.settings.data_transfer.imports.edit');
+            Route::put('edit/{id}', 'update')->name('admin.settings.data_transfer.imports.update');
 
-                Route::put('edit/{id}', 'update')->name('admin.settings.data_transfer.imports.update');
+            Route::delete('destroy/{id}', 'destroy')->name('admin.settings.data_transfer.imports.delete');
 
-                Route::delete('destroy/{id}', 'destroy')->name('admin.settings.data_transfer.imports.delete');
+            Route::get('import/{id}', 'importView')->name('admin.settings.data_transfer.imports.import-view');
 
-                Route::get('import/{id}', 'importView')->name('admin.settings.data_transfer.imports.import-view');
+            Route::get('validate/{id}', 'validateImport')->name('admin.settings.data_transfer.imports.validate');
 
-                Route::get('validate/{id}', 'validateImport')->name('admin.settings.data_transfer.imports.validate');
+            Route::put('import-now/{id}', 'importNow')->name('admin.settings.data_transfer.imports.import_now');
 
-                Route::put('import-now/{id}', 'importNow')->name('admin.settings.data_transfer.imports.import_now');
+            Route::get('start/{id}', 'start')->name('admin.settings.data_transfer.imports.start');
 
-                Route::get('start/{id}', 'start')->name('admin.settings.data_transfer.imports.start');
+            Route::get('link/{id}', 'link')->name('admin.settings.data_transfer.imports.link');
 
-                Route::get('link/{id}', 'link')->name('admin.settings.data_transfer.imports.link');
+            Route::get('index/{id}', 'indexData')->name('admin.settings.data_transfer.imports.index_data');
 
-                Route::get('index/{id}', 'indexData')->name('admin.settings.data_transfer.imports.index_data');
+            Route::post('pause/{id}', 'pause')->name('admin.settings.data_transfer.imports.pause');
 
-                Route::post('pause/{id}', 'pause')->name('admin.settings.data_transfer.imports.pause');
+            Route::post('resume/{id}', 'resume')->name('admin.settings.data_transfer.imports.resume');
 
-                Route::post('resume/{id}', 'resume')->name('admin.settings.data_transfer.imports.resume');
+            Route::post('cancel/{id}', 'cancel')->name('admin.settings.data_transfer.imports.cancel');
 
-                Route::post('cancel/{id}', 'cancel')->name('admin.settings.data_transfer.imports.cancel');
+            Route::get('stats/{id}/{state?}', 'stats')->name('admin.settings.data_transfer.imports.stats');
 
-                Route::get('stats/{id}/{state?}', 'stats')->name('admin.settings.data_transfer.imports.stats');
+            Route::get('download-sample/{type?}', 'downloadSample')->name('admin.settings.data_transfer.imports.download_sample');
 
-                Route::get('download-sample/{type?}', 'downloadSample')->name('admin.settings.data_transfer.imports.download_sample');
+            Route::get('download/{id}', 'download')->name('admin.settings.data_transfer.imports.download');
 
-                Route::get('download/{id}', 'download')->name('admin.settings.data_transfer.imports.download');
+            Route::get('download-error-report/{id}', 'downloadErrorReport')->name('admin.settings.data_transfer.imports.download_error_report');
 
-                Route::get('download-error-report/{id}', 'downloadErrorReport')->name('admin.settings.data_transfer.imports.download_error_report');
+            Route::get('download-sample-images-zip/{type?}', 'downloadSampleImagesZip')->name('admin.settings.data_transfer.imports.download_sample_zip');
 
-                Route::get('download-sample-images-zip/{type?}', 'downloadSampleImagesZip')->name('admin.settings.data_transfer.imports.download_sample_zip');
+            Route::post('upload-images-zip', 'uploadImagesZip')->name('admin.settings.data_transfer.imports.upload_images_zip');
+        });
 
-                Route::post('upload-images-zip', 'uploadImagesZip')->name('admin.settings.data_transfer.imports.upload_images_zip');
-            });
+        /**
+         * Export routes. admin.settings.data_transfer.exports.export-view
+         */
+        Route::controller(ExportController::class)->prefix('exports')->group(function () {
+            Route::get('', 'index')->name('admin.settings.data_transfer.exports.index');
 
-            /**
-             * Export routes. admin.settings.data_transfer.exports.export-view
-             */
-            Route::controller(ExportController::class)->prefix('exports')->group(function () {
-                Route::get('', 'index')->name('admin.settings.data_transfer.exports.index');
+            Route::get('create', 'create')->name('admin.settings.data_transfer.exports.create');
 
-                Route::get('create', 'create')->name('admin.settings.data_transfer.exports.create');
+            Route::post('create', 'store')->name('admin.settings.data_transfer.exports.store');
 
-                Route::post('create', 'store')->name('admin.settings.data_transfer.exports.store');
+            Route::get('edit/{id}', 'edit')->name('admin.settings.data_transfer.exports.edit');
 
-                Route::get('edit/{id}', 'edit')->name('admin.settings.data_transfer.exports.edit');
+            Route::get('system/edit/{id}', 'edit')->name('admin.settings.data_transfer.systems.edit');
 
-                Route::get('system/edit/{id}', 'edit')->name('admin.settings.data_transfer.systems.edit');
+            Route::put('edit/{id}', 'update')->name('admin.settings.data_transfer.exports.update');
 
-                Route::put('edit/{id}', 'update')->name('admin.settings.data_transfer.exports.update');
+            Route::delete('destroy/{id}', 'destroy')->name('admin.settings.data_transfer.exports.delete');
 
-                Route::delete('destroy/{id}', 'destroy')->name('admin.settings.data_transfer.exports.delete');
+            Route::get('export/{id}', 'exportView')->name('admin.settings.data_transfer.exports.export-view');
 
-                Route::get('export/{id}', 'exportView')->name('admin.settings.data_transfer.exports.export-view');
+            Route::get('validate/{id}', 'validateExport')->name('admin.settings.data_transfer.exports.validate');
 
-                Route::get('validate/{id}', 'validateExport')->name('admin.settings.data_transfer.exports.validate');
+            Route::put('export-now/{id}', 'exportNow')->name('admin.settings.data_transfer.exports.export_now');
 
-                Route::put('export-now/{id}', 'exportNow')->name('admin.settings.data_transfer.exports.export_now');
+            Route::get('start/{id}', 'start')->name('admin.settings.data_transfer.exports.start');
 
-                Route::get('start/{id}', 'start')->name('admin.settings.data_transfer.exports.start');
+            Route::get('link/{id}', 'link')->name('admin.settings.data_transfer.exports.link');
 
-                Route::get('link/{id}', 'link')->name('admin.settings.data_transfer.exports.link');
+            Route::get('index/{id}', 'indexData')->name('admin.settings.data_transfer.exports.index_data');
 
-                Route::get('index/{id}', 'indexData')->name('admin.settings.data_transfer.exports.index_data');
+            Route::get('stats/{id}/{state?}', 'stats')->name('admin.settings.data_transfer.exports.stats');
 
-                Route::get('stats/{id}/{state?}', 'stats')->name('admin.settings.data_transfer.exports.stats');
+            Route::get('download-sample/{type?}', 'downloadSample')->name('admin.settings.data_transfer.exports.download_sample');
 
-                Route::get('download-sample/{type?}', 'downloadSample')->name('admin.settings.data_transfer.exports.download_sample');
+            Route::get('download-sample-images-zip/{type?}', 'downloadSampleImagesZip')->name('admin.settings.data_transfer.exports.download_sample_zip');
 
-                Route::get('download-sample-images-zip/{type?}', 'downloadSampleImagesZip')->name('admin.settings.data_transfer.exports.download_sample_zip');
+            Route::get('download/{id}', 'download')->name('admin.settings.data_transfer.exports.download');
 
-                Route::get('download/{id}', 'download')->name('admin.settings.data_transfer.exports.download');
+            Route::get('download-error-report/{id}', 'downloadErrorReport')->name('admin.settings.data_transfer.exports.download_error_report');
+        });
 
-                Route::get('download-error-report/{id}', 'downloadErrorReport')->name('admin.settings.data_transfer.exports.download_error_report');
-            });
+        Route::controller(ExportFilterController::class)->prefix('exports/filters')->group(function () {
+            Route::get('channels', 'channels')->name('admin.settings.data_transfer.exports.filters.channels');
 
-            Route::controller(ExportFilterController::class)->prefix('exports/filters')->group(function () {
-                Route::get('channels', 'channels')->name('admin.settings.data_transfer.exports.filters.channels');
+            Route::get('locales', 'locales')->name('admin.settings.data_transfer.exports.filters.locales');
 
-                Route::get('locales', 'locales')->name('admin.settings.data_transfer.exports.filters.locales');
+            Route::get('currencies', 'currencies')->name('admin.settings.data_transfer.exports.filters.currencies');
 
-                Route::get('currencies', 'currencies')->name('admin.settings.data_transfer.exports.filters.currencies');
+            Route::get('attributes', 'getAttributes')->name('admin.settings.data_transfer.exports.filters.attributes');
 
-                Route::get('attributes', 'getAttributes')->name('admin.settings.data_transfer.exports.filters.attributes');
+            Route::get('attribute-families', 'attributeFamilies')->name('admin.settings.data_transfer.exports.filters.attribute_families');
 
-                Route::get('attribute-families', 'attributeFamilies')->name('admin.settings.data_transfer.exports.filters.attribute_families');
-
-                Route::get('categories', 'categories')->name('admin.settings.data_transfer.exports.filters.categories');
-            });
+            Route::get('categories', 'categories')->name('admin.settings.data_transfer.exports.filters.categories');
         });
     });
 });

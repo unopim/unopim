@@ -1,7 +1,7 @@
 <?php
 
 it('should not display webhook logs if user does not have permission', function () {
-    $this->loginWithPermissions(permissions: ['dashboard', 'configuration.webhook.settings']);
+    $this->loginWithPermissions(permissions: ['dashboard', 'configuration.webhook']);
 
     $this->get(route('webhook.logs.index'))
         ->assertStatus(403);
@@ -15,7 +15,7 @@ it('should display webhook logs if user has permission', function () {
 });
 
 it('should hide logs tab link when user lacks logs permission', function () {
-    $viewPath = base_path('packages/Webkul/Webhook/src/Resources/views/settings/index.blade.php');
+    $viewPath = base_path('packages/Webkul/Webhook/src/Resources/views/webhooks/edit.blade.php');
     $content = file_get_contents($viewPath);
 
     // The Logs tab link must be wrapped in a bouncer permission check
@@ -23,7 +23,7 @@ it('should hide logs tab link when user lacks logs permission', function () {
 });
 
 it('should hide logs tab content when user lacks logs permission', function () {
-    $viewPath = base_path('packages/Webkul/Webhook/src/Resources/views/settings/index.blade.php');
+    $viewPath = base_path('packages/Webkul/Webhook/src/Resources/views/webhooks/edit.blade.php');
     $content = file_get_contents($viewPath);
 
     // The Logs tab content inclusion must also be permission-gated

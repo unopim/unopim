@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Хувилбарын бүтцүүд',
+        'ai-suggest'         => 'AI санал',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'хуулбар - :value',
@@ -13,7 +17,8 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Тохируулах боломжтой',
-        'simple'       => 'Энгийн',
+        'configurable'  => 'Тохируулах боломжтой',
+        'simple'        => 'Энгийн',
+        'variant-group' => 'Хувилбарын бүлэг',
     ],
 ];

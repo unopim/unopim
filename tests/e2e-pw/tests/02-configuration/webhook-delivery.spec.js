@@ -1,6 +1,6 @@
 const http = require('http');
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { clickSave, navigateTo } = require('../../utils/helpers');
 
 // Real end-to-end proof that product updates reach an external webhook.
 // Uses a local HTTP server spun up inside the test process to capture
@@ -84,7 +84,7 @@ async function configureWebhook(adminPage, url) {
   const isChecked = await checkbox.isChecked().catch(() => false);
   if (!isChecked) await toggle.click();
 
-  await adminPage.getByRole('button', { name: 'Save' }).click();
+  await clickSave(adminPage, 'Save');
   await expect(
     adminPage.locator('#app').getByText('Webhook settings saved successfully'),
   ).toBeVisible();
@@ -96,7 +96,7 @@ async function disableWebhook(adminPage) {
   const isChecked = await checkbox.isChecked().catch(() => false);
   if (isChecked) {
     await adminPage.locator('label[for="webhook_active"]').click();
-    await adminPage.getByRole('button', { name: 'Save' }).click();
+    await clickSave(adminPage, 'Save');
     await expect(
       adminPage.locator('#app').getByText('Webhook settings saved successfully'),
     ).toBeVisible();
@@ -110,7 +110,7 @@ async function clearWebhookLogs(adminPage) {
   const result = await adminPage.evaluate(async () => {
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
 
-    const listing = await fetch('/admin/webhook/logs', {
+    const listing = await fetch('/admin/configuration/webhook/logs', {
       credentials: 'same-origin',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
@@ -125,7 +125,7 @@ async function clearWebhookLogs(adminPage) {
 
     if (ids.length === 0) return { ok: true, deleted: 0 };
 
-    const del = await fetch('/admin/webhook/logs/mass-delete', {
+    const del = await fetch('/admin/configuration/webhook/logs/mass-delete', {
       method:      'POST',
       credentials: 'same-origin',
       headers: {

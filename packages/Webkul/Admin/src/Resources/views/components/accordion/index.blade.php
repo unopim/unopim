@@ -15,7 +15,7 @@
                     {{ $header }}
 
                     <span
-                        :class="`text-2xl p-1.5 rounded-md cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 ${isOpen ? 'icon-chevron-up' : 'icon-chevron-down'}`"
+                        :class="`text-2xl p-1.5 rounded-md cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 ${isOpen ? 'icon-chevron-up' : 'icon-chevron-down'}`"
                         @click="toggle"
                     ></span>
                 </div>

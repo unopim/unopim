@@ -2,6 +2,8 @@
 
 namespace Webkul\Attribute\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Webkul\Attribute\Contracts\AttributeGroup as AttributeGroupContract;
@@ -10,22 +12,20 @@ use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Fillable([
+    'code',
+    'column',
+    'position',
+])]
+#[WithoutTimestamps]
 class AttributeGroup extends TranslatableModel implements AttributeGroupContract, HistoryAuditable
 {
     use HasFactory;
     use HistoryTrait;
 
-    public $timestamps = false;
-
     public $translatedAttributes = ['name'];
 
     protected $historyTags = ['attributeGroup'];
-
-    protected $fillable = [
-        'code',
-        'column',
-        'position',
-    ];
 
     /**
      * Get all the attribute groups.

@@ -2,11 +2,8 @@
 
 namespace Webkul\DataTransfer\Jobs\Import;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
@@ -14,26 +11,23 @@ use Webkul\DataTransfer\Services\JobLogger;
 
 class Completed implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
 
     /**
      * Create a new job instance.
      *
      * @param  mixed  $import
-     * @return void
      */
     public function __construct(protected $import, protected $jobTrackId) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $logger = JobLogger::make($this->jobTrackId);
 
-        $importHelper = app(ImportHelper::class)
+        $importHelper = resolve(ImportHelper::class)
             ->setImport($this->import)
             ->setLogger($logger);
 
@@ -50,7 +44,7 @@ class Completed implements ShouldQueue
         $this->dispatchPostImportCompleteness();
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         JobLogger::make($this->jobTrackId)->error("Completed job failed: {$exception->getMessage()}", [
             'exception' => $exception->getTraceAsString(),
@@ -84,7 +78,7 @@ class Completed implements ShouldQueue
         $skus = $this->import->batches()
             ->where('state', ImportHelper::STATE_PROCESSED)
             ->get('data')
-            ->flatMap(fn ($batch) => array_column($batch->data ?? [], 'sku'))
+            ->flatMap(fn ($batch): array => array_column($batch->data ?? [], 'sku'))
             ->filter()
             ->unique()
             ->values()
@@ -101,7 +95,7 @@ class Completed implements ShouldQueue
             ->toArray();
 
         if (! empty($ids)) {
-            BulkProductCompletenessJob::dispatch($ids);
+            dispatch(new BulkProductCompletenessJob($ids));
         }
     }
 }

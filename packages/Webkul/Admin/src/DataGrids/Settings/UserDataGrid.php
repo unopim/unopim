@@ -26,6 +26,7 @@ class UserDataGrid extends DataGrid
     {
         $queryBuilder = DB::table('admins as u')
             ->leftJoin('roles as ro', 'u.role_id', '=', 'ro.id')
+            ->where('u.type', 'user')
             ->addSelect(
                 'u.id as user_id',
                 'u.name as user_name',

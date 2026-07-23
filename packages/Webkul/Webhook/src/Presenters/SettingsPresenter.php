@@ -21,8 +21,8 @@ class SettingsPresenter extends JsonDataPresenter
 
         $normalizedData = [];
 
-        $arrayCheckOld = array_filter($oldArray, 'is_array');
-        $arrayCheckNew = array_filter($newArray, 'is_array');
+        $arrayCheckOld = array_filter($oldArray, is_array(...));
+        $arrayCheckNew = array_filter($newArray, is_array(...));
 
         if (count($arrayCheckOld) > 0) {
             $oldArray = array_merge(...array_values($oldArray));
@@ -55,17 +55,12 @@ class SettingsPresenter extends JsonDataPresenter
         return $normalizedData;
     }
 
-    protected static function formatekey(string $key)
+    protected static function formatekey(string $key): string
     {
-        switch ($key) {
-            case 'webhook_active':
-                $key = 'Active Webhook';
-                break;
-            case 'webhook_url':
-                $key = 'Webhook URL';
-                break;
-        }
-
-        return $key;
+        return match ($key) {
+            'webhook_active' => 'Active Webhook',
+            'webhook_url'    => 'Webhook URL',
+            default          => $key,
+        };
     }
 }

@@ -8,6 +8,12 @@ return [
         'sort'  => 7,
     ],
     [
+        'key'   => 'ai-agent',
+        'name'  => 'ai-agent::app.acl.ai-agent',
+        'route' => 'admin.magic_ai.image',
+        'sort'  => 7,
+    ],
+    [
         'key'    => 'ai-agent.platform',
         'name'   => 'ai-agent::app.acl.platform',
         'route'  => 'admin.magic_ai.platform.index',
@@ -42,6 +48,12 @@ return [
         'key'    => 'ai-agent.general',
         'name'   => 'ai-agent::app.acl.general',
         'route'  => 'admin.configuration.edit',
+        'sort'   => 1,
+    ],
+    [
+        'key'    => 'ai-agent.general',
+        'name'   => 'ai-agent::app.acl.general',
+        'route'  => 'admin.magic_ai.settings.index',
         'sort'   => 1,
     ],
     [

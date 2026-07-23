@@ -1,5 +1,4 @@
 <x-admin::layouts>
-    <!-- Page Title -->
     <x-slot:title>
         @lang('admin::app.settings.channels.create.title')
     </x-slot>
@@ -10,13 +9,8 @@
 
         {!! view_render_event('admin.settings.channels.create.create_form_controls.before') !!}
 
-        <div class="flex justify-between items-center">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.settings.channels.create.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
-                <!-- Cancel Button -->
+        <x-admin::page-header :title="trans('admin::app.settings.channels.create.title')">
+            <x-slot:actions>
                 <a
                     href="{{ route('admin.settings.channels.index') }}"
                     class="transparent-button"
@@ -24,22 +18,18 @@
                     @lang('admin::app.settings.channels.create.cancel')
                 </a>
 
-                <!-- Save Button -->
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     class="primary-button"
                 >
                     @lang('admin::app.settings.channels.create.save-btn')
                 </button>
-            </div>
-        </div>
+            </x-slot>
+        </x-admin::page-header>
 
-        <!-- body content -->
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-            <!-- Left sub-component -->
             <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
 
-                <!-- General Information -->
 
                 {!! view_render_event('unopim.admin.settings.channels.create.card.general.before') !!}
 
@@ -48,7 +38,6 @@
                         @lang('admin::app.settings.channels.create.general')
                     </p>
 
-                    <!-- Code -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.settings.channels.create.code')
@@ -67,16 +56,15 @@
                         <x-admin::form.control-group.error control-name="code" />
                     </x-admin::form.control-group>
  
-                    <!-- Root Category -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.settings.channels.create.root-category')
                         </x-admin::form.control-group.label>
 
                         @php
-                            $options = json_encode(app('Webkul\Category\Repositories\CategoryRepository')->getRootCategories()->toArray());
+                            $options = json_encode($rootCategories->toArray());
                         @endphp
-                        
+
                         <x-admin::form.control-group.control
                             type="select"
                             id="root_category_id"
@@ -98,7 +86,6 @@
 
                 {!! view_render_event('unopim.admin.settings.channels.create.card.general.after') !!}
 
-                <!-- Name Translations -->
 
                 {!! view_render_event('unopim.admin.settings.channels.create.card.translations.before') !!}
 
@@ -128,10 +115,8 @@
 
             </div>
 
-            <!-- Right section -->
             <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
 
-                <!-- Currencies and Locales -->
 
                 {!! view_render_event('unopim.admin.settings.channels.create.card.accordion.currencies_and_locales.before') !!}
 
@@ -143,14 +128,13 @@
                     </x-slot>
             
                     <x-slot:content>
-                         <!-- Locales Checkboxes -->
                         <x-admin::form.control-group class="mb-4">
                             <x-admin::form.control-group.label class="required">
                                 @lang('admin::app.settings.channels.edit.locales')
                             </x-admin::form.control-group.label>
 
                             @php
-                                $options = json_encode(core()->getAllActiveLocales()->toArray());
+                                $options = json_encode(core()->getAllLocales()->values()->toArray());
                                 $oldLocales = old('locales');
 
                                 if (is_array($oldLocales)) {
@@ -174,14 +158,13 @@
                             <x-admin::form.control-group.error control-name="locales" />
                         </x-admin::form.control-group>
 
-                        <!-- Currencies Checkboxes -->
                         <x-admin::form.control-group class="mb-4">
                             <x-admin::form.control-group.label class="required">
                                 @lang('admin::app.settings.channels.edit.currencies')
                             </x-admin::form.control-group.label>
                         
                             @php
-                                $options = json_encode(array_values(core()->getAllActiveCurrencies()->toArray()));
+                                $options = json_encode(core()->getAllCurrencies()->sortBy('name')->values()->toArray());
                             @endphp
 
                             <x-admin::form.control-group.control

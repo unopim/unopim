@@ -3,15 +3,26 @@
         channel
     </x-slot>
 
-    <!-- Page Title -->
     <x-slot:title>
         @lang('admin::app.settings.channels.edit.title')
+    </x-slot>
+
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.settings.channels.edit.title')"
+            :back-url="route('admin.settings.channels.index')"
+            :back-label="trans('admin::app.settings.channels.edit.back-btn')"
+            :save-label="trans('admin::app.settings.channels.edit.save-btn')"
+            form="channel-edit-form"
+            :sticky="false"
+        />
     </x-slot>
 
     <!-- Channel Edit Form -->
     {!! view_render_event('unopim.admin.settings.channels.edit.before') !!}
 
     <x-admin::form
+        id="channel-edit-form"
         ajax
         :action="route('admin.settings.channels.update', ['id' => $channel->id])"
     >
@@ -19,35 +30,10 @@
 
         {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.before') !!}
 
-        <div class="flex justify-between items-center">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.settings.channels.edit.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
-                <a
-                    href="{{ route('admin.settings.channels.index') }}"
-                    class="transparent-button"
-                >
-                    @lang('admin::app.settings.channels.edit.back-btn')
-                </a>
-
-                <button 
-                    type="submit" 
-                    class="primary-button"
-                    aria-lebel="Submit"
-                >
-                    @lang('admin::app.settings.channels.edit.save-btn')
-                </button>
-            </div>
-        </div>
-
         <!-- body content -->
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-            <!-- Left Section -->
             <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
 
-                <!-- General Information -->
 
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.general.before') !!}
 
@@ -56,14 +42,13 @@
                         @lang('admin::app.settings.channels.edit.general')
                     </p>
 
-                    <!-- Code -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.settings.channels.edit.code')
                         </x-admin::form.control-group.label>
 
                         @php
-                            $selectedOption = old('type') ?: $channel->code;
+                            $selectedOption = old('code') ?: $channel->code;
                         @endphp
 
                         <x-admin::form.control-group.control
@@ -88,7 +73,6 @@
                         <x-admin::form.control-group.error control-name="code" />
                     </x-admin::form.control-group>
 
-                    <!-- Root Category -->
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.settings.channels.edit.root-category')
@@ -97,8 +81,8 @@
                         @php
                         
                             $selectedOption = $channel->root_category_id;
-                            
-                            $options = json_encode(app('Webkul\Category\Repositories\CategoryRepository')->getRootCategories()->toArray());
+
+                            $options = json_encode($rootCategories->toArray());
                         @endphp
 
                         <x-admin::form.control-group.control
@@ -121,7 +105,6 @@
 
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.general.after') !!}
 
-                <!-- Name Translations -->
 
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.translations.before') !!}
 
@@ -132,8 +115,12 @@
 
                     @foreach (core()->getAllActiveLocales() as $locale)
                         <x-admin::form.control-group>
-                            <x-admin::form.control-group.label>
-                                {{ $locale->name }} 
+                            <x-admin::form.control-group.label
+                                class="w-full"
+                                localizable="true"
+                                :current-locale-code="$locale->code"
+                            >
+                                @lang('admin::app.settings.channels.edit.name')
                             </x-admin::form.control-group.label>
     
                             <x-admin::form.control-group.control
@@ -151,9 +138,7 @@
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.translations.after') !!}
             </div>
 
-            <!-- Right Section -->
             <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                <!-- Currencies and Locale -->
 
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.accordion.currencies_and_locales.before') !!}
 
@@ -167,7 +152,6 @@
                     </x-slot>
             
                     <x-slot:content>
-                        <!-- Locales Checkboxes -->
                         <x-admin::form.control-group class="mb-4">
                             <x-admin::form.control-group.label class="required">
                                 @lang('admin::app.settings.channels.edit.locales')
@@ -178,7 +162,7 @@
 
                                 $selectedOptions = is_array($selectedOptions) ? json_encode($selectedOptions, JSON_NUMERIC_CHECK) : $selectedOptions;
 
-                                $options = json_encode(core()->getAllActiveLocales()->toArray());
+                                $options = json_encode(core()->getAllLocales()->values()->toArray());
                                 
                             @endphp
 
@@ -208,7 +192,7 @@
 
                                 $selectedOptions2 = is_array($selectedOptions2) ? json_encode($selectedOptions2, JSON_NUMERIC_CHECK) : $selectedOptions2;
 
-                                $options2 = json_encode(array_values(core()->getAllActiveCurrencies()->toArray()));
+                                $options2 = json_encode(core()->getAllCurrencies()->sortBy('name')->values()->toArray());
                             @endphp
 
                             <x-admin::form.control-group.control
