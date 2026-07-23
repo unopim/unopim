@@ -5,14 +5,20 @@ namespace Webkul\Publication\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Publication\DataTransferObjects\PublicationType;
+use Webkul\Publication\Events\PublicationPublished;
+use Webkul\Publication\Events\PublicationRedacted;
+use Webkul\Publication\Http\Controllers\PublicationAssetController;
 use Webkul\Publication\Http\Controllers\PublicationController;
 use Webkul\Publication\Http\Middleware\EnsurePublicationEnabled;
 use Webkul\Publication\Http\Middleware\PublicationErrorBoundary;
 use Webkul\Publication\Http\Middleware\PublicationRateLimit;
+use Webkul\Publication\Listeners\PrunePublicationVersionDocumentsOnRedaction;
+use Webkul\Publication\Listeners\SyncPublicationVersionDocuments;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 
 class PublicationServiceProvider extends ServiceProvider
@@ -39,6 +45,9 @@ class PublicationServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'publication');
 
         $this->app->register(ModuleServiceProvider::class);
+
+        Event::listen(PublicationPublished::class, SyncPublicationVersionDocuments::class);
+        Event::listen(PublicationRedacted::class, PrunePublicationVersionDocumentsOnRedaction::class);
 
         $this->registerPublicRoutes();
     }
@@ -69,11 +78,15 @@ class PublicationServiceProvider extends ServiceProvider
         foreach (collect(config('publication.types', []))->map(
             fn (array $config, string $code): PublicationType => PublicationType::fromConfig($code, $config)
         ) as $type) {
-            // No ->whereUuid()/->where('locale', ...) constraints: a route regex failure
-            // throws NotFoundHttpException outside this group's own middleware, so
-            // Laravel's Pipeline renders it via the global handler (admin::errors.index)
-            // instead. Segment count alone disambiguates these routes; shape validation
-            // is the controller's job, which always returns our own 404.
+            // No ->whereUuid()/->where('locale', ...) constraints on the first and
+            // third routes: a route regex failure throws NotFoundHttpException
+            // outside this group's own middleware, so Laravel's Pipeline renders it
+            // via the global handler (admin::errors.index) instead. Segment count
+            // plus the literal `asset` token disambiguate these three routes; shape
+            // validation is the controller's job, which always returns our own 404.
+            // The asset route's own `where('path', ...)` is a functional necessity,
+            // not just a hardening extra: without it the `{path}` segment cannot
+            // capture the slashes a nested document path contains at all.
             Route::middleware(['publication.errors', 'publication.enabled', 'publication.ratelimit'])
                 ->prefix($type->routePrefix)
                 ->group(function () use ($type): void {
@@ -81,8 +94,10 @@ class PublicationServiceProvider extends ServiceProvider
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.show');
 
-                    // A future `/{uuid}/asset/{path}` route must be inserted here, before
-                    // the locale route below, or `{locale}` would swallow `asset`.
+                    Route::get('/{uuid}/asset/{path}', [PublicationAssetController::class, 'show'])
+                        ->where('path', '[A-Za-z0-9][A-Za-z0-9_.\/%-]*')
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.asset');
 
                     Route::get('/{uuid}/{locale}', [PublicationController::class, 'show'])
                         ->defaults('type', $type->code)

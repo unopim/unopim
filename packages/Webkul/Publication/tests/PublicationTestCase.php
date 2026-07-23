@@ -2,6 +2,7 @@
 
 namespace Webkul\Publication\Tests;
 
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeGroupProxy;
@@ -15,6 +16,7 @@ use Webkul\Product\Models\ProductProxy;
 use Webkul\Publication\Models\PublicationVersion;
 use Webkul\Publication\Providers\PublicationServiceProvider;
 use Webkul\Publication\Services\Publisher;
+use Webkul\Publication\Tests\Support\DocumentStubPayloadBuilder;
 use Webkul\Publication\Tests\Support\StubPayloadBuilder;
 use Webkul\User\Tests\Concerns\UserAssertions;
 
@@ -125,5 +127,41 @@ class PublicationTestCase extends TestCase
         $this->app->getProvider(PublicationServiceProvider::class)->registerPublicRoutes();
 
         return resolve(Publisher::class)->publish($product, $channel, $complete, 'dpp');
+    }
+
+    /**
+     * Places a real file on the asset disk first, exactly mirroring what
+     * Task 10's real payload builder will do, then publishes through
+     * `DocumentStubPayloadBuilder` so the version's payload already points at
+     * that path when `SyncPublicationVersionDocuments` indexes it.
+     *
+     * @return array{0: PublicationVersion, 1: string}
+     */
+    protected function passportWithDocumentFixture(): array
+    {
+        [$product, $channel, , $complete] = $this->seedPassportFixture();
+
+        $path = 'publication/'.$product->id.'/'.$complete->code.'/certificate.pdf';
+
+        Storage::disk(config('publication.asset_disk'))->put($path, '%PDF-1.4 stub');
+
+        config()->set('publication.types.dpp', [
+            'label'           => 'publication::app.publications.status.published',
+            'payload_builder' => DocumentStubPayloadBuilder::class,
+            'template'        => 'publication::public.stub',
+            'required_group'  => 'dpp',
+            'route_prefix'    => 'p',
+        ]);
+
+        // See publishedPassportFixture() above: routes registered at boot time
+        // don't know about the `dpp` type set just now, so this test's Router
+        // instance needs its own explicit re-registration.
+        $this->app->getProvider(PublicationServiceProvider::class)->registerPublicRoutes();
+
+        DocumentStubPayloadBuilder::$documentPath = $path;
+
+        $version = resolve(Publisher::class)->publish($product, $channel, $complete, 'dpp');
+
+        return [$version, $path];
     }
 }
