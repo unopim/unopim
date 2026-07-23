@@ -73,7 +73,7 @@ class AccountController extends Controller
             'default_channel_id',
         ]);
 
-        if (! Hash::check($data['current_password'], $user->password)) {
+        if (! Hash::check($data['current_password'] ?? '', $user->password)) {
             session()->flash('warning', trans('admin::app.account.edit.invalid-password'));
 
             return redirect()->back();
@@ -81,7 +81,7 @@ class AccountController extends Controller
 
         $isPasswordChanged = false;
 
-        if (! $data['password']) {
+        if (empty($data['password'])) {
             unset($data['password']);
         } else {
             $isPasswordChanged = true;
@@ -114,8 +114,6 @@ class AccountController extends Controller
         $user->update($data);
 
         if ($isPasswordChanged) {
-            // Revoke all Passport access tokens issued to this admin so previously-issued API
-            // credentials stop working after a password change (security best practice).
             $user->tokens()->update(['revoked' => true]);
 
             Event::dispatch('admin.password.update.after', $user);

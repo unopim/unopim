@@ -1003,6 +1003,7 @@ return [
                 'selected-to'                      => 'geselecteerd → naar',
                 'assign'                           => 'Toewijzen',
                 'clear'                            => 'wissen',
+                'too-large'                        => 'Filter is te groot om op te slaan',
                 'variant-saved'                    => 'Variantstructuur opgeslagen.',
                 'variant-structure-locked'         => 'Deze variantstructuur heeft al varianten, dus de assen en niveaus kunnen niet meer worden gewijzigd. Verwijder eerst de bestaande varianten.',
                 'no-axis-options'                  => 'Voeg minimaal één niet-scopegebonden selectieattribuut toe aan deze familie voordat u varianten aanmaakt.',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => 'Filter toevoegen',
                 'remove-filter'   => 'Filter verwijderen',
                 'search-filter'   => 'Zoeken...',
+                'no-value'        => 'Alle',
                 'values-selected' => ':count geselecteerd',
                 'saved-filters'   => [
                     'title'        => 'Opgeslagen filters',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Wis alles',
+                    'clear'     => 'Wissen',
                     'title'     => 'Aangepaste filters',
                 ],
                 'boolean-options' => [

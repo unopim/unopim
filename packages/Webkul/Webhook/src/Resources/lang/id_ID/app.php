@@ -23,10 +23,6 @@ return [
             'edit'   => 'Edit',
             'delete' => 'Hapus',
         ],
-        'settings' => [
-            'index'  => 'Pengaturan',
-            'update' => 'Perbarui pengaturan',
-        ],
         'logs' => [
             'index'       => 'Log',
             'view'        => 'Lihat',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Buat Webhook',
-            'cancel'   => 'Batal',
             'save-btn' => 'Simpan',
         ],
         'edit' => [
             'title'    => 'Edit Webhook',
-            'cancel'   => 'Batal',
             'save-btn' => 'Simpan',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Pengaturan',
-                    'save'    => 'Simpan',
-                    'general' => 'Umum',
-                    'active'  => [
-                        'label' => 'Webhook aktif',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'URL Webhook',
-                        'required'          => 'URL Webhook diperlukan saat Webhook aktif.',
-                        'scheme'            => 'URL Webhook harus dimulai dengan http:// atau https://.',
-                        'connection_failed' => 'URL Webhook tidak dapat dijangkau. Silakan periksa URL.',
-                        'unreachable'       => 'URL Webhook tidak valid (HTTP :code).',
-                        'unsafe'            => 'URL Webhook menunjuk ke alamat pribadi, loopback, atau internal dan tidak diizinkan.',
-                    ],
-                    'success'    => 'Pengaturan Webhook berhasil disimpan',
-                    'title'      => 'Pengaturan Webhook',
-                    'logs-title' => 'Log',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

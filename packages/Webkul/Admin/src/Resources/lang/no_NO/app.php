@@ -1003,6 +1003,7 @@ return [
                 'selected-to'                      => 'valgt → til',
                 'assign'                           => 'Tildel',
                 'clear'                            => 'tøm',
+                'too-large'                        => 'Filteret er for stort til å lagre',
                 'variant-saved'                    => 'Variantstruktur lagret.',
                 'variant-structure-locked'         => 'Denne variantstrukturen har allerede varianter, så aksene og nivåene kan ikke lenger endres. Slett de eksisterende variantene først.',
                 'no-axis-options'                  => 'Legg til minst ett ikke-omfangsbestemt valgattributt i denne familien før du oppretter varianter.',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => 'Legg til filter',
                 'remove-filter'   => 'Fjern filter',
                 'search-filter'   => 'Søk...',
+                'no-value'        => 'Alle',
                 'values-selected' => ':count valgt',
                 'saved-filters'   => [
                     'title'        => 'Lagrede filtre',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Tøm alle',
+                    'clear'     => 'Tøm',
                     'title'     => 'Brukerdefinerte filtre',
                 ],
                 'boolean-options' => [

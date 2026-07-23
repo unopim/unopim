@@ -1003,6 +1003,7 @@ return [
                 'selected-to'                      => '선택됨 → 대상',
                 'assign'                           => '할당',
                 'clear'                            => '지우기',
+                'too-large'                        => '필터가 너무 커서 저장할 수 없습니다',
                 'variant-saved'                    => '변형 구조가 저장되었습니다.',
                 'variant-structure-locked'         => '이 배리언트 구조에는 이미 배리언트가 있어 축과 레벨을 더 이상 변경할 수 없습니다. 기존 배리언트를 먼저 삭제하세요.',
                 'no-axis-options'                  => '변형을 만들기 전에 이 패밀리에 범위가 지정되지 않은 선택 속성을 하나 이상 추가하세요.',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => '필터 추가',
                 'remove-filter'   => '필터 제거',
                 'search-filter'   => '검색...',
+                'no-value'        => '전체',
                 'values-selected' => ':count개 선택됨',
                 'saved-filters'   => [
                     'title'        => '저장된 필터',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => '모두 지우기',
+                    'clear'     => '지우기',
                     'title'     => '사용자 정의 필터',
                 ],
                 'boolean-options' => [

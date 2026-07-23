@@ -23,10 +23,6 @@ return [
             'edit'   => 'Редагувати',
             'delete' => 'Видалити',
         ],
-        'settings' => [
-            'index'  => 'Налаштування',
-            'update' => 'Оновити налаштування',
-        ],
         'logs' => [
             'index'       => 'Журнали',
             'view'        => 'Переглянути',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Створити вебхук',
-            'cancel'   => 'Скасувати',
             'save-btn' => 'Зберегти',
         ],
         'edit' => [
             'title'    => 'Редагувати вебхук',
-            'cancel'   => 'Скасувати',
             'save-btn' => 'Зберегти',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Налаштування',
-                    'save'    => 'Зберегти',
-                    'general' => 'Загальні',
-                    'active'  => [
-                        'label' => 'Активний Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'URL Webhook',
-                        'required'          => 'URL Webhook є обов’язковим, коли Webhook активний.',
-                        'scheme'            => 'URL Webhook повинен починатися з http:// або https://.',
-                        'connection_failed' => 'Не вдалося підключитися до URL Webhook. Будь ласка, перевірте URL.',
-                        'unreachable'       => 'URL Webhook недійсний (HTTP :code).',
-                        'unsafe'            => 'URL вебхука вказує на приватну, петлеву або внутрішню адресу і не дозволений.',
-                    ],
-                    'success'    => 'Налаштування Webhook успішно збережено',
-                    'title'      => 'Налаштування Webhook',
-                    'logs-title' => 'Журнали',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

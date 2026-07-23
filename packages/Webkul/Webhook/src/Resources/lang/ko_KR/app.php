@@ -23,10 +23,6 @@ return [
             'edit'   => '편집',
             'delete' => '삭제',
         ],
-        'settings' => [
-            'index'  => '설정',
-            'update' => '설정 업데이트',
-        ],
         'logs' => [
             'index'       => '로그',
             'view'        => '보기',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => '웹훅 생성',
-            'cancel'   => '취소',
             'save-btn' => '저장',
         ],
         'edit' => [
             'title'    => '웹훅 편집',
-            'cancel'   => '취소',
             'save-btn' => '저장',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => '설정',
-                    'save'    => '저장',
-                    'general' => '일반',
-                    'active'  => [
-                        'label' => '활성 Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => '웹훅 URL',
-                        'required'          => 'Webhook이 활성화되어 있으면 Webhook URL이 필요합니다.',
-                        'scheme'            => 'Webhook URL은 http:// 또는 https://로 시작해야 합니다.',
-                        'connection_failed' => 'Webhook URL에 연결할 수 없습니다. URL을 확인해 주세요.',
-                        'unreachable'       => 'Webhook URL이 유효하지 않습니다 (HTTP :code).',
-                        'unsafe'            => '웹훅 URL이 비공개, 루프백 또는 내부 주소를 가리키므로 허용되지 않습니다.',
-                    ],
-                    'success'    => 'Webhook 설정이 성공적으로 저장되었습니다',
-                    'title'      => 'Webhook 설정',
-                    'logs-title' => '로그',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

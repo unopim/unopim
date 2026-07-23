@@ -23,10 +23,6 @@ return [
             'edit'   => 'संपादित करें',
             'delete' => 'हटाएं',
         ],
-        'settings' => [
-            'index'  => 'सेटिंग्स',
-            'update' => 'सेटिंग्स अपडेट करें',
-        ],
         'logs' => [
             'index'       => 'लॉग',
             'view'        => 'देखें',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'वेबहुक बनाएं',
-            'cancel'   => 'रद्द करें',
             'save-btn' => 'सहेजें',
         ],
         'edit' => [
             'title'    => 'वेबहुक संपादित करें',
-            'cancel'   => 'रद्द करें',
             'save-btn' => 'सहेजें',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'सेटिंग्स',
-                    'save'    => 'सहेजें',
-                    'general' => 'सामान्य',
-                    'active'  => [
-                        'label' => 'सक्रिय Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'वेबहुक URL',
-                        'required'          => 'जब Webhook सक्रिय हो तो Webhook URL आवश्यक है।',
-                        'scheme'            => 'Webhook URL http:// या https:// से शुरू होना चाहिए।',
-                        'connection_failed' => 'Webhook URL तक नहीं पहुँचा जा सका। कृपया URL जाँचें।',
-                        'unreachable'       => 'Webhook URL मान्य नहीं है (HTTP :code)।',
-                        'unsafe'            => 'Webhook URL एक प्राइवेट, लूपबैक या आंतरिक पते की ओर इशारा करता है और इसकी अनुमति नहीं है।',
-                    ],
-                    'success'    => 'Webhook सेटिंग्स सफलतापूर्वक सहेजी गईं',
-                    'title'      => 'Webhook सेटिंग्स',
-                    'logs-title' => 'लॉग',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

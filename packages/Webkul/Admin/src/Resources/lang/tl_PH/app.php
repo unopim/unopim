@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'napili → sa',
                 'assign'                           => 'Italaga',
                 'clear'                            => 'i-clear',
+                'too-large'                        => 'Masyadong malaki ang filter para i-save',
                 'variant-saved'                    => 'Na-save ang istraktura ng variant.',
                 'variant-structure-locked'         => 'May mga variant na ang variant structure na ito, kaya hindi na mababago ang mga axis at level nito. Burahin muna ang mga kasalukuyang variant.',
                 'no-axis-options'                  => 'Magdagdag ng hindi bababa sa isang non-scoped na select attribute sa pamilyang ito bago gumawa ng mga variant.',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => 'Magdagdag ng Filter',
                 'remove-filter'   => 'Alisin ang Filter',
                 'search-filter'   => 'Maghanap...',
+                'no-value'        => 'Lahat',
                 'values-selected' => ':count napili',
                 'saved-filters'   => [
                     'title'        => 'Mga Naka-save na Filter',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'I-clear Lahat',
+                    'clear'     => 'I-clear',
                     'title'     => 'Mga Pasadyang Salain',
                 ],
                 'boolean-options' => [

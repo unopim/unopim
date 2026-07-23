@@ -23,10 +23,6 @@ return [
             'edit'   => 'Edit',
             'delete' => 'Delete',
         ],
-        'settings' => [
-            'index'  => 'Settings',
-            'update' => 'Update Settings',
-        ],
         'logs' => [
             'index'       => 'Logs',
             'view'        => 'View',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Create Webhook',
-            'cancel'   => 'Cancel',
             'save-btn' => 'Save',
         ],
         'edit' => [
             'title'    => 'Edit Webhook',
-            'cancel'   => 'Cancel',
             'save-btn' => 'Save',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Settings',
-                    'save'    => 'Save',
-                    'general' => 'General',
-                    'active'  => [
-                        'label' => 'Active Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'Webhook URL',
-                        'required'          => 'A Webhook URL is required when the webhook is active.',
-                        'scheme'            => 'The Webhook URL must start with http:// or https://.',
-                        'connection_failed' => 'The Webhook URL could not be reached. Please check the URL.',
-                        'unreachable'       => 'The Webhook URL is not valid (HTTP :code).',
-                        'unsafe'            => 'The Webhook URL points at a private, loopback or internal address and is not allowed.',
-                    ],
-                    'success'    => 'Webhook settings saved successfully',
-                    'title'      => 'Webhook Settings',
-                    'logs-title' => 'Logs',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

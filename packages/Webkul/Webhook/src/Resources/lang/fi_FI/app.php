@@ -23,10 +23,6 @@ return [
             'edit'   => 'Muokkaa',
             'delete' => 'Poista',
         ],
-        'settings' => [
-            'index'  => 'Asetukset',
-            'update' => 'Päivitä asetukset',
-        ],
         'logs' => [
             'index'       => 'Lokit',
             'view'        => 'Näytä',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Luo Webhook',
-            'cancel'   => 'Peruuta',
             'save-btn' => 'Tallenna',
         ],
         'edit' => [
             'title'    => 'Muokkaa Webhookia',
-            'cancel'   => 'Peruuta',
             'save-btn' => 'Tallenna',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Asetukset',
-                    'save'    => 'Tallenna',
-                    'general' => 'Yleiset',
-                    'active'  => [
-                        'label' => 'Aktiivinen Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'Webhook-URL',
-                        'required'          => 'Webhook-URL vaaditaan, kun webhook on käytössä.',
-                        'scheme'            => 'Webhook-URL:n on alettava http:// tai https://.',
-                        'connection_failed' => 'Webhook-URL-osoitteeseen ei saatu yhteyttä. Tarkista URL-osoite.',
-                        'unreachable'       => 'Webhook-URL ei kelpaa (HTTP :code).',
-                        'unsafe'            => 'Webhook-URL osoittaa yksityiseen, loopback- tai sisäiseen osoitteeseen, eikä sitä sallita.',
-                    ],
-                    'success'    => 'Webhook-asetukset tallennettu onnistuneesti',
-                    'title'      => 'Webhook-asetukset',
-                    'logs-title' => 'Lokit',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

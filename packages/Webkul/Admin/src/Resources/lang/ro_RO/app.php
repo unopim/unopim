@@ -1003,6 +1003,7 @@ return [
                 'selected-to'                      => 'selectat(e) → către',
                 'assign'                           => 'Atribuiți',
                 'clear'                            => 'șterge',
+                'too-large'                        => 'Filtrul este prea mare pentru a fi salvat',
                 'variant-saved'                    => 'Structura variantei a fost salvată.',
                 'variant-structure-locked'         => 'Această structură de variante are deja variante, așa că axele și nivelurile sale nu mai pot fi modificate. Ștergeți mai întâi variantele existente.',
                 'no-axis-options'                  => 'Adăugați cel puțin un atribut de tip listă fără domeniu la această familie înainte de a crea variante.',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => 'Adaugă filtru',
                 'remove-filter'   => 'Elimină filtru',
                 'search-filter'   => 'Căutare...',
+                'no-value'        => 'Toate',
                 'values-selected' => ':count selectate',
                 'saved-filters'   => [
                     'title'        => 'Filtre salvate',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Ștergeți Tot',
+                    'clear'     => 'Șterge',
                     'title'     => 'Filtre Personalizate',
                 ],
                 'boolean-options' => [

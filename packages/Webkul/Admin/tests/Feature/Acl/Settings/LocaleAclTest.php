@@ -52,7 +52,7 @@ it('should return the locale json for edit if have permission', function () {
     $this->loginWithPermissions(permissions: ['dashboard', 'settings.locales.edit']);
     $locale = Locale::factory()->create();
 
-    $this->get(route('admin.settings.locales.edit', $locale->id))
+    $this->getJson(route('admin.settings.locales.edit', $locale->id))
         ->assertOk()
         ->assertJsonFragment([
             ...$locale->toArray(),

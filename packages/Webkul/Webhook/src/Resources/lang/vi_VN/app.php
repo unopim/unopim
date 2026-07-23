@@ -23,10 +23,6 @@ return [
             'edit'   => 'Chỉnh sửa',
             'delete' => 'Xóa',
         ],
-        'settings' => [
-            'index'  => 'Cài đặt',
-            'update' => 'Cập nhật cài đặt',
-        ],
         'logs' => [
             'index'       => 'Nhật ký',
             'view'        => 'Xem',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Tạo Webhook',
-            'cancel'   => 'Hủy',
             'save-btn' => 'Lưu',
         ],
         'edit' => [
             'title'    => 'Chỉnh sửa Webhook',
-            'cancel'   => 'Hủy',
             'save-btn' => 'Lưu',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Cài đặt',
-                    'save'    => 'Lưu',
-                    'general' => 'Chung',
-                    'active'  => [
-                        'label' => 'Webhook đang hoạt động',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'URL Webhook',
-                        'required'          => 'URL Webhook là bắt buộc khi Webhook đang hoạt động.',
-                        'scheme'            => 'URL Webhook phải bắt đầu bằng http:// hoặc https://.',
-                        'connection_failed' => 'Không thể truy cập URL Webhook. Vui lòng kiểm tra URL.',
-                        'unreachable'       => 'URL Webhook không hợp lệ (HTTP :code).',
-                        'unsafe'            => 'URL Webhook trỏ đến địa chỉ riêng tư, loopback hoặc nội bộ và không được phép.',
-                    ],
-                    'success'    => 'Cài đặt Webhook đã được lưu thành công',
-                    'title'      => 'Cài đặt Webhook',
-                    'logs-title' => 'Nhật ký',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

@@ -57,7 +57,7 @@ it('should return the locale as json for edit modal', function () {
 
     $locale = Locale::factory()->create();
 
-    $this->get(route('admin.settings.locales.edit', $locale->id))
+    $this->getJson(route('admin.settings.locales.edit', $locale->id))
         ->assertOk()
         ->assertJsonFragment([
             ...$locale->toArray(),

@@ -695,13 +695,20 @@ class Core
      */
     public function sortItems(array $items): array
     {
+        // Registering a child whose ancestor was filtered out by ACL seeds that
+        // ancestor as a headless placeholder — no key, sort or name. Drop it:
+        // an unpermitted parent must not surface its subtree.
+        $items = array_filter($items, fn (array $item): bool => isset($item['key']));
+
         foreach ($items as &$item) {
-            if (count($item['children']) > 0) {
+            if (count($item['children'] ?? []) > 0) {
                 $item['children'] = $this->sortItems($item['children']);
             }
         }
 
-        usort($items, fn (array $a, array $b): int => $a['sort'] <=> $b['sort']);
+        unset($item);
+
+        usort($items, fn (array $a, array $b): int => ($a['sort'] ?? 0) <=> ($b['sort'] ?? 0));
 
         return $this->convertToAssociativeArray($items);
     }

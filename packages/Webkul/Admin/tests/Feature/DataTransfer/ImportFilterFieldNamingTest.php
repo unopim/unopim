@@ -59,16 +59,21 @@ it('persists a bracketed filters[...] payload as an array on the job instance', 
 });
 
 it('brackets the filter input name for text/date/datetime/textarea in the blade source', function () {
-    $file = dirname(__DIR__, 3)
+    $filterFields = dirname(__DIR__, 3)
         .'/src/Resources/views/components/data-transfer/filter-fields.blade.php';
 
-    expect(file_exists($file))->toBeTrue();
+    $inputs = dirname(__DIR__, 3)
+        .'/src/Resources/views/components/form/fields/inputs.blade.php';
 
-    $contents = file_get_contents($file);
+    expect(file_exists($filterFields))->toBeTrue()
+        ->and(file_exists($inputs))->toBeTrue();
 
-    // The fixed bracketed binding must be present ...
-    expect($contents)->toContain(":name=\"'filters[' + filterField.name + ']'\"");
+    // Bracketing now lives in the shared field set: the filter view declares the
+    // prefix and the input composes `prefix[name]` from it.
+    expect(file_get_contents($filterFields))->toContain('name-prefix="filters"');
+
+    expect(file_get_contents($inputs))->toContain('${this.namePrefix}[${this.field.name}]');
 
     // ... and the buggy bare binding must be gone.
-    expect($contents)->not->toContain(':name="filterField.name"');
+    expect(file_get_contents($filterFields))->not->toContain(':name="filterField.name"');
 });

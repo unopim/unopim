@@ -92,9 +92,7 @@
             },
 
             mounted() {
-                this.toggleBlockWidth = this.$refs.toggleBlock.clientWidth;
-
-                this.toggleBlockHeight = this.$refs.toggleBlock.clientHeight;
+                this.measureToggle();
             },
 
             beforeUnmount() {
@@ -145,6 +143,31 @@
             methods: {
                 toggle() {
                     this.isActive = ! this.isActive;
+
+                    /**
+                     * Re-measure the toggle when opening. Dropdowns mounted inside a hidden
+                     * container (e.g. a collapsed filter row or a closed drawer) measure 0 in
+                     * mounted(), which collapses the menu to content width and pins it top-left.
+                     */
+                    if (this.isActive) {
+                        this.measureToggle();
+                    }
+                },
+
+                measureToggle() {
+                    const block = this.$refs.toggleBlock;
+
+                    if (! block) {
+                        return;
+                    }
+
+                    if (block.clientWidth) {
+                        this.toggleBlockWidth = block.clientWidth;
+                    }
+
+                    if (block.clientHeight) {
+                        this.toggleBlockHeight = block.clientHeight;
+                    }
                 },
 
                 handleFocusOut(e) {

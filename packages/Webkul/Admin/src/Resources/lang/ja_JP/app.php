@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => '選択済み → 移動先',
                 'assign'                           => '割り当て',
                 'clear'                            => 'クリア',
+                'too-large'                        => 'フィルターが大きすぎて保存できません',
                 'variant-saved'                    => 'バリエーション構造を保存しました。',
                 'variant-structure-locked'         => 'このバリアント構造にはすでにバリアントが存在するため、軸とレベルを変更できません。先に既存のバリアントを削除してください。',
                 'no-axis-options'                  => 'バリエーションを作成する前に、このファミリーにスコープ指定なしの選択属性を少なくとも1つ追加してください。',
@@ -2396,6 +2397,7 @@ return [
                 'add-filter'      => 'フィルターを追加',
                 'remove-filter'   => 'フィルターを削除',
                 'search-filter'   => '検索...',
+                'no-value'        => 'すべて',
                 'values-selected' => ':count 件選択済み',
                 'saved-filters'   => [
                     'title'        => '保存済みフィルター',
@@ -2418,6 +2420,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'すべてクリア',
+                    'clear'     => 'クリア',
                     'title'     => 'カスタムフィルター',
                 ],
                 'boolean-options' => [

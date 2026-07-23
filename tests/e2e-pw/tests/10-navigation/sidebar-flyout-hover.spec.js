@@ -22,13 +22,14 @@ test.describe('Sidebar fly-out submenu hover', () => {
   test('keeps the fly-out open while moving from the parent onto a sub-item', async ({ adminPage }) => {
     const sidebar = adminPage.locator('#unopim-sidebar');
 
-    // Sidebar labels render as `<p> Label </p>`, so the accessible name carries
-    // surrounding whitespace; anchor with a regex to stay exact without depending
-    // on that padding.
-    const catalog = sidebar.getByRole('link', { name: /^\s*Catalog\s*$/ });
+    // Locate by href, not by label: the collapsed sidebar (the default) hides the
+    // `<p>` labels, so the links carry no accessible name in that state.
+    const catalog = sidebar.locator('[data-menu-item]', {
+      has: adminPage.locator('a[href$="/catalog/attribute-families"]'),
+    }).locator('> a');
     // The lowest sub-item is the worst case: the diagonal from the short trigger
     // row down to it crosses the most dead space.
-    const families = sidebar.getByRole('link', { name: /^\s*Attribute Families\s*$/ });
+    const families = sidebar.locator('a[href$="/catalog/attribute-families"]');
 
     await catalog.hover();
     await expect(families).toBeVisible();
@@ -47,5 +48,106 @@ test.describe('Sidebar fly-out submenu hover', () => {
     await families.click();
 
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families/);
+  });
+
+  /**
+   * The fly-out is `position: fixed` with no CSS `top`, so without JS it falls back
+   * to its static flow position — one row height below the icon it belongs to. The
+   * sidebar sits inside the `#app` Vue root, which re-creates these nodes on mount,
+   * so listeners must be delegated from `document` or they are silently discarded.
+   */
+  test('docks the fly-out to the top of its trigger row', async ({ adminPage }) => {
+    const sidebar = adminPage.locator('#unopim-sidebar');
+
+    const catalog = sidebar.locator('[data-menu-item]', {
+      has: adminPage.locator('a[href$="/catalog/attribute-families"]'),
+    }).locator('> a');
+
+    await catalog.hover();
+
+    const geometry = await adminPage.evaluate(() => {
+      const subMenu = document.querySelector('#unopim-sidebar [data-submenu][style*="grid"]');
+      const menuItem = subMenu.closest('[data-menu-item]');
+
+      return {
+        triggerTop: menuItem.getBoundingClientRect().top,
+        subMenuTop: subMenu.getBoundingClientRect().top,
+        subMenuBottom: subMenu.getBoundingClientRect().bottom,
+        viewportHeight: window.innerHeight,
+      };
+    });
+
+    expect(Math.abs(geometry.subMenuTop - geometry.triggerTop)).toBeLessThanOrEqual(1);
+    expect(geometry.subMenuBottom).toBeLessThanOrEqual(geometry.viewportHeight);
+  });
+
+  /**
+   * Sweeping down the icon rail used to stack fly-outs on top of each other: the
+   * CSS `group-hover` reveal is instant, so a second panel appeared while the first
+   * was still held open by its grace period. Only one may ever be on screen.
+   */
+  test('never shows two fly-outs while sweeping across parents', async ({ adminPage }) => {
+    const triggers = await adminPage.evaluate(() =>
+      [...document.querySelectorAll('#unopim-sidebar [data-menu-item]')]
+        .filter((menuItem) => menuItem.querySelector('[data-submenu]'))
+        .map((menuItem) => {
+          const rect = menuItem.getBoundingClientRect();
+
+          return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+        }));
+
+    expect(triggers.length).toBeGreaterThan(2);
+
+    const visibleCount = () => adminPage.evaluate(() =>
+      [...document.querySelectorAll('#unopim-sidebar [data-submenu]')]
+        .filter((subMenu) => getComputedStyle(subMenu).display !== 'none')
+        .length);
+
+    // Fast sweep: faster than the switch delay, which is where panels used to stack.
+    for (const trigger of triggers) {
+      await adminPage.mouse.move(trigger.x, trigger.y);
+      await adminPage.waitForTimeout(120);
+
+      expect(await visibleCount()).toBe(1);
+    }
+
+    // Deliberate hovers: each parent replaces the previous fly-out, never adds to it.
+    for (const trigger of triggers) {
+      await adminPage.mouse.move(trigger.x, trigger.y);
+      await adminPage.waitForTimeout(500);
+
+      expect(await visibleCount()).toBe(1);
+    }
+  });
+
+  /**
+   * Admin pages swap through ajax navigation, so the sidebar is never re-parsed
+   * after the first load. The fly-out must keep working without a page refresh.
+   */
+  test('survives an in-app navigation without a reload', async ({ adminPage }) => {
+    const sidebar = adminPage.locator('#unopim-sidebar');
+
+    const catalog = sidebar.locator('[data-menu-item]', {
+      has: adminPage.locator('a[href$="/catalog/attribute-families"]'),
+    }).locator('> a');
+
+    await catalog.hover();
+    await sidebar.locator('a[href$="/catalog/categories"]').click();
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/categories/);
+
+    // Leave the sidebar, then come back the way a user would after landing.
+    await adminPage.mouse.move(700, 500);
+    await catalog.hover();
+
+    const delta = await adminPage.evaluate(() => {
+      const subMenu = document.querySelector('#unopim-sidebar [data-submenu][style*="grid"]');
+
+      return subMenu
+        ? subMenu.getBoundingClientRect().top - subMenu.closest('[data-menu-item]').getBoundingClientRect().top
+        : null;
+    });
+
+    expect(delta).not.toBeNull();
+    expect(Math.abs(delta)).toBeLessThanOrEqual(1);
   });
 });

@@ -23,10 +23,6 @@ return [
             'edit'   => 'Düzenle',
             'delete' => 'Sil',
         ],
-        'settings' => [
-            'index'  => 'Ayarlar',
-            'update' => 'Ayarları güncelle',
-        ],
         'logs' => [
             'index'       => 'Günlükler',
             'view'        => 'Görüntüle',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Webhook Oluştur',
-            'cancel'   => 'İptal',
             'save-btn' => 'Kaydet',
         ],
         'edit' => [
             'title'    => 'Webhook Düzenle',
-            'cancel'   => 'İptal',
             'save-btn' => 'Kaydet',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Ayarlar',
-                    'save'    => 'Kaydet',
-                    'general' => 'Genel',
-                    'active'  => [
-                        'label' => 'Aktif Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'Webhook URL',
-                        'required'          => 'Webhook etkin olduğunda Webhook URL\'si gereklidir.',
-                        'scheme'            => 'Webhook URL\'si http:// veya https:// ile başlamalıdır.',
-                        'connection_failed' => 'Webhook URL\'sine erişilemedi. Lütfen URL\'yi kontrol edin.',
-                        'unreachable'       => 'Webhook URL geçerli değil (HTTP :code).',
-                        'unsafe'            => 'Webhook URL\'si özel, geri döngü veya dahili bir adrese işaret ediyor ve izin verilmiyor.',
-                    ],
-                    'success'    => 'Webhook ayarları başarıyla kaydedildi',
-                    'title'      => 'Webhook Ayarları',
-                    'logs-title' => 'Günlükler',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

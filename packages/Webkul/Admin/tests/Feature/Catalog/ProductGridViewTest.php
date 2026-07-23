@@ -99,6 +99,17 @@ it('lists own views plus the ones other admins shared', function () {
         ->and(collect($views)->firstWhere('name', 'Shared by a colleague')['is_owner'])->toBeFalse();
 });
 
+it('refuses a payload far larger than any real grid state', function () {
+    $this->loginAsAdmin();
+
+    $this->postJson(route('admin.catalog.products.grid_views.store'), [
+        'name'    => 'Oversized',
+        'payload' => viewPayload(['columns' => array_fill(0, 100, str_repeat('c', 1000))]),
+    ])->assertUnprocessable();
+
+    expect(ProductGridView::query()->where('name', 'Oversized')->exists())->toBeFalse();
+});
+
 it('narrows the list with a search term', function () {
     $admin = $this->loginAsAdmin();
 

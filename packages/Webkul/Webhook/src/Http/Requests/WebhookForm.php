@@ -11,7 +11,9 @@ class WebhookForm extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return bouncer()->hasPermission(
+            $this->route('id') ? 'configuration.webhook.edit' : 'configuration.webhook.create'
+        );
     }
 
     /**

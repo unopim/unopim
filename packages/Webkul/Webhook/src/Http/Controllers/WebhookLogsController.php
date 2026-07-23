@@ -32,6 +32,17 @@ class WebhookLogsController
     }
 
     /**
+     * Delivery log feed for a single webhook. The id travels in the path so the
+     * scope survives whatever query string the datagrid rebuilds.
+     */
+    public function forWebhook(int $id): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
+
+        return resolve(LogsDataGrid::class)->forWebhook($id)->toJson();
+    }
+
+    /**
      * Return the specified log entry as JSON for the view modal.
      */
     public function show(int $id): JsonResponse

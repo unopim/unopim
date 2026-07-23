@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,6 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('webhook_settings')) {
+            return;
+        }
+
         $settings = DB::table('webhook_settings')
             ->whereIn('field', ['webhook_url', 'webhook_active'])
             ->pluck('value', 'field');
@@ -44,13 +49,29 @@ return new class extends Migration
         DB::table('webhook_logs')->whereNull('webhook_id')->update(['webhook_id' => $webhookId]);
     }
 
+    /**
+     * Only the row this migration seeded is removed — a webhook the admin added
+     * afterwards must survive a rollback.
+     */
     public function down(): void
     {
-        $webhookId = DB::table('webhooks')->orderBy('id')->value('id');
-
-        if ($webhookId !== null) {
-            DB::table('webhook_logs')->where('webhook_id', $webhookId)->update(['webhook_id' => null]);
-            DB::table('webhooks')->where('id', $webhookId)->delete();
+        if (! Schema::hasTable('webhook_settings')) {
+            return;
         }
+
+        $url = DB::table('webhook_settings')->where('field', 'webhook_url')->value('value');
+
+        if (in_array($url, [null, '', '0'], true)) {
+            return;
+        }
+
+        $webhookId = DB::table('webhooks')->where('url', $url)->orderBy('id')->value('id');
+
+        if ($webhookId === null) {
+            return;
+        }
+
+        DB::table('webhook_logs')->where('webhook_id', $webhookId)->update(['webhook_id' => null]);
+        DB::table('webhooks')->where('id', $webhookId)->delete();
     }
 };

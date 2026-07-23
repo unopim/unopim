@@ -162,7 +162,7 @@
 
                                 $selectedOptions = is_array($selectedOptions) ? json_encode($selectedOptions, JSON_NUMERIC_CHECK) : $selectedOptions;
 
-                                $options = json_encode(core()->getAllActiveLocales()->toArray());
+                                $options = json_encode(core()->getAllLocales()->values()->toArray());
                                 
                             @endphp
 
@@ -192,7 +192,7 @@
 
                                 $selectedOptions2 = is_array($selectedOptions2) ? json_encode($selectedOptions2, JSON_NUMERIC_CHECK) : $selectedOptions2;
 
-                                $options2 = json_encode(array_values(core()->getAllActiveCurrencies()->toArray()));
+                                $options2 = json_encode(core()->getAllCurrencies()->sortBy('name')->values()->toArray());
                             @endphp
 
                             <x-admin::form.control-group.control

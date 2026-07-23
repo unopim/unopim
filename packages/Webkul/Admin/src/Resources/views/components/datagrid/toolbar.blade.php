@@ -260,6 +260,7 @@
                             type="button"
                             data-save-view
                             class="secondary-button block w-full text-center"
+                            :class="! viewName.trim() ? 'cursor-not-allowed opacity-50' : ''"
                             :disabled="! viewName.trim()"
                             @click="saveView()"
                         >

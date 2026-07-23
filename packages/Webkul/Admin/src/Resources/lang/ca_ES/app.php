@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'seleccionat(s) → a',
                 'assign'                           => 'Assigna',
                 'clear'                            => 'neteja',
+                'too-large'                        => 'El filtre és massa gran per desar-lo',
                 'variant-saved'                    => 'Estructura de variant desada.',
                 'variant-structure-locked'         => 'Aquesta estructura de variants ja té variants, de manera que els seus eixos i nivells ja no es poden canviar. Elimineu primer les variants existents.',
                 'no-axis-options'                  => 'Afegiu almenys un atribut de selecció sense àmbit a aquesta família abans de crear variants.',
@@ -2396,6 +2397,7 @@ return [
                 'add-filter'      => 'Afegir filtre',
                 'remove-filter'   => 'Eliminar filtre',
                 'search-filter'   => 'Cerca...',
+                'no-value'        => 'Tots',
                 'values-selected' => ':count seleccionats',
                 'saved-filters'   => [
                     'title'        => 'Filtres desats',
@@ -2418,6 +2420,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Limpiar todo',
+                    'clear'     => 'Neteja',
                     'title'     => 'Filtros personalizados',
                 ],
                 'boolean-options' => [

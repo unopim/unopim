@@ -1,17 +1,17 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, clickSaveAndExpect } = require('../../utils/helpers');
+const { navigateTo } = require('../../utils/helpers');
 
 /**
- * Multiple-webhooks admin CRUD coverage: list, create (+validation), the
- * three-tab edit page (General / Logs / History), the Test button, and delete.
+ * Multiple-webhooks admin CRUD coverage: list, quick-create modal (+validation),
+ * the three-tab edit page (General / Logs / History), the Test button, and delete.
  */
 test.describe('UnoPim Webhooks (multiple) CRUD', () => {
   const unique = () => `PW Hook ${Date.now()}${Math.floor(Math.random() * 1000)}`;
 
-  async function gotoCreate(page) {
+  async function openCreateModal(page) {
     await navigateTo(page, 'webhook');
-    await page.getByRole('link', { name: 'Create Webhook' }).click();
-    await page.waitForURL(/\/admin\/configuration\/webhook\/create/, { timeout: 20000 });
+    await page.getByRole('button', { name: 'Create Webhook' }).click();
+    await expect(page.locator('input[name="url"]')).toBeVisible({ timeout: 10000 });
   }
 
   async function selectEvent(page, label) {
@@ -23,39 +23,42 @@ test.describe('UnoPim Webhooks (multiple) CRUD', () => {
   }
 
   async function createWebhook(page, name, url = 'https://example.com/hook') {
-    await gotoCreate(page);
+    await openCreateModal(page);
     await page.locator('input[name="name"]').fill(name);
     await page.locator('input[name="url"]').fill(url);
     await selectEvent(page, 'Product Created');
-    await clickSaveAndExpect(page, 'Save', /created successfully/i, /\/admin\/configuration\/webhook\/edit\/\d+/);
+    await page.getByRole('button', { name: 'Save' }).last().click();
+    await page.waitForURL(/\/admin\/configuration\/webhook\/edit\/\d+/, { timeout: 20000 });
   }
 
   test('list page loads with heading and create button', async ({ adminPage }) => {
     await navigateTo(adminPage, 'webhook');
     await expect(adminPage).toHaveURL(/.*\/admin\/configuration\/webhook$/);
-    await expect(adminPage.locator('#app').getByText('Webhooks', { exact: true }).first()).toBeVisible();
-    await expect(adminPage.getByRole('link', { name: 'Create Webhook' })).toBeVisible();
+    await expect(adminPage.getByRole('heading', { name: 'Webhooks', exact: true })).toBeVisible();
+    await expect(adminPage.getByRole('button', { name: 'Create Webhook' })).toBeVisible();
   });
 
-  test('create page shows all fields', async ({ adminPage }) => {
-    await gotoCreate(adminPage);
+  test('create modal asks only for the required fields', async ({ adminPage }) => {
+    await openCreateModal(adminPage);
     await expect(adminPage.locator('input[name="name"]')).toBeVisible();
     await expect(adminPage.locator('input[name="url"]')).toBeVisible();
     await expect(adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="events"]') })).toBeVisible();
-    await expect(adminPage.locator('input[name="secret"]')).toBeVisible();
-    await expect(adminPage.getByRole('button', { name: 'Send Test' })).toBeVisible();
-    // Save button is intentionally hidden until the form is dirty (unsaved-changes tracking).
-    await adminPage.locator('input[name="name"]').fill('dirty');
-    await expect(adminPage.getByRole('button', { name: /^Save/ }).first()).toBeVisible({ timeout: 10000 });
+    // Optional fields belong to the edit page, not the quick-create modal.
+    await expect(adminPage.locator('input[name="secret"]')).toHaveCount(0);
+    await expect(adminPage.getByRole('button', { name: 'Send Test' })).toHaveCount(0);
   });
 
   test('shows validation errors when required fields are empty', async ({ adminPage }) => {
-    await gotoCreate(adminPage);
-    // Make the form dirty so the save affordance appears, but leave url/events empty.
+    await openCreateModal(adminPage);
     await adminPage.locator('input[name="name"]').fill(unique());
-    await adminPage.getByRole('button', { name: /^Save/ }).first().click();
+    await adminPage.getByRole('button', { name: 'Save' }).last().click();
     await expect(adminPage.locator('#app').getByText(/required/i).first()).toBeVisible({ timeout: 10000 });
-    await expect(adminPage).toHaveURL(/\/create/);
+    await expect(adminPage).toHaveURL(/\/admin\/configuration\/webhook$/);
+  });
+
+  test('list page renders breadcrumbs above the heading', async ({ adminPage }) => {
+    await navigateTo(adminPage, 'webhook');
+    await expect(adminPage.getByRole('navigation', { name: /breadcrumb/i })).toBeVisible();
   });
 
   test('creates a webhook and lands on the edit page', async ({ adminPage }) => {
@@ -88,8 +91,7 @@ test.describe('UnoPim Webhooks (multiple) CRUD', () => {
   });
 
   test('Test button reports an outcome via a flash message', async ({ adminPage }) => {
-    await gotoCreate(adminPage);
-    await adminPage.locator('input[name="url"]').fill('https://example.com/hook');
+    await createWebhook(adminPage, unique());
     await adminPage.getByRole('button', { name: 'Send Test' }).click();
     await expect(adminPage.getByRole('alert').first()).toBeVisible({ timeout: 20000 });
   });

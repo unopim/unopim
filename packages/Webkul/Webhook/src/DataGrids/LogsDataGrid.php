@@ -24,6 +24,18 @@ class LogsDataGrid extends DataGrid
      */
     protected ?array $webhookNames = null;
 
+    protected ?int $webhookId = null;
+
+    /**
+     * Pin the grid to one webhook regardless of what the client sends.
+     */
+    public function forWebhook(int $webhookId): self
+    {
+        $this->webhookId = $webhookId;
+
+        return $this;
+    }
+
     /**
      * Prepare query builder.
      *
@@ -42,7 +54,7 @@ class LogsDataGrid extends DataGrid
             'http_code'
         );
 
-        $webhookId = request('webhook_id');
+        $webhookId = $this->webhookId ?? request('webhook_id');
 
         if (is_numeric($webhookId)) {
             $queryBuilder->where('webhook_id', (int) $webhookId);

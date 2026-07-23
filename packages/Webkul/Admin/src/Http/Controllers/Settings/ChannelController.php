@@ -8,10 +8,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\ChannelDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\ChannelForm;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Repositories\ChannelRepository;
-use Webkul\Core\Rules\Code;
-use Webkul\Core\Rules\ConvertToArrayIfNeeded;
 
 class ChannelController extends Controller
 {
@@ -52,24 +51,9 @@ class ChannelController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(ChannelForm $request): RedirectResponse
     {
-        $locales = core()->getAllActiveLocales();
-
-        $rules = [
-            'code'              => ['required', 'unique:channels,code', new Code],
-            'root_category_id'  => 'required',
-            'locales'           => ['required', new ConvertToArrayIfNeeded],
-            'currencies'        => ['required', new ConvertToArrayIfNeeded],
-        ];
-
-        foreach ($locales as $locale) {
-            $rules[$locale->code.'.name'] = 'nullable';
-        }
-
-        $this->validate(request(), $rules);
-
-        $data = request()->only(array_keys($rules));
+        $data = $request->validated();
 
         Event::dispatch('core.channel.create.before');
 
@@ -97,23 +81,9 @@ class ChannelController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(int $id): RedirectResponse
+    public function update(ChannelForm $request, int $id): RedirectResponse
     {
-        $locales = core()->getAllActiveLocales();
-
-        $rules = [
-            'root_category_id'  => 'required',
-            'locales'           => ['required', new ConvertToArrayIfNeeded],
-            'currencies'        => ['required', new ConvertToArrayIfNeeded],
-        ];
-
-        foreach ($locales as $locale) {
-            $rules[$locale->code.'.name'] = 'nullable';
-        }
-
-        $this->validate(request(), $rules);
-
-        $data = request()->only(array_keys($rules));
+        $data = $request->validated();
 
         Event::dispatch('core.channel.update.before', $id);
 
@@ -160,20 +130,5 @@ class ChannelController extends Controller
                 'message' => trans('admin::app.settings.channels.index.delete-failed'),
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    /**
-     * Unset keys.
-     *
-     * @param  array  $keys
-     * @return array
-     */
-    private function unsetKeys($data, $keys)
-    {
-        foreach ($keys as $key) {
-            unset($data[$key]);
-        }
-
-        return $data;
     }
 }

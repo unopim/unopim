@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'valda → till',
                 'assign'                           => 'Tilldela',
                 'clear'                            => 'rensa',
+                'too-large'                        => 'Filtret är för stort för att sparas',
                 'variant-saved'                    => 'Variantstruktur sparad.',
                 'variant-structure-locked'         => 'Den här variantstrukturen har redan varianter, så dess axlar och nivåer kan inte längre ändras. Ta bort de befintliga varianterna först.',
                 'no-axis-options'                  => 'Lägg till minst ett icke-omfångsbundet valattribut i den här familjen innan du skapar varianter.',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => 'Lägg till filter',
                 'remove-filter'   => 'Ta bort filter',
                 'search-filter'   => 'Sök...',
+                'no-value'        => 'Alla',
                 'values-selected' => ':count valda',
                 'saved-filters'   => [
                     'title'        => 'Sparade filter',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Rensa Alla',
+                    'clear'     => 'Rensa',
                     'title'     => 'Anpassade Filter',
                 ],
                 'boolean-options' => [

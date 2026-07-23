@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'odabrano → u',
                 'assign'                           => 'Dodijeli',
                 'clear'                            => 'očisti',
+                'too-large'                        => 'Filtar je prevelik za spremanje',
                 'variant-saved'                    => 'Struktura varijanti spremljena.',
                 'variant-structure-locked'         => 'Ova struktura varijanti već ima varijante, pa se njezine osi i razine više ne mogu mijenjati. Najprije izbrišite postojeće varijante.',
                 'no-axis-options'                  => 'Dodajte ovoj obitelji barem jedan atribut tipa odabir bez opsega prije stvaranja varijanti.',
@@ -2396,6 +2397,7 @@ return [
                 'add-filter'      => 'Dodaj filtar',
                 'remove-filter'   => 'Ukloni filtar',
                 'search-filter'   => 'Pretraži...',
+                'no-value'        => 'Svi',
                 'values-selected' => ':count odabrano',
                 'saved-filters'   => [
                     'title'        => 'Spremljeni filtri',
@@ -2418,6 +2420,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Izbriši sve',
+                    'clear'     => 'Očisti',
                     'title'     => 'Prilagođeni filtri',
                 ],
                 'boolean-options' => [

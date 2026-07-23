@@ -5,55 +5,59 @@
     :data-datagrid-filter="column.index"
     :data-attribute-filter="isAttributeFilter(column) ? column.index : null"
 >
-    <div class="flex items-center gap-x-1">
+    <div class="flex items-center">
         <button
             type="button"
-            class="flex min-w-0 flex-1 items-center gap-x-3 rounded-md py-3 text-left ltr:pr-1 rtl:pl-1"
+            class="flex min-w-0 flex-1 flex-col gap-y-0.5 py-3 text-left ltr:pr-1 rtl:pl-1"
             data-filter-toggle
             :aria-expanded="isFilterExpanded(column.index) ? 'true' : 'false'"
             @click="toggleFilterEditor(column.index)"
         >
             <span
-                class="shrink-0 truncate text-sm font-medium text-gray-800 dark:text-white"
+                class="truncate text-xs font-semibold uppercase tracking-wide"
+                :class="isFilterExpanded(column.index) || filterHasValue(column) ? 'text-gray-800 dark:text-white' : 'text-gray-400 dark:text-gray-500'"
                 data-filter-name
                 v-text="filterLabel(column)"
             >
             </span>
 
             <span
-                v-show="filterHasValue(column) && !isFilterExpanded(column.index)"
-                class="min-w-0 flex-1 truncate text-right text-sm text-primary-700 dark:text-primary-400"
+                v-show="!isFilterExpanded(column.index)"
+                class="truncate text-sm"
+                :class="filterHasValue(column) ? 'text-primary-700 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'"
                 data-filter-summary
-                :title="filterSummary(column)"
-                v-text="filterSummary(column)"
+                :title="collapsedSummary(column)"
+                v-text="collapsedSummary(column)"
             >
             </span>
-
-            <span
-                class="icon-chevron-down shrink-0 text-2xl text-gray-400 transition-transform dark:text-gray-500 ltr:ml-auto rtl:mr-auto"
-                :class="isFilterExpanded(column.index) ? 'rotate-180' : ''"
-            ></span>
         </button>
 
-        <span
+        <button
             v-if="!defaultFilterIndices.includes(column.index)"
-            class="icon-cancel cursor-pointer text-lg text-gray-300 opacity-0 transition-all hover:text-gray-600 group-hover:opacity-100 dark:text-gray-600 dark:hover:text-gray-300"
+            type="button"
+            class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-gray-400 transition-all hover:bg-gray-100 hover:text-gray-600 ltr:ml-1 rtl:mr-1 dark:text-gray-500 dark:hover:bg-cherry-800 dark:hover:text-gray-300"
             data-remove-filter
             @click.stop="removeActiveFilter(column.index)"
-            title="@lang('admin::app.components.datagrid.filters.remove-filter')"
-        ></span>
+            :aria-label="'@lang('admin::app.components.datagrid.filters.remove-filter')'"
+            :title="'@lang('admin::app.components.datagrid.filters.remove-filter')'"
+        >
+            <span class="icon-cancel text-base" aria-hidden="true"></span>
+        </button>
+
+        <span v-else class="h-7 w-7 shrink-0 ltr:ml-1 rtl:mr-1" aria-hidden="true"></span>
     </div>
 
     <div class="pb-3" v-show="isFilterExpanded(column.index)">
-        <button
-            type="button"
-            v-if="filterHasValue(column)"
-            class="mb-2 text-xs font-medium text-primary-700 transition-all hover:underline dark:text-primary-400"
-            data-clear-filter
-            @click="clearFilter(column)"
-        >
-            @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
-        </button>
+        <div v-if="filterHasValue(column)" class="mb-2 flex justify-end">
+            <button
+                type="button"
+                class="text-xs font-medium text-primary-700 transition-all hover:underline dark:text-primary-400"
+                data-clear-filter
+                @click="clearFilter(column)"
+            >
+                @lang('admin::app.components.datagrid.filters.custom-filters.clear')
+            </button>
+        </div>
 
         <div v-if="isAttributeFilter(column)">
             <div class="grid grid-cols-2 gap-2">
@@ -62,7 +66,7 @@
                         <button
                             type="button"
                             data-filter-currency
-                            class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                            class="inline-flex min-h-[39px] w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                         >
                             <span
                                 class="text-sm"
@@ -90,7 +94,7 @@
                         <button
                             type="button"
                             data-filter-operator
-                            class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                            class="inline-flex min-h-[39px] w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                         >
                             <span
                                 class="text-sm"
@@ -121,7 +125,7 @@
                             <button
                                 type="button"
                                 data-filter-value
-                                class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                                class="inline-flex min-h-[39px] w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                             >
                                 <span
                                     class="text-sm"
@@ -171,7 +175,7 @@
                             <input
                                 data-filter-value
                                 autocomplete="off"
-                                class="w-full rounded-md border px-3 py-2.5 text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-gray-600 dark:bg-cherry-900 dark:text-gray-300 dark:hover:border-gray-400"
+                                class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
                                 :value="attributeCondition(column.index).value"
                                 placeholder="@lang('admin::app.settings.data-transfer.exports.create.range-from')"
                                 @change="setAttributeConditionValue(column, 'value', $event.target.value)"
@@ -184,7 +188,7 @@
                             <input
                                 data-filter-value2
                                 autocomplete="off"
-                                class="w-full rounded-md border px-3 py-2.5 text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-gray-600 dark:bg-cherry-900 dark:text-gray-300 dark:hover:border-gray-400"
+                                class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
                                 :value="attributeCondition(column.index).value2"
                                 placeholder="@lang('admin::app.settings.data-transfer.exports.create.range-to')"
                                 @change="setAttributeConditionValue(column, 'value2', $event.target.value)"
@@ -198,7 +202,7 @@
                         <input
                             type="number"
                             data-filter-value
-                            class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                            class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
                             v-model="attributeCondition(column.index).value"
                             placeholder="@lang('admin::app.settings.data-transfer.exports.create.range-from')"
                             @input="applyAttributeCondition(column)"
@@ -209,7 +213,7 @@
                         <input
                             type="number"
                             data-filter-value2
-                            class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                            class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
                             v-model="attributeCondition(column.index).value2"
                             placeholder="@lang('admin::app.settings.data-transfer.exports.create.range-to')"
                             @input="applyAttributeCondition(column)"
@@ -222,7 +226,7 @@
                         <input
                             data-filter-value
                             autocomplete="off"
-                            class="w-full rounded-md border px-3 py-2.5 text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-gray-600 dark:bg-cherry-900 dark:text-gray-300 dark:hover:border-gray-400"
+                            class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
                             :value="attributeCondition(column.index).value"
                             :placeholder="filterLabel(column)"
                             @change="setAttributeConditionValue(column, 'value', $event.target.value)"
@@ -235,7 +239,7 @@
                         :type="attributeValueControl(column)"
                         data-filter-value
                         :class="attributeValueSpansRow(column) ? 'col-span-2' : ''"
-                        class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                        class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
                         v-model="attributeCondition(column.index).value"
                         :placeholder="filterLabel(column)"
                         @input="applyAttributeCondition(column)"
@@ -251,17 +255,17 @@
                     <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <div
-                            class="flex min-h-[38px] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border bg-white px-2.5 py-1.5 leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-gray-600 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
+                            class="flex min-h-[39px] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border bg-white px-2.5 py-1.5 leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-gray-600 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
                         >
                             <template v-if="hasAnyAppliedColumnValues(column.index)">
                                 <span
-                                    class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700"
+                                    class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
                                     v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                                 >
                                     <span v-text="column.options.find((option => option.value == appliedColumnValue))?.label"></span>
 
                                     <span
-                                        class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-700"
+                                        class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-400"
                                         @click.stop="removeAppliedColumnValue(column.index, appliedColumnValue)"
                                     ></span>
                                 </span>
@@ -300,17 +304,17 @@
                         <!-- Dropdown Toggler -->
                         <x-slot:toggle>
                             <div
-                                class="flex min-h-[38px] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border bg-white px-2.5 py-1.5 leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-gray-600 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
+                                class="flex min-h-[39px] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border bg-white px-2.5 py-1.5 leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-gray-600 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
                             >
                                 <template v-if="hasAnyAppliedColumnValues(column.index)">
                                     <span
-                                        class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700"
+                                        class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
                                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                                     >
                                         <span v-text="column.options.params.options.find((option => option.value == appliedColumnValue))?.label"></span>
 
                                         <span
-                                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-700"
+                                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-400"
                                             @click.stop="removeAppliedColumnValue(column.index, appliedColumnValue)"
                                         ></span>
                                     </span>
@@ -412,13 +416,13 @@
 
                 <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
                     <p
-                        class="flex items-center rounded bg-primary-100 px-2 py-1 font-semibold text-primary-700"
+                        class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                     >
-                        <span v-text="appliedColumnValue.join(' to ')"></span>
+                        <span v-text="appliedColumnValue.join(' – ')"></span>
 
                         <span
-                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
+                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-400"
                             @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
                         >
                         </span>
@@ -432,7 +436,7 @@
             <div class="grid grid-cols-2 gap-2">
                     <input
                         type="text"
-                        class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                        class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
                         :name="column.index"
                         :placeholder="filterLabel(column)"
                         v-model="priceValue"
@@ -444,7 +448,7 @@
                     <x-slot:toggle>
                         <button
                             type="button"
-                            class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                            class="inline-flex min-h-[39px] w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                         >
                             <span
                                 class="text-sm"
@@ -471,13 +475,13 @@
 
                 <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
                     <p
-                        class="flex items-center rounded bg-primary-100 px-2 py-1 font-semibold text-primary-700"
+                        class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                     >
-                        <span v-text="appliedColumnValue.join(' - ')"></span>
+                        <span v-text="appliedColumnValue.join(' – ')"></span>
 
                         <span
-                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
+                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-400"
                             @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
                         >
                         </span>
@@ -534,13 +538,13 @@
 
                 <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
                     <p
-                        class="flex items-center rounded bg-primary-100 px-2 py-1 font-semibold text-primary-700"
+                        class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                     >
-                        <span v-text="appliedColumnValue.join(' to ')"></span>
+                        <span v-text="appliedColumnValue.join(' – ')"></span>
 
                         <span
-                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
+                            class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-400"
                             @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
                         >
                         </span>
@@ -562,13 +566,13 @@
 
             <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
                 <p
-                    class="flex items-center rounded bg-primary-100 px-2 py-1 font-semibold text-primary-700"
+                    class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
                     v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                 >
                     <span v-text="appliedColumnValue"></span>
 
                     <span
-                        class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
+                        class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-400"
                         @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
                     >
                     </span>
@@ -589,13 +593,13 @@
 
             <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
                 <p
-                    class="flex items-center rounded bg-primary-100 px-2 py-1 font-semibold text-primary-700"
+                    class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
                     v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                 >
                     <span v-text="appliedColumnValue"></span>
 
                     <span
-                        class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-primary-700"
+                        class="icon-cancel cursor-pointer text-lg text-primary-700 ltr:ml-1 rtl:mr-1 dark:!text-primary-400"
                         @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
                     >
                     </span>

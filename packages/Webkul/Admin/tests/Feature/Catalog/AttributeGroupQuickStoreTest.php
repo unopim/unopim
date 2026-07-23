@@ -16,7 +16,8 @@ it('quick-creates an attribute group and returns its option payload', function (
     $response->assertJsonPath('data.code', 'marketing_copy');
     $response->assertJsonPath('data.label', 'Marketing Copy');
 
-    expect($group->name)->toBe('Marketing Copy');
+    // name is per-locale: the modal posts under the catalog locale, not the UI locale.
+    expect($group->translate(core()->getRequestedLocaleCode())->name)->toBe('Marketing Copy');
 });
 
 it('rejects a duplicate group code on quick-create', function () {

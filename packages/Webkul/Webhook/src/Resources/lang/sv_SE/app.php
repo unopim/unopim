@@ -23,10 +23,6 @@ return [
             'edit'   => 'Redigera',
             'delete' => 'Radera',
         ],
-        'settings' => [
-            'index'  => 'Inställningar',
-            'update' => 'Uppdatera inställningar',
-        ],
         'logs' => [
             'index'       => 'Loggar',
             'view'        => 'Visa',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Skapa webhook',
-            'cancel'   => 'Avbryt',
             'save-btn' => 'Spara',
         ],
         'edit' => [
             'title'    => 'Redigera webhook',
-            'cancel'   => 'Avbryt',
             'save-btn' => 'Spara',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Inställningar',
-                    'save'    => 'Spara',
-                    'general' => 'Allmänt',
-                    'active'  => [
-                        'label' => 'Aktiv Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'Webhook-URL',
-                        'required'          => 'En Webhook-URL krävs när webhooken är aktiv.',
-                        'scheme'            => 'Webhook-URL:en måste börja med http:// eller https://.',
-                        'connection_failed' => 'Webhook-URL:en kunde inte nås. Kontrollera URL:en.',
-                        'unreachable'       => 'Webhook-URL:en är inte giltig (HTTP :code).',
-                        'unsafe'            => 'Webhook-URL:en pekar på en privat, loopback- eller intern adress och är inte tillåten.',
-                    ],
-                    'success'    => 'Webhook-inställningar sparades framgångsrikt',
-                    'title'      => 'Webhook-inställningar',
-                    'logs-title' => 'Loggar',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'valittu → kohteeseen',
                 'assign'                           => 'Määritä',
                 'clear'                            => 'tyhjennä',
+                'too-large'                        => 'Suodatin on liian suuri tallennettavaksi',
                 'variant-saved'                    => 'Varianttirakenne tallennettu.',
                 'variant-structure-locked'         => 'Tällä varianttirakenteella on jo variantteja, joten sen akseleita ja tasoja ei voi enää muuttaa. Poista ensin olemassa olevat variantit.',
                 'no-axis-options'                  => 'Lisää tähän perheeseen vähintään yksi ei-kohdennettu valinta-attribuutti ennen varianttien luomista.',
@@ -2396,6 +2397,7 @@ return [
                 'add-filter'      => 'Lisää suodatin',
                 'remove-filter'   => 'Poista suodatin',
                 'search-filter'   => 'Haku...',
+                'no-value'        => 'Kaikki',
                 'values-selected' => ':count valittu',
                 'saved-filters'   => [
                     'title'        => 'Tallennetut suodattimet',
@@ -2418,6 +2420,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Tyhjennä kaikki',
+                    'clear'     => 'Tyhjennä',
                     'title'     => 'Mukautetut suodattimet',
                 ],
                 'boolean-options' => [

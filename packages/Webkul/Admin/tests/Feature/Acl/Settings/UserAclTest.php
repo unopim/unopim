@@ -63,7 +63,7 @@ it('should display the user edit form if has permission', function () {
     $this->loginWithPermissions(permissions: ['dashboard', 'settings.users.users.edit']);
     $user = Admin::first();
 
-    $response = $this->get(route('admin.settings.users.edit', ['id' => $user->id]));
+    $response = $this->getJson(route('admin.settings.users.edit', ['id' => $user->id]));
     $response->assertStatus(200);
     $response->assertJson([
         'user' => $user->toArray(),
