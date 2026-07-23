@@ -20,7 +20,7 @@ it('should return the user as json for edit', function () {
 
     $user = Admin::factory()->create();
 
-    $response = get(route('admin.settings.users.edit', ['id' => $user->id]));
+    $response = $this->getJson(route('admin.settings.users.edit', ['id' => $user->id]));
 
     $response->assertStatus(200)
         ->assertJsonFragment([

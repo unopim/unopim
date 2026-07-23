@@ -17,7 +17,6 @@ use Webkul\DataTransfer\Database\Factories\JobTrackFactory;
     'type',
     'action',
     'validation_strategy',
-    'validation_strategy',
     'allowed_errors',
     'processed_rows_count',
     'invalid_rows_count',

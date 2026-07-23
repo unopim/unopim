@@ -23,10 +23,6 @@ return [
             'edit'   => 'Editar',
             'delete' => 'Eliminar',
         ],
-        'settings' => [
-            'index'  => 'Definições',
-            'update' => 'Atualizar definições',
-        ],
         'logs' => [
             'index'       => 'Registos',
             'view'        => 'Ver',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Criar Webhook',
-            'cancel'   => 'Cancelar',
             'save-btn' => 'Guardar',
         ],
         'edit' => [
             'title'    => 'Editar Webhook',
-            'cancel'   => 'Cancelar',
             'save-btn' => 'Guardar',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Definições',
-                    'save'    => 'Guardar',
-                    'general' => 'Geral',
-                    'active'  => [
-                        'label' => 'Webhook ativo',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'URL do Webhook',
-                        'required'          => 'É necessário um URL do Webhook quando o Webhook está ativo.',
-                        'scheme'            => 'O URL do Webhook deve começar com http:// ou https://.',
-                        'connection_failed' => 'Não foi possível aceder ao URL do Webhook. Verifique o URL.',
-                        'unreachable'       => 'O URL do Webhook não é válido (HTTP :code).',
-                        'unsafe'            => 'O URL do webhook aponta para um endereço privado, de loopback ou interno e não é permitido.',
-                    ],
-                    'success'    => 'Definições do Webhook guardadas com sucesso',
-                    'title'      => 'Definições do Webhook',
-                    'logs-title' => 'Registos',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

@@ -6,7 +6,7 @@ $cardView = __DIR__.'/../../../src/Resources/views/components/media/card.blade.p
 $imageView = __DIR__.'/../../../src/Resources/views/components/media/image.blade.php';
 $imagesView = __DIR__.'/../../../src/Resources/views/components/media/image.blade.php';
 $galleryView = __DIR__.'/../../../src/Resources/views/components/media/gallery.blade.php';
-$fileView = __DIR__.'/../../../src/Resources/views/components/media/file.blade.php';
+$fileView = __DIR__.'/../../../src/Resources/views/components/media/files.blade.php';
 
 it('exposes a flexible shared media card API', function () use ($cardView) {
     $source = file_get_contents($cardView);

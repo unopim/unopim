@@ -1,9 +1,4 @@
 @php
-    $eventOptions = collect($eventGroups)
-        ->flatMap(fn ($group) => $group['options'])
-        ->values()
-        ->all();
-
     $selectedEvents = old('events') ?? ($webhook->events ?? []);
     $selectedEvents = is_array($selectedEvents) ? json_encode($selectedEvents) : $selectedEvents;
 

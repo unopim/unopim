@@ -97,7 +97,7 @@ it('should update a Role', function () {
     ]);
 });
 
-it('should give validation message when creating a Role without description', function () {
+it('should create a Role without a description, which is optional', function () {
     $this->loginAsAdmin();
 
     $role = [
@@ -105,9 +105,13 @@ it('should give validation message when creating a Role without description', fu
         'permission_type' => 'custom',
     ];
 
-    $response = postJson(route('admin.settings.roles.store'), $role);
+    postJson(route('admin.settings.roles.store'), $role)
+        ->assertJsonMissingValidationErrors('description');
 
-    $response->assertJsonValidationErrorFor('description');
+    $this->assertDatabaseHas($this->getFullTableName(Role::class), [
+        'name'        => 'demo role',
+        'description' => null,
+    ]);
 });
 
 it('should give validation message when creating a Role without permission type', function () {

@@ -8,7 +8,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     Route::prefix('configuration/webhook')->group(function (): void {
         Route::controller(WebhookController::class)->group(function (): void {
             Route::get('', 'index')->name('webhook.index');
-            Route::get('create', 'create')->name('webhook.create');
             Route::post('create', 'store')->name('webhook.store');
             Route::get('edit/{id}', 'edit')->name('webhook.edit')->whereNumber('id');
             Route::put('edit/{id}', 'update')->name('webhook.update')->whereNumber('id');
@@ -19,6 +18,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::controller(WebhookLogsController::class)->prefix('logs')->group(function (): void {
             Route::get('', 'index')->name('webhook.logs.index');
+            Route::get('webhook/{id}', 'forWebhook')->name('webhook.logs.for-webhook')->whereNumber('id');
             Route::get('show/{id}', 'show')->name('webhook.logs.show')->whereNumber('id');
             Route::delete('delete/{id}', 'destroy')->name('webhook.logs.delete')->whereNumber('id');
             Route::post('mass-delete', 'massDestroy')->name('webhook.logs.mass_delete');

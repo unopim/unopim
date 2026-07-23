@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Models\VariantStructure;
 
 it('should return the product index page', function () {
     $this->loginAsAdmin();
@@ -89,6 +91,32 @@ it('should create a simple product successfully', function () {
     $this->assertDatabaseHas($this->getFullTableName(Product::class), $data);
 });
 
+/**
+ * A configurable product may only be created for a family that already declares
+ * a variant structure, so every configurable fixture has to seed one.
+ */
+function makeVariantStructureFor(int $familyId): VariantStructure
+{
+    $axis = AttributeFamily::find($familyId)->getConfigurableAttributes()->first();
+
+    $structure = VariantStructure::create([
+        'attribute_family_id' => $familyId,
+        'code'                => 'vs_'.Str::random(8),
+        'name'                => 'Variant Structure',
+        'levels'              => 1,
+    ]);
+
+    if ($axis) {
+        $structure->axes()->create([
+            'level'          => 1,
+            'attribute_id'   => $axis->id,
+            'position'       => 1,
+        ]);
+    }
+
+    return $structure->refresh();
+}
+
 it('should return json error if family lacks configurable attributes when creating configurable product', function () {
     $this->loginAsAdmin();
 
@@ -104,23 +132,25 @@ it('should return json error if family lacks configurable attributes when creati
         ->assertStatus(422)
         ->assertJsonFragment([
             'errors' => [
-                'attribute_family_id' => [trans('admin::app.catalog.products.index.create.not-config-family-error')],
+                'attribute_family_id' => [trans('admin::app.catalog.products.index.create.no-variant-structure')],
             ],
         ]);
 
     $this->assertDatabaseMissing($this->getFullTableName(Product::class), $data);
 });
 
-it('should return configurable attributes when creating configurable product', function () {
+it('should return the family variant structures when creating configurable product', function () {
     $this->loginAsAdmin();
 
     $data = Product::factory()->definition();
 
     $data['type'] = 'configurable';
 
+    makeVariantStructureFor($data['attribute_family_id']);
+
     $this->post(route('admin.catalog.products.store'), $data)
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json->whereType('data.attributes', 'array'));
+        ->assertJson(fn (AssertableJson $json) => $json->whereType('data.variant_structures', 'array'));
 });
 
 it('should create a configurable product successfully', function () {
@@ -128,18 +158,18 @@ it('should create a configurable product successfully', function () {
 
     $data = Product::factory()->definition();
 
-    $configurableAttribute = AttributeFamily::find($data['attribute_family_id'])->getConfigurableAttributes()->first();
-
     $data['type'] = 'configurable';
 
-    $data['super_attributes'] = json_encode([$configurableAttribute->code]);
+    $structure = makeVariantStructureFor($data['attribute_family_id']);
+
+    $data['variant_structure_id'] = $structure->id;
 
     $this->post(route('admin.catalog.products.store'), $data)
         ->assertOk()
         ->assertSessionHas('success', trans('admin::app.catalog.products.create-success'))
         ->assertJson(fn (AssertableJson $json) => $json->whereType('data.redirect_url', 'string'));
 
-    unset($data['super_attributes']);
+    unset($data['variant_structure_id']);
 
     $this->assertDatabaseHas($this->getFullTableName(Product::class), $data);
 
@@ -147,7 +177,7 @@ it('should create a configurable product successfully', function () {
 
     $this->assertDatabaseHas('product_super_attributes', [
         'product_id'   => $productId,
-        'attribute_id' => $configurableAttribute->id,
+        'attribute_id' => $structure->axes()->value('attribute_id'),
     ]);
 });
 

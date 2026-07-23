@@ -3,9 +3,9 @@
         ->getRootCategories()
         ->toJson();
 
-    $locales = core()->getAllActiveLocales()->toJson();
+    $locales = core()->getAllLocales()->values()->toJson();
 
-    $currencies = collect(core()->getAllActiveCurrencies())->values()->toJson();
+    $currencies = core()->getAllCurrencies()->sortBy('name')->values()->toJson();
 @endphp
 
 <x-admin::layouts>

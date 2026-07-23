@@ -23,10 +23,6 @@ return [
             'edit'   => 'Editare',
             'delete' => 'Ștergere',
         ],
-        'settings' => [
-            'index'  => 'Setări',
-            'update' => 'Actualizare setări',
-        ],
         'logs' => [
             'index'       => 'Jurnale',
             'view'        => 'Vizualizare',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Creare Webhook',
-            'cancel'   => 'Anulare',
             'save-btn' => 'Salvează',
         ],
         'edit' => [
             'title'    => 'Editare Webhook',
-            'cancel'   => 'Anulare',
             'save-btn' => 'Salvează',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Setări',
-                    'save'    => 'Salvează',
-                    'general' => 'General',
-                    'active'  => [
-                        'label' => 'Webhook activ',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'URL Webhook',
-                        'required'          => 'Un URL Webhook este obligatoriu când Webhook-ul este activ.',
-                        'scheme'            => 'URL-ul Webhook trebuie să înceapă cu http:// sau https://.',
-                        'connection_failed' => 'URL-ul Webhook nu a putut fi accesat. Verificați URL-ul.',
-                        'unreachable'       => 'URL-ul Webhook nu este valid (HTTP :code).',
-                        'unsafe'            => 'URL-ul webhook indică o adresă privată, loopback sau internă și nu este permis.',
-                    ],
-                    'success'    => 'Setările Webhook au fost salvate cu succes',
-                    'title'      => 'Setări Webhook',
-                    'logs-title' => 'Jurnale',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

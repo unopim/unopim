@@ -1003,6 +1003,7 @@ return [
                 'selected-to'                      => 'zaznaczono → do',
                 'assign'                           => 'Przypisz',
                 'clear'                            => 'wyczyść',
+                'too-large'                        => 'Filtr jest zbyt duży, aby go zapisać',
                 'variant-saved'                    => 'Struktura wariantów została zapisana.',
                 'variant-structure-locked'         => 'Ta struktura wariantów ma już warianty, więc jej osie i poziomy nie mogą być już zmieniane. Najpierw usuń istniejące warianty.',
                 'no-axis-options'                  => 'Dodaj do tej rodziny co najmniej jeden nieobjęty zakresem atrybut typu wybór, zanim utworzysz warianty.',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => 'Dodaj filtr',
                 'remove-filter'   => 'Usuń filtr',
                 'search-filter'   => 'Szukaj...',
+                'no-value'        => 'Wszystkie',
                 'values-selected' => 'Wybrano :count',
                 'saved-filters'   => [
                     'title'        => 'Zapisane filtry',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Wyczyść wszystko',
+                    'clear'     => 'Wyczyść',
                     'title'     => 'Filtry niestandardowe',
                 ],
                 'boolean-options' => [

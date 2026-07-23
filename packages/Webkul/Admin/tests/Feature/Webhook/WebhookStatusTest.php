@@ -16,6 +16,7 @@ use Webkul\Webhook\Services\WebhookService;
  *   - connection error / timeout → status = 0 (failed) with the error in extra
  */
 beforeEach(function () {
+    DB::table('webhooks')->delete();
     $this->loginAsAdmin();
 
     DB::table('webhooks')->insert([

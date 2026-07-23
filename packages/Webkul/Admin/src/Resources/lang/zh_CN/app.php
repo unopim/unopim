@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => '已选 → 至',
                 'assign'                           => '分配',
                 'clear'                            => '清除',
+                'too-large'                        => '筛选过大，无法保存',
                 'variant-saved'                    => '变体结构已保存。',
                 'variant-structure-locked'         => '该变体结构已存在变体，因此无法再更改其轴和层级。请先删除现有变体。',
                 'no-axis-options'                  => '在创建变体之前，请至少向该属性族添加一个非作用域的选择属性。',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => '添加筛选',
                 'remove-filter'   => '移除筛选',
                 'search-filter'   => '搜索...',
+                'no-value'        => '全部',
                 'values-selected' => '已选 :count 项',
                 'saved-filters'   => [
                     'title'        => '已保存筛选',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => '清除全部',
+                    'clear'     => '清除',
                     'title'     => '自定义过滤器',
                 ],
                 'boolean-options' => [

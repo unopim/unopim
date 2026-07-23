@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -8,6 +9,8 @@ use Webkul\Webhook\Jobs\SendProductWebhook;
 use Webkul\Webhook\Services\WebhookService;
 
 beforeEach(function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+    DB::table('webhooks')->delete();
     DB::table('webhooks')->insert([
         'name'       => 'Create Test',
         'url'        => 'https://1.1.1.1/hook',

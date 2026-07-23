@@ -1,7 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Webhook\Models\Webhook;
 use Webkul\Webhook\Repositories\WebhookRepository;
+
+beforeEach(function () {
+    DB::table('webhooks')->delete();
+});
 
 function makeWebhook(array $overrides = []): Webhook
 {

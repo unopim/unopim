@@ -16,7 +16,7 @@ class FileOrImageValidValue implements ValidationRule
 
     const FILE_ALLOWED_EXTENSION = ['csv', 'doc', 'docx', 'mp3', 'pdf', 'ppt', 'pptx', 'rtf', 'svg', 'txt', 'wav'];
 
-    const IMAGE_ALLOWED_EXTENSIONS = ['gif', 'jfif', 'jif', 'jpeg', 'jpg', 'pdf', 'png', 'psd', 'tif', 'tiff', 'webp', 'bmp'];
+    const IMAGE_ALLOWED_EXTENSIONS = ['gif', 'jfif', 'jif', 'jpeg', 'jpg', 'png', 'psd', 'tif', 'tiff', 'webp', 'bmp'];
 
     const VIDEO_ALLOWED_EXTENSIONS = ['mp4', 'webm', 'mkv'];
 

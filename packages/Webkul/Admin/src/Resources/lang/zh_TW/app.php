@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => '已選取 → 至',
                 'assign'                           => '指派',
                 'clear'                            => '清除',
+                'too-large'                        => '篩選過大，無法儲存',
                 'variant-saved'                    => '變體結構已儲存。',
                 'variant-structure-locked'         => '此變體結構已有變體，因此無法再變更其軸與層級。請先刪除現有變體。',
                 'no-axis-options'                  => '在建立變體之前，請至少為此屬性家族新增一個非範圍的選擇屬性。',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => '新增篩選',
                 'remove-filter'   => '移除篩選',
                 'search-filter'   => '搜尋...',
+                'no-value'        => '全部',
                 'values-selected' => '已選 :count 項',
                 'saved-filters'   => [
                     'title'        => '已儲存篩選',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => '清除所有',
+                    'clear'     => '清除',
                     'title'     => '自定義過濾器',
                 ],
                 'boolean-options' => [

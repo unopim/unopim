@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'seçildi → şuraya',
                 'assign'                           => 'Ata',
                 'clear'                            => 'temizle',
+                'too-large'                        => 'Filtre kaydedilemeyecek kadar büyük',
                 'variant-saved'                    => 'Varyant yapısı kaydedildi.',
                 'variant-structure-locked'         => 'Bu varyant yapısında zaten varyantlar var, bu nedenle eksenleri ve seviyeleri artık değiştirilemez. Önce mevcut varyantları silin.',
                 'no-axis-options'                  => 'Varyant oluşturmadan önce bu aileye kapsam dışı en az bir seçim özniteliği ekleyin.',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => 'Filtre Ekle',
                 'remove-filter'   => 'Filtreyi Kaldır',
                 'search-filter'   => 'Ara...',
+                'no-value'        => 'Tümü',
                 'values-selected' => ':count seçildi',
                 'saved-filters'   => [
                     'title'        => 'Kayıtlı filtreler',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Hepsini Temizle',
+                    'clear'     => 'Temizle',
                     'title'     => 'Özel Filtreler',
                 ],
                 'boolean-options' => [

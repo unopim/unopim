@@ -36,7 +36,7 @@
         <x-admin::layouts.edit-page-header
             :title="trans('webhook::app.webhooks.edit.title')"
             :back-url="route('webhook.index')"
-            :back-label="trans('webhook::app.webhooks.edit.cancel')"
+            :back-label="trans('admin::app.account.edit.back-btn')"
             :save-label="$activeTab === 'general' ? trans('webhook::app.webhooks.edit.save-btn') : null"
             form="webhook-edit-form"
             :sticky="false"
@@ -53,7 +53,7 @@
 
     <x-slot:tabContents>
         @if ($activeTab === 'logs' && bouncer()->hasPermission('configuration.webhook.logs'))
-            @include('webhook::logs._grid', ['logsSrc' => route('webhook.logs.index', ['webhook_id' => $webhook->id])])
+            @include('webhook::logs._grid', ['logsSrc' => route('webhook.logs.for-webhook', $webhook->id)])
         @endif
     </x-slot>
 </x-admin::layouts.with-history>

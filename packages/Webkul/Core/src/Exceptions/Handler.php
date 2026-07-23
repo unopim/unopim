@@ -13,6 +13,17 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    private const array RENDERABLE_STATUS_CODES = [
+        JsonResponse::HTTP_UNAUTHORIZED,
+        JsonResponse::HTTP_FORBIDDEN,
+        JsonResponse::HTTP_NOT_FOUND,
+        JsonResponse::HTTP_METHOD_NOT_ALLOWED,
+        JsonResponse::HTTP_REQUEST_ENTITY_TOO_LARGE,
+        JsonResponse::HTTP_TOO_MANY_REQUESTS,
+        JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
+        JsonResponse::HTTP_SERVICE_UNAVAILABLE,
+    ];
+
     /**
      * Register the exception handling callbacks for the application.
      */
@@ -67,23 +78,20 @@ class Handler extends ExceptionHandler
     private function handleHttpException(): void
     {
         $this->renderable(function (HttpException $exception, Request $request) {
-            $errorCode = in_array($exception->getStatusCode(), [
-                JsonResponse::HTTP_UNAUTHORIZED,
-                JsonResponse::HTTP_FORBIDDEN,
-                JsonResponse::HTTP_NOT_FOUND,
-                JsonResponse::HTTP_TOO_MANY_REQUESTS,
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
-                JsonResponse::HTTP_SERVICE_UNAVAILABLE,
-            ]) ? $exception->getStatusCode() : JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
+            $errorCode = in_array($exception->getStatusCode(), self::RENDERABLE_STATUS_CODES, true)
+                ? $exception->getStatusCode()
+                : JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
+
+            $headers = $exception->getHeaders();
 
             if ($request->wantsJson() || $this->isApiRequest($request)) {
                 return response()->json([
                     'error'       => trans("admin::app.errors.{$errorCode}.title"),
                     'description' => trans("admin::app.errors.{$errorCode}.description"),
-                ], $errorCode);
+                ], $errorCode, $headers);
             }
 
-            return response()->view('admin::errors.index', ['errorCode' => $errorCode], $errorCode);
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode], $errorCode, $headers);
         });
     }
 

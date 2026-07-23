@@ -27,7 +27,9 @@ test.describe('Product DataGrid filter panel', () => {
 
     expect(await filterLabels(adminPage)).toContain('SKU');
 
-    await expect(adminPage.locator('[data-datagrid-filter="sku"] [data-filter-summary]')).toBeHidden();
+    // An unset filter shows its "All" state, and the editor stays collapsed.
+    await expect(adminPage.locator('[data-datagrid-filter="sku"] [data-filter-summary]')).toBeVisible();
+    await expect(adminPage.locator('[data-datagrid-filter="sku"] [data-filter-summary]')).toHaveText('All');
     await expect(adminPage.locator('[data-datagrid-filter="sku"] input')).toBeHidden();
   });
 
@@ -49,7 +51,7 @@ test.describe('Product DataGrid filter panel', () => {
     await openFilterDrawer(adminPage);
 
     for (const index of ['name', 'attribute_family', 'status', 'type']) {
-      await adminPage.locator(`[data-datagrid-filter="${index}"] .icon-cancel`).click();
+      await adminPage.locator(`[data-datagrid-filter="${index}"] [data-remove-filter]`).click();
     }
 
     expect(await filterLabels(adminPage)).toEqual(['SKU']);
@@ -96,6 +98,29 @@ test.describe('Product DataGrid filter panel', () => {
       'Updated At',
       'Completeness',
     ]);
+  });
+
+  test('Applying a filter from a later page returns to the first page', async ({ adminPage }) => {
+    await navigateTo(adminPage, 'products');
+    await adminPage.evaluate(() => localStorage.removeItem('datagrids'));
+    await adminPage.reload({ waitUntil: 'networkidle' });
+
+    const nextPage = adminPage.getByRole('button', { name: /next page/i });
+
+    await nextPage.click();
+    await adminPage.waitForLoadState('networkidle');
+    await nextPage.click();
+    await adminPage.waitForLoadState('networkidle');
+
+    await adminPage.getByText('Filter', { exact: true }).click();
+    await adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]').click();
+    await adminPage.locator('[data-datagrid-filter="status"] .icon-chevron-down').last().click();
+    await adminPage.getByRole('listitem').filter({ hasText: /^True$/ }).first().click();
+    await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
+    await adminPage.waitForLoadState('networkidle');
+
+    await expect(adminPage.locator('input[aria-label*="Page" i]').first()).toHaveValue('1');
+    await expect(adminPage.getByText('No Records Available.')).toHaveCount(0);
   });
 
   test('Operator and value share a row so the panel stays short', async ({ adminPage }) => {
@@ -145,7 +170,8 @@ test.describe('Product DataGrid filter panel', () => {
 
 test.describe('Product DataGrid saved filters', () => {
 
-  const FILTER_NAME = 'E2E saved filter';
+  /** Workers share the database, so each one owns a differently named saved filter. */
+  const FILTER_NAME = `E2E saved filter ${process.env.TEST_PARALLEL_INDEX ?? '0'}`;
 
   async function openSavedFilters(adminPage) {
     await adminPage.locator('[data-grid-views]').click();
@@ -212,7 +238,7 @@ test.describe('Product DataGrid saved filters', () => {
 
     await adminPage.getByText('Filter', { exact: true }).click();
 
-    await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-summary]')).toBeHidden();
+    await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-summary]')).toHaveText('All');
   });
 
   test('Deleting a saved filter asks for confirmation first', async ({ adminPage }) => {

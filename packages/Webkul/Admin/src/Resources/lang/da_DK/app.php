@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'valgt → til',
                 'assign'                           => 'Tildel',
                 'clear'                            => 'ryd',
+                'too-large'                        => 'Filteret er for stort til at gemme',
                 'variant-saved'                    => 'Variantstruktur gemt.',
                 'variant-structure-locked'         => 'Denne variantstruktur har allerede varianter, så dens akser og niveauer kan ikke længere ændres. Slet først de eksisterende varianter.',
                 'no-axis-options'                  => 'Tilføj mindst én ikke-områdebestemt valgattribut til denne familie, før du opretter varianter.',
@@ -2396,6 +2397,7 @@ return [
                 'add-filter'      => 'Tilføj filter',
                 'remove-filter'   => 'Fjern filter',
                 'search-filter'   => 'Søg...',
+                'no-value'        => 'Alle',
                 'values-selected' => ':count valgt',
                 'saved-filters'   => [
                     'title'        => 'Gemte filtre',
@@ -2418,6 +2420,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Ryd alle',
+                    'clear'     => 'Ryd',
                     'title'     => 'Brugerdefinerede filtre',
                 ],
                 'boolean-options' => [

@@ -89,15 +89,40 @@ class EventRegistry
         $result = [];
 
         foreach ($this->groups as $entity => $events) {
-            $options = [];
-
-            foreach ($events as $key => $translationKey) {
-                $options[] = ['id' => $key, 'label' => trans($translationKey)];
-            }
-
-            $result[] = ['entity' => $entity, 'options' => $options];
+            $result[] = ['entity' => $entity, 'options' => $this->optionsFor($events)];
         }
 
         return $result;
+    }
+
+    /**
+     * Every registered event as a flat multiselect payload.
+     *
+     * @return array<int, array{id: string, label: string}>
+     */
+    public function forOptions(): array
+    {
+        $options = [];
+
+        foreach ($this->groups as $events) {
+            $options = array_merge($options, $this->optionsFor($events));
+        }
+
+        return $options;
+    }
+
+    /**
+     * @param  array<string, string>  $events  eventKey => translation key
+     * @return array<int, array{id: string, label: string}>
+     */
+    protected function optionsFor(array $events): array
+    {
+        $options = [];
+
+        foreach ($events as $key => $translationKey) {
+            $options[] = ['id' => $key, 'label' => trans($translationKey)];
+        }
+
+        return $options;
     }
 }

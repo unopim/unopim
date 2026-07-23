@@ -23,10 +23,6 @@ return [
             'edit'   => '編集',
             'delete' => '削除',
         ],
-        'settings' => [
-            'index'  => '設定',
-            'update' => '設定を更新',
-        ],
         'logs' => [
             'index'       => 'ログ',
             'view'        => '表示',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Webhookを作成',
-            'cancel'   => 'キャンセル',
             'save-btn' => '保存',
         ],
         'edit' => [
             'title'    => 'Webhookを編集',
-            'cancel'   => 'キャンセル',
             'save-btn' => '保存',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => '設定',
-                    'save'    => '保存',
-                    'general' => '一般',
-                    'active'  => [
-                        'label' => '有効なWebhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'ウェブフック URL',
-                        'required'          => 'Webhook が有効な場合、Webhook URL は必須です。',
-                        'scheme'            => 'Webhook URL は http:// または https:// で始まる必要があります。',
-                        'connection_failed' => 'Webhook URL に到達できませんでした。URL を確認してください。',
-                        'unreachable'       => 'Webhook URL が無効です (HTTP :code)。',
-                        'unsafe'            => 'Webhook URL がプライベート、ループバック、または内部アドレスを指しているため許可されていません。',
-                    ],
-                    'success'    => 'Webhook設定が正常に保存されました',
-                    'title'      => 'Webhook設定',
-                    'logs-title' => 'ログ',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

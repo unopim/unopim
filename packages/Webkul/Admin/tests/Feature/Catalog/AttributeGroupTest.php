@@ -22,7 +22,8 @@ it('should create Attribute group', function () {
     $this->loginAsAdmin();
 
     $response = postJson(route('admin.catalog.attribute.groups.store'), [
-        'code' => 'other',
+        'code'                              => 'other',
+        core()->getRequestedLocaleCode()    => ['name' => 'Other'],
     ]);
 
     $this->assertDatabaseHas($this->getFullTableName(AttributeGroup::class), [

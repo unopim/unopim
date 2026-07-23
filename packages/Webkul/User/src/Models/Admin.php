@@ -4,6 +4,7 @@ namespace Webkul\User\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -186,7 +187,7 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
     /**
      * Scope to interactive human admins only, excluding API robots.
      */
-    public function scopeHumans(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeHumans(Builder $query): Builder
     {
         return $query->where('type', 'user');
     }

@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'seleccionado(s) → a',
                 'assign'                           => 'Asignar',
                 'clear'                            => 'limpiar',
+                'too-large'                        => 'El filtro es demasiado grande para guardarlo',
                 'variant-saved'                    => 'Estructura de variante guardada.',
                 'variant-structure-locked'         => 'Esta estructura de variantes ya tiene variantes, por lo que sus ejes y niveles ya no se pueden cambiar. Elimine primero las variantes existentes.',
                 'no-axis-options'                  => 'Agregue al menos un atributo de selección no contextualizado a esta familia antes de crear variantes.',
@@ -2396,6 +2397,7 @@ return [
                 'add-filter'      => 'Agregar filtro',
                 'remove-filter'   => 'Eliminar filtro',
                 'search-filter'   => 'Buscar...',
+                'no-value'        => 'Todos',
                 'values-selected' => ':count seleccionados',
                 'saved-filters'   => [
                     'title'        => 'Filtros guardados',
@@ -2418,6 +2420,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Limpiar todo',
+                    'clear'     => 'Borrar',
                     'title'     => 'Filtros personalizados',
                 ],
                 'boolean-options' => [

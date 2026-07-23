@@ -11,6 +11,7 @@ use Webkul\Webhook\Registry\EventRegistry;
  * @method static array keys()
  * @method static bool has(string $event)
  * @method static array forSelect()
+ * @method static array forOptions()
  *
  * @see EventRegistry
  */

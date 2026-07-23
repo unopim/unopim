@@ -2,14 +2,26 @@
 
 namespace Webkul\Core\Repositories;
 
+use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Contracts\Channel;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Core\Services\ChannelActivationSyncer;
 
 class ChannelRepository extends Repository
 {
+    /**
+     * Create a new repository instance.
+     */
+    public function __construct(
+        protected ChannelActivationSyncer $channelActivationSyncer,
+        Container $container
+    ) {
+        parent::__construct($container);
+    }
+
     /**
      * Specify model class name.
      */
@@ -64,11 +76,15 @@ class ChannelRepository extends Repository
         $channel = parent::create($data);
 
         if (isset($data['locales'])) {
-            $channel->locales()->sync($data['locales']);
+            $synced = $channel->locales()->sync($data['locales']);
+
+            $this->channelActivationSyncer->syncLocales($synced['attached'], []);
         }
 
         if (isset($data['currencies'])) {
-            $channel->currencies()->sync($data['currencies']);
+            $synced = $channel->currencies()->sync($data['currencies']);
+
+            $this->channelActivationSyncer->syncCurrencies($synced['attached'], []);
         }
 
         return $channel;
@@ -88,25 +104,49 @@ class ChannelRepository extends Repository
 
         $channel = parent::update($data, $id);
 
-        // Sync the Channel Locales
         $oldLocales = $channel->locales()->pluck('code')->toArray();
 
-        $channel->locales()->sync($data['locales']);
+        $syncedLocales = $channel->locales()->sync($data['locales']);
 
         $newLocales = $channel->locales()->pluck('code')->toArray();
 
         Event::dispatch('core.model.proxy.sync.locales', ['old_values' => $oldLocales, 'new_values' => $newLocales, 'model' => $channel]);
 
-        // Sync the Channel Currencies
+        $this->channelActivationSyncer->syncLocales($syncedLocales['attached'], $syncedLocales['detached']);
+
         $oldCurrencies = $channel->currencies()->pluck('code')->toArray();
 
-        $channel->currencies()->sync($data['currencies']);
+        $syncedCurrencies = $channel->currencies()->sync($data['currencies']);
 
         $newCurrencies = $channel->currencies()->pluck('code')->toArray();
 
         Event::dispatch('core.model.proxy.sync.currencies', ['old_values' => $oldCurrencies, 'new_values' => $newCurrencies, 'model' => $channel]);
 
+        $this->channelActivationSyncer->syncCurrencies($syncedCurrencies['attached'], $syncedCurrencies['detached']);
+
         return $channel;
+    }
+
+    /**
+     * Delete.
+     *
+     * @param  int  $id
+     * @return mixed
+     */
+    public function delete($id)
+    {
+        $channel = $this->find($id);
+
+        $localeIds = $channel?->locales()->pluck('locales.id')->toArray() ?? [];
+        $currencyIds = $channel?->currencies()->pluck('currencies.id')->toArray() ?? [];
+
+        $deleted = parent::delete($id);
+
+        $this->channelActivationSyncer->syncLocales([], $localeIds);
+
+        $this->channelActivationSyncer->syncCurrencies([], $currencyIds);
+
+        return $deleted;
     }
 
     /**

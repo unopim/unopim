@@ -1,7 +1,12 @@
 <?php
 
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Event;
 use Webkul\Product\Models\Product;
+
+beforeEach(function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+});
 
 it('should dispatch catalog.product.create.after event for each variant created under a configurable product', function () {
     $this->loginAsAdmin();

@@ -23,10 +23,6 @@ return [
             'edit'   => 'Editar',
             'delete' => 'Eliminar',
         ],
-        'settings' => [
-            'index'  => 'Configuració',
-            'update' => 'Actualitzar configuració',
-        ],
         'logs' => [
             'index'       => 'Registres',
             'view'        => 'Veure',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Crear Webhook',
-            'cancel'   => 'Cancel·lar',
             'save-btn' => 'Desar',
         ],
         'edit' => [
             'title'    => 'Editar Webhook',
-            'cancel'   => 'Cancel·lar',
             'save-btn' => 'Desar',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Configuració',
-                    'save'    => 'Desar',
-                    'general' => 'General',
-                    'active'  => [
-                        'label' => 'Webhook actiu',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'URL del Webhook',
-                        'required'          => 'Es requereix una URL del Webhook quan el Webhook està actiu.',
-                        'scheme'            => 'L\'URL del Webhook ha de començar amb http:// o https://.',
-                        'connection_failed' => 'No s\'ha pogut accedir a l\'URL del Webhook. Verifiqueu l\'URL.',
-                        'unreachable'       => 'L\'URL del Webhook no és vàlid (HTTP :code).',
-                        'unsafe'            => 'L\'URL del webhook apunta a una adreça privada, de loopback o interna i no està permès.',
-                    ],
-                    'success'    => 'La configuració del Webhook s\'ha desat correctament',
-                    'title'      => 'Configuració del Webhook',
-                    'logs-title' => 'Registres',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

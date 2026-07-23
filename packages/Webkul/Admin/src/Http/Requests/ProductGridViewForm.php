@@ -6,6 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ProductGridViewForm extends FormRequest
 {
+    /** Filter conditions are small; anything larger is not a grid state. */
+    const MAX_PAYLOAD_BYTES = 65536;
+
     public function authorize(): bool
     {
         return bouncer()->hasPermission('catalog.products');
@@ -35,5 +38,16 @@ class ProductGridViewForm extends FormRequest
             'payload.channel'               => ['nullable', 'string', 'max:50'],
             'payload.locale'                => ['nullable', 'string', 'max:50'],
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator): void {
+            $payload = $this->input('payload');
+
+            if (is_array($payload) && strlen((string) json_encode($payload)) > self::MAX_PAYLOAD_BYTES) {
+                $validator->errors()->add('payload', trans('admin::app.components.datagrid.filters.saved-filters.too-large'));
+            }
+        });
     }
 }

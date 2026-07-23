@@ -1082,6 +1082,7 @@ return [
                 'selected-to'                      => 'sélectionnés → vers',
                 'assign'                           => 'Attribuer',
                 'clear'                            => 'effacer',
+                'too-large'                        => 'Le filtre est trop volumineux pour être enregistré',
                 'variant-saved'                    => 'Structure de variante enregistrée.',
                 'variant-structure-locked'         => 'Cette structure de variantes possède déjà des variantes, ses axes et niveaux ne peuvent donc plus être modifiés. Supprimez d’abord les variantes existantes.',
                 'group-code-already-exists'        => 'Le code de groupe d\'attributs existe déjà.',
@@ -2395,6 +2396,7 @@ return [
                 'add-filter'      => 'Ajouter un filtre',
                 'remove-filter'   => 'Supprimer le filtre',
                 'search-filter'   => 'Rechercher...',
+                'no-value'        => 'Tous',
                 'values-selected' => ':count sélectionnés',
                 'saved-filters'   => [
                     'title'        => 'Filtres enregistrés',
@@ -2417,6 +2419,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Tout effacer',
+                    'clear'     => 'Effacer',
                     'title'     => 'Filtres personnalisés',
                 ],
                 'boolean-options' => [

@@ -95,6 +95,8 @@
 
                     appliedViewId: null,
 
+                    appliedViewLabel: null,
+
                     viewName: '',
 
                     viewShared: false,
@@ -298,6 +300,7 @@
                             }
 
                             this.appliedViewId = currentDatagrid.appliedViewId ?? null;
+                            this.appliedViewLabel = currentDatagrid.appliedViewLabel ?? null;
                             this.viewSnapshot = currentDatagrid.viewSnapshot ?? null;
                             this.viewScope = currentDatagrid.viewScope ?? null;
 
@@ -618,6 +621,8 @@
                 },
 
                 runFilters() {
+                    this.applied.pagination.page = 1;
+
                     this.get();
                 },
 
@@ -1127,6 +1132,7 @@
                                         applied: appliedForStorage,
                                         activeFilterIndices: this.activeFilterIndices,
                                         appliedViewId: this.appliedViewId,
+                                        appliedViewLabel: this.appliedViewLabel,
                                         viewSnapshot: this.viewSnapshot,
                                         viewScope: this.viewScope,
                                     };
@@ -1162,6 +1168,7 @@
                         applied: appliedForStorage,
                         activeFilterIndices: this.activeFilterIndices,
                         appliedViewId: this.appliedViewId,
+                        appliedViewLabel: this.appliedViewLabel,
                         viewSnapshot: this.viewSnapshot,
                         viewScope: this.viewScope,
                     };
@@ -1298,9 +1305,27 @@
                     return JSON.stringify(this.currentViewPayload());
                 },
 
+                /**
+                 * Signature of only the meaningful applied filter values (+ scope). Paging,
+                 * sorting, column changes or opening an empty filter row must NOT read as
+                 * "unsaved changes" against an applied saved filter.
+                 */
+                dirtySignature() {
+                    const filters = this.applied.filters.columns
+                        .filter(column => column.index !== 'all' && (column.value?.length ?? 0) > 0)
+                        .map(column => ({ index: column.index, value: column.value }))
+                        .sort((a, b) => a.index.localeCompare(b.index));
+
+                    return JSON.stringify({
+                        filters,
+                        channel: this.viewScope?.channel ?? this.scopeChannel ?? null,
+                        locale: this.viewScope?.locale ?? this.scopeLocale ?? null,
+                    });
+                },
+
                 hasUnsavedFilters() {
                     if (this.viewSnapshot) {
-                        return this.currentViewSignature() !== this.viewSnapshot;
+                        return this.dirtySignature() !== this.viewSnapshot;
                     }
 
                     return this.hasAppliedFilters();
@@ -1326,7 +1351,10 @@
                     this.attributeConditions = {};
 
                     this.appliedViewId = null;
+                    this.appliedViewLabel = null;
                     this.viewSnapshot = null;
+
+                    this.applied.pagination.page = 1;
 
                     this.closeSavedFilters();
 
@@ -1361,7 +1389,16 @@
                 },
 
                 appliedViewName() {
-                    return this.savedViews.find(view => view.id === this.activeViewId())?.name
+                    if (! this.activeViewId()) {
+                        return '@lang('admin::app.components.datagrid.filters.saved-filters.title')';
+                    }
+
+                    /**
+                     * Prefer the cached name so searching the dropdown (which replaces the
+                     * savedViews list with a filtered set) can't blank the toolbar label.
+                     */
+                    return this.appliedViewLabel
+                        ?? this.savedViews.find(view => view.id === this.appliedViewId)?.name
                         ?? '@lang('admin::app.components.datagrid.filters.saved-filters.title')';
                 },
 
@@ -1399,7 +1436,8 @@
                     };
 
                     this.appliedViewId = view.id;
-                    this.viewSnapshot = this.currentViewSignature();
+                    this.appliedViewLabel = view.name;
+                    this.viewSnapshot = this.dirtySignature();
 
                     this.closeSavedFilters();
 
@@ -1429,8 +1467,10 @@
                         return;
                     }
 
+                    const name = this.viewName.trim();
+
                     this.$axios.post(this.viewsSrc, {
-                        name: this.viewName.trim(),
+                        name: name,
                         is_shared: this.viewShared,
                         payload: this.currentViewPayload(),
                     })
@@ -1438,7 +1478,8 @@
                             this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
 
                             this.appliedViewId = response.data.view?.id ?? null;
-                            this.viewSnapshot = this.currentViewSignature();
+                            this.appliedViewLabel = response.data.view?.name ?? name;
+                            this.viewSnapshot = this.dirtySignature();
                             this.viewName = '';
                             this.viewShared = false;
 
@@ -1469,6 +1510,7 @@
 
                             if (this.appliedViewId === view.id) {
                                 this.appliedViewId = null;
+                                this.appliedViewLabel = null;
                                 this.viewSnapshot = null;
 
                                 this.updateDatagrids();
@@ -1510,6 +1552,12 @@
                     }
 
                     return this.appliedValuesSummary(column, this.getAppliedColumnValues(column.index));
+                },
+
+                collapsedSummary(column) {
+                    return this.filterHasValue(column)
+                        ? this.filterSummary(column)
+                        : '@lang('admin::app.components.datagrid.filters.no-value')';
                 },
 
                 attributeConditionSummary(column) {
@@ -1569,7 +1617,13 @@
                         return;
                     }
 
-                    this.removeAppliedColumnAllValues(column.index);
+                    /**
+                     * State-only reset; the grid refetches on Apply, matching every other
+                     * drawer edit instead of reloading mid-session.
+                     */
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        appliedColumn => appliedColumn.index !== column.index
+                    );
                 },
 
                 getActiveFilterColumns() {
@@ -1616,8 +1670,12 @@
                     this.showFilterPicker = ! this.showFilterPicker;
                     this.filterPickerSearch = '';
 
-                    if (this.showFilterPicker && this.filterAttributesSrc) {
-                        this.loadFilterAttributes(true);
+                    if (this.showFilterPicker) {
+                        if (this.filterAttributesSrc) {
+                            this.loadFilterAttributes(true);
+                        }
+
+                        this.$nextTick(() => this.$refs.filterPickerSearchInput?.focus());
                     }
                 },
 

@@ -54,9 +54,13 @@ class Webhook extends Model implements HistoryAuditable, PresentableHistoryInter
 
     /**
      * Whether this webhook is subscribed to the given event key.
+     *
+     * Read through getAttribute(): a bare $this->events matches Rector's
+     * Laravel rename of the legacy Model::$events property and gets rewritten
+     * to $dispatchesEvents, which silently empties the subscription list.
      */
     public function subscribesTo(string $event): bool
     {
-        return in_array($event, (array) $this->dispatchesEvents, true);
+        return in_array($event, (array) $this->getAttribute('events'), true);
     }
 }

@@ -23,10 +23,6 @@ return [
             'edit'   => '編輯',
             'delete' => '刪除',
         ],
-        'settings' => [
-            'index'  => '設定',
-            'update' => '更新設定',
-        ],
         'logs' => [
             'index'       => '日誌',
             'view'        => '查看',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => '建立 Webhook',
-            'cancel'   => '取消',
             'save-btn' => '儲存',
         ],
         'edit' => [
             'title'    => '編輯 Webhook',
-            'cancel'   => '取消',
             'save-btn' => '儲存',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => '設定',
-                    'save'    => '儲存',
-                    'general' => '一般',
-                    'active'  => [
-                        'label' => '啟用 Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => '網路鉤子 URL',
-                        'required'          => '當 Webhook 啟用時，必須提供 Webhook URL。',
-                        'scheme'            => 'Webhook URL 必須以 http:// 或 https:// 開頭。',
-                        'connection_failed' => '無法存取 Webhook URL。請檢查 URL。',
-                        'unreachable'       => 'Webhook URL 無效 (HTTP :code)。',
-                        'unsafe'            => 'Webhook URL 指向私有、回環或內部地址,不被允許。',
-                    ],
-                    'success'    => 'Webhook 設定已成功儲存',
-                    'title'      => 'Webhook 設定',
-                    'logs-title' => '日誌',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

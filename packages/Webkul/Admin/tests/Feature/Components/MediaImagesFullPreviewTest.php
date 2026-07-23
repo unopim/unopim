@@ -16,10 +16,11 @@ $enLang = __DIR__.'/../../../src/Resources/lang/en_US/app.php';
 it('exposes fullPreview as a reactive prop, defaulted on', function () use ($imagesView) {
     $source = file_get_contents($imagesView);
 
-    expect($source)->toContain("'fullPreview'      => true,")
+    // Matched loosely: Pint realigns the props array and the prop list grows.
+    expect($source)->toMatch("/'fullPreview'\s+=> true,/")
         ->and($source)->toContain("v-bind:full-preview=\"{{ \$fullPreview ? 'true' : 'false' }}\"")
         ->and($source)->toContain(':fullPreview="fullPreview"')
-        ->and($source)->toContain("'objectFit', 'responsive', 'fullPreview']");
+        ->and($source)->toMatch("/props: \[[^\]]*'fullPreview'[^\]]*\]/");
 });
 
 it('keeps the boxed preview modal available as the compact opt-out', function () use ($imagesView) {
@@ -73,6 +74,6 @@ it('keeps the add tile last and matches the uploaded card height', function () u
     $source = file_get_contents($imagesView);
 
     expect(substr_count($source, ':style="{ ...tileStyle, order: 9999 }"'))->toBe(2)
-        ->and($source)->toContain("responsive ? 'w-full min-h-[160px]' : ''")
+        ->and($source)->toContain(":height=\"responsive ? '176px' : `calc(\${height} + 36px)`\"")
         ->and($source)->toContain('height: `calc(${this.height} + 36px)`');
 });

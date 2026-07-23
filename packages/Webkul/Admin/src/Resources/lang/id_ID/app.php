@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'dipilih → ke',
                 'assign'                           => 'Tetapkan',
                 'clear'                            => 'bersihkan',
+                'too-large'                        => 'Filter terlalu besar untuk disimpan',
                 'variant-saved'                    => 'Struktur varian disimpan.',
                 'variant-structure-locked'         => 'Struktur varian ini sudah memiliki varian, sehingga sumbu dan levelnya tidak dapat diubah lagi. Hapus varian yang ada terlebih dahulu.',
                 'no-axis-options'                  => 'Tambahkan setidaknya satu atribut pilihan tanpa cakupan ke famili ini sebelum membuat varian.',
@@ -2396,6 +2397,7 @@ return [
                 'add-filter'      => 'Tambah Filter',
                 'remove-filter'   => 'Hapus Filter',
                 'search-filter'   => 'Cari...',
+                'no-value'        => 'Semua',
                 'values-selected' => ':count dipilih',
                 'saved-filters'   => [
                     'title'        => 'Filter Tersimpan',
@@ -2418,6 +2420,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Bersihkan semua',
+                    'clear'     => 'Hapus',
                     'title'     => 'Filter khusus',
                 ],
                 'boolean-options' => [

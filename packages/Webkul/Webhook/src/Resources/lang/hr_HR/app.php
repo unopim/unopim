@@ -23,10 +23,6 @@ return [
             'edit'   => 'Uredi',
             'delete' => 'Obriši',
         ],
-        'settings' => [
-            'index'  => 'Postavke',
-            'update' => 'Ažuriraj postavke',
-        ],
         'logs' => [
             'index'       => 'Zapisi',
             'view'        => 'Pogledaj',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Stvori Webhook',
-            'cancel'   => 'Odustani',
             'save-btn' => 'Spremi',
         ],
         'edit' => [
             'title'    => 'Uredi Webhook',
-            'cancel'   => 'Odustani',
             'save-btn' => 'Spremi',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Postavke',
-                    'save'    => 'Spremi',
-                    'general' => 'Općenito',
-                    'active'  => [
-                        'label' => 'Aktivan Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'Webhook URL',
-                        'required'          => 'Webhook URL je obavezan kada je Webhook aktivan.',
-                        'scheme'            => 'Webhook URL mora počinjati s http:// ili https://.',
-                        'connection_failed' => 'Nije moguće pristupiti Webhook URL-u. Provjerite URL.',
-                        'unreachable'       => 'Webhook URL nije ispravan (HTTP :code).',
-                        'unsafe'            => 'Webhook URL upućuje na privatnu, loopback ili internu adresu i nije dopušten.',
-                    ],
-                    'success'    => 'Postavke Webhooka uspješno spremljene',
-                    'title'      => 'Postavke Webhooka',
-                    'logs-title' => 'Zapisi',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

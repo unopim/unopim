@@ -134,7 +134,7 @@
                             </x-admin::form.control-group.label>
 
                             @php
-                                $options = json_encode(core()->getAllActiveLocales()->toArray());
+                                $options = json_encode(core()->getAllLocales()->values()->toArray());
                                 $oldLocales = old('locales');
 
                                 if (is_array($oldLocales)) {
@@ -164,7 +164,7 @@
                             </x-admin::form.control-group.label>
                         
                             @php
-                                $options = json_encode(array_values(core()->getAllActiveCurrencies()->toArray()));
+                                $options = json_encode(core()->getAllCurrencies()->sortBy('name')->values()->toArray());
                             @endphp
 
                             <x-admin::form.control-group.control

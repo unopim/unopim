@@ -93,11 +93,15 @@ class AttributeGroupController extends Controller
 
         Event::dispatch('catalog.attribute.group.create.after', $attributeGroup);
 
+        $attributeGroup->refresh();
+
+        $name = $attributeGroup->translate($locale)?->name;
+
         return new JsonResponse([
             'data' => [
                 'id'    => $attributeGroup->id,
                 'code'  => $attributeGroup->code,
-                'label' => $attributeGroup->name ?: '['.$attributeGroup->code.']',
+                'label' => $name ?: '['.$attributeGroup->code.']',
             ],
         ]);
     }

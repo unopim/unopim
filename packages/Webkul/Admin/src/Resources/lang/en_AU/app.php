@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'selected → to',
                 'assign'                           => 'Assign',
                 'clear'                            => 'clear',
+                'too-large'                        => 'Filter is too large to save',
                 'variant-saved'                    => 'Variant structure saved.',
                 'variant-structure-locked'         => 'This variant structure already has variants, so its axes and levels can no longer be changed. Delete the existing variants first.',
                 'no-axis-options'                  => 'Add at least one non-scoped select attribute to this family before creating variants.',
@@ -2396,6 +2397,7 @@ return [
                 'add-filter'      => 'Add Filter',
                 'remove-filter'   => 'Remove Filter',
                 'search-filter'   => 'Search...',
+                'no-value'        => 'All',
                 'values-selected' => ':count selected',
                 'saved-filters'   => [
                     'title'        => 'Saved Filters',
@@ -2418,6 +2420,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Clear All',
+                    'clear'     => 'Clear',
                     'title'     => 'Custom Filters',
                 ],
                 'boolean-options' => [

@@ -1002,6 +1002,7 @@ return [
                 'selected-to'                      => 'đã chọn → đến',
                 'assign'                           => 'Gán',
                 'clear'                            => 'xóa',
+                'too-large'                        => 'Bộ lọc quá lớn để lưu',
                 'variant-saved'                    => 'Đã lưu cấu trúc biến thể.',
                 'variant-structure-locked'         => 'Cấu trúc biến thể này đã có biến thể nên không thể thay đổi trục và cấp độ nữa. Hãy xóa các biến thể hiện có trước.',
                 'no-axis-options'                  => 'Thêm ít nhất một thuộc tính lựa chọn không giới hạn phạm vi vào họ này trước khi tạo biến thể.',
@@ -2399,6 +2400,7 @@ return [
                 'add-filter'      => 'Thêm bộ lọc',
                 'remove-filter'   => 'Xóa bộ lọc',
                 'search-filter'   => 'Tìm kiếm...',
+                'no-value'        => 'Tất cả',
                 'values-selected' => 'Đã chọn :count',
                 'saved-filters'   => [
                     'title'        => 'Bộ lọc đã lưu',
@@ -2421,6 +2423,7 @@ return [
                 ],
                 'custom-filters' => [
                     'clear-all' => 'Xóa tất cả',
+                    'clear'     => 'Xoá',
                     'title'     => 'Bộ lọc tùy chỉnh',
                 ],
                 'boolean-options' => [

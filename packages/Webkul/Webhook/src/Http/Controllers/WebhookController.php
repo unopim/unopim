@@ -33,33 +33,30 @@ class WebhookController
             return resolve(WebhookDataGrid::class)->toJson();
         }
 
-        return view('webhook::webhooks.index');
-    }
-
-    /**
-     * Show the form for creating a new webhook.
-     */
-    public function create(): View
-    {
-        abort_unless(bouncer()->hasPermission('configuration.webhook.create'), 403);
-
-        return view('webhook::webhooks.create', [
-            'eventGroups' => $this->eventGroups(),
+        return view('webhook::webhooks.index', [
+            'eventOptions' => bouncer()->hasPermission('configuration.webhook.create')
+                ? $this->eventOptions()
+                : [],
         ]);
     }
 
     /**
-     * Store a newly created webhook.
+     * Store a webhook created from the quick-create modal. Only the required
+     * fields are captured here; the optional ones are filled in on the edit page.
      */
-    public function store(WebhookForm $request): RedirectResponse
+    public function store(WebhookForm $request): JsonResponse
     {
         abort_unless(bouncer()->hasPermission('configuration.webhook.create'), 403);
 
-        $webhook = $this->webhookRepository->create($this->normalize($request));
+        $webhook = $this->webhookRepository->create($this->normalize($request, defaultActive: true));
 
         session()->flash('success', trans('webhook::app.webhooks.create-success'));
 
-        return to_route('webhook.edit', $webhook->id);
+        return new JsonResponse([
+            'data' => [
+                'redirect_url' => route('webhook.edit', $webhook->id),
+            ],
+        ]);
     }
 
     /**
@@ -72,8 +69,8 @@ class WebhookController
         $webhook = $this->webhookRepository->findOrFail($id);
 
         return view('webhook::webhooks.edit', [
-            'webhook'     => $webhook,
-            'eventGroups' => $this->eventGroups(),
+            'webhook'      => $webhook,
+            'eventOptions' => $this->eventOptions(),
         ]);
     }
 
@@ -186,12 +183,12 @@ class WebhookController
      *
      * @return array<string, mixed>
      */
-    protected function normalize(WebhookForm $request): array
+    protected function normalize(WebhookForm $request, bool $defaultActive = false): array
     {
         return [
             'name'      => $request->input('name'),
             'url'       => $request->input('url'),
-            'is_active' => $request->boolean('is_active'),
+            'is_active' => $request->boolean('is_active', $defaultActive),
             'events'    => array_values((array) $request->input('events', [])),
             'secret'    => $request->input('secret'),
             'headers'   => $this->normalizeHeaders($request->input('headers', [])),
@@ -221,10 +218,10 @@ class WebhookController
     /**
      * The subscribable event catalog shaped for the form multiselect.
      *
-     * @return array<int, array{entity: string, options: array<int, array{id: string, label: string}>}>
+     * @return array<int, array{id: string, label: string}>
      */
-    protected function eventGroups(): array
+    protected function eventOptions(): array
     {
-        return resolve(EventRegistry::class)->forSelect();
+        return resolve(EventRegistry::class)->forOptions();
     }
 }

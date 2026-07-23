@@ -1107,6 +1107,7 @@ return [
                 'select-destination-group'         => 'Select group',
                 'assign'                           => 'Assign',
                 'clear'                            => 'clear',
+                'too-large'                        => 'Filter is too large to save',
                 'variant-saved'                    => 'Variant structure saved.',
                 'variant-structure-locked'         => 'This variant structure already has variants, so its axes and levels can no longer be changed. Delete the existing variants first.',
                 'group-code-already-exists'        => 'An attribute group code already exists.',
@@ -2563,6 +2564,7 @@ return [
                 'add-filter'      => 'Add Filter',
                 'remove-filter'   => 'Remove Filter',
                 'search-filter'   => 'Search...',
+                'no-value'        => 'All',
                 'values-selected' => ':count selected',
                 'saved-filters'   => [
                     'title'        => 'Saved Filters',
@@ -2586,6 +2588,7 @@ return [
 
                 'custom-filters' => [
                     'clear-all' => 'Clear All',
+                    'clear'     => 'Clear',
                     'title'     => 'Custom Filters',
                 ],
 

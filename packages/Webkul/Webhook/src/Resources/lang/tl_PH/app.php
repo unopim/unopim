@@ -23,10 +23,6 @@ return [
             'edit'   => 'I-edit',
             'delete' => 'Burahin',
         ],
-        'settings' => [
-            'index'  => 'Mga Setting',
-            'update' => 'I-update ang mga setting',
-        ],
         'logs' => [
             'index'       => 'Mga Log',
             'view'        => 'Tingnan',
@@ -64,12 +60,10 @@ return [
         ],
         'create' => [
             'title'    => 'Lumikha ng Webhook',
-            'cancel'   => 'Kanselahin',
             'save-btn' => 'I-save',
         ],
         'edit' => [
             'title'    => 'I-edit ang Webhook',
-            'cancel'   => 'Kanselahin',
             'save-btn' => 'I-save',
         ],
         'form' => [
@@ -116,28 +110,6 @@ return [
 
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Mga Setting',
-                    'save'    => 'I-save',
-                    'general' => 'Pangkalahatan',
-                    'active'  => [
-                        'label' => 'Aktibong Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'URL ng Webhook',
-                        'required'          => 'Kinakailangan ang Webhook URL kapag aktibo ang Webhook.',
-                        'scheme'            => 'Ang Webhook URL ay dapat magsimula sa http:// o https://.',
-                        'connection_failed' => 'Hindi maabot ang Webhook URL. Pakisuri ang URL.',
-                        'unreachable'       => 'Hindi wasto ang Webhook URL (HTTP :code).',
-                        'unsafe'            => 'Ang Webhook URL ay tumuturo sa pribado, loopback, o panloob na address at hindi pinapayagan.',
-                    ],
-                    'success'    => 'Matagumpay na na-save ang mga setting ng Webhook',
-                    'title'      => 'Mga Setting ng Webhook',
-                    'logs-title' => 'Mga Log',
-                ],
-            ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

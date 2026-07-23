@@ -6,6 +6,7 @@ use Webkul\Product\Models\Product;
 use Webkul\Webhook\Services\WebhookService;
 
 beforeEach(function () {
+    DB::table('webhooks')->delete();
     $this->loginAsAdmin();
     DB::table('webhook_logs')->delete();
 });
