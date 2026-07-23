@@ -55,6 +55,10 @@
             <directory suffix="Test.php">packages/Webkul/Category/tests/Unit</directory>
         </testsuite>
 
+        <testsuite name="Measurement Feature Test">
+            <directory suffix="Test.php">packages/Webkul/Measurement/tests/Feature</directory>
+        </testsuite>
+
         <testsuite name="AiAgent Unit Test">
             <directory suffix="Test.php">packages/Webkul/AiAgent/tests/Unit</directory>
         </testsuite>

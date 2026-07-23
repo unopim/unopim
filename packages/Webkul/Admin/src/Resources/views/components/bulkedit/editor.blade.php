@@ -18,6 +18,7 @@
 @include('admin::components.bulkedit.type.image')
 @include('admin::components.bulkedit.type.gallery')
 @include('admin::components.bulkedit.type.boolean')
+@includeIf('measurement::components.bulkedit.type.measurement')
 
 
 @php
