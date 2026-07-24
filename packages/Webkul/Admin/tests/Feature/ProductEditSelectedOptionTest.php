@@ -50,3 +50,40 @@ it('renders the translated label of a selected select option (F2)', function () 
         ->assertSee('Crimson Red')
         ->assertDontSee('Cobalt Blue');
 });
+
+it('renders every selected label of a multi-value multiselect (F2)', function () {
+    $this->loginAsAdmin();
+
+    $family = AttributeFamily::factory()->create();
+    $group = AttributeGroup::factory()->create();
+    $family->familyGroups()->attach($group);
+
+    $mapping = $family->attributeFamilyGroupMappings()->first();
+
+    foreach (Attribute::whereIn('code', ['sku', 'status'])->get() as $position => $attribute) {
+        $mapping->customAttributes()->attach($attribute, ['position' => $position + 1]);
+    }
+
+    $multiselect = Attribute::factory()->create(['type' => 'multiselect', 'code' => 'perf_materials']);
+    $multiselect->translateOrNew('en_US')->name = 'Materials';
+    $multiselect->save();
+
+    foreach (['cotton' => 'Pure Cotton', 'wool' => 'Merino Wool'] as $code => $label) {
+        $option = AttributeOption::create(['code' => $code, 'sort_order' => 1, 'attribute_id' => $multiselect->id]);
+        $option->translateOrNew('en_US')->label = $label;
+        $option->save();
+    }
+
+    $mapping->customAttributes()->attach($multiselect, ['position' => 10]);
+
+    // Multiselect values are persisted comma-joined.
+    $product = Product::factory()->simple()->create([
+        'attribute_family_id' => $family->id,
+        'values'              => ['common' => ['sku' => 'PERF-MS-1', 'perf_materials' => 'cotton,wool']],
+    ]);
+
+    get(route('admin.catalog.products.edit', ['id' => $product->id]))
+        ->assertOk()
+        ->assertSee('Pure Cotton')
+        ->assertSee('Merino Wool');
+});

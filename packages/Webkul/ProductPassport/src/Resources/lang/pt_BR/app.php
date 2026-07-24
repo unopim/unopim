@@ -5,6 +5,11 @@ return [
         'label' => 'Passaporte Digital do Produto',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Passaporte digital do produto',
+            'info'  => 'Gerencie a publicação de passaportes e as configurações de publicação pública.',
+        ],
+
         'product_passport' => [
             'title'    => 'Passaporte do Produto',
             'info'     => 'Configurações de publicação do passaporte digital do produto.',
@@ -169,15 +174,18 @@ return [
         'gtin' => 'O :attribute deve ser um GTIN válido (8, 12, 13 ou 14 dígitos com um dígito verificador correto).',
     ],
     'mapping' => [
-        'title'         => 'Mapeamento de campos do passaporte',
-        'info'          => 'Obtenha cada campo do passaporte a partir de um atributo que você já mantém. Deixe um campo sem mapeamento para recorrer ao seu atributo de passaporte dedicado.',
-        'menu'          => 'Mapeamento de campos',
-        'field'         => 'Campo do passaporte',
-        'source'        => 'Atributo de origem',
-        'select-source' => 'Usar o atributo do passaporte',
-        'save-btn'      => 'Salvar mapeamento',
-        'type-mismatch' => 'A fonte selecionada não é compatível com o tipo deste campo do passaporte.',
-        'saved'         => 'Mapeamento de campos salvo com sucesso.',
+        'add-field'       => 'Adicionar campo de passaporte',
+        'add-field-title' => 'Adicionar campo de passaporte',
+        'field-created'   => 'Campo de passaporte criado com sucesso.',
+        'title'           => 'Mapeamento de campos do passaporte',
+        'info'            => 'Obtenha cada campo do passaporte a partir de um atributo que você já mantém. Deixe um campo sem mapeamento para recorrer ao seu atributo de passaporte dedicado.',
+        'menu'            => 'Mapeamento de campos',
+        'field'           => 'Campo do passaporte',
+        'source'          => 'Atributo de origem',
+        'select-source'   => 'Usar o atributo do passaporte',
+        'save-btn'        => 'Salvar mapeamento',
+        'type-mismatch'   => 'A fonte selecionada não é compatível com o tipo deste campo do passaporte.',
+        'saved'           => 'Mapeamento de campos salvo com sucesso.',
     ],
 
 ];

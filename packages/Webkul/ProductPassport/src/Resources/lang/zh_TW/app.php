@@ -5,6 +5,11 @@ return [
         'label' => '數位產品護照',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => '數位產品護照',
+            'info'  => '管理護照發布與公開發布設定。',
+        ],
+
         'product_passport' => [
             'title'    => '產品護照',
             'info'     => '數位產品護照的發布設定。',
@@ -169,15 +174,18 @@ return [
         'gtin' => ':attribute 必須是有效的 GTIN（8、12、13 或 14 位數字，且檢查碼正確）。',
     ],
     'mapping' => [
-        'title'         => '護照欄位對應',
-        'info'          => '從您已維護的屬性中取得每個護照欄位。將欄位保持未對應以回退至其專用護照屬性。',
-        'menu'          => '欄位對應',
-        'field'         => '護照欄位',
-        'source'        => '來源屬性',
-        'select-source' => '使用護照屬性',
-        'save-btn'      => '儲存對應',
-        'type-mismatch' => '所選來源與此護照欄位的類型不相容。',
-        'saved'         => '欄位對應已成功儲存。',
+        'add-field'       => '新增護照欄位',
+        'add-field-title' => '新增護照欄位',
+        'field-created'   => '護照欄位建立成功。',
+        'title'           => '護照欄位對應',
+        'info'            => '從您已維護的屬性中取得每個護照欄位。將欄位保持未對應以回退至其專用護照屬性。',
+        'menu'            => '欄位對應',
+        'field'           => '護照欄位',
+        'source'          => '來源屬性',
+        'select-source'   => '使用護照屬性',
+        'save-btn'        => '儲存對應',
+        'type-mismatch'   => '所選來源與此護照欄位的類型不相容。',
+        'saved'           => '欄位對應已成功儲存。',
     ],
 
 ];

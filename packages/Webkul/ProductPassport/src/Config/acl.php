@@ -37,6 +37,11 @@ return [
         'route' => 'admin.catalog.passports.mapping.update',
         'sort'  => 4,
     ], [
+        'key'   => 'catalog.passport.mapping',
+        'name'  => 'passport::app.mapping.title',
+        'route' => 'admin.catalog.passports.mapping.field.store',
+        'sort'  => 4,
+    ], [
         /**
          * Routeless: the Product Passport system-settings row shares the generic
          * editor route, so per-section access is enforced in

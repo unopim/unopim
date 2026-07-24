@@ -5,6 +5,11 @@ return [
         'label' => 'Digitalt Produktpass',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Digitalt produktpass',
+            'info'  => 'Hantera publicering av pass och inställningar för offentlig publicering.',
+        ],
+
         'product_passport' => [
             'title'    => 'Produktpass',
             'info'     => 'Publiceringsinställningar för det digitala produktpasset.',
@@ -169,15 +174,18 @@ return [
         'gtin' => ':attribute måste vara ett giltigt GTIN (8, 12, 13 eller 14 siffror med korrekt kontrollsiffra).',
     ],
     'mapping' => [
-        'title'         => 'Fältmappning för produktpass',
-        'info'          => 'Hämta varje passfält från ett attribut som du redan underhåller. Lämna ett fält omappat för att falla tillbaka på dess dedikerade passattribut.',
-        'menu'          => 'Fältmappning',
-        'field'         => 'Passfält',
-        'source'        => 'Källattribut',
-        'select-source' => 'Använd passattributet',
-        'save-btn'      => 'Spara mappning',
-        'type-mismatch' => 'Den valda källan är inte kompatibel med typen för detta passfält.',
-        'saved'         => 'Fältmappningen sparades.',
+        'add-field'       => 'Lägg till passfält',
+        'add-field-title' => 'Lägg till passfält',
+        'field-created'   => 'Passfält skapat.',
+        'title'           => 'Fältmappning för produktpass',
+        'info'            => 'Hämta varje passfält från ett attribut som du redan underhåller. Lämna ett fält omappat för att falla tillbaka på dess dedikerade passattribut.',
+        'menu'            => 'Fältmappning',
+        'field'           => 'Passfält',
+        'source'          => 'Källattribut',
+        'select-source'   => 'Använd passattributet',
+        'save-btn'        => 'Spara mappning',
+        'type-mismatch'   => 'Den valda källan är inte kompatibel med typen för detta passfält.',
+        'saved'           => 'Fältmappningen sparades.',
     ],
 
 ];

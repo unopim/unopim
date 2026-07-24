@@ -10,7 +10,10 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
@@ -87,7 +90,7 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
      */
     protected function avatarUrl(): Attribute
     {
-        return Attribute::make(get: fn () => $this->image_url() ?: $this->getGravatarUrlAttribute());
+        return Attribute::make(get: fn () => $this->image_url() ?: $this->gravatar_url);
     }
 
     /**
@@ -120,6 +123,72 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
         } catch (\Throwable) {
             return "https://gravatar.com/avatar/{$hash}?s=200&d=404";
         }
+    }
+
+    /**
+     * Whether this admin's email resolves to an actual gravatar image.
+     *
+     * Resolved server-side (and cached) so the UI can decide deterministically whether to render
+     * the gravatar, instead of relying on the browser's image load succeeding.
+     */
+    public function hasGravatar(): bool
+    {
+        return self::gravatarExistsForEmail($this->email);
+    }
+
+    public static function gravatarExistsForEmail(?string $email): bool
+    {
+        if (! $email) {
+            return false;
+        }
+
+        $normalizedEmail = mb_strtolower(trim($email));
+
+        if ($normalizedEmail === '') {
+            return false;
+        }
+
+        return self::gravatarPayload(md5($normalizedEmail))['found'];
+    }
+
+    /**
+     * Cached upstream gravatar lookup. Misses are cached (shorter TTL) so a listing that renders one
+     * avatar per row does not trigger a synchronous gravatar round-trip per request.
+     *
+     * @return array{found: bool, body: string, content_type: string}
+     */
+    public static function gravatarPayload(string $hash): array
+    {
+        $miss = ['found' => false, 'body' => '', 'content_type' => 'image/png'];
+
+        if (! preg_match('/^[a-f0-9]{32}$/', $hash)) {
+            return $miss;
+        }
+
+        $cached = Cache::get("admin.gravatar.{$hash}");
+
+        if (is_array($cached)) {
+            return $cached;
+        }
+
+        try {
+            $response = Http::timeout(4)
+                ->withHeaders([
+                    'User-Agent' => 'UnoPim Avatar Proxy',
+                    'Accept'     => 'image/*',
+                ])
+                ->get("https://gravatar.com/avatar/{$hash}?s=200&d=404");
+
+            $payload = $response->successful()
+                ? ['found' => true, 'body' => $response->body(), 'content_type' => $response->header('Content-Type') ?: 'image/png']
+                : $miss;
+        } catch (ConnectionException) {
+            $payload = $miss;
+        }
+
+        Cache::put("admin.gravatar.{$hash}", $payload, $payload['found'] ? 86400 : 3600);
+
+        return $payload;
     }
 
     /**

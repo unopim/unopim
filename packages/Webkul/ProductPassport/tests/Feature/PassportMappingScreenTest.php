@@ -4,6 +4,7 @@ use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Core\Models\CoreConfig;
+use Webkul\Core\Models\Locale;
 use Webkul\ProductPassport\Database\Seeders\DppAttributeSeeder;
 
 it('persists a core_config row when the mapping is updated', function (): void {
@@ -70,6 +71,46 @@ it('lists a custom attribute added to the dpp group as a mappable field', functi
     $this->get(route('admin.catalog.passports.mapping.edit'))
         ->assertOk()
         ->assertSee('mapping[eco_label]', false);
+});
+
+it('creates a genuine dpp-group attribute that becomes a mappable field', function (): void {
+    resolve(DppAttributeSeeder::class)->run();
+
+    $dppGroup = AttributeGroup::where('code', 'dpp')->firstOrFail();
+
+    $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
+    $family->familyGroups()->attach($dppGroup->id);
+
+    $this->setPassportConfig(['enabled' => '1']);
+
+    $this->loginWithPermissions('all');
+
+    $localeCode = Locale::query()->value('code');
+
+    $this->post(route('admin.catalog.passports.mapping.field.store'), [
+        'code'      => 'dpp_eco_label',
+        'type'      => 'text',
+        $localeCode => ['name' => 'Eco Label'],
+    ])->assertOk();
+
+    expect(AttributeProxy::where('code', 'dpp_eco_label')->exists())->toBeTrue();
+
+    $this->get(route('admin.catalog.passports.mapping.edit'))
+        ->assertOk()
+        ->assertSee('mapping[dpp_eco_label]', false);
+});
+
+it('forbids creating a passport field without the mapping permission', function (): void {
+    $this->setPassportConfig(['enabled' => '1']);
+
+    $this->loginWithPermissions('custom', ['dashboard']);
+
+    $this->post(route('admin.catalog.passports.mapping.field.store'), [
+        'code' => 'dpp_eco_label',
+        'type' => 'text',
+    ])->assertForbidden();
+
+    expect(AttributeProxy::where('code', 'dpp_eco_label')->exists())->toBeFalse();
 });
 
 it('accepts a document source for a document passport field', function (): void {

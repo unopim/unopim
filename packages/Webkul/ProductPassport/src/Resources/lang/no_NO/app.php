@@ -5,6 +5,11 @@ return [
         'label' => 'Digitalt Produktpass',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Digitalt produktpass',
+            'info'  => 'Administrer publisering av pass og innstillinger for offentlig publisering.',
+        ],
+
         'product_passport' => [
             'title'    => 'Produktpass',
             'info'     => 'Publiseringsinnstillinger for det digitale produktpasset.',
@@ -169,15 +174,18 @@ return [
         'gtin' => ':attribute må være en gyldig GTIN (8, 12, 13 eller 14 sifre med korrekt kontrollsiffer).',
     ],
     'mapping' => [
-        'title'         => 'Feltmapping for produktpass',
-        'info'          => 'Hent hvert passfelt fra et attributt du allerede vedlikeholder. La et felt være umappet for å falle tilbake til dets dedikerte passattributt.',
-        'menu'          => 'Feltmapping',
-        'field'         => 'Passfelt',
-        'source'        => 'Kildeattributt',
-        'select-source' => 'Bruk passattributtet',
-        'save-btn'      => 'Lagre mapping',
-        'type-mismatch' => 'Den valgte kilden er ikke kompatibel med typen for dette passfeltet.',
-        'saved'         => 'Feltmapping ble lagret.',
+        'add-field'       => 'Legg til passfelt',
+        'add-field-title' => 'Legg til passfelt',
+        'field-created'   => 'Passfelt opprettet.',
+        'title'           => 'Feltmapping for produktpass',
+        'info'            => 'Hent hvert passfelt fra et attributt du allerede vedlikeholder. La et felt være umappet for å falle tilbake til dets dedikerte passattributt.',
+        'menu'            => 'Feltmapping',
+        'field'           => 'Passfelt',
+        'source'          => 'Kildeattributt',
+        'select-source'   => 'Bruk passattributtet',
+        'save-btn'        => 'Lagre mapping',
+        'type-mismatch'   => 'Den valgte kilden er ikke kompatibel med typen for dette passfeltet.',
+        'saved'           => 'Feltmapping ble lagret.',
     ],
 
 ];

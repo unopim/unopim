@@ -24,9 +24,9 @@ class SendBulkEditProductWebhook implements ShouldQueue
      */
     public function handle(WebhookService $webhookService): void
     {
-        $user = AdminProxy::find($this->userId);
-
-        Auth::login($user);
+        if ($this->userId && ($user = AdminProxy::find($this->userId))) {
+            Auth::login($user);
+        }
 
         $webhookService->sendBatchForBulkEdit($this->ids);
     }

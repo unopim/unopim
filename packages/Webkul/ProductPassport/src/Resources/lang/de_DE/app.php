@@ -5,6 +5,11 @@ return [
         'label' => 'Digitaler Produktpass',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Digitaler Produktpass',
+            'info'  => 'Veröffentlichung von Produktpässen und Einstellungen der öffentlichen Publikation verwalten.',
+        ],
+
         'product_passport' => [
             'title'    => 'Produktpass',
             'info'     => 'Veröffentlichungseinstellungen für den digitalen Produktpass.',
@@ -169,15 +174,18 @@ return [
         'gtin' => 'Das Feld :attribute muss eine gültige GTIN sein (8, 12, 13 oder 14 Ziffern mit korrekter Prüfziffer).',
     ],
     'mapping' => [
-        'title'         => 'Passfeld-Zuordnung',
-        'info'          => 'Beziehen Sie jedes Passfeld aus einem Attribut, das Sie bereits pflegen. Lassen Sie ein Feld unzugeordnet, um auf sein eigenes Passattribut zurückzugreifen.',
-        'menu'          => 'Feldzuordnung',
-        'field'         => 'Passfeld',
-        'source'        => 'Quellattribut',
-        'select-source' => 'Passattribut verwenden',
-        'save-btn'      => 'Zuordnung speichern',
-        'type-mismatch' => 'Die ausgewählte Quelle ist nicht mit dem Typ dieses Passfelds kompatibel.',
-        'saved'         => 'Feldzuordnung erfolgreich gespeichert.',
+        'add-field'       => 'Passfeld hinzufügen',
+        'add-field-title' => 'Passfeld hinzufügen',
+        'field-created'   => 'Passfeld erfolgreich erstellt.',
+        'title'           => 'Passfeld-Zuordnung',
+        'info'            => 'Beziehen Sie jedes Passfeld aus einem Attribut, das Sie bereits pflegen. Lassen Sie ein Feld unzugeordnet, um auf sein eigenes Passattribut zurückzugreifen.',
+        'menu'            => 'Feldzuordnung',
+        'field'           => 'Passfeld',
+        'source'          => 'Quellattribut',
+        'select-source'   => 'Passattribut verwenden',
+        'save-btn'        => 'Zuordnung speichern',
+        'type-mismatch'   => 'Die ausgewählte Quelle ist nicht mit dem Typ dieses Passfelds kompatibel.',
+        'saved'           => 'Feldzuordnung erfolgreich gespeichert.',
     ],
 
 ];

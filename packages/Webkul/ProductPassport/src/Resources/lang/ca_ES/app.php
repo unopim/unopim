@@ -5,6 +5,11 @@ return [
         'label' => 'Passaport Digital del Producte',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Passaport digital de producte',
+            'info'  => 'Gestioneu la publicació de passaports i la configuració de publicació pública.',
+        ],
+
         'product_passport' => [
             'title'    => 'Passaport del Producte',
             'info'     => 'Configuració de publicació del Passaport Digital del Producte.',
@@ -169,15 +174,18 @@ return [
         'gtin' => 'El :attribute ha de ser un GTIN vàlid (8, 12, 13 o 14 dígits amb un dígit de control correcte).',
     ],
     'mapping' => [
-        'title'         => 'Mapatge de camps del passaport',
-        'info'          => 'Obteniu cada camp del passaport a partir d\'un atribut que ja manteniu. Deixeu un camp sense mapar per utilitzar el seu atribut de passaport dedicat.',
-        'menu'          => 'Mapatge de camps',
-        'field'         => 'Camp del passaport',
-        'source'        => 'Atribut origen',
-        'select-source' => 'Utilitza l\'atribut del passaport',
-        'save-btn'      => 'Desa el mapatge',
-        'type-mismatch' => 'La font seleccionada no és compatible amb el tipus d\'aquest camp del passaport.',
-        'saved'         => 'El mapatge de camps s\'ha desat correctament.',
+        'add-field'       => 'Afegeix un camp de passaport',
+        'add-field-title' => 'Afegeix un camp de passaport',
+        'field-created'   => 'Camp de passaport creat correctament.',
+        'title'           => 'Mapatge de camps del passaport',
+        'info'            => 'Obteniu cada camp del passaport a partir d\'un atribut que ja manteniu. Deixeu un camp sense mapar per utilitzar el seu atribut de passaport dedicat.',
+        'menu'            => 'Mapatge de camps',
+        'field'           => 'Camp del passaport',
+        'source'          => 'Atribut origen',
+        'select-source'   => 'Utilitza l\'atribut del passaport',
+        'save-btn'        => 'Desa el mapatge',
+        'type-mismatch'   => 'La font seleccionada no és compatible amb el tipus d\'aquest camp del passaport.',
+        'saved'           => 'El mapatge de camps s\'ha desat correctament.',
     ],
 
 ];

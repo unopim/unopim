@@ -5,6 +5,11 @@ return [
         'label' => 'Passaporto Digitale del Prodotto',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Passaporto digitale del prodotto',
+            'info'  => 'Gestisci la pubblicazione dei passaporti e le impostazioni di pubblicazione pubblica.',
+        ],
+
         'product_passport' => [
             'title'    => 'Passaporto del Prodotto',
             'info'     => 'Impostazioni di pubblicazione del passaporto digitale del prodotto.',
@@ -169,15 +174,18 @@ return [
         'gtin' => 'Il campo :attribute deve essere un GTIN valido (8, 12, 13 o 14 cifre con una cifra di controllo corretta).',
     ],
     'mapping' => [
-        'title'         => 'Mappatura dei campi del passaporto',
-        'info'          => 'Alimenta ogni campo del passaporto da un attributo che già gestisci. Lascia un campo non mappato per ricorrere al suo attributo di passaporto dedicato.',
-        'menu'          => 'Mappatura dei campi',
-        'field'         => 'Campo del passaporto',
-        'source'        => 'Attributo di origine',
-        'select-source' => 'Usa l’attributo del passaporto',
-        'save-btn'      => 'Salva mappatura',
-        'type-mismatch' => 'L\'origine selezionata non è compatibile con il tipo di questo campo del passaporto.',
-        'saved'         => 'Mappatura dei campi salvata con successo.',
+        'add-field'       => 'Aggiungi campo passaporto',
+        'add-field-title' => 'Aggiungi campo passaporto',
+        'field-created'   => 'Campo passaporto creato correttamente.',
+        'title'           => 'Mappatura dei campi del passaporto',
+        'info'            => 'Alimenta ogni campo del passaporto da un attributo che già gestisci. Lascia un campo non mappato per ricorrere al suo attributo di passaporto dedicato.',
+        'menu'            => 'Mappatura dei campi',
+        'field'           => 'Campo del passaporto',
+        'source'          => 'Attributo di origine',
+        'select-source'   => 'Usa l’attributo del passaporto',
+        'save-btn'        => 'Salva mappatura',
+        'type-mismatch'   => 'L\'origine selezionata non è compatibile con il tipo di questo campo del passaporto.',
+        'saved'           => 'Mappatura dei campi salvata con successo.',
     ],
 
 ];

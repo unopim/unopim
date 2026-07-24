@@ -22,6 +22,24 @@ it('does not edit an option belonging to a different attribute', function () {
         ->assertStatus(404);
 });
 
+it('does not reorder options of a different attribute via updateSort', function () {
+    $this->loginWithPermissions('all', ['dashboard']);
+
+    $attributeA = Attribute::factory()->create(['type' => 'select']);
+    $attributeB = Attribute::factory()->create(['type' => 'select']);
+
+    $anchorA = AttributeOption::create(['code' => 'anchor_a', 'sort_order' => 1, 'attribute_id' => $attributeA->id]);
+    $foreignB = AttributeOption::create(['code' => 'foreign_b', 'sort_order' => 7, 'attribute_id' => $attributeB->id]);
+
+    $this->putJson(route('admin.catalog.attributes.options.update_sort', ['attribute_id' => $attributeA->id]), [
+        'optionIds' => [$foreignB->id, $anchorA->id],
+        'direction' => 'up',
+        'toIndex'   => $anchorA->id,
+    ])->assertOk();
+
+    expect($foreignB->fresh()->sort_order)->toBe(7);
+});
+
 it('does not delete an option belonging to a different attribute', function () {
     $this->loginWithPermissions('all', ['dashboard']);
 

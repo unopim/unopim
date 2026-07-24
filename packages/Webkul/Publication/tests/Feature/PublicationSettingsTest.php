@@ -14,7 +14,7 @@ it('registers all three levels of the publication settings tree', function (): v
 });
 
 it('exposes the section through the system settings hub', function (): void {
-    expect(collect(config('system_settings'))->pluck('key'))->toContain('system.publication');
+    expect(collect(config('system_settings'))->pluck('key'))->toContain('digital_product_passport.publication');
 });
 
 it('defaults every field before any core_config row exists', function (): void {

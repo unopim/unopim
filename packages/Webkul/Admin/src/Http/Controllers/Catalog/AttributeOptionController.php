@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeOptionDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AttributeOptionForm;
+use Webkul\Admin\Http\Requests\AttributeOptionSortForm;
 use Webkul\Admin\Http\Requests\AttributeOptionUpdateForm;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
@@ -125,9 +126,9 @@ class AttributeOptionController extends Controller
     /**
      * Updates the sort order of an attribute option based on the direction it is moved (up or down).
      */
-    public function updateSort(int $attributeId): JsonResponse
+    public function updateSort(AttributeOptionSortForm $request, int $attributeId): JsonResponse
     {
-        $data = request()->all();
+        $data = $request->validated();
 
         $sortOrderUpdated = $this->attributeOptionRepository->updateSortOrder($data['optionIds'], $data['direction'], $data['toIndex'], $attributeId);
 

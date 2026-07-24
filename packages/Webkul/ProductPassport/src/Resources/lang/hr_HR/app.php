@@ -5,6 +5,11 @@ return [
         'label' => 'Digitalna putovnica proizvoda',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Digitalna putovnica proizvoda',
+            'info'  => 'Upravljajte objavom putovnica i postavkama javne objave.',
+        ],
+
         'product_passport' => [
             'title'    => 'Putovnica proizvoda',
             'info'     => 'Postavke objave digitalne putovnice proizvoda.',
@@ -169,15 +174,18 @@ return [
         'gtin' => ':attribute mora biti valjan GTIN (8, 12, 13 ili 14 znamenki s ispravnom kontrolnom znamenkom).',
     ],
     'mapping' => [
-        'title'         => 'Mapiranje polja putovnice',
-        'info'          => 'Svako polje putovnice popunite iz atributa koji već održavate. Ostavite polje nemapiranim da bi se koristio njegov namjenski atribut putovnice.',
-        'menu'          => 'Mapiranje polja',
-        'field'         => 'Polje putovnice',
-        'source'        => 'Izvorni atribut',
-        'select-source' => 'Koristi atribut putovnice',
-        'save-btn'      => 'Spremi mapiranje',
-        'type-mismatch' => 'Odabrani izvor nije kompatibilan s vrstom ovog polja putovnice.',
-        'saved'         => 'Mapiranje polja uspješno je spremljeno.',
+        'add-field'       => 'Dodaj polje putovnice',
+        'add-field-title' => 'Dodaj polje putovnice',
+        'field-created'   => 'Polje putovnice uspješno stvoreno.',
+        'title'           => 'Mapiranje polja putovnice',
+        'info'            => 'Svako polje putovnice popunite iz atributa koji već održavate. Ostavite polje nemapiranim da bi se koristio njegov namjenski atribut putovnice.',
+        'menu'            => 'Mapiranje polja',
+        'field'           => 'Polje putovnice',
+        'source'          => 'Izvorni atribut',
+        'select-source'   => 'Koristi atribut putovnice',
+        'save-btn'        => 'Spremi mapiranje',
+        'type-mismatch'   => 'Odabrani izvor nije kompatibilan s vrstom ovog polja putovnice.',
+        'saved'           => 'Mapiranje polja uspješno je spremljeno.',
     ],
 
 ];

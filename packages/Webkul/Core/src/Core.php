@@ -933,9 +933,9 @@ class Core
      */
     protected function getCoreConfig($field, $channel, $locale)
     {
-        $memoKey = "core_config_memo.{$field}.{$channel}.{$locale}";
+        $memoKey = 'core_config.'.implode('|', [$field, $channel, $locale]);
 
-        $memo = request()->attributes;
+        $memo = app(RequestMemo::class);
 
         if ($memo->has($memoKey)) {
             return $memo->get($memoKey);

@@ -27,8 +27,10 @@ use Webkul\Core\Facades\ElasticSearch as ElasticSearchFacade;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\Core\Helpers\Locales as LocalesHelper;
 use Webkul\Core\Http\Middleware\EnableDebugForAllowedIps;
+use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
+use Webkul\Core\RequestMemo;
 use Webkul\Core\View\Compilers\BladeCompiler;
 use Webkul\Theme\ViewRenderEventManager;
 
@@ -119,6 +121,12 @@ class CoreServiceProvider extends ServiceProvider
         }
 
         DB::macro('rawQueryGrammar', fn (): Grammar => GrammarQueryManager::getGrammar());
+
+        // Drop the request-scoped config memo whenever a config row changes, so a
+        // write is reflected by a later read within the same request/job.
+        $forgetConfigMemo = fn () => app(RequestMemo::class)->forget('core_config.');
+        CoreConfig::saved($forgetConfigMemo);
+        CoreConfig::deleted($forgetConfigMemo);
     }
 
     /**
@@ -207,6 +215,8 @@ class CoreServiceProvider extends ServiceProvider
             $app->make(LocaleRepository::class),
             $app->make(ChannelRepository::class),
         ));
+
+        $this->app->scoped(RequestMemo::class);
 
         /**
          * Astrotomic registers its own Locales helper as a singleton, but every TranslatableModel

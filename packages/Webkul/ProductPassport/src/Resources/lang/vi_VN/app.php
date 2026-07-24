@@ -5,6 +5,11 @@ return [
         'label' => 'Hộ chiếu Sản phẩm Kỹ thuật số',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Hộ chiếu sản phẩm kỹ thuật số',
+            'info'  => 'Quản lý việc xuất bản hộ chiếu và cài đặt xuất bản công khai.',
+        ],
+
         'product_passport' => [
             'title'    => 'Hộ chiếu Sản phẩm',
             'info'     => 'Cài đặt xuất bản hộ chiếu sản phẩm kỹ thuật số.',
@@ -169,15 +174,18 @@ return [
         'gtin' => ':attribute phải là một GTIN hợp lệ (8, 12, 13 hoặc 14 chữ số với chữ số kiểm tra chính xác).',
     ],
     'mapping' => [
-        'title'         => 'Ánh xạ trường hộ chiếu sản phẩm',
-        'info'          => 'Lấy từng trường hộ chiếu từ một thuộc tính bạn đã duy trì. Để trống ánh xạ một trường để quay lại thuộc tính hộ chiếu chuyên dụng của nó.',
-        'menu'          => 'Ánh xạ trường',
-        'field'         => 'Trường hộ chiếu',
-        'source'        => 'Thuộc tính nguồn',
-        'select-source' => 'Sử dụng thuộc tính hộ chiếu',
-        'save-btn'      => 'Lưu ánh xạ',
-        'type-mismatch' => 'Nguồn đã chọn không tương thích với loại trường hộ chiếu này.',
-        'saved'         => 'Đã lưu ánh xạ trường thành công.',
+        'add-field'       => 'Thêm trường hộ chiếu',
+        'add-field-title' => 'Thêm trường hộ chiếu',
+        'field-created'   => 'Đã tạo trường hộ chiếu thành công.',
+        'title'           => 'Ánh xạ trường hộ chiếu sản phẩm',
+        'info'            => 'Lấy từng trường hộ chiếu từ một thuộc tính bạn đã duy trì. Để trống ánh xạ một trường để quay lại thuộc tính hộ chiếu chuyên dụng của nó.',
+        'menu'            => 'Ánh xạ trường',
+        'field'           => 'Trường hộ chiếu',
+        'source'          => 'Thuộc tính nguồn',
+        'select-source'   => 'Sử dụng thuộc tính hộ chiếu',
+        'save-btn'        => 'Lưu ánh xạ',
+        'type-mismatch'   => 'Nguồn đã chọn không tương thích với loại trường hộ chiếu này.',
+        'saved'           => 'Đã lưu ánh xạ trường thành công.',
     ],
 
 ];

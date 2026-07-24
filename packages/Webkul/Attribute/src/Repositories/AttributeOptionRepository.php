@@ -67,10 +67,22 @@ class AttributeOptionRepository extends Repository
 
         $totalSortedOptions = count($optionIds) - 1;
 
+        // Only reorder options that belong to this attribute, so a crafted request
+        // cannot rewrite sort_order on options of other attributes.
+        $allowedIds = $this->model->newQuery()
+            ->whereIn('id', $optionIds)
+            ->where('attribute_id', $attributeId)
+            ->pluck('id')
+            ->flip();
+
         try {
             DB::beginTransaction();
 
             foreach ($optionIds as $index => $optionId) {
+                if (! $allowedIds->has($optionId)) {
+                    continue;
+                }
+
                 Event::dispatch('catalog.attribute.option.update.before', $optionId);
 
                 $sortOrder = $direction === 'down'

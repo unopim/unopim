@@ -5,6 +5,11 @@ return [
         'label' => 'Digitaalinen tuotepassi',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Digitaalinen tuotepassi',
+            'info'  => 'Hallitse passien julkaisua ja julkisen julkaisun asetuksia.',
+        ],
+
         'product_passport' => [
             'title'    => 'Tuotepassi',
             'info'     => 'Digitaalisen tuotepassin julkaisuasetukset.',
@@ -169,15 +174,18 @@ return [
         'gtin' => ':attribute on oltava kelvollinen GTIN (8, 12, 13 tai 14 numeroa oikealla tarkistusnumerolla).',
     ],
     'mapping' => [
-        'title'         => 'Passikenttien määritys',
-        'info'          => 'Hae jokainen passikenttä attribuutista, jota jo ylläpidät. Jätä kenttä määrittämättä, jolloin käytetään sen omaa passiattribuuttia.',
-        'menu'          => 'Kenttämääritys',
-        'field'         => 'Passikenttä',
-        'source'        => 'Lähdeattribuutti',
-        'select-source' => 'Käytä passiattribuuttia',
-        'save-btn'      => 'Tallenna määritys',
-        'type-mismatch' => 'Valittu lähde ei ole yhteensopiva tämän passikentän tyypin kanssa.',
-        'saved'         => 'Kenttämääritys tallennettiin onnistuneesti.',
+        'add-field'       => 'Lisää passikenttä',
+        'add-field-title' => 'Lisää passikenttä',
+        'field-created'   => 'Passikenttä luotu onnistuneesti.',
+        'title'           => 'Passikenttien määritys',
+        'info'            => 'Hae jokainen passikenttä attribuutista, jota jo ylläpidät. Jätä kenttä määrittämättä, jolloin käytetään sen omaa passiattribuuttia.',
+        'menu'            => 'Kenttämääritys',
+        'field'           => 'Passikenttä',
+        'source'          => 'Lähdeattribuutti',
+        'select-source'   => 'Käytä passiattribuuttia',
+        'save-btn'        => 'Tallenna määritys',
+        'type-mismatch'   => 'Valittu lähde ei ole yhteensopiva tämän passikentän tyypin kanssa.',
+        'saved'           => 'Kenttämääritys tallennettiin onnistuneesti.',
     ],
 
 ];

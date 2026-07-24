@@ -51,7 +51,7 @@ it('enforces the section permission on update, not just edit', function () {
 it('gates the package-provided publication section by its own permission', function () {
     $this->loginWithPermissions(permissions: ['configuration.system_settings']);
 
-    $this->get(route('admin.settings.system.edit', ['key' => 'system.publication']))
+    $this->get(route('admin.settings.system.edit', ['key' => 'digital_product_passport.publication']))
         ->assertStatus(403);
 
     $this->loginWithPermissions(permissions: [
@@ -59,6 +59,6 @@ it('gates the package-provided publication section by its own permission', funct
         'configuration.system_settings.publication',
     ]);
 
-    $this->get(route('admin.settings.system.edit', ['key' => 'system.publication']))
+    $this->get(route('admin.settings.system.edit', ['key' => 'digital_product_passport.publication']))
         ->assertOk();
 });

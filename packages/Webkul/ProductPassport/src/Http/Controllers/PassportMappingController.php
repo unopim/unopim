@@ -6,11 +6,15 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Attribute\Contracts\Attribute;
+use Webkul\Attribute\Models\AttributeFamilyGroupMappingProxy;
 use Webkul\Attribute\Models\AttributeGroupProxy;
 use Webkul\Attribute\Models\AttributeProxy;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\CoreConfigRepository;
+use Webkul\ProductPassport\Http\Requests\StorePassportFieldRequest;
 use Webkul\ProductPassport\Http\Requests\UpdatePassportMappingRequest;
 
 class PassportMappingController extends Controller
@@ -36,6 +40,7 @@ class PassportMappingController extends Controller
 
     public function __construct(
         protected CoreConfigRepository $coreConfigRepository,
+        protected AttributeRepository $attributeRepository,
     ) {}
 
     public function edit(): View
@@ -77,6 +82,55 @@ class PassportMappingController extends Controller
             'message'      => trans('passport::app.mapping.saved'),
             'redirect_url' => route('admin.catalog.passports.mapping.edit'),
         ]);
+    }
+
+    /**
+     * Create a genuine passport field: a real attribute (its code is what the
+     * payload and JSON-LD key off) added to the `dpp` group so it becomes both
+     * publishable and mappable. Reuses the canonical attribute quick-create path.
+     */
+    public function storeField(StorePassportFieldRequest $request): JsonResponse
+    {
+        abort_unless(PublicationController::featureEnabled(), 404);
+
+        $data = $request->all();
+
+        if (($data['validation'] ?? null) === 'none') {
+            $data['validation'] = null;
+        }
+
+        Event::dispatch('catalog.attribute.create.before');
+
+        $attribute = $this->attributeRepository->create($data);
+
+        Event::dispatch('catalog.attribute.create.after', $attribute);
+
+        $this->attachToDppGroup((int) $attribute->id);
+
+        return new JsonResponse([
+            'message'      => trans('passport::app.mapping.field-created'),
+            'redirect_url' => route('admin.catalog.passports.mapping.edit'),
+        ]);
+    }
+
+    /**
+     * Attach a newly created field to the `dpp` group in every family that
+     * already uses it, so it surfaces on all passport-enabled products at once.
+     * Families without the group are untouched; `syncWithoutDetaching` keeps the
+     * call idempotent.
+     */
+    private function attachToDppGroup(int $attributeId): void
+    {
+        $group = AttributeGroupProxy::modelClass()::query()->where('code', self::GROUP_CODE)->first();
+
+        if ($group === null) {
+            return;
+        }
+
+        AttributeFamilyGroupMappingProxy::modelClass()::query()
+            ->where('attribute_group_id', $group->id)
+            ->get()
+            ->each(fn ($mapping) => $mapping->customAttributes()->syncWithoutDetaching([$attributeId]));
     }
 
     /**

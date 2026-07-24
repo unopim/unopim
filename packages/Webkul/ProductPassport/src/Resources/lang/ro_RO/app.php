@@ -5,6 +5,11 @@ return [
         'label' => 'Pașaport Digital al Produsului',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Pașaport digital al produsului',
+            'info'  => 'Gestionați publicarea pașapoartelor și setările de publicare publică.',
+        ],
+
         'product_passport' => [
             'title'    => 'Pașaportul Produsului',
             'info'     => 'Setările de publicare a pașaportului digital al produsului.',
@@ -169,15 +174,18 @@ return [
         'gtin' => 'Câmpul :attribute trebuie să fie un GTIN valid (8, 12, 13 sau 14 cifre cu o cifră de control corectă).',
     ],
     'mapping' => [
-        'title'         => 'Maparea câmpurilor pașaportului',
-        'info'          => 'Alimentați fiecare câmp al pașaportului dintr-un atribut pe care îl gestionați deja. Lăsați un câmp nemapat pentru a reveni la atributul său de pașaport dedicat.',
-        'menu'          => 'Maparea câmpurilor',
-        'field'         => 'Câmp pașaport',
-        'source'        => 'Atribut sursă',
-        'select-source' => 'Folosește atributul pașaportului',
-        'save-btn'      => 'Salvează maparea',
-        'type-mismatch' => 'Sursa selectată nu este compatibilă cu tipul acestui câmp de pașaport.',
-        'saved'         => 'Maparea câmpurilor a fost salvată cu succes.',
+        'add-field'       => 'Adaugă câmp de pașaport',
+        'add-field-title' => 'Adaugă câmp de pașaport',
+        'field-created'   => 'Câmp de pașaport creat cu succes.',
+        'title'           => 'Maparea câmpurilor pașaportului',
+        'info'            => 'Alimentați fiecare câmp al pașaportului dintr-un atribut pe care îl gestionați deja. Lăsați un câmp nemapat pentru a reveni la atributul său de pașaport dedicat.',
+        'menu'            => 'Maparea câmpurilor',
+        'field'           => 'Câmp pașaport',
+        'source'          => 'Atribut sursă',
+        'select-source'   => 'Folosește atributul pașaportului',
+        'save-btn'        => 'Salvează maparea',
+        'type-mismatch'   => 'Sursa selectată nu este compatibilă cu tipul acestui câmp de pașaport.',
+        'saved'           => 'Maparea câmpurilor a fost salvată cu succes.',
     ],
 
 ];

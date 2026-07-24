@@ -17,6 +17,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     Route::controller(PassportMappingController::class)->prefix('catalog/passports')->group(function (): void {
         Route::get('mapping', 'edit')->name('admin.catalog.passports.mapping.edit');
         Route::put('mapping', 'update')->name('admin.catalog.passports.mapping.update');
+        Route::post('mapping/field', 'storeField')->name('admin.catalog.passports.mapping.field.store');
     });
 
     Route::get('products/{product}/passport', [ProductPassportController::class, 'show'])

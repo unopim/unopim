@@ -5,6 +5,11 @@ return [
         'label' => 'Digital na Pasaporte ng Produkto',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Digital na Pasaporte ng Produkto',
+            'info'  => 'Pamahalaan ang paglalathala ng pasaporte at mga setting ng pampublikong paglalathala.',
+        ],
+
         'product_passport' => [
             'title'    => 'Pasaporte ng Produkto',
             'info'     => 'Mga setting ng paglalathala ng digital na pasaporte ng produkto.',
@@ -169,15 +174,18 @@ return [
         'gtin' => 'Ang :attribute ay dapat na wastong GTIN (8, 12, 13, o 14 na digit na may tamang check digit).',
     ],
     'mapping' => [
-        'title'         => 'Pagmamapa ng Field ng Pasaporte',
-        'info'          => 'Kunin ang bawat field ng pasaporte mula sa isang attribute na pinananatili mo na. Iwanang hindi namapa ang isang field upang gamitin ang nakatuong attribute ng pasaporte nito.',
-        'menu'          => 'Pagmamapa ng Field',
-        'field'         => 'Field ng Pasaporte',
-        'source'        => 'Pinagmulang Attribute',
-        'select-source' => 'Gamitin ang attribute ng pasaporte',
-        'save-btn'      => 'I-save ang Pagmamapa',
-        'type-mismatch' => 'Ang napiling pinagmulan ay hindi tugma sa uri ng field ng pasaporte na ito.',
-        'saved'         => 'Matagumpay na na-save ang pagmamapa ng field.',
+        'add-field'       => 'Magdagdag ng field ng pasaporte',
+        'add-field-title' => 'Magdagdag ng Field ng Pasaporte',
+        'field-created'   => 'Matagumpay na nalikha ang field ng pasaporte.',
+        'title'           => 'Pagmamapa ng Field ng Pasaporte',
+        'info'            => 'Kunin ang bawat field ng pasaporte mula sa isang attribute na pinananatili mo na. Iwanang hindi namapa ang isang field upang gamitin ang nakatuong attribute ng pasaporte nito.',
+        'menu'            => 'Pagmamapa ng Field',
+        'field'           => 'Field ng Pasaporte',
+        'source'          => 'Pinagmulang Attribute',
+        'select-source'   => 'Gamitin ang attribute ng pasaporte',
+        'save-btn'        => 'I-save ang Pagmamapa',
+        'type-mismatch'   => 'Ang napiling pinagmulan ay hindi tugma sa uri ng field ng pasaporte na ito.',
+        'saved'           => 'Matagumpay na na-save ang pagmamapa ng field.',
     ],
 
 ];

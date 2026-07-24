@@ -43,6 +43,11 @@
             $selected = $lockedFields[$selectField->code]['value'] ?? null;
         }
 
+        // Multiselect values are stored comma-joined; split them so each code matches.
+        if (is_string($selected) && str_contains($selected, ',')) {
+            $selected = explode(',', $selected);
+        }
+
         $codes = array_filter((array) $selected, static fn ($code): bool => $code !== '' && $code !== null);
 
         if (! empty($codes)) {

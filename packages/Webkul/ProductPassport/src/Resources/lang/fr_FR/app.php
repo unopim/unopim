@@ -5,6 +5,11 @@ return [
         'label' => 'Passeport Numérique du Produit',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Passeport numérique de produit',
+            'info'  => 'Gérez la publication des passeports et les paramètres de publication publique.',
+        ],
+
         'product_passport' => [
             'title'    => 'Passeport du Produit',
             'info'     => 'Paramètres de publication du passeport numérique du produit.',
@@ -164,15 +169,18 @@ return [
         'gtin' => 'Le champ :attribute doit être un GTIN valide (8, 12, 13 ou 14 chiffres avec une clé de contrôle correcte).',
     ],
     'mapping' => [
-        'title'         => 'Mappage des champs du passeport',
-        'info'          => 'Alimentez chaque champ du passeport à partir d’un attribut que vous gérez déjà. Laissez un champ non mappé pour revenir à son attribut de passeport dédié.',
-        'menu'          => 'Mappage des champs',
-        'field'         => 'Champ du passeport',
-        'source'        => 'Attribut source',
-        'select-source' => 'Utiliser l’attribut du passeport',
-        'save-btn'      => 'Enregistrer le mappage',
-        'type-mismatch' => 'La source sélectionnée n\'est pas compatible avec le type de ce champ du passeport.',
-        'saved'         => 'Mappage des champs enregistré avec succès.',
+        'add-field'       => 'Ajouter un champ de passeport',
+        'add-field-title' => 'Ajouter un champ de passeport',
+        'field-created'   => 'Champ de passeport créé avec succès.',
+        'title'           => 'Mappage des champs du passeport',
+        'info'            => 'Alimentez chaque champ du passeport à partir d’un attribut que vous gérez déjà. Laissez un champ non mappé pour revenir à son attribut de passeport dédié.',
+        'menu'            => 'Mappage des champs',
+        'field'           => 'Champ du passeport',
+        'source'          => 'Attribut source',
+        'select-source'   => 'Utiliser l’attribut du passeport',
+        'save-btn'        => 'Enregistrer le mappage',
+        'type-mismatch'   => 'La source sélectionnée n\'est pas compatible avec le type de ce champ du passeport.',
+        'saved'           => 'Mappage des champs enregistré avec succès.',
     ],
 
 ];

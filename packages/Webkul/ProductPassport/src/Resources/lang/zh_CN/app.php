@@ -5,6 +5,11 @@ return [
         'label' => '数字产品护照',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => '数字产品护照',
+            'info'  => '管理护照发布和公开发布设置。',
+        ],
+
         'product_passport' => [
             'title'    => '产品护照',
             'info'     => '数字产品护照的发布设置。',
@@ -169,15 +174,18 @@ return [
         'gtin' => ':attribute 必须是有效的 GTIN（8、12、13 或 14 位数字，且校验位正确）。',
     ],
     'mapping' => [
-        'title'         => '护照字段映射',
-        'info'          => '从您已维护的属性中获取每个护照字段。将字段保持未映射以回退到其专用护照属性。',
-        'menu'          => '字段映射',
-        'field'         => '护照字段',
-        'source'        => '来源属性',
-        'select-source' => '使用护照属性',
-        'save-btn'      => '保存映射',
-        'type-mismatch' => '所选来源与此护照字段的类型不兼容。',
-        'saved'         => '字段映射保存成功。',
+        'add-field'       => '添加护照字段',
+        'add-field-title' => '添加护照字段',
+        'field-created'   => '护照字段创建成功。',
+        'title'           => '护照字段映射',
+        'info'            => '从您已维护的属性中获取每个护照字段。将字段保持未映射以回退到其专用护照属性。',
+        'menu'            => '字段映射',
+        'field'           => '护照字段',
+        'source'          => '来源属性',
+        'select-source'   => '使用护照属性',
+        'save-btn'        => '保存映射',
+        'type-mismatch'   => '所选来源与此护照字段的类型不兼容。',
+        'saved'           => '字段映射保存成功。',
     ],
 
 ];

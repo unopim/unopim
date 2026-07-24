@@ -6,8 +6,9 @@ use function Pest\Laravel\putJson;
 
 /*
  * Guards against privilege escalation through the role editor: a non-superadmin
- * must not be able to promote a role to full access, nor grant permissions it
- * does not itself hold.
+ * must not promote a role to full access. (Defining an over-privileged custom
+ * role is allowed by design — the escalation vector is *assigning* it, which is
+ * blocked separately in UserController; see UserRoleAssignmentEscalationTest.)
  */
 it('forbids a non-all admin from promoting a role to full access', function () {
     $admin = $this->loginWithPermissions('custom', ['dashboard', 'settings.roles', 'settings.roles.edit']);

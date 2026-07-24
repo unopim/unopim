@@ -5,6 +5,11 @@ return [
         'label' => 'Paspor Produk Digital',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Paspor Produk Digital',
+            'info'  => 'Kelola penerbitan paspor dan pengaturan publikasi publik.',
+        ],
+
         'product_passport' => [
             'title'    => 'Paspor Produk',
             'info'     => 'Pengaturan penerbitan Paspor Produk Digital.',
@@ -169,15 +174,18 @@ return [
         'gtin' => ':attribute harus berupa GTIN yang valid (8, 12, 13, atau 14 digit dengan digit pemeriksa yang benar).',
     ],
     'mapping' => [
-        'title'         => 'Pemetaan Bidang Paspor',
-        'info'          => 'Ambil setiap bidang paspor dari atribut yang sudah Anda kelola. Biarkan bidang tidak dipetakan untuk kembali ke atribut paspor khususnya.',
-        'menu'          => 'Pemetaan Bidang',
-        'field'         => 'Bidang Paspor',
-        'source'        => 'Atribut Sumber',
-        'select-source' => 'Gunakan atribut paspor',
-        'save-btn'      => 'Simpan Pemetaan',
-        'type-mismatch' => 'Sumber yang dipilih tidak kompatibel dengan tipe bidang paspor ini.',
-        'saved'         => 'Pemetaan bidang berhasil disimpan.',
+        'add-field'       => 'Tambah bidang paspor',
+        'add-field-title' => 'Tambah Bidang Paspor',
+        'field-created'   => 'Bidang paspor berhasil dibuat.',
+        'title'           => 'Pemetaan Bidang Paspor',
+        'info'            => 'Ambil setiap bidang paspor dari atribut yang sudah Anda kelola. Biarkan bidang tidak dipetakan untuk kembali ke atribut paspor khususnya.',
+        'menu'            => 'Pemetaan Bidang',
+        'field'           => 'Bidang Paspor',
+        'source'          => 'Atribut Sumber',
+        'select-source'   => 'Gunakan atribut paspor',
+        'save-btn'        => 'Simpan Pemetaan',
+        'type-mismatch'   => 'Sumber yang dipilih tidak kompatibel dengan tipe bidang paspor ini.',
+        'saved'           => 'Pemetaan bidang berhasil disimpan.',
     ],
 
 ];

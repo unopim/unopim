@@ -5,6 +5,11 @@ return [
         'label' => 'Pasaporte Digital del Producto',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Pasaporte digital de producto',
+            'info'  => 'Gestione la publicación de pasaportes y la configuración de publicación pública.',
+        ],
+
         'product_passport' => [
             'title'    => 'Pasaporte del Producto',
             'info'     => 'Ajustes de publicación del pasaporte digital del producto.',
@@ -169,15 +174,18 @@ return [
         'gtin' => 'El :attribute debe ser un GTIN válido (8, 12, 13 o 14 dígitos con un dígito verificador correcto).',
     ],
     'mapping' => [
-        'title'         => 'Asignación de campos del pasaporte',
-        'info'          => 'Obtenga cada campo del pasaporte a partir de un atributo que ya mantiene. Deje un campo sin asignar para recurrir a su atributo de pasaporte específico.',
-        'menu'          => 'Asignación de campos',
-        'field'         => 'Campo del pasaporte',
-        'source'        => 'Atributo de origen',
-        'select-source' => 'Usar el atributo del pasaporte',
-        'save-btn'      => 'Guardar asignación',
-        'type-mismatch' => 'La fuente seleccionada no es compatible con el tipo de este campo del pasaporte.',
-        'saved'         => 'La asignación de campos se guardó correctamente.',
+        'add-field'       => 'Agregar campo de pasaporte',
+        'add-field-title' => 'Agregar campo de pasaporte',
+        'field-created'   => 'Campo de pasaporte creado correctamente.',
+        'title'           => 'Asignación de campos del pasaporte',
+        'info'            => 'Obtenga cada campo del pasaporte a partir de un atributo que ya mantiene. Deje un campo sin asignar para recurrir a su atributo de pasaporte específico.',
+        'menu'            => 'Asignación de campos',
+        'field'           => 'Campo del pasaporte',
+        'source'          => 'Atributo de origen',
+        'select-source'   => 'Usar el atributo del pasaporte',
+        'save-btn'        => 'Guardar asignación',
+        'type-mismatch'   => 'La fuente seleccionada no es compatible con el tipo de este campo del pasaporte.',
+        'saved'           => 'La asignación de campos se guardó correctamente.',
     ],
 
 ];

@@ -18,6 +18,7 @@ use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Completeness\Models\CompletenessSetting;
 use Webkul\Completeness\Models\ProductCompletenessScore;
+use Webkul\Core\RequestMemo;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\BooleanPresenter;
@@ -236,9 +237,9 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      */
     public function getImageAttributes()
     {
-        $memoKey = "product_image_attributes.{$this->attribute_family_id}";
+        $memoKey = 'product_image_attributes.'.$this->attribute_family_id;
 
-        $memo = request()->attributes;
+        $memo = app(RequestMemo::class);
 
         if ($memo->has($memoKey)) {
             return $memo->get($memoKey);

@@ -5,6 +5,11 @@ return [
         'label' => 'Digital Product Passport',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Digital Product Passport',
+            'info'  => 'Manage passport publishing and public publication settings.',
+        ],
+
         'product_passport' => [
             'title'    => 'Product Passport',
             'info'     => 'Digital Product Passport publishing settings.',
@@ -169,15 +174,18 @@ return [
         'gtin' => 'The :attribute must be a valid GTIN (8, 12, 13, or 14 digits with a correct check digit).',
     ],
     'mapping' => [
-        'title'         => 'Passport Field Mapping',
-        'info'          => 'Source each passport field from an attribute you already maintain. Leave a field unmapped to fall back to its dedicated passport attribute.',
-        'menu'          => 'Field Mapping',
-        'field'         => 'Passport Field',
-        'source'        => 'Source Attribute',
-        'select-source' => 'Use the passport attribute',
-        'save-btn'      => 'Save Mapping',
-        'type-mismatch' => 'The selected source is not compatible with this passport field\'s type.',
-        'saved'         => 'Field mapping saved successfully.',
+        'add-field'       => 'Add passport field',
+        'add-field-title' => 'Add Passport Field',
+        'field-created'   => 'Passport field created successfully.',
+        'title'           => 'Passport Field Mapping',
+        'info'            => 'Source each passport field from an attribute you already maintain. Leave a field unmapped to fall back to its dedicated passport attribute.',
+        'menu'            => 'Field Mapping',
+        'field'           => 'Passport Field',
+        'source'          => 'Source Attribute',
+        'select-source'   => 'Use the passport attribute',
+        'save-btn'        => 'Save Mapping',
+        'type-mismatch'   => 'The selected source is not compatible with this passport field\'s type.',
+        'saved'           => 'Field mapping saved successfully.',
     ],
 
 ];

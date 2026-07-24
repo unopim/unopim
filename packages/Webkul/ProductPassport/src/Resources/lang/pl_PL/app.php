@@ -5,6 +5,11 @@ return [
         'label' => 'Cyfrowy Paszport Produktu',
     ],
     'configuration' => [
+        'dpp-section' => [
+            'title' => 'Cyfrowy paszport produktu',
+            'info'  => 'Zarządzaj publikowaniem paszportów i ustawieniami publikacji publicznej.',
+        ],
+
         'product_passport' => [
             'title'    => 'Paszport Produktu',
             'info'     => 'Ustawienia publikacji cyfrowego paszportu produktu.',
@@ -169,15 +174,18 @@ return [
         'gtin' => 'Pole :attribute musi być prawidłowym numerem GTIN (8, 12, 13 lub 14 cyfr z poprawną cyfrą kontrolną).',
     ],
     'mapping' => [
-        'title'         => 'Mapowanie pól paszportu',
-        'info'          => 'Wypełnij każde pole paszportu z atrybutu, który już utrzymujesz. Pozostaw pole niezmapowane, aby użyć jego dedykowanego atrybutu paszportu.',
-        'menu'          => 'Mapowanie pól',
-        'field'         => 'Pole paszportu',
-        'source'        => 'Atrybut źródłowy',
-        'select-source' => 'Użyj atrybutu paszportu',
-        'save-btn'      => 'Zapisz mapowanie',
-        'type-mismatch' => 'Wybrane źródło jest niezgodne z typem tego pola paszportu.',
-        'saved'         => 'Mapowanie pól zostało pomyślnie zapisane.',
+        'add-field'       => 'Dodaj pole paszportu',
+        'add-field-title' => 'Dodaj pole paszportu',
+        'field-created'   => 'Pole paszportu zostało utworzone.',
+        'title'           => 'Mapowanie pól paszportu',
+        'info'            => 'Wypełnij każde pole paszportu z atrybutu, który już utrzymujesz. Pozostaw pole niezmapowane, aby użyć jego dedykowanego atrybutu paszportu.',
+        'menu'            => 'Mapowanie pól',
+        'field'           => 'Pole paszportu',
+        'source'          => 'Atrybut źródłowy',
+        'select-source'   => 'Użyj atrybutu paszportu',
+        'save-btn'        => 'Zapisz mapowanie',
+        'type-mismatch'   => 'Wybrane źródło jest niezgodne z typem tego pola paszportu.',
+        'saved'           => 'Mapowanie pól zostało pomyślnie zapisane.',
     ],
 
 ];

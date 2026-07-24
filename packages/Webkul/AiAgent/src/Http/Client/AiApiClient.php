@@ -127,8 +127,13 @@ class AiApiClient
      */
     protected function execute(string $method, string $url, ?array $data = null): array
     {
+        // Pin the connection to the validated IP (CURLOPT_RESOLVE) and disable
+        // redirects, so a rebinding host cannot re-resolve to an internal address
+        // between validation and the actual request (SSRF TOCTOU).
+        $safeOptions = SafeWebhookUrl::httpOptions($url);
+
         throw_unless(
-            SafeWebhookUrl::validate($url)['valid'],
+            isset($safeOptions['curl'][CURLOPT_RESOLVE]),
             ApiException::class,
             trans('admin::app.configuration.platform.message.unsafe-api-url'),
             422
@@ -148,6 +153,8 @@ class AiApiClient
             CURLOPT_HTTPHEADER     => $headers,
             CURLOPT_TIMEOUT        => 120,
             CURLOPT_CONNECTTIMEOUT => 30,
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_RESOLVE        => $safeOptions['curl'][CURLOPT_RESOLVE],
         ];
 
         if ($method === 'POST' && $data !== null) {
