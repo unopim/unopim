@@ -44,6 +44,7 @@ class AdminApiServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->activateMiddlewareAliases();
         $this->registerRateLimiter();
+        $this->throttleTokenRoutes();
         $this->activatePassportApiClient();
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'admin_api');
@@ -91,6 +92,27 @@ class AdminApiServiceProvider extends ServiceProvider
         RateLimiter::for('rest-api', function (Request $request) {
             return Limit::perMinute((int) config('api.rate_limit', 120))
                 ->by($request->user()?->getAuthIdentifier() ?: $request->ip());
+        });
+
+        RateLimiter::for('oauth-token', function (Request $request) {
+            return Limit::perMinute((int) config('api.token_rate_limit', 10))
+                ->by(((string) $request->input('username')).'|'.$request->ip());
+        });
+    }
+
+    /**
+     * Passport auto-registers its OAuth routes with no rate limit. Append a
+     * throttle to the token endpoints to blunt password-grant brute force
+     * without forking Passport's route definitions.
+     */
+    protected function throttleTokenRoutes(): void
+    {
+        $this->app->booted(function (): void {
+            $routes = $this->app['router']->getRoutes();
+
+            foreach (['passport.token', 'passport.token.refresh'] as $name) {
+                $routes->getByName($name)?->middleware('throttle:oauth-token');
+            }
         });
     }
 
