@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Kopiera operatörslänk',
                     'copy-authority-link'  => 'Kopiera myndighetslänk',
                     'link-copied'          => 'Länk kopierad',
+                    'download-qr'          => 'Ladda ner QR-kod',
                     'title'                => 'Digitalt Produktpass',
                     'publishing-disabled'  => 'Publicering av pass är inaktiverad för denna kanal.',
                     'locale'               => 'Språk',

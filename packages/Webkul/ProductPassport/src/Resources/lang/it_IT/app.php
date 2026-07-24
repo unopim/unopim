@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Copia link operatore',
                     'copy-authority-link'  => 'Copia link autorità',
                     'link-copied'          => 'Link copiato',
+                    'download-qr'          => 'Scarica codice QR',
                     'title'                => 'Passaporto Digitale del Prodotto',
                     'publishing-disabled'  => 'La pubblicazione dei passaporti è disabilitata per questo canale.',
                     'locale'               => 'Lingua',

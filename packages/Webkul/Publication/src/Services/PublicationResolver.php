@@ -2,6 +2,7 @@
 
 namespace Webkul\Publication\Services;
 
+use Illuminate\Support\Facades\Log;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Models\PublicationVersion;
@@ -36,6 +37,42 @@ class PublicationResolver
                 'versions' => fn ($query) => $query->where('is_current', true)->with('locale'),
             ])
             ->first();
+    }
+
+    /**
+     * Resolves a GTIN to a single canonical publication. A GTIN identifies the
+     * product, not the channel, so it is non-unique across publications: the
+     * designated passport channel (`general.publication.settings.gs1_passport_channel`)
+     * makes the mapping deterministic. When unset, falls back to the lowest
+     * channel_id and logs the ambiguity so a multi-channel GTIN never silently
+     * resolves to an arbitrary passport.
+     */
+    public function findByGtin(string $gtin, string $type): ?Publication
+    {
+        $passportChannel = core()->getConfigData('general.publication.settings.gs1_passport_channel');
+
+        $query = PublicationProxy::modelClass()::query()
+            ->where('gtin', $gtin)
+            ->where('type', $type)
+            ->with([
+                'channel.locales',
+                'versions' => fn ($query) => $query->where('is_current', true)->with('locale'),
+            ]);
+
+        if (! empty($passportChannel)) {
+            return $query->whereHas('channel', fn ($channel) => $channel->where('code', $passportChannel))->first();
+        }
+
+        $publication = $query->orderBy('channel_id')->first();
+
+        if ($publication !== null) {
+            Log::warning('GS1 resolve without designated passport channel', [
+                'gtin'       => $gtin,
+                'channel_id' => $publication->channel_id,
+            ]);
+        }
+
+        return $publication;
     }
 
     /**

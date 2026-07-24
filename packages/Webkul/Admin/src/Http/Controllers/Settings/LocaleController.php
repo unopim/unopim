@@ -6,10 +6,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\LocalesDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\LocaleForm;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Core\Repositories\LocaleRepository;
-use Webkul\Core\Rules\Code;
 
 class LocaleController extends Controller
 {
@@ -37,12 +37,8 @@ class LocaleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): JsonResponse
+    public function store(LocaleForm $request): JsonResponse
     {
-        $this->validate(request(), [
-            'code'        => ['required', 'unique:locales,code', new Code],
-        ]);
-
         $this->localeRepository->create(request()->only([
             'code',
             'status',
@@ -75,12 +71,8 @@ class LocaleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(): JsonResponse
+    public function update(LocaleForm $request): JsonResponse
     {
-        $this->validate(request(), [
-            'status' => 'boolean',
-        ]);
-
         if (! request()->status && $this->localeRepository->checkLocaleBeingUsed(request()->id)) {
             return new JsonResponse([
                 'errors' => [

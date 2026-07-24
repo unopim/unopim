@@ -158,6 +158,7 @@ return [
                     'copy-operator-link'   => 'Copy operator link',
                     'copy-authority-link'  => 'Copy authority link',
                     'link-copied'          => 'Link copied',
+                    'download-qr'          => 'Download QR code',
                 ],
             ],
         ],

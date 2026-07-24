@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Kopyahin ang link ng operator',
                     'copy-authority-link'  => 'Kopyahin ang link ng awtoridad',
                     'link-copied'          => 'Nakopya ang link',
+                    'download-qr'          => 'I-download ang QR code',
                     'title'                => 'Digital na Pasaporte ng Produkto',
                     'publishing-disabled'  => 'Naka-disable ang paglalathala ng pasaporte para sa channel na ito.',
                     'locale'               => 'Wika',

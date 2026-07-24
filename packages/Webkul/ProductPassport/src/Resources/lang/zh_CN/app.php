@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => '复制运营者链接',
                     'copy-authority-link'  => '复制主管机构链接',
                     'link-copied'          => '链接已复制',
+                    'download-qr'          => '下载二维码',
                     'title'                => '数字产品护照',
                     'publishing-disabled'  => '该渠道已禁用护照发布。',
                     'locale'               => '语言',

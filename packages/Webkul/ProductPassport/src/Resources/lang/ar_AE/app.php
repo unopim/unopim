@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'نسخ رابط المُشغِّل',
                     'copy-authority-link'  => 'نسخ رابط السلطة',
                     'link-copied'          => 'تم نسخ الرابط',
+                    'download-qr'          => 'تنزيل رمز QR',
                     'title'                => 'جواز المنتج الرقمي',
                     'publishing-disabled'  => 'نشر الجواز معطل لهذه القناة.',
                     'locale'               => 'اللغة',

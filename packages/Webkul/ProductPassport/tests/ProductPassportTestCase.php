@@ -300,6 +300,56 @@ class ProductPassportTestCase extends TestCase
     }
 
     /**
+     * Publishes the same GTIN-bearing product across `$channelCount` channels
+     * (each with its own locale), the fixture the GS1 Digital Link tests drive.
+     * `dpp_gtin` is a common-bucket attribute, so one value flows to every
+     * channel's payload — the multi-channel case the designated-channel setting
+     * disambiguates. Returns the product alongside the created channels and the
+     * per-channel published versions in creation order (channel_id ascending).
+     *
+     * @return array{0: Product, 1: list<Channel>, 2: list<PublicationVersion>}
+     */
+    protected function publishGtinPassport(string $gtin, int $channelCount = 1): array
+    {
+        resolve(DppAttributeSeeder::class)->run();
+
+        $dppGroup = AttributeGroup::where('code', 'dpp')->firstOrFail();
+
+        $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
+        $family->familyGroups()->attach($dppGroup->id);
+        $family->attributeFamilyGroupMappings()->where('attribute_group_id', $dppGroup->id)->first()
+            ?->customAttributes()->attach(Attribute::where('code', 'dpp_gtin')->first());
+
+        $product = ProductProxy::factory()->create([
+            'attribute_family_id' => $family->id,
+            'values'              => ['common' => ['dpp_gtin' => $gtin]],
+        ]);
+
+        $channels = [];
+        $versions = [];
+
+        for ($i = 0; $i < $channelCount; $i++) {
+            $channel = ChannelProxy::factory()->create();
+            $locale = $channel->locales()->first() ?: tap(Locale::factory()->create(), fn ($l) => $channel->locales()->attach($l));
+
+            ProductCompletenessScore::query()->create([
+                'product_id'    => $product->id,
+                'channel_id'    => $channel->id,
+                'locale_id'     => $locale->id,
+                'score'         => 100,
+                'missing_count' => 0,
+            ]);
+
+            $this->enablePublicTier($channel->code);
+
+            $channels[] = $channel;
+            $versions[] = resolve(Publisher::class)->publish($product, $channel, $locale, 'dpp');
+        }
+
+        return [$product, $channels, $versions];
+    }
+
+    /**
      * An incomplete and a complete locale on the same channel, mirroring the
      * shape `Webkul\Publication`'s own (package-local) `seedPassportFixture()`
      * uses — `ProductPassportTestCase` cannot call a protected method

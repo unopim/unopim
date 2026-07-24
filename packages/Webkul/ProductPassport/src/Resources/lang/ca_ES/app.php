@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Copiar l\'enllaç de l\'operador',
                     'copy-authority-link'  => 'Copiar l\'enllaç de l\'autoritat',
                     'link-copied'          => 'Enllaç copiat',
+                    'download-qr'          => 'Baixa el codi QR',
                     'title'                => 'Passaport Digital del Producte',
                     'publishing-disabled'  => 'La publicació de passaports està desactivada per a aquest canal.',
                     'locale'               => 'Idioma',

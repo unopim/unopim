@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Kopioi toimijalinkki',
                     'copy-authority-link'  => 'Kopioi viranomaislinkki',
                     'link-copied'          => 'Linkki kopioitu',
+                    'download-qr'          => 'Lataa QR-koodi',
                     'title'                => 'Digitaalinen tuotepassi',
                     'publishing-disabled'  => 'Passin julkaisu on poistettu käytöstä tälle kanavalle.',
                     'locale'               => 'Kieli',

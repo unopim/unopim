@@ -56,6 +56,43 @@ class PublicationController extends Controller
     }
 
     /**
+     * GS1 Digital Link entry point: maps a scanned `/01/{gtin}` to the product's
+     * designated passport and 302s to its canonical per-locale URL, where the
+     * existing Accept-Language resolution picks the language. Honours the same
+     * publicly-resolvable-status and channel-enabled gates as every other public
+     * route, keyed by the resolved row rather than request input.
+     */
+    public function resolveByGtin(Request $request, string $gtin): Response
+    {
+        $type = $this->routeType($request);
+
+        if (! $this->registry->has($type)) {
+            return $this->notFound();
+        }
+
+        $publication = $this->resolver->findByGtin($gtin, $type);
+
+        if (
+            $publication === null
+            || ! $publication->status->isPubliclyResolvable()
+            || ! $this->resolver->isChannelEnabled($publication)
+        ) {
+            return $this->notFound();
+        }
+
+        $version = $this->resolver->resolveVersion($publication, null, $request->header('Accept-Language'));
+
+        if ($version === null) {
+            return $this->notFound();
+        }
+
+        return redirect()
+            ->route('publication.public.'.$type.'.show.locale', ['uuid' => $publication->uuid, 'locale' => $version->locale->code])
+            ->header('Cache-Control', 'private, no-store')
+            ->header('Vary', 'Accept-Language');
+    }
+
+    /**
      * Renders the publication, honouring If-None-Match against a checksum-derived ETag.
      */
     public function show(Request $request, string $uuid, string $locale): Response

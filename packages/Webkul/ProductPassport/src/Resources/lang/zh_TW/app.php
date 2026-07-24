@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => '複製營運者連結',
                     'copy-authority-link'  => '複製主管機關連結',
                     'link-copied'          => '連結已複製',
+                    'download-qr'          => '下載 QR 碼',
                     'title'                => '數位產品護照',
                     'publishing-disabled'  => '此通路已停用護照發布。',
                     'locale'               => '語言',

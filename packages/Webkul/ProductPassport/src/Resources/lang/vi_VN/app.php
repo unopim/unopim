@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Sao chép liên kết nhà điều hành',
                     'copy-authority-link'  => 'Sao chép liên kết cơ quan chức năng',
                     'link-copied'          => 'Đã sao chép liên kết',
+                    'download-qr'          => 'Tải xuống mã QR',
                     'title'                => 'Hộ chiếu Sản phẩm Kỹ thuật số',
                     'publishing-disabled'  => 'Việc xuất bản hộ chiếu bị vô hiệu hóa cho kênh này.',
                     'locale'               => 'Ngôn ngữ',

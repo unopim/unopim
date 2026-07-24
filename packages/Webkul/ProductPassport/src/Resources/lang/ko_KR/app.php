@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => '운영자 링크 복사',
                     'copy-authority-link'  => '당국 링크 복사',
                     'link-copied'          => '링크가 복사되었습니다',
+                    'download-qr'          => 'QR 코드 다운로드',
                     'title'                => '디지털 제품 여권',
                     'publishing-disabled'  => '이 채널에서는 여권 게시가 비활성화되어 있습니다.',
                     'locale'               => '언어',

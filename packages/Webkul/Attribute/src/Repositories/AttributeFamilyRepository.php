@@ -184,6 +184,19 @@ class AttributeFamilyRepository extends Repository
 
         $groupPosition = 1;
 
+        // Resolve every referenced attribute once, keyed by id, instead of a
+        // find() per attribute per group (G·A point lookups on a large family).
+        $attributeIds = collect($data['attribute_groups'] ?? [])
+            ->flatMap(fn ($group): array => collect($group['custom_attributes'] ?? [])->pluck('id')->all())
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $attributesById = $attributeIds === []
+            ? collect()
+            : $this->attributeRepository->findWhereIn('id', $attributeIds)->keyBy('id');
+
         foreach ($data['attribute_groups'] ?? [] as $groupId => $attributeGroupInputs) {
             $new = [];
             $old = [];
@@ -214,7 +227,7 @@ class AttributeFamilyRepository extends Repository
                 }
 
                 foreach ($attributeGroupInputs['custom_attributes'] as $attributeIndex => $attributeInputs) {
-                    $attribute = $this->attributeRepository->find($attributeInputs['id']);
+                    $attribute = $attributesById->get($attributeInputs['id']);
 
                     $new[] = $attribute->toArray()['code'];
 
@@ -242,7 +255,7 @@ class AttributeFamilyRepository extends Repository
                 $previousAttributeIds = $familyGroupMapping->customAttributes()->get()->pluck('id');
 
                 foreach ($attributeGroupInputs['custom_attributes'] ?? [] as $attributeIndex => $attributeInputs) {
-                    $attribute = $this->attributeRepository->find($attributeInputs['id']);
+                    $attribute = $attributesById->get($attributeInputs['id']);
                     $code = $attribute?->toArray()['code'];
                     $attributePosition = $attributeInputs['position'] ?? ($attributeIndex + 1);
 

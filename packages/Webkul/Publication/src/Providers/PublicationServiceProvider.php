@@ -23,6 +23,7 @@ use Webkul\Publication\Listeners\GuardChannelDeletionAgainstPublications;
 use Webkul\Publication\Listeners\GuardProductDeletionAgainstPublications;
 use Webkul\Publication\Listeners\PrunePublicationVersionDocumentsOnRedaction;
 use Webkul\Publication\Listeners\SyncPublicationCounters;
+use Webkul\Publication\Listeners\SyncPublicationGtin;
 use Webkul\Publication\Listeners\SyncPublicationVersionDocuments;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 
@@ -56,6 +57,7 @@ class PublicationServiceProvider extends ServiceProvider
 
         Event::listen(PublicationPublished::class, SyncPublicationVersionDocuments::class);
         Event::listen(PublicationPublished::class, SyncPublicationCounters::class);
+        Event::listen(PublicationPublished::class, SyncPublicationGtin::class);
         Event::listen(PublicationRedacted::class, PrunePublicationVersionDocumentsOnRedaction::class);
         Event::listen('catalog.product.delete.before', GuardProductDeletionAgainstPublications::class);
         Event::listen('core.channel.delete.before', GuardChannelDeletionAgainstPublications::class);
@@ -123,6 +125,19 @@ class PublicationServiceProvider extends ServiceProvider
                         ->name('publication.public.'.$type->code.'.show.locale');
                 });
         }
+
+        // GS1 Digital Link's `/01/{gtin}` grammar is fixed by the standard, not
+        // per-type-prefixed, so it lives in its own global group outside the loop
+        // above while sharing the identical public middleware stack. It resolves
+        // to the `dpp` type; the numeric `{gtin}` regex keeps it from shadowing any
+        // per-type prefix route (all of which begin with an alphabetic segment).
+        Route::middleware(['publication.errors', 'publication.enabled', 'publication.headers', 'publication.ratelimit'])
+            ->group(function (): void {
+                Route::get('/01/{gtin}', [PublicationController::class, 'resolveByGtin'])
+                    ->where('gtin', '[0-9]{8,14}')
+                    ->defaults('type', 'dpp')
+                    ->name('publication.public.gs1');
+            });
 
         // RouteCollection snapshots the route name before ->name() sets it, and the
         // name-lookup cache is only rebuilt once during normal boot. A late

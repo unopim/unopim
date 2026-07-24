@@ -149,6 +149,7 @@ return [
                     'copy-operator-link'   => 'Copier le lien opérateur',
                     'copy-authority-link'  => 'Copier le lien autorité',
                     'link-copied'          => 'Lien copié',
+                    'download-qr'          => 'Télécharger le code QR',
                 ],
             ],
         ],

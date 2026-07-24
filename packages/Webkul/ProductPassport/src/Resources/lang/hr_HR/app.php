@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Kopiraj poveznicu operatera',
                     'copy-authority-link'  => 'Kopiraj poveznicu nadležnog tijela',
                     'link-copied'          => 'Poveznica kopirana',
+                    'download-qr'          => 'Preuzmi QR kod',
                     'title'                => 'Digitalna putovnica proizvoda',
                     'publishing-disabled'  => 'Objava putovnica je onemogućena za ovaj kanal.',
                     'locale'               => 'Jezik',

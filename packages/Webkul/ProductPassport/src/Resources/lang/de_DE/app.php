@@ -154,6 +154,7 @@ return [
                     'copy-operator-link'   => 'Betreiberlink kopieren',
                     'copy-authority-link'  => 'Behördenlink kopieren',
                     'link-copied'          => 'Link kopiert',
+                    'download-qr'          => 'QR-Code herunterladen',
                 ],
             ],
         ],

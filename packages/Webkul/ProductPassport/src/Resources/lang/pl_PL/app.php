@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Kopiuj link operatora',
                     'copy-authority-link'  => 'Kopiuj link organu',
                     'link-copied'          => 'Link skopiowany',
+                    'download-qr'          => 'Pobierz kod QR',
                     'title'                => 'Cyfrowy Paszport Produktu',
                     'publishing-disabled'  => 'Publikowanie paszportów jest wyłączone dla tego kanału.',
                     'locale'               => 'Język',

@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Operatorlink kopiëren',
                     'copy-authority-link'  => 'Autoriteitslink kopiëren',
                     'link-copied'          => 'Link gekopieerd',
+                    'download-qr'          => 'QR-code downloaden',
                     'title'                => 'Digitaal Productpaspoort',
                     'publishing-disabled'  => 'Het publiceren van paspoorten is uitgeschakeld voor dit kanaal.',
                     'locale'               => 'Taal',

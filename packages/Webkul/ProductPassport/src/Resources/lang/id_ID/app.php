@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Salin tautan operator',
                     'copy-authority-link'  => 'Salin tautan otoritas',
                     'link-copied'          => 'Tautan disalin',
+                    'download-qr'          => 'Unduh kode QR',
                     'title'                => 'Paspor Produk Digital',
                     'publishing-disabled'  => 'Penerbitan paspor dinonaktifkan untuk saluran ini.',
                     'locale'               => 'Bahasa',

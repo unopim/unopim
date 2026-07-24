@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => '事業者リンクをコピー',
                     'copy-authority-link'  => '当局リンクをコピー',
                     'link-copied'          => 'リンクをコピーしました',
+                    'download-qr'          => 'QRコードをダウンロード',
                     'title'                => 'デジタルプロダクトパスポート',
                     'publishing-disabled'  => 'このチャネルではパスポートの公開が無効になっています。',
                     'locale'               => '言語',

@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Operatör bağlantısını kopyala',
                     'copy-authority-link'  => 'Otorite bağlantısını kopyala',
                     'link-copied'          => 'Bağlantı kopyalandı',
+                    'download-qr'          => 'QR kodunu indir',
                     'title'                => 'Dijital Ürün Pasaportu',
                     'publishing-disabled'  => 'Bu kanal için pasaport yayınlama devre dışı.',
                     'locale'               => 'Dil',

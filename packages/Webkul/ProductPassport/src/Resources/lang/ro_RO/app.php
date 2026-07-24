@@ -141,6 +141,7 @@ return [
                     'copy-operator-link'   => 'Copiați linkul operatorului',
                     'copy-authority-link'  => 'Copiați linkul autorității',
                     'link-copied'          => 'Link copiat',
+                    'download-qr'          => 'Descarcă codul QR',
                     'title'                => 'Pașaport Digital al Produsului',
                     'publishing-disabled'  => 'Publicarea pașapoartelor este dezactivată pentru acest canal.',
                     'locale'               => 'Limbă',

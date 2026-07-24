@@ -59,6 +59,13 @@ return [
                 'title' => 'publication::app.configuration.publication.settings.indexable',
                 'type'  => 'boolean',
                 'info'  => 'publication::app.configuration.publication.settings.indexable-hint',
+            ], [
+                'name'        => 'gs1_passport_channel',
+                'title'       => 'publication::app.configuration.publication.settings.gs1-passport-channel',
+                'type'        => 'select',
+                'repository'  => '\Webkul\Publication\Support\PublicationChannelOptions@toSettingsOptions',
+                'placeholder' => 'publication::app.configuration.publication.settings.gs1-passport-channel-placeholder',
+                'info'        => 'publication::app.configuration.publication.settings.gs1-passport-channel-hint',
             ],
         ],
     ],
