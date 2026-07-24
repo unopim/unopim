@@ -2697,6 +2697,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => '產品護照',
+        'publish'                  => '發布',
+        'withdraw'                 => '撤回',
         'addresses'                => '地址',
         'attribute-families'       => '屬性家庭',
         'attribute-groups'         => '屬性群組',

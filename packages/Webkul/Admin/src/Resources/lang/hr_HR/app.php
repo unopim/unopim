@@ -2694,6 +2694,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Putovnice proizvoda',
+        'publish'                  => 'Objavi',
+        'withdraw'                 => 'Povuci',
         'addresses'                => 'Adrese',
         'attribute-families'       => 'Attributne obitelji',
         'attribute-groups'         => 'Attributne grupe',

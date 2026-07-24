@@ -2694,6 +2694,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Tuotepassit',
+        'publish'                  => 'Julkaise',
+        'withdraw'                 => 'Peru',
         'addresses'                => 'Osoitteet',
         'attribute-families'       => 'Attribuuttiperheet',
         'attribute-groups'         => 'Attribuuttiryhmät',

@@ -2694,6 +2694,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Produktpässe',
+        'publish'                  => 'Veröffentlichen',
+        'withdraw'                 => 'Zurückziehen',
         'addresses'                => 'Adressen',
         'attribute-families'       => 'Attributfamilien',
         'attribute-groups'         => 'Attributgruppen',

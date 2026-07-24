@@ -2694,6 +2694,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'उत्पाद पासपोर्ट',
+        'publish'                  => 'प्रकाशित करें',
+        'withdraw'                 => 'वापस लें',
         'addresses'                => 'पतों',
         'attribute-families'       => 'विशेषण परिवार',
         'attribute-groups'         => 'विशेषता समूह',

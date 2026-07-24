@@ -93,7 +93,8 @@ return [
     ],
 
     'publications' => [
-        'index' => [
+        'not-found'      => 'No passport found for id :id.',
+        'index'          => [
             'title'           => 'Digital Product Passports',
             'disabled-notice' => 'Passport publishing is currently disabled. Existing passports are shown below for management (view and withdraw).',
         ],
@@ -154,6 +155,9 @@ return [
                     'auto-publish-off'     => 'Manual publishing — use the buttons to publish this product’s passport for each locale.',
                     'publishing'           => 'Publishing…',
                     'queued'               => 'Queued',
+                    'copy-operator-link'   => 'Copy operator link',
+                    'copy-authority-link'  => 'Copy authority link',
+                    'link-copied'          => 'Link copied',
                 ],
             ],
         ],

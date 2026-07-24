@@ -111,7 +111,7 @@ class PassportController extends ApiController
 
         $publication = Publication::find($id);
         if (! $publication) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.passports.not-found', ['id' => $id]));
+            return $this->modelNotFoundResponse(trans('passport::app.publications.not-found', ['id' => $id]));
         }
 
         $publisher->withdraw($publication);

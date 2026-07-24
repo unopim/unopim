@@ -2697,6 +2697,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Hộ chiếu sản phẩm',
+        'publish'                  => 'Xuất bản',
+        'withdraw'                 => 'Thu hồi',
         'addresses'                => 'Địa chỉ',
         'attribute-families'       => 'Nhóm thuộc tính',
         'attribute-groups'         => 'Nhóm thuộc tính',

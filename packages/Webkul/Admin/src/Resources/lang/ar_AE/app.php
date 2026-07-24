@@ -2693,6 +2693,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'جوازات المنتج',
+        'publish'                  => 'نشر',
+        'withdraw'                 => 'سحب',
         'addresses'                => 'عناوين',
         'attribute-families'       => 'عائلات السمات',
         'attribute-groups'         => 'مجموعات السمات',

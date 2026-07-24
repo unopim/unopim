@@ -2697,6 +2697,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Mga Pasaporte ng Produkto',
+        'publish'                  => 'I-publish',
+        'withdraw'                 => 'Bawiin',
         'addresses'                => 'Mga Address',
         'attribute-families'       => 'Mga Pamilya ng Katangian',
         'attribute-groups'         => 'Mga Grupo ng Katangian',

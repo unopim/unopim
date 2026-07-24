@@ -2697,6 +2697,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Бүтээгдэхүүний паспорт',
+        'publish'                  => 'Нийтлэх',
+        'withdraw'                 => 'Татах',
         'addresses'                => 'Хаягдарлагдах хаяг',
         'attribute-families'       => 'Аттригийн гэр бүлүүд',
         'attribute-groups'         => 'Аттрибутын бүлгүүд',

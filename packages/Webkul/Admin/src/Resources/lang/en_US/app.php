@@ -2887,6 +2887,9 @@ return [
     ],
 
     'acl' => [
+        'passports'                => 'Product Passports',
+        'publish'                  => 'Publish',
+        'withdraw'                 => 'Withdraw',
         'addresses'                => 'Addresses',
         'attribute-families'       => 'Attribute Families',
         'attribute-groups'         => 'Attribute Groups',

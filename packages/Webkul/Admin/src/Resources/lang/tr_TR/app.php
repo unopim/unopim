@@ -2697,6 +2697,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Ürün Pasaportları',
+        'publish'                  => 'Yayınla',
+        'withdraw'                 => 'Geri Çek',
         'addresses'                => 'Adresler',
         'attribute-families'       => 'Özellik Aileleri',
         'attribute-groups'         => 'Özellik Grupları',

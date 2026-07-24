@@ -2694,6 +2694,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Paspor Produk',
+        'publish'                  => 'Terbitkan',
+        'withdraw'                 => 'Tarik',
         'addresses'                => 'Alamat',
         'attribute-families'       => 'Keluarga atribut',
         'attribute-groups'         => 'Grup atribut',

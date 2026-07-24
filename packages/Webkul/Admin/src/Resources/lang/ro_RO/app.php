@@ -2697,6 +2697,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Pașapoarte produs',
+        'publish'                  => 'Publică',
+        'withdraw'                 => 'Retrage',
         'addresses'                => 'Adrese',
         'attribute-families'       => 'Familii de Atribute',
         'attribute-groups'         => 'Grupuri de Atribute',

@@ -2697,6 +2697,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => '제품 여권',
+        'publish'                  => '게시',
+        'withdraw'                 => '회수',
         'addresses'                => '주소',
         'attribute-families'       => '속성 가족',
         'attribute-groups'         => '속성 그룹',

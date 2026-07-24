@@ -2697,6 +2697,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Паспорта товаров',
+        'publish'                  => 'Опубликовать',
+        'withdraw'                 => 'Отозвать',
         'addresses'                => 'Адреса',
         'attribute-families'       => 'Атрибут семьи',
         'attribute-groups'         => 'Группы атрибутов',
