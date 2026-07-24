@@ -102,10 +102,12 @@ return [
             'live-locales'    => '活跃语言',
             'last-published'  => '最近发布时间',
             'withdraw'        => '撤回',
+            'mass-publish'    => '发布所选',
         ],
-        'publish-queued' => '护照发布已排队。',
-        'withdrawn'      => '护照已成功撤回。',
-        'mass-publish'   => [
+        'publish-queued'      => '护照发布已排队。',
+        'bulk-publish-queued' => '所选护照的发布已加入队列。',
+        'withdrawn'           => '护照已成功撤回。',
+        'mass-publish'        => [
             'action' => '发布数字产品护照',
             'queued' => '已将 :count 个产品的护照发布加入队列。',
         ],

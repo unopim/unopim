@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Ngôn ngữ đang hoạt động',
             'last-published'  => 'Xuất bản lần cuối',
             'withdraw'        => 'Thu hồi',
+            'mass-publish'    => 'Xuất bản mục đã chọn',
         ],
-        'publish-queued' => 'Việc xuất bản hộ chiếu đã được đưa vào hàng đợi.',
-        'withdrawn'      => 'Đã thu hồi hộ chiếu thành công.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Việc xuất bản hộ chiếu đã được đưa vào hàng đợi.',
+        'bulk-publish-queued' => 'Việc xuất bản các hộ chiếu đã chọn đã được đưa vào hàng đợi.',
+        'withdrawn'           => 'Đã thu hồi hộ chiếu thành công.',
+        'mass-publish'        => [
             'action' => 'Xuất bản Hộ chiếu Sản phẩm Kỹ thuật số',
             'queued' => 'Đã đưa việc xuất bản hộ chiếu vào hàng đợi cho :count sản phẩm.',
         ],

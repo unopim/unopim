@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Idiomas activos',
             'last-published'  => 'Última publicación',
             'withdraw'        => 'Retirar',
+            'mass-publish'    => 'Publicar seleccionados',
         ],
-        'publish-queued' => 'Se ha puesto en cola la publicación del pasaporte.',
-        'withdrawn'      => 'Pasaporte retirado correctamente.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Se ha puesto en cola la publicación del pasaporte.',
+        'bulk-publish-queued' => 'Se ha puesto en cola la publicación de los pasaportes seleccionados.',
+        'withdrawn'           => 'Pasaporte retirado correctamente.',
+        'mass-publish'        => [
             'action' => 'Publicar el pasaporte digital de producto',
             'queued' => 'Publicación del pasaporte en cola para :count producto(s).',
         ],

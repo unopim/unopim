@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Lingue attive',
             'last-published'  => 'Ultima pubblicazione',
             'withdraw'        => 'Ritira',
+            'mass-publish'    => 'Pubblica selezionati',
         ],
-        'publish-queued' => 'La pubblicazione del passaporto è stata messa in coda.',
-        'withdrawn'      => 'Passaporto ritirato con successo.',
-        'mass-publish'   => [
+        'publish-queued'      => 'La pubblicazione del passaporto è stata messa in coda.',
+        'bulk-publish-queued' => 'La pubblicazione dei passaporti selezionati è stata messa in coda.',
+        'withdrawn'           => 'Passaporto ritirato con successo.',
+        'mass-publish'        => [
             'action' => 'Pubblica il passaporto digitale di prodotto',
             'queued' => 'Pubblicazione del passaporto in coda per :count prodotto/i.',
         ],

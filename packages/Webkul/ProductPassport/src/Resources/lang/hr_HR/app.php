@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Aktivni jezici',
             'last-published'  => 'Zadnja objava',
             'withdraw'        => 'Povuci',
+            'mass-publish'    => 'Objavi odabrano',
         ],
-        'publish-queued' => 'Objava putovnice je stavljena u red čekanja.',
-        'withdrawn'      => 'Putovnica uspješno povučena.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Objava putovnice je stavljena u red čekanja.',
+        'bulk-publish-queued' => 'Objava odabranih putovnica stavljena je u red čekanja.',
+        'withdrawn'           => 'Putovnica uspješno povučena.',
+        'mass-publish'        => [
             'action' => 'Objavi digitalnu putovnicu proizvoda',
             'queued' => 'Objava putovnice stavljena u red čekanja za :count proizvod(a).',
         ],

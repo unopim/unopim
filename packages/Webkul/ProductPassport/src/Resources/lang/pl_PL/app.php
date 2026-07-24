@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Aktywne języki',
             'last-published'  => 'Ostatnio opublikowano',
             'withdraw'        => 'Wycofaj',
+            'mass-publish'    => 'Opublikuj wybrane',
         ],
-        'publish-queued' => 'Publikacja paszportu została zakolejkowana.',
-        'withdrawn'      => 'Paszport pomyślnie wycofany.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Publikacja paszportu została zakolejkowana.',
+        'bulk-publish-queued' => 'Publikacja wybranych paszportów została dodana do kolejki.',
+        'withdrawn'           => 'Paszport pomyślnie wycofany.',
+        'mass-publish'        => [
             'action' => 'Opublikuj cyfrowy paszport produktu',
             'queued' => 'Publikacja paszportu zakolejkowana dla :count produktu(-ów).',
         ],

@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Aktiiviset kielet',
             'last-published'  => 'Viimeksi julkaistu',
             'withdraw'        => 'Peruuta',
+            'mass-publish'    => 'Julkaise valitut',
         ],
-        'publish-queued' => 'Passin julkaisu on jonossa.',
-        'withdrawn'      => 'Passi peruutettu onnistuneesti.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Passin julkaisu on jonossa.',
+        'bulk-publish-queued' => 'Valittujen passien julkaisu on lisätty jonoon.',
+        'withdrawn'           => 'Passi peruutettu onnistuneesti.',
+        'mass-publish'        => [
             'action' => 'Julkaise digitaalinen tuotepassi',
             'queued' => 'Passin julkaisu asetettu jonoon :count tuotteelle.',
         ],

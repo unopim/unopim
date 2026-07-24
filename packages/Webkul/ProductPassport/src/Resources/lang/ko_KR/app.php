@@ -102,10 +102,12 @@ return [
             'live-locales'    => '활성 언어',
             'last-published'  => '마지막 게시일',
             'withdraw'        => '철회',
+            'mass-publish'    => '선택 항목 게시',
         ],
-        'publish-queued' => '여권 게시가 대기열에 추가되었습니다.',
-        'withdrawn'      => '여권이 철회되었습니다.',
-        'mass-publish'   => [
+        'publish-queued'      => '여권 게시가 대기열에 추가되었습니다.',
+        'bulk-publish-queued' => '선택한 여권 게시가 대기열에 추가되었습니다.',
+        'withdrawn'           => '여권이 철회되었습니다.',
+        'mass-publish'        => [
             'action' => '디지털 제품 여권 게시',
             'queued' => '제품 :count개의 여권 게시가 대기열에 추가되었습니다.',
         ],

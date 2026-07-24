@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Actieve talen',
             'last-published'  => 'Laatst gepubliceerd',
             'withdraw'        => 'Intrekken',
+            'mass-publish'    => 'Selectie publiceren',
         ],
-        'publish-queued' => 'Publicatie van het paspoort is in de wachtrij geplaatst.',
-        'withdrawn'      => 'Paspoort succesvol ingetrokken.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Publicatie van het paspoort is in de wachtrij geplaatst.',
+        'bulk-publish-queued' => 'Het publiceren van de geselecteerde paspoorten is in de wachtrij geplaatst.',
+        'withdrawn'           => 'Paspoort succesvol ingetrokken.',
+        'mass-publish'        => [
             'action' => 'Digitaal productpaspoort publiceren',
             'queued' => 'Paspoortpublicatie in de wachtrij geplaatst voor :count product(en).',
         ],

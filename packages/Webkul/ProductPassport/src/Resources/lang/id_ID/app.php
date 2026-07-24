@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Bahasa Aktif',
             'last-published'  => 'Terakhir Diterbitkan',
             'withdraw'        => 'Tarik Kembali',
+            'mass-publish'    => 'Terbitkan yang dipilih',
         ],
-        'publish-queued' => 'Penerbitan paspor telah diantrekan.',
-        'withdrawn'      => 'Paspor berhasil ditarik kembali.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Penerbitan paspor telah diantrekan.',
+        'bulk-publish-queued' => 'Penerbitan paspor yang dipilih telah dimasukkan ke antrean.',
+        'withdrawn'           => 'Paspor berhasil ditarik kembali.',
+        'mass-publish'        => [
             'action' => 'Terbitkan Paspor Produk Digital',
             'queued' => 'Penerbitan paspor diantrekan untuk :count produk.',
         ],

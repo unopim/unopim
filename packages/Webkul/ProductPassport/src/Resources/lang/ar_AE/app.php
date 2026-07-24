@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'اللغات النشطة',
             'last-published'  => 'آخر نشر',
             'withdraw'        => 'سحب',
+            'mass-publish'    => 'نشر المحدد',
         ],
-        'publish-queued' => 'تمت جدولة نشر الجواز.',
-        'withdrawn'      => 'تم سحب الجواز بنجاح.',
-        'mass-publish'   => [
+        'publish-queued'      => 'تمت جدولة نشر الجواز.',
+        'bulk-publish-queued' => 'تمت جدولة نشر جوازات المنتجات المحددة.',
+        'withdrawn'           => 'تم سحب الجواز بنجاح.',
+        'mass-publish'        => [
             'action' => 'نشر جواز المنتج الرقمي',
             'queued' => 'تمت جدولة نشر الجواز لـ :count منتج.',
         ],

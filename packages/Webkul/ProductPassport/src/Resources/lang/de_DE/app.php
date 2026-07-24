@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Aktive Sprachen',
             'last-published'  => 'Zuletzt veröffentlicht',
             'withdraw'        => 'Zurückziehen',
+            'mass-publish'    => 'Auswahl veröffentlichen',
         ],
-        'publish-queued' => 'Die Veröffentlichung des Passes wurde eingeplant.',
-        'withdrawn'      => 'Pass erfolgreich zurückgezogen.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Die Veröffentlichung des Passes wurde eingeplant.',
+        'bulk-publish-queued' => 'Die Veröffentlichung der ausgewählten Pässe wurde in die Warteschlange gestellt.',
+        'withdrawn'           => 'Pass erfolgreich zurückgezogen.',
+        'mass-publish'        => [
             'action' => 'Digitalen Produktpass veröffentlichen',
             'queued' => 'Passveröffentlichung für :count Produkt(e) eingeplant.',
         ],

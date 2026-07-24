@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Idiomes actius',
             'last-published'  => 'Última publicació',
             'withdraw'        => 'Retirar',
+            'mass-publish'    => 'Publica la selecció',
         ],
-        'publish-queued' => 'S\'ha posat en cua la publicació del passaport.',
-        'withdrawn'      => 'Passaport retirat correctament.',
-        'mass-publish'   => [
+        'publish-queued'      => 'S\'ha posat en cua la publicació del passaport.',
+        'bulk-publish-queued' => 'S\'ha posat a la cua la publicació dels passaports seleccionats.',
+        'withdrawn'           => 'Passaport retirat correctament.',
+        'mass-publish'        => [
             'action' => 'Publicar el passaport digital de producte',
             'queued' => 'Publicació del passaport en cua per a :count producte(s).',
         ],

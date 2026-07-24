@@ -106,6 +106,17 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
         }
     }
 
+    public function prepareMassActions(): void
+    {
+        if (bouncer()->hasPermission('catalog.passport.publish')) {
+            $this->addMassAction([
+                'title'  => trans('passport::app.publications.datagrid.mass-publish'),
+                'url'    => route('admin.catalog.passports.bulk-publish'),
+                'method' => 'POST',
+            ]);
+        }
+    }
+
     /**
      * `live_locale_count`/`last_published_at` are plain, indexed columns —
      * sorting them is an ordinary indexed sort, not a per-row correlated

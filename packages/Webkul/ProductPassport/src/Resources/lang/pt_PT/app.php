@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Idiomas ativos',
             'last-published'  => 'Última publicação',
             'withdraw'        => 'Retirar',
+            'mass-publish'    => 'Publicar selecionados',
         ],
-        'publish-queued' => 'A publicação do passaporte foi colocada em fila.',
-        'withdrawn'      => 'Passaporte retirado com sucesso.',
-        'mass-publish'   => [
+        'publish-queued'      => 'A publicação do passaporte foi colocada em fila.',
+        'bulk-publish-queued' => 'A publicação dos passaportes selecionados foi colocada em fila.',
+        'withdrawn'           => 'Passaporte retirado com sucesso.',
+        'mass-publish'        => [
             'action' => 'Publicar Passaporte Digital do Produto',
             'queued' => 'Publicação do passaporte colocada em fila para :count produto(s).',
         ],

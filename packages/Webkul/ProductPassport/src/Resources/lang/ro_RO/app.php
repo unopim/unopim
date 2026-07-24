@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Limbi active',
             'last-published'  => 'Ultima publicare',
             'withdraw'        => 'Retrage',
+            'mass-publish'    => 'Publică selecția',
         ],
-        'publish-queued' => 'Publicarea pașaportului a fost pusă în coadă.',
-        'withdrawn'      => 'Pașaport retras cu succes.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Publicarea pașaportului a fost pusă în coadă.',
+        'bulk-publish-queued' => 'Publicarea pașapoartelor selectate a fost adăugată în coadă.',
+        'withdrawn'           => 'Pașaport retras cu succes.',
+        'mass-publish'        => [
             'action' => 'Publică Pașaportul Digital al Produsului',
             'queued' => 'Publicarea pașaportului a fost pusă în coadă pentru :count produs(e).',
         ],

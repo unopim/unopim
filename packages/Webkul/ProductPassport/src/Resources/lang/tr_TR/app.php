@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Aktif Diller',
             'last-published'  => 'Son Yayınlanma',
             'withdraw'        => 'Geri Çek',
+            'mass-publish'    => 'Seçilenleri yayımla',
         ],
-        'publish-queued' => 'Pasaport yayını sıraya alındı.',
-        'withdrawn'      => 'Pasaport başarıyla geri çekildi.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Pasaport yayını sıraya alındı.',
+        'bulk-publish-queued' => 'Seçili pasaportların yayımlanması kuyruğa alındı.',
+        'withdrawn'           => 'Pasaport başarıyla geri çekildi.',
+        'mass-publish'        => [
             'action' => 'Dijital Ürün Pasaportunu Yayınla',
             'queued' => ':count ürün için pasaport yayını sıraya alındı.',
         ],

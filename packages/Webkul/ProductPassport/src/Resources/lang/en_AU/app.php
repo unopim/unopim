@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Live Locales',
             'last-published'  => 'Last Published',
             'withdraw'        => 'Withdraw',
+            'mass-publish'    => 'Publish selected',
         ],
-        'publish-queued' => 'Passport publishing has been queued.',
-        'withdrawn'      => 'Passport withdrawn successfully.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Passport publishing has been queued.',
+        'bulk-publish-queued' => 'Passport publishing has been queued for the selected passports.',
+        'withdrawn'           => 'Passport withdrawn successfully.',
+        'mass-publish'        => [
             'action' => 'Publish Digital Product Passport',
             'queued' => 'Passport publishing queued for :count product(s).',
         ],

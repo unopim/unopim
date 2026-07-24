@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Aktibong mga Wika',
             'last-published'  => 'Huling Nailathala',
             'withdraw'        => 'Bawiin',
+            'mass-publish'    => 'I-publish ang napili',
         ],
-        'publish-queued' => 'Naka-queue na ang paglalathala ng pasaporte.',
-        'withdrawn'      => 'Matagumpay na nabawi ang pasaporte.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Naka-queue na ang paglalathala ng pasaporte.',
+        'bulk-publish-queued' => 'Naka-queue na ang pag-publish ng mga napiling passport.',
+        'withdrawn'           => 'Matagumpay na nabawi ang pasaporte.',
+        'mass-publish'        => [
             'action' => 'Ilathala ang Digital na Pasaporte ng Produkto',
             'queued' => 'Naka-queue ang paglalathala ng pasaporte para sa :count produkto.',
         ],

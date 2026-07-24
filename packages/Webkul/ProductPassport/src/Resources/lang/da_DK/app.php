@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Aktive sprog',
             'last-published'  => 'Sidst udgivet',
             'withdraw'        => 'Træk tilbage',
+            'mass-publish'    => 'Udgiv valgte',
         ],
-        'publish-queued' => 'Udgivelse af pas er sat i kø.',
-        'withdrawn'      => 'Pas trukket tilbage.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Udgivelse af pas er sat i kø.',
+        'bulk-publish-queued' => 'Udgivelse af de valgte pas er sat i kø.',
+        'withdrawn'           => 'Pas trukket tilbage.',
+        'mass-publish'        => [
             'action' => 'Udgiv digitalt produktpas',
             'queued' => 'Udgivelse af pas sat i kø for :count produkt(er).',
         ],

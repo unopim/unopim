@@ -100,10 +100,12 @@ return [
             'live-locales'   => 'Langues actives',
             'last-published' => 'Dernière publication',
             'withdraw'       => 'Retirer',
+            'mass-publish'   => 'Publier la sélection',
         ],
-        'publish-queued' => 'La publication du passeport a été mise en file d\'attente.',
-        'withdrawn'      => 'Passeport retiré avec succès.',
-        'mass-publish'   => [
+        'publish-queued'      => 'La publication du passeport a été mise en file d\'attente.',
+        'bulk-publish-queued' => 'La publication des passeports sélectionnés a été mise en file d\'attente.',
+        'withdrawn'           => 'Passeport retiré avec succès.',
+        'mass-publish'        => [
             'action' => 'Publier le passeport numérique de produit',
             'queued' => 'Publication du passeport mise en file d\'attente pour :count produit(s).',
         ],

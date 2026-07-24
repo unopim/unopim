@@ -102,10 +102,12 @@ return [
             'live-locales'    => '啟用語言',
             'last-published'  => '最近發布時間',
             'withdraw'        => '撤回',
+            'mass-publish'    => '發布所選',
         ],
-        'publish-queued' => '護照發布已排入佇列。',
-        'withdrawn'      => '護照已成功撤回。',
-        'mass-publish'   => [
+        'publish-queued'      => '護照發布已排入佇列。',
+        'bulk-publish-queued' => '所選護照的發布已加入佇列。',
+        'withdrawn'           => '護照已成功撤回。',
+        'mass-publish'        => [
             'action' => '發布數位產品護照',
             'queued' => '已將 :count 個產品的護照發布排入佇列。',
         ],

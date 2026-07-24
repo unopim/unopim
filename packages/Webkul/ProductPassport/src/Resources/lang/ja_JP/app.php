@@ -102,10 +102,12 @@ return [
             'live-locales'    => '公開中の言語',
             'last-published'  => '最終公開日',
             'withdraw'        => '撤回',
+            'mass-publish'    => '選択項目を公開',
         ],
-        'publish-queued' => 'パスポートの公開がキューに登録されました。',
-        'withdrawn'      => 'パスポートを撤回しました。',
-        'mass-publish'   => [
+        'publish-queued'      => 'パスポートの公開がキューに登録されました。',
+        'bulk-publish-queued' => '選択したパスポートの公開をキューに追加しました。',
+        'withdrawn'           => 'パスポートを撤回しました。',
+        'mass-publish'        => [
             'action' => 'デジタル製品パスポートを公開',
             'queued' => ':count 件の製品のパスポート公開をキューに登録しました。',
         ],

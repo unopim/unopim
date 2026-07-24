@@ -102,10 +102,12 @@ return [
             'live-locales'    => 'Aktiva språk',
             'last-published'  => 'Senast publicerad',
             'withdraw'        => 'Dra tillbaka',
+            'mass-publish'    => 'Publicera valda',
         ],
-        'publish-queued' => 'Publicering av passet har lagts i kö.',
-        'withdrawn'      => 'Pass indraget.',
-        'mass-publish'   => [
+        'publish-queued'      => 'Publicering av passet har lagts i kö.',
+        'bulk-publish-queued' => 'Publiceringen av de valda passen har lagts i kö.',
+        'withdrawn'           => 'Pass indraget.',
+        'mass-publish'        => [
             'action' => 'Publicera digitalt produktpass',
             'queued' => 'Passpublicering köad för :count produkt(er).',
         ],

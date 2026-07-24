@@ -9,8 +9,10 @@ use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
+use Webkul\ProductPassport\Http\Requests\BulkPublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\MassPublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\PublishPassportRequest;
+use Webkul\ProductPassport\Jobs\BulkPublishPassportsJob;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Services\Publisher;
@@ -107,6 +109,27 @@ class PublicationController extends Controller
 
         return new JsonResponse([
             'message' => trans('passport::app.publications.mass-publish.queued', ['count' => $productIds->count()]),
+        ]);
+    }
+
+    /**
+     * Publish the selected passport rows across each publication's own channel
+     * locales. Fans out through a chunking orchestrator job so the request
+     * returns immediately regardless of how many rows were selected.
+     */
+    public function bulkPublish(BulkPublishPassportRequest $request): JsonResponse
+    {
+        if (! $this->featureEnabled()) {
+            abort(404);
+        }
+
+        BulkPublishPassportsJob::dispatch(
+            $request->collect('indices')->map(fn ($id): int => (int) $id)->all(),
+            auth()->guard('admin')->id(),
+        );
+
+        return new JsonResponse([
+            'message' => trans('passport::app.publications.bulk-publish-queued'),
         ]);
     }
 
