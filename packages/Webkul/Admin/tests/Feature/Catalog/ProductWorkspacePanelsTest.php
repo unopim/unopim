@@ -4,7 +4,8 @@ use Webkul\Product\Models\Product;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
-it('renders the product edit workspace chrome and section cards', function () {
+function editProductResponse()
+{
     // Explicitly resolve the full-permission role rather than relying on
     // `loginAsAdmin()`'s default `Role::first()` fallback (used by sibling
     // tests): in this shared dev database, role id ordering isn't guaranteed
@@ -12,23 +13,43 @@ it('renders the product edit workspace chrome and section cards', function () {
     // every admin route with a permission error unrelated to this feature.
     $adminRole = Role::where('permission_type', 'all')->first() ?? Role::factory()->create(['permission_type' => 'all']);
 
-    $this->loginAsAdmin(Admin::factory()->create(['role_id' => $adminRole->id]));
+    test()->loginAsAdmin(Admin::factory()->create(['role_id' => $adminRole->id]));
 
     $product = Product::factory()->withInitialValues()->create();
 
-    $response = $this->get(route('admin.catalog.products.edit', $product->id));
+    return test()->get(route('admin.catalog.products.edit', $product->id));
+}
+
+it('renders the slim section store and drawer component, not the old workspace frame', function () {
+    $response = editProductResponse();
 
     $response->assertOk();
 
-    // The workspace chrome (`workspace.blade.php`) mounts the overlay component.
-    $response->assertSee('v-product-workspace', false);
+    $response->assertSee('$productWorkspace', false);
+    $response->assertSee('v-product-section-drawer', false);
 
-    // The Categories and Associations section cards open the workspace on click.
-    $response->assertSee("\$productWorkspace.open('categories')", false);
-    $response->assertSee("\$productWorkspace.open('associations')", false);
+    $response->assertDontSee('v-product-workspace', false);
+    $response->assertDontSee('product-workspace-frame', false);
+    $response->assertDontSee('product-workspace-panel', false);
+    $response->assertDontSee('setWorkspaceBounds', false);
+});
 
-    // Each section's workspace panel is present, scoped by its `data-section-id`.
-    $response->assertSee('product-workspace-panel', false);
-    $response->assertSee('data-section-id="categories"', false);
+it('renders Categories and Associations as contained drawers with intact submission contract', function () {
+    $response = editProductResponse();
+
+    $response->assertOk();
+
+    // Both sections mount a section-drawer instance.
+    $response->assertSee('id="categories"', false);
+    $response->assertSee('id="associations"', false);
+
+    // Association count is scoped by this wrapper; publishState() depends on it.
     $response->assertSee('data-section-id="associations"', false);
+    $response->assertSee('v-product-links', false);
+});
+
+it('never reintroduces a clickable div add-control', function () {
+    editProductResponse()
+        ->assertOk()
+        ->assertDontSee('<div'."\n".'                                class="secondary-button', false);
 });
