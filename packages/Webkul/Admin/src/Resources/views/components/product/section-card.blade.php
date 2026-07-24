@@ -13,8 +13,8 @@
     @keydown.space.prevent="$productWorkspace.open('{{ $id }}')"
     class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow flex items-center gap-3 cursor-pointer hover:border-violet-300 border border-transparent transition-all"
 >
-    <span class="grid place-items-center w-10 h-10 rounded bg-violet-50 dark:bg-cherry-800 text-lg shrink-0">
-        {!! $icon !!}
+    <span class="grid place-items-center w-10 h-10 rounded bg-violet-50 dark:bg-cherry-800 shrink-0">
+        <span class="{{ $icon }} text-2xl text-gray-600 dark:text-gray-300"></span>
     </span>
 
     <div class="min-w-0 flex-1">

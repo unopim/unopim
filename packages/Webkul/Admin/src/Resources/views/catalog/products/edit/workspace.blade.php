@@ -39,7 +39,9 @@
             <!-- Header (above body panels) -->
             <div class="absolute top-0 left-0 right-0 h-16 z-[42] flex items-center justify-between gap-4 px-6 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-cherry-900">
                 <div class="flex items-center gap-3 min-w-0">
-                    <span class="grid place-items-center w-9 h-9 rounded bg-violet-50 dark:bg-cherry-800 text-lg shrink-0" v-html="activeIcon"></span>
+                    <span class="grid place-items-center w-9 h-9 rounded bg-violet-50 dark:bg-cherry-800 shrink-0">
+                        <span :class="activeIcon" class="text-xl text-gray-600 dark:text-gray-300"></span>
+                    </span>
                     <div class="min-w-0">
                         <p class="text-base font-semibold text-gray-800 dark:text-white truncate">@{{ activeTitle }}</p>
                         <p class="text-xs text-gray-500 dark:text-gray-400 truncate">@{{ activeSubtitle }}</p>

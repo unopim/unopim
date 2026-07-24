@@ -8,16 +8,16 @@
 <x-admin::product.section-card
     id="categories"
     :title="trans('admin::app.catalog.products.edit.categories.title')"
-    icon="📁"
+    icon="icon-folder"
 >
-    <span v-text="$productWorkspace.getCount('categories') + ' ' + @json(trans('admin::app.catalog.products.edit.workspace.categories.selected'))"></span>
+    <span v-text='$productWorkspace.getCount("categories") + " " + @json(trans("admin::app.catalog.products.edit.workspace.categories.selected"))'></span>
 </x-admin::product.section-card>
 
 <x-admin::product.workspace-panel
     id="categories"
     :title="trans('admin::app.catalog.products.edit.categories.title')"
     :subtitle="trans('admin::app.catalog.products.edit.workspace.categories.subtitle')"
-    icon="📁"
+    icon="icon-folder"
     :order="10"
 >
     {!! view_render_event('unopim.admin.catalog.product.edit.form.categories.controls.before', ['product' => $product]) !!}
@@ -51,7 +51,7 @@
                     </x-admin::form.control-group>
                 </div>
                 <span class="shrink-0 text-xs font-medium text-gray-600 dark:text-gray-300 px-3 py-2 rounded bg-gray-100 dark:bg-cherry-800">
-                    @{{ selectedCount }} @lang('admin::app.catalog.products.edit.workspace.categories.selected')
+                    @{{ $productWorkspace.getCount('categories') }} @lang('admin::app.catalog.products.edit.workspace.categories.selected')
                 </span>
             </div>
 
@@ -89,10 +89,6 @@
                     search: '',
                     initialSelected: @json(array_values((array) $productCategories)),
                 }
-            },
-
-            computed: {
-                selectedCount() { return this.currentSelected().length; },
             },
 
             mounted() {
