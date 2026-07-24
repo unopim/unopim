@@ -7,6 +7,7 @@
         ajax
         :action="route('admin.catalog.association_types.update', $associationType->id)"
         method="PUT"
+        :hide-save-when-tracked="false"
     >
         {!! view_render_event('unopim.admin.catalog.association_types.edit.form_controls.before', ['associationType' => $associationType]) !!}
 
