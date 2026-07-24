@@ -37,7 +37,7 @@ class PassportController extends ApiController
             })
             ->when(request()->filled('status'), fn ($query) => $query->where('status', request('status')))
             ->orderByDesc('id')
-            ->paginate((int) request()->input('limit', 10));
+            ->paginate(min(100, max(1, (int) request()->input('limit', 10))));
 
         return PublicationResource::collection($publications)->response();
     }
