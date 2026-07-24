@@ -32,7 +32,7 @@
             </div>
 
             <teleport
-                to="#main-content"
+                to="body"
                 v-if="mounted"
             >
                 <transition
@@ -43,7 +43,9 @@
                 >
                     <div
                         v-show="isOpen"
-                        class="absolute inset-0 z-[30] bg-gray-500/30 dark:bg-black/40"
+                        ref="overlay"
+                        class="fixed z-[40] bg-gray-500/30 dark:bg-black/50"
+                        :style="overlayStyle"
                         @click="close"
                     ></div>
                 </transition>
@@ -56,8 +58,10 @@
                 >
                     <div
                         v-show="isOpen"
+                        ref="panel"
                         :data-section-id="id"
-                        class="absolute inset-y-0 ltr:right-0 rtl:left-0 z-[31] flex flex-col w-full md:w-[90%] lg:w-[80%] xl:w-[70%] max-sm:!w-full bg-unopim-primary-page dark:bg-cherry-800 shadow-2xl"
+                        :style="panelStyle"
+                        class="fixed z-[41] flex flex-col bg-unopim-primary-page dark:bg-cherry-800 shadow-2xl"
                     >
                         <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900">
                             <div class="flex items-center gap-3 min-w-0">
@@ -102,6 +106,8 @@
             data: () => ({
                 isOpen: false,
                 mounted: false,
+                overlayStyle: {},
+                panelStyle: {},
                 closeLabel: "@lang('admin::app.catalog.products.edit.workspace.close')",
             }),
 
@@ -120,12 +126,19 @@
                     }
                 };
 
+                this._reflow = () => {
+                    if (this.isOpen) {
+                        this.reposition();
+                    }
+                };
+
                 window.addEventListener('keydown', this._esc);
+                window.addEventListener('resize', this._reflow);
             },
 
             beforeUnmount() {
                 window.removeEventListener('keydown', this._esc);
-                this.unlock();
+                window.removeEventListener('resize', this._reflow);
             },
 
             methods: {
@@ -134,35 +147,63 @@
                 },
 
                 /**
-                 * Anchors the teleported overlay/panel to main-content and locks its
-                 * scroll via inline style (overriding the element's overflow-y-auto class)
-                 * so the absolute inset-0 panel matches the visible box instead of the
-                 * full scroll height.
+                 * Width the drawer occupies as a fraction of the main-content area,
+                 * mirroring the Tailwind breakpoints (xl 70% / lg 80% / md 90% /
+                 * below 100%) so the panel stays usable at every screen size.
                  */
-                open() {
+                ratio() {
+                    const w = window.innerWidth;
+
+                    if (w >= 1280) return 0.70;
+                    if (w >= 1024) return 0.80;
+                    if (w >= 768) return 0.90;
+
+                    return 1;
+                },
+
+                /**
+                 * Positions the fixed overlay/panel over the visible main-content
+                 * region using its live bounding rect, so the drawer tracks the
+                 * left sidebar and app header without covering them and stays in the
+                 * viewport regardless of page scroll.
+                 */
+                reposition() {
                     const main = this.main();
 
                     if (! main) {
                         return;
                     }
 
-                    main.classList.add('relative');
-                    main.style.overflow = 'hidden';
+                    const rect = main.getBoundingClientRect();
+                    const rtl = document.dir === 'rtl';
+                    const width = Math.round(rect.width * this.ratio());
 
+                    const top = Math.round(rect.top) + 'px';
+                    const bottom = Math.round(window.innerHeight - rect.bottom) + 'px';
+
+                    this.overlayStyle = {
+                        top,
+                        bottom,
+                        left: Math.round(rect.left) + 'px',
+                        width: Math.round(rect.width) + 'px',
+                    };
+
+                    this.panelStyle = rtl
+                        ? { top, bottom, left: Math.round(rect.left) + 'px', width: width + 'px' }
+                        : { top, bottom, right: Math.round(window.innerWidth - rect.right) + 'px', width: width + 'px' };
+                },
+
+                open() {
+                    if (! this.main()) {
+                        return;
+                    }
+
+                    this.reposition();
                     this.isOpen = true;
                 },
 
                 close() {
                     this.isOpen = false;
-                    this.unlock();
-                },
-
-                unlock() {
-                    const main = this.main();
-
-                    if (main) {
-                        main.style.overflow = '';
-                    }
                 },
             },
         });
