@@ -27,15 +27,60 @@ return [
         'route' => 'admin.api.channels.index',
         'sort'  => 1,
     ], [
+        'key'   => 'api.settings.channels.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.channels.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.settings.channels.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.channels.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.settings.channels.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.channels.delete',
+        'sort'  => 3,
+    ], [
         'key'   => 'api.settings.locales',
         'name'  => 'admin::app.acl.locales',
         'route' => 'admin.api.locales.index',
         'sort'  => 2,
     ], [
+        'key'   => 'api.settings.locales.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.locales.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.settings.locales.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.locales.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.settings.locales.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.locales.delete',
+        'sort'  => 3,
+    ], [
         'key'   => 'api.settings.currencies',
         'name'  => 'admin::app.acl.currencies',
         'route' => 'admin.api.currencies.index',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.settings.currencies.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.currencies.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.settings.currencies.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.currencies.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.settings.currencies.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.currencies.delete',
+        'sort'  => 3,
     ],
 
     /*
