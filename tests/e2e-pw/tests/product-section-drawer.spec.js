@@ -2,9 +2,14 @@ const { test, expect } = require('@playwright/test');
 
 const PRODUCT_EDIT = '/admin/catalog/products/edit/3';
 
+// The drawer panel is teleported to <body> and carries both `.fixed` and
+// data-section-id; the association content wrapper reuses data-section-id
+// without `.fixed`, so scope every panel lookup to `.fixed`.
+const panelSel = (sec) => `.fixed[data-section-id="${sec}"]`;
+
 const widthRatio = (page, section) => page.evaluate((sec) => {
   const main = document.getElementById('main-content');
-  const panel = document.querySelector(`#main-content [data-section-id="${sec}"]`);
+  const panel = document.querySelector(`.fixed[data-section-id="${sec}"]`);
   if (!main || !panel) return null;
   return panel.getBoundingClientRect().width / main.getBoundingClientRect().width;
 }, section);
@@ -13,15 +18,23 @@ const noOverflow = (page) => page.evaluate(
   () => document.body.scrollWidth <= document.documentElement.clientWidth + 1
 );
 
+// Dispatch the click on the card element directly: at narrow widths the cards
+// sit at the page bottom where the dev Debugbar overlay intercepts real pointer
+// events, and a native element.click() still bubbles to the drawer's @click.
+const openDrawer = async (page, nameRe) => {
+  const card = page.getByRole('button', { name: nameRe }).first();
+  await card.evaluate((el) => el.click());
+};
+
 test.describe('product-edit section drawer', () => {
   for (const [w, h, expected] of [[1440, 900, 0.90], [1024, 800, 0.90], [768, 900, 0.90], [375, 720, 1.0]]) {
     test(`categories drawer at ${w}px ~ ${Math.round(expected * 100)}% and no overflow`, async ({ page }) => {
       await page.setViewportSize({ width: w, height: h });
       await page.goto(PRODUCT_EDIT);
 
-      await page.getByRole('button', { name: /categories/i }).first().click();
+      await openDrawer(page, /categories/i);
 
-      const panel = page.locator('#main-content [data-section-id="categories"]');
+      const panel = page.locator(panelSel('categories'));
       await expect(panel).toBeVisible();
 
       const ratio = await widthRatio(page, 'categories');
@@ -30,8 +43,11 @@ test.describe('product-edit section drawer', () => {
 
       expect(await noOverflow(page)).toBe(true);
 
-      // App chrome stays visible while a drawer is open.
-      await expect(page.locator('#unopim-sidebar')).toBeVisible();
+      // On desktop the left sidebar stays visible/undimmed alongside the drawer;
+      // below lg UnoPim collapses it off-canvas, so only assert where it shows.
+      if (w >= 1024) {
+        await expect(page.locator('#unopim-sidebar')).toBeVisible();
+      }
     });
   }
 
@@ -39,9 +55,9 @@ test.describe('product-edit section drawer', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(PRODUCT_EDIT);
 
-    await page.getByRole('button', { name: /link|associations/i }).first().click();
+    await openDrawer(page, /link|associations/i);
 
-    const panel = page.locator('#main-content [data-section-id="associations"]');
+    const panel = page.locator(panelSel('associations'));
     await expect(panel).toBeVisible();
 
     await page.keyboard.press('Escape');
@@ -52,8 +68,8 @@ test.describe('product-edit section drawer', () => {
     await page.setViewportSize({ width: 375, height: 720 });
     await page.goto(PRODUCT_EDIT);
 
-    await page.getByRole('button', { name: /link|associations/i }).first().click();
-    await expect(page.locator('#main-content [data-section-id="associations"]')).toBeVisible();
+    await openDrawer(page, /link|associations/i);
+    await expect(page.locator(panelSel('associations'))).toBeVisible();
 
     expect(await noOverflow(page)).toBe(true);
   });
