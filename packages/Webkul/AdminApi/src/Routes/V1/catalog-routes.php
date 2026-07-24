@@ -55,6 +55,8 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.category-fields.get');
         Route::post('', 'store')->name('admin.api.category-fields.store');
         Route::put('{code}', 'update')->name('admin.api.category-fields.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.category-fields.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.category-fields.delete');
 
         Route::get('{code}/options', 'getOptions')->name('admin.api.category-fields_options.get');
         Route::post('{code}/options', 'storeOption')->name('admin.api.category-fields-options.store_option');

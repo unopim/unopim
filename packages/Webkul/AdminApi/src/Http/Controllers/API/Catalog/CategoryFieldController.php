@@ -114,6 +114,42 @@ class CategoryFieldController extends ApiController
     }
 
     /**
+     * Partially update the specified resource.
+     */
+    public function partialUpdate(UpdateCategoryFieldRequest $request, string $code): JsonResponse
+    {
+        return $this->update($request, $code);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function delete(string $code): JsonResponse
+    {
+        $categoryField = $this->categoryFieldRepository->findOneByField('code', $code);
+        if (! $categoryField) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $code]));
+        }
+
+        if (! $categoryField->canBeDeleted()) {
+            return $this->validateErrorResponse(
+                ['code' => [trans('admin::app.catalog.category_fields.index.datagrid.delete-failed')]],
+                trans('admin::app.catalog.category_fields.index.datagrid.delete-failed')
+            );
+        }
+
+        try {
+            Event::dispatch('catalog.category_field.delete.before', $categoryField->id);
+            $this->categoryFieldRepository->delete($categoryField->id);
+            Event::dispatch('catalog.category_field.delete.after', $categoryField->id);
+
+            return $this->successResponse(trans('admin::app.catalog.category_fields.delete-success'));
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
      * Sets default values for the given request data array.
      *
      * @return array The updated request data array with default values.

@@ -201,6 +201,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.category-fields.update',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.category_fields.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.category-fields.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.category_fields.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.category-fields.delete',
+        'sort'  => 3,
     ],
 
     // Category field options — map to category_fields permissions
