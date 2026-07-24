@@ -115,6 +115,42 @@ class AttributeFamilyController extends ApiController
     }
 
     /**
+     * Partially update the specified resource.
+     */
+    public function partialUpdate(UpdateAttributeFamilyRequest $request, string $code): JsonResponse
+    {
+        return $this->update($request, $code);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function delete(string $code): JsonResponse
+    {
+        $attributeFamily = $this->attributeFamilyRepository->findOneByField('code', $code);
+        if (! $attributeFamily) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.families.not-found', ['code' => $code]));
+        }
+
+        if ($attributeFamily->products()->count()) {
+            return $this->validateErrorResponse(
+                ['code' => [trans('admin::app.catalog.families.attribute-product-error')]],
+                trans('admin::app.catalog.families.attribute-product-error')
+            );
+        }
+
+        try {
+            Event::dispatch('catalog.attribute_family.delete.before', $attributeFamily->id);
+            $this->attributeFamilyRepository->delete($attributeFamily->id);
+            Event::dispatch('catalog.attribute_family.delete.after', $attributeFamily->id);
+
+            return $this->successResponse(trans('admin::app.catalog.families.delete-success'));
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
      * Normalize custom attributes, and custom attribute groups data.
      *
      * @return array

@@ -309,5 +309,15 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.families.update',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.families.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.families.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.families.delete',
+        'sort'  => 3,
     ],
 ];

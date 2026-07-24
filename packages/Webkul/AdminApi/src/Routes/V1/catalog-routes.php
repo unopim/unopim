@@ -43,6 +43,8 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.families.get');
         Route::post('', 'store')->name('admin.api.families.store');
         Route::put('{code}', 'update')->name('admin.api.families.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.families.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.families.delete');
     });
 
     /** Category Fields API Routes */
