@@ -44,7 +44,7 @@
                     <div
                         v-show="isOpen"
                         ref="overlay"
-                        class="fixed z-[40] bg-gray-500/30 dark:bg-black/50"
+                        class="fixed bg-gray-500/30 dark:bg-black/50"
                         :style="overlayStyle"
                         @click="close"
                     ></div>
@@ -61,7 +61,7 @@
                         ref="panel"
                         :data-section-id="id"
                         :style="panelStyle"
-                        class="fixed z-[41] flex flex-col bg-unopim-primary-page dark:bg-cherry-800 shadow-2xl"
+                        class="fixed flex flex-col bg-unopim-primary-page dark:bg-cherry-800 shadow-2xl"
                     >
                         <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-gray-200 dark:border-cherry-800 bg-white dark:bg-cherry-900">
                             <div class="flex items-center gap-3 min-w-0">
@@ -174,16 +174,27 @@
                     const top = Math.round(rect.top) + 'px';
                     const bottom = Math.round(window.innerHeight - rect.bottom) + 'px';
 
+                    // z-index set inline (not via Tailwind's z-[..] classes, which
+                    // aren't compiled from this x-template's markup) so the panel
+                    // sits above page content -- incl. the rich-text toolbars -- yet
+                    // below the app's own drawers/modals (z-index 10001).
                     this.overlayStyle = {
                         top,
                         bottom,
                         left: Math.round(rect.left) + 'px',
                         width: Math.round(rect.width) + 'px',
+                        zIndex: 9998,
                     };
 
-                    this.panelStyle = rtl
-                        ? { top, bottom, left: Math.round(rect.left) + 'px', width: width + 'px' }
-                        : { top, bottom, right: Math.round(window.innerWidth - rect.right) + 'px', width: width + 'px' };
+                    this.panelStyle = {
+                        top,
+                        bottom,
+                        width: width + 'px',
+                        zIndex: 9999,
+                        ...(rtl
+                            ? { left: Math.round(rect.left) + 'px' }
+                            : { right: Math.round(window.innerWidth - rect.right) + 'px' }),
+                    };
                 },
 
                 open() {
