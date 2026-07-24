@@ -37,6 +37,7 @@ Route::group([
         Route::get('{code}/options', 'getOptions')->name('admin.api.attribute_options.get');
         Route::post('{code}/options', 'storeOption')->name('admin.api.attribute_options.store_option');
         Route::put('{code}/options', 'updateOption')->name('admin.api.attribute_options.update_option');
+        Route::delete('{code}/options/{optionCode}', 'deleteOption')->name('admin.api.attribute_options.delete_option');
     });
 
     /** Attributes Family API Routes */
@@ -61,6 +62,7 @@ Route::group([
         Route::get('{code}/options', 'getOptions')->name('admin.api.category-fields_options.get');
         Route::post('{code}/options', 'storeOption')->name('admin.api.category-fields-options.store_option');
         Route::put('{code}/options', 'updateOption')->name('admin.api.category-fields-options.update_option');
+        Route::delete('{code}/options/{optionCode}', 'deleteOption')->name('admin.api.category-fields-options.delete_option');
     });
 
     /** Categories API Routes */

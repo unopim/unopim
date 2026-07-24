@@ -269,6 +269,35 @@ class CategoryFieldController extends ApiController
     }
 
     /**
+     * Delete a single option of the category field, identified by its code.
+     */
+    public function deleteOption(string $fieldCode, string $optionCode): JsonResponse
+    {
+        $categoryField = $this->categoryFieldRepository->findOneByField('code', $fieldCode);
+        if (! $categoryField) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $fieldCode]));
+        }
+
+        $option = $this->categoryFieldOptionRepository->findOneWhere([
+            'code'              => $optionCode,
+            'category_field_id' => $categoryField->id,
+        ]);
+        if (! $option) {
+            return $this->modelNotFoundResponse(
+                trans('admin::app.catalog.category-fields-options.update-unknown-code', ['code' => $optionCode])
+            );
+        }
+
+        try {
+            $this->categoryFieldOptionRepository->delete($option->id);
+
+            return $this->successResponse(trans('admin::app.catalog.category-fields-options.delete-success'));
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
      * Normalizes the options payload so a single option object is treated the
      * same as a list containing one option.
      *

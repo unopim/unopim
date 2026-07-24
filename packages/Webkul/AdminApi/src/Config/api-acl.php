@@ -229,6 +229,11 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.category-fields-options.update_option',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.category_fields.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.category-fields-options.delete_option',
+        'sort'  => 3,
     ],
 
     // ── Attributes ──────────────────────────────────────────
@@ -275,6 +280,11 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.attribute_options.update_option',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attributes.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.attribute_options.delete_option',
+        'sort'  => 3,
     ],
 
     // Swatch media uploads — require attribute edit permission

@@ -257,6 +257,35 @@ class AttributeController extends ApiController
     }
 
     /**
+     * Delete a single option of the attribute, identified by its code.
+     */
+    public function deleteOption(string $attributeCode, string $optionCode): JsonResponse
+    {
+        $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
+        if (! $attribute) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.attributes.not-found', ['code' => $attributeCode]));
+        }
+
+        $option = $this->attributeOptionRepository->findOneWhere([
+            'code'         => $optionCode,
+            'attribute_id' => $attribute->id,
+        ]);
+        if (! $option) {
+            return $this->modelNotFoundResponse(
+                trans('admin::app.catalog.products.edit.types.configurable.variant-attribute-option-not-found', ['attributes' => $optionCode])
+            );
+        }
+
+        try {
+            $this->attributeOptionRepository->delete($option->id);
+
+            return $this->successResponse(trans('admin::app.catalog.attribute-options.delete-success'));
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
      * Normalizes the options payload so a single option object is treated the
      * same as a list containing one option.
      *
