@@ -14,7 +14,7 @@ const noOverflow = (page) => page.evaluate(
 );
 
 test.describe('product-edit section drawer', () => {
-  for (const [w, h, expected] of [[1440, 900, 0.70], [1024, 800, 0.80], [768, 900, 0.90], [375, 720, 1.0]]) {
+  for (const [w, h, expected] of [[1440, 900, 0.90], [1024, 800, 0.90], [768, 900, 0.90], [375, 720, 1.0]]) {
     test(`categories drawer at ${w}px ~ ${Math.round(expected * 100)}% and no overflow`, async ({ page }) => {
       await page.setViewportSize({ width: w, height: h });
       await page.goto(PRODUCT_EDIT);

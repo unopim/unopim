@@ -147,18 +147,11 @@
                 },
 
                 /**
-                 * Width the drawer occupies as a fraction of the main-content area,
-                 * mirroring the Tailwind breakpoints (xl 70% / lg 80% / md 90% /
-                 * below 100%) so the panel stays usable at every screen size.
+                 * Width the drawer occupies as a fraction of the main-content area:
+                 * 90% from tablet up, full-width below so it stays usable on phones.
                  */
                 ratio() {
-                    const w = window.innerWidth;
-
-                    if (w >= 1280) return 0.70;
-                    if (w >= 1024) return 0.80;
-                    if (w >= 768) return 0.90;
-
-                    return 1;
+                    return window.innerWidth >= 768 ? 0.90 : 1;
                 },
 
                 /**

@@ -39,45 +39,82 @@
         >
             <!-- Panel -->
             <div class="bg-white grid gap-2.5 p-4 dark:bg-cherry-900 rounded box-shadow">
-                <p class="flex justify-between text-base text-gray-800 dark:text-white font-semibold mb-4">
-                    @lang('admin::app.catalog.products.edit.links.title')
-                </p>
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-base text-gray-800 dark:text-white font-semibold">
+                        @lang('admin::app.catalog.products.edit.links.title')
+                    </p>
 
-                @foreach ($associationTypes as $typeIndex => $type)
-                    <div class="{{ $typeIndex > 0 ? 'pt-4 border-t border-gray-200 dark:border-cherry-800' : '' }}">
+                    <!-- Add Association Type -->
+                    <button
+                        type="button"
+                        class="secondary-button text-xs"
+                        @click="$refs.typeSearch.open()"
+                    >
+                        @lang('admin::app.catalog.products.edit.links.add-type-btn')
+                    </button>
+                </div>
+
+                <!-- No association types linked yet -->
+                <div
+                    class="grid gap-3.5 justify-center justify-items-center py-10 px-2.5"
+                    v-if="! localTypes.length"
+                >
+                    <img
+                        src="{{ unopim_asset('images/icon-add-product.svg') }}"
+                        class="w-20 h-20 dark:invert dark:mix-blend-exclusion"
+                    />
+
+                    <div class="flex flex-col gap-1.5 items-center">
+                        <p class="text-base text-gray-400 font-semibold">
+                            @lang('admin::app.catalog.products.edit.links.no-types-title')
+                        </p>
+
+                        <p class="text-gray-400">
+                            @lang('admin::app.catalog.products.edit.links.no-types-info')
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Association Types -->
+                <div
+                    v-for="(type, typeIndex) in localTypes"
+                    :key="type.code"
+                    :class="typeIndex > 0 ? 'pt-4 border-t border-gray-200 dark:border-cherry-800' : ''"
+                >
                     {{--
-                        Presence sentinel: emitted once per active type,
+                        Presence sentinel: emitted once per RENDERED type,
                         UNCONDITIONALLY (regardless of link count), so the
                         `associations[<typeCode>]` key always survives form
-                        submission -- even after the user removes every link
-                        of this type, when no other input below would carry
-                        that key at all. `AbstractType::prepareRichAssociations()`
-                        treats any type key present in the submitted
-                        `associations` payload as authoritative for that type
-                        (an empty/sentinel-only value prunes all its
-                        `product_associations` rows, and for the 3 legacy
-                        sections also clears the legacy JSON list), and strips
-                        this sentinel before processing link rows.
+                        submission -- even after every link of this type is
+                        removed. `AbstractType::prepareRichAssociations()` treats
+                        any type key present in the submitted `associations`
+                        payload as authoritative for that type (an empty/
+                        sentinel-only value prunes all its `product_associations`
+                        rows) and strips this sentinel before processing rows.
+                        Types the product does not link to are never rendered, so
+                        their links are never touched.
                     --}}
                     <input
                         type="hidden"
-                        name="associations[{{ $type['code'] }}][__present]"
+                        :name="'associations[' + type.code + '][__present]'"
                         value="1"
                     />
 
                     <div class="flex gap-5 justify-between items-center">
                         <div class="flex flex-col gap-2">
-                            <p class="text-gray-800 text-xs dark:text-white font-medium">
-                                {{ $type['name'] }}
+                            <p
+                                class="text-gray-800 text-xs dark:text-white font-medium"
+                                v-text="type.name"
+                            >
                             </p>
                         </div>
 
-                        <!-- Add Button -->
+                        <!-- Add Product -->
                         <div class="flex gap-x-1 items-center">
                             <button
                                 type="button"
                                 class="secondary-button text-xs"
-                                @click="selectedTypeCode = '{{ $type['code'] }}'; $refs.productSearch.openDrawer()"
+                                @click="openProductSearch(type.code)"
                             >
                                 @lang('admin::app.catalog.products.edit.links.add-btn')
                             </button>
@@ -87,17 +124,16 @@
                     <!-- Product Listing -->
                     <div
                         class="grid"
-                        v-if="localTypes[{{ $typeIndex }}]?.links?.length"
+                        v-if="type.links.length"
                     >
                         <div
                             class="flex flex-col sm:flex-row gap-2.5 sm:justify-between p-4 border-b border-gray-200 dark:border-cherry-800"
-                            v-for="(link, index) in localTypes[{{ $typeIndex }}].links"
+                            v-for="(link, index) in type.links"
                             :key="link.sku"
                         >
-                            <!-- Hidden Input -->
                             <input
                                 type="hidden"
-                                :name="'associations[{{ $type['code'] }}][' + index + '][sku]'"
+                                :name="'associations[' + type.code + '][' + index + '][sku]'"
                                 :value="link.sku"
                             />
 
@@ -135,22 +171,20 @@
                                 </div>
                             </div>
 
-                            @if (! empty($type['fields']))
-                                <!-- Custom Association Fields -->
-                                <div class="grid gap-2.5 flex-1 sm:max-w-[280px]">
-                                    <x-admin::associations.link-fields
-                                        :fields="$type['fields']"
-                                        :type-code="$type['code']"
-                                    />
-                                </div>
-                            @endif
+                            <!-- Custom Association Fields -->
+                            <div
+                                class="grid gap-2.5 flex-1 sm:max-w-[280px]"
+                                v-if="type.fields.length"
+                            >
+                                <x-admin::associations.link-fields />
+                            </div>
 
                             <!-- Actions -->
                             <div class="grid gap-1 place-content-start text-right">
                                 <button
                                     type="button"
                                     class="text-red-600 hover:text-red-700 transition-all"
-                                    @click="remove('{{ $type['code'] }}', link)"
+                                    @click="remove(type.code, link)"
                                     title="@lang('admin::app.catalog.products.index.datagrid.delete')"
                                     aria-label="@lang('admin::app.catalog.products.index.datagrid.delete')"
                                 >
@@ -165,33 +199,37 @@
                         class="grid gap-3.5 justify-center justify-items-center py-10 px-2.5"
                         v-else
                     >
-                        <!-- Placeholder Image -->
                         <img
                             src="{{ unopim_asset('images/icon-add-product.svg') }}"
                             class="w-20 h-20 dark:invert dark:mix-blend-exclusion"
                         />
 
-                        <!-- Add Links Information -->
                         <div class="flex flex-col gap-1.5 items-center">
                             <p class="text-base text-gray-400 font-semibold">
                                 @lang('admin::app.catalog.products.edit.links.empty-title')
                             </p>
 
                             <p class="text-gray-400">
-                                {{ trans('admin::app.catalog.products.edit.links.empty-info', ['type' => $type['name']]) }}
+                                @{{ @json(trans('admin::app.catalog.products.edit.links.empty-info')).replace(':type', type.name) }}
                             </p>
                         </div>
                     </div>
-                    </div>
-                @endforeach
+                </div>
             </div>
 
-            <!-- Product Search Blade Component -->
+            <!-- Product Search Drawer -->
             <x-admin::products.search
                 ref="productSearch"
                 ::added-product-ids="addedProductIds"
                 ::queryParams='queryParams'
                 @onProductAdded="addSelected($event)"
+            />
+
+            <!-- Association Type Search Drawer -->
+            <x-admin::associations.type-search
+                ref="typeSearch"
+                ::added-type-codes="addedTypeCodes"
+                @onTypeAdded="addType($event)"
             />
         </div>
     </script>
@@ -218,7 +256,9 @@
                      * differently from the prop itself: writing to
                      * `this.associationTypes` directly would silently no-op
                      * (Vue 3 exposes props as a readonly proxy), so add/remove
-                     * mutate `localTypes` instead.
+                     * mutate `localTypes` instead. Only the types this product
+                     * already links to arrive here; more are appended via the
+                     * async picker (`addType`).
                      */
                     localTypes: JSON.parse(JSON.stringify(this.associationTypes)),
 
@@ -243,6 +283,10 @@
                     productIds.push(this.currentProduct.sku);
 
                     return productIds;
+                },
+
+                addedTypeCodes() {
+                    return this.localTypes.map(type => type.code);
                 }
             },
 
@@ -263,6 +307,34 @@
                     ).length;
 
                     this.$productWorkspace.setCount('associations', total);
+                },
+
+                openProductSearch(typeCode) {
+                    this.selectedTypeCode = typeCode;
+
+                    this.$refs.productSearch.openDrawer();
+                },
+
+                /**
+                 * Append picker-selected types as fresh, link-less panels
+                 * (deduped by code). No `setDirty` here: an empty type prunes
+                 * nothing on save; the form turns dirty once a link is added.
+                 */
+                addType(selectedTypes) {
+                    selectedTypes.forEach(type => {
+                        if (this.localTypes.some(existing => existing.code === type.code)) {
+                            return;
+                        }
+
+                        this.localTypes.push({
+                            code:   type.code,
+                            name:   type.name,
+                            fields: type.fields || [],
+                            links:  [],
+                        });
+                    });
+
+                    this.$nextTick(() => this.publishState());
                 },
 
                 /**
