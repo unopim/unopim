@@ -4,7 +4,24 @@
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.links.before', ['product' => $product]) !!}
 
-<v-product-links :association-types='@json($associationTypes)'></v-product-links>
+<x-admin::product.section-card
+    id="associations"
+    :title="trans('admin::app.catalog.products.edit.links.title')"
+    icon="icon-product"
+>
+    {{-- v-text attribute is SINGLE-quoted so @json's double quotes don't collide --}}
+    <span v-text='$productWorkspace.getCount("associations") + " " + @json(trans("admin::app.catalog.products.edit.workspace.associations.linked"))'></span>
+</x-admin::product.section-card>
+
+<x-admin::product.workspace-panel
+    id="associations"
+    :title="trans('admin::app.catalog.products.edit.links.title')"
+    :subtitle="trans('admin::app.catalog.products.edit.workspace.associations.subtitle')"
+    icon="icon-product"
+    :order="20"
+>
+    <v-product-links :association-types='@json($associationTypes)'></v-product-links>
+</x-admin::product.workspace-panel>
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.links.after', ['product' => $product]) !!}
 
@@ -220,7 +237,25 @@
                 }
             },
 
+            mounted() {
+                this.publishState();
+            },
+
             methods: {
+                /**
+                 * Linked products are rendered as hidden `associations[<typeCode>][<index>][sku]`
+                 * inputs (see the `sku` hidden input above), one per link row across every
+                 * association type -- scoped to this panel via `data-section-id="associations"`
+                 * so the count reflects only this section's DOM.
+                 */
+                publishState() {
+                    const total = document.querySelectorAll(
+                        '.product-workspace-panel[data-section-id="associations"] input[name^="associations["][name$="][sku]"]'
+                    ).length;
+
+                    this.$productWorkspace.setCount('associations', total);
+                },
+
                 /**
                  * `Product::normalizeWithImage()` (the shape every link/searched
                  * product here is built from) has no `name` key. Derive a
@@ -261,6 +296,11 @@
                     if (newLinks.length > 0) {
                         type.links = [...type.links, ...newLinks];
                     }
+
+                    this.$nextTick(() => {
+                        this.publishState();
+                        this.$productWorkspace.setDirty('associations', true);
+                    });
                 },
 
                 remove(typeCode, link) {
@@ -271,6 +311,11 @@
                             if (type) {
                                 type.links = type.links.filter(item => item.sku !== link.sku);
                             }
+
+                            this.$nextTick(() => {
+                                this.publishState();
+                                this.$productWorkspace.setDirty('associations', true);
+                            });
                         },
                     });
                 },
