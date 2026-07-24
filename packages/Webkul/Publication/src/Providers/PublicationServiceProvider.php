@@ -13,6 +13,7 @@ use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Events\PublicationPublished;
 use Webkul\Publication\Events\PublicationRedacted;
 use Webkul\Publication\Http\Controllers\PublicationAssetController;
+use Webkul\Publication\Http\Controllers\PublicationCarrierController;
 use Webkul\Publication\Http\Controllers\PublicationController;
 use Webkul\Publication\Http\Middleware\EnsurePublicationEnabled;
 use Webkul\Publication\Http\Middleware\PublicationErrorBoundary;
@@ -109,6 +110,13 @@ class PublicationServiceProvider extends ServiceProvider
                         ->where('path', '[A-Za-z0-9][A-Za-z0-9_.\/%-]*')
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.asset');
+
+                    // Registered before `/{uuid}/{locale}`: `carrier.svg` contains
+                    // a dot and would otherwise be captured as a `{locale}` segment,
+                    // so first-match ordering must resolve it here.
+                    Route::get('/{uuid}/carrier.svg', [PublicationCarrierController::class, 'show'])
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.carrier');
 
                     Route::get('/{uuid}/{locale}', [PublicationController::class, 'show'])
                         ->defaults('type', $type->code)

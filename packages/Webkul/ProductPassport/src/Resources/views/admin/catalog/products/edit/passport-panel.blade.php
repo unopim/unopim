@@ -38,6 +38,29 @@
                     <td class="py-2">{{ $row['published_at'] ?? '—' }}</td>
                     <td class="py-2">{{ $row['missing_count'] ?? trans('passport::app.catalog.products.edit.passport.unscored') }}</td>
                     <td class="py-2 text-right">
+                        @if (! empty($row['operator_link']))
+                            <button type="button" class="passport-copy-link-btn text-violet-700 dark:text-violet-300 font-semibold mr-3"
+                                    data-link="{{ $row['operator_link'] }}"
+                                    data-label="{{ trans('passport::app.catalog.products.edit.passport.copy-operator-link') }}">
+                                {{ trans('passport::app.catalog.products.edit.passport.copy-operator-link') }}
+                            </button>
+                        @endif
+
+                        @if (! empty($row['authority_link']))
+                            <button type="button" class="passport-copy-link-btn text-violet-700 dark:text-violet-300 font-semibold mr-3"
+                                    data-link="{{ $row['authority_link'] }}"
+                                    data-label="{{ trans('passport::app.catalog.products.edit.passport.copy-authority-link') }}">
+                                {{ trans('passport::app.catalog.products.edit.passport.copy-authority-link') }}
+                            </button>
+                        @endif
+
+                        @if (! empty($row['carrier_link']))
+                            <a href="{{ $row['carrier_link'] }}" download
+                               class="text-violet-700 dark:text-violet-300 font-semibold mr-3">
+                                {{ trans('passport::app.catalog.products.edit.passport.download-qr') }}
+                            </a>
+                        @endif
+
                         <button type="button" class="passport-publish-btn text-violet-700 dark:text-violet-300 font-semibold"
                                 data-locale-id="{{ $row['locale_id'] }}">
                             {{ $passportAutoPublish
@@ -86,7 +109,39 @@
             });
         }
 
+        function copyLink(button) {
+            var link = button.dataset.link;
+            var restore = button.dataset.label;
+
+            function flash() {
+                button.textContent = @json(trans('passport::app.catalog.products.edit.passport.link-copied'));
+                setTimeout(function () { button.textContent = restore; }, 1500);
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link).then(flash).catch(flash);
+
+                return;
+            }
+
+            var field = document.createElement('textarea');
+            field.value = link;
+            document.body.appendChild(field);
+            field.select();
+            try { document.execCommand('copy'); } catch (error) { /* clipboard unavailable */ }
+            document.body.removeChild(field);
+            flash();
+        }
+
         document.addEventListener('click', function (event) {
+            var copy = event.target.closest('.passport-copy-link-btn');
+
+            if (copy) {
+                copyLink(copy);
+
+                return;
+            }
+
             var single = event.target.closest('.passport-publish-btn');
 
             if (single && ! single.disabled) {
