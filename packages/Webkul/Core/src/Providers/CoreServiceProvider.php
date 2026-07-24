@@ -3,6 +3,7 @@
 namespace Webkul\Core\Providers;
 
 use Elastic\Elasticsearch\Client as ElasticSearchClient;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
@@ -80,6 +81,17 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->register(VisitorServiceProvider::class);
 
         $this->app->bind(ExceptionHandler::class, Handler::class);
+
+        /*
+         * The framework's default redirect target for unauthenticated requests
+         * is the (nonexistent) `login` route, which the Authenticate middleware
+         * resolves eagerly while building the exception — throwing a 500 before
+         * any handler runs. Point web requests at the admin login and let API
+         * requests fall through to the JSON 401 in the exception handler.
+         */
+        Authenticate::redirectUsing(
+            fn ($request) => $request->is('api/*') ? null : route('admin.session.create')
+        );
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'core');
 
