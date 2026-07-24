@@ -17,13 +17,13 @@
     </div>
 </div>
 
-@pushOnce('scripts')
+@pushOnce('scripts', 'product-workspace-panel-' . $id)
     <script type="module">
         (function register() {
             const store = app.config.globalProperties.$productWorkspace;
             if (! store) { window.requestAnimationFrame(register); return; }
             store.register({
-                id: '{{ $id }}',
+                id: @json($id),
                 title: @json($title),
                 subtitle: @json($subtitle),
                 icon: @json($icon),
