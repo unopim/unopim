@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Data di creazione',
                     'product-type' => 'Tipo di prodotto',
                 ],
+                'sections' => [
+                    'view'    => 'Visualizza',
+                    'unsaved' => 'Modifiche non salvate',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Chiudi',
+                    'categories'   => [
+                        'subtitle' => 'Assegna questo prodotto alle categorie del catalogo.',
+                        'search'   => 'Cerca categorie…',
+                        'selected' => 'selezionato',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Collega prodotti correlati, up-sell, cross-sell e personalizzati.',
+                        'linked'   => 'prodotti collegati',
+                    ],
+                ],
+
                 'more-actions' => 'Altre azioni',
                 'variations'   => [
                     'title'          => 'Variazioni',

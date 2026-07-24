@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Luotu',
                     'product-type' => 'Tuotetyyppi',
                 ],
+                'sections' => [
+                    'view'    => 'Näytä',
+                    'unsaved' => 'Tallentamattomat muutokset',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Sulje',
+                    'categories'   => [
+                        'subtitle' => 'Liitä tämä tuote luettelon kategorioihin.',
+                        'search'   => 'Hae kategorioita…',
+                        'selected' => 'valittu',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Linkitä liittyviä, lisämyynti-, ristiinmyynti- ja mukautettuja tuotteita.',
+                        'linked'   => 'linkitettyä tuotetta',
+                    ],
+                ],
+
                 'more-actions' => 'Lisää toimintoja',
                 'variations'   => [
                     'title'          => 'Variaatiot',

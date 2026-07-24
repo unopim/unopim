@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Ngày tạo',
                     'product-type' => 'Loại sản phẩm',
                 ],
+                'sections' => [
+                    'view'    => 'Xem',
+                    'unsaved' => 'Thay đổi chưa lưu',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Đóng',
+                    'categories'   => [
+                        'subtitle' => 'Gán sản phẩm này vào danh mục.',
+                        'search'   => 'Tìm kiếm danh mục…',
+                        'selected' => 'đã chọn',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Liên kết sản phẩm liên quan, bán thêm, bán chéo và tùy chỉnh.',
+                        'linked'   => 'sản phẩm đã liên kết',
+                    ],
+                ],
+
                 'more-actions' => 'Hành động khác',
                 'variations'   => [
                     'title'          => 'Biến thể',

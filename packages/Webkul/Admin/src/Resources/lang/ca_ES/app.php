@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Data de creació',
                     'product-type' => 'Tipus de producte',
                 ],
+                'sections' => [
+                    'view'    => 'Veure',
+                    'unsaved' => 'Canvis sense desar',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Tanca',
+                    'categories'   => [
+                        'subtitle' => 'Assigneu aquest producte a categories del catàleg.',
+                        'search'   => 'Cerca categories…',
+                        'selected' => 'seleccionat(s)',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Vincula productes relacionats, de venda addicional, de venda creuada i personalitzats.',
+                        'linked'   => 'productes vinculats',
+                    ],
+                ],
+
                 'more-actions' => 'Més accions',
                 'variations'   => [
                     'title'          => 'Variacions',

@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Créé le',
                     'product-type' => 'Type de produit',
                 ],
+                'sections' => [
+                    'view'    => 'Voir',
+                    'unsaved' => 'Modifications non enregistrées',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Fermer',
+                    'categories'   => [
+                        'subtitle' => 'Associez ce produit aux catégories du catalogue.',
+                        'search'   => 'Rechercher des catégories…',
+                        'selected' => 'sélectionné(s)',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Associez des produits similaires, de montée en gamme, complémentaires et personnalisés.',
+                        'linked'   => 'produits liés',
+                    ],
+                ],
+
                 'more-actions' => 'Plus d\'actions',
                 'variations'   => [
                     'title'          => 'Variations',

@@ -393,6 +393,24 @@ return [
                     'created-at'   => 'Opprettet',
                     'product-type' => 'Produkttype',
                 ],
+                'sections' => [
+                    'view'    => 'Vis',
+                    'unsaved' => 'Ulagrede endringer',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Lukk',
+                    'categories'   => [
+                        'subtitle' => 'Tilordne dette produktet til katalogkategorier.',
+                        'search'   => 'Søk i kategorier…',
+                        'selected' => 'valgt',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Koble relaterte, mersalgs-, kryssalgs- og tilpassede produkter.',
+                        'linked'   => 'koblede produkter',
+                    ],
+                ],
+
                 'more-actions' => 'Flere handlinger',
                 'variations'   => [
                     'title'          => 'Variasjoner',

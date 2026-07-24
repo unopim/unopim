@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Petsa ng Pagkakalikha',
                     'product-type' => 'Uri ng Produkto',
                 ],
+                'sections' => [
+                    'view'    => 'Tingnan',
+                    'unsaved' => 'Hindi na-save na mga pagbabago',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Isara',
+                    'categories'   => [
+                        'subtitle' => 'I-assign ang produktong ito sa mga kategorya ng katalogo.',
+                        'search'   => 'Maghanap ng mga kategorya…',
+                        'selected' => 'napili',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'I-link ang mga kaugnay, up-sell, cross-sell, at custom na produkto.',
+                        'linked'   => 'naka-link na mga produkto',
+                    ],
+                ],
+
                 'more-actions' => 'Higit Pang Aksyon',
                 'variations'   => [
                     'title'          => 'Mga Variation',

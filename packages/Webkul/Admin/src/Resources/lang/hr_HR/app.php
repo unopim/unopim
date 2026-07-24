@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Datum izrade',
                     'product-type' => 'Vrsta proizvoda',
                 ],
+                'sections' => [
+                    'view'    => 'Prikaži',
+                    'unsaved' => 'Nespremljene promjene',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Zatvori',
+                    'categories'   => [
+                        'subtitle' => 'Dodijelite ovaj proizvod kategorijama kataloga.',
+                        'search'   => 'Pretraži kategorije…',
+                        'selected' => 'odabrano',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Povežite srodne, dodatne, unakrsne i prilagođene proizvode.',
+                        'linked'   => 'povezanih proizvoda',
+                    ],
+                ],
+
                 'more-actions' => 'Više radnji',
                 'variations'   => [
                     'title'          => 'Varijacije',

@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Oprettelsesdato',
                     'product-type' => 'Produkttype',
                 ],
+                'sections' => [
+                    'view'    => 'Vis',
+                    'unsaved' => 'Ugemte ændringer',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Luk',
+                    'categories'   => [
+                        'subtitle' => 'Tildel dette produkt til katalogkategorier.',
+                        'search'   => 'Søg i kategorier…',
+                        'selected' => 'valgt',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Kobl relaterede, mersalgs-, krydssalgs- og brugerdefinerede produkter.',
+                        'linked'   => 'tilknyttede produkter',
+                    ],
+                ],
+
                 'more-actions' => 'Flere handlinger',
                 'variations'   => [
                     'title'          => 'Variationer',

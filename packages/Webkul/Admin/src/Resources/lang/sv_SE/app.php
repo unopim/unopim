@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Skapad datum',
                     'product-type' => 'Produkttyp',
                 ],
+                'sections' => [
+                    'view'    => 'Visa',
+                    'unsaved' => 'Osparade ändringar',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Stäng',
+                    'categories'   => [
+                        'subtitle' => 'Tilldela denna produkt till katalogkategorier.',
+                        'search'   => 'Sök kategorier…',
+                        'selected' => 'vald',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Länka relaterade, mersälj-, korsförsäljnings- och anpassade produkter.',
+                        'linked'   => 'länkade produkter',
+                    ],
+                ],
+
                 'more-actions' => 'Fler åtgärder',
                 'variations'   => [
                     'title'          => 'Variationer',

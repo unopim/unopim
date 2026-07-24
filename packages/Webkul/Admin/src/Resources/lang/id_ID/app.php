@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Tanggal Dibuat',
                     'product-type' => 'Tipe Produk',
                 ],
+                'sections' => [
+                    'view'    => 'Lihat',
+                    'unsaved' => 'Perubahan belum disimpan',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Tutup',
+                    'categories'   => [
+                        'subtitle' => 'Tetapkan produk ini ke kategori katalog.',
+                        'search'   => 'Cari kategori…',
+                        'selected' => 'dipilih',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Tautkan produk terkait, penjualan tambahan, penjualan silang, dan kustom.',
+                        'linked'   => 'produk tertaut',
+                    ],
+                ],
+
                 'more-actions' => 'Tindakan Lainnya',
                 'variations'   => [
                     'title'          => 'Variasi',

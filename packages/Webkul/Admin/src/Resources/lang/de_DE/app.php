@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Erstellt am',
                     'product-type' => 'Produkttyp',
                 ],
+                'sections' => [
+                    'view'    => 'Ansehen',
+                    'unsaved' => 'Nicht gespeicherte Änderungen',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Schließen',
+                    'categories'   => [
+                        'subtitle' => 'Weisen Sie dieses Produkt Katalogkategorien zu.',
+                        'search'   => 'Kategorien suchen…',
+                        'selected' => 'ausgewählt',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Verknüpfen Sie verwandte, Zusatzverkaufs-, Cross-Selling- und benutzerdefinierte Produkte.',
+                        'linked'   => 'verknüpfte Produkte',
+                    ],
+                ],
+
                 'more-actions' => 'Mehr Aktionen',
                 'variations'   => [
                     'title'          => 'Variationen',

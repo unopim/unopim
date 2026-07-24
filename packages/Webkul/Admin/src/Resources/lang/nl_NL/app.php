@@ -393,6 +393,24 @@ return [
                     'created-at'   => 'Aanmaakdatum',
                     'product-type' => 'Producttype',
                 ],
+                'sections' => [
+                    'view'    => 'Bekijken',
+                    'unsaved' => 'Niet-opgeslagen wijzigingen',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Sluiten',
+                    'categories'   => [
+                        'subtitle' => 'Wijs dit product toe aan catalogus­categorieën.',
+                        'search'   => 'Categorieën zoeken…',
+                        'selected' => 'geselecteerd',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Koppel gerelateerde, upsell-, cross-sell- en aangepaste producten.',
+                        'linked'   => 'gekoppelde producten',
+                    ],
+                ],
+
                 'more-actions' => 'Meer acties',
                 'variations'   => [
                     'title'          => 'Variaties',

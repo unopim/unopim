@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Oluşturulma Tarihi',
                     'product-type' => 'Ürün Türü',
                 ],
+                'sections' => [
+                    'view'    => 'Görüntüle',
+                    'unsaved' => 'Kaydedilmemiş değişiklikler',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Kapat',
+                    'categories'   => [
+                        'subtitle' => 'Bu ürünü katalog kategorilerine atayın.',
+                        'search'   => 'Kategori ara…',
+                        'selected' => 'seçildi',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'İlgili, ek satış, çapraz satış ve özel ürünleri bağlayın.',
+                        'linked'   => 'bağlı ürün',
+                    ],
+                ],
+
                 'more-actions' => 'Daha Fazla İşlem',
                 'variations'   => [
                     'title'          => 'Varyasyonlar',

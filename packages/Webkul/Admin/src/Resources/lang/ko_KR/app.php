@@ -393,6 +393,24 @@ return [
                     'created-at'   => '생성일',
                     'product-type' => '제품 유형',
                 ],
+                'sections' => [
+                    'view'    => '보기',
+                    'unsaved' => '저장되지 않은 변경 사항',
+                ],
+
+                'workspace' => [
+                    'close'        => '닫기',
+                    'categories'   => [
+                        'subtitle' => '이 제품을 카탈로그 카테고리에 할당합니다.',
+                        'search'   => '카테고리 검색…',
+                        'selected' => '선택됨',
+                    ],
+                    'associations' => [
+                        'subtitle' => '관련, 상향 판매, 교차 판매 및 맞춤 제품을 연결합니다.',
+                        'linked'   => '연결된 제품',
+                    ],
+                ],
+
                 'more-actions' => '추가 작업',
                 'variations'   => [
                     'title'          => '변형',

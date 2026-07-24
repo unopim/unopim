@@ -392,6 +392,24 @@ return [
                     'created-at'   => '創建日期',
                     'product-type' => '產品類型',
                 ],
+                'sections' => [
+                    'view'    => '檢視',
+                    'unsaved' => '未儲存的變更',
+                ],
+
+                'workspace' => [
+                    'close'        => '關閉',
+                    'categories'   => [
+                        'subtitle' => '將此產品指派至目錄類別。',
+                        'search'   => '搜尋類別…',
+                        'selected' => '已選取',
+                    ],
+                    'associations' => [
+                        'subtitle' => '連結相關、追加銷售、交叉銷售及自訂產品。',
+                        'linked'   => '已連結產品',
+                    ],
+                ],
+
                 'more-actions' => '更多操作',
                 'variations'   => [
                     'title'          => '變體',

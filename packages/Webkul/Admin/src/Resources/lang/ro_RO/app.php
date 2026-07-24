@@ -393,6 +393,24 @@ return [
                     'created-at'   => 'Data Creării',
                     'product-type' => 'Tip Produs',
                 ],
+                'sections' => [
+                    'view'    => 'Vizualizare',
+                    'unsaved' => 'Modificări nesalvate',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Închide',
+                    'categories'   => [
+                        'subtitle' => 'Atribuiți acest produs categoriilor din catalog.',
+                        'search'   => 'Căutare categorii…',
+                        'selected' => 'selectat(e)',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Conectați produse asociate, up-sell, cross-sell și personalizate.',
+                        'linked'   => 'produse conectate',
+                    ],
+                ],
+
                 'more-actions' => 'Mai multe acțiuni',
                 'variations'   => [
                     'title'          => 'Variații',

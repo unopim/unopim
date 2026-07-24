@@ -392,6 +392,24 @@ return [
                     'created-at'   => 'Date Created',
                     'product-type' => 'Product Type',
                 ],
+                'sections' => [
+                    'view'    => 'View',
+                    'unsaved' => 'Unsaved changes',
+                ],
+
+                'workspace' => [
+                    'close'        => 'Close',
+                    'categories'   => [
+                        'subtitle' => 'Assign this product to catalog categories.',
+                        'search'   => 'Search categories…',
+                        'selected' => 'selected',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Link related, up-sell, cross-sell and custom products.',
+                        'linked'   => 'linked products',
+                    ],
+                ],
+
                 'more-actions' => 'More Actions',
                 'variations'   => [
                     'title'          => 'Variations',

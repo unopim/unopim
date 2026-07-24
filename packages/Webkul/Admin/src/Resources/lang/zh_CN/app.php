@@ -392,6 +392,24 @@ return [
                     'created-at'   => '创建日期',
                     'product-type' => '产品类型',
                 ],
+                'sections' => [
+                    'view'    => '查看',
+                    'unsaved' => '未保存的更改',
+                ],
+
+                'workspace' => [
+                    'close'        => '关闭',
+                    'categories'   => [
+                        'subtitle' => '将此产品分配到目录类别。',
+                        'search'   => '搜索类别…',
+                        'selected' => '已选择',
+                    ],
+                    'associations' => [
+                        'subtitle' => '关联相关、追加销售、交叉销售和自定义产品。',
+                        'linked'   => '已关联产品',
+                    ],
+                ],
+
                 'more-actions' => '更多操作',
                 'variations'   => [
                     'title'          => '变体',

@@ -392,6 +392,24 @@ return [
                     'created-at'   => '作成日',
                     'product-type' => '製品タイプ',
                 ],
+                'sections' => [
+                    'view'    => '表示',
+                    'unsaved' => '未保存の変更',
+                ],
+
+                'workspace' => [
+                    'close'        => '閉じる',
+                    'categories'   => [
+                        'subtitle' => 'この商品をカタログカテゴリーに割り当てます。',
+                        'search'   => 'カテゴリーを検索…',
+                        'selected' => '選択済み',
+                    ],
+                    'associations' => [
+                        'subtitle' => '関連商品、アップセル、クロスセル、カスタム商品をリンクします。',
+                        'linked'   => 'リンクされた商品',
+                    ],
+                ],
+
                 'more-actions' => 'その他の操作',
                 'variations'   => [
                     'title'          => 'バリエーション',
