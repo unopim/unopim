@@ -8,12 +8,9 @@
 <div
     role="button"
     tabindex="0"
-    @click="$productWorkspace?.open('{{ $id }}')"
-    @keydown.enter="$productWorkspace?.open('{{ $id }}')"
-    @keydown.space.prevent="$productWorkspace?.open('{{ $id }}')"
-    class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow flex items-center gap-3 cursor-pointer hover:border-violet-300 border border-transparent transition-all"
+    class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow flex items-center gap-3 cursor-pointer border border-transparent hover:border-unopim-primary-border dark:hover:border-cherry-800 transition-all"
 >
-    <span class="grid place-items-center w-10 h-10 rounded bg-violet-50 dark:bg-cherry-800 shrink-0">
+    <span class="grid place-items-center w-10 h-10 rounded bg-unopim-primary-soft dark:bg-cherry-800 shrink-0">
         <span class="{{ $icon }} text-2xl text-gray-600 dark:text-gray-300"></span>
     </span>
 
@@ -35,7 +32,7 @@
         </p>
     </div>
 
-    <span class="text-sm font-medium text-violet-700 dark:text-violet-400 shrink-0">
+    <span class="text-sm font-medium text-primary-600 dark:text-primary-400 shrink-0">
         @lang('admin::app.catalog.products.edit.sections.view') <span class="rtl:hidden">&rarr;</span>
     </span>
 </div>
