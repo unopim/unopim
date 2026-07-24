@@ -147,6 +147,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.media-files.product.store',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.api.media-files.product.get',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.products.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.media-files.product.delete',
+        'sort'  => 3,
     ],
 
     // ── Categories ──────────────────────────────────────────
@@ -183,6 +193,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.media-files.category.store',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.categories',
+        'name'  => 'admin::app.acl.categories',
+        'route' => 'admin.api.media-files.category.get',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.categories.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.media-files.category.delete',
+        'sort'  => 3,
     ],
 
     // ── Category Fields ─────────────────────────────────────
@@ -293,6 +313,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.media-files.attribute.options.store',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attributes',
+        'name'  => 'admin::app.acl.attributes',
+        'route' => 'admin.api.media-files.attribute.options.get',
+        'sort'  => 4,
+    ], [
+        'key'   => 'api.catalog.attributes.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.media-files.attribute.options.delete',
+        'sort'  => 3,
     ],
 
     // ── Attribute Groups ────────────────────────────────────

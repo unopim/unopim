@@ -79,14 +79,20 @@ Route::group([
     Route::controller(MediaFileController::class)->prefix('media-files')->group(function () {
         Route::prefix('category')->group(function () {
             Route::post('', 'storeCategoryMedia')->name('admin.api.media-files.category.store');
+            Route::get('', 'getCategoryMedia')->name('admin.api.media-files.category.get');
+            Route::delete('', 'deleteCategoryMedia')->name('admin.api.media-files.category.delete');
         });
 
         Route::prefix('product')->group(function () {
             Route::post('', 'storeProductMedia')->name('admin.api.media-files.product.store');
+            Route::get('', 'getProductMedia')->name('admin.api.media-files.product.get');
+            Route::delete('', 'deleteProductMedia')->name('admin.api.media-files.product.delete');
         });
 
         Route::prefix('swatch')->group(function () {
             Route::post('', 'storeSwatchMedia')->name('admin.api.media-files.attribute.options.store');
+            Route::get('', 'getSwatchMedia')->name('admin.api.media-files.attribute.options.get');
+            Route::delete('', 'deleteSwatchMedia')->name('admin.api.media-files.attribute.options.delete');
         });
     });
 
