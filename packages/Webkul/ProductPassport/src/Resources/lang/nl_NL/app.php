@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Geen paspoort gevonden voor id :id.',
-        'index'          => [
+        'reinstated'        => 'Paspoort succesvol hersteld.',
+        'reinstate-invalid' => 'Alleen een ingetrokken paspoort kan worden hersteld.',
+        'redacted'          => 'Paspoort succesvol geredigeerd.',
+        'redact-invalid'    => 'Dit paspoort kan niet worden geredigeerd.',
+        'not-found'         => 'Geen paspoort gevonden voor id :id.',
+        'index'             => [
             'disabled-notice' => 'Het publiceren van paspoorten is momenteel uitgeschakeld. Bestaande paspoorten worden hieronder weergegeven voor beheer (bekijken en intrekken).',
             'title'           => 'Digitale Productpaspoorten',
         ],

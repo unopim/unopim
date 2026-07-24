@@ -186,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Media nu a putut fi găsită.',
+            'index'          => [
                 'already-taken'             => ':name este deja utilizat.',
                 'variant-sku-already-taken' => 'SKU-ul variantei ":sku" este deja utilizat.',
                 'variant-sku-label'         => 'SKU-ul variantei :position',
@@ -673,6 +674,8 @@ return [
             'not-found'         => 'Atributul cu codul ":code" nu a fost găsit',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opțiunea de atribut a fost ștearsă cu succes',
+            'swatch-not-found'     => 'Nu s-a găsit nicio imagine de mostră pentru această opțiune.',
             'create-success'       => 'Opțiunea atributului a fost creată cu succes',
             'update-success'       => 'Opțiunea atributului a fost actualizată cu succes',
             'usable-in-grid-error' => 'Doar 4 atribute pot fi marcate ca utilizabile în grilă.',
@@ -955,6 +958,7 @@ return [
             'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Opțiunea câmpului de categorie a fost ștearsă cu succes',
             'create-success'      => 'Opțiune câmp categorie creată',
             'update-success'      => 'Opțiune câmp categorie actualizată',
             'update-unknown-code' => 'Nu există nicio opțiune de câmp de categorie cu codul „:code”.',
@@ -1144,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Nu s-a găsit nicio localizare cu codul :code.',
                 'create-btn'            => 'Creare Localitate',
                 'locale'                => 'Localitate',
                 'title'                 => 'Localități',
@@ -1191,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Nu s-a găsit nicio monedă cu codul :code.',
                 'create-btn'            => 'Creare Monedă',
                 'currency'              => 'Monedă',
                 'title'                 => 'Monede',
@@ -1651,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Nu s-a găsit niciun canal cu codul :code.',
                 'create-btn'           => 'Creează Canal',
                 'delete-failed'        => 'Ștergerea canalului a eșuat',
                 'delete-success'       => 'Canalul a fost șters cu succes.',

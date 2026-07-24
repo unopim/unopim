@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Không tìm thấy phương tiện.',
+            'index'          => [
                 'already-taken'             => ':name đã được sử dụng.',
                 'variant-sku-already-taken' => 'SKU của biến thể ":sku" đã được sử dụng.',
                 'variant-sku-label'         => 'SKU của biến thể :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'Không tìm thấy thuộc tính với mã ":code"',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Đã xóa tùy chọn thuộc tính thành công',
+            'swatch-not-found'     => 'Không tìm thấy hình ảnh mẫu cho tùy chọn này.',
             'create-success'       => 'Tùy chọn thuộc tính đã được tạo thành công',
             'update-success'       => 'Tùy chọn thuộc tính đã được cập nhật thành công',
             'usable-in-grid-error' => 'Chỉ có 4 thuộc tính có thể được đánh dấu là có thể sử dụng trong lưới.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Đã xóa tùy chọn trường danh mục thành công',
             'create-success'      => 'Tùy chọn trường danh mục đã được tạo thành công',
             'update-success'      => 'Tùy chọn trường danh mục đã được cập nhật thành công',
             'update-unknown-code' => 'Không có tuỳ chọn trường danh mục với mã ":code".',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Không tìm thấy ngôn ngữ có mã :code.',
                 'create-btn'            => 'Tạo Ngôn Ngữ',
                 'locale'                => 'Ngôn Ngữ',
                 'title'                 => 'Các Ngôn Ngữ',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Không tìm thấy tiền tệ có mã :code.',
                 'create-btn'            => 'Tạo Tiền Tệ',
                 'currency'              => 'Tiền Tệ',
                 'title'                 => 'Các Tiền Tệ',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Không tìm thấy kênh có mã :code.',
                 'create-btn'           => 'Tạo Kênh',
                 'delete-failed'        => 'Xóa Kênh Thất Bại',
                 'delete-success'       => 'Kênh đã được xóa thành công.',

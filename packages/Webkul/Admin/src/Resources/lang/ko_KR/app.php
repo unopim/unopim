@@ -186,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => '미디어를 찾을 수 없습니다.',
+            'index'          => [
                 'already-taken'             => ':name은(는) 이미 사용되었습니다.',
                 'variant-sku-already-taken' => '변형 SKU ":sku"은(는) 이미 사용 중입니다.',
                 'variant-sku-label'         => '변형 :position SKU',
@@ -673,6 +674,8 @@ return [
             'not-found'         => '코드 ":code"에 해당하는 속성을 찾을 수 없습니다',
         ],
         'attribute-options' => [
+            'delete-success'       => '속성 옵션이 성공적으로 삭제되었습니다',
+            'swatch-not-found'     => '이 옵션에 대한 견본 이미지를 찾을 수 없습니다.',
             'create-success'       => '속성 옵션이 성공적으로 생성되었습니다.',
             'update-success'       => '속성 옵션이 성공적으로 업데이트되었습니다.',
             'usable-in-grid-error' => '그리드에서 사용할 수 있는 속성은 4개만 설정할 수 있습니다.',
@@ -955,6 +958,7 @@ return [
             'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => '카테고리 필드 옵션이 성공적으로 삭제되었습니다',
             'create-success'      => '카테고리 필드 옵션이 성공적으로 생성되었습니다.',
             'update-success'      => '카테고리 필드 옵션이 성공적으로 업데이트되었습니다.',
             'update-unknown-code' => '코드 ":code"에 해당하는 카테고리 필드 옵션이 없습니다.',
@@ -1144,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => '코드가 :code인 로케일을 찾을 수 없습니다.',
                 'create-btn'            => '로케일 생성',
                 'locale'                => '로케일',
                 'title'                 => '로케일',
@@ -1191,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => '코드가 :code인 통화를 찾을 수 없습니다.',
                 'create-btn'            => '통화 생성',
                 'currency'              => '통화',
                 'title'                 => '통화',
@@ -1651,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => '코드가 :code인 채널을 찾을 수 없습니다.',
                 'create-btn'           => '채널 만들기',
                 'delete-failed'        => '채널 삭제 실패',
                 'delete-success'       => '채널이 성공적으로 삭제되었습니다.',

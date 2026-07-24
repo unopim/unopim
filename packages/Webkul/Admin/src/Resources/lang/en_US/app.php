@@ -194,7 +194,8 @@ return [
 
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Media could not be found.',
+            'index'          => [
                 'already-taken'             => 'The :name has already been taken.',
                 'create-btn'                => 'Create Product',
                 'title'                     => 'Products',
@@ -719,6 +720,8 @@ return [
         ],
 
         'attribute-options' => [
+            'delete-success'       => 'Attribute Option Deleted Successfully',
+            'swatch-not-found'     => 'No swatch image found for this option.',
             'create-success'       => 'Attribute Option Created Successfully',
             'update-success'       => 'Attribute Option Updated Successfully',
             'usable-in-grid-error' => 'Only 4 attributes can be have usable in grid enabled.',
@@ -1020,6 +1023,7 @@ return [
         ],
 
         'category-fields-options' => [
+            'delete-success'      => 'Category Field Option Deleted Successfully',
             'create-success'      => 'Category Field Option Created Successfully',
             'update-success'      => 'Category Field Option Updated Successfully',
             'update-unknown-code' => 'No category field option exists with code ":code".',
@@ -1218,6 +1222,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Locale with code :code not found.',
                 'create-btn'            => 'Create Locale',
                 'locale'                => 'Locale',
                 'title'                 => 'Locales',
@@ -1271,6 +1276,7 @@ return [
 
         'currencies' => [
             'index' => [
+                'not-found'             => 'Currency with code :code not found.',
                 'create-btn'            => 'Create Currency',
                 'currency'              => 'Currency',
                 'title'                 => 'Currencies',
@@ -1759,6 +1765,7 @@ return [
 
         'channels' => [
             'index' => [
+                'not-found'            => 'Channel with code :code not found.',
                 'create-btn'           => 'Create Channel',
                 'delete-failed'        => 'Channel Delete Failed',
                 'delete-success'       => 'Channel deleted successfully.',

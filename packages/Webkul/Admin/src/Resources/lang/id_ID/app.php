@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Media tidak dapat ditemukan.',
+            'index'          => [
                 'already-taken'             => ':name telah diambil.',
                 'variant-sku-already-taken' => 'SKU varian ":sku" sudah digunakan.',
                 'variant-sku-label'         => 'SKU varian :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'Atribut dengan kode ":code" tidak dapat ditemukan',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opsi atribut berhasil dihapus',
+            'swatch-not-found'     => 'Tidak ada gambar contoh warna untuk opsi ini.',
             'create-success'       => 'Opsi atribut berhasil dibuat',
             'update-success'       => 'Opsi atribut berhasil diperbarui',
             'usable-in-grid-error' => 'Hanya 4 atribut yang dapat digunakan dalam kisi yang diaktifkan.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Field berikut tidak dapat diubah: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Opsi bidang kategori berhasil dihapus',
             'create-success'      => 'Opsi bidang kategori berhasil dibuat',
             'update-success'      => 'Opsi bidang kategori berhasil diperbarui',
             'update-unknown-code' => 'Opsi field kategori dengan kode ":code" tidak ditemukan.',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Lokal dengan kode :code tidak ditemukan.',
                 'create-btn'            => 'Buat lokal',
                 'locale'                => 'Lokal',
                 'title'                 => 'Lokal',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Mata uang dengan kode :code tidak ditemukan.',
                 'create-btn'            => 'Buat mata uang',
                 'currency'              => 'Mata uang',
                 'title'                 => 'Mata uang',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Saluran dengan kode :code tidak ditemukan.',
                 'create-btn'           => 'Buat saluran',
                 'delete-failed'        => 'Hapus saluran gagal',
                 'delete-success'       => 'Saluran berhasil dihapus.',

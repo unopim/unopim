@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Nenhum passaporte encontrado para o id :id.',
-        'index'          => [
+        'reinstated'        => 'Passaporte restabelecido com sucesso.',
+        'reinstate-invalid' => 'Apenas um passaporte retirado pode ser restabelecido.',
+        'redacted'          => 'Passaporte redigido com sucesso.',
+        'redact-invalid'    => 'Este passaporte não pode ser redigido.',
+        'not-found'         => 'Nenhum passaporte encontrado para o id :id.',
+        'index'             => [
             'disabled-notice' => 'A publicação de passaportes está atualmente desativada. Os passaportes existentes são apresentados abaixo para gestão (visualizar e retirar).',
             'title'           => 'Passaportes Digitais do Produto',
         ],

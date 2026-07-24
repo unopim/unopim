@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Inget pass hittades för id :id.',
-        'index'          => [
+        'reinstated'        => 'Passet har återställts.',
+        'reinstate-invalid' => 'Endast ett tillbakadraget pass kan återställas.',
+        'redacted'          => 'Passet har redigerats.',
+        'redact-invalid'    => 'Detta pass kan inte redigeras.',
+        'not-found'         => 'Inget pass hittades för id :id.',
+        'index'             => [
             'disabled-notice' => 'Publicering av pass är för närvarande inaktiverad. Befintliga pass visas nedan för hantering (visa och återkalla).',
             'title'           => 'Digitala Produktpass',
         ],

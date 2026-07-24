@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'No s\'ha trobat cap passaport amb l\'id :id.',
-        'index'          => [
+        'reinstated'        => 'Passaport restablert correctament.',
+        'reinstate-invalid' => 'Només es pot restablir un passaport retirat.',
+        'redacted'          => 'Passaport redactat correctament.',
+        'redact-invalid'    => 'Aquest passaport no es pot redactar.',
+        'not-found'         => 'No s\'ha trobat cap passaport amb l\'id :id.',
+        'index'             => [
             'disabled-notice' => 'La publicació de passaports està desactivada actualment. Els passaports existents es mostren a continuació per gestionar-los (visualitzar i retirar).',
             'title'           => 'Passaports Digitals del Producte',
         ],

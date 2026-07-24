@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => '找不到媒体文件。',
+            'index'          => [
                 'already-taken'             => ':name 已被占用。',
                 'variant-sku-already-taken' => '变体 SKU“:sku”已被使用。',
                 'variant-sku-label'         => '变体 :position 的 SKU',
@@ -672,6 +673,8 @@ return [
             'not-found'         => '无法找到代码为“:code”的属性',
         ],
         'attribute-options' => [
+            'delete-success'       => '属性选项删除成功',
+            'swatch-not-found'     => '未找到此选项的色板图片。',
             'create-success'       => '属性选项成功创建了',
             'update-success'       => '属性选项成功更新',
             'usable-in-grid-error' => '仅在启用网格中可以使用4个属性。',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => '以下字段无法修改：:fields。',
         ],
         'category-fields-options' => [
+            'delete-success'      => '分类字段选项删除成功',
             'create-success'      => '类别字段选项成功创建了',
             'update-success'      => '类别字段选项成功更新',
             'update-unknown-code' => '不存在代码为":code"的类别字段选项。',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => '未找到代码为 :code 的语言环境。',
                 'create-btn'            => '创建语言环境',
                 'locale'                => '语言环境',
                 'title'                 => '地区',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => '未找到代码为 :code 的货币。',
                 'create-btn'            => '创建货币',
                 'currency'              => '货币',
                 'title'                 => '货币',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => '未找到代码为 :code 的渠道。',
                 'create-btn'           => '创建频道',
                 'delete-failed'        => '频道删除失败',
                 'delete-success'       => '频道成功删除。',

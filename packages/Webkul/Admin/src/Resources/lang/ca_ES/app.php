@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'No s\'ha pogut trobar el mitjà.',
+            'index'          => [
                 'already-taken'             => 'El :name ja està en ús.',
                 'variant-sku-already-taken' => 'El SKU de la variant ":sku" ja està en ús.',
                 'variant-sku-label'         => 'SKU de la variant :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'No s\'ha trobat l\'atribut amb codi ":code"',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opció d\'atribut eliminada correctament',
+            'swatch-not-found'     => 'No s\'ha trobat cap imatge de mostra per a aquesta opció.',
             'create-success'       => 'Opció d\'atribut creada amb èxit',
             'update-success'       => 'Opció d\'atribut actualitzada amb èxit',
             'usable-in-grid-error' => 'Només es poden habilitar 4 atributs com a utilitzables en la graella.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Opció de camp de categoria eliminada correctament',
             'create-success'      => 'Opció de Camp de Categoria Creada Correctament',
             'update-success'      => 'Opció de Camp de Categoria Actualitzada Correctament',
             'update-unknown-code' => 'No existeix cap opció de camp de categoria amb el codi «:code».',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'No s\'ha trobat cap configuració regional amb el codi :code.',
                 'create-btn'            => 'Crear Local',
                 'locale'                => 'Local',
                 'title'                 => 'Locals',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'No s\'ha trobat cap moneda amb el codi :code.',
                 'create-btn'            => 'Crear Moneda',
                 'currency'              => 'Moneda',
                 'title'                 => 'Monedes',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'No s\'ha trobat cap canal amb el codi :code.',
                 'create-btn'           => 'Crear Canal',
                 'delete-failed'        => 'No s\'ha pogut suprimir el canal',
                 'delete-success'       => 'Canal suprimit amb èxit.',

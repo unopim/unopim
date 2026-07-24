@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => ':id kimliği için pasaport bulunamadı.',
-        'index'          => [
+        'reinstated'        => 'Pasaport başarıyla geri alındı.',
+        'reinstate-invalid' => 'Yalnızca geri çekilmiş bir pasaport geri alınabilir.',
+        'redacted'          => 'Pasaport başarıyla redakte edildi.',
+        'redact-invalid'    => 'Bu pasaport redakte edilemez.',
+        'not-found'         => ':id kimliği için pasaport bulunamadı.',
+        'index'             => [
             'disabled-notice' => 'Pasaport yayımlama şu anda devre dışı. Mevcut pasaportlar yönetim için aşağıda gösterilir (görüntüleme ve geri çekme).',
             'title'           => 'Dijital Ürün Pasaportları',
         ],

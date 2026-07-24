@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Média introuvable.',
+            'index'          => [
                 'already-taken'             => 'Le :name a déjà été pris.',
                 'variant-sku-already-taken' => 'Le SKU de la variante ":sku" est déjà utilisé.',
                 'variant-sku-label'         => 'SKU de la variante :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'L\'attribut avec le code ":code" est introuvable',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Option d\'attribut supprimée avec succès',
+            'swatch-not-found'     => 'Aucune image de nuancier trouvée pour cette option.',
             'create-success'       => 'Option d\'attribut créée avec succès',
             'update-success'       => 'Option d\'attribut mise à jour avec succès',
             'usable-in-grid-error' => 'Seuls 4 attributs peuvent être utilisés dans la grille.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Les champs suivants ne peuvent pas être modifiés : :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Option de champ de catégorie supprimée avec succès',
             'create-success'      => 'Option de champ de catégorie créée avec succès',
             'update-success'      => 'Option de champ de catégorie mise à jour avec succès',
             'update-unknown-code' => 'Aucune option de champ de catégorie n\'existe avec le code « :code ».',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Langue avec le code :code introuvable.',
                 'create-btn'            => 'Ajouter un langage',
                 'locale'                => 'Langue',
                 'title'                 => 'Langues',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Devise avec le code :code introuvable.',
                 'create-btn'            => 'Ajouter une devise',
                 'currency'              => 'Devise',
                 'title'                 => 'Devises',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Canal avec le code :code introuvable.',
                 'create-btn'           => 'Ajouter un canal',
                 'delete-failed'        => 'La suppression du canal a échoué',
                 'delete-success'       => 'Le canal a été supprimé avec succès.',

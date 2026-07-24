@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Mediaa ei löytynyt.',
+            'index'          => [
                 'already-taken'             => ':name on jo otettu.',
                 'variant-sku-already-taken' => 'Variantin SKU ":sku" on jo käytössä.',
                 'variant-sku-label'         => 'variantin :position SKU',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'Ominaisuutta koodilla ":code" ei löytynyt',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Määriteoptio poistettu onnistuneesti',
+            'swatch-not-found'     => 'Tälle vaihtoehdolle ei löytynyt värimallikuvaa.',
             'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',
             'update-success'       => 'Attribuuttivaihtoehto päivitettiin onnistuneesti',
             'usable-in-grid-error' => 'Vain 4 attribuuttia voidaan merkitä käytettäväksi ruudukossa.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Seuraavia kenttiä ei voi muokata: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Kategoriakentän vaihtoehto poistettu onnistuneesti',
             'create-success'      => 'Kategoriakenttävaihtoehto luotu onnistuneesti',
             'update-success'      => 'Kategoriakenttävaihtoehto päivitetty onnistuneesti',
             'update-unknown-code' => 'Luokkakenttävalintaa koodilla ":code" ei ole olemassa.',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Kielialuetta koodilla :code ei löytynyt.',
                 'create-btn'            => 'Luo käännöskieli',
                 'locale'                => 'Kieli',
                 'title'                 => 'Käännöskielet',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuuttaa koodilla :code ei löytynyt.',
                 'create-btn'            => 'Luo valuutta',
                 'currency'              => 'Valuutta',
                 'title'                 => 'Valuutat',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanavaa koodilla :code ei löytynyt.',
                 'create-btn'           => 'Luo Kanava',
                 'delete-failed'        => 'Kanavan poistaminen epäonnistui',
                 'delete-success'       => 'Kanava poistettu onnistuneesti.',

@@ -186,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Media kon niet worden gevonden.',
+            'index'          => [
                 'already-taken'             => 'De :name is al in gebruik.',
                 'variant-sku-already-taken' => 'De variant-SKU ":sku" is al in gebruik.',
                 'variant-sku-label'         => 'SKU van variant :position',
@@ -673,6 +674,8 @@ return [
             'not-found'         => 'Attribuut met code ":code" kon niet worden gevonden.',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Attribuutoptie succesvol verwijderd',
+            'swatch-not-found'     => 'Geen staalafbeelding gevonden voor deze optie.',
             'create-success'       => 'Attribuutoptie succesvol aangemaakt.',
             'update-success'       => 'Attribuutoptie succesvol bijgewerkt.',
             'usable-in-grid-error' => 'Er kunnen maximaal 4 attributen bruikbaar zijn in het raster.',
@@ -955,6 +958,7 @@ return [
             'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Categorieveldoptie succesvol verwijderd',
             'create-success'      => 'Categorieveldoptie succesvol aangemaakt.',
             'update-success'      => 'Categorieveldoptie succesvol bijgewerkt.',
             'update-unknown-code' => 'Er bestaat geen categorieveldoptie met code ":code".',
@@ -1144,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Landinstelling met code :code niet gevonden.',
                 'create-btn'            => 'Taalinstelling aanmaken',
                 'locale'                => 'Taalinstelling',
                 'title'                 => 'Taalinstellingen',
@@ -1191,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuta met code :code niet gevonden.',
                 'create-btn'            => 'Valuta aanmaken',
                 'currency'              => 'Munteenheid',
                 'title'                 => 'Valuta',
@@ -1651,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanaal met code :code niet gevonden.',
                 'create-btn'           => 'Kanaal aanmaken',
                 'delete-failed'        => 'Kanaal verwijderen mislukt.',
                 'delete-success'       => 'Kanaal succesvol verwijderd.',

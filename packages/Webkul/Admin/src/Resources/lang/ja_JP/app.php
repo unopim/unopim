@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'メディアが見つかりませんでした。',
+            'index'          => [
                 'already-taken'             => ':name はすでに使用されています。',
                 'variant-sku-already-taken' => 'バリエーションのSKU「:sku」は既に使用されています。',
                 'variant-sku-label'         => 'バリエーション:positionのSKU',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'コード ":code" の属性が見つかりませんでした',
         ],
         'attribute-options' => [
+            'delete-success'       => '属性オプションが正常に削除されました',
+            'swatch-not-found'     => 'このオプションのスウォッチ画像が見つかりません。',
             'create-success'       => '属性オプションが正常に作成されました',
             'update-success'       => '属性オプションが正常に更新されました',
             'usable-in-grid-error' => 'グリッドを有効にすると、4 つの属性のみ使用可能になります。',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => '次のフィールドは変更できません: :fields。',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'カテゴリフィールドオプションが正常に削除されました',
             'create-success'      => 'カテゴリ フィールド オプションが正常に作成されました',
             'update-success'      => 'カテゴリ フィールド オプションが正常に更新されました',
             'update-unknown-code' => 'コード「:code」のカテゴリフィールドオプションは存在しません。',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'コード :code のロケールが見つかりません。',
                 'create-btn'            => 'ロケールの作成',
                 'locale'                => 'ロケール',
                 'title'                 => 'ロケール',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'コード :code の通貨が見つかりません。',
                 'create-btn'            => '通貨の作成',
                 'currency'              => '通貨',
                 'title'                 => '通貨',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'コード :code のチャネルが見つかりません。',
                 'create-btn'           => 'チャネルの作成',
                 'delete-failed'        => 'チャネルの削除に失敗しました',
                 'delete-success'       => 'チャネルが正常に削除されました。',

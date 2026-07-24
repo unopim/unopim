@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'No passport found for id :id.',
-        'index'          => [
+        'reinstated'        => 'Passport reinstated successfully.',
+        'reinstate-invalid' => 'Only a withdrawn passport can be reinstated.',
+        'redacted'          => 'Passport redacted successfully.',
+        'redact-invalid'    => 'This passport cannot be redacted.',
+        'not-found'         => 'No passport found for id :id.',
+        'index'             => [
             'disabled-notice' => 'Passport publishing is currently disabled. Existing passports are shown below for management (view and withdraw).',
             'title'           => 'Digital Product Passports',
         ],

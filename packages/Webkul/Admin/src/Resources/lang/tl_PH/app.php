@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Hindi matagpuan ang media.',
+            'index'          => [
                 'already-taken'             => ':name ay ginagamit na.',
                 'variant-sku-already-taken' => 'Ang SKU ng variant na ":sku" ay ginagamit na.',
                 'variant-sku-label'         => 'SKU ng variant :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'Ang katangian na may code ":code" ay hindi natagpuan',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Matagumpay na natanggal ang opsyon ng attribute',
+            'swatch-not-found'     => 'Walang natagpuang larawan ng swatch para sa opsyong ito.',
             'create-success'       => 'Matag taglay na opsyon ng attribute ay matagumpay na nalikha',
             'update-success'       => 'Matagumpay na na-update ang opsyon ng attribute',
             'usable-in-grid-error' => 'Apat lamang na attribute ang maaaring ituring na magagamit sa grid.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Matagumpay na natanggal ang opsyon ng field ng kategorya',
             'create-success'      => 'Nagtagumpay ang paglikha ng opsyon ng kategorya',
             'update-success'      => 'Na-update ang opsyon ng kategorya',
             'update-unknown-code' => 'Walang category field option na may code na ":code".',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Hindi natagpuan ang lokal na may code na :code.',
                 'create-btn'            => 'Lumikha ng Wika',
                 'locale'                => 'Wika',
                 'title'                 => 'Mga Wika',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Hindi natagpuan ang pera na may code na :code.',
                 'create-btn'            => 'Lumikha ng Pera',
                 'currency'              => 'Pera',
                 'title'                 => 'Mga Pera',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Hindi natagpuan ang channel na may code na :code.',
                 'create-btn'           => 'Lumikha ng Channel',
                 'delete-failed'        => 'Nabigo ang pagtanggal ng channel',
                 'delete-success'       => 'Channel ay matagumpay na natanggal.',

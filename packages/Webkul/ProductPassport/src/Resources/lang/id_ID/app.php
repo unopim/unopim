@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Tidak ada paspor untuk id :id.',
-        'index'          => [
+        'reinstated'        => 'Paspor berhasil dipulihkan.',
+        'reinstate-invalid' => 'Hanya paspor yang ditarik yang dapat dipulihkan.',
+        'redacted'          => 'Paspor berhasil disunting.',
+        'redact-invalid'    => 'Paspor ini tidak dapat disunting.',
+        'not-found'         => 'Tidak ada paspor untuk id :id.',
+        'index'             => [
             'disabled-notice' => 'Penerbitan paspor saat ini dinonaktifkan. Paspor yang ada ditampilkan di bawah untuk pengelolaan (lihat dan tarik).',
             'title'           => 'Paspor Produk Digital',
         ],

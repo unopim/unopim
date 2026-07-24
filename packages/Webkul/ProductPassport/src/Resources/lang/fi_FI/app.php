@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Tunnuksella :id ei löytynyt passia.',
-        'index'          => [
+        'reinstated'        => 'Passi palautettu onnistuneesti.',
+        'reinstate-invalid' => 'Vain peruutettu passi voidaan palauttaa.',
+        'redacted'          => 'Passi muokattu onnistuneesti.',
+        'redact-invalid'    => 'Tätä passia ei voi muokata.',
+        'not-found'         => 'Tunnuksella :id ei löytynyt passia.',
+        'index'             => [
             'disabled-notice' => 'Passien julkaiseminen on tällä hetkellä poistettu käytöstä. Olemassa olevat passit näkyvät alla hallintaa varten (tarkastelu ja peruutus).',
             'title'           => 'Digitaaliset tuotepassit',
         ],

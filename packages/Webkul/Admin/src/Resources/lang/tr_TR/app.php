@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Medya bulunamadı.',
+            'index'          => [
                 'already-taken'             => ':name zaten kullanılıyor.',
                 'variant-sku-already-taken' => 'Varyant SKU ":sku" zaten kullanılıyor.',
                 'variant-sku-label'         => 'varyant :position SKU',
@@ -672,6 +673,8 @@ return [
             'not-found'         => '":code" kodlu öznitelik bulunamadı',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Özellik seçeneği başarıyla silindi',
+            'swatch-not-found'     => 'Bu seçenek için renk örneği görseli bulunamadı.',
             'create-success'       => 'Öznitelik seçeneği başarıyla oluşturuldu',
             'update-success'       => 'Öznitelik seçeneği başarıyla güncellendi',
             'usable-in-grid-error' => 'Sadece 4 öznitelik ızgarada kullanılabilir olarak işaretlenebilir.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Kategori alanı seçeneği başarıyla silindi',
             'create-success'      => 'Kategori alanı seçeneği başarıyla oluşturuldu',
             'update-success'      => 'Kategori alanı seçeneği başarıyla güncellendi',
             'update-unknown-code' => '":code" kodlu kategori alanı seçeneği bulunamadı.',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => ':code kodlu yerel ayar bulunamadı.',
                 'create-btn'            => 'Lumikha ng Wika',
                 'locale'                => 'Wika',
                 'title'                 => 'Mga Wika',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => ':code kodlu para birimi bulunamadı.',
                 'create-btn'            => 'Lumikha ng Pera',
                 'currency'              => 'Pera',
                 'title'                 => 'Mga Pera',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => ':code kodlu kanal bulunamadı.',
                 'create-btn'           => 'Kanal Oluştur',
                 'delete-failed'        => 'Kanal silme işlemi başarısız oldu',
                 'delete-success'       => 'Kanal başarıyla silindi.',

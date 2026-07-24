@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Walang pasaporteng nahanap para sa id :id.',
-        'index'          => [
+        'reinstated'        => 'Matagumpay na naibalik ang pasaporte.',
+        'reinstate-invalid' => 'Isang binawing pasaporte lang ang maaaring ibalik.',
+        'redacted'          => 'Matagumpay na na-redact ang pasaporte.',
+        'redact-invalid'    => 'Hindi maaaring i-redact ang pasaporteng ito.',
+        'not-found'         => 'Walang pasaporteng nahanap para sa id :id.',
+        'index'             => [
             'disabled-notice' => 'Kasalukuyang naka-disable ang paglalathala ng pasaporte. Ipinapakita sa ibaba ang mga umiiral na pasaporte para sa pamamahala (tingnan at bawiin).',
             'title'           => 'Mga Digital na Pasaporte ng Produkto',
         ],

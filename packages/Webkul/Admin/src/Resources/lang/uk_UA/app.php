@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Не вдалося знайти медіафайл.',
+            'index'          => [
                 'already-taken'             => ':name вже використовується.',
                 'variant-sku-already-taken' => 'SKU варіанта ":sku" вже використовується.',
                 'variant-sku-label'         => 'SKU варіанта :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'Атрибут з кодом ":code" не знайдено',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Опцію атрибута успішно видалено',
+            'swatch-not-found'     => 'Зображення зразка для цієї опції не знайдено.',
             'create-success'       => 'Опцію атрибута успішно створено',
             'update-success'       => 'Опцію атрибута успішно оновлено',
             'usable-in-grid-error' => 'Тільки 4 атрибути можуть бути позначені як використані в сітці.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Наступні поля не можна змінювати: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Опцію поля категорії успішно видалено',
             'create-success'      => 'Опцію категорії створено успішно',
             'update-success'      => 'Опцію категорії оновлено успішно',
             'update-unknown-code' => 'Опція поля категорії з кодом «:code» не існує.',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Локаль з кодом :code не знайдено.',
                 'create-btn'            => 'Створити Мову',
                 'locale'                => 'Мова',
                 'title'                 => 'Мови',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Валюту з кодом :code не знайдено.',
                 'create-btn'            => 'Створити валюту',
                 'currency'              => 'Валюта',
                 'title'                 => 'Валюти',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Канал з кодом :code не знайдено.',
                 'create-btn'           => 'Створити канал',
                 'delete-failed'        => 'Не вдалося видалити канал',
                 'delete-success'       => 'Канал успішно видалено.',

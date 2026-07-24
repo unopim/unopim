@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => '未找到 id 为 :id 的护照。',
-        'index'          => [
+        'reinstated'        => '护照恢复成功。',
+        'reinstate-invalid' => '只有已撤回的护照才能恢复。',
+        'redacted'          => '护照隐去成功。',
+        'redact-invalid'    => '此护照无法隐去。',
+        'not-found'         => '未找到 id 为 :id 的护照。',
+        'index'             => [
             'disabled-notice' => '护照发布当前已禁用。现有护照显示在下方以供管理（查看和撤回）。',
             'title'           => '数字产品护照',
         ],

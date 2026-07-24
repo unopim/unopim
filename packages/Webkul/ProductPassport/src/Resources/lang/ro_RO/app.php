@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Nu s-a găsit niciun pașaport pentru id-ul :id.',
-        'index'          => [
+        'reinstated'        => 'Pașaport restabilit cu succes.',
+        'reinstate-invalid' => 'Doar un pașaport retras poate fi restabilit.',
+        'redacted'          => 'Pașaport redactat cu succes.',
+        'redact-invalid'    => 'Acest pașaport nu poate fi redactat.',
+        'not-found'         => 'Nu s-a găsit niciun pașaport pentru id-ul :id.',
+        'index'             => [
             'disabled-notice' => 'Publicarea pașapoartelor este momentan dezactivată. Pașapoartele existente sunt afișate mai jos pentru gestionare (vizualizare și retragere).',
             'title'           => 'Pașapoarte Digitale ale Produsului',
         ],

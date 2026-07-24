@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Media kunde inte hittas.',
+            'index'          => [
                 'already-taken'             => ':name är redan i bruk.',
                 'variant-sku-already-taken' => 'Variantens SKU ":sku" används redan.',
                 'variant-sku-label'         => 'SKU för variant :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'Attributet med koden ":code" hittades inte',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Attributalternativ har tagits bort',
+            'swatch-not-found'     => 'Ingen färgrutebild hittades för detta alternativ.',
             'create-success'       => 'Attributalternativ skapades',
             'update-success'       => 'Attributalternativ uppdaterades',
             'usable-in-grid-error' => 'Endast 4 attribut kan markeras som användbara i rutan.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Kategorifältalternativ har tagits bort',
             'create-success'      => 'Kategoriens fältalternativ skapades',
             'update-success'      => 'Kategoriens fältalternativ uppdaterades',
             'update-unknown-code' => 'Det finns inget kategorifältsalternativ med koden ":code".',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Språkinställning med koden :code hittades inte.',
                 'create-btn'            => 'Skapa Lokalitet',
                 'locale'                => 'Lokalitet',
                 'title'                 => 'Lokaliteter',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuta med koden :code hittades inte.',
                 'create-btn'            => 'Skapa Valuta',
                 'currency'              => 'Valuta',
                 'title'                 => 'Valutor',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanal med koden :code hittades inte.',
                 'create-btn'           => 'Skapa kanal',
                 'delete-failed'        => 'Kanals borttagning misslyckades',
                 'delete-success'       => 'Kanal borttagen.',

@@ -186,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Fant ikke mediet.',
+            'index'          => [
                 'already-taken'             => ':name er allerede tatt.',
                 'variant-sku-already-taken' => 'Variantens SKU ":sku" er allerede i bruk.',
                 'variant-sku-label'         => 'SKU for variant :position',
@@ -673,6 +674,8 @@ return [
             'not-found'         => 'Fant ikke attributt med kode ":code"',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Attributtvalg slettet',
+            'swatch-not-found'     => 'Fant ingen fargeprøvebilde for dette valget.',
             'create-success'       => 'Attributalternativ opprettet',
             'update-success'       => 'Attributalternativ oppdatert',
             'usable-in-grid-error' => 'Kun 4 attributter kan være merket som brukbare i grid.',
@@ -955,6 +958,7 @@ return [
             'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Kategorifeltvalg slettet',
             'create-success'      => 'Kategori feltalternativ opprettet',
             'update-success'      => 'Kategori feltalternativ oppdatert',
             'update-unknown-code' => 'Det finnes ingen kategorifeltalternativ med koden «:code».',
@@ -1144,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Fant ingen lokalitet med koden :code.',
                 'create-btn'            => 'Opprett Lokale',
                 'locale'                => 'Lokale',
                 'title'                 => 'Lokale',
@@ -1191,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Fant ingen valuta med koden :code.',
                 'create-btn'            => 'Opprett Valuta',
                 'currency'              => 'Valuta',
                 'title'                 => 'Valutaer',
@@ -1651,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Fant ingen kanal med koden :code.',
                 'create-btn'           => 'Opprett Kanal',
                 'delete-failed'        => 'Kanalsletting mislyktes',
                 'delete-success'       => 'Kanal slettet med suksess.',

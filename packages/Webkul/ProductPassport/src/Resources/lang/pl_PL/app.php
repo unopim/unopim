@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Nie znaleziono paszportu o id :id.',
-        'index'          => [
+        'reinstated'        => 'Paszport został pomyślnie przywrócony.',
+        'reinstate-invalid' => 'Przywrócić można tylko wycofany paszport.',
+        'redacted'          => 'Paszport został pomyślnie zredagowany.',
+        'redact-invalid'    => 'Tego paszportu nie można zredagować.',
+        'not-found'         => 'Nie znaleziono paszportu o id :id.',
+        'index'             => [
             'disabled-notice' => 'Publikowanie paszportów jest obecnie wyłączone. Istniejące paszporty są wyświetlane poniżej w celu zarządzania (podgląd i wycofanie).',
             'title'           => 'Cyfrowe Paszporty Produktu',
         ],

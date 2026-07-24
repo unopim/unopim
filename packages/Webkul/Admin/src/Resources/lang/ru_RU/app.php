@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Не удалось найти медиафайл.',
+            'index'          => [
                 'already-taken'             => ':name уже занят.',
                 'variant-sku-already-taken' => 'SKU варианта ":sku" уже используется.',
                 'variant-sku-label'         => 'SKU варианта :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'Атрибут с кодом ":code" не найден',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Опция атрибута успешно удалена',
+            'swatch-not-found'     => 'Изображение образца для этой опции не найдено.',
             'create-success'       => 'Успешная опция атрибута создана успешно',
             'update-success'       => 'Параметр атрибута успешно обновлена',
             'usable-in-grid-error' => 'Только 4 атрибута могут быть использованы в сетке.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Следующие поля нельзя изменить: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Опция поля категории успешно удалена',
             'create-success'      => 'Вариант поля категории создан успешно',
             'update-success'      => 'Параметр поля категории успешно обновлена',
             'update-unknown-code' => 'Опция поля категории с кодом «:code» не найдена.',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Локаль с кодом :code не найдена.',
                 'create-btn'            => 'Создать локаль',
                 'locale'                => 'Локаль',
                 'title'                 => 'Локации',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Валюта с кодом :code не найдена.',
                 'create-btn'            => 'Создать валюту',
                 'currency'              => 'Валюта',
                 'title'                 => 'Валюты',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Канал с кодом :code не найден.',
                 'create-btn'           => 'Создать канал',
                 'delete-failed'        => 'Удаление канала не удалось',
                 'delete-success'       => 'Канал удален успешно.',

@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => '找不到媒體檔案。',
+            'index'          => [
                 'already-taken'             => ':name 已經被使用。',
                 'variant-sku-already-taken' => '變體 SKU「:sku」已被使用。',
                 'variant-sku-label'         => '變體 :position 的 SKU',
@@ -672,6 +673,8 @@ return [
             'not-found'         => '找不到代碼 ":code" 的屬性',
         ],
         'attribute-options' => [
+            'delete-success'       => '屬性選項刪除成功',
+            'swatch-not-found'     => '找不到此選項的色票圖片。',
             'create-success'       => '屬性選項已成功創建',
             'update-success'       => '屬性選項已成功更新',
             'usable-in-grid-error' => '最多只能有4個屬性標示為可用於網格。',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => '以下欄位無法修改：:fields。',
         ],
         'category-fields-options' => [
+            'delete-success'      => '分類欄位選項刪除成功',
             'create-success'      => '類別欄位選項建立成功',
             'update-success'      => '類別欄位選項更新成功',
             'update-unknown-code' => '不存在代碼為「:code」的類別欄位選項。',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => '找不到代碼為 :code 的語言環境。',
                 'create-btn'            => '創建語言',
                 'locale'                => '語言',
                 'title'                 => '語言',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => '找不到代碼為 :code 的貨幣。',
                 'create-btn'            => '創建貨幣',
                 'currency'              => '貨幣',
                 'title'                 => '貨幣',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => '找不到代碼為 :code 的頻道。',
                 'create-btn'           => '創建頻道',
                 'delete-failed'        => '刪除頻道失敗',
                 'delete-success'       => '頻道已成功刪除。',

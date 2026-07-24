@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Medien konnten nicht gefunden werden.',
+            'index'          => [
                 'already-taken'             => 'Der :name ist bereits vergeben.',
                 'variant-sku-already-taken' => 'Die Varianten-SKU ":sku" ist bereits vergeben.',
                 'variant-sku-label'         => 'SKU der Variante :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'Attribut mit Code „:code“ konnte nicht gefunden werden',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Attributoption erfolgreich gelöscht',
+            'swatch-not-found'     => 'Für diese Option wurde kein Farbfeldbild gefunden.',
             'create-success'       => 'Attributoption erfolgreich erstellt',
             'update-success'       => 'Attributoption erfolgreich aktualisiert',
             'usable-in-grid-error' => 'Es können nur 4 Attribute zur Verwendung im Raster aktiviert sein.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Kategoriefeldoption erfolgreich gelöscht',
             'create-success'      => 'Kategoriefeldoption erfolgreich erstellt',
             'update-success'      => 'Kategoriefeldoption erfolgreich aktualisiert',
             'update-unknown-code' => 'Eine Kategoriefeld-Option mit dem Code „:code“ existiert nicht.',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Gebietsschema mit dem Code :code nicht gefunden.',
                 'create-btn'            => 'Gebietsschema erstellen',
                 'locale'                => 'Gebietsschema',
                 'title'                 => 'Gebietsschemas',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Währung mit dem Code :code nicht gefunden.',
                 'create-btn'            => 'Währung erstellen',
                 'currency'              => 'Währung',
                 'title'                 => 'Währungen',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanal mit dem Code :code nicht gefunden.',
                 'create-btn'           => 'Kanal erstellen',
                 'delete-failed'        => 'Kanal löschen fehlgeschlagen',
                 'delete-success'       => 'Kanal erfolgreich gelöscht.',

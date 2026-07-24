@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Impossibile trovare il file multimediale.',
+            'index'          => [
                 'already-taken'             => ':name è già stato preso.',
                 'variant-sku-already-taken' => 'Lo SKU della variante ":sku" è già in uso.',
                 'variant-sku-label'         => 'SKU della variante :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'Attributo con codice ":code" non trovato',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opzione attributo eliminata con successo',
+            'swatch-not-found'     => 'Nessuna immagine campione trovata per questa opzione.',
             'create-success'       => 'Opzione attributo creata con successo',
             'update-success'       => 'Opzione attributo aggiornata con successo',
             'usable-in-grid-error' => 'Possono essere contrassegnati come utilizzabili nella griglia solo 4 attributi.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'I seguenti campi non possono essere modificati: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Opzione campo categoria eliminata con successo',
             'create-success'      => 'Opzione del campo categoria creata con successo',
             'update-success'      => 'Opzione del campo categoria aggiornata con successo',
             'update-unknown-code' => 'Nessuna opzione campo categoria esiste con il codice ":code".',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Localizzazione con codice :code non trovata.',
                 'create-btn'            => 'Crea Località',
                 'locale'                => 'Località',
                 'title'                 => 'Località',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuta con codice :code non trovata.',
                 'create-btn'            => 'Crea Valuta',
                 'currency'              => 'Valuta',
                 'title'                 => 'Valute',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Canale con codice :code non trovato.',
                 'create-btn'           => 'Crea Canale',
                 'delete-failed'        => 'Eliminazione del canale non riuscita',
                 'delete-success'       => 'Canale eliminato con successo.',

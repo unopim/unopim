@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Không tìm thấy hộ chiếu cho id :id.',
-        'index'          => [
+        'reinstated'        => 'Đã khôi phục hộ chiếu thành công.',
+        'reinstate-invalid' => 'Chỉ có thể khôi phục hộ chiếu đã thu hồi.',
+        'redacted'          => 'Đã biên tập lại hộ chiếu thành công.',
+        'redact-invalid'    => 'Không thể biên tập lại hộ chiếu này.',
+        'not-found'         => 'Không tìm thấy hộ chiếu cho id :id.',
+        'index'             => [
             'disabled-notice' => 'Việc xuất bản hộ chiếu hiện đang bị tắt. Các hộ chiếu hiện có được hiển thị bên dưới để quản lý (xem và thu hồi).',
             'title'           => 'Hộ chiếu Sản phẩm Kỹ thuật số',
         ],

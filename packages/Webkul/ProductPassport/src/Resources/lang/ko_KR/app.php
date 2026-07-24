@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'ID :id에 대한 여권을 찾을 수 없습니다.',
-        'index'          => [
+        'reinstated'        => '여권이 성공적으로 복원되었습니다.',
+        'reinstate-invalid' => '회수된 여권만 복원할 수 있습니다.',
+        'redacted'          => '여권이 성공적으로 삭제 처리되었습니다.',
+        'redact-invalid'    => '이 여권은 삭제 처리할 수 없습니다.',
+        'not-found'         => 'ID :id에 대한 여권을 찾을 수 없습니다.',
+        'index'             => [
             'disabled-notice' => '여권 게시가 현재 비활성화되어 있습니다. 기존 여권은 관리(보기 및 철회)를 위해 아래에 표시됩니다.',
             'title'           => '디지털 제품 여권 목록',
         ],

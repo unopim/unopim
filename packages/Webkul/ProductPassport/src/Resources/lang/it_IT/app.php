@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Nessun passaporto trovato per l\'id :id.',
-        'index'          => [
+        'reinstated'        => 'Passaporto ripristinato con successo.',
+        'reinstate-invalid' => 'Solo un passaporto ritirato può essere ripristinato.',
+        'redacted'          => 'Passaporto oscurato con successo.',
+        'redact-invalid'    => 'Questo passaporto non può essere oscurato.',
+        'not-found'         => 'Nessun passaporto trovato per l\'id :id.',
+        'index'             => [
             'disabled-notice' => 'La pubblicazione dei passaporti è attualmente disattivata. I passaporti esistenti sono mostrati di seguito per la gestione (visualizzazione e ritiro).',
             'title'           => 'Passaporti Digitali del Prodotto',
         ],

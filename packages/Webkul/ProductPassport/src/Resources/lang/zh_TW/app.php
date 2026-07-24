@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => '找不到 id 為 :id 的護照。',
-        'index'          => [
+        'reinstated'        => '護照復原成功。',
+        'reinstate-invalid' => '只有已撤回的護照才能復原。',
+        'redacted'          => '護照遮蔽成功。',
+        'redact-invalid'    => '此護照無法遮蔽。',
+        'not-found'         => '找不到 id 為 :id 的護照。',
+        'index'             => [
             'disabled-notice' => '護照發布目前已停用。現有護照顯示於下方以供管理（檢視與撤回）。',
             'title'           => '數位產品護照',
         ],

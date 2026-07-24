@@ -186,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Nie można znaleźć multimediów.',
+            'index'          => [
                 'already-taken'             => ':name jest już zajęte.',
                 'variant-sku-already-taken' => 'SKU wariantu ":sku" jest już zajęte.',
                 'variant-sku-label'         => 'SKU wariantu :position',
@@ -673,6 +674,8 @@ return [
             'not-found'         => 'Nie znaleziono atrybutu o kodzie ":code"',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opcja atrybutu została pomyślnie usunięta',
+            'swatch-not-found'     => 'Nie znaleziono obrazu próbki dla tej opcji.',
             'create-success'       => 'Opcja atrybutu została utworzona',
             'update-success'       => 'Opcja atrybutu została zaktualizowana',
             'usable-in-grid-error' => 'Tylko 4 atrybuty mogą być oznaczone jako użyteczne w siatce.',
@@ -955,6 +958,7 @@ return [
             'immutable-fields'  => 'Następujących pól nie można zmodyfikować: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Opcja pola kategorii została pomyślnie usunięta',
             'create-success'      => 'Opcja pola kategorii została utworzona',
             'update-success'      => 'Opcja pola kategorii została zaktualizowana',
             'update-unknown-code' => 'Nie istnieje opcja pola kategorii o kodzie „:code”.',
@@ -1144,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Nie znaleziono ustawień regionalnych o kodzie :code.',
                 'create-btn'            => 'Utwórz Lokalizację',
                 'locale'                => 'Lokalizacja',
                 'title'                 => 'Lokalizacje',
@@ -1191,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Nie znaleziono waluty o kodzie :code.',
                 'create-btn'            => 'Utwórz Walutę',
                 'currency'              => 'Waluta',
                 'title'                 => 'Waluty',
@@ -1651,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Nie znaleziono kanału o kodzie :code.',
                 'create-btn'           => 'Utwórz Kanał',
                 'delete-failed'        => 'Nie udało się usunąć kanału',
                 'delete-success'       => 'Kanał został pomyślnie usunięty.',

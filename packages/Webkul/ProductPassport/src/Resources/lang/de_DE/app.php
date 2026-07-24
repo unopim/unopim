@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Kein Pass mit der ID :id gefunden.',
-        'index'          => [
+        'reinstated'        => 'Pass erfolgreich wiederhergestellt.',
+        'reinstate-invalid' => 'Nur ein zurückgezogener Pass kann wiederhergestellt werden.',
+        'redacted'          => 'Pass erfolgreich geschwärzt.',
+        'redact-invalid'    => 'Dieser Pass kann nicht geschwärzt werden.',
+        'not-found'         => 'Kein Pass mit der ID :id gefunden.',
+        'index'             => [
             'title'           => 'Digitale Produktpässe',
             'disabled-notice' => 'Die Veröffentlichung von Pässen ist derzeit deaktiviert. Vorhandene Pässe werden unten zur Verwaltung angezeigt (Ansehen und Zurückziehen).',
         ],

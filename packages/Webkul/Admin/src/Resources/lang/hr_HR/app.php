@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Medij nije pronađen.',
+            'index'          => [
                 'already-taken'             => ':name je već zauzet.',
                 'variant-sku-already-taken' => 'SKU varijante ":sku" je već zauzet.',
                 'variant-sku-label'         => 'SKU varijante :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'Atribut s kodom ":code" nije pronađen',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opcija atributa uspješno izbrisana',
+            'swatch-not-found'     => 'Nije pronađena slika uzorka za ovu opciju.',
             'create-success'       => 'Opcija atributa uspješno stvorena',
             'update-success'       => 'Opcija atributa uspješno ažurirana',
             'usable-in-grid-error' => 'Samo 4 atributa mogu biti označena kao upotrebljiva u mreži.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Opcija polja kategorije uspješno izbrisana',
             'create-success'      => 'Opcija polja kategorije uspješno stvorena',
             'update-success'      => 'Opcija polja kategorije uspješno ažurirana',
             'update-unknown-code' => 'Ne postoji opcija polja kategorije s kodom „:code“.',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Lokalizacija s kodom :code nije pronađena.',
                 'create-btn'            => 'Kreiraj lokalitet',
                 'locale'                => 'Lokalitet',
                 'title'                 => 'Lokaliteti',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuta s kodom :code nije pronađena.',
                 'create-btn'            => 'Kreiraj valutu',
                 'currency'              => 'Valuta',
                 'title'                 => 'Valute',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanal s kodom :code nije pronađen.',
                 'create-btn'           => 'Kreiraj kanal',
                 'delete-failed'        => 'Brisanje kanala nije uspjelo',
                 'delete-success'       => 'Kanal je uspješno izbrisan.',

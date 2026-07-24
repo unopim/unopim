@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Nije pronađena putovnica za id :id.',
-        'index'          => [
+        'reinstated'        => 'Putovnica je uspješno vraćena.',
+        'reinstate-invalid' => 'Samo se povučena putovnica može vratiti.',
+        'redacted'          => 'Putovnica je uspješno redigirana.',
+        'redact-invalid'    => 'Ova se putovnica ne može redigirati.',
+        'not-found'         => 'Nije pronađena putovnica za id :id.',
+        'index'             => [
             'disabled-notice' => 'Objavljivanje putovnica trenutačno je onemogućeno. Postojeće putovnice prikazane su u nastavku radi upravljanja (pregled i povlačenje).',
             'title'           => 'Digitalne putovnice proizvoda',
         ],

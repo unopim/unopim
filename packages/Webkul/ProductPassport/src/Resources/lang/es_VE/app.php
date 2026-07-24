@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'No se encontró ningún pasaporte con el id :id.',
-        'index'          => [
+        'reinstated'        => 'Pasaporte restablecido correctamente.',
+        'reinstate-invalid' => 'Solo se puede restablecer un pasaporte retirado.',
+        'redacted'          => 'Pasaporte redactado correctamente.',
+        'redact-invalid'    => 'Este pasaporte no se puede redactar.',
+        'not-found'         => 'No se encontró ningún pasaporte con el id :id.',
+        'index'             => [
             'disabled-notice' => 'La publicación de pasaportes está deshabilitada actualmente. Los pasaportes existentes se muestran a continuación para su gestión (ver y retirar).',
             'title'           => 'Pasaportes Digitales del Producto',
         ],

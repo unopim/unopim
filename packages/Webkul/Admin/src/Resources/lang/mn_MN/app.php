@@ -186,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Медиа олдсонгүй.',
+            'index'          => [
                 'already-taken'             => ':name аль хэдийн авсан байна.',
                 'variant-sku-already-taken' => 'Хувилбарын SKU ":sku" аль хэдийн ашиглагдсан байна.',
                 'variant-sku-label'         => 'Хувилбар :position-ийн SKU',
@@ -673,6 +674,8 @@ return [
             'not-found'         => '":code" кодтой атрибут олдсонгүй',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Атрибутын сонголтыг амжилттай устгалаа',
+            'swatch-not-found'     => 'Энэ сонголтод зориулсан загвар зураг олдсонгүй.',
             'create-success'       => 'Аттрибутын сонголт амжилттай бүтээгдсэн',
             'update-success'       => 'Аттрибутын сонголтыг амжилттай шинэчилсэн',
             'usable-in-grid-error' => 'Зөвхөн 4 шинж чанарыг зөвхөн сүлжээнд ашиглах боломжтой.',
@@ -955,6 +958,7 @@ return [
             'immutable-fields'  => 'Дараах талбаруудыг өөрчилөх боломжгүй: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Ангиллын талбарын сонголтыг амжилттай устгалаа',
             'create-success'      => 'Ангилалын талбарын сонголт амжилттай бүтээгдсэн',
             'update-success'      => 'Ангилалын талбарын сонголт амжилттай шинэчлэгдсэн',
             'update-unknown-code' => '«:code» кодтой ангиллын талбарын сонголт байхгүй байна.',
@@ -1144,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => ':code кодтой хэлний тохиргоо олдсонгүй.',
                 'create-btn'            => 'Нуцент үүсгэх',
                 'locale'                => 'Нээлттэй нутаг',
                 'title'                 => 'Орон нутгийн',
@@ -1191,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => ':code кодтой валют олдсонгүй.',
                 'create-btn'            => 'Валют үүсгэх',
                 'currency'              => 'Мөнгө',
                 'title'                 => 'Валютууд',
@@ -1651,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => ':code кодтой суваг олдсонгүй.',
                 'create-btn'           => 'Суваг үүсгэх',
                 'delete-failed'        => 'Суваг устгах ажиллагаа амжилтгүй болсон',
                 'delete-success'       => 'Суваг амжилттай устгасан.',

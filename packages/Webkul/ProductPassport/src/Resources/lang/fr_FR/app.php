@@ -87,8 +87,12 @@ return [
         ],
     ],
     'publications' => [
-        'not-found'      => 'Aucun passeport trouvé pour l\'id :id.',
-        'index'          => [
+        'reinstated'        => 'Passeport rétabli avec succès.',
+        'reinstate-invalid' => 'Seul un passeport retiré peut être rétabli.',
+        'redacted'          => 'Passeport expurgé avec succès.',
+        'redact-invalid'    => 'Ce passeport ne peut pas être expurgé.',
+        'not-found'         => 'Aucun passeport trouvé pour l\'id :id.',
+        'index'             => [
             'title'           => 'Passeports Numériques du Produit',
             'disabled-notice' => 'La publication des passeports est actuellement désactivée. Les passeports existants sont affichés ci-dessous pour gestion (consultation et retrait).',
         ],

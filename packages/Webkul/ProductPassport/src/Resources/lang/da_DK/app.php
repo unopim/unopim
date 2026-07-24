@@ -89,8 +89,12 @@ return [
     ],
 
     'publications' => [
-        'not-found'      => 'Der blev ikke fundet noget pas med id :id.',
-        'index'          => [
+        'reinstated'        => 'Pas gendannet.',
+        'reinstate-invalid' => 'Kun et tilbagetrukket pas kan gendannes.',
+        'redacted'          => 'Pas redigeret.',
+        'redact-invalid'    => 'Dette pas kan ikke redigeres.',
+        'not-found'         => 'Der blev ikke fundet noget pas med id :id.',
+        'index'             => [
             'disabled-notice' => 'Udgivelse af pas er i øjeblikket deaktiveret. Eksisterende pas vises nedenfor til administration (visning og tilbagetrækning).',
             'title'           => 'Digitale Produktpas',
         ],

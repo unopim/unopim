@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'تعذّر العثور على الوسائط.',
+            'index'          => [
                 'already-taken'             => 'تم أخذ :name بالفعل.',
                 'variant-sku-already-taken' => 'رمز SKU للمتغير ":sku" مستخدم بالفعل.',
                 'variant-sku-label'         => 'رمز SKU للمتغير :position',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'لم يتم العثور على السمة برمز ":code"',
         ],
         'attribute-options' => [
+            'delete-success'       => 'تم حذف خيار السمة بنجاح',
+            'swatch-not-found'     => 'لم يتم العثور على صورة نموذج لهذا الخيار.',
             'create-success'       => 'خيار السمة الذي تم إنشاؤه بنجاح',
             'update-success'       => 'تم تحديث خيار السمة بنجاح',
             'usable-in-grid-error' => 'يمكن استخدام 4 سمات فقط في تمكين الشبكة.',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'تم حذف خيار حقل الفئة بنجاح',
             'create-success'      => 'خيار حقل الفئة تم إنشاؤه بنجاح',
             'update-success'      => 'تم تحديث خيار حقل الفئة بنجاح',
             'update-unknown-code' => 'خيار حقل الفئة ذو الرمز ":code" غير موجود.',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'لم يتم العثور على لغة بالرمز :code.',
                 'create-btn'            => 'إنشاء لغة',
                 'locale'                => 'لغة',
                 'title'                 => 'أماكن',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'لم يتم العثور على عملة بالرمز :code.',
                 'create-btn'            => 'إنشاء العملة',
                 'currency'              => 'عملة',
                 'title'                 => 'العملات',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'لم يتم العثور على قناة بالرمز :code.',
                 'create-btn'           => 'إنشاء قناة',
                 'delete-failed'        => 'فشل حذف القناة',
                 'delete-success'       => 'تم حذف القناة بنجاح.',

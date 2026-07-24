@@ -185,7 +185,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'मीडिया नहीं मिल सका।',
+            'index'          => [
                 'already-taken'             => ':name पहले ही लिया जा चुका है।',
                 'variant-sku-already-taken' => 'वेरिएंट SKU ":sku" पहले से लिया जा चुका है।',
                 'variant-sku-label'         => 'वेरिएंट :position का SKU',
@@ -672,6 +673,8 @@ return [
             'not-found'         => 'कोड के साथ विशेषता ":code" नहीं मिल सकता है',
         ],
         'attribute-options' => [
+            'delete-success'       => 'विशेषता विकल्प सफलतापूर्वक हटाया गया',
+            'swatch-not-found'     => 'इस विकल्प के लिए कोई स्वैच छवि नहीं मिली।',
             'create-success'       => 'विशेषता विकल्प सफलतापूर्वक बनाया गया',
             'update-success'       => 'विशेषता विकल्प सफलतापूर्वक अपडेट किया गया',
             'usable-in-grid-error' => 'ग्रिड सक्षम में केवल 4 विशेषताओं को उपयोग करने योग्य किया जा सकता है।',
@@ -954,6 +957,7 @@ return [
             'immutable-fields'  => 'निम्न फ़ील्ड्स संशोधित नहीं की जा सकतीं: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'श्रेणी फ़ील्ड विकल्प सफलतापूर्वक हटाया गया',
             'create-success'      => 'श्रेणी फ़ील्ड विकल्प सफलतापूर्वक बनाया गया',
             'update-success'      => 'श्रेणी फ़ील्ड विकल्प सफलतापूर्वक अपडेट किया गया',
             'update-unknown-code' => 'कोड ":code" के साथ कोई श्रेणी फ़ील्ड विकल्प मौजूद नहीं है।',
@@ -1143,6 +1147,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => ':code कोड वाला लोकेल नहीं मिला।',
                 'create-btn'            => 'स्थान बनाएं',
                 'locale'                => 'स्थान',
                 'title'                 => 'स्थानों',
@@ -1190,6 +1195,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => ':code कोड वाली मुद्रा नहीं मिली।',
                 'create-btn'            => 'मुद्रा बनाएँ',
                 'currency'              => 'मुद्रा',
                 'title'                 => 'मुद्राओं',
@@ -1650,6 +1656,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => ':code कोड वाला चैनल नहीं मिला।',
                 'create-btn'           => 'चैनल बनाएँ',
                 'delete-failed'        => 'चैनल डिलीट विफल',
                 'delete-success'       => 'चैनल सफलतापूर्वक हटा दिया गया।',
