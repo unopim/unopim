@@ -4,24 +4,27 @@
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.links.before', ['product' => $product]) !!}
 
-<x-admin::product.section-card
-    id="associations"
-    :title="trans('admin::app.catalog.products.edit.links.title')"
-    icon="icon-product"
->
-    {{-- v-text attribute is SINGLE-quoted so @json's double quotes don't collide --}}
-    <span v-text='($productWorkspace?.getCount("associations") ?? 0) + " " + @json(trans("admin::app.catalog.products.edit.workspace.associations.linked"))'></span>
-</x-admin::product.section-card>
-
-<x-admin::product.workspace-panel
+<x-admin::product.section-drawer
     id="associations"
     :title="trans('admin::app.catalog.products.edit.links.title')"
     :subtitle="trans('admin::app.catalog.products.edit.workspace.associations.subtitle')"
     icon="icon-product"
-    :order="20"
 >
-    <v-product-links :association-types='@json($associationTypes)'></v-product-links>
-</x-admin::product.workspace-panel>
+    <x-slot:toggle>
+        <x-admin::product.section-card
+            id="associations"
+            :title="trans('admin::app.catalog.products.edit.links.title')"
+            icon="icon-product"
+        >
+            {{-- v-text attribute is SINGLE-quoted so @json's double quotes don't collide --}}
+            <span v-text='($productWorkspace?.getCount("associations") ?? 0) + " " + @json(trans("admin::app.catalog.products.edit.workspace.associations.linked"))'></span>
+        </x-admin::product.section-card>
+    </x-slot:toggle>
+
+    <x-slot:content>
+        <v-product-links :association-types='@json($associationTypes)'></v-product-links>
+    </x-slot:content>
+</x-admin::product.section-drawer>
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.links.after', ['product' => $product]) !!}
 
@@ -30,7 +33,10 @@
         type="text/x-template"
         id="v-product-links-template"
     >
-        <div class="grid gap-2.5">
+        <div
+            class="grid gap-2.5"
+            data-section-id="associations"
+        >
             <!-- Panel -->
             <div class="bg-white grid gap-2.5 p-4 dark:bg-cherry-900 rounded box-shadow">
                 <p class="flex justify-between text-base text-gray-800 dark:text-white font-semibold mb-4">
@@ -38,7 +44,7 @@
                 </p>
 
                 @foreach ($associationTypes as $typeIndex => $type)
-                    <div class="{{ $typeIndex > 0 ? 'pt-4 border-t border-slate-200 dark:border-gray-800' : '' }}">
+                    <div class="{{ $typeIndex > 0 ? 'pt-4 border-t border-gray-200 dark:border-cherry-800' : '' }}">
                     {{--
                         Presence sentinel: emitted once per active type,
                         UNCONDITIONALLY (regardless of link count), so the
@@ -68,12 +74,13 @@
 
                         <!-- Add Button -->
                         <div class="flex gap-x-1 items-center">
-                            <div
+                            <button
+                                type="button"
                                 class="secondary-button text-xs"
                                 @click="selectedTypeCode = '{{ $type['code'] }}'; $refs.productSearch.openDrawer()"
                             >
                                 @lang('admin::app.catalog.products.edit.links.add-btn')
-                            </div>
+                            </button>
                         </div>
                     </div>
 
@@ -83,7 +90,7 @@
                         v-if="localTypes[{{ $typeIndex }}]?.links?.length"
                     >
                         <div
-                            class="flex gap-2.5 justify-between p-4 border-b border-slate-300 dark:border-gray-800"
+                            class="flex flex-col sm:flex-row gap-2.5 sm:justify-between p-4 border-b border-gray-200 dark:border-cherry-800"
                             v-for="(link, index) in localTypes[{{ $typeIndex }}].links"
                             :key="link.sku"
                         >
@@ -130,7 +137,7 @@
 
                             @if (! empty($type['fields']))
                                 <!-- Custom Association Fields -->
-                                <div class="grid gap-2.5 flex-1 max-w-[280px]">
+                                <div class="grid gap-2.5 flex-1 sm:max-w-[280px]">
                                     <x-admin::associations.link-fields
                                         :fields="$type['fields']"
                                         :type-code="$type['code']"
@@ -140,13 +147,15 @@
 
                             <!-- Actions -->
                             <div class="grid gap-1 place-content-start text-right">
-                                <p
-                                    class="text-red-600 cursor-pointer transition-all"
+                                <button
+                                    type="button"
+                                    class="text-red-600 hover:text-red-700 transition-all"
                                     @click="remove('{{ $type['code'] }}', link)"
                                     title="@lang('admin::app.catalog.products.index.datagrid.delete')"
+                                    aria-label="@lang('admin::app.catalog.products.index.datagrid.delete')"
                                 >
-                                    <i class="icon-delete text-red-600 cursor-pointer transition-all text-xl"></i>
-                                </p>
+                                    <span class="icon-delete text-xl"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -250,7 +259,7 @@
                  */
                 publishState() {
                     const total = document.querySelectorAll(
-                        '.product-workspace-panel[data-section-id="associations"] input[name^="associations["][name$="][sku]"]'
+                        '[data-section-id="associations"] input[name^="associations["][name$="][sku]"]'
                     ).length;
 
                     this.$productWorkspace.setCount('associations', total);
