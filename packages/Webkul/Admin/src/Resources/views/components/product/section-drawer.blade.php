@@ -82,10 +82,8 @@
                                 type="button"
                                 @click="close"
                                 :aria-label="closeLabel"
-                                class="grid place-items-center w-9 h-9 rounded border border-gray-200 dark:border-cherry-800 text-gray-500 hover:text-gray-800 dark:hover:text-white shrink-0"
-                            >
-                                <span class="icon-cancel text-lg"></span>
-                            </button>
+                                class="icon-cancel text-3xl shrink-0 cursor-pointer p-1 hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                            ></button>
                         </div>
 
                         <div class="flex-1 min-h-0 overflow-auto p-6">
