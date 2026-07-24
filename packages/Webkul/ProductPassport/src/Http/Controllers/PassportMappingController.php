@@ -6,15 +6,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Attribute\Contracts\Attribute;
-use Webkul\Attribute\Models\AttributeFamilyGroupMappingProxy;
 use Webkul\Attribute\Models\AttributeGroupProxy;
 use Webkul\Attribute\Models\AttributeProxy;
-use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\CoreConfigRepository;
-use Webkul\ProductPassport\Http\Requests\StorePassportFieldRequest;
 use Webkul\ProductPassport\Http\Requests\UpdatePassportMappingRequest;
 
 class PassportMappingController extends Controller
@@ -38,9 +34,15 @@ class PassportMappingController extends Controller
 
     private const MAPPING_PREFIX = 'catalog.product_passport.mapping.';
 
+    /**
+     * A single core_config row holding the merchant's own passport fields as a
+     * JSON array of `{name, attribute}` objects — user-typed label plus the
+     * source attribute code the payload builder resolves the value from.
+     */
+    private const CUSTOM_FIELDS_KEY = 'catalog.product_passport.custom_fields';
+
     public function __construct(
         protected CoreConfigRepository $coreConfigRepository,
-        protected AttributeRepository $attributeRepository,
     ) {}
 
     public function edit(): View
@@ -62,9 +64,11 @@ class PassportMappingController extends Controller
         ])->all();
 
         return view('passport::admin.mapping.index', [
-            'passportFields' => $passportFields,
-            'sourceOptions'  => $sourceOptions,
-            'mapping'        => $mapping,
+            'passportFields'      => $passportFields,
+            'sourceOptions'       => $sourceOptions,
+            'mapping'             => $mapping,
+            'customSourceOptions' => $this->customSourceOptions($sourceAttributes),
+            'customFields'        => $this->customFieldsData(),
         ]);
     }
 
@@ -72,65 +76,17 @@ class PassportMappingController extends Controller
     {
         abort_unless(PublicationController::featureEnabled(), 404);
 
-        $this->persistMapping(
-            $request->validated('mapping') ?? [],
-            $request->filled('channel') ? (string) $request->input('channel') : null,
-            $request->filled('locale') ? (string) $request->input('locale') : null,
-        );
+        $channel = $request->filled('channel') ? (string) $request->input('channel') : null;
+        $locale = $request->filled('locale') ? (string) $request->input('locale') : null;
+
+        $this->persistMapping($request->validated('mapping') ?? [], $channel, $locale);
+
+        $this->persistCustomFields($request->validated('custom_fields') ?? [], $channel, $locale);
 
         return new JsonResponse([
             'message'      => trans('passport::app.mapping.saved'),
             'redirect_url' => route('admin.catalog.passports.mapping.edit'),
         ]);
-    }
-
-    /**
-     * Create a genuine passport field: a real attribute (its code is what the
-     * payload and JSON-LD key off) added to the `dpp` group so it becomes both
-     * publishable and mappable. Reuses the canonical attribute quick-create path.
-     */
-    public function storeField(StorePassportFieldRequest $request): JsonResponse
-    {
-        abort_unless(PublicationController::featureEnabled(), 404);
-
-        $data = $request->all();
-
-        if (($data['validation'] ?? null) === 'none') {
-            $data['validation'] = null;
-        }
-
-        Event::dispatch('catalog.attribute.create.before');
-
-        $attribute = $this->attributeRepository->create($data);
-
-        Event::dispatch('catalog.attribute.create.after', $attribute);
-
-        $this->attachToDppGroup((int) $attribute->id);
-
-        return new JsonResponse([
-            'message'      => trans('passport::app.mapping.field-created'),
-            'redirect_url' => route('admin.catalog.passports.mapping.edit'),
-        ]);
-    }
-
-    /**
-     * Attach a newly created field to the `dpp` group in every family that
-     * already uses it, so it surfaces on all passport-enabled products at once.
-     * Families without the group are untouched; `syncWithoutDetaching` keeps the
-     * call idempotent.
-     */
-    private function attachToDppGroup(int $attributeId): void
-    {
-        $group = AttributeGroupProxy::modelClass()::query()->where('code', self::GROUP_CODE)->first();
-
-        if ($group === null) {
-            return;
-        }
-
-        AttributeFamilyGroupMappingProxy::modelClass()::query()
-            ->where('attribute_group_id', $group->id)
-            ->get()
-            ->each(fn ($mapping) => $mapping->customAttributes()->syncWithoutDetaching([$attributeId]));
     }
 
     /**
@@ -158,6 +114,78 @@ class PassportMappingController extends Controller
         if ($payload !== []) {
             $this->coreConfigRepository->create($payload);
         }
+    }
+
+    /**
+     * Persist the merchant's custom passport fields as a single JSON core_config
+     * row. An empty list writes `[]`, so clearing every row removes the rows
+     * from the published payload — an unset key stays fully backward-compatible.
+     *
+     * @param  list<array{name: string, attribute: string}>  $customFields
+     */
+    public function persistCustomFields(array $customFields, ?string $channel = null, ?string $locale = null): void
+    {
+        $rows = array_values(array_map(fn (array $row): array => [
+            'name'      => trim((string) $row['name']),
+            'attribute' => (string) $row['attribute'],
+        ], $customFields));
+
+        $payload = [];
+
+        Arr::set($payload, self::CUSTOM_FIELDS_KEY, json_encode($rows));
+
+        if ($channel !== null) {
+            $payload['channel'] = $channel;
+        }
+
+        if ($locale !== null) {
+            $payload['locale'] = $locale;
+        }
+
+        $this->coreConfigRepository->create($payload);
+    }
+
+    /**
+     * The saved custom fields, decoded for the admin screen to hydrate its
+     * reactive row list.
+     *
+     * @return list<array{name: string, attribute: string}>
+     */
+    public function customFieldsData(): array
+    {
+        $raw = core()->getConfigData(self::CUSTOM_FIELDS_KEY);
+
+        $rows = is_string($raw) ? json_decode($raw, true) : (is_array($raw) ? $raw : []);
+
+        if (! is_array($rows)) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map(fn ($row): array => [
+            'name'      => trim((string) ($row['name'] ?? '')),
+            'attribute' => (string) ($row['attribute'] ?? ''),
+        ], $rows), fn (array $row): bool => $row['name'] !== '' && $row['attribute'] !== ''));
+    }
+
+    /**
+     * Value (non-document) attributes offered as sources for a custom field.
+     * A custom field always publishes a value into the consumer section, so
+     * document attributes are excluded. Derived from the already-loaded source
+     * collection, so no extra query.
+     *
+     * @param  Collection<int, Attribute>  $sourceAttributes
+     * @return list<array{id: string, label: string}>
+     */
+    private function customSourceOptions(Collection $sourceAttributes): array
+    {
+        return $sourceAttributes
+            ->reject(fn ($attribute): bool => in_array($attribute->type, self::DOCUMENT_TYPES, true))
+            ->map(fn ($attribute): array => [
+                'id'    => $attribute->code,
+                'label' => $attribute->getTranslatedValueWithFallback('name') ?: $attribute->code,
+            ])
+            ->values()
+            ->all();
     }
 
     /**
