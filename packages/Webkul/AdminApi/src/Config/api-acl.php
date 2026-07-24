@@ -357,5 +357,15 @@ return [
         'name'  => 'admin::app.acl.passports',
         'route' => 'admin.api.passports.mapping',
         'sort'  => 7,
+    ], [
+        'key'   => 'api.catalog.passports.publish',
+        'name'  => 'admin::app.acl.publish',
+        'route' => 'admin.api.passports.publish',
+        'sort'  => 8,
+    ], [
+        'key'   => 'api.catalog.passports.withdraw',
+        'name'  => 'admin::app.acl.withdraw',
+        'route' => 'admin.api.passports.withdraw',
+        'sort'  => 9,
     ],
 ];
