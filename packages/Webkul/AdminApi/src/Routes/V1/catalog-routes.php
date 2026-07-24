@@ -21,6 +21,8 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.attribute_groups.get');
         Route::post('', 'store')->name('admin.api.attribute_groups.store');
         Route::put('{code}', 'update')->name('admin.api.attribute_groups.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.attribute_groups.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.attribute_groups.delete');
     });
 
     /** Attributes API Routes */

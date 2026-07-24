@@ -291,6 +291,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.attribute_groups.update',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attribute_groups.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.attribute_groups.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attribute_groups.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.attribute_groups.delete',
+        'sort'  => 3,
     ],
 
     // ── Families ────────────────────────────────────────────
