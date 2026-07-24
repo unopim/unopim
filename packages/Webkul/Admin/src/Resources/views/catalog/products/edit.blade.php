@@ -227,6 +227,7 @@
                     {!! view_render_event('unopim.admin.catalog.product.edit.form.column_after', ['product' => $product]) !!}
                 @endforeach
             </div>
+            @include('admin::catalog.products.edit.workspace')
             <div class="right-column flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                 @if ($variantTree ?? null)
                     <v-variant-axis-nav></v-variant-axis-nav>
