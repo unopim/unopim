@@ -83,7 +83,7 @@ module.exports = {
             },
 
             fontFamily: {
-                inter: ['Inter'],
+                inter: ['Inter', 'system-ui', 'sans-serif'],
                 icon: ['icomoon']
             }
         },

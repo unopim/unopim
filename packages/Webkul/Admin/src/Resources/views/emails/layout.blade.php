@@ -19,10 +19,6 @@
         <meta name="x-apple-disable-message-reformatting" />
 
         <title>{{ config('app.name') }}</title>
-
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     </head>
 
     <body dir="{{ $direction }}" style="margin: 0; padding: 0; background-color: #F1F2F9; font-family: 'Inter', Arial, sans-serif;">
